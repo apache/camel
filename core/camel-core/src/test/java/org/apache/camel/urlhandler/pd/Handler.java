@@ -28,35 +28,35 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Class to simulate a change of the XSD document. During the first call of
- * the resource a XSD is returned which does not fit to the XML document. In
- * the second call a XSD fitting to the XML document is returned.
- * Used in org.apache.camel.component.validator.ValidatorEndpointClearCachedSchemaTest
+ * Class to simulate a change of the XSD document. During the first call of the
+ * resource a XSD is returned which does not fit to the XML document. In the
+ * second call a XSD fitting to the XML document is returned. Used in
+ * org.apache.camel.component.validator.ValidatorEndpointClearCachedSchemaTest
  */
 public class Handler extends URLStreamHandler {
     private static int counter;
     private static final Logger LOG = LoggerFactory.getLogger(Handler.class);
 
     private final String xsdtemplate1 = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + //
-            "<xsd:schema targetNamespace=\"http://apache.camel.org/test\" xmlns=\"http://apache.camel.org/test\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">"
-            + //
-            "    <xsd:complexType name=\"TestMessage\">" + //
-            "        <xsd:sequence>" + //
-            "            <xsd:element name=\"Content\" type=\"xsd:string\" />" + // //
-            // wrong
-            // element
-            // name
-            // will
-            // cause
-            // the
-            // validation
-            // to
-            // fail
-            "        </xsd:sequence>" + //
-            "        <xsd:attribute name=\"attr\" type=\"xsd:string\" default=\"xsd1\"/>" + //
-            "    </xsd:complexType>" + //
-            "    <xsd:element name=\"TestMessage\" type=\"TestMessage\" />" + //
-            "</xsd:schema>"; //
+                                        "<xsd:schema targetNamespace=\"http://apache.camel.org/test\" xmlns=\"http://apache.camel.org/test\" xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\">"
+                                        + //
+                                        "    <xsd:complexType name=\"TestMessage\">" + //
+                                        "        <xsd:sequence>" + //
+                                        "            <xsd:element name=\"Content\" type=\"xsd:string\" />" + // //
+                                        // wrong
+                                        // element
+                                        // name
+                                        // will
+                                        // cause
+                                        // the
+                                        // validation
+                                        // to
+                                        // fail
+                                        "        </xsd:sequence>" + //
+                                        "        <xsd:attribute name=\"attr\" type=\"xsd:string\" default=\"xsd1\"/>" + //
+                                        "    </xsd:complexType>" + //
+                                        "    <xsd:element name=\"TestMessage\" type=\"TestMessage\" />" + //
+                                        "</xsd:schema>"; //
 
     private final String xsdtemplate2 = xsdtemplate1.replace("\"Content\"", "\"MessageContent\""); // correct
     // element

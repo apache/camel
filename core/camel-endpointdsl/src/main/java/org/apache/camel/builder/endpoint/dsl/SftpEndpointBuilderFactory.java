@@ -33,7 +33,6 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The sftp (FTP over SSH) component is used for uploading or downloading files
@@ -70,7 +69,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointConsumerBuilder charset(String charset) {
-            setProperty("charset", charset);
+            doSetProperty("charset", charset);
             return this;
         }
         /**
@@ -84,7 +83,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointConsumerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -98,7 +97,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointConsumerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -119,7 +118,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointConsumerBuilder doneFileName(String doneFileName) {
-            setProperty("doneFileName", doneFileName);
+            doSetProperty("doneFileName", doneFileName);
             return this;
         }
         /**
@@ -145,7 +144,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointConsumerBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -172,7 +171,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointConsumerBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -185,7 +184,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder jschLoggingLevel(
                 LoggingLevel jschLoggingLevel) {
-            setProperty("jschLoggingLevel", jschLoggingLevel);
+            doSetProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
         /**
@@ -199,7 +198,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder jschLoggingLevel(
                 String jschLoggingLevel) {
-            setProperty("jschLoggingLevel", jschLoggingLevel);
+            doSetProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
         /**
@@ -213,7 +212,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointConsumerBuilder separator(PathSeparator separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -227,7 +226,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointConsumerBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -245,7 +244,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -263,7 +262,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -274,7 +273,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder delete(boolean delete) {
-            setProperty("delete", delete);
+            doSetProperty("delete", delete);
             return this;
         }
         /**
@@ -285,7 +284,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder delete(String delete) {
-            setProperty("delete", delete);
+            doSetProperty("delete", delete);
             return this;
         }
         /**
@@ -299,7 +298,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder moveFailed(Expression moveFailed) {
-            setProperty("moveFailed", moveFailed);
+            doSetProperty("moveFailed", moveFailed);
             return this;
         }
         /**
@@ -314,7 +313,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder moveFailed(String moveFailed) {
-            setProperty("moveFailed", moveFailed);
+            doSetProperty("moveFailed", moveFailed);
             return this;
         }
         /**
@@ -328,7 +327,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder noop(boolean noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -342,7 +341,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder noop(String noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -355,7 +354,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder preMove(Expression preMove) {
-            setProperty("preMove", preMove);
+            doSetProperty("preMove", preMove);
             return this;
         }
         /**
@@ -369,7 +368,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder preMove(String preMove) {
-            setProperty("preMove", preMove);
+            doSetProperty("preMove", preMove);
             return this;
         }
         /**
@@ -385,7 +384,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder preSort(boolean preSort) {
-            setProperty("preSort", preSort);
+            doSetProperty("preSort", preSort);
             return this;
         }
         /**
@@ -401,7 +400,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder preSort(String preSort) {
-            setProperty("preSort", preSort);
+            doSetProperty("preSort", preSort);
             return this;
         }
         /**
@@ -413,7 +412,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder recursive(boolean recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -425,7 +424,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder recursive(String recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -438,7 +437,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -451,7 +450,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -466,7 +465,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder streamDownload(
                 boolean streamDownload) {
-            setProperty("streamDownload", streamDownload);
+            doSetProperty("streamDownload", streamDownload);
             return this;
         }
         /**
@@ -480,7 +479,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder streamDownload(String streamDownload) {
-            setProperty("streamDownload", streamDownload);
+            doSetProperty("streamDownload", streamDownload);
             return this;
         }
         /**
@@ -493,7 +492,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder antExclude(String antExclude) {
-            setProperty("antExclude", antExclude);
+            doSetProperty("antExclude", antExclude);
             return this;
         }
         /**
@@ -505,7 +504,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder antFilterCaseSensitive(
                 boolean antFilterCaseSensitive) {
-            setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
+            doSetProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
         }
         /**
@@ -517,7 +516,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder antFilterCaseSensitive(
                 String antFilterCaseSensitive) {
-            setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
+            doSetProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
         }
         /**
@@ -529,7 +528,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder antInclude(String antInclude) {
-            setProperty("antInclude", antInclude);
+            doSetProperty("antInclude", antInclude);
             return this;
         }
         /**
@@ -546,7 +545,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 boolean eagerMaxMessagesPerPoll) {
-            setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
+            doSetProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
         }
         /**
@@ -563,7 +562,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 String eagerMaxMessagesPerPoll) {
-            setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
+            doSetProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
         }
         /**
@@ -578,7 +577,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder exclude(String exclude) {
-            setProperty("exclude", exclude);
+            doSetProperty("exclude", exclude);
             return this;
         }
         /**
@@ -592,7 +591,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filter(Object filter) {
-            setProperty("filter", filter);
+            doSetProperty("filter", filter);
             return this;
         }
         /**
@@ -606,7 +605,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filter(String filter) {
-            setProperty("filter", filter);
+            doSetProperty("filter", filter);
             return this;
         }
         /**
@@ -620,7 +619,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder filterDirectory(
                 Predicate filterDirectory) {
-            setProperty("filterDirectory", filterDirectory);
+            doSetProperty("filterDirectory", filterDirectory);
             return this;
         }
         /**
@@ -635,7 +634,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder filterDirectory(
                 String filterDirectory) {
-            setProperty("filterDirectory", filterDirectory);
+            doSetProperty("filterDirectory", filterDirectory);
             return this;
         }
         /**
@@ -647,7 +646,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterFile(Predicate filterFile) {
-            setProperty("filterFile", filterFile);
+            doSetProperty("filterFile", filterFile);
             return this;
         }
         /**
@@ -660,7 +659,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder filterFile(String filterFile) {
-            setProperty("filterFile", filterFile);
+            doSetProperty("filterFile", filterFile);
             return this;
         }
         /**
@@ -674,7 +673,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotent(Boolean idempotent) {
-            setProperty("idempotent", idempotent);
+            doSetProperty("idempotent", idempotent);
             return this;
         }
         /**
@@ -689,7 +688,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotent(String idempotent) {
-            setProperty("idempotent", idempotent);
+            doSetProperty("idempotent", idempotent);
             return this;
         }
         /**
@@ -704,7 +703,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder idempotentKey(
                 Expression idempotentKey) {
-            setProperty("idempotentKey", idempotentKey);
+            doSetProperty("idempotentKey", idempotentKey);
             return this;
         }
         /**
@@ -719,7 +718,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotentKey(String idempotentKey) {
-            setProperty("idempotentKey", idempotentKey);
+            doSetProperty("idempotentKey", idempotentKey);
             return this;
         }
         /**
@@ -734,7 +733,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
-            setProperty("idempotentRepository", idempotentRepository);
+            doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
         /**
@@ -749,7 +748,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
-            setProperty("idempotentRepository", idempotentRepository);
+            doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
         /**
@@ -764,7 +763,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder include(String include) {
-            setProperty("include", include);
+            doSetProperty("include", include);
             return this;
         }
         /**
@@ -776,7 +775,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder maxDepth(int maxDepth) {
-            setProperty("maxDepth", maxDepth);
+            doSetProperty("maxDepth", maxDepth);
             return this;
         }
         /**
@@ -788,7 +787,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder maxDepth(String maxDepth) {
-            setProperty("maxDepth", maxDepth);
+            doSetProperty("maxDepth", maxDepth);
             return this;
         }
         /**
@@ -808,7 +807,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -828,7 +827,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -841,7 +840,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder minDepth(int minDepth) {
-            setProperty("minDepth", minDepth);
+            doSetProperty("minDepth", minDepth);
             return this;
         }
         /**
@@ -854,7 +853,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder minDepth(String minDepth) {
-            setProperty("minDepth", minDepth);
+            doSetProperty("minDepth", minDepth);
             return this;
         }
         /**
@@ -867,7 +866,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder move(Expression move) {
-            setProperty("move", move);
+            doSetProperty("move", move);
             return this;
         }
         /**
@@ -881,7 +880,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: filter
          */
         default SftpEndpointConsumerBuilder move(String move) {
-            setProperty("move", move);
+            doSetProperty("move", move);
             return this;
         }
         /**
@@ -896,7 +895,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
                 Object exclusiveReadLockStrategy) {
-            setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
+            doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
         }
         /**
@@ -911,36 +910,36 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder exclusiveReadLockStrategy(
                 String exclusiveReadLockStrategy) {
-            setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
+            doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
         }
         /**
          * Used by consumer, to only poll the files if it has exclusive
          * read-lock on the file (i.e. the file is not in-progress or being
          * written). Camel will wait until the file lock is granted. This option
-         * provides the build in strategies: none - No read lock is in use
+         * provides the build in strategies: - none - No read lock is in use -
          * markerFile - Camel creates a marker file (fileName.camelLock) and
          * then holds a lock on it. This option is not available for the FTP
-         * component changed - Changed is using file length/modification
+         * component - changed - Changed is using file length/modification
          * timestamp to detect whether the file is currently being copied or
          * not. Will at least use 1 sec to determine this, so this option cannot
          * consume files as fast as the others, but can be more reliable as the
          * JDK IO API cannot always determine whether a file is currently being
          * used by another process. The option readLockCheckInterval can be used
-         * to set the check frequency. fileLock - is for using
+         * to set the check frequency. - fileLock - is for using
          * java.nio.channels.FileLock. This option is not avail for Windows OS
          * and the FTP component. This approach should be avoided when accessing
          * a remote file system via a mount/share unless that file system
-         * supports distributed file locks. rename - rename is for using a try
-         * to rename the file as a test if we can get exclusive read-lock.
+         * supports distributed file locks. - rename - rename is for using a try
+         * to rename the file as a test if we can get exclusive read-lock. -
          * idempotent - (only for file component) idempotent is for using a
          * idempotentRepository as the read-lock. This allows to use read locks
          * that supports clustering if the idempotent repository implementation
-         * supports that. idempotent-changed - (only for file component)
+         * supports that. - idempotent-changed - (only for file component)
          * idempotent-changed is for using a idempotentRepository and changed as
          * the combined read-lock. This allows to use read locks that supports
          * clustering if the idempotent repository implementation supports that.
-         * idempotent-rename - (only for file component) idempotent-rename is
+         * - idempotent-rename - (only for file component) idempotent-rename is
          * for using a idempotentRepository and rename as the combined
          * read-lock. This allows to use read locks that supports clustering if
          * the idempotent repository implementation supports that. Notice: The
@@ -959,7 +958,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLock(String readLock) {
-            setProperty("readLock", readLock);
+            doSetProperty("readLock", readLock);
             return this;
         }
         /**
@@ -981,7 +980,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockCheckInterval(
                 long readLockCheckInterval) {
-            setProperty("readLockCheckInterval", readLockCheckInterval);
+            doSetProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
         }
         /**
@@ -1003,7 +1002,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockCheckInterval(
                 String readLockCheckInterval) {
-            setProperty("readLockCheckInterval", readLockCheckInterval);
+            doSetProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
         }
         /**
@@ -1021,7 +1020,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 boolean readLockDeleteOrphanLockFiles) {
-            setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
+            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
         }
         /**
@@ -1039,7 +1038,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 String readLockDeleteOrphanLockFiles) {
-            setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
+            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
         }
         /**
@@ -1053,7 +1052,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 boolean readLockIdempotentReleaseAsync) {
-            setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
+            doSetProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
             return this;
         }
         /**
@@ -1067,7 +1066,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(
                 String readLockIdempotentReleaseAsync) {
-            setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
+            doSetProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
             return this;
         }
         /**
@@ -1086,7 +1085,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 int readLockIdempotentReleaseAsyncPoolSize) {
-            setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
+            doSetProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
             return this;
         }
         /**
@@ -1105,7 +1104,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
                 String readLockIdempotentReleaseAsyncPoolSize) {
-            setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
+            doSetProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
             return this;
         }
         /**
@@ -1124,7 +1123,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 int readLockIdempotentReleaseDelay) {
-            setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
+            doSetProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
             return this;
         }
         /**
@@ -1143,7 +1142,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseDelay(
                 String readLockIdempotentReleaseDelay) {
-            setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
+            doSetProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
             return this;
         }
         /**
@@ -1157,7 +1156,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
-            setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
+            doSetProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
             return this;
         }
         /**
@@ -1171,7 +1170,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
                 String readLockIdempotentReleaseExecutorService) {
-            setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
+            doSetProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
             return this;
         }
         /**
@@ -1187,7 +1186,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockLoggingLevel(
                 LoggingLevel readLockLoggingLevel) {
-            setProperty("readLockLoggingLevel", readLockLoggingLevel);
+            doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
         }
         /**
@@ -1204,7 +1203,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockLoggingLevel(
                 String readLockLoggingLevel) {
-            setProperty("readLockLoggingLevel", readLockLoggingLevel);
+            doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
         }
         /**
@@ -1221,7 +1220,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockMarkerFile(
                 boolean readLockMarkerFile) {
-            setProperty("readLockMarkerFile", readLockMarkerFile);
+            doSetProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
         }
         /**
@@ -1238,7 +1237,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockMarkerFile(
                 String readLockMarkerFile) {
-            setProperty("readLockMarkerFile", readLockMarkerFile);
+            doSetProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
         }
         /**
@@ -1254,7 +1253,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
-            setProperty("readLockMinAge", readLockMinAge);
+            doSetProperty("readLockMinAge", readLockMinAge);
             return this;
         }
         /**
@@ -1270,7 +1269,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
-            setProperty("readLockMinAge", readLockMinAge);
+            doSetProperty("readLockMinAge", readLockMinAge);
             return this;
         }
         /**
@@ -1285,7 +1284,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockMinLength(
                 long readLockMinLength) {
-            setProperty("readLockMinLength", readLockMinLength);
+            doSetProperty("readLockMinLength", readLockMinLength);
             return this;
         }
         /**
@@ -1300,7 +1299,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockMinLength(
                 String readLockMinLength) {
-            setProperty("readLockMinLength", readLockMinLength);
+            doSetProperty("readLockMinLength", readLockMinLength);
             return this;
         }
         /**
@@ -1320,7 +1319,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnCommit(
                 boolean readLockRemoveOnCommit) {
-            setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
+            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
         }
         /**
@@ -1340,7 +1339,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnCommit(
                 String readLockRemoveOnCommit) {
-            setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
+            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
         }
         /**
@@ -1356,7 +1355,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnRollback(
                 boolean readLockRemoveOnRollback) {
-            setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
+            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
         }
         /**
@@ -1372,7 +1371,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnRollback(
                 String readLockRemoveOnRollback) {
-            setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
+            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
         }
         /**
@@ -1394,7 +1393,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
-            setProperty("readLockTimeout", readLockTimeout);
+            doSetProperty("readLockTimeout", readLockTimeout);
             return this;
         }
         /**
@@ -1417,7 +1416,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder readLockTimeout(
                 String readLockTimeout) {
-            setProperty("readLockTimeout", readLockTimeout);
+            doSetProperty("readLockTimeout", readLockTimeout);
             return this;
         }
         /**
@@ -1430,7 +1429,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -1443,7 +1442,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -1456,7 +1455,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -1469,7 +1468,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -1486,7 +1485,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -1503,7 +1502,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -1516,7 +1515,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -1529,7 +1528,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -1541,7 +1540,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -1553,7 +1552,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -1566,7 +1565,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -1579,7 +1578,33 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default SftpEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default SftpEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -1592,7 +1617,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -1606,7 +1631,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -1621,7 +1646,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -1636,41 +1661,24 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default SftpEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1679,12 +1687,12 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -1694,7 +1702,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -1706,7 +1714,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -1717,7 +1725,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -1728,7 +1736,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -1740,7 +1748,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -1752,7 +1760,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -1764,7 +1772,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -1775,7 +1783,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: sort
          */
         default SftpEndpointConsumerBuilder shuffle(boolean shuffle) {
-            setProperty("shuffle", shuffle);
+            doSetProperty("shuffle", shuffle);
             return this;
         }
         /**
@@ -1786,7 +1794,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: sort
          */
         default SftpEndpointConsumerBuilder shuffle(String shuffle) {
-            setProperty("shuffle", shuffle);
+            doSetProperty("shuffle", shuffle);
             return this;
         }
         /**
@@ -1801,7 +1809,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
-            setProperty("sortBy", sortBy);
+            doSetProperty("sortBy", sortBy);
             return this;
         }
         /**
@@ -1816,7 +1824,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sortBy(String sortBy) {
-            setProperty("sortBy", sortBy);
+            doSetProperty("sortBy", sortBy);
             return this;
         }
         /**
@@ -1828,7 +1836,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
-            setProperty("sorter", sorter);
+            doSetProperty("sorter", sorter);
             return this;
         }
         /**
@@ -1840,7 +1848,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: sort
          */
         default SftpEndpointConsumerBuilder sorter(String sorter) {
-            setProperty("sorter", sorter);
+            doSetProperty("sorter", sorter);
             return this;
         }
         /**
@@ -1854,7 +1862,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder ciphers(String ciphers) {
-            setProperty("ciphers", ciphers);
+            doSetProperty("ciphers", ciphers);
             return this;
         }
         /**
@@ -1866,7 +1874,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder keyPair(KeyPair keyPair) {
-            setProperty("keyPair", keyPair);
+            doSetProperty("keyPair", keyPair);
             return this;
         }
         /**
@@ -1879,7 +1887,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder keyPair(String keyPair) {
-            setProperty("keyPair", keyPair);
+            doSetProperty("keyPair", keyPair);
             return this;
         }
         /**
@@ -1891,7 +1899,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder knownHosts(Byte[] knownHosts) {
-            setProperty("knownHosts", knownHosts);
+            doSetProperty("knownHosts", knownHosts);
             return this;
         }
         /**
@@ -1903,7 +1911,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder knownHosts(String knownHosts) {
-            setProperty("knownHosts", knownHosts);
+            doSetProperty("knownHosts", knownHosts);
             return this;
         }
         /**
@@ -1915,7 +1923,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder knownHostsFile(String knownHostsFile) {
-            setProperty("knownHostsFile", knownHostsFile);
+            doSetProperty("knownHostsFile", knownHostsFile);
             return this;
         }
         /**
@@ -1927,7 +1935,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder knownHostsUri(String knownHostsUri) {
-            setProperty("knownHostsUri", knownHostsUri);
+            doSetProperty("knownHostsUri", knownHostsUri);
             return this;
         }
         /**
@@ -1938,7 +1946,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1952,7 +1960,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder preferredAuthentications(
                 String preferredAuthentications) {
-            setProperty("preferredAuthentications", preferredAuthentications);
+            doSetProperty("preferredAuthentications", preferredAuthentications);
             return this;
         }
         /**
@@ -1964,7 +1972,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder privateKey(Byte[] privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -1976,7 +1984,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -1988,7 +1996,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -2001,7 +2009,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder privateKeyPassphrase(
                 String privateKeyPassphrase) {
-            setProperty("privateKeyPassphrase", privateKeyPassphrase);
+            doSetProperty("privateKeyPassphrase", privateKeyPassphrase);
             return this;
         }
         /**
@@ -2013,7 +2021,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder privateKeyUri(String privateKeyUri) {
-            setProperty("privateKeyUri", privateKeyUri);
+            doSetProperty("privateKeyUri", privateKeyUri);
             return this;
         }
         /**
@@ -2025,7 +2033,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
-            setProperty("strictHostKeyChecking", strictHostKeyChecking);
+            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
             return this;
         }
         /**
@@ -2036,7 +2044,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -2049,7 +2057,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
-            setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
         /**
@@ -2062,7 +2070,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointConsumerBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
-            setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
     }
@@ -2092,7 +2100,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -2111,7 +2119,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
                 String fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -2126,7 +2134,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder download(boolean download) {
-            setProperty("download", download);
+            doSetProperty("download", download);
             return this;
         }
         /**
@@ -2141,7 +2149,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder download(String download) {
-            setProperty("download", download);
+            doSetProperty("download", download);
             return this;
         }
         /**
@@ -2157,7 +2165,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -2173,7 +2181,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -2185,7 +2193,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -2198,7 +2206,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -2214,7 +2222,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 boolean ignoreFileNotFoundOrPermissionError) {
-            setProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
+            doSetProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
             return this;
         }
         /**
@@ -2230,7 +2238,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 String ignoreFileNotFoundOrPermissionError) {
-            setProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
+            doSetProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
             return this;
         }
         /**
@@ -2246,7 +2254,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
                 IdempotentRepository inProgressRepository) {
-            setProperty("inProgressRepository", inProgressRepository);
+            doSetProperty("inProgressRepository", inProgressRepository);
             return this;
         }
         /**
@@ -2262,7 +2270,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder inProgressRepository(
                 String inProgressRepository) {
-            setProperty("inProgressRepository", inProgressRepository);
+            doSetProperty("inProgressRepository", inProgressRepository);
             return this;
         }
         /**
@@ -2277,7 +2285,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder localWorkDirectory(
                 String localWorkDirectory) {
-            setProperty("localWorkDirectory", localWorkDirectory);
+            doSetProperty("localWorkDirectory", localWorkDirectory);
             return this;
         }
         /**
@@ -2293,7 +2301,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
                 ExceptionHandler onCompletionExceptionHandler) {
-            setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
         }
         /**
@@ -2309,7 +2317,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder onCompletionExceptionHandler(
                 String onCompletionExceptionHandler) {
-            setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
         }
         /**
@@ -2325,7 +2333,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -2341,7 +2349,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -2359,7 +2367,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder processStrategy(
                 Object processStrategy) {
-            setProperty("processStrategy", processStrategy);
+            doSetProperty("processStrategy", processStrategy);
             return this;
         }
         /**
@@ -2377,7 +2385,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder processStrategy(
                 String processStrategy) {
-            setProperty("processStrategy", processStrategy);
+            doSetProperty("processStrategy", processStrategy);
             return this;
         }
         /**
@@ -2394,7 +2402,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder useList(boolean useList) {
-            setProperty("useList", useList);
+            doSetProperty("useList", useList);
             return this;
         }
         /**
@@ -2411,7 +2419,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder useList(String useList) {
-            setProperty("useList", useList);
+            doSetProperty("useList", useList);
             return this;
         }
         /**
@@ -2426,7 +2434,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder autoCreate(
                 boolean autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -2440,7 +2448,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder autoCreate(String autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -2453,7 +2461,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2466,7 +2474,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2479,29 +2487,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder bindAddress(
                 String bindAddress) {
-            setProperty("bindAddress", bindAddress);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointConsumerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bindAddress", bindAddress);
             return this;
         }
         /**
@@ -2515,7 +2501,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder bulkRequests(
                 Integer bulkRequests) {
-            setProperty("bulkRequests", bulkRequests);
+            doSetProperty("bulkRequests", bulkRequests);
             return this;
         }
         /**
@@ -2530,7 +2516,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder bulkRequests(
                 String bulkRequests) {
-            setProperty("bulkRequests", bulkRequests);
+            doSetProperty("bulkRequests", bulkRequests);
             return this;
         }
         /**
@@ -2543,7 +2529,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder compression(int compression) {
-            setProperty("compression", compression);
+            doSetProperty("compression", compression);
             return this;
         }
         /**
@@ -2557,7 +2543,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder compression(
                 String compression) {
-            setProperty("compression", compression);
+            doSetProperty("compression", compression);
             return this;
         }
         /**
@@ -2570,7 +2556,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder connectTimeout(
                 int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -2583,7 +2569,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -2596,7 +2582,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -2609,7 +2595,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -2621,7 +2607,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder proxy(Object proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -2634,7 +2620,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder proxy(String proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -2647,7 +2633,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
                 long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -2660,11 +2646,14 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder reconnectDelay(
                 String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2672,11 +2661,14 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveCountMax(
                 int serverAliveCountMax) {
-            setProperty("serverAliveCountMax", serverAliveCountMax);
+            doSetProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2684,11 +2676,13 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveCountMax(
                 String serverAliveCountMax) {
-            setProperty("serverAliveCountMax", serverAliveCountMax);
+            doSetProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -2696,11 +2690,13 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
                 int serverAliveInterval) {
-            setProperty("serverAliveInterval", serverAliveInterval);
+            doSetProperty("serverAliveInterval", serverAliveInterval);
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -2708,7 +2704,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveInterval(
                 String serverAliveInterval) {
-            setProperty("serverAliveInterval", serverAliveInterval);
+            doSetProperty("serverAliveInterval", serverAliveInterval);
             return this;
         }
         /**
@@ -2723,7 +2719,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder soTimeout(int soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -2738,7 +2734,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder soTimeout(String soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -2753,7 +2749,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder stepwise(boolean stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -2768,7 +2764,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder stepwise(String stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -2781,7 +2777,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2794,7 +2790,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2810,7 +2806,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -2826,7 +2822,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -2837,7 +2833,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -2848,7 +2844,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -2878,7 +2874,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointProducerBuilder charset(String charset) {
-            setProperty("charset", charset);
+            doSetProperty("charset", charset);
             return this;
         }
         /**
@@ -2892,7 +2888,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointProducerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -2906,7 +2902,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointProducerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -2927,7 +2923,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointProducerBuilder doneFileName(String doneFileName) {
-            setProperty("doneFileName", doneFileName);
+            doSetProperty("doneFileName", doneFileName);
             return this;
         }
         /**
@@ -2953,7 +2949,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointProducerBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -2980,7 +2976,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointProducerBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -2993,7 +2989,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder jschLoggingLevel(
                 LoggingLevel jschLoggingLevel) {
-            setProperty("jschLoggingLevel", jschLoggingLevel);
+            doSetProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
         /**
@@ -3007,7 +3003,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder jschLoggingLevel(
                 String jschLoggingLevel) {
-            setProperty("jschLoggingLevel", jschLoggingLevel);
+            doSetProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
         /**
@@ -3021,7 +3017,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointProducerBuilder separator(PathSeparator separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -3035,25 +3031,25 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointProducerBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. Append - adds
-         * content to the existing file. Fail - throws a
+         * which is the default, replaces the existing file. - Append - adds
+         * content to the existing file. - Fail - throws a
          * GenericFileOperationException, indicating that there is already an
-         * existing file. Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay. Move -
+         * existing file. - Ignore - silently ignores the problem and does not
+         * override the existing file, but assumes everything is okay. - Move -
          * option requires to use the moveExisting option to be configured as
          * well. The option eagerDeleteTargetFile can be used to control what to
          * do if an moving the file, and there exists already an existing file,
          * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file. TryRename is
-         * only applicable if tempFileName option is in use. This allows to try
-         * renaming the file from the temporary name to the actual name, without
-         * doing any exists check. This check may be faster on some file systems
-         * and especially FTP servers.
+         * move any existing files, before writing the target file. - TryRename
+         * is only applicable if tempFileName option is in use. This allows to
+         * try renaming the file from the temporary name to the actual name,
+         * without doing any exists check. This check may be faster on some file
+         * systems and especially FTP servers.
          * 
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
@@ -3061,25 +3057,25 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer
          */
         default SftpEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
-            setProperty("fileExist", fileExist);
+            doSetProperty("fileExist", fileExist);
             return this;
         }
         /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. Append - adds
-         * content to the existing file. Fail - throws a
+         * which is the default, replaces the existing file. - Append - adds
+         * content to the existing file. - Fail - throws a
          * GenericFileOperationException, indicating that there is already an
-         * existing file. Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay. Move -
+         * existing file. - Ignore - silently ignores the problem and does not
+         * override the existing file, but assumes everything is okay. - Move -
          * option requires to use the moveExisting option to be configured as
          * well. The option eagerDeleteTargetFile can be used to control what to
          * do if an moving the file, and there exists already an existing file,
          * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file. TryRename is
-         * only applicable if tempFileName option is in use. This allows to try
-         * renaming the file from the temporary name to the actual name, without
-         * doing any exists check. This check may be faster on some file systems
-         * and especially FTP servers.
+         * move any existing files, before writing the target file. - TryRename
+         * is only applicable if tempFileName option is in use. This allows to
+         * try renaming the file from the temporary name to the actual name,
+         * without doing any exists check. This check may be faster on some file
+         * systems and especially FTP servers.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
@@ -3087,7 +3083,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer
          */
         default SftpEndpointProducerBuilder fileExist(String fileExist) {
-            setProperty("fileExist", fileExist);
+            doSetProperty("fileExist", fileExist);
             return this;
         }
         /**
@@ -3103,7 +3099,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer
          */
         default SftpEndpointProducerBuilder flatten(boolean flatten) {
-            setProperty("flatten", flatten);
+            doSetProperty("flatten", flatten);
             return this;
         }
         /**
@@ -3119,7 +3115,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer
          */
         default SftpEndpointProducerBuilder flatten(String flatten) {
-            setProperty("flatten", flatten);
+            doSetProperty("flatten", flatten);
             return this;
         }
         /**
@@ -3136,7 +3132,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder jailStartingDirectory(
                 boolean jailStartingDirectory) {
-            setProperty("jailStartingDirectory", jailStartingDirectory);
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -3153,7 +3149,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder jailStartingDirectory(
                 String jailStartingDirectory) {
-            setProperty("jailStartingDirectory", jailStartingDirectory);
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -3173,7 +3169,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -3193,7 +3189,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -3211,7 +3207,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer
          */
         default SftpEndpointProducerBuilder moveExisting(Expression moveExisting) {
-            setProperty("moveExisting", moveExisting);
+            doSetProperty("moveExisting", moveExisting);
             return this;
         }
         /**
@@ -3230,7 +3226,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer
          */
         default SftpEndpointProducerBuilder moveExisting(String moveExisting) {
-            setProperty("moveExisting", moveExisting);
+            doSetProperty("moveExisting", moveExisting);
             return this;
         }
         /**
@@ -3247,7 +3243,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer
          */
         default SftpEndpointProducerBuilder tempFileName(Expression tempFileName) {
-            setProperty("tempFileName", tempFileName);
+            doSetProperty("tempFileName", tempFileName);
             return this;
         }
         /**
@@ -3265,7 +3261,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer
          */
         default SftpEndpointProducerBuilder tempFileName(String tempFileName) {
-            setProperty("tempFileName", tempFileName);
+            doSetProperty("tempFileName", tempFileName);
             return this;
         }
         /**
@@ -3280,7 +3276,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer
          */
         default SftpEndpointProducerBuilder tempPrefix(String tempPrefix) {
-            setProperty("tempPrefix", tempPrefix);
+            doSetProperty("tempPrefix", tempPrefix);
             return this;
         }
         /**
@@ -3294,7 +3290,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder ciphers(String ciphers) {
-            setProperty("ciphers", ciphers);
+            doSetProperty("ciphers", ciphers);
             return this;
         }
         /**
@@ -3306,7 +3302,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder keyPair(KeyPair keyPair) {
-            setProperty("keyPair", keyPair);
+            doSetProperty("keyPair", keyPair);
             return this;
         }
         /**
@@ -3319,7 +3315,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder keyPair(String keyPair) {
-            setProperty("keyPair", keyPair);
+            doSetProperty("keyPair", keyPair);
             return this;
         }
         /**
@@ -3331,7 +3327,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder knownHosts(Byte[] knownHosts) {
-            setProperty("knownHosts", knownHosts);
+            doSetProperty("knownHosts", knownHosts);
             return this;
         }
         /**
@@ -3343,7 +3339,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder knownHosts(String knownHosts) {
-            setProperty("knownHosts", knownHosts);
+            doSetProperty("knownHosts", knownHosts);
             return this;
         }
         /**
@@ -3355,7 +3351,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder knownHostsFile(String knownHostsFile) {
-            setProperty("knownHostsFile", knownHostsFile);
+            doSetProperty("knownHostsFile", knownHostsFile);
             return this;
         }
         /**
@@ -3367,7 +3363,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder knownHostsUri(String knownHostsUri) {
-            setProperty("knownHostsUri", knownHostsUri);
+            doSetProperty("knownHostsUri", knownHostsUri);
             return this;
         }
         /**
@@ -3378,7 +3374,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -3392,7 +3388,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder preferredAuthentications(
                 String preferredAuthentications) {
-            setProperty("preferredAuthentications", preferredAuthentications);
+            doSetProperty("preferredAuthentications", preferredAuthentications);
             return this;
         }
         /**
@@ -3404,7 +3400,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder privateKey(Byte[] privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -3416,7 +3412,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -3428,7 +3424,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -3441,7 +3437,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder privateKeyPassphrase(
                 String privateKeyPassphrase) {
-            setProperty("privateKeyPassphrase", privateKeyPassphrase);
+            doSetProperty("privateKeyPassphrase", privateKeyPassphrase);
             return this;
         }
         /**
@@ -3453,7 +3449,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder privateKeyUri(String privateKeyUri) {
-            setProperty("privateKeyUri", privateKeyUri);
+            doSetProperty("privateKeyUri", privateKeyUri);
             return this;
         }
         /**
@@ -3465,7 +3461,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
-            setProperty("strictHostKeyChecking", strictHostKeyChecking);
+            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
             return this;
         }
         /**
@@ -3476,7 +3472,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -3489,7 +3485,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
-            setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
         /**
@@ -3502,7 +3498,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointProducerBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
-            setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
     }
@@ -3532,7 +3528,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -3551,7 +3547,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
                 String fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -3569,7 +3565,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -3587,7 +3583,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -3598,7 +3594,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder chmod(String chmod) {
-            setProperty("chmod", chmod);
+            doSetProperty("chmod", chmod);
             return this;
         }
         /**
@@ -3612,7 +3608,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
                 boolean disconnectOnBatchComplete) {
-            setProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
+            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
             return this;
         }
         /**
@@ -3626,7 +3622,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
                 String disconnectOnBatchComplete) {
-            setProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
+            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
             return this;
         }
         /**
@@ -3650,7 +3646,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder eagerDeleteTargetFile(
                 boolean eagerDeleteTargetFile) {
-            setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
+            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
         }
         /**
@@ -3674,7 +3670,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder eagerDeleteTargetFile(
                 String eagerDeleteTargetFile) {
-            setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
+            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
         }
         /**
@@ -3692,7 +3688,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder keepLastModified(
                 boolean keepLastModified) {
-            setProperty("keepLastModified", keepLastModified);
+            doSetProperty("keepLastModified", keepLastModified);
             return this;
         }
         /**
@@ -3710,7 +3706,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder keepLastModified(
                 String keepLastModified) {
-            setProperty("keepLastModified", keepLastModified);
+            doSetProperty("keepLastModified", keepLastModified);
             return this;
         }
         /**
@@ -3725,7 +3721,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
                 Object moveExistingFileStrategy) {
-            setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
         }
         /**
@@ -3740,7 +3736,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
-            setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
         }
         /**
@@ -3755,7 +3751,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder sendNoop(boolean sendNoop) {
-            setProperty("sendNoop", sendNoop);
+            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -3770,7 +3766,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder sendNoop(String sendNoop) {
-            setProperty("sendNoop", sendNoop);
+            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -3785,7 +3781,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder autoCreate(
                 boolean autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -3799,7 +3795,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder autoCreate(String autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -3812,7 +3808,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3825,7 +3821,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3838,29 +3834,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder bindAddress(
                 String bindAddress) {
-            setProperty("bindAddress", bindAddress);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointProducerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bindAddress", bindAddress);
             return this;
         }
         /**
@@ -3874,7 +3848,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder bulkRequests(
                 Integer bulkRequests) {
-            setProperty("bulkRequests", bulkRequests);
+            doSetProperty("bulkRequests", bulkRequests);
             return this;
         }
         /**
@@ -3889,7 +3863,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder bulkRequests(
                 String bulkRequests) {
-            setProperty("bulkRequests", bulkRequests);
+            doSetProperty("bulkRequests", bulkRequests);
             return this;
         }
         /**
@@ -3902,7 +3876,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder compression(int compression) {
-            setProperty("compression", compression);
+            doSetProperty("compression", compression);
             return this;
         }
         /**
@@ -3916,7 +3890,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder compression(
                 String compression) {
-            setProperty("compression", compression);
+            doSetProperty("compression", compression);
             return this;
         }
         /**
@@ -3929,7 +3903,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -3942,7 +3916,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -3955,7 +3929,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -3968,7 +3942,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -3980,7 +3954,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder proxy(Object proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -3993,7 +3967,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder proxy(String proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -4006,7 +3980,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder reconnectDelay(
                 long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -4019,11 +3993,14 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder reconnectDelay(
                 String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4031,11 +4008,14 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
                 int serverAliveCountMax) {
-            setProperty("serverAliveCountMax", serverAliveCountMax);
+            doSetProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4043,11 +4023,13 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
                 String serverAliveCountMax) {
-            setProperty("serverAliveCountMax", serverAliveCountMax);
+            doSetProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4055,11 +4037,13 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
                 int serverAliveInterval) {
-            setProperty("serverAliveInterval", serverAliveInterval);
+            doSetProperty("serverAliveInterval", serverAliveInterval);
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4067,7 +4051,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveInterval(
                 String serverAliveInterval) {
-            setProperty("serverAliveInterval", serverAliveInterval);
+            doSetProperty("serverAliveInterval", serverAliveInterval);
             return this;
         }
         /**
@@ -4082,7 +4066,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder soTimeout(int soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -4097,7 +4081,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder soTimeout(String soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -4112,7 +4096,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder stepwise(boolean stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -4127,7 +4111,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder stepwise(String stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -4140,7 +4124,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -4153,7 +4137,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -4169,7 +4153,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -4185,7 +4169,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -4196,7 +4180,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -4207,7 +4191,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -4237,7 +4221,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointBuilder charset(String charset) {
-            setProperty("charset", charset);
+            doSetProperty("charset", charset);
             return this;
         }
         /**
@@ -4251,7 +4235,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -4265,7 +4249,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -4286,7 +4270,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointBuilder doneFileName(String doneFileName) {
-            setProperty("doneFileName", doneFileName);
+            doSetProperty("doneFileName", doneFileName);
             return this;
         }
         /**
@@ -4312,7 +4296,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -4339,7 +4323,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -4352,7 +4336,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder jschLoggingLevel(
                 LoggingLevel jschLoggingLevel) {
-            setProperty("jschLoggingLevel", jschLoggingLevel);
+            doSetProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
         /**
@@ -4365,7 +4349,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointBuilder jschLoggingLevel(String jschLoggingLevel) {
-            setProperty("jschLoggingLevel", jschLoggingLevel);
+            doSetProperty("jschLoggingLevel", jschLoggingLevel);
             return this;
         }
         /**
@@ -4379,7 +4363,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointBuilder separator(PathSeparator separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -4393,7 +4377,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: common
          */
         default SftpEndpointBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -4407,7 +4391,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder ciphers(String ciphers) {
-            setProperty("ciphers", ciphers);
+            doSetProperty("ciphers", ciphers);
             return this;
         }
         /**
@@ -4419,7 +4403,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder keyPair(KeyPair keyPair) {
-            setProperty("keyPair", keyPair);
+            doSetProperty("keyPair", keyPair);
             return this;
         }
         /**
@@ -4432,7 +4416,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder keyPair(String keyPair) {
-            setProperty("keyPair", keyPair);
+            doSetProperty("keyPair", keyPair);
             return this;
         }
         /**
@@ -4444,7 +4428,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder knownHosts(Byte[] knownHosts) {
-            setProperty("knownHosts", knownHosts);
+            doSetProperty("knownHosts", knownHosts);
             return this;
         }
         /**
@@ -4456,7 +4440,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder knownHosts(String knownHosts) {
-            setProperty("knownHosts", knownHosts);
+            doSetProperty("knownHosts", knownHosts);
             return this;
         }
         /**
@@ -4468,7 +4452,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder knownHostsFile(String knownHostsFile) {
-            setProperty("knownHostsFile", knownHostsFile);
+            doSetProperty("knownHostsFile", knownHostsFile);
             return this;
         }
         /**
@@ -4480,7 +4464,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder knownHostsUri(String knownHostsUri) {
-            setProperty("knownHostsUri", knownHostsUri);
+            doSetProperty("knownHostsUri", knownHostsUri);
             return this;
         }
         /**
@@ -4491,7 +4475,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -4505,7 +4489,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder preferredAuthentications(
                 String preferredAuthentications) {
-            setProperty("preferredAuthentications", preferredAuthentications);
+            doSetProperty("preferredAuthentications", preferredAuthentications);
             return this;
         }
         /**
@@ -4517,7 +4501,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder privateKey(Byte[] privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -4529,7 +4513,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -4541,7 +4525,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -4554,7 +4538,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder privateKeyPassphrase(
                 String privateKeyPassphrase) {
-            setProperty("privateKeyPassphrase", privateKeyPassphrase);
+            doSetProperty("privateKeyPassphrase", privateKeyPassphrase);
             return this;
         }
         /**
@@ -4566,7 +4550,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder privateKeyUri(String privateKeyUri) {
-            setProperty("privateKeyUri", privateKeyUri);
+            doSetProperty("privateKeyUri", privateKeyUri);
             return this;
         }
         /**
@@ -4578,7 +4562,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder strictHostKeyChecking(
                 String strictHostKeyChecking) {
-            setProperty("strictHostKeyChecking", strictHostKeyChecking);
+            doSetProperty("strictHostKeyChecking", strictHostKeyChecking);
             return this;
         }
         /**
@@ -4589,7 +4573,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: security
          */
         default SftpEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -4602,7 +4586,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder useUserKnownHostsFile(
                 boolean useUserKnownHostsFile) {
-            setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
         /**
@@ -4615,7 +4599,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default SftpEndpointBuilder useUserKnownHostsFile(
                 String useUserKnownHostsFile) {
-            setProperty("useUserKnownHostsFile", useUserKnownHostsFile);
+            doSetProperty("useUserKnownHostsFile", useUserKnownHostsFile);
             return this;
         }
     }
@@ -4645,7 +4629,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -4664,7 +4648,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder fastExistsCheck(
                 String fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -4678,7 +4662,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder autoCreate(boolean autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -4692,7 +4676,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder autoCreate(String autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -4705,7 +4689,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -4718,7 +4702,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -4730,29 +4714,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bindAddress(String bindAddress) {
-            setProperty("bindAddress", bindAddress);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
-            return this;
-        }
-        /**
-         * Write buffer sized in bytes.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedSftpEndpointBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bindAddress", bindAddress);
             return this;
         }
         /**
@@ -4765,7 +4727,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bulkRequests(Integer bulkRequests) {
-            setProperty("bulkRequests", bulkRequests);
+            doSetProperty("bulkRequests", bulkRequests);
             return this;
         }
         /**
@@ -4779,7 +4741,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder bulkRequests(String bulkRequests) {
-            setProperty("bulkRequests", bulkRequests);
+            doSetProperty("bulkRequests", bulkRequests);
             return this;
         }
         /**
@@ -4792,7 +4754,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder compression(int compression) {
-            setProperty("compression", compression);
+            doSetProperty("compression", compression);
             return this;
         }
         /**
@@ -4805,7 +4767,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder compression(String compression) {
-            setProperty("compression", compression);
+            doSetProperty("compression", compression);
             return this;
         }
         /**
@@ -4817,7 +4779,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -4829,7 +4791,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder connectTimeout(String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -4842,7 +4804,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -4855,7 +4817,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -4867,7 +4829,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder proxy(Object proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -4880,7 +4842,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder proxy(String proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -4892,7 +4854,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder reconnectDelay(long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -4904,11 +4866,14 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder reconnectDelay(String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4916,11 +4881,14 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder serverAliveCountMax(
                 int serverAliveCountMax) {
-            setProperty("serverAliveCountMax", serverAliveCountMax);
+            doSetProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
         }
         /**
-         * Allows you to set the serverAliveCountMax of the sftp session.
+         * Sets the number of keep-alive messages which may be sent without
+         * receiving any messages back from the server. If this threshold is
+         * reached while keep-alive messages are being sent, the connection will
+         * be disconnected. The default value is one.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4928,11 +4896,13 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder serverAliveCountMax(
                 String serverAliveCountMax) {
-            setProperty("serverAliveCountMax", serverAliveCountMax);
+            doSetProperty("serverAliveCountMax", serverAliveCountMax);
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -4940,11 +4910,13 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder serverAliveInterval(
                 int serverAliveInterval) {
-            setProperty("serverAliveInterval", serverAliveInterval);
+            doSetProperty("serverAliveInterval", serverAliveInterval);
             return this;
         }
         /**
-         * Allows you to set the serverAliveInterval of the sftp session.
+         * Sets the interval (millis) to send a keep-alive message. If zero is
+         * specified, any keep-alive message must not be sent. The default
+         * interval is zero.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -4952,7 +4924,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder serverAliveInterval(
                 String serverAliveInterval) {
-            setProperty("serverAliveInterval", serverAliveInterval);
+            doSetProperty("serverAliveInterval", serverAliveInterval);
             return this;
         }
         /**
@@ -4967,7 +4939,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder soTimeout(int soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -4982,7 +4954,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder soTimeout(String soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -4997,7 +4969,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder stepwise(boolean stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -5012,7 +4984,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder stepwise(String stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -5024,7 +4996,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -5036,7 +5008,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -5052,7 +5024,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -5068,7 +5040,7 @@ public interface SftpEndpointBuilderFactory {
          */
         default AdvancedSftpEndpointBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -5079,7 +5051,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -5090,7 +5062,7 @@ public interface SftpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -5123,7 +5095,7 @@ public interface SftpEndpointBuilderFactory {
      * files from SFTP servers.
      * 
      * Category: file
-     * Available as of version: 1.1
+     * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-ftp
      * 
      * Syntax: <code>sftp:host:port/directoryName</code>

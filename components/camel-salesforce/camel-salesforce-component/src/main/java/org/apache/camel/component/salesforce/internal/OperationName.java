@@ -19,59 +19,28 @@ package org.apache.camel.component.salesforce.internal;
 public enum OperationName {
 
     // rest API
-    GET_VERSIONS("getVersions"),
-    GET_RESOURCES("getResources"),
-    GET_GLOBAL_OBJECTS("getGlobalObjects"),
-    GET_BASIC_INFO("getBasicInfo"),
-    GET_DESCRIPTION("getDescription"),
-    GET_SOBJECT("getSObject"),
-    CREATE_SOBJECT("createSObject"),
-    UPDATE_SOBJECT("updateSObject"),
-    DELETE_SOBJECT("deleteSObject"),
-    GET_SOBJECT_WITH_ID("getSObjectWithId"),
-    UPSERT_SOBJECT("upsertSObject"),
-    DELETE_SOBJECT_WITH_ID("deleteSObjectWithId"),
-    GET_BLOB_FIELD("getBlobField"),
-    QUERY("query"),
-    QUERY_MORE("queryMore"),
-    QUERY_ALL("queryAll"),
-    SEARCH("search"),
-    APEX_CALL("apexCall"),
-    RECENT("recent"),
+    GET_VERSIONS("getVersions"), GET_RESOURCES("getResources"), GET_GLOBAL_OBJECTS("getGlobalObjects"), GET_BASIC_INFO("getBasicInfo"), GET_DESCRIPTION(
+        "getDescription"), GET_SOBJECT("getSObject"), CREATE_SOBJECT("createSObject"), UPDATE_SOBJECT("updateSObject"), DELETE_SOBJECT("deleteSObject"), GET_SOBJECT_WITH_ID(
+            "getSObjectWithId"), UPSERT_SOBJECT("upsertSObject"), DELETE_SOBJECT_WITH_ID("deleteSObjectWithId"), GET_BLOB_FIELD(
+                "getBlobField"), QUERY("query"), QUERY_MORE("queryMore"), QUERY_ALL("queryAll"), SEARCH("search"), APEX_CALL("apexCall"), RECENT("recent"),
 
     // bulk API
-    CREATE_JOB("createJob"),
-    GET_JOB("getJob"),
-    CLOSE_JOB("closeJob"),
-    ABORT_JOB("abortJob"),
-    CREATE_BATCH("createBatch"),
-    GET_BATCH("getBatch"),
-    GET_ALL_BATCHES("getAllBatches"),
-    GET_REQUEST("getRequest"),
-    GET_RESULTS("getResults"),
-    CREATE_BATCH_QUERY("createBatchQuery"),
-    GET_QUERY_RESULT_IDS("getQueryResultIds"),
-    GET_QUERY_RESULT("getQueryResult"),
-    
+    CREATE_JOB("createJob"), GET_JOB("getJob"), CLOSE_JOB("closeJob"), ABORT_JOB("abortJob"), CREATE_BATCH("createBatch"), GET_BATCH("getBatch"), GET_ALL_BATCHES(
+        "getAllBatches"), GET_REQUEST(
+            "getRequest"), GET_RESULTS("getResults"), CREATE_BATCH_QUERY("createBatchQuery"), GET_QUERY_RESULT_IDS("getQueryResultIds"), GET_QUERY_RESULT("getQueryResult"),
+
     // analytics API
-    GET_RECENT_REPORTS("getRecentReports"),
-    GET_REPORT_DESCRIPTION("getReportDescription"),
-    EXECUTE_SYNCREPORT("executeSyncReport"),
-    EXECUTE_ASYNCREPORT("executeAsyncReport"),
-    GET_REPORT_INSTANCES("getReportInstances"),
-    GET_REPORT_RESULTS("getReportResults"),
+    GET_RECENT_REPORTS("getRecentReports"), GET_REPORT_DESCRIPTION("getReportDescription"), EXECUTE_SYNCREPORT("executeSyncReport"), EXECUTE_ASYNCREPORT(
+        "executeAsyncReport"), GET_REPORT_INSTANCES("getReportInstances"), GET_REPORT_RESULTS("getReportResults"),
 
     // limits API
     LIMITS("limits"),
 
     // Approval Processes and Process Rules API
-    APPROVAL("approval"),
-    APPROVALS("approvals"),
+    APPROVAL("approval"), APPROVALS("approvals"),
 
     // Composite API
-    COMPOSITE_TREE("composite-tree"),
-    COMPOSITE_BATCH("composite-batch"),
-    COMPOSITE("composite");
+    COMPOSITE_TREE("composite-tree"), COMPOSITE_BATCH("composite-batch"), COMPOSITE("composite");
 
     private final String value;
 

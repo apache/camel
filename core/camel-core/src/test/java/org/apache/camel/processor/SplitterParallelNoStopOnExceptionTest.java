@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -30,15 +31,17 @@ import org.junit.Test;
 
 public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
 
-    private ExecutorService service; 
-    
+    private ExecutorService service;
+
+    @Override
     @Before
     public void setUp() throws Exception {
         // use a pool with 2 concurrent tasks so we cannot run too fast
         service = Executors.newFixedThreadPool(2);
         super.setUp();
     }
-    
+
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -59,7 +62,8 @@ public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
     public void testSplitParallelNoStopOnExceptionStop() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedMinimumMessageCount(0);
-        // we do NOT stop so we receive all messages except the one that goes kaboom
+        // we do NOT stop so we receive all messages except the one that goes
+        // kaboom
         mock.allMessages().body().isNotEqualTo("Kaboom");
         mock.expectedBodiesReceivedInAnyOrder("Hello World", "Goodday World", "Bye World", "Hi World");
 
@@ -80,16 +84,14 @@ public class SplitterParallelNoStopOnExceptionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:start")
-                        .split(body().tokenize(",")).parallelProcessing().executorService(service)
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if ("Kaboom".equals(body)) {
-                                    throw new IllegalArgumentException("Forced");
-                                }
-                            }
-                        }).to("mock:split");
+                from("direct:start").split(body().tokenize(",")).parallelProcessing().executorService(service).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if ("Kaboom".equals(body)) {
+                            throw new IllegalArgumentException("Forced");
+                        }
+                    }
+                }).to("mock:split");
             }
         };
     }

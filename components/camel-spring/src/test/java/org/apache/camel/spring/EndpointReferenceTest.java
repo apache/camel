@@ -58,6 +58,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected SpringCamelContext createCamelContext() {
         return applicationContext.getBean("camel", SpringCamelContext.class);
     }
@@ -86,6 +87,7 @@ public class EndpointReferenceTest extends SpringTestSupport {
         }
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/endpointReference.xml");
     }

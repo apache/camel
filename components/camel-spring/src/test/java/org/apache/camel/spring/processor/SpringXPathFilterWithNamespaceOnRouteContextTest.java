@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.XPathFilterTest;
 import org.junit.Before;
@@ -33,6 +34,7 @@ public class SpringXPathFilterWithNamespaceOnRouteContextTest extends XPathFilte
         super.setUp();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/xpathFilterWithNamespaceOnRouteContext.xml");
     }

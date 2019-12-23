@@ -20,14 +20,13 @@ import java.util.Map;
 import java.util.Set;
 
 import com.amazonaws.services.simpleworkflow.AmazonSimpleWorkflow;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 
 @Component("aws-swf")
 public class SWFComponent extends DefaultComponent {
@@ -48,31 +47,26 @@ public class SWFComponent extends DefaultComponent {
     public SWFComponent(CamelContext context) {
         super(context);
 
-        this.configuration = new SWFConfiguration();
         registerExtension(new SwfComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Map<String, Object> clientConfigurationParameters = IntrospectionSupport.extractProperties(parameters, "clientConfiguration.");
-        Map<String, Object> sWClientParameters = IntrospectionSupport.extractProperties(parameters, "sWClient.");
-        Map<String, Object> startWorkflowOptionsParameters = IntrospectionSupport.extractProperties(parameters, "startWorkflowOptions.");
+        Map<String, Object> clientConfigurationParameters = PropertiesHelper.extractProperties(parameters, "clientConfiguration.");
+        Map<String, Object> sWClientParameters = PropertiesHelper.extractProperties(parameters, "sWClient.");
+        Map<String, Object> startWorkflowOptionsParameters = PropertiesHelper.extractProperties(parameters, "startWorkflowOptions.");
 
-        SWFConfiguration configuration = this.configuration.copy();
+        SWFConfiguration configuration = this.configuration != null ? this.configuration.copy() : new SWFConfiguration();
         configuration.setType(remaining);
-        setProperties(configuration, parameters);
         configuration.setClientConfigurationParameters(clientConfigurationParameters);
         configuration.setSWClientParameters(sWClientParameters);
         configuration.setStartWorkflowOptionsParameters(startWorkflowOptionsParameters);
         
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        SWFEndpoint endpoint = new SWFEndpoint(uri, this, configuration);
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonSWClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSWClient or accessKey and secretKey must be specified.");
@@ -92,36 +86,36 @@ public class SWFComponent extends DefaultComponent {
     }
 
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key.
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key.
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
 
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     /**
      * Amazon AWS Region.
      */
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
     
     private void checkAndSetRegistryClient(SWFConfiguration configuration) {

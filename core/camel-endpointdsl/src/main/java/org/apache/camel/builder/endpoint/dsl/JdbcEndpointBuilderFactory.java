@@ -48,7 +48,7 @@ public interface JdbcEndpointBuilderFactory {
          */
         default JdbcEndpointBuilder allowNamedParameters(
                 boolean allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
             return this;
         }
         /**
@@ -60,7 +60,45 @@ public interface JdbcEndpointBuilderFactory {
          */
         default JdbcEndpointBuilder allowNamedParameters(
                 String allowNamedParameters) {
-            setProperty("allowNamedParameters", allowNamedParameters);
+            doSetProperty("allowNamedParameters", allowNamedParameters);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default JdbcEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default JdbcEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -72,7 +110,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder outputClass(String outputClass) {
-            setProperty("outputClass", outputClass);
+            doSetProperty("outputClass", outputClass);
             return this;
         }
         /**
@@ -84,7 +122,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder outputType(JdbcOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -96,7 +134,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -109,7 +147,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder parameters(Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -123,7 +161,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -135,7 +173,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder readSize(int readSize) {
-            setProperty("readSize", readSize);
+            doSetProperty("readSize", readSize);
             return this;
         }
         /**
@@ -147,7 +185,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder readSize(String readSize) {
-            setProperty("readSize", readSize);
+            doSetProperty("readSize", readSize);
             return this;
         }
         /**
@@ -165,7 +203,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder resetAutoCommit(boolean resetAutoCommit) {
-            setProperty("resetAutoCommit", resetAutoCommit);
+            doSetProperty("resetAutoCommit", resetAutoCommit);
             return this;
         }
         /**
@@ -183,7 +221,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder resetAutoCommit(String resetAutoCommit) {
-            setProperty("resetAutoCommit", resetAutoCommit);
+            doSetProperty("resetAutoCommit", resetAutoCommit);
             return this;
         }
         /**
@@ -194,7 +232,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -205,7 +243,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -219,7 +257,7 @@ public interface JdbcEndpointBuilderFactory {
          */
         default JdbcEndpointBuilder useGetBytesForBlob(
                 boolean useGetBytesForBlob) {
-            setProperty("useGetBytesForBlob", useGetBytesForBlob);
+            doSetProperty("useGetBytesForBlob", useGetBytesForBlob);
             return this;
         }
         /**
@@ -232,7 +270,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: producer
          */
         default JdbcEndpointBuilder useGetBytesForBlob(String useGetBytesForBlob) {
-            setProperty("useGetBytesForBlob", useGetBytesForBlob);
+            doSetProperty("useGetBytesForBlob", useGetBytesForBlob);
             return this;
         }
         /**
@@ -247,7 +285,7 @@ public interface JdbcEndpointBuilderFactory {
          */
         default JdbcEndpointBuilder useHeadersAsParameters(
                 boolean useHeadersAsParameters) {
-            setProperty("useHeadersAsParameters", useHeadersAsParameters);
+            doSetProperty("useHeadersAsParameters", useHeadersAsParameters);
             return this;
         }
         /**
@@ -262,7 +300,7 @@ public interface JdbcEndpointBuilderFactory {
          */
         default JdbcEndpointBuilder useHeadersAsParameters(
                 String useHeadersAsParameters) {
-            setProperty("useHeadersAsParameters", useHeadersAsParameters);
+            doSetProperty("useHeadersAsParameters", useHeadersAsParameters);
             return this;
         }
         /**
@@ -279,7 +317,7 @@ public interface JdbcEndpointBuilderFactory {
          */
         default JdbcEndpointBuilder useJDBC4ColumnNameAndLabelSemantics(
                 boolean useJDBC4ColumnNameAndLabelSemantics) {
-            setProperty("useJDBC4ColumnNameAndLabelSemantics", useJDBC4ColumnNameAndLabelSemantics);
+            doSetProperty("useJDBC4ColumnNameAndLabelSemantics", useJDBC4ColumnNameAndLabelSemantics);
             return this;
         }
         /**
@@ -296,7 +334,7 @@ public interface JdbcEndpointBuilderFactory {
          */
         default JdbcEndpointBuilder useJDBC4ColumnNameAndLabelSemantics(
                 String useJDBC4ColumnNameAndLabelSemantics) {
-            setProperty("useJDBC4ColumnNameAndLabelSemantics", useJDBC4ColumnNameAndLabelSemantics);
+            doSetProperty("useJDBC4ColumnNameAndLabelSemantics", useJDBC4ColumnNameAndLabelSemantics);
             return this;
         }
     }
@@ -320,7 +358,7 @@ public interface JdbcEndpointBuilderFactory {
          */
         default AdvancedJdbcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -333,7 +371,7 @@ public interface JdbcEndpointBuilderFactory {
          */
         default AdvancedJdbcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -348,7 +386,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder beanRowMapper(Object beanRowMapper) {
-            setProperty("beanRowMapper", beanRowMapper);
+            doSetProperty("beanRowMapper", beanRowMapper);
             return this;
         }
         /**
@@ -363,11 +401,11 @@ public interface JdbcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder beanRowMapper(String beanRowMapper) {
-            setProperty("beanRowMapper", beanRowMapper);
+            doSetProperty("beanRowMapper", beanRowMapper);
             return this;
         }
         /**
-         * Allows to plugin to use a custom
+         * Allows the plugin to use a custom
          * org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to
          * control preparation of the query and prepared statement.
          * 
@@ -378,11 +416,11 @@ public interface JdbcEndpointBuilderFactory {
          */
         default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
                 Object prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
-         * Allows to plugin to use a custom
+         * Allows the plugin to use a custom
          * org.apache.camel.component.jdbc.JdbcPrepareStatementStrategy to
          * control preparation of the query and prepared statement.
          * 
@@ -393,7 +431,7 @@ public interface JdbcEndpointBuilderFactory {
          */
         default AdvancedJdbcEndpointBuilder prepareStatementStrategy(
                 String prepareStatementStrategy) {
-            setProperty("prepareStatementStrategy", prepareStatementStrategy);
+            doSetProperty("prepareStatementStrategy", prepareStatementStrategy);
             return this;
         }
         /**
@@ -405,7 +443,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -417,7 +455,7 @@ public interface JdbcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -437,7 +475,7 @@ public interface JdbcEndpointBuilderFactory {
      * SQL queries are sent in the message body.
      * 
      * Category: database,sql
-     * Available as of version: 1.2
+     * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-jdbc
      * 
      * Syntax: <code>jdbc:dataSourceName</code>

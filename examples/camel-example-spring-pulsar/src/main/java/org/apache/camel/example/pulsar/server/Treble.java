@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 public class Treble implements Multiplier {
     private static final Logger LOGGER = LoggerFactory.getLogger(Treble.class);
 
+    @Override
     public int multiply(final int originalNumber) {
         LOGGER.info("Number to multiply received {}", originalNumber);
         return originalNumber * 3;

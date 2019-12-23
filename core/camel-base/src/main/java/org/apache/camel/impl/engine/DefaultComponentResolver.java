@@ -42,6 +42,7 @@ public class DefaultComponentResolver implements ComponentResolver {
 
     private FactoryFinder factoryFinder;
 
+    @Override
     public Component resolveComponent(String name, CamelContext context) {
         // lookup in registry first
         Component componentReg = ResolverHelper.lookupComponentInRegistryWithFallback(context, name);
@@ -75,11 +76,11 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
     }
 
-    private Class<?> findComponent(String name, CamelContext context) throws ClassNotFoundException, IOException {
+    private Class<?> findComponent(String name, CamelContext context) throws IOException {
         if (factoryFinder == null) {
             factoryFinder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
         }
-        return factoryFinder.findClass(name);
+        return factoryFinder.findClass(name).orElse(null);
     }
 
     protected Logger getLog() {

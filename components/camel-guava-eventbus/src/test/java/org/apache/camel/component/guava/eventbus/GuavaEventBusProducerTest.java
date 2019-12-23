@@ -18,13 +18,14 @@ package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class GuavaEventBusProducerTest extends CamelTestSupport {
 
+    @BindToRegistry("eventBus")
     EventBus eventBus = new EventBus();
 
     Object receivedEvent;
@@ -37,13 +38,6 @@ public class GuavaEventBusProducerTest extends CamelTestSupport {
                 from("direct:start").to("guava-eventbus:eventBus");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("eventBus", eventBus);
-        return registry;
     }
 
     @Test

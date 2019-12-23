@@ -47,7 +47,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default JsonValidatorEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default JsonValidatorEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default JsonValidatorEndpointBuilder failOnNullBody(
                 boolean failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default JsonValidatorEndpointBuilder failOnNullBody(
                 String failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default JsonValidatorEndpointBuilder failOnNullHeader(
                 boolean failOnNullHeader) {
-            setProperty("failOnNullHeader", failOnNullHeader);
+            doSetProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
         /**
@@ -106,7 +106,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default JsonValidatorEndpointBuilder failOnNullHeader(
                 String failOnNullHeader) {
-            setProperty("failOnNullHeader", failOnNullHeader);
+            doSetProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
         /**
@@ -117,7 +117,47 @@ public interface JsonValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default JsonValidatorEndpointBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default JsonValidatorEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default JsonValidatorEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -141,7 +181,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -154,7 +194,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -168,7 +208,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -182,7 +222,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder errorHandler(
                 String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -197,7 +237,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 Object schemaLoader) {
-            setProperty("schemaLoader", schemaLoader);
+            doSetProperty("schemaLoader", schemaLoader);
             return this;
         }
         /**
@@ -212,7 +252,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder schemaLoader(
                 String schemaLoader) {
-            setProperty("schemaLoader", schemaLoader);
+            doSetProperty("schemaLoader", schemaLoader);
             return this;
         }
         /**
@@ -225,7 +265,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -238,7 +278,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          */
         default AdvancedJsonValidatorEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -247,7 +287,7 @@ public interface JsonValidatorEndpointBuilderFactory {
      * Validates the payload of a message using NetworkNT JSON Schema library.
      * 
      * Category: validation
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-json-validator
      * 
      * Syntax: <code>json-validator:resourceUri</code>

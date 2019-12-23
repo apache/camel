@@ -47,21 +47,17 @@ public class OnExceptionHandleAndThrowNewExceptionTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .handled(true)
-                    .to("log:onException")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
-                            assertNotNull(cause);
+                onException(IllegalArgumentException.class).handled(true).to("log:onException").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        Exception cause = exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class);
+                        assertNotNull(cause);
 
-                            throw new IOException("First failure message is: " + cause.getMessage());
-                        }
-                    });
+                        throw new IOException("First failure message is: " + cause.getMessage());
+                    }
+                });
 
-                from("direct:start")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

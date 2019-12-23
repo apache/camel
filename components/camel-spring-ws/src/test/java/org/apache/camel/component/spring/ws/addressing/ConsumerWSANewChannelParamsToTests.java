@@ -25,6 +25,7 @@ import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 
 public class ConsumerWSANewChannelParamsToTests extends AbstractConsumerTests {
 
+    @Override
     public ActionCallback channelIn(String actionUri) throws URISyntaxException {
         // new channel
         return toAndReplyTo(actionUri, "mailto:reply-to-trigger@new-channel.com");

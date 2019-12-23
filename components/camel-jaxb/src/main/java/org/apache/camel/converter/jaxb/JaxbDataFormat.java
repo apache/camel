@@ -64,8 +64,6 @@ import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
@@ -122,6 +120,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         return "jaxb";
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws IOException {
         try {
             // must create a new instance of marshaller as its not thread safe
@@ -270,6 +269,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         return needFiltering(exchange) || (xmlStreamWriterWrapper != null);
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException {
         try {
             Object answer;
@@ -446,10 +446,12 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, DataFo
         this.namespacePrefixRef = namespacePrefixRef;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

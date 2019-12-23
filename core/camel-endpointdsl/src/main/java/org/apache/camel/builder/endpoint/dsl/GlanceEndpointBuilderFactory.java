@@ -46,7 +46,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder config(Object config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder config(String config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -81,7 +81,46 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder domain(String domain) {
-            setProperty("domain", domain);
+            doSetProperty("domain", domain);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default GlanceEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default GlanceEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -92,7 +131,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -104,7 +143,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -116,7 +155,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder project(String project) {
-            setProperty("project", project);
+            doSetProperty("project", project);
             return this;
         }
         /**
@@ -128,7 +167,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: producer
          */
         default GlanceEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -152,7 +191,7 @@ public interface GlanceEndpointBuilderFactory {
          */
         default AdvancedGlanceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -165,7 +204,7 @@ public interface GlanceEndpointBuilderFactory {
          */
         default AdvancedGlanceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -177,7 +216,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -189,7 +228,7 @@ public interface GlanceEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -199,7 +238,7 @@ public interface GlanceEndpointBuilderFactory {
      * image services.
      * 
      * Category: cloud,paas
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
      * 
      * Syntax: <code>openstack-glance:host</code>
@@ -207,7 +246,7 @@ public interface GlanceEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default GlanceEndpointBuilder glance(String path) {
+    default GlanceEndpointBuilder openstackGlance(String path) {
         class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder, AdvancedGlanceEndpointBuilder {
             public GlanceEndpointBuilderImpl(String path) {
                 super("openstack-glance", path);

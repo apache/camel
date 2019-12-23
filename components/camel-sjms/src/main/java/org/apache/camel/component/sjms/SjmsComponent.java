@@ -83,7 +83,6 @@ public class SjmsComponent extends HeaderFilterStrategyComponent {
     }
 
     protected SjmsComponent(Class<? extends Endpoint> endpointClass) {
-        super();
     }
 
     @Override

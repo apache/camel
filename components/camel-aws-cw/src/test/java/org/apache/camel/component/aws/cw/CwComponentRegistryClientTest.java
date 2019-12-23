@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.cw;
 import java.util.Date;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatchClient;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -35,7 +34,7 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
     public void createEndpointWithAllOptions() throws Exception {
         AmazonCloudWatchClient cloudWatchClient = mock(AmazonCloudWatchClient.class);
         context.getRegistry().bind("amazonCwClient", cloudWatchClient);
-        CwComponent component = new CwComponent(context);
+        CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         CwEndpoint endpoint = (CwEndpoint) component.createEndpoint("aws-cw://camel.apache.org/test?name=testMetric&value=2&unit=Count&timestamp=#now");
 
         assertEquals("camel.apache.org/test", endpoint.getConfiguration().getNamespace());
@@ -47,8 +46,7 @@ public class CwComponentRegistryClientTest extends CamelTestSupport {
     
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
-
-        CwComponent component = new CwComponent(context);
+        CwComponent component = context.getComponent("aws-cw", CwComponent.class);
         CwEndpoint endpoint = (CwEndpoint)component.createEndpoint("aws-cw://camel.apache.org/test");
     }
 }

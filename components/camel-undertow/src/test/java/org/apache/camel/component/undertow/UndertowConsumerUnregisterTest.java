@@ -59,22 +59,24 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
             }
         };
         Exchange ret = template.request("undertow:http://localhost:{{port}}/foo", sender);
-        Assert.assertEquals(200, ret.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        Assert.assertEquals("test", ret.getOut().getBody(String.class));
+        Assert.assertEquals(200, ret.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Assert.assertEquals("test", ret.getMessage().getBody(String.class));
+        
         ret = template.request("undertow:http://localhost:{{port}}/bar", sender);
-        Assert.assertEquals(200, ret.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        Assert.assertEquals("test", ret.getOut().getBody(String.class));
+        Assert.assertEquals(200, ret.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Assert.assertEquals("test", ret.getMessage().getBody(String.class));
 
         UndertowComponent component = context.getComponent("undertow", UndertowComponent.class);
         UndertowConsumer consumerFoo = (UndertowConsumer) context.getRoute("route-foo").getConsumer();
         component.unregisterEndpoint(consumerFoo.getEndpoint().getHttpHandlerRegistrationInfo(), consumerFoo.getEndpoint().getSslContext());
 
         ret = template.request("undertow:http://localhost:{{port}}/foo", sender);
-        Assert.assertEquals(404, ret.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        Assert.assertEquals("No matching path found", ret.getOut().getBody(String.class));
+        Assert.assertEquals(404, ret.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Assert.assertEquals("No matching path found", ret.getMessage().getBody(String.class));
+        
         ret = template.request("undertow:http://localhost:{{port}}/bar", sender);
-        Assert.assertEquals(200, ret.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        Assert.assertEquals("test", ret.getOut().getBody(String.class));
+        Assert.assertEquals(200, ret.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        Assert.assertEquals("test", ret.getMessage().getBody(String.class));
 
         mockFoo.assertIsSatisfied();
         mockBar.assertIsSatisfied();
@@ -84,8 +86,15 @@ public class UndertowConsumerUnregisterTest extends BaseUndertowTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("undertow:http://localhost:{{port}}/foo").id("route-foo").to("mock:foo");
-                from("undertow:http://localhost:{{port}}/bar").id("route-bar").to("mock:bar");
+                from("undertow:http://localhost:{{port}}/foo")
+                    .id("route-foo")
+                    .setBody().constant("test")
+                    .to("mock:foo");
+                
+                from("undertow:http://localhost:{{port}}/bar")
+                    .id("route-bar")
+                    .setBody().constant("test")
+                    .to("mock:bar");
             }
         };
     }

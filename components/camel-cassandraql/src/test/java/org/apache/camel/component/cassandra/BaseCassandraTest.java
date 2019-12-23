@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cassandra;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -43,6 +44,5 @@ public abstract class BaseCassandraTest extends CamelTestSupport {
             }
         }
     }
-
 
 }

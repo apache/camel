@@ -37,8 +37,7 @@ final class OffsetDateTimeSerializer extends StdSerializer<OffsetDateTime> {
     }
 
     @Override
-    public void serialize(final OffsetDateTime value, final JsonGenerator gen, final SerializerProvider serializers)
-        throws IOException, JsonProcessingException {
+    public void serialize(final OffsetDateTime value, final JsonGenerator gen, final SerializerProvider serializers) throws IOException, JsonProcessingException {
 
         final ZonedDateTime zonedDateTime = value.toZonedDateTime();
 

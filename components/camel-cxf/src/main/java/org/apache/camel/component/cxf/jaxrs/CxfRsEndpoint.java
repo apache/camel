@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.HostnameVerifier;
 
 import org.apache.camel.Component;
@@ -84,7 +85,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     @UriParam
     private List<Class<?>> resourceClasses;
     @UriParam(label = "consumer,advanced")
-    private List<Object> serviceBeans;
+    private String serviceBeans;
     @UriParam
     private String modelRef;
     @UriParam(label = "consumer", defaultValue = "Default")
@@ -129,7 +130,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     @UriParam(label = "advanced")
     private boolean propagateContexts;
     @UriParam(label = "advanced")
-    private CxfRsEndpointConfigurer cxfRsEndpointConfigurer;
+    private CxfRsConfigurer cxfRsConfigurer;
     @UriParam(label = "producer")
     private CookieHandler cookieHandler;
 
@@ -171,6 +172,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return httpClientAPI;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -178,16 +180,19 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         CxfRsConsumer answer = new CxfRsConsumer(this, processor);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (bindingStyle == BindingStyle.SimpleConsumer) {
             throw new IllegalArgumentException("The SimpleConsumer Binding Style cannot be used in a camel-cxfrs producer");
@@ -215,11 +220,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return skipFaultLogging;
     }
 
-    public CxfRsEndpointConfigurer getChainedCxfRsEndpointConfigurer() {
-        return ChainedCxfRsEndpointConfigurer
+    public CxfRsConfigurer getChainedCxfRsEndpointConfigurer() {
+        return ChainedCxfRsConfigurer
                 .create(getNullSafeCxfRsEndpointConfigurer(),
-                        SslCxfRsEndpointConfigurer.create(sslContextParameters, getCamelContext()))
-                .addChild(HostnameVerifierCxfRsEndpointConfigurer.create(hostnameVerifier));
+                        SslCxfRsConfigurer.create(sslContextParameters, getCamelContext()))
+                .addChild(HostnameVerifierCxfRsConfigurer.create(hostnameVerifier));
     }
     /**
      * This option controls whether the PhaseInterceptorChain skips logging the Fault that it catches.
@@ -243,8 +248,9 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getResourceClasses() != null) {
             sfb.setResourceClasses(getResourceClasses());
         }
-        if (serviceBeans != null && !serviceBeans.isEmpty()) {
-            sfb.setServiceBeans(serviceBeans);
+        if (serviceBeans != null) {
+            List<Object> beans = EndpointHelper.resolveReferenceListParameter(getCamelContext(), serviceBeans, Object.class);
+            sfb.setServiceBeans(beans);
         }
 
         // setup the resource providers for interfaces
@@ -260,11 +266,11 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         getNullSafeCxfRsEndpointConfigurer().configure(sfb);
     }
 
-    protected CxfRsEndpointConfigurer getNullSafeCxfRsEndpointConfigurer() {
-        if (cxfRsEndpointConfigurer == null) {
-            return new ChainedCxfRsEndpointConfigurer.NullCxfRsEndpointConfigurer();
+    protected CxfRsConfigurer getNullSafeCxfRsEndpointConfigurer() {
+        if (cxfRsConfigurer == null) {
+            return new ChainedCxfRsConfigurer.NullCxfRsConfigurer();
         }
-        return cxfRsEndpointConfigurer;
+        return cxfRsConfigurer;
     }
 
     private void processResourceModel(JAXRSServerFactoryBean sfb) {
@@ -432,38 +438,27 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         setResourceClasses(Arrays.asList(classes));
     }
 
-    public List<?> getServiceBeans() {
+    public String getServiceBeans() {
         return serviceBeans;
     }
 
-    public void addServiceBean(Object bean) {
-        if (serviceBeans == null) {
-            serviceBeans = new ArrayList<>();
-        }
-        serviceBeans.add(bean);
-    }
-
     /**
-     * The service beans which you want to export as REST service. Multiple beans can be separated by comma.
+     * The service beans (the bean ids to lookup in the registry) which you want to export as REST service.
+     * Multiple beans can be separated by comma
      */
-    public void setServiceBeans(List<?> beans) {
-        this.serviceBeans = new ArrayList<Object>(beans);
-    }
-
-    public void setServiceBeans(Object... beans) {
-        setServiceBeans(Arrays.asList(beans));
-    }
-
     public void setServiceBeans(String beans) {
-        setServiceBeans(EndpointHelper.resolveReferenceListParameter(getCamelContext(), beans, Object.class));
+        this.serviceBeans = beans;
     }
-
 
     /**
      * The service publish address.
      */
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getModelRef() {
+        return modelRef;
     }
 
     /**
@@ -818,16 +813,16 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         this.hostnameVerifier = hostnameVerifier;
     }
 
-    public CxfRsEndpointConfigurer getCxfRsEndpointConfigurer() {
-        return cxfRsEndpointConfigurer;
+    public CxfRsConfigurer getCxfRsConfigurer() {
+        return cxfRsConfigurer;
     }
 
     /**
      * This option could apply the implementation of org.apache.camel.component.cxf.jaxrs.CxfRsEndpointConfigurer which supports to configure the CXF endpoint
      * in  programmatic way. User can configure the CXF server and client by implementing configure{Server/Client} method of CxfEndpointConfigurer.
      */
-    public void setCxfRsEndpointConfigurer(CxfRsEndpointConfigurer configurer) {
-        this.cxfRsEndpointConfigurer = configurer;
+    public void setCxfRsConfigurer(CxfRsConfigurer configurer) {
+        this.cxfRsConfigurer = configurer;
     }
 
     public CookieHandler getCookieHandler() {

@@ -18,12 +18,12 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FtpProducerConnectErrorsHeaderTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://xxx@localhost:" + getPort() + "/tmp4/camel?password=xxx&consumer.delay=5000";
+        return "ftp://xxx@localhost:" + getPort() + "/tmp4/camel?password=xxx&delay=5000";
     }
 
     @Test
@@ -36,6 +36,7 @@ public class FtpProducerConnectErrorsHeaderTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

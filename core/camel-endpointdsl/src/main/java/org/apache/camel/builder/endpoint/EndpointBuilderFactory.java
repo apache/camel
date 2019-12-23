@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint;
 
 // CHECKSTYLE:OFF
+// CHECKSTYLE:OFF
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +29,7 @@ import org.apache.camel.builder.endpoint.dsl.*;
 import org.apache.camel.support.ExpressionAdapter;
 
 public interface EndpointBuilderFactory extends
+// FACTORY INTERFACE UPDATE START
         AMQPEndpointBuilderFactory,
         AS2EndpointBuilderFactory,
         ActiveMQEndpointBuilderFactory,
@@ -78,6 +80,10 @@ public interface EndpointBuilderFactory extends
         DataSetTestEndpointBuilderFactory,
         DdbEndpointBuilderFactory,
         DdbStreamEndpointBuilderFactory,
+        DebeziumMongodbEndpointBuilderFactory,
+        DebeziumMySqlEndpointBuilderFactory,
+        DebeziumPostgresEndpointBuilderFactory,
+        DebeziumSqlserverEndpointBuilderFactory,
         DigitalOceanEndpointBuilderFactory,
         DigitalSignatureEndpointBuilderFactory,
         DirectEndpointBuilderFactory,
@@ -93,9 +99,9 @@ public interface EndpointBuilderFactory extends
         ECSEndpointBuilderFactory,
         EKSEndpointBuilderFactory,
         EhcacheEndpointBuilderFactory,
-        EjbEndpointBuilderFactory,
         ElasticsearchEndpointBuilderFactory,
         ElsqlEndpointBuilderFactory,
+        ElytronEndpointBuilderFactory,
         EtcdEndpointBuilderFactory,
         EventAdminEndpointBuilderFactory,
         EventEndpointBuilderFactory,
@@ -103,6 +109,7 @@ public interface EndpointBuilderFactory extends
         FacebookEndpointBuilderFactory,
         FhirEndpointBuilderFactory,
         FileEndpointBuilderFactory,
+        FileWatchEndpointBuilderFactory,
         FlatpackEndpointBuilderFactory,
         FlinkEndpointBuilderFactory,
         FopEndpointBuilderFactory,
@@ -126,6 +133,7 @@ public interface EndpointBuilderFactory extends
         GoogleSheetsStreamEndpointBuilderFactory,
         GoraEndpointBuilderFactory,
         GrapeEndpointBuilderFactory,
+        GraphqlEndpointBuilderFactory,
         GridFsEndpointBuilderFactory,
         GrpcEndpointBuilderFactory,
         GuavaEventBusEndpointBuilderFactory,
@@ -195,24 +203,24 @@ public interface EndpointBuilderFactory extends
         KubernetesSecretsEndpointBuilderFactory,
         KubernetesServiceAccountsEndpointBuilderFactory,
         KubernetesServicesEndpointBuilderFactory,
+        KuduEndpointBuilderFactory,
         LambdaEndpointBuilderFactory,
         LanguageEndpointBuilderFactory,
         LdapEndpointBuilderFactory,
         LdifEndpointBuilderFactory,
-        LinkedInEndpointBuilderFactory,
         LogEndpointBuilderFactory,
         LuceneEndpointBuilderFactory,
         LumberjackEndpointBuilderFactory,
         MQEndpointBuilderFactory,
-        MQTTEndpointBuilderFactory,
         MSKEndpointBuilderFactory,
         MailEndpointBuilderFactory,
         MasterEndpointBuilderFactory,
         MetricsEndpointBuilderFactory,
+        MicroProfileMetricsEndpointBuilderFactory,
         MicrometerEndpointBuilderFactory,
         MiloClientEndpointBuilderFactory,
         MiloServerEndpointBuilderFactory,
-        Mina2EndpointBuilderFactory,
+        MinaEndpointBuilderFactory,
         MllpEndpointBuilderFactory,
         MockEndpointBuilderFactory,
         MongoDbEndpointBuilderFactory,
@@ -227,6 +235,7 @@ public interface EndpointBuilderFactory extends
         NettyEndpointBuilderFactory,
         NettyHttpEndpointBuilderFactory,
         NeutronEndpointBuilderFactory,
+        NitriteEndpointBuilderFactory,
         NovaEndpointBuilderFactory,
         NsqEndpointBuilderFactory,
         Olingo2EndpointBuilderFactory,
@@ -238,8 +247,9 @@ public interface EndpointBuilderFactory extends
         PaxLoggingEndpointBuilderFactory,
         PdfEndpointBuilderFactory,
         PgEventEndpointBuilderFactory,
+        PgReplicationSlotEndpointBuilderFactory,
+        PlatformHttpEndpointBuilderFactory,
         PrinterEndpointBuilderFactory,
-        PropertiesEndpointBuilderFactory,
         PubNubEndpointBuilderFactory,
         PulsarEndpointBuilderFactory,
         QuartzEndpointBuilderFactory,
@@ -251,8 +261,9 @@ public interface EndpointBuilderFactory extends
         RefEndpointBuilderFactory,
         RestApiEndpointBuilderFactory,
         RestEndpointBuilderFactory,
+        RestOpenApiEndpointBuilderFactory,
         RestSwaggerEndpointBuilderFactory,
-        RestletEndpointBuilderFactory,
+        RobotFrameworkEndpointBuilderFactory,
         RssEndpointBuilderFactory,
         S3EndpointBuilderFactory,
         SWFEndpointBuilderFactory,
@@ -299,10 +310,10 @@ public interface EndpointBuilderFactory extends
         ThriftEndpointBuilderFactory,
         TikaEndpointBuilderFactory,
         TimerEndpointBuilderFactory,
+        TranslateEndpointBuilderFactory,
         TwilioEndpointBuilderFactory,
         TwitterDirectMessageEndpointBuilderFactory,
         TwitterSearchEndpointBuilderFactory,
-        TwitterStreamingEndpointBuilderFactory,
         TwitterTimelineEndpointBuilderFactory,
         UndertowEndpointBuilderFactory,
         ValidatorEndpointBuilderFactory,
@@ -316,14 +327,17 @@ public interface EndpointBuilderFactory extends
         WordpressEndpointBuilderFactory,
         WsEndpointBuilderFactory,
         XChangeEndpointBuilderFactory,
+        XJEndpointBuilderFactory,
         XQueryEndpointBuilderFactory,
         XmlSignatureEndpointBuilderFactory,
         XmppEndpointBuilderFactory,
         XsltEndpointBuilderFactory,
+        XsltSaxonEndpointBuilderFactory,
         YammerEndpointBuilderFactory,
         ZendeskEndpointBuilderFactory,
         ZooKeeperEndpointBuilderFactory,
         ZooKeeperMasterEndpointBuilderFactory
+// FACTORY INTERFACE UPDATE END
 {
 
     default Expression endpoints(EndpointProducerBuilder... endpoints) {

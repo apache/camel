@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.ftp;
+
 import java.io.File;
 
 import org.apache.camel.Exchange;
@@ -43,7 +44,7 @@ public class FtpXQueryTest extends CamelTestSupport {
     
     @BeforeClass
     public static void initPort() throws Exception {
-        ftpPort = AvailablePortFinder.getNextAvailable(20127);
+        ftpPort = AvailablePortFinder.getNextAvailable();
     }
 
     @Test
@@ -80,12 +81,14 @@ public class FtpXQueryTest extends CamelTestSupport {
         };
     }
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         initFtpServer();
         ftpServer.start();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

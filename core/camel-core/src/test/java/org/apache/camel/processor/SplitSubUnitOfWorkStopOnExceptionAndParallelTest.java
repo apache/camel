@@ -53,7 +53,8 @@ public class SplitSubUnitOfWorkStopOnExceptionAndParallelTest extends ContextTes
         // b should get between 1 or 3 depending when we stop (we run parallel)
         getMockEndpoint("mock:b").expectedMinimumMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
-        // line should get between 0 or 2 depending when we stop (we run parallel)
+        // line should get between 0 or 2 depending when we stop (we run
+        // parallel)
         getMockEndpoint("mock:line").expectedMinimumMessageCount(0);
 
         template.sendBody("direct:start", "Tiger,Donkey,Camel");
@@ -68,22 +69,12 @@ public class SplitSubUnitOfWorkStopOnExceptionAndParallelTest extends ContextTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage()
-                        .maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start")
-                    .to("mock:a")
-                    .split(body().tokenize(",")).shareUnitOfWork()
-                        .stopOnException().parallelProcessing()
-                        .to("mock:b")
-                        .to("direct:line")
-                    .end()
+                from("direct:start").to("mock:a").split(body().tokenize(",")).shareUnitOfWork().stopOnException().parallelProcessing().to("mock:b").to("direct:line").end()
                     .to("mock:result");
 
-                from("direct:line")
-                    .to("log:line")
-                    .process(new MyProcessor())
-                    .to("mock:line");
+                from("direct:line").to("log:line").process(new MyProcessor()).to("mock:line");
             }
         };
     }

@@ -35,11 +35,13 @@ public class SplunkComponent extends DefaultComponent {
     public SplunkComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SplunkConfiguration configuration = splunkConfigurationFactory.parseMap(parameters);
+        SplunkEndpoint answer = new SplunkEndpoint(uri, this, configuration);
+        setProperties(answer, parameters);
         configuration.setName(remaining);
-        setProperties(configuration, parameters);
-        return new SplunkEndpoint(uri, this, configuration);
+        return answer;
     }
 
     public SplunkConfigurationFactory getSplunkConfigurationFactory() {

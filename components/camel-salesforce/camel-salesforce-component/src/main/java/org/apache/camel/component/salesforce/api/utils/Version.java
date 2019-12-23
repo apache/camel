@@ -34,8 +34,7 @@ public final class Version implements Comparable<Version> {
     public static Version create(final String version) {
         final Matcher matcher = VERSION_PATTERN.matcher(version);
         if (!matcher.matches()) {
-            throw new IllegalArgumentException(
-                "API version needs to be in <number>.<number> format, given: " + version);
+            throw new IllegalArgumentException("API version needs to be in <number>.<number> format, given: " + version);
         }
 
         final int major = Integer.parseInt(matcher.group(1));
@@ -65,7 +64,7 @@ public final class Version implements Comparable<Version> {
             return false;
         }
 
-        final Version other = (Version) obj;
+        final Version other = (Version)obj;
 
         return compareTo(other) == 0;
     }
@@ -92,8 +91,8 @@ public final class Version implements Comparable<Version> {
         final Version required = new Version(requiredMajor, requiredMinor);
 
         if (this.compareTo(required) < 0) {
-            throw new UnsupportedOperationException("This operation requires API version at least " + requiredMajor
-                + "." + requiredMinor + ", currently configured for " + major + "." + minor);
+            throw new UnsupportedOperationException("This operation requires API version at least " + requiredMajor + "." + requiredMinor + ", currently configured for " + major
+                                                    + "." + minor);
         }
     }
 }

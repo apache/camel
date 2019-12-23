@@ -20,7 +20,6 @@ import java.util.Map;
 
 import io.opentracing.Span;
 import io.opentracing.tag.Tags;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
@@ -29,6 +28,11 @@ public class MongoDBSpanDecorator extends AbstractSpanDecorator {
     @Override
     public String getComponent() {
         return "mongodb";
+    }
+
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.mongodb.MongoDbComponent";
     }
 
     @Override

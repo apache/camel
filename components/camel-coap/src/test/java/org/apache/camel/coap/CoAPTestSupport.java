@@ -27,6 +27,7 @@ public class CoAPTestSupport extends CamelTestSupport {
 
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

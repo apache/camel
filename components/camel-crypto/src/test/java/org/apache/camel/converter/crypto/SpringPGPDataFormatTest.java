@@ -23,6 +23,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringPGPDataFormatTest extends AbstractPGPDataFormatTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(
                 new ClassPathXmlApplicationContext("/org/apache/camel/component/crypto/SpringPGPDataFormatTest.xml"), true);

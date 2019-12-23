@@ -26,13 +26,14 @@ public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSuppor
 
     @Test
     public void testThreadUsedForEveryAggregatorWhenDefaultExecutorServiceUsed() throws Exception {
-        assertTrue("There should be a thread for every aggregator when using defaults", 
-                AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount() >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS);
-        
+        assertTrue("There should be a thread for every aggregator when using defaults",
+                   AggregateTimeoutWithExecutorServiceTest.aggregateThreadsCount() >= AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS);
+
         // sanity check to make sure were testing routes that work
         for (int i = 0; i < AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS; ++i) {
             MockEndpoint result = getMockEndpoint("mock:result" + i);
-            // by default the use latest aggregation strategy is used so we get message 4
+            // by default the use latest aggregation strategy is used so we get
+            // message 4
             result.expectedBodiesReceived("Message 4");
         }
         for (int i = 0; i < AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS; ++i) {
@@ -41,8 +42,8 @@ public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSuppor
             }
         }
         assertMockEndpointsSatisfied();
-    }   
-    
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -51,10 +52,9 @@ public class AggregateTimeoutWithNoExecutorServiceTest extends ContextTestSuppor
                 for (int i = 0; i < AggregateTimeoutWithExecutorServiceTest.NUM_AGGREGATORS; ++i) {
                     from("direct:start" + i)
                         // aggregate timeout after 0.1 second
-                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10)
-                        .to("mock:result" + i);
+                        .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(100).completionTimeoutCheckerInterval(10).to("mock:result" + i);
                 }
             }
         };
-    }    
+    }
 }

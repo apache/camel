@@ -19,6 +19,7 @@ package org.apache.camel.component.hbase.mapping;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.hbase.HBaseAttribute;
@@ -105,6 +106,7 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
      */
+    @Override
     public void applyGetResults(Message message, HBaseData data) {
         message.setHeaders(message.getExchange().getIn().getHeaders());
         int index = 1;
@@ -126,6 +128,7 @@ public class HeaderMappingStrategy implements CellMappingStrategy {
     /**
      * Applies the cells to the {@link org.apache.camel.Exchange}.
      */
+    @Override
     public void applyScanResults(Message message, HBaseData data) {
         message.setHeaders(message.getExchange().getIn().getHeaders());
         int index = 1;

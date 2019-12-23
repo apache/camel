@@ -46,9 +46,7 @@ public class BeanLanguageOGNLWithDotInParameterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader("goto").simple("${bean:myBean?method=whereToMate('MyAppV1.2.3', 'blah')}")
-                    .to("mock:result");
+                from("direct:start").setHeader("goto").simple("${bean:myBean?method=whereToMate('MyAppV1.2.3', 'blah')}").to("mock:result");
             }
         };
     }

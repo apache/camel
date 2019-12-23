@@ -21,6 +21,7 @@ package org.apache.camel.component.cxf;
 
 public class CxfConsumerClientDisconnectedSynchronousTest extends CxfConsumerClientDisconnectedTest {
 
+    @Override
     protected boolean isSynchronous() {
         return true;
     }

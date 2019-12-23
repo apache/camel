@@ -31,25 +31,23 @@ public class TraceInterceptorTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "This is Copenhagen calling", "from", "Claus");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // enable tracing
                 getContext().setTracing(true);
 
-                from("direct:start").routeId("foo").
-                        process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // do nothing
-                            }
+                from("direct:start").routeId("foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // do nothing
+                    }
 
-                            @Override
-                            public String toString() {
-                                return "MyProcessor";
-                            }
-                        }).
-                        to("mock:foo").
-                        to("direct:bar");
+                    @Override
+                    public String toString() {
+                        return "MyProcessor";
+                    }
+                }).to("mock:foo").to("direct:bar");
 
                 from("direct:bar").routeId("bar").to("mock:bar");
             }

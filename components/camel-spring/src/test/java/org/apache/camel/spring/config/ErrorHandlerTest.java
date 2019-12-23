@@ -31,6 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ErrorHandlerTest extends SpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/errorHandler.xml");
     }

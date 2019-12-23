@@ -47,7 +47,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         // assert correct order
-        DefaultCamelContext dcc = (DefaultCamelContext) context;
+        DefaultCamelContext dcc = (DefaultCamelContext)context;
         List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
 
         assertEquals(4, order.size());
@@ -85,15 +85,18 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
             this.name = name;
         }
 
+        @Override
         protected void doStart() throws Exception {
             startOrder += name;
             started = true;
         }
 
+        @Override
         protected void doStop() throws Exception {
             started = false;
         }
 
+        @Override
         public boolean isStarted() {
             return started;
         }
@@ -106,6 +109,7 @@ public class RouteServicesStartupOrderTest extends ContextTestSupport {
             this.started = started;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
         }
     }

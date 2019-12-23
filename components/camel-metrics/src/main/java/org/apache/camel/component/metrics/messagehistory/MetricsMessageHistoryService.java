@@ -17,6 +17,7 @@
 package org.apache.camel.component.metrics.messagehistory;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.management.MBeanServer;
 
 import com.codahale.metrics.JmxReporter;
@@ -62,10 +63,12 @@ public final class MetricsMessageHistoryService extends ServiceSupport implement
         this.metricsRegistry = metricsRegistry;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -165,6 +168,7 @@ public final class MetricsMessageHistoryService extends ServiceSupport implement
         }
     }
 
+    @Override
     public String dumpStatisticsAsJsonTimeUnitSeconds() {
         ObjectWriter writer = secondsMapper.writer();
         if (isPrettyPrint()) {
@@ -177,6 +181,7 @@ public final class MetricsMessageHistoryService extends ServiceSupport implement
         }
     }
 
+    @Override
     public void reset() {
         // remove all
         metricsRegistry.removeMatching(new MetricFilter() {

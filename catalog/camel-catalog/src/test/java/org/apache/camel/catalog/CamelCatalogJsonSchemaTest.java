@@ -16,14 +16,20 @@
  */
 package org.apache.camel.catalog;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class CamelCatalogJsonSchemaTest {
 
@@ -46,6 +52,38 @@ public class CamelCatalogJsonSchemaTest {
             assertTrue(name, tree.has("component"));
             assertTrue(name, tree.has("componentProperties"));
             assertTrue(name, tree.has("properties"));
+
+            validateComponentSyntax(name, tree);
+        }
+    }
+
+    private void validateComponentSyntax(String name, JsonNode tree) {
+        String syntax = tree.get("component").get("syntax").textValue();
+        assertFalse("Empty syntax for component " + name, syntax.isEmpty());
+        List<String> pathProperties = new ArrayList<>();
+        List<String> requiredProperties = new ArrayList<>();
+
+        Iterator<Map.Entry<String, JsonNode>> it = tree.get("properties").fields();
+        while (it.hasNext()) {
+            Map.Entry<String, JsonNode> property = it.next();
+            if ("path".equals(property.getValue().get("kind").textValue())) {
+                pathProperties.add(property.getKey());
+                if (property.getValue().get("required").booleanValue()) {
+                    requiredProperties.add(property.getKey());
+                }
+            }
+        }
+        List<String> syntaxParts = Arrays.asList(syntax.split("[/:#.]"));
+        Assert.assertEquals("Syntax must start with component name", name, syntaxParts.get(0));
+
+        for (String part : syntaxParts.subList(1, syntaxParts.size())) {
+            if (!part.isEmpty()) {
+                Assert.assertTrue(String.format("Component %s. Syntax %s. Part %s is not defined as UriPath", name, syntax, part), pathProperties.contains(part));
+            }
+        }
+
+        for (String requiredPart : requiredProperties) {
+            Assert.assertTrue(String.format("Component %s. Syntax %s. Required param %s is not defined in syntax", name, syntax, requiredPart), syntaxParts.contains(requiredPart));
         }
     }
 

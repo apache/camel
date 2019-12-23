@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.onexception;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
@@ -107,14 +108,9 @@ public class OnExceptionRouteWithDefaultErrorHandlerTest extends ContextTestSupp
                 onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true);
                 onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler");
 
-                from("direct:start")
-                    .choice()
-                        .when().xpath("//type = 'myType'").to("bean:myServiceBean")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end().to("mock:result");
             }
         };
     }
-
 
 }

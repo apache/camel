@@ -42,11 +42,9 @@ public interface CompositeApiClient {
         void onResponse(Optional<T> body, Map<String, String> headers, SalesforceException exception);
     }
 
-    void submitComposite(SObjectComposite composite, Map<String, List<String>> headers,
-        ResponseCallback<SObjectCompositeResponse> callback) throws SalesforceException;
+    void submitComposite(SObjectComposite composite, Map<String, List<String>> headers, ResponseCallback<SObjectCompositeResponse> callback) throws SalesforceException;
 
-    void submitCompositeBatch(SObjectBatch batch, Map<String, List<String>> headers,
-        ResponseCallback<SObjectBatchResponse> callback) throws SalesforceException;
+    void submitCompositeBatch(SObjectBatch batch, Map<String, List<String>> headers, ResponseCallback<SObjectBatchResponse> callback) throws SalesforceException;
 
     /**
      * Submits given nodes (records) of SObjects and their children as a tree in
@@ -56,7 +54,6 @@ public interface CompositeApiClient {
      * @param tree SObject tree to submit
      * @param callback {@link ResponseCallback} to handle response or exception
      */
-    void submitCompositeTree(SObjectTree tree, Map<String, List<String>> headers,
-        ResponseCallback<SObjectTreeResponse> callback) throws SalesforceException;
+    void submitCompositeTree(SObjectTree tree, Map<String, List<String>> headers, ResponseCallback<SObjectTreeResponse> callback) throws SalesforceException;
 
 }

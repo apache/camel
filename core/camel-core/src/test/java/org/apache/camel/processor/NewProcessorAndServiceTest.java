@@ -49,14 +49,17 @@ public class NewProcessorAndServiceTest extends ContextTestSupport {
 
         private boolean started;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody("Bye World");
+            exchange.getMessage().setBody("Bye World");
         }
 
+        @Override
         public void start() {
             started = true;
         }
 
+        @Override
         public void stop() {
             started = false;
         }

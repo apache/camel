@@ -49,23 +49,11 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     final boolean valExpectedDaemon = true;
     final long valExpectedRepeatCount = 13;
 
-    final String refTimerUri = "timer://passByRefTimer?"
-            + "time=#refExpectedTimeString"
-            + "&pattern=#refExpectedPattern"
-            + "&period=#refExpectedPeriod"
-            + "&delay=#refExpectedDelay"
-            + "&fixedRate=#refExpectedFixedRate"
-            + "&daemon=#refExpectedDaemon"
-            + "&repeatCount=#refExpectedRepeatCount";
+    final String refTimerUri = "timer://passByRefTimer?" + "time=#refExpectedTimeString" + "&pattern=#refExpectedPattern" + "&period=#refExpectedPeriod"
+                               + "&delay=#refExpectedDelay" + "&fixedRate=#refExpectedFixedRate" + "&daemon=#refExpectedDaemon" + "&repeatCount=#refExpectedRepeatCount";
 
-    final String valueTimerUri = "timer://passByValueTimer?"
-            + "time=" + valExpectedTimeString
-            + "&pattern=" + valExpectedPattern
-            + "&period=" + valExpectedPeriod
-            + "&delay=" + valExpectedDelay
-            + "&fixedRate=" + valExpectedFixedRate
-            + "&daemon=" + valExpectedDaemon
-            + "&repeatCount=" + valExpectedRepeatCount;
+    final String valueTimerUri = "timer://passByValueTimer?" + "time=" + valExpectedTimeString + "&pattern=" + valExpectedPattern + "&period=" + valExpectedPeriod + "&delay="
+                                 + valExpectedDelay + "&fixedRate=" + valExpectedFixedRate + "&daemon=" + valExpectedDaemon + "&repeatCount=" + valExpectedRepeatCount;
 
     final String mockEndpointUri = "mock:result";
 
@@ -100,7 +88,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     public void testReferenceConfiguration() throws Exception {
 
         Endpoint e = context.getEndpoint(refTimerUri);
-        TimerEndpoint timer = (TimerEndpoint) e;
+        TimerEndpoint timer = (TimerEndpoint)e;
         final Date expectedTimeObject = new SimpleDateFormat(refExpectedPattern).parse(refExpectedTimeString);
         final Date time = timer.getTime();
         final long period = timer.getPeriod();
@@ -123,7 +111,7 @@ public class TimerReferenceConfigurationTest extends ContextTestSupport {
     @Test
     public void testValueConfiguration() throws Exception {
         Endpoint e = context.getEndpoint(valueTimerUri);
-        TimerEndpoint timer = (TimerEndpoint) e;
+        TimerEndpoint timer = (TimerEndpoint)e;
         final Date expectedTimeObject = new SimpleDateFormat(valExpectedPattern).parse(valExpectedTimeString);
         final Date time = timer.getTime();
         final long period = timer.getPeriod();

@@ -70,8 +70,6 @@ public class DefaultExchangeHolder implements Serializable {
     private String exchangeId;
     private Object inBody;
     private Object outBody;
-    private Boolean inFaultFlag = Boolean.FALSE;
-    private Boolean outFaultFlag = Boolean.FALSE;
     private Map<String, Object> inHeaders;
     private Map<String, Object> outHeaders;
     private Map<String, Object> properties;
@@ -95,32 +93,7 @@ public class DefaultExchangeHolder implements Serializable {
      * @return the holder object with information copied form the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties) {
-        ObjectHelper.notNull(exchange, "exchange");
-
-        // we do not support files
-        Object body = exchange.getIn().getBody();
-        if (body instanceof WrappedFile || body instanceof File) {
-            throw new RuntimeExchangeException("Message body of type " + body.getClass().getCanonicalName() + " is not supported by this marshaller.", exchange);
-        }
-
-        DefaultExchangeHolder payload = new DefaultExchangeHolder();
-
-        payload.exchangeId = exchange.getExchangeId();
-        payload.inBody = checkSerializableBody("in body", exchange, exchange.getIn().getBody());
-        payload.safeSetInHeaders(exchange, false);
-        if (exchange.hasOut()) {
-            payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
-            payload.outFaultFlag = exchange.getOut().isFault();
-            payload.safeSetOutHeaders(exchange, false);
-        } else {
-            payload.inFaultFlag = exchange.getIn().isFault();
-        }
-        if (includeProperties) {
-            payload.safeSetProperties(exchange, false);
-        }
-        payload.exception = exchange.getException();
-
-        return payload;
+        return marshal(exchange, includeProperties, false, true);
     }
     
     /**
@@ -132,6 +105,20 @@ public class DefaultExchangeHolder implements Serializable {
      * @return the holder object with information copied form the exchange
      */
     public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties, boolean allowSerializedHeaders) {
+        return marshal(exchange, includeProperties, allowSerializedHeaders, true);
+    }
+
+    /**
+     * Creates a payload object with the information from the given exchange.
+     *
+     * @param exchange the exchange, must <b>not</b> be <tt>null</tt>
+     * @param includeProperties whether or not to include exchange properties
+     * @param allowSerializedHeaders whether or not to include serialized headers
+     * @param preserveExchangeId whether to preserve exchange id
+     * @return the holder object with information copied form the exchange
+     */
+    public static DefaultExchangeHolder marshal(Exchange exchange, boolean includeProperties,
+                                                boolean allowSerializedHeaders, boolean preserveExchangeId) {
         ObjectHelper.notNull(exchange, "exchange");
 
         // we do not support files
@@ -142,15 +129,14 @@ public class DefaultExchangeHolder implements Serializable {
 
         DefaultExchangeHolder payload = new DefaultExchangeHolder();
 
-        payload.exchangeId = exchange.getExchangeId();
+        if (preserveExchangeId) {
+            payload.exchangeId = exchange.getExchangeId();
+        }
         payload.inBody = checkSerializableBody("in body", exchange, exchange.getIn().getBody());
         payload.safeSetInHeaders(exchange, allowSerializedHeaders);
         if (exchange.hasOut()) {
             payload.outBody = checkSerializableBody("out body", exchange, exchange.getOut().getBody());
-            payload.outFaultFlag = exchange.getOut().isFault();
             payload.safeSetOutHeaders(exchange, allowSerializedHeaders);
-        } else {
-            payload.inFaultFlag = exchange.getIn().isFault();
         }
         if (includeProperties) {
             payload.safeSetProperties(exchange, allowSerializedHeaders);
@@ -170,21 +156,17 @@ public class DefaultExchangeHolder implements Serializable {
         ObjectHelper.notNull(exchange, "exchange");
         ObjectHelper.notNull(payload, "payload");
 
-        exchange.setExchangeId(payload.exchangeId);
+        if (payload.exchangeId != null) {
+            exchange.setExchangeId(payload.exchangeId);
+        }
         exchange.getIn().setBody(payload.inBody);
         if (payload.inHeaders != null) {
             exchange.getIn().setHeaders(payload.inHeaders);
-        }
-        if (payload.inFaultFlag != null) {
-            exchange.getIn().setFault(payload.inFaultFlag);
         }
         if (payload.outBody != null) {
             exchange.getOut().setBody(payload.outBody);
             if (payload.outHeaders != null) {
                 exchange.getOut().setHeaders(payload.outHeaders);
-            }
-            if (payload.outFaultFlag != null) {
-                exchange.getOut().setFault(payload.outFaultFlag);
             }
         }
         if (payload.properties != null) {
@@ -215,6 +197,7 @@ public class DefaultExchangeHolder implements Serializable {
         payload.properties.put(key, property);
     }
 
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("DefaultExchangeHolder[exchangeId=").append(exchangeId);
         sb.append("inBody=").append(inBody).append(", outBody=").append(outBody);
@@ -233,6 +216,7 @@ public class DefaultExchangeHolder implements Serializable {
         return null;
     }
 
+    @Deprecated
     private Map<String, Object> safeSetOutHeaders(Exchange exchange, boolean allowSerializedHeaders) {
         if (exchange.hasOut() && exchange.getOut().hasHeaders()) {
             Map<String, Object> map = checkValidHeaderObjects("out headers", exchange, exchange.getOut().getHeaders(), allowSerializedHeaders);

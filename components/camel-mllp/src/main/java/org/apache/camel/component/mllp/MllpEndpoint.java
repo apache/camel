@@ -45,7 +45,7 @@ import org.slf4j.Logger;
  * <p/>
  */
 @ManagedResource(description = "MLLP Endpoint")
-@UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port", label = "mllp")
+@UriEndpoint(scheme = "mllp", firstVersion = "2.17.0", title = "MLLP", syntax = "mllp:hostname:port", label = "mllp", generateConfigurer = false)
 public class MllpEndpoint extends DefaultEndpoint {
     // Use constants from MllpProtocolConstants
     @Deprecated()
@@ -119,11 +119,13 @@ public class MllpEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         log.trace("({}).createProducer()", this.getEndpointKey());
         return new MllpTcpClientProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         log.trace("({}).createConsumer(Processor)", this.getEndpointKey());
         Consumer consumer = new MllpTcpServerConsumer(this, processor);
@@ -406,7 +408,7 @@ public class MllpEndpoint extends DefaultEndpoint {
                     final boolean on = true;
                     final int linger = 0;
                     if (log != null) {
-                        log.trace("Setting SO_LINGER to {} on Socket: localAddress={} remoteAddress={}", localSocketAddress, remoteSocketAddress);
+                        log.trace("Setting SO_LINGER to {} on Socket: localAddress={} remoteAddress={}", linger, localSocketAddress, remoteSocketAddress);
                     }
                     try {
                         socket.setSoLinger(on, linger);

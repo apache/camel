@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
@@ -38,6 +39,7 @@ import javax.lang.model.type.TypeKind;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.ElementFilter;
 import javax.lang.model.util.Elements;
+import javax.tools.Diagnostic.Kind;
 import javax.tools.FileObject;
 import javax.tools.StandardLocation;
 
@@ -54,6 +56,7 @@ import org.apache.camel.tools.apt.model.ComponentModel;
 import org.apache.camel.tools.apt.model.ComponentOption;
 import org.apache.camel.tools.apt.model.EndpointOption;
 import org.apache.camel.tools.apt.model.EndpointPath;
+import org.apache.camel.tools.apt.model.PropertyOption;
 import org.apache.camel.util.json.JsonObject;
 import org.apache.camel.util.json.Jsoner;
 
@@ -77,6 +80,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
     private static final String HEADER_FILTER_STRATEGY_JAVADOC = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.";
 
+    @Override
     protected void doProcess(Set<? extends TypeElement> annotations, final RoundEnvironment roundEnv) throws Exception {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(UriEndpoint.class);
         for (Element element : elements) {
@@ -93,6 +97,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             String extendsScheme = uriEndpoint.extendsScheme();
             String title = uriEndpoint.title();
             final String label = uriEndpoint.label();
+            validateSchemaName(scheme, classElement);
             if (!isNullOrEmpty(scheme)) {
                 // support multiple schemes separated by comma, which maps to the exact same component
                 // for example camel-mail has a bunch of component schema names that does that
@@ -115,14 +120,21 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     String packageName = name.substring(0, name.lastIndexOf("."));
                     String fileName = alias + ".json";
                     processFile(processingEnv, packageName, fileName,
-                            writer -> writeJSonSchemeDocumentation(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes));
+                            writer -> writeJSonSchemeAndPropertyConfigurer(writer, roundEnv, classElement, uriEndpoint, aliasTitle, alias, extendsAlias, label, schemes));
                 }
             }
         }
     }
 
-    protected void writeJSonSchemeDocumentation(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
-                                                String title, String scheme, String extendsScheme, String label, String[] schemes) {
+    private void validateSchemaName(final String schemaName, final TypeElement classElement) {
+        // our schema name has to be in lowercase
+        if (!schemaName.equals(schemaName.toLowerCase())) {
+            processingEnv.getMessager().printMessage(Kind.WARNING, String.format("Mixed case schema name in '%s' with value '%s' has been deprecated. Please use lowercase only!", classElement.getQualifiedName(), schemaName));
+        }
+    }
+
+    protected void writeJSonSchemeAndPropertyConfigurer(PrintWriter writer, RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint,
+                                                        String title, String scheme, String extendsScheme, String label, String[] schemes) {
         // gather component information
         ComponentModel componentModel = findComponentProperties(roundEnv, uriEndpoint, classElement, title, scheme, extendsScheme, label);
 
@@ -162,15 +174,79 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             }
         }
 
+        // component options
         TypeElement componentClassElement = findTypeElement(processingEnv, roundEnv, componentModel.getJavaType());
         if (componentClassElement != null) {
-            findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "", parentData);
+            findComponentClassProperties(writer, roundEnv, componentModel, componentOptions, componentClassElement, "", parentData, null, null);
+        }
+        // if the component has known class name
+        if (!"@@@JAVATYPE@@@".equals(componentModel.getJavaType())) {
+            generateComponentConfigurer(roundEnv, uriEndpoint, scheme, schemes, componentModel, componentOptions);
         }
 
-        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties(), parentData);
-
+        // endpoint options
+        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, classElement, "", uriEndpoint.excludeProperties(), parentData, null, null);
         String json = createParameterJsonSchema(componentModel, componentOptions, endpointPaths, endpointOptions, schemes, parentData);
         writer.println(json);
+        generateEndpointConfigurer(roundEnv, classElement, uriEndpoint, scheme, schemes, componentModel, endpointOptions);
+    }
+
+    private void generateComponentConfigurer(RoundEnvironment roundEnv, UriEndpoint uriEndpoint, String scheme, String[] schemes,
+                                             ComponentModel componentModel, Set<ComponentOption> componentOptions) {
+        TypeElement parent;
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            // special for activemq and amqp scheme which should reuse jms
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsComponentConfigurer");
+        } else {
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.GeneratedPropertyConfigurer");
+        }
+        String fqComponentClassName = componentModel.getJavaType();
+        String componentClassName = fqComponentClassName.substring(fqComponentClassName.lastIndexOf('.') + 1);
+        String className = componentClassName + "Configurer";
+        String packageName = fqComponentClassName.substring(0, fqComponentClassName.lastIndexOf('.'));
+        String fqClassName = packageName + "." + className;
+
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            PropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
+            PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
+        } else if (uriEndpoint.generateConfigurer() && !componentOptions.isEmpty()) {
+            // only generate this once for the first scheme
+            if (schemes == null || schemes[0].equals(scheme)) {
+                Set<PropertyOption> set = new LinkedHashSet<>();
+                set.addAll(componentOptions);
+                PropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, componentClassName, set);
+                PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-component", fqClassName);
+            }
+        }
+    }
+
+    private void generateEndpointConfigurer(RoundEnvironment roundEnv, TypeElement classElement, UriEndpoint uriEndpoint, String scheme, String[] schemes,
+                                            ComponentModel componentModel, Set<EndpointOption> endpointOptions) {
+        TypeElement parent;
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            // special for activemq and amqp scheme which should reuse jms
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.component.jms.JmsEndpointConfigurer");
+        } else {
+            parent = findTypeElement(processingEnv, roundEnv, "org.apache.camel.spi.GeneratedPropertyConfigurer");
+        }
+        String fqEndpointClassName = classElement.getQualifiedName().toString();
+        String packageName = fqEndpointClassName.substring(0, fqEndpointClassName.lastIndexOf('.'));
+        String endpointClassName = classElement.getSimpleName().toString();
+        String className = endpointClassName + "Configurer";
+        String fqClassName = packageName + "." + className;
+
+        if ("activemq".equals(scheme) || "amqp".equals(scheme)) {
+            PropertyConfigurerGenerator.generateExtendConfigurer(processingEnv, parent, packageName, className, fqClassName);
+            PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
+        } else if (uriEndpoint.generateConfigurer() && !endpointOptions.isEmpty()) {
+            // only generate this once for the first scheme
+            if (schemes == null || schemes[0].equals(scheme)) {
+                Set<PropertyOption> set = new LinkedHashSet<>();
+                set.addAll(endpointOptions);
+                PropertyConfigurerGenerator.generatePropertyConfigurer(processingEnv, parent, packageName, className, fqClassName, endpointClassName, set);
+                PropertyConfigurerGenerator.generateMetaInfConfigurer(processingEnv, componentModel.getScheme() + "-endpoint", fqClassName);
+            }
+        }
     }
 
     public String createParameterJsonSchema(ComponentModel componentModel, Set<ComponentOption> componentOptions,
@@ -252,7 +328,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "property", required, entry.getType(), defaultValue, doc,
                 entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
-                false, null, asPredicate, optionalPrefix, prefix, multiValue));
+                false, null, asPredicate, optionalPrefix, prefix, multiValue, entry.getConfigurationClass(), entry.getConfigurationField()));
 
             parentComponentProperties.remove(entry.getName());
         }
@@ -326,7 +402,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "path", required, entry.getType(), defaultValue, doc,
                 entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
-                false, null, asPredicate, optionalPrefix, prefix, multiValue));
+                false, null, asPredicate, optionalPrefix, prefix, multiValue, null, null));
 
             parentProperties.remove(entry.getName());
         }
@@ -374,7 +450,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "parameter", required, entry.getType(), defaultValue,
                 doc, entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
-                false, null, asPredicate, optionalPrefix, prefix, multiValue));
+                false, null, asPredicate, optionalPrefix, prefix, multiValue, entry.getConfigurationClass(), entry.getConfigurationField()));
 
             parentProperties.remove(entry.getName());
         }
@@ -481,7 +557,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
     protected void findComponentClassProperties(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
                                                 Set<ComponentOption> componentOptions, TypeElement classElement, String prefix,
-                                                Map<String, Object> parentData) {
+                                                Map<String, Object> parentData, String nestedTypeName, String nestedFieldName) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             Metadata componentAnnotation = classElement.getAnnotation(Metadata.class);
@@ -494,6 +570,10 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 String methodName = method.getSimpleName().toString();
                 boolean deprecated = method.getAnnotation(Deprecated.class) != null;
                 Metadata metadata = method.getAnnotation(Metadata.class);
+                if (metadata != null && metadata.skip()) {
+                    continue;
+                }
+
                 String deprecationNote = null;
                 if (metadata != null) {
                     deprecationNote = metadata.deprecationNote();
@@ -515,14 +595,15 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                     continue;
                 }
 
-                // must be a getter/setter pair
+                // we usually favor putting the @Metadata annotation on the field instead of the setter, so try to use it if its there
                 String fieldName = methodName.substring(3);
                 fieldName = fieldName.substring(0, 1).toLowerCase() + fieldName.substring(1);
-
-                // we usually favor putting the @Metadata annotation on the field instead of the setter, so try to use it if its there
                 VariableElement field = findFieldElement(classElement, fieldName);
                 if (field != null && metadata == null) {
                     metadata = field.getAnnotation(Metadata.class);
+                }
+                if (metadata != null && metadata.skip()) {
+                    continue;
                 }
 
                 boolean required = metadata != null && metadata.required();
@@ -589,7 +670,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
 
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                 ComponentOption option = new ComponentOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
-                        docComment.trim(), deprecated, deprecationNote, secret, group, label, isEnum, enums);
+                        docComment.trim(), deprecated, deprecationNote, secret, group, label, isEnum, enums, nestedTypeName, nestedFieldName);
                 componentOptions.add(option);
             }
 
@@ -613,13 +694,16 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
     protected void findClassProperties(PrintWriter writer, RoundEnvironment roundEnv, ComponentModel componentModel,
                                        Set<EndpointPath> endpointPaths, Set<EndpointOption> endpointOptions,
                                        TypeElement classElement, String prefix, String excludeProperties,
-                                       Map<String, Object> parentData) {
+                                       Map<String, Object> parentData, String nestedTypeName, String nestedFieldName) {
         Elements elementUtils = processingEnv.getElementUtils();
         while (true) {
             List<VariableElement> fieldElements = ElementFilter.fieldsIn(classElement.getEnclosedElements());
             for (VariableElement fieldElement : fieldElements) {
 
                 Metadata metadata = fieldElement.getAnnotation(Metadata.class);
+                if (metadata != null && metadata.skip()) {
+                    continue;
+                }
                 boolean deprecated = fieldElement.getAnnotation(Deprecated.class) != null;
                 String deprecationNote = null;
                 if (metadata != null) {
@@ -696,8 +780,8 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                         fieldTypeName = path.javaType();
                     }
 
+                    boolean isSecret = secret != null && secret || path.secret();
                     String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
-                    boolean isSecret = secret != null ? secret : false;
                     EndpointPath ep = new EndpointPath(name, displayName, fieldTypeName, required, defaultValue, docComment, deprecated, deprecationNote,
                         isSecret, group, label, isEnum, enums);
                     endpointPaths.add(ep);
@@ -749,7 +833,11 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                         if (!isNullOrEmpty(extraPrefix)) {
                             nestedPrefix += extraPrefix;
                         }
-                        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix, excludeProperties, null);
+                        nestedTypeName = fieldTypeName;
+                        nestedFieldName = fieldElement.getSimpleName().toString();
+                        findClassProperties(writer, roundEnv, componentModel, endpointPaths, endpointOptions, fieldTypeElement, nestedPrefix, excludeProperties, null, nestedTypeName, nestedFieldName);
+                        nestedTypeName = null;
+                        nestedFieldName = null;
                     } else {
                         String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, false);
                         if (isNullOrEmpty(docComment)) {
@@ -791,10 +879,11 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                             fieldTypeName = param.javaType();
                         }
 
-                        boolean isSecret = secret != null ? secret : param.secret();
+                        boolean isSecret = secret != null && secret || param.secret();
                         String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
                         EndpointOption option = new EndpointOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
-                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, deprecationNote, isSecret, group, label, isEnum, enums);
+                                docComment.trim(), paramOptionalPrefix, paramPrefix, multiValue, deprecated, deprecationNote, isSecret, group, label,
+                                isEnum, enums, nestedTypeName, nestedFieldName);
                         endpointOptions.add(option);
                     }
                 }
@@ -827,22 +916,6 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         return false;
     }
 
-    private static Map<String, String> parseAsMap(String data) {
-        Map<String, String> answer = new HashMap<>();
-        String[] lines = data.split("\n");
-        for (String line : lines) {
-            if (!line.isEmpty()) {
-                int idx = line.indexOf('=');
-                String key = line.substring(0, idx);
-                String value = line.substring(idx + 1);
-                // remove ending line break for the values
-                value = value.trim().replaceAll("\n", "");
-                answer.put(key.trim(), value);
-            }
-        }
-        return answer;
-    }
-
     private static boolean secureAlias(String scheme, String alias) {
         if (scheme.equals(alias)) {
             return false;
@@ -868,7 +941,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
         if (method.getReturnType() instanceof DeclaredType) {
             final DeclaredType returnType = (DeclaredType) method.getReturnType();
 
-            return "groovy.lang.MetaClass".equals(returnType.asElement().getSimpleName());
+            return "groovy.lang.MetaClass".equals(returnType.asElement().getSimpleName().toString());
         } else {
             // Eclipse (Groovy?) compiler returns javax.lang.model.type.NoType, no other way to check but to look at toString output
             return method.toString().contains("(groovy.lang.MetaClass)");

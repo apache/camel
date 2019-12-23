@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.aws.kinesis;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.kinesis.AmazonKinesis;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -53,9 +53,11 @@ public class KinesisConfiguration implements Cloneable {
                                                                          + "in case of silent there will be no logging and the consumer will start from the beginning,"
                                                                          + "in case of fail a ReachedClosedStateException will be raised")
     private KinesisShardClosedStrategyEnum shardClosed;
-    @UriParam(description = "To define a proxy host when instantiating the DDBStreams client")
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS", description = "To define a proxy protocol when instantiating the Kinesis client")
+    private Protocol proxyProtocol = Protocol.HTTPS;
+    @UriParam(description = "To define a proxy host when instantiating the Kinesis client")
     private String proxyHost;
-    @UriParam(description = "To define a proxy port when instantiating the DDBStreams client")
+    @UriParam(description = "To define a proxy port when instantiating the Kinesis client")
     private Integer proxyPort;
 
     public AmazonKinesis getAmazonKinesisClient() {
@@ -137,6 +139,14 @@ public class KinesisConfiguration implements Cloneable {
     public void setRegion(String region) {
         this.region = region;
     }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
+    }    
 
     public String getProxyHost() {
         return proxyHost;

@@ -1,10 +1,14 @@
 [[hipchat-component]]
-== Hipchat Component
+= Hipchat Component
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Hipchat component supports producing and consuming messages from/to
-https://www.hipchat.com[Hipchat] service.
+https://www.hipchat.com[Hipchat] service.
 
 *Prerequisites*
 
@@ -13,7 +17,7 @@ https://www.hipchat.com/account/api[personal access token] that you can
 use to produce/consume messages.
 
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------------
@@ -23,19 +27,20 @@ hipchat://[host][:port]?options
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
-The Hipchat component supports 2 options, which are listed below.
+The Hipchat component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -53,7 +58,7 @@ hipchat:protocol:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -65,7 +70,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+=== Query Parameters (25 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,34 +83,35 @@ with the following path and query parameters:
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
-| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *delay* (scheduler) | Milliseconds before the next poll. | 5000 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-hipchat-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -113,7 +119,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -121,8 +127,9 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.hipchat.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.hipchat.enabled* | Enable hipchat component | true | Boolean
-| *camel.component.hipchat.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.hipchat.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.hipchat.enabled* | Whether to enable auto configuration of the hipchat component. This is enabled by default. |  | Boolean
+| *camel.component.hipchat.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -132,7 +139,7 @@ The component supports 3 options, which are listed below.
 
 
 
-### Scheduled Poll Consumer
+== Scheduled Poll Consumer
 
 This component implements the
 ScheduledPollConsumer. Only the last message
@@ -140,7 +147,7 @@ from the provided 'consumeUsers' are retrieved and sent as Exchange
 body. If you do not want the same message to be retrieved again when
 there are no new messages on next poll then you can add the
 idempotent consumer as shown below. All
-the options on the ScheduledPollConsumer can
+the options on the ScheduledPollConsumer can
 also be used for more control on the consumer.
 
 [source,java]
@@ -157,7 +164,7 @@ public void configure() throws Exception {
 }
 ---------------------------------------------------------------------------------
 
-#### Message headers set by the Hipchat consumer
+=== Message headers set by the Hipchat consumer
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -170,11 +177,11 @@ authToken
 |HipchatMessageDate |HipchatConstants.MESSAGE_DATE |_String_ |The date message was sent. The format is ISO-8601 as present in the
 Hipchat https://www.hipchat.com/docs/apiv2/method/view_recent_privatechat_history[response].
 
-|HipchatFromUserResponseStatus |HipchatConstants.FROM_USER_RESPONSE_STATUS  |_http://hc.apache.org/httpcomponents-core-4.2.x/httpcore/apidocs/org/apache/http/StatusLine.html[StatusLine]_
+|HipchatFromUserResponseStatus |HipchatConstants.FROM_USER_RESPONSE_STATUS  |_http://hc.apache.org/httpcomponents-core-4.2.x/httpcore/apidocs/org/apache/http/StatusLine.html[StatusLine]_
 The status of the API response received.
 |=======================================================================
 
-### Hipchat Producer
+== Hipchat Producer
 
 Producer can send messages to both Room's and User's simultaneously. The
 body of the exchange is sent as message. Sample usage is shown below.
@@ -191,7 +198,7 @@ Appropriate headers needs to be set.
  }
 ----------------------------------------------------------
 
-#### Message headers evaluated by the Hipchat producer
+=== Message headers evaluated by the Hipchat producer
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -205,14 +212,14 @@ Appropriate headers needs to be set.
 |HipchatMessageFormat |HipchatConstants.MESSAGE_FORMAT |String |Valid formats are 'text' or 'html'. *Default: 'text'*
 
 |HipchatMessageBackgroundColor |HipchatConstants.MESSAGE_BACKGROUND_COLOR |_String_ |Valid color values are 'yellow', 'green', 'red', 'purple', 'gray',
-'random'. *Default: 'yellow' (Room Only)* 
+'random'. *Default: 'yellow' (Room Only)* 
 
 |HipchatTriggerNotification |HipchatConstants.TRIGGER_NOTIFY |_String_ |Valid values are 'true' or 'false'. Whether this message should trigger
 a user notification (change the tab color, play a sound, notify mobile
 phones, etc). *Default: 'false' (Room Only)*
 |=======================================================================
 
-#### Message headers set by the Hipchat producer
+=== Message headers set by the Hipchat producer
 
 [width="100%",cols="10%,10%,10%,70%",options="header",]
 |=======================================================================
@@ -225,7 +232,7 @@ The status of the API response received when message sent to the user.
 |HipchatFromUserResponseStatus |HipchatConstants.TO_ROOM_RESPONSE_STATUS |_http://hc.apache.org/httpcomponents-core-4.2.x/httpcore/apidocs/org/apache/http/StatusLine.html[StatusLine]_ |The status of the API response received when message sent to the room.
 |=======================================================================
 
-#### Configuring Http Client
+=== Configuring Http Client
 
 The HipChat component allow your own `HttpClient` configuration. This can be done by defining a reference for `CloseableHttpClient` in the http://camel.apache.org/registry.html[registry] (e.g. Spring Context) and then, set the parameter during the Endpoint definition, for example: `hipchat:http://api.hipchat.com?httpClient=#myHttpClient`.
 
@@ -243,7 +250,7 @@ CloseableHttpClient httpclient = HttpClients.custom()
 To see more information about Http Client configuration, please check the https://hc.apache.org/httpcomponents-client-ga/examples.html[official documentation].
  
 
-#### Dependencies
+=== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -258,4 +265,4 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ------------------------------------------
 
-where `\${camel-version}` must be replaced by the actual version of Camel.
+where `$\{camel-version\}` must be replaced by the actual version of Camel.

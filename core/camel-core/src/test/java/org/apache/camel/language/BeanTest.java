@@ -112,6 +112,7 @@ public class BeanTest extends LanguageTestSupport {
         assertEquals("cake", e.getMethodName());
     }
 
+    @Override
     protected String getLanguageName() {
         return "bean";
     }

@@ -86,10 +86,12 @@ public class CsvDataFormat extends ServiceSupport implements DataFormat, DataFor
         return "csv";
     }
 
+    @Override
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         marshaller.marshal(exchange, object, outputStream);
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         return unmarshaller.unmarshal(exchange, inputStream);
     }

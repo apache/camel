@@ -44,8 +44,8 @@ public class SimpleProcessorIdAwareTest extends ContextTestSupport {
         Processor bar = matches.get(0);
         Processor baz = matches.get(1);
 
-        assertEquals("bar", ((IdAware) bar).getId());
-        assertEquals("baz", ((IdAware) baz).getId());
+        assertEquals("bar", ((IdAware)bar).getId());
+        assertEquals("baz", ((IdAware)baz).getId());
 
         bar = context.getProcessor("bar");
         assertNotNull(bar);
@@ -72,14 +72,7 @@ public class SimpleProcessorIdAwareTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("foo")
-                    .choice()
-                        .when(header("bar"))
-                        .to("log:bar").id("bar")
-                    .otherwise()
-                        .to("mock:result").id("result")
-                    .end()
-                    .to("log:baz").id("baz");
+                from("direct:start").routeId("foo").choice().when(header("bar")).to("log:bar").id("bar").otherwise().to("mock:result").id("result").end().to("log:baz").id("baz");
             }
         };
     }

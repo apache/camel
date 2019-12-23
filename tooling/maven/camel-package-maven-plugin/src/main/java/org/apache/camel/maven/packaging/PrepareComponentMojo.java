@@ -114,6 +114,7 @@ public class PrepareComponentMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         int count = 0;
         count += prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);

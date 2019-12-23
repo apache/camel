@@ -1,7 +1,12 @@
 [[aws-ddb-component]]
-== AWS DynamoDB Component
+= AWS DynamoDB Component
+:page-source: components/camel-aws-ddb/src/main/docs/aws-ddb-component.adoc
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The DynamoDB component supports storing and retrieving data from/to
 https://aws.amazon.com/dynamodb[Amazon's DynamoDB] service.
@@ -12,7 +17,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon DynamoDB. More information is available at
 https://aws.amazon.com/dynamodb[Amazon DynamoDB].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------------
@@ -22,11 +27,11 @@ aws-ddb://domainName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
-The AWS DynamoDB component supports 6 options, which are listed below.
+The AWS DynamoDB component supports 7 options, which are listed below.
 
 
 
@@ -37,8 +42,9 @@ The AWS DynamoDB component supports 6 options, which are listed below.
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *region* (producer) | The region in which DDB client needs to work |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -54,7 +60,7 @@ aws-ddb:tableName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +70,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (15 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,6 +84,7 @@ with the following path and query parameters:
 | *operation* (producer) | What operation to perform | PutItem | DdbOperations
 | *proxyHost* (producer) | To define a proxy host when instantiating the DDB client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the DDB client. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the DDB client | HTTPS | Protocol
 | *readCapacity* (producer) | The provisioned throughput to reserve for reading resources from your table |  | Long
 | *region* (producer) | The region in which DDB client needs to work |  | String
 | *writeCapacity* (producer) | The provisioned throughput to reserved for writing resources to your table |  | Long
@@ -88,14 +95,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-aws-ddb-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -103,7 +110,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 19 options, which are listed below.
+The component supports 21 options, which are listed below.
 
 
 
@@ -112,6 +119,7 @@ The component supports 19 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-ddb.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-ddb.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-ddb.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.aws-ddb.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-ddb.configuration.amazon-d-d-b-client* | To use the AmazonDynamoDB as the client |  | AmazonDynamoDB
 | *camel.component.aws-ddb.configuration.consistent-read* | Determines whether or not strong consistency should be enforced when data is read. | false | Boolean
@@ -120,14 +128,15 @@ The component supports 19 options, which are listed below.
 | *camel.component.aws-ddb.configuration.operation* | What operation to perform |  | DdbOperations
 | *camel.component.aws-ddb.configuration.proxy-host* | To define a proxy host when instantiating the DDB client |  | String
 | *camel.component.aws-ddb.configuration.proxy-port* | To define a proxy port when instantiating the DDB client. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | Integer
+| *camel.component.aws-ddb.configuration.proxy-protocol* | To define a proxy protocol when instantiating the DDB client |  | Protocol
 | *camel.component.aws-ddb.configuration.read-capacity* | The provisioned throughput to reserve for reading resources from your table |  | Long
 | *camel.component.aws-ddb.configuration.region* | The region in which DDB client needs to work |  | String
 | *camel.component.aws-ddb.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-ddb.configuration.table-name* | The name of the table currently worked with. |  | String
 | *camel.component.aws-ddb.configuration.write-capacity* | The provisioned throughput to reserved for writing resources to your table |  | Long
 | *camel.component.aws-ddb.enabled* | Whether to enable auto configuration of the aws-ddb component. This is enabled by default. |  | Boolean
+| *camel.component.aws-ddb.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.aws-ddb.region* | The region in which DDB client needs to work |  | String
-| *camel.component.aws-ddb.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-ddb.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END
@@ -141,9 +150,9 @@ You have to provide the amazonDDBClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/dynamodb[Amazon's DynamoDB].
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the DDB producer
+=== Message headers evaluated by the DDB producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -196,7 +205,7 @@ the query.
 |`CamelAwsDdbUpdateValues` |`Map<String, AttributeValueUpdate>` |Map of attribute name to the new value and action for the update.
 |=======================================================================
 
-#### Message headers set during BatchGetItems operation
+=== Message headers set during BatchGetItems operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -208,7 +217,7 @@ the query.
 processed with the current response.
 |=======================================================================
 
-#### Message headers set during DeleteItem operation
+=== Message headers set during DeleteItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -217,7 +226,7 @@ processed with the current response.
 |`CamelAwsDdbAttributes` |`Map<String, AttributeValue>` |The list of attributes returned by the operation.
 |=======================================================================
 
-#### Message headers set during DeleteTable operation
+=== Message headers set during DeleteTable operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -241,19 +250,19 @@ processed with the current response.
 |`CamelAwsDdbTableStatus` |`String` |The status of the table: CREATING, UPDATING, DELETING, ACTIVE
 |=======================================================================
 
-#### Message headers set during DescribeTable operation
+=== Message headers set during DescribeTable operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
 |Header |Type |Description
 
-|`CamelAwsDdbProvisionedThroughput` |{{ProvisionedThroughputDescription}} |The value of the ProvisionedThroughput property for this table
+|`CamelAwsDdbProvisionedThroughput` |{\{ProvisionedThroughputDescription\}} |The value of the ProvisionedThroughput property for this table
 
 |`CamelAwsDdbCreationDate` |`Date` |Creation DateTime of this table.
 
 |`CamelAwsDdbTableItemCount` |`Long` |Item count for this table.
 
-|`CamelAwsDdbKeySchema` |{{KeySchema}} |The KeySchema that identifies the primary key for this table.
+|`CamelAwsDdbKeySchema` |{\{KeySchema\}} |The KeySchema that identifies the primary key for this table.
 
 
 |`CamelAwsDdbTableName` |`String` |The table name.
@@ -267,7 +276,7 @@ processed with the current response.
 |`CamelAwsDdbWriteCapacity` |`Long` |WriteCapacityUnits property of this table.
 |=======================================================================
 
-#### Message headers set during GetItem operation
+=== Message headers set during GetItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -277,7 +286,7 @@ processed with the current response.
 
 |=======================================================================
 
-#### Message headers set during PutItem operation
+=== Message headers set during PutItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -287,7 +296,7 @@ processed with the current response.
 
 |=======================================================================
 
-#### Message headers set during Query operation
+=== Message headers set during Query operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -304,7 +313,7 @@ consumed during the operation.
 |`CamelAwsDdbCount` |`Integer` |Number of items in the response.
 |=======================================================================
 
-#### Message headers set during Scan operation
+=== Message headers set during Scan operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -323,7 +332,7 @@ consumed during the operation.
 |`CamelAwsDdbScannedCount` |`Integer` |Number of items in the complete scan before any filters are applied.
 |=======================================================================
 
-#### Message headers set during UpdateItem operation
+=== Message headers set during UpdateItem operation
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -333,7 +342,7 @@ consumed during the operation.
 
 |=======================================================================
 
-#### Advanced AmazonDynamoDB configuration
+=== Advanced AmazonDynamoDB configuration
 
 If you need more control over the `AmazonDynamoDB` instance
 configuration you can create your own instance and refer to it from the
@@ -362,13 +371,26 @@ AmazonDynamoDB client = new AmazonDynamoDBClient(awsCredentials, clientConfigura
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
-### Automatic detection of AmazonDynamoDB client in registry
+== Supported producer operations
+
+- BatchGetItems
+- DeleteItem
+- DeleteTable
+- DescribeTable
+- GetItem
+- PutItem
+- Query
+- Scan
+- UpdateItem
+- UpdateTable
+
+== Automatic detection of AmazonDynamoDB client in registry
 
 The component is capable of detecting the presence of an AmazonDynamoDB bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -383,13 +405,5 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `\${camel-version}` must be replaced by the actual version of Camel.
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

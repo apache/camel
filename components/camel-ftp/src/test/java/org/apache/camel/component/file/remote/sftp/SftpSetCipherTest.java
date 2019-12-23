@@ -20,7 +20,10 @@ import java.io.File;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.remote.SftpEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SftpSetCipherTest extends SftpServerTestSupport {
 
@@ -36,7 +39,7 @@ public class SftpSetCipherTest extends SftpServerTestSupport {
 
         // test setting the cipher doesn't interfere with message payload
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
-        assertTrue("File should exist: " + file, file.exists());
+        assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
 
         // did we actually set the correct cipher?

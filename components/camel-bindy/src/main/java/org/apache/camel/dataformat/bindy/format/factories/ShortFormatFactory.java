@@ -43,10 +43,12 @@ public class ShortFormatFactory extends AbstractFormatFactory {
 
     private static class ShortFormat extends AbstractNumberFormat<Short> {
 
+        @Override
         public String format(Short object) throws Exception {
             return object.toString();
         }
 
+        @Override
         public Short parse(String string) throws Exception {
             return new Short(string);
         }

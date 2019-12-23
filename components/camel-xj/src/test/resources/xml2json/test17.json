@@ -1,0 +1,29 @@
+{
+  "type": {
+    "b": "c",
+    "#text": null
+  },
+  "displayName": "true",
+  "lastname": 1.2,
+  "role": 2.1e10,
+  "base64": "SGFsbG8K",
+  "company": {
+    "company": "test",
+    "id": "company",
+    "#text": [
+      "whoo",
+      "\n      8\n   "
+    ]
+  },
+  "#text": [
+    "\n   text1\n   ",
+    "\n   text2\n"
+  ],
+  "object": [
+    {
+      "id": "b",
+      "#text": "1"
+    },
+    false
+  ]
+}

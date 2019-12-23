@@ -23,7 +23,6 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -133,7 +132,13 @@ public class RestApiEndpoint extends DefaultEndpoint {
     public Producer createProducer() throws Exception {
         RestApiProcessorFactory factory = null;
 
-        RestConfiguration config = getCamelContext().getRestConfiguration(consumerComponentName, true);
+        RestConfiguration config = getCamelContext().getRestConfiguration(consumerComponentName, false);
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration();
+        }
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration(consumerComponentName, true);
+        }
 
         // lookup in registry
         Set<RestApiProcessorFactory> factories = getCamelContext().getRegistry().findByType(RestApiProcessorFactory.class);
@@ -147,15 +152,8 @@ public class RestApiEndpoint extends DefaultEndpoint {
             if (name == null) {
                 name = DEFAULT_API_COMPONENT_NAME;
             }
-            try {
-                FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
-                Object instance = finder.newInstance(name);
-                if (instance instanceof RestApiProcessorFactory) {
-                    factory = (RestApiProcessorFactory) instance;
-                }
-            } catch (NoFactoryAvailableException e) {
-                // ignore
-            }
+            FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+            factory = finder.newInstance(name, RestApiProcessorFactory.class).orElse(null);
         }
 
         if (factory != null) {

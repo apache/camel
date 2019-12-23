@@ -47,7 +47,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder flatternMap(boolean flatternMap) {
-            setProperty("flatternMap", flatternMap);
+            doSetProperty("flatternMap", flatternMap);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder flatternMap(String flatternMap) {
-            setProperty("flatternMap", flatternMap);
+            doSetProperty("flatternMap", flatternMap);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder json(boolean json) {
-            setProperty("json", json);
+            doSetProperty("json", json);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder json(String json) {
-            setProperty("json", json);
+            doSetProperty("json", json);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder jsonAsMap(boolean jsonAsMap) {
-            setProperty("jsonAsMap", jsonAsMap);
+            doSetProperty("jsonAsMap", jsonAsMap);
             return this;
         }
         /**
@@ -105,7 +105,47 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder jsonAsMap(String jsonAsMap) {
-            setProperty("jsonAsMap", jsonAsMap);
+            doSetProperty("jsonAsMap", jsonAsMap);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default NetWeaverEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default NetWeaverEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -117,7 +157,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -129,7 +169,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: producer
          */
         default NetWeaverEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -153,7 +193,7 @@ public interface NetWeaverEndpointBuilderFactory {
          */
         default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -166,7 +206,7 @@ public interface NetWeaverEndpointBuilderFactory {
          */
         default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -178,7 +218,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -190,7 +230,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -200,7 +240,7 @@ public interface NetWeaverEndpointBuilderFactory {
      * using HTTP transports.
      * 
      * Category: sap
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-sap-netweaver
      * 
      * Syntax: <code>sap-netweaver:url</code>
@@ -208,7 +248,7 @@ public interface NetWeaverEndpointBuilderFactory {
      * Path parameter: url (required)
      * Url to the SAP net-weaver gateway server.
      */
-    default NetWeaverEndpointBuilder netWeaver(String path) {
+    default NetWeaverEndpointBuilder sapNetweaver(String path) {
         class NetWeaverEndpointBuilderImpl extends AbstractEndpointBuilder implements NetWeaverEndpointBuilder, AdvancedNetWeaverEndpointBuilder {
             public NetWeaverEndpointBuilderImpl(String path) {
                 super("sap-netweaver", path);

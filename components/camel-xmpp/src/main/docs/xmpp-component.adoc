@@ -1,7 +1,11 @@
 [[xmpp-component]]
-== XMPP Component
+= XMPP Component
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The XMPP component implements an XMPP (Jabber) transport.
 
@@ -18,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,text]
 ------------------------------------------------------
@@ -34,19 +38,20 @@ starting.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
-The XMPP component supports 2 options, which are listed below.
+The XMPP component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -61,7 +66,7 @@ xmpp:host:port/participant
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -73,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,18 +103,19 @@ with the following path and query parameters:
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *password* (security) | Password for login |  | String
+| *roomPassword* (security) | Password for room |  | String
 | *user* (security) | User name (without server name). If not specified, anonymous login will be attempted. |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-xmpp-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -117,7 +123,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -125,14 +131,15 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.xmpp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.xmpp.enabled* | Enable xmpp component | true | Boolean
-| *camel.component.xmpp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.xmpp.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.xmpp.enabled* | Whether to enable auto configuration of the xmpp component. This is enabled by default. |  | Boolean
+| *camel.component.xmpp.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
-### Headers and setting Subject or Language
+== Headers and setting Subject or Language
 
 Camel sets the message IN headers as properties on the XMPP message. You
 can configure a `HeaderFilterStategy` if you need custom filtering of
@@ -140,7 +147,7 @@ headers.
 The *Subject* and *Language* of the XMPP message are also set if they
 are provided as IN headers.
 
-### Examples
+== Examples
 
 User `superman` to join room `krypton` at `jabber` server with password,
 `secret`:
@@ -201,11 +208,5 @@ from("direct:start").
   to("mock:result");
 ---------------------------------------------------------------------------------------------------------
 
- 
+ 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -74,6 +74,7 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         }
     }
 
+    @Override
     public WebsocketEndpoint getEndpoint() {
         return endpoint;
     }
@@ -128,22 +129,17 @@ public class WebsocketProducer extends DefaultProducer implements WebsocketProdu
         int timeout = endpoint.getSendTimeout();
         while (!futures.isEmpty() && watch.taken() < timeout) {
             // remove all that are done/cancelled
-            for (Future future : futures) {
-                if (future.isDone() || future.isCancelled()) {
-                    futures.remove(future);
-                }
-                // if there are still more then we need to wait a little bit before checking again, to avoid burning cpu cycles in the while loop
-                if (!futures.isEmpty()) {
-                    long interval = Math.min(1000, timeout);
-                    log.debug("Sleeping {} millis waiting for sendToAll to complete sending with timeout {} millis", interval, timeout);
-                    try {
-                        Thread.sleep(interval);
-                    } catch (InterruptedException e) {
-                        handleSleepInterruptedException(e, exchange);
-                    }
+            futures.removeIf(future -> future.isDone() || future.isCancelled());
+            // if there are still more then we need to wait a little bit before checking again, to avoid burning cpu cycles in the while loop
+            if (!futures.isEmpty()) {
+                long interval = Math.min(1000, timeout);
+                log.debug("Sleeping {} millis waiting for sendToAll to complete sending with timeout {} millis", interval, timeout);
+                try {
+                    Thread.sleep(interval);
+                } catch (InterruptedException e) {
+                    handleSleepInterruptedException(e, exchange);
                 }
             }
-
         }
         if (!futures.isEmpty()) {
             exception = new WebsocketSendException("Failed to deliver message within " + endpoint.getSendTimeout() + " millis to one or more recipients.", exchange);

@@ -47,6 +47,7 @@ public class MailRecipientsPipeIssueTest extends CamelTestSupport {
         assertEquals("easy@riders.org", msg.getRecipients(Message.RecipientType.TO)[1].toString());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

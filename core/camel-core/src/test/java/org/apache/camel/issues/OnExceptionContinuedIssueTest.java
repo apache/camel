@@ -44,43 +44,33 @@ public class OnExceptionContinuedIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setTracing(false);
 
-                onException(OrderFailedException.class)
-                        .maximumRedeliveries(0)
-                        .continued(true);
+                onException(OrderFailedException.class).maximumRedeliveries(0).continued(true);
 
                 from("direct:dead").to("log:dead", "mock:dead");
 
-                from("direct:order")
-                        .to("mock:one")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                log.info("First Processor Invoked");
-                                throw new OrderFailedException("First Processor Failure");
-                            }
-                        })
-                        .to("mock:two")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                log.info("Second Processor Invoked");
-                            }
-                        })
-                        .to("mock:three")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                log.info("Third Processor Invoked");
-                                throw new RuntimeException("Some Runtime Exception");
-                            }
-                        })
-                        .to("mock:four")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                log.info("Fourth Processor Invoked");
-                            }
-                        });
+                from("direct:order").to("mock:one").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        log.info("First Processor Invoked");
+                        throw new OrderFailedException("First Processor Failure");
+                    }
+                }).to("mock:two").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        log.info("Second Processor Invoked");
+                    }
+                }).to("mock:three").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        log.info("Third Processor Invoked");
+                        throw new RuntimeException("Some Runtime Exception");
+                    }
+                }).to("mock:four").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        log.info("Fourth Processor Invoked");
+                    }
+                });
             }
         });
         context.start();

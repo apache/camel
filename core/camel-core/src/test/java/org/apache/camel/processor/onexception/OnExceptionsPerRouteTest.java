@@ -49,15 +49,8 @@ public class OnExceptionsPerRouteTest extends ContextTestSupport {
             @Override
             @SuppressWarnings("unchecked")
             public void configure() throws Exception {
-                from("direct:start")
-                    .onException(IllegalArgumentException.class, IOException.class)
-                        .handled(true)
-                        .to("mock:error")
-                    .end()
-                    .choice()
-                        .when(body().contains("Damn")).throwException(new IllegalArgumentException("Damn"))
-                        .when(body().contains("Connect")).throwException(new ConnectException("Cannot connect"))
-                    .end();
+                from("direct:start").onException(IllegalArgumentException.class, IOException.class).handled(true).to("mock:error").end().choice().when(body().contains("Damn"))
+                    .throwException(new IllegalArgumentException("Damn")).when(body().contains("Connect")).throwException(new ConnectException("Cannot connect")).end();
             }
         };
     }

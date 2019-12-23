@@ -59,12 +59,12 @@ public class DefaultRouteContext implements RouteContext {
     private ManagementInterceptStrategy managementInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
+    private Boolean backlogTrace;
     private Boolean debug;
     private Boolean messageHistory;
     private Boolean logMask;
     private Boolean logExhaustedMessageBody;
     private Boolean streamCache;
-    private Boolean handleFault;
     private Long delay;
     private Boolean autoStartup = Boolean.TRUE;
     private List<RoutePolicy> routePolicyList = new ArrayList<>();
@@ -86,18 +86,22 @@ public class DefaultRouteContext implements RouteContext {
         this.routeId = routeId;
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }
 
+    @Override
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 
+    @Override
     public NamedNode getRoute() {
         return route;
     }
 
+    @Override
     public String getRouteId() {
         return routeId;
     }
@@ -106,14 +110,17 @@ public class DefaultRouteContext implements RouteContext {
         return runtimeRoute;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public Endpoint resolveEndpoint(String uri) {
         return CamelContextHelper.getMandatoryEndpoint(camelContext, uri);
     }
 
+    @Override
     public Endpoint resolveEndpoint(String uri, String ref) {
         Endpoint endpoint = null;
         if (uri != null) {
@@ -145,10 +152,12 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    @Override
     public <T> T lookup(String name, Class<T> type) {
         return getCamelContext().getRegistry().lookupByNameAndType(name, type);
     }
 
+    @Override
     public <T> Map<String, T> lookupByType(Class<T> type) {
         return getCamelContext().getRegistry().findByTypeWithName(type);
     }
@@ -158,10 +167,13 @@ public class DefaultRouteContext implements RouteContext {
         return CamelContextHelper.mandatoryLookup(getCamelContext(), name, type);
     }
 
+    @Override
     public Route commit() {
         // now lets turn all of the event driven consumer processors into a single route
         if (!eventDrivenProcessors.isEmpty()) {
-            Processor target = Pipeline.newInstance(getCamelContext(), eventDrivenProcessors);
+            // always use an pipeline even if there are only 1 processor as the pipeline
+            // handles preparing the response from the exchange in regard to IN vs OUT messages etc
+            Processor target = new Pipeline(getCamelContext(), eventDrivenProcessors);
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             CamelInternalProcessor internal = new CamelInternalProcessor(target);
@@ -225,42 +237,52 @@ public class DefaultRouteContext implements RouteContext {
         return runtimeRoute;
     }
 
+    @Override
     public void addEventDrivenProcessor(Processor processor) {
         eventDrivenProcessors.add(processor);
     }
 
+    @Override
     public List<InterceptStrategy> getInterceptStrategies() {
         return interceptStrategies;
     }
 
+    @Override
     public void setInterceptStrategies(List<InterceptStrategy> interceptStrategies) {
         this.interceptStrategies = interceptStrategies;
     }
 
+    @Override
     public void addInterceptStrategy(InterceptStrategy interceptStrategy) {
         getInterceptStrategies().add(interceptStrategy);
     }
 
+    @Override
     public void setManagementInterceptStrategy(ManagementInterceptStrategy interceptStrategy) {
         this.managementInterceptStrategy = interceptStrategy;
     }
 
+    @Override
     public ManagementInterceptStrategy getManagementInterceptStrategy() {
         return managementInterceptStrategy;
     }
 
+    @Override
     public boolean isRouteAdded() {
         return routeAdded;
     }
 
+    @Override
     public void setIsRouteAdded(boolean routeAdded) {
         this.routeAdded = routeAdded;
     }
 
+    @Override
     public void setTracing(Boolean tracing) {
         this.trace = tracing;
     }
 
+    @Override
     public Boolean isTracing() {
         if (trace != null) {
             return trace;
@@ -270,10 +292,39 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    @Override
+    public String getTracingPattern() {
+        // can only set this on context level
+        return getCamelContext().getTracingPattern();
+    }
+
+    @Override
+    public void setTracingPattern(String tracePattern) {
+        // can only set this on context level
+        getCamelContext().setTracingPattern(tracePattern);
+    }
+
+    @Override
+    public void setBacklogTracing(Boolean backlogTrace) {
+        this.backlogTrace = backlogTrace;
+    }
+
+    @Override
+    public Boolean isBacklogTracing() {
+        if (backlogTrace != null) {
+            return backlogTrace;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isBacklogTracing();
+        }
+    }
+
+    @Override
     public void setDebugging(Boolean debugging) {
         this.debug = debugging;
     }
 
+    @Override
     public Boolean isDebugging() {
         if (debug != null) {
             return debug;
@@ -283,10 +334,12 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    @Override
     public void setMessageHistory(Boolean messageHistory) {
         this.messageHistory = messageHistory;
     }
 
+    @Override
     public Boolean isMessageHistory() {
         if (messageHistory != null) {
             return messageHistory;
@@ -296,10 +349,12 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    @Override
     public void setLogMask(Boolean logMask) {
         this.logMask = logMask;
     }
 
+    @Override
     public Boolean isLogMask() {
         if (logMask != null) {
             return logMask;
@@ -309,10 +364,12 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    @Override
     public void setLogExhaustedMessageBody(Boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
     }
 
+    @Override
     public Boolean isLogExhaustedMessageBody() {
         if (logExhaustedMessageBody != null) {
             return logExhaustedMessageBody;
@@ -322,10 +379,12 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    @Override
     public void setStreamCaching(Boolean cache) {
         this.streamCache = cache;
     }
 
+    @Override
     public Boolean isStreamCaching() {
         if (streamCache != null) {
             return streamCache;
@@ -335,23 +394,12 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
-    public void setHandleFault(Boolean handleFault) {
-        this.handleFault = handleFault;
-    }
-
-    public Boolean isHandleFault() {
-        if (handleFault != null) {
-            return handleFault;
-        } else {
-            // fallback to the option from camel context
-            return getCamelContext().isHandleFault();
-        }
-    }
-
+    @Override
     public void setDelayer(Long delay) {
         this.delay = delay;
     }
 
+    @Override
     public Long getDelayer() {
         if (delay != null) {
             return delay;
@@ -361,10 +409,12 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    @Override
     public void setAutoStartup(Boolean autoStartup) {
         this.autoStartup = autoStartup;
     }
 
+    @Override
     public Boolean isAutoStartup() {
         if (autoStartup != null) {
             return autoStartup;
@@ -373,6 +423,7 @@ public class DefaultRouteContext implements RouteContext {
         return true;
     }
 
+    @Override
     public void setStartupOrder(Integer startupOrder) {
         this.startupOrder = startupOrder;
     }
@@ -382,6 +433,7 @@ public class DefaultRouteContext implements RouteContext {
         return startupOrder;
     }
 
+    @Override
     public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
         this.errorHandlerFactory = errorHandlerFactory;
     }
@@ -391,20 +443,24 @@ public class DefaultRouteContext implements RouteContext {
         return errorHandlerFactory;
     }
 
+    @Override
     public void setShutdownRoute(ShutdownRoute shutdownRoute) {
         this.shutdownRoute = shutdownRoute;
     }
 
+    @Override
     public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
         // can only be configured on CamelContext
         getCamelContext().setAllowUseOriginalMessage(allowUseOriginalMessage);
     }
 
+    @Override
     public Boolean isAllowUseOriginalMessage() {
         // can only be configured on CamelContext
         return getCamelContext().isAllowUseOriginalMessage();
     }
 
+    @Override
     public ShutdownRoute getShutdownRoute() {
         if (shutdownRoute != null) {
             return shutdownRoute;
@@ -414,10 +470,12 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    @Override
     public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
     }
 
+    @Override
     public ShutdownRunningTask getShutdownRunningTask() {
         if (shutdownRunningTask != null) {
             return shutdownRunningTask;
@@ -427,10 +485,12 @@ public class DefaultRouteContext implements RouteContext {
         }
     }
 
+    @Override
     public void setRoutePolicyList(List<RoutePolicy> routePolicyList) {
         this.routePolicyList = routePolicyList;
     }
 
+    @Override
     public List<RoutePolicy> getRoutePolicyList() {
         return routePolicyList;
     }
@@ -475,10 +535,12 @@ public class DefaultRouteContext implements RouteContext {
         onExceptions.put(onExceptionId, processor);
     }
 
+    @Override
     public void addAdvice(CamelInternalProcessorAdvice<?> advice) {
         advices.add(advice);
     }
 
+    @Override
     public void addProperty(String key, Object value) {
         properties.put(key, value);
     }

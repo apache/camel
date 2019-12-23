@@ -34,6 +34,7 @@ public class ValidatorComponent extends DefaultComponent {
     public ValidatorComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ValidatorEndpoint endpoint = new ValidatorEndpoint(uri, this, remaining);
         // lookup custom resolver to use

@@ -22,7 +22,6 @@ import java.io.StringWriter;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;

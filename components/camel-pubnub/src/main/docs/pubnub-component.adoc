@@ -1,7 +1,11 @@
 [[pubnub-component]]
-== PubNub Component
+= PubNub Component
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 Camel PubNub component can be used to communicate with the https://www.pubnub.com/[PubNub] data stream network for connected devices.
 This component uses pubnub https://github.com/pubnub/java[java library].
@@ -30,7 +34,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------
@@ -39,19 +43,20 @@ pubnub:channel[?options]
 
 Where *channel* is the PubNub channel to publish or subscribe to.
 
-### Options
+== Options
 
 
 // component options: START
-The PubNub component supports 2 options, which are listed below.
+The PubNub component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -66,7 +71,7 @@ pubnub:channel
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +81,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,7 +98,7 @@ with the following path and query parameters:
 | *pubnub* (advanced) | Reference to a Pubnub client in the registry. |  | PubNub
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *authKey* (security) | If Access Manager is utilized, client will use this authKey in all restricted requests. |  | String
-| *cipherKey* (security) | If cipher is passed, all communicatons to/from PubNub will be encrypted. |  | String
+| *cipherKey* (security) | If cipher is passed, all communications to/from PubNub will be encrypted. |  | String
 | *publishKey* (security) | The publish key obtained from your PubNub account. Required when publishing messages. |  | String
 | *secretKey* (security) | The secret key used for message signing. |  | String
 | *secure* (security) | Use SSL for secure transmission. | true | boolean
@@ -101,14 +106,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-pubnub-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -116,7 +121,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -124,13 +129,14 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.pubnub.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.pubnub.enabled* | Enable pubnub component | true | Boolean
-| *camel.component.pubnub.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.pubnub.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.pubnub.enabled* | Whether to enable auto configuration of the pubnub component. This is enabled by default. |  | Boolean
+| *camel.component.pubnub.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-### Message headers when subscribing
+== Message headers when subscribing
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -140,7 +146,7 @@ The component supports 3 options, which are listed below.
 |=======================================================================
 
 
-### Message body
+== Message body
 
 The message body can contain any JSON serializable data, including: Objects, Arrays, Ints and Strings. Message data should not contain special Java V4 classes or functions as these will not serialize. String content can include any single-byte or multi-byte UTF-8
 
@@ -148,9 +154,9 @@ Object serialization when sending is done automatically. Just pass the full obje
 
 When receiving the message body utilize objects provided by the PubNub API.
 
-### Examples
+== Examples
 
-#### Publishing events
+=== Publishing events
 
 Default operation when producing.
 The following snippet publish the event generated by PojoBean to the channel iot.
@@ -163,7 +169,7 @@ from("timer:mytimer")
     .to("pubnub:iot?publishKey=mypublishKey");
 ----
 
-#### Fire events aka BLOCKS Event Handlers
+=== Fire events aka BLOCKS Event Handlers
 
 See https://www.pubnub.com/blocks-catalog/ for all kind of serverless functions that can be invoked.
 Example of geolocation lookup 
@@ -179,7 +185,7 @@ from("pubnub:eon-map-geolocation-output?subscribeKey=mysubkey)
     .log("${body}");
 ----
 
-#### Subscribing to events
+=== Subscribing to events
 
 The following snippet listens for events on the iot channel.
 If you can add the option withPresence, you will also receive channel Join, Leave asf events.
@@ -191,7 +197,7 @@ from("pubnub:iot?subscribeKey=mySubscribeKey")
     .to("mock:result");
 ----
 
-#### Performing operations
+=== Performing operations
 
 
 herenow : Obtain information about the current state of a channel including a list of unique user-ids currently subscribed to the channel and the total occupancy count of the channel
@@ -237,11 +243,3 @@ The example PubNubSensorExample already contains a subscribe key provided by Pub
 The example illustrates the PubNub component subscribing to a infinite stream of sensor data.
 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:rss-component.adoc[RSS]

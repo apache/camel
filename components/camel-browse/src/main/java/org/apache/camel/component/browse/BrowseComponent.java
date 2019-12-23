@@ -31,6 +31,7 @@ public class BrowseComponent extends DefaultComponent {
     public BrowseComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BrowseEndpoint endpoint = new BrowseEndpoint(uri, this);
         endpoint.setName(remaining);

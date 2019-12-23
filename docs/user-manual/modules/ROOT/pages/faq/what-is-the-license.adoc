@@ -1,5 +1,5 @@
 [[Whatisthelicense-Whatisthelicense]]
-=== What is the license?
+= What is the license?
 
 This software is open source using the
 http://www.apache.org/licenses/LICENSE-2.0.html[Apache 2.0 licence] (a

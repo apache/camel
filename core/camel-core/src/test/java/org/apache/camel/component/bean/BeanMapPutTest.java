@@ -50,8 +50,7 @@ public class BeanMapPutTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean("myMap", "put('isMaster','true')");
+                from("direct:start").bean("myMap", "put('isMaster','true')");
             }
         };
     }

@@ -44,6 +44,7 @@ public class CxfProducerSoapActionTest extends CamelTestSupport {
         template.requestBody(DIRECT_START, REQUEST_MESSAGE, String.class);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
 

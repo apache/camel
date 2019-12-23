@@ -50,15 +50,13 @@ public abstract class AbstractSalesforceTestBase extends CamelTestSupport {
 
         HashMap<String, Object> clientProperties = new HashMap<>();
         clientProperties.put("timeout", "60000");
-        clientProperties.put("maxRetreis", "3");
+        clientProperties.put("maxRetries", "3");
         // 4MB for RestApiIntegrationTest.testGetBlobField()
         clientProperties.put("maxContentLength", String.valueOf(4 * 1024 * 1024));
         component.setHttpClientProperties(clientProperties);
 
         // set DTO package
-        component.setPackages(new String[] {
-            Merchandise__c.class.getPackage().getName()
-        });
+        component.setPackages(new String[] {Merchandise__c.class.getPackage().getName()});
 
         // add it to context
         context().addComponent("salesforce", component);

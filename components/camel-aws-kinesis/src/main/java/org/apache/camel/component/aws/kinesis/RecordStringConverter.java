@@ -23,7 +23,7 @@ import com.amazonaws.services.kinesis.model.Record;
 import org.apache.camel.Converter;
 
 // Allow to ignore this type converter if the kinesis JARs are not present on the classpath
-@Converter(loader = true, ignoreOnLoadError = true)
+@Converter(generateLoader = true, ignoreOnLoadError = true)
 public final class RecordStringConverter {
 
     private RecordStringConverter() {

@@ -25,6 +25,7 @@ import org.junit.Test;
 
 public class SimpleWeaveAddMockLastTest extends CamelTestSupport {
 
+    @Override
     public boolean isUseAdviceWith() {
         return true;
     }

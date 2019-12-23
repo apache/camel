@@ -28,6 +28,7 @@ public class CamelVelocityDelegateClassLoader extends ClassLoader {
         super(parent);
     }
    
+    @Override
     protected Class< ? > findClass(String name) throws ClassNotFoundException {
         if (CAMLE_VELOCITY_CLASSPATH_RESOURCE_LOADER.equals(name)) {
             return CamelVelocityClasspathResourceLoader.class;

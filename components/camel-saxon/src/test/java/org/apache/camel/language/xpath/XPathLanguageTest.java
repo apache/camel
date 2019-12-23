@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.language.xpath;
+
 import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Exchange;
@@ -60,6 +61,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
         super.tearDown();
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/xpath/XPathLanguageTest.xml");
     }

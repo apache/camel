@@ -35,7 +35,7 @@ import org.snmp4j.security.SecurityLevel;
 /**
  * The snmp component gives you the ability to poll SNMP capable devices or receiving traps.
  */
-@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", consumerOnly = true, label = "monitoring")
+@UriEndpoint(firstVersion = "2.1.0", scheme = "snmp", title = "SNMP", syntax = "snmp:host:port", label = "monitoring")
 public class SnmpEndpoint extends DefaultPollingEndpoint {
 
     public static final String DEFAULT_COMMUNITY = "public";
@@ -79,7 +79,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
     private String snmpContextName;
     @UriParam
     private String snmpContextEngineId;
-    @UriParam(javaType = "java.lang.String")
+    @UriParam
     private OIDList oids = new OIDList();
     @UriParam(label = "consumer", defaultValue = "false")
     private boolean treeList;
@@ -94,6 +94,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         super(uri, component);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (this.type == SnmpActionType.TRAP) {
             SnmpTrapConsumer answer = new SnmpTrapConsumer(this, processor);
@@ -108,15 +109,17 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (this.type == SnmpActionType.TRAP) {
             return new SnmpTrapProducer(this);
         } else {
-            return new SnmpProducer(this);
+            // add the support: snmp walk (use snmp4j GET_NEXT)
+            return new SnmpProducer(this, this.type);
         }
     }
 
-/**
+    /**
      * creates an exchange for the given message
      *
      * @param pdu the pdu
@@ -152,6 +155,7 @@ public class SnmpEndpoint extends DefaultPollingEndpoint {
         // noop
     }
 
+    @Override
     public long getDelay() {
         return delay;
     }

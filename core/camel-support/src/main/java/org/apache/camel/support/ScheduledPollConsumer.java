@@ -20,6 +20,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -42,6 +43,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private ScheduledExecutorService scheduledExecutorService;
 
     // if adding more options then align with org.apache.camel.support.ScheduledPollEndpoint
+
     private boolean startScheduler = true;
     private long initialDelay = 1000;
     private long delay = 500;
@@ -54,6 +56,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private int backoffMultiplier;
     private int backoffIdleThreshold;
     private int backoffErrorThreshold;
+    private long repeatCount;
     private Map<String, Object> schedulerProperties;
 
     // state during running
@@ -61,6 +64,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private volatile int backoffCounter;
     private volatile long idleCounter;
     private volatile long errorCounter;
+    private final AtomicLong counter = new AtomicLong();
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -77,6 +81,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     /**
      * Invoked whenever we should be polled
      */
+    @Override
     public void run() {
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
         try {
@@ -141,6 +146,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 backoffCounter = 0;
                 log.trace("doRun() backoff finished, resetting counters.");
             }
+        }
+
+        long count = counter.incrementAndGet();
+        boolean stopFire = repeatCount > 0 && count > repeatCount;
+        if (stopFire) {
+            log.debug("Cancelling {} scheduler as repeat count limit reached after {} counts.", getEndpoint(), repeatCount);
+            scheduler.unscheduleTask();
+            return;
         }
 
         int retryCounter = -1;
@@ -255,7 +268,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     /**
      * Whether polling is currently in progress
      */
-    protected boolean isPolling() {
+    public boolean isPolling() {
         return polling;
     }
 
@@ -375,6 +388,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         this.backoffErrorThreshold = backoffErrorThreshold;
     }
 
+    public long getRepeatCount() {
+        return repeatCount;
+    }
+
+    public void setRepeatCount(long repeatCount) {
+        this.repeatCount = repeatCount;
+    }
+
     public ScheduledExecutorService getScheduledExecutorService() {
         return scheduledExecutorService;
     }
@@ -411,19 +432,21 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         }
 
         if (scheduler == null) {
-            scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
+            DefaultScheduledPollConsumerScheduler scheduler = new DefaultScheduledPollConsumerScheduler(scheduledExecutorService);
+            scheduler.setDelay(delay);
+            scheduler.setInitialDelay(initialDelay);
+            scheduler.setTimeUnit(timeUnit);
+            scheduler.setUseFixedDelay(useFixedDelay);
+            this.scheduler = scheduler;
         }
         scheduler.setCamelContext(getEndpoint().getCamelContext());
         scheduler.onInit(this);
 
         // configure scheduler with options from this consumer
-        Map<String, Object> properties = new LinkedHashMap<>();
-        IntrospectionSupport.getProperties(this, properties, null);
-        PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), scheduler, properties);
         if (schedulerProperties != null && !schedulerProperties.isEmpty()) {
             // need to use a copy in case the consumer is restarted so we keep the properties
             Map<String, Object> copy = new LinkedHashMap<>(schedulerProperties);
-            PropertyBindingSupport.bindProperties(getEndpoint().getCamelContext(), scheduler, copy);
+            PropertyBindingSupport.build().bind(getEndpoint().getCamelContext(), scheduler, copy);
             if (copy.size() > 0) {
                 throw new FailedToCreateConsumerException(getEndpoint(), "There are " + copy.size()
                         + " scheduler parameters that couldn't be set on the endpoint."
@@ -470,6 +493,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         backoffCounter = 0;
         idleCounter = 0;
         errorCounter = 0;
+        counter.set(0);
 
         super.doStop();
     }
@@ -487,7 +511,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     public void onInit() throws Exception {
-        // make sure the scheduler is starter
+        // make sure the scheduler is starting
         startScheduler = true;
     }
 

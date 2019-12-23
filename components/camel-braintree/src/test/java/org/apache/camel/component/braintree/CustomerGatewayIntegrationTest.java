@@ -35,7 +35,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class CustomerGatewayIntegrationTest extends AbstractBraintreeTestSupport {
 
     private static final String PATH_PREFIX = getApiNameAsString(CustomerGatewayApiMethod.class);

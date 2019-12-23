@@ -34,6 +34,7 @@ public class WebsocketCamelRouterWithInitParamTestSupport extends CamelTestSuppo
 
     protected ServletHolder servletHolder;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         server = new Server(PORT);
@@ -54,6 +55,7 @@ public class WebsocketCamelRouterWithInitParamTestSupport extends CamelTestSuppo
         server.start();
     }
     
+    @Override
     @After
     public void tearDown() throws Exception {
         if (startCamelContext) {

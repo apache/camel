@@ -44,7 +44,6 @@ import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.SocketFactory;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LoggingLevel;
@@ -95,10 +94,12 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
     public interface ExtendedUserInfo extends UserInfo, UIKeyboardInteractive {
     }
 
+    @Override
     public void setEndpoint(GenericFileEndpoint<SftpRemoteFile> endpoint) {
         this.endpoint = (SftpEndpoint)endpoint;
     }
 
+    @Override
     public synchronized boolean connect(RemoteFileConfiguration configuration, Exchange exchange) throws GenericFileOperationFailedException {
         if (isConnected()) {
             // already connected
@@ -392,6 +393,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             this.loggingLevel = loggingLevel;
         }
 
+        @Override
         public boolean isEnabled(int level) {
             switch (level) {
             case FATAL:
@@ -408,6 +410,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
             }
         }
 
+        @Override
         public void log(int level, String message) {
             switch (level) {
             case FATAL:
@@ -430,10 +433,12 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized boolean isConnected() throws GenericFileOperationFailedException {
         return session != null && session.isConnected() && channel != null && channel.isConnected();
     }
 
+    @Override
     public synchronized void disconnect() throws GenericFileOperationFailedException {
         if (session != null && session.isConnected()) {
             session.disconnect();
@@ -443,6 +448,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized void forceDisconnect() throws GenericFileOperationFailedException {
         try {
             if (session != null) {
@@ -464,6 +470,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized boolean deleteFile(String name) throws GenericFileOperationFailedException {
         LOG.debug("Deleting file: {}", name);
         try {
@@ -476,6 +483,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         LOG.debug("Renaming file: {} to: {}", from, to);
         try {
@@ -491,6 +499,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         // must normalize directory first
         directory = endpoint.getConfiguration().normalizePath(directory);
@@ -561,6 +570,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         return success;
     }
 
+    @Override
     public synchronized String getCurrentDirectory() throws GenericFileOperationFailedException {
         LOG.trace("getCurrentDirectory()");
         try {
@@ -572,6 +582,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         LOG.trace("changeCurrentDirectory({})", path);
         if (ObjectHelper.isEmpty(path)) {
@@ -650,6 +661,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized void changeToParentDirectory() throws GenericFileOperationFailedException {
         LOG.trace("changeToParentDirectory()");
         String current = getCurrentDirectory();
@@ -663,10 +675,12 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         changeCurrentDirectory(parent);
     }
 
+    @Override
     public synchronized List<SftpRemoteFile> listFiles() throws GenericFileOperationFailedException {
         return listFiles(".");
     }
 
+    @Override
     public synchronized List<SftpRemoteFile> listFiles(String path) throws GenericFileOperationFailedException {
         LOG.trace("listFiles({})", path);
         if (ObjectHelper.isEmpty(path)) {
@@ -691,6 +705,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         LOG.trace("retrieveFile({})", name);
         if (ObjectHelper.isNotEmpty(endpoint.getLocalWorkDirectory())) {
@@ -703,6 +718,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized void releaseRetrievedFileResources(Exchange exchange) throws GenericFileOperationFailedException {
         InputStream is = exchange.getIn().getHeader(RemoteFileComponent.REMOTE_FILE_INPUT_STREAM, InputStream.class);
 
@@ -876,6 +892,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         return true;
     }
 
+    @Override
     public synchronized boolean storeFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // must normalize name first
         name = endpoint.getConfiguration().normalizePath(name);
@@ -994,6 +1011,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         }
     }
 
+    @Override
     public synchronized boolean existsFile(String name) throws GenericFileOperationFailedException {
         LOG.trace("existsFile({})", name);
         if (endpoint.isFastExistsCheck()) {
@@ -1056,6 +1074,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
 
     }
 
+    @Override
     public synchronized boolean sendNoop() throws GenericFileOperationFailedException {
         if (isConnected()) {
             try {
@@ -1069,6 +1088,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
         return false;
     }
 
+    @Override
     public synchronized boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {
         // is not implemented
         return true;
@@ -1087,10 +1107,7 @@ public class SftpOperations implements RemoteFileOperations<SftpRemoteFile> {
                 return socket;
             } catch (Exception e) {
                 String message = e.toString();
-                if (e instanceof Throwable) {
-                    throw new RuntimeCamelException(message, e);
-                }
-                throw new RuntimeCamelException(message);
+                throw new RuntimeCamelException(message, e);
             }
         }
         final Socket[] sockp = new Socket[1];

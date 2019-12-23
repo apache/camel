@@ -165,6 +165,7 @@ public class ExceptionBuilderTest extends ContextTestSupport {
         private static final long serialVersionUID = 1L;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @SuppressWarnings("unchecked")
@@ -172,41 +173,21 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // START SNIPPET: exceptionBuilder1
-                onException(NullPointerException.class)
-                    .maximumRedeliveries(0)
-                    .setHeader(MESSAGE_INFO, constant("Damm a NPE"))
-                    .to(ERROR_QUEUE);
+                onException(NullPointerException.class).maximumRedeliveries(0).setHeader(MESSAGE_INFO, constant("Damm a NPE")).to(ERROR_QUEUE);
 
-                onException(IOException.class)
-                    .redeliveryDelay(10)
-                    .maximumRedeliveries(3)
-                    .maximumRedeliveryDelay(30 * 1000L)
-                    .backOffMultiplier(1.0)
-                    .useExponentialBackOff()
-                    .setHeader(MESSAGE_INFO, constant("Damm somekind of IO exception"))
-                    .to(ERROR_QUEUE);
+                onException(IOException.class).redeliveryDelay(10).maximumRedeliveries(3).maximumRedeliveryDelay(30 * 1000L).backOffMultiplier(1.0).useExponentialBackOff()
+                    .setHeader(MESSAGE_INFO, constant("Damm somekind of IO exception")).to(ERROR_QUEUE);
 
-                onException(Exception.class)
-                    .redeliveryDelay(0)
-                    .maximumRedeliveries(2)
-                    .setHeader(MESSAGE_INFO, constant("Damm just exception"))
-                    .to(ERROR_QUEUE);
+                onException(Exception.class).redeliveryDelay(0).maximumRedeliveries(2).setHeader(MESSAGE_INFO, constant("Damm just exception")).to(ERROR_QUEUE);
 
-                onException(MyBaseBusinessException.class)
-                    .redeliveryDelay(0)
-                    .maximumRedeliveries(3)
-                    .setHeader(MESSAGE_INFO, constant("Damm my business is not going to well"))
+                onException(MyBaseBusinessException.class).redeliveryDelay(0).maximumRedeliveries(3).setHeader(MESSAGE_INFO, constant("Damm my business is not going to well"))
                     .to(BUSINESS_ERROR_QUEUE);
 
-                onException(GeneralSecurityException.class, KeyException.class)
-                    .maximumRedeliveries(1)
-                    .setHeader(MESSAGE_INFO, constant("Damm some security error"))
+                onException(GeneralSecurityException.class, KeyException.class).maximumRedeliveries(1).setHeader(MESSAGE_INFO, constant("Damm some security error"))
                     .to(SECURITY_ERROR_QUEUE);
 
-                onException(InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class)
-                    .maximumRedeliveries(0)
-                    .setHeader(MESSAGE_INFO, constant("Damm some access error"))
-                    .to(ERROR_QUEUE);
+                onException(InstantiationException.class, IllegalAccessException.class, ClassNotFoundException.class).maximumRedeliveries(0)
+                    .setHeader(MESSAGE_INFO, constant("Damm some access error")).to(ERROR_QUEUE);
                 // END SNIPPET: exceptionBuilder1
 
                 from("direct:a").process(new Processor() {
@@ -225,12 +206,10 @@ public class ExceptionBuilderTest extends ContextTestSupport {
                         } else if ("I am not allowed to access this".equals(s)) {
                             throw new IllegalAccessException();
                         }
-                        exchange.getOut().setBody("Hello World");
+                        exchange.getMessage().setBody("Hello World");
                     }
                 }).to("mock:result");
             }
         };
     }
 }
-
-

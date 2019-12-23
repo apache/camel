@@ -25,6 +25,7 @@ import org.junit.Test;
  */
 public class FileConsumerSharedThreadPollStopRouteTest extends FileConsumerSharedThreadPollTest {
 
+    @Override
     @Test
     public void testSharedThreadPool() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

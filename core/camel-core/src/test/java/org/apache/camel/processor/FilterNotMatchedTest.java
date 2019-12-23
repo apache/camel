@@ -51,14 +51,11 @@ public class FilterNotMatchedTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .filter(header("foo").isEqualTo("bar"))
-                        .to("mock:result")
-                    .end()
-                    .to("mock:end");
+                from("direct:start").filter(header("foo").isEqualTo("bar")).to("mock:result").end().to("mock:end");
             }
         };
     }

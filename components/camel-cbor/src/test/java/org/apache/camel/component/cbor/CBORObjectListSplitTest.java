@@ -22,7 +22,6 @@ import java.util.List;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.cbor.CBORFactory;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -38,7 +37,7 @@ public class CBORObjectListSplitTest extends CamelTestSupport {
         DummyObject d2 = new DummyObject();
         d2.setDummy("value2");
         
-        List<DummyObject> list = new ArrayList<DummyObject>();
+        List<DummyObject> list = new ArrayList<>();
         list.add(d1);
         list.add(d2);
 

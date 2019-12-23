@@ -17,9 +17,11 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * The hazelcast-instance component is used to consume join/leave events of the
@@ -41,25 +43,39 @@ public interface HazelcastInstanceEndpointBuilderFactory {
             return (AdvancedHazelcastInstanceEndpointBuilder) this;
         }
         /**
-         * Define if the endpoint will use a reliable Topic struct or not.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Group: common
+         * Group: consumer
          */
-        default HazelcastInstanceEndpointBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
+        default HazelcastInstanceEndpointBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
-         * Define if the endpoint will use a reliable Topic struct or not.
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Group: common
+         * Group: consumer
          */
-        default HazelcastInstanceEndpointBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
+        default HazelcastInstanceEndpointBuilder bridgeErrorHandler(
+                String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -74,7 +90,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          */
         default HazelcastInstanceEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -89,7 +105,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          */
         default HazelcastInstanceEndpointBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -103,7 +119,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -117,7 +133,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -131,136 +147,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          */
         default HazelcastInstanceEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder onErrorDelay(int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder onErrorDelay(
-                String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder pollTimeout(String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder transferExchange(
-                boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastInstanceEndpointBuilder transferExchange(
-                String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
     }
@@ -275,6 +162,63 @@ public interface HazelcastInstanceEndpointBuilderFactory {
             return (HazelcastInstanceEndpointBuilder) this;
         }
         /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedHazelcastInstanceEndpointBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedHazelcastInstanceEndpointBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedHazelcastInstanceEndpointBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedHazelcastInstanceEndpointBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -284,7 +228,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          */
         default AdvancedHazelcastInstanceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -297,7 +241,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          */
         default AdvancedHazelcastInstanceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -310,7 +254,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          */
         default AdvancedHazelcastInstanceEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -323,7 +267,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          */
         default AdvancedHazelcastInstanceEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -371,22 +315,13 @@ public interface HazelcastInstanceEndpointBuilderFactory {
         readOnceTail,
         capacity;
     }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> enum.
-     */
-    enum HazelcastQueueConsumerMode {
-        listen,
-        poll;
-    }
     /**
      * Hazelcast Instance (camel-hazelcast)
      * The hazelcast-instance component is used to consume join/leave events of
      * the cache instance in the cluster.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-instance:cacheName</code>

@@ -119,6 +119,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         return new FileIdempotentRepository(store, cache);
     }
 
+    @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
         synchronized (cache) {
@@ -148,6 +149,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         }
     }
 
+    @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String key) {
         synchronized (cache) {
@@ -156,6 +158,7 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         }
     }
 
+    @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
         boolean answer;
@@ -167,11 +170,13 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         return answer;
     }
 
+    @Override
     public boolean confirm(String key) {
         // noop
         return true;
     }
     
+    @Override
     @ManagedOperation(description = "Clear the store (danger this removes all entries)")
     public void clear() {
         synchronized (cache) {

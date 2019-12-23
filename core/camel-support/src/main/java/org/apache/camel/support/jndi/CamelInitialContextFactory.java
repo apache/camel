@@ -40,6 +40,7 @@ public class CamelInitialContextFactory implements InitialContextFactory {
      * @return the created context.
      * @throws NamingException is thrown if creation failed.
      */
+    @Override
     public Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
         try {
             return new JndiContext(CastUtils.cast(environment, String.class, Object.class));

@@ -70,6 +70,7 @@ public class CustomerServicesTest extends Assert {
             super(phase);
         }
 
+        @Override
         public void handleMessage(Message message) throws Fault {
             Map<String, List<String>> headers
                 = CastUtils.cast((Map<?, ?>)message.get(Message.PROTOCOL_HEADERS));

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -44,8 +45,7 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(uri)
-                    .convertBodyTo(String.class).to("mock:result");
+                from(uri).convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -69,14 +69,15 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         File renamed = new File("target/data/idempotent/report.txt");
         file.renameTo(renamed);
 
-        // should NOT consume the file again, let a bit time pass to let the consumer try to consume it but it should not
+        // should NOT consume the file again, let a bit time pass to let the
+        // consumer try to consume it but it should not
         Thread.sleep(100);
         assertMockEndpointsSatisfied();
 
         FileEndpoint fe = context.getEndpoint(uri, FileEndpoint.class);
         assertNotNull(fe);
 
-        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) fe.getInProgressRepository();
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository)fe.getInProgressRepository();
         assertEquals("Should be no in-progress files", 0, repo.getCacheSize());
     }
 

@@ -24,9 +24,6 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static java.util.Arrays.asList;
-import static java.util.Arrays.stream;
-
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.TypeConverter;
@@ -45,6 +42,8 @@ import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.Invocation;
 
+import static java.util.Arrays.asList;
+import static java.util.Arrays.stream;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.atLeastOnce;
@@ -86,7 +85,7 @@ public class AbstractCamelContextFactoryBeanTest {
         new DefaultFactoryFinder(new DefaultClassResolver(), "META-INF/services/org/apache/camel/"), false);
 
     // properties that should return value that can be converted to boolean
-    Set<String> valuesThatReturnBoolean = new HashSet<>(asList("{{getStreamCache}}", "{{getTrace}}",
+    Set<String> valuesThatReturnBoolean = new HashSet<>(asList("{{getStreamCache}}", "{{getDebug}}", "{{getTrace}}", "{{getBacklogTrace}}",
         "{{getMessageHistory}}", "{{getLogMask}}", "{{getLogExhaustedMessageBody}}", "{{getHandleFault}}",
         "{{getAutoStartup}}", "{{getUseMDCLogging}}", "{{getUseDataType}}", "{{getUseBreadcrumb}}", "{{getAllowUseOriginalMessage}}"));
 

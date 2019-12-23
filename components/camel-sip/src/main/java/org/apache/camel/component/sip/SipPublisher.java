@@ -79,6 +79,7 @@ public class SipPublisher extends DefaultProducer {
         getSipStack().stop();
     }
     
+    @Override
     public void process(Exchange exchange) throws Exception {
         String requestMethod = exchange.getIn().getHeader("REQUEST_METHOD", String.class);
         if (requestMethod == null) {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -34,7 +35,7 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
     private static int counter;
     private static volatile String event = "";
 
-    private String fileUrl = "file://target/data/pollstrategy/?consumer.pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10";
+    private String fileUrl = "file://target/data/pollstrategy/?pollStrategy=#myPoll&noop=true&initialDelay=0&delay=10";
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -66,6 +67,7 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
         assertTrue(event.startsWith("beginbegincommit"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -76,6 +78,7 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
 
     private static class MyPollStrategy implements PollingConsumerPollStrategy {
 
+        @Override
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             event += "begin";
             if (counter++ == 0) {
@@ -85,10 +88,12 @@ public class FileConsumerPollStrategyNotBeginTest extends ContextTestSupport {
             return true;
         }
 
+        @Override
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
             event += "commit";
         }
 
+        @Override
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             event += "rollback";
             return false;

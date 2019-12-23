@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
  */
 public class StreamResultHandlerFactory implements ResultHandlerFactory {
 
+    @Override
     public ResultHandler createResult(Exchange exchange) throws Exception {
         return new StreamResultHandler();
     }

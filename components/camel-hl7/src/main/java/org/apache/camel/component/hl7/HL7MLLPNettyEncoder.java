@@ -22,7 +22,7 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToByteEncoder;
 
 /**
- * HL7 MLLP Encoder for Netty4
+ * HL7 MLLP Encoder for Netty
  */
 class HL7MLLPNettyEncoder extends MessageToByteEncoder<Object> {
 

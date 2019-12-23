@@ -65,6 +65,7 @@ public class SpringDataFormatPartialTest extends CamelSpringTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/example/springDataFormatPartial.xml");
     }

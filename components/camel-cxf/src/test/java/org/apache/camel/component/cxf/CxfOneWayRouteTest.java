@@ -33,7 +33,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 /**
  * Tests a cxf routing scenario from an oneway cxf EP to a file EP to not forward the old input
  * back to the oneway cxf EP.
@@ -90,6 +89,7 @@ public class CxfOneWayRouteTest extends CamelSpringTestSupport {
     public static class TestProcessor implements Processor {
         static final byte[] MAGIC = {(byte)0xca, 0x3e, 0x1e};
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // just check the MEP here
             assertEquals("Don't get the right MEP", ExchangePattern.InOnly, exchange.getPattern());

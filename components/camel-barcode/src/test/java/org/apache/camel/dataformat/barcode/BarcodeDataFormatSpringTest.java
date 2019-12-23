@@ -23,10 +23,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class BarcodeDataFormatSpringTest extends BarcodeDataFormatCamelTest {
     
+    @Override
     public boolean isCreateCamelContextPerClass() {
         return true;
     }
     
+    @Override
     public boolean isUseRouteBuilder() {
         return false;
     }

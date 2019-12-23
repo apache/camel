@@ -32,9 +32,11 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.isEmpty;
  * Cassandra 2 CQL3 producer.
  * <dl>
  * <dt>In Message</dt>
- * <dd>Bound parameters: Collection of Objects, Array of Objects, Simple Object<dd>
+ * <dd>Bound parameters: Collection of Objects, Array of Objects, Simple Object
+ * <dd>
  * <dt>Out Message</dt>
- * <dd>List of all Rows<dd>
+ * <dd>List of all Rows
+ * <dd>
  * <dl>
  */
 public class CassandraProducer extends DefaultProducer {
@@ -61,7 +63,7 @@ public class CassandraProducer extends DefaultProducer {
 
     @Override
     public CassandraEndpoint getEndpoint() {
-        return (CassandraEndpoint) super.getEndpoint();
+        return (CassandraEndpoint)super.getEndpoint();
     }
 
     public boolean isPrepareStatements() {
@@ -77,10 +79,10 @@ public class CassandraProducer extends DefaultProducer {
         } else if (objectArrayClazz.isInstance(cqlParamsObj)) {
             cqlParams = objectArrayClazz.cast(cqlParamsObj);
         } else if (cqlParamsObj instanceof Collection) {
-            final Collection cqlParamsColl = (Collection) cqlParamsObj;
+            final Collection cqlParamsColl = (Collection)cqlParamsObj;
             cqlParams = cqlParamsColl.toArray();
         } else {
-            cqlParams = new Object[]{cqlParamsObj};
+            cqlParams = new Object[] {cqlParamsObj};
         }
         return cqlParams;
     }
@@ -91,7 +93,7 @@ public class CassandraProducer extends DefaultProducer {
     private ResultSet execute(Message message) {
         Object messageCql = message.getHeader(CassandraConstants.CQL_QUERY);
         // Convert Empty string to null
-        if (messageCql instanceof String && ((String) messageCql).isEmpty()) {
+        if (messageCql instanceof String && ((String)messageCql).isEmpty()) {
             messageCql = null;
         }
         Object[] cqlParams = getCqlParams(message);
@@ -117,10 +119,10 @@ public class CassandraProducer extends DefaultProducer {
             lPreparedStatement = this.preparedStatement;
         } else if (messageCql instanceof String) {
             // Message CQL
-            lPreparedStatement = getEndpoint().prepareStatement((String) messageCql);
+            lPreparedStatement = getEndpoint().prepareStatement((String)messageCql);
         } else if (messageCql instanceof RegularStatement) {
             // Message Statement
-            lPreparedStatement = getEndpoint().getSession().prepare((RegularStatement) messageCql);
+            lPreparedStatement = getEndpoint().getSession().prepare((RegularStatement)messageCql);
         } else {
             throw new IllegalArgumentException("Invalid " + CassandraConstants.CQL_QUERY + " header");
         }
@@ -144,10 +146,10 @@ public class CassandraProducer extends DefaultProducer {
             cql = getEndpoint().getCql();
         } else if (messageCql instanceof String) {
             // Message CQL
-            cql = (String) messageCql;
+            cql = (String)messageCql;
         } else if (messageCql instanceof RegularStatement) {
             // Message Statement
-            statement = (RegularStatement) messageCql;
+            statement = (RegularStatement)messageCql;
         } else {
             throw new IllegalArgumentException("Invalid " + CassandraConstants.CQL_QUERY + " header");
         }
@@ -161,6 +163,7 @@ public class CassandraProducer extends DefaultProducer {
         return resultSet;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // copy the header of in message to the out message
         exchange.getOut().copyFrom(exchange.getIn());

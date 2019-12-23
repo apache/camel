@@ -50,9 +50,7 @@ public class AggregationStrategyBeanAdapterPollEnrichTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .pollEnrich("seda:foo", 100, AggregationStrategies.bean(appender))
-                        .to("mock:result");
+                from("direct:start").pollEnrich("seda:foo", 100, AggregationStrategies.bean(appender)).to("mock:result");
             }
         };
     }

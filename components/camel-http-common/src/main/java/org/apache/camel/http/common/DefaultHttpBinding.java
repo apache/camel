@@ -33,6 +33,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeoutException;
+
 import javax.activation.DataHandler;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
@@ -79,6 +80,7 @@ public class DefaultHttpBinding implements HttpBinding {
     private boolean useReaderForPayload;
     private boolean eagerCheckContentAvailable;
     private boolean transferException;
+    private boolean muteException;
     private boolean allowJavaSerializedObject;
     private boolean mapHttpMessageBody = true;
     private boolean mapHttpMessageHeaders = true;
@@ -98,11 +100,13 @@ public class DefaultHttpBinding implements HttpBinding {
     public DefaultHttpBinding(HttpCommonEndpoint endpoint) {
         this.headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         this.transferException = endpoint.isTransferException();
+        this.muteException = endpoint.isMuteException();
         if (endpoint.getComponent() != null) {
             this.allowJavaSerializedObject = endpoint.getComponent().isAllowJavaSerializedObject();
         }
     }
 
+    @Override
     public void readRequest(HttpServletRequest request, HttpMessage message) {
         LOG.trace("readRequest {}", request);
 
@@ -326,8 +330,9 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public void writeResponse(Exchange exchange, HttpServletResponse response) throws IOException {
-        Message target = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message target = exchange.getMessage();
         if (exchange.isFailed()) {
             if (exchange.getException() != null) {
                 doWriteExceptionResponse(exchange.getException(), response);
@@ -354,11 +359,16 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
         if (exception instanceof TimeoutException) {
             response.setStatus(HttpServletResponse.SC_GATEWAY_TIMEOUT);
             response.setContentType("text/plain");
             response.getWriter().write("Timeout error");
+        } else if (isMuteException()) {
+            response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            response.setContentType("text/plain");
+            response.getWriter().write("Exception");
         } else {
             response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
 
@@ -375,17 +385,16 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public void doWriteFaultResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
-        message.setHeader(Exchange.HTTP_RESPONSE_CODE, HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         doWriteResponse(message, response, exchange);
     }
 
+    @Override
     public void doWriteResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
-        // set the status code in the response. Default is 200.
-        if (message.getHeader(Exchange.HTTP_RESPONSE_CODE) != null) {
-            int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
-            response.setStatus(code);
-        }
+        int statusCode = determineResponseCode(exchange, exchange.getMessage().getBody());
+        response.setStatus(statusCode);
+        
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
@@ -416,6 +425,30 @@ public class DefaultHttpBinding implements HttpBinding {
                 doWriteDirectResponse(message, response, exchange);
             }
         }
+    }
+    
+    /*
+     * set the HTTP status code
+     * NOTE: this is similar to the Netty-Http and Undertow approach
+     * TODO: we may want to refactor this class so that 
+     * the status code is determined in one place
+     */
+    private int determineResponseCode(Exchange camelExchange, Object body) {
+        boolean failed = camelExchange.isFailed();
+        int defaultCode = failed ? 500 : 200;
+
+        Message message = camelExchange.getMessage();
+        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+        int codeToUse = currentCode == null ? defaultCode : currentCode;
+
+        if (codeToUse != 500) {
+            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+                // no content 
+                codeToUse = currentCode == null ? 204 : currentCode;
+            }
+        }
+
+        return codeToUse;
     }
     
     protected String convertHeaderValueToString(Exchange exchange, Object headerValue) {
@@ -459,7 +492,7 @@ public class DefaultHttpBinding implements HttpBinding {
     protected void doWriteDirectResponse(Message message, HttpServletResponse response, Exchange exchange) throws IOException {
         // if content type is serialized Java object, then serialize and write it to the response
         String contentType = message.getHeader(Exchange.CONTENT_TYPE, String.class);
-        if (contentType != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
+        if (HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentType)) {
             if (allowJavaSerializedObject || isTransferException()) {
                 try {
                     Object object = message.getMandatoryBody(Serializable.class);
@@ -497,7 +530,7 @@ public class DefaultHttpBinding implements HttpBinding {
                     OutputStream current = stream.getCurrentStream();
                     if (current instanceof ByteArrayOutputStream) {
                         if (LOG.isDebugEnabled()) {
-                            LOG.debug("Streaming (direct) response in non-chunked mode with content-length {}");
+                            LOG.debug("Streaming (direct) response in non-chunked mode with content-length {}", len);
                         }
                         ByteArrayOutputStream bos = (ByteArrayOutputStream) current;
                         bos.writeTo(os);
@@ -573,6 +606,7 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public Object parseBody(HttpMessage httpMessage) throws IOException {
         // lets assume the body is a reader
         HttpServletRequest request = httpMessage.getRequest();
@@ -599,74 +633,102 @@ public class DefaultHttpBinding implements HttpBinding {
         }
     }
 
+    @Override
     public boolean isUseReaderForPayload() {
         return useReaderForPayload;
     }
 
+    @Override
     public void setUseReaderForPayload(boolean useReaderForPayload) {
         this.useReaderForPayload = useReaderForPayload;
     }
 
+    @Override
     public boolean isEagerCheckContentAvailable() {
         return eagerCheckContentAvailable;
     }
 
+    @Override
     public void setEagerCheckContentAvailable(boolean eagerCheckContentAvailable) {
         this.eagerCheckContentAvailable = eagerCheckContentAvailable;
     }
 
+    @Override
     public boolean isTransferException() {
         return transferException;
     }
 
+    @Override
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
     }
 
+    @Override
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    @Override
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
+    }
+
+    @Override
     public boolean isAllowJavaSerializedObject() {
         return allowJavaSerializedObject;
     }
 
+    @Override
     public void setAllowJavaSerializedObject(boolean allowJavaSerializedObject) {
         this.allowJavaSerializedObject = allowJavaSerializedObject;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
+    @Override
     public boolean isMapHttpMessageBody() {
         return mapHttpMessageBody;
     }
 
+    @Override
     public void setMapHttpMessageBody(boolean mapHttpMessageBody) {
         this.mapHttpMessageBody = mapHttpMessageBody;
     }
 
+    @Override
     public boolean isMapHttpMessageHeaders() {
         return mapHttpMessageHeaders;
     }
 
+    @Override
     public void setMapHttpMessageHeaders(boolean mapHttpMessageHeaders) {
         this.mapHttpMessageHeaders = mapHttpMessageHeaders;
     }
 
+    @Override
     public boolean isMapHttpMessageFormUrlEncodedBody() {
         return mapHttpMessageFormUrlEncodedBody;
     }
 
+    @Override
     public void setMapHttpMessageFormUrlEncodedBody(boolean mapHttpMessageFormUrlEncodedBody) {
         this.mapHttpMessageFormUrlEncodedBody = mapHttpMessageFormUrlEncodedBody;
     }
 
+    @Override
     public String getFileNameExtWhitelist() {
         return fileNameExtWhitelist;
     }
 
+    @Override
     public void setFileNameExtWhitelist(String fileNameExtWhitelist) {
         this.fileNameExtWhitelist = fileNameExtWhitelist;
     }

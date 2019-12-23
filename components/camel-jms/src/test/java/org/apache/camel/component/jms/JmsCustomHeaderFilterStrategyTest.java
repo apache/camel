@@ -51,6 +51,7 @@ public class JmsCustomHeaderFilterStrategyTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -75,10 +76,12 @@ public class JmsCustomHeaderFilterStrategyTest extends CamelTestSupport {
 
     private static class MyHeaderFilterStrategy implements HeaderFilterStrategy {
 
+        @Override
         public boolean applyFilterToCamelHeaders(String s, Object o, Exchange exchange) {
             return false;
         }
 
+        @Override
         public boolean applyFilterToExternalHeaders(String s, Object o, Exchange exchange) {
             return s.equals("skipme");
         }

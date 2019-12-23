@@ -93,6 +93,7 @@ public class SnmpTrapConsumer extends DefaultConsumer implements CommandResponde
         super.doStop();
     }
 
+    @Override
     public void processPdu(CommandResponderEvent event) {
         PDU pdu = event.getPDU();
         // check PDU not null

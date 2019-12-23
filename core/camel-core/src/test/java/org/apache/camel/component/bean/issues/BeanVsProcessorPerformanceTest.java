@@ -65,11 +65,9 @@ public class BeanVsProcessorPerformanceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                        .process(new MyLittleProcessor());
+                from("direct:a").process(new MyLittleProcessor());
 
-                from("direct:b")
-                    .bean("myLittleBean", "bye");
+                from("direct:b").bean("myLittleBean", "bye");
             }
         };
     }

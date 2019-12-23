@@ -52,7 +52,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointConsumerBuilder dataFormat(DataFormat dataFormat) {
-            setProperty("dataFormat", dataFormat);
+            doSetProperty("dataFormat", dataFormat);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointConsumerBuilder dataFormat(String dataFormat) {
-            setProperty("dataFormat", dataFormat);
+            doSetProperty("dataFormat", dataFormat);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointConsumerBuilder wrappedStyle(Boolean wrappedStyle) {
-            setProperty("wrappedStyle", wrappedStyle);
+            doSetProperty("wrappedStyle", wrappedStyle);
             return this;
         }
         /**
@@ -93,7 +93,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointConsumerBuilder wrappedStyle(String wrappedStyle) {
-            setProperty("wrappedStyle", wrappedStyle);
+            doSetProperty("wrappedStyle", wrappedStyle);
             return this;
         }
         /**
@@ -111,7 +111,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -142,7 +142,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointConsumerBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointConsumerBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -167,7 +167,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: logging
          */
         default CxfEndpointConsumerBuilder loggingSizeLimit(int loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -180,7 +180,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointConsumerBuilder loggingSizeLimit(
                 String loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -193,7 +193,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointConsumerBuilder skipFaultLogging(
                 boolean skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -206,7 +206,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointConsumerBuilder skipFaultLogging(
                 String skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -218,7 +218,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: security
          */
         default CxfEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -230,7 +230,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: security
          */
         default CxfEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointConsumerBuilder bindingId(String bindingId) {
-            setProperty("bindingId", bindingId);
+            doSetProperty("bindingId", bindingId);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointConsumerBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointConsumerBuilder publishedEndpointUrl(
                 String publishedEndpointUrl) {
-            setProperty("publishedEndpointUrl", publishedEndpointUrl);
+            doSetProperty("publishedEndpointUrl", publishedEndpointUrl);
             return this;
         }
         /**
@@ -281,7 +281,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointConsumerBuilder serviceClass(
                 Class<Object> serviceClass) {
-            setProperty("serviceClass", serviceClass);
+            doSetProperty("serviceClass", serviceClass);
             return this;
         }
         /**
@@ -294,7 +294,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointConsumerBuilder serviceClass(String serviceClass) {
-            setProperty("serviceClass", serviceClass);
+            doSetProperty("serviceClass", serviceClass);
             return this;
         }
         /**
@@ -306,7 +306,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointConsumerBuilder serviceName(String serviceName) {
-            setProperty("serviceName", serviceName);
+            doSetProperty("serviceName", serviceName);
             return this;
         }
         /**
@@ -318,7 +318,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointConsumerBuilder wsdlURL(String wsdlURL) {
-            setProperty("wsdlURL", wsdlURL);
+            doSetProperty("wsdlURL", wsdlURL);
             return this;
         }
     }
@@ -345,7 +345,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -361,7 +361,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -373,7 +373,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -386,7 +386,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -401,7 +401,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder allowStreaming(
                 Boolean allowStreaming) {
-            setProperty("allowStreaming", allowStreaming);
+            doSetProperty("allowStreaming", allowStreaming);
             return this;
         }
         /**
@@ -417,7 +417,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder allowStreaming(
                 String allowStreaming) {
-            setProperty("allowStreaming", allowStreaming);
+            doSetProperty("allowStreaming", allowStreaming);
             return this;
         }
         /**
@@ -430,7 +430,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -443,7 +443,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -454,7 +454,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder bus(Object bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -466,7 +466,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder bus(String bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -480,7 +480,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder continuationTimeout(
                 long continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -494,7 +494,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder continuationTimeout(
                 String continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -507,7 +507,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfBinding(Object cxfBinding) {
-            setProperty("cxfBinding", cxfBinding);
+            doSetProperty("cxfBinding", cxfBinding);
             return this;
         }
         /**
@@ -520,7 +520,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder cxfBinding(String cxfBinding) {
-            setProperty("cxfBinding", cxfBinding);
+            doSetProperty("cxfBinding", cxfBinding);
             return this;
         }
         /**
@@ -531,14 +531,13 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointConsumerBuilder cxfEndpointConfigurer(
-                Object cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointConsumerBuilder cxfConfigurer(
+                Object cxfConfigurer) {
+            doSetProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -549,14 +548,13 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointConsumerBuilder cxfEndpointConfigurer(
-                String cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointConsumerBuilder cxfConfigurer(
+                String cxfConfigurer) {
+            doSetProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -567,7 +565,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder defaultBus(boolean defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -578,7 +576,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder defaultBus(String defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -592,7 +590,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -606,7 +604,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -620,7 +618,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder mergeProtocolHeaders(
                 boolean mergeProtocolHeaders) {
-            setProperty("mergeProtocolHeaders", mergeProtocolHeaders);
+            doSetProperty("mergeProtocolHeaders", mergeProtocolHeaders);
             return this;
         }
         /**
@@ -634,7 +632,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder mergeProtocolHeaders(
                 String mergeProtocolHeaders) {
-            setProperty("mergeProtocolHeaders", mergeProtocolHeaders);
+            doSetProperty("mergeProtocolHeaders", mergeProtocolHeaders);
             return this;
         }
         /**
@@ -647,7 +645,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder mtomEnabled(
                 boolean mtomEnabled) {
-            setProperty("mtomEnabled", mtomEnabled);
+            doSetProperty("mtomEnabled", mtomEnabled);
             return this;
         }
         /**
@@ -660,7 +658,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder mtomEnabled(
                 String mtomEnabled) {
-            setProperty("mtomEnabled", mtomEnabled);
+            doSetProperty("mtomEnabled", mtomEnabled);
             return this;
         }
         /**
@@ -675,7 +673,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder properties(
                 Map<String, Object> properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -690,7 +688,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder properties(String properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -702,7 +700,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder skipPayloadMessagePartCheck(
                 boolean skipPayloadMessagePartCheck) {
-            setProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
+            doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
         /**
@@ -714,7 +712,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder skipPayloadMessagePartCheck(
                 String skipPayloadMessagePartCheck) {
-            setProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
+            doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
         /**
@@ -727,7 +725,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -740,7 +738,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -763,7 +761,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointProducerBuilder dataFormat(DataFormat dataFormat) {
-            setProperty("dataFormat", dataFormat);
+            doSetProperty("dataFormat", dataFormat);
             return this;
         }
         /**
@@ -775,7 +773,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointProducerBuilder dataFormat(String dataFormat) {
-            setProperty("dataFormat", dataFormat);
+            doSetProperty("dataFormat", dataFormat);
             return this;
         }
         /**
@@ -789,7 +787,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointProducerBuilder wrappedStyle(Boolean wrappedStyle) {
-            setProperty("wrappedStyle", wrappedStyle);
+            doSetProperty("wrappedStyle", wrappedStyle);
             return this;
         }
         /**
@@ -804,7 +802,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointProducerBuilder wrappedStyle(String wrappedStyle) {
-            setProperty("wrappedStyle", wrappedStyle);
+            doSetProperty("wrappedStyle", wrappedStyle);
             return this;
         }
         /**
@@ -816,7 +814,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: producer
          */
         default CxfEndpointProducerBuilder cookieHandler(Object cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -828,7 +826,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: producer
          */
         default CxfEndpointProducerBuilder cookieHandler(String cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -841,7 +839,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder defaultOperationName(
                 String defaultOperationName) {
-            setProperty("defaultOperationName", defaultOperationName);
+            doSetProperty("defaultOperationName", defaultOperationName);
             return this;
         }
         /**
@@ -854,7 +852,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder defaultOperationNamespace(
                 String defaultOperationNamespace) {
-            setProperty("defaultOperationNamespace", defaultOperationNamespace);
+            doSetProperty("defaultOperationNamespace", defaultOperationNamespace);
             return this;
         }
         /**
@@ -867,7 +865,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder hostnameVerifier(
                 Object hostnameVerifier) {
-            setProperty("hostnameVerifier", hostnameVerifier);
+            doSetProperty("hostnameVerifier", hostnameVerifier);
             return this;
         }
         /**
@@ -881,7 +879,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder hostnameVerifier(
                 String hostnameVerifier) {
-            setProperty("hostnameVerifier", hostnameVerifier);
+            doSetProperty("hostnameVerifier", hostnameVerifier);
             return this;
         }
         /**
@@ -901,7 +899,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -921,7 +919,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -935,7 +933,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -949,7 +947,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -960,7 +958,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: producer
          */
         default CxfEndpointProducerBuilder wrapped(boolean wrapped) {
-            setProperty("wrapped", wrapped);
+            doSetProperty("wrapped", wrapped);
             return this;
         }
         /**
@@ -971,7 +969,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: producer
          */
         default CxfEndpointProducerBuilder wrapped(String wrapped) {
-            setProperty("wrapped", wrapped);
+            doSetProperty("wrapped", wrapped);
             return this;
         }
         /**
@@ -984,7 +982,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -997,7 +995,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -1009,7 +1007,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: logging
          */
         default CxfEndpointProducerBuilder loggingSizeLimit(int loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -1022,7 +1020,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder loggingSizeLimit(
                 String loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -1035,7 +1033,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder skipFaultLogging(
                 boolean skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -1048,7 +1046,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder skipFaultLogging(
                 String skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -1060,7 +1058,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: security
          */
         default CxfEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1072,7 +1070,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: security
          */
         default CxfEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -1083,7 +1081,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointProducerBuilder bindingId(String bindingId) {
-            setProperty("bindingId", bindingId);
+            doSetProperty("bindingId", bindingId);
             return this;
         }
         /**
@@ -1096,7 +1094,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointProducerBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -1109,7 +1107,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder publishedEndpointUrl(
                 String publishedEndpointUrl) {
-            setProperty("publishedEndpointUrl", publishedEndpointUrl);
+            doSetProperty("publishedEndpointUrl", publishedEndpointUrl);
             return this;
         }
         /**
@@ -1123,7 +1121,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointProducerBuilder serviceClass(
                 Class<Object> serviceClass) {
-            setProperty("serviceClass", serviceClass);
+            doSetProperty("serviceClass", serviceClass);
             return this;
         }
         /**
@@ -1136,7 +1134,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointProducerBuilder serviceClass(String serviceClass) {
-            setProperty("serviceClass", serviceClass);
+            doSetProperty("serviceClass", serviceClass);
             return this;
         }
         /**
@@ -1148,7 +1146,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointProducerBuilder serviceName(String serviceName) {
-            setProperty("serviceName", serviceName);
+            doSetProperty("serviceName", serviceName);
             return this;
         }
         /**
@@ -1160,7 +1158,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointProducerBuilder wsdlURL(String wsdlURL) {
-            setProperty("wsdlURL", wsdlURL);
+            doSetProperty("wsdlURL", wsdlURL);
             return this;
         }
     }
@@ -1186,7 +1184,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder allowStreaming(
                 Boolean allowStreaming) {
-            setProperty("allowStreaming", allowStreaming);
+            doSetProperty("allowStreaming", allowStreaming);
             return this;
         }
         /**
@@ -1202,7 +1200,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder allowStreaming(
                 String allowStreaming) {
-            setProperty("allowStreaming", allowStreaming);
+            doSetProperty("allowStreaming", allowStreaming);
             return this;
         }
         /**
@@ -1215,7 +1213,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1228,7 +1226,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1239,7 +1237,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder bus(Object bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -1251,7 +1249,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder bus(String bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -1265,7 +1263,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder continuationTimeout(
                 long continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -1279,7 +1277,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder continuationTimeout(
                 String continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -1292,7 +1290,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfBinding(Object cxfBinding) {
-            setProperty("cxfBinding", cxfBinding);
+            doSetProperty("cxfBinding", cxfBinding);
             return this;
         }
         /**
@@ -1305,7 +1303,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder cxfBinding(String cxfBinding) {
-            setProperty("cxfBinding", cxfBinding);
+            doSetProperty("cxfBinding", cxfBinding);
             return this;
         }
         /**
@@ -1316,14 +1314,13 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointProducerBuilder cxfEndpointConfigurer(
-                Object cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointProducerBuilder cxfConfigurer(
+                Object cxfConfigurer) {
+            doSetProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -1334,14 +1331,13 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointProducerBuilder cxfEndpointConfigurer(
-                String cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointProducerBuilder cxfConfigurer(
+                String cxfConfigurer) {
+            doSetProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -1352,7 +1348,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder defaultBus(boolean defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -1363,7 +1359,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder defaultBus(String defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -1377,7 +1373,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1391,7 +1387,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1405,7 +1401,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder mergeProtocolHeaders(
                 boolean mergeProtocolHeaders) {
-            setProperty("mergeProtocolHeaders", mergeProtocolHeaders);
+            doSetProperty("mergeProtocolHeaders", mergeProtocolHeaders);
             return this;
         }
         /**
@@ -1419,7 +1415,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder mergeProtocolHeaders(
                 String mergeProtocolHeaders) {
-            setProperty("mergeProtocolHeaders", mergeProtocolHeaders);
+            doSetProperty("mergeProtocolHeaders", mergeProtocolHeaders);
             return this;
         }
         /**
@@ -1432,7 +1428,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder mtomEnabled(
                 boolean mtomEnabled) {
-            setProperty("mtomEnabled", mtomEnabled);
+            doSetProperty("mtomEnabled", mtomEnabled);
             return this;
         }
         /**
@@ -1445,7 +1441,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder mtomEnabled(
                 String mtomEnabled) {
-            setProperty("mtomEnabled", mtomEnabled);
+            doSetProperty("mtomEnabled", mtomEnabled);
             return this;
         }
         /**
@@ -1460,7 +1456,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder properties(
                 Map<String, Object> properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -1475,7 +1471,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder properties(String properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -1487,7 +1483,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder skipPayloadMessagePartCheck(
                 boolean skipPayloadMessagePartCheck) {
-            setProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
+            doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
         /**
@@ -1499,7 +1495,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder skipPayloadMessagePartCheck(
                 String skipPayloadMessagePartCheck) {
-            setProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
+            doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
         /**
@@ -1512,7 +1508,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1525,7 +1521,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1548,7 +1544,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointBuilder dataFormat(DataFormat dataFormat) {
-            setProperty("dataFormat", dataFormat);
+            doSetProperty("dataFormat", dataFormat);
             return this;
         }
         /**
@@ -1560,7 +1556,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointBuilder dataFormat(String dataFormat) {
-            setProperty("dataFormat", dataFormat);
+            doSetProperty("dataFormat", dataFormat);
             return this;
         }
         /**
@@ -1574,7 +1570,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointBuilder wrappedStyle(Boolean wrappedStyle) {
-            setProperty("wrappedStyle", wrappedStyle);
+            doSetProperty("wrappedStyle", wrappedStyle);
             return this;
         }
         /**
@@ -1589,7 +1585,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: common
          */
         default CxfEndpointBuilder wrappedStyle(String wrappedStyle) {
-            setProperty("wrappedStyle", wrappedStyle);
+            doSetProperty("wrappedStyle", wrappedStyle);
             return this;
         }
         /**
@@ -1602,7 +1598,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointBuilder loggingFeatureEnabled(
                 boolean loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -1615,7 +1611,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointBuilder loggingFeatureEnabled(
                 String loggingFeatureEnabled) {
-            setProperty("loggingFeatureEnabled", loggingFeatureEnabled);
+            doSetProperty("loggingFeatureEnabled", loggingFeatureEnabled);
             return this;
         }
         /**
@@ -1627,7 +1623,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: logging
          */
         default CxfEndpointBuilder loggingSizeLimit(int loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -1639,7 +1635,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: logging
          */
         default CxfEndpointBuilder loggingSizeLimit(String loggingSizeLimit) {
-            setProperty("loggingSizeLimit", loggingSizeLimit);
+            doSetProperty("loggingSizeLimit", loggingSizeLimit);
             return this;
         }
         /**
@@ -1651,7 +1647,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: logging
          */
         default CxfEndpointBuilder skipFaultLogging(boolean skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -1663,7 +1659,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: logging
          */
         default CxfEndpointBuilder skipFaultLogging(String skipFaultLogging) {
-            setProperty("skipFaultLogging", skipFaultLogging);
+            doSetProperty("skipFaultLogging", skipFaultLogging);
             return this;
         }
         /**
@@ -1675,7 +1671,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: security
          */
         default CxfEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1687,7 +1683,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: security
          */
         default CxfEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -1698,7 +1694,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointBuilder bindingId(String bindingId) {
-            setProperty("bindingId", bindingId);
+            doSetProperty("bindingId", bindingId);
             return this;
         }
         /**
@@ -1711,7 +1707,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -1724,7 +1720,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default CxfEndpointBuilder publishedEndpointUrl(
                 String publishedEndpointUrl) {
-            setProperty("publishedEndpointUrl", publishedEndpointUrl);
+            doSetProperty("publishedEndpointUrl", publishedEndpointUrl);
             return this;
         }
         /**
@@ -1737,7 +1733,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointBuilder serviceClass(Class<Object> serviceClass) {
-            setProperty("serviceClass", serviceClass);
+            doSetProperty("serviceClass", serviceClass);
             return this;
         }
         /**
@@ -1750,7 +1746,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointBuilder serviceClass(String serviceClass) {
-            setProperty("serviceClass", serviceClass);
+            doSetProperty("serviceClass", serviceClass);
             return this;
         }
         /**
@@ -1762,7 +1758,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointBuilder serviceName(String serviceName) {
-            setProperty("serviceName", serviceName);
+            doSetProperty("serviceName", serviceName);
             return this;
         }
         /**
@@ -1774,7 +1770,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: service
          */
         default CxfEndpointBuilder wsdlURL(String wsdlURL) {
-            setProperty("wsdlURL", wsdlURL);
+            doSetProperty("wsdlURL", wsdlURL);
             return this;
         }
     }
@@ -1799,7 +1795,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder allowStreaming(Boolean allowStreaming) {
-            setProperty("allowStreaming", allowStreaming);
+            doSetProperty("allowStreaming", allowStreaming);
             return this;
         }
         /**
@@ -1814,7 +1810,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder allowStreaming(String allowStreaming) {
-            setProperty("allowStreaming", allowStreaming);
+            doSetProperty("allowStreaming", allowStreaming);
             return this;
         }
         /**
@@ -1827,7 +1823,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1840,7 +1836,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1851,7 +1847,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder bus(Object bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -1863,7 +1859,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder bus(String bus) {
-            setProperty("bus", bus);
+            doSetProperty("bus", bus);
             return this;
         }
         /**
@@ -1877,7 +1873,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder continuationTimeout(
                 long continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -1891,7 +1887,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder continuationTimeout(
                 String continuationTimeout) {
-            setProperty("continuationTimeout", continuationTimeout);
+            doSetProperty("continuationTimeout", continuationTimeout);
             return this;
         }
         /**
@@ -1904,7 +1900,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfBinding(Object cxfBinding) {
-            setProperty("cxfBinding", cxfBinding);
+            doSetProperty("cxfBinding", cxfBinding);
             return this;
         }
         /**
@@ -1917,7 +1913,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder cxfBinding(String cxfBinding) {
-            setProperty("cxfBinding", cxfBinding);
+            doSetProperty("cxfBinding", cxfBinding);
             return this;
         }
         /**
@@ -1928,14 +1924,12 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointBuilder cxfEndpointConfigurer(
-                Object cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointBuilder cxfConfigurer(Object cxfConfigurer) {
+            doSetProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -1946,14 +1940,12 @@ public interface CxfEndpointBuilderFactory {
          * method of CxfEndpointConfigurer.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.cxf.CxfEndpointConfigurer</code>
-         * type.
+         * <code>org.apache.camel.component.cxf.CxfConfigurer</code> type.
          * 
          * Group: advanced
          */
-        default AdvancedCxfEndpointBuilder cxfEndpointConfigurer(
-                String cxfEndpointConfigurer) {
-            setProperty("cxfEndpointConfigurer", cxfEndpointConfigurer);
+        default AdvancedCxfEndpointBuilder cxfConfigurer(String cxfConfigurer) {
+            doSetProperty("cxfConfigurer", cxfConfigurer);
             return this;
         }
         /**
@@ -1964,7 +1956,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder defaultBus(boolean defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -1975,7 +1967,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder defaultBus(String defaultBus) {
-            setProperty("defaultBus", defaultBus);
+            doSetProperty("defaultBus", defaultBus);
             return this;
         }
         /**
@@ -1989,7 +1981,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -2003,7 +1995,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -2017,7 +2009,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder mergeProtocolHeaders(
                 boolean mergeProtocolHeaders) {
-            setProperty("mergeProtocolHeaders", mergeProtocolHeaders);
+            doSetProperty("mergeProtocolHeaders", mergeProtocolHeaders);
             return this;
         }
         /**
@@ -2031,7 +2023,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder mergeProtocolHeaders(
                 String mergeProtocolHeaders) {
-            setProperty("mergeProtocolHeaders", mergeProtocolHeaders);
+            doSetProperty("mergeProtocolHeaders", mergeProtocolHeaders);
             return this;
         }
         /**
@@ -2043,7 +2035,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder mtomEnabled(boolean mtomEnabled) {
-            setProperty("mtomEnabled", mtomEnabled);
+            doSetProperty("mtomEnabled", mtomEnabled);
             return this;
         }
         /**
@@ -2055,7 +2047,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder mtomEnabled(String mtomEnabled) {
-            setProperty("mtomEnabled", mtomEnabled);
+            doSetProperty("mtomEnabled", mtomEnabled);
             return this;
         }
         /**
@@ -2070,7 +2062,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder properties(
                 Map<String, Object> properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -2085,7 +2077,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder properties(String properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -2097,7 +2089,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder skipPayloadMessagePartCheck(
                 boolean skipPayloadMessagePartCheck) {
-            setProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
+            doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
         /**
@@ -2109,7 +2101,7 @@ public interface CxfEndpointBuilderFactory {
          */
         default AdvancedCxfEndpointBuilder skipPayloadMessagePartCheck(
                 String skipPayloadMessagePartCheck) {
-            setProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
+            doSetProperty("skipPayloadMessagePartCheck", skipPayloadMessagePartCheck);
             return this;
         }
         /**
@@ -2121,7 +2113,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2133,7 +2125,7 @@ public interface CxfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -2154,7 +2146,7 @@ public interface CxfEndpointBuilderFactory {
      * The cxf component is used for SOAP WebServices using Apache CXF.
      * 
      * Category: soap,webservice
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-cxf
      * 
      * Syntax: <code>cxf:beanId:address</code>

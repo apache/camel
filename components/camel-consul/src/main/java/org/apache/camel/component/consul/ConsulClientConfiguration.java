@@ -32,7 +32,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
 
 @UriParams
-public class ConsulClientConfiguration implements Cloneable {
+public abstract class ConsulClientConfiguration implements Cloneable {
     @UriParam
     private String url;
     @UriParam(label = "advanced")
@@ -171,8 +171,8 @@ public class ConsulClientConfiguration implements Cloneable {
     }
 
     /**
-     * SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters
-     * instance.
+     * SSL configuration using an
+     * org.apache.camel.support.jsse.SSLContextParameters instance.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -253,7 +253,8 @@ public class ConsulClientConfiguration implements Cloneable {
     }
 
     /**
-     * Configure if the AgentClient should attempt a ping before returning the Consul instance
+     * Configure if the AgentClient should attempt a ping before returning the
+     * Consul instance
      */
     public void setPingInstance(boolean pingInstance) {
         this.pingInstance = pingInstance;

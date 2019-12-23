@@ -30,6 +30,7 @@ public class SpringSplitterWithCustomThreadPoolExecutorTest extends SplitterWith
         return context.getRegistry().lookupByNameAndType("myThreadPoolExecutor", ThreadPoolExecutor.class);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/splitterWithCustomThreadPoolExecutor.xml");
     }

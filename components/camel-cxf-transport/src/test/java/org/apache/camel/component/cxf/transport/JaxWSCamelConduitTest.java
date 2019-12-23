@@ -31,6 +31,7 @@ import static org.hamcrest.CoreMatchers.is;
  */
 public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 

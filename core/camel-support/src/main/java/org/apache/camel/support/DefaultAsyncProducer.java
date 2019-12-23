@@ -34,11 +34,13 @@ public abstract class DefaultAsyncProducer extends DefaultProducer implements As
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorAwaitManager awaitManager = exchange.getContext().adapt(ExtendedCamelContext.class).getAsyncProcessorAwaitManager();
         awaitManager.process(this, exchange);
     }
 
+    @Override
     public CompletableFuture<Exchange> processAsync(Exchange exchange) {
         AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
         process(exchange, callback);

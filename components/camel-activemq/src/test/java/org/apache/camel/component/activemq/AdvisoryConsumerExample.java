@@ -40,6 +40,7 @@ public class AdvisoryConsumerExample extends CamelTestSupport {
         Thread.sleep(10000);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

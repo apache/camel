@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 import javax.management.openmbean.CompositeData;
@@ -55,6 +56,7 @@ import org.apache.camel.spi.Validator;
  */
 public abstract class AbstractLocalCamelController extends AbstractCamelController implements LocalCamelController {
 
+    @Override
     public CamelContext getLocalCamelContext(String name) throws Exception {
         for (CamelContext camelContext : this.getLocalCamelContexts()) {
             if (camelContext.getName().equals(name)) {
@@ -155,6 +157,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return answer;
     }
 
+    @Override
     public String getCamelContextStatsAsXml(String camelContextName, boolean fullStats, boolean includeProcessors) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
@@ -177,6 +180,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return null;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Map<String, Object>> browseInflightExchanges(String camelContextName, String route, int limit, boolean sortByLongestDuration) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
@@ -227,6 +231,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return answer;
     }
 
+    @Override
     public void startContext(String camelContextName) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
@@ -238,6 +243,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
+    @Override
     public void stopContext(String camelContextName) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
@@ -245,6 +251,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
+    @Override
     public void suspendContext(String camelContextName) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
@@ -252,6 +259,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
+    @Override
     public void resumeContext(String camelContextName) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
@@ -259,10 +267,12 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
+    @Override
     public List<Map<String, String>> getRoutes(String camelContextName) throws Exception {
         return getRoutes(camelContextName, null);
     }
 
+    @Override
     public List<Map<String, String>> getRoutes(String camelContextName, String filter) throws Exception {
         List<Map<String, String>> answer = new ArrayList<>();
 
@@ -318,6 +328,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return answer;
     }
 
+    @Override
     public void resetRouteStats(String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
@@ -340,6 +351,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
+    @Override
     public void startRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
@@ -347,6 +359,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
+    @Override
     public void stopRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
@@ -354,6 +367,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
+    @Override
     public void suspendRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
@@ -361,6 +375,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
+    @Override
     public void resumeRoute(String camelContextName, String routeId) throws Exception {
         CamelContext context = getLocalCamelContext(camelContextName);
         if (context != null) {
@@ -368,6 +383,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         }
     }
 
+    @Override
     public String getRouteModelAsXml(String routeId, String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
@@ -429,6 +445,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return null;
     }
 
+    @Override
     public String getRestModelAsXml(String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
@@ -445,6 +462,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return ModelHelper.dumpModelAsXml(context, def);
     }
 
+    @Override
     public String getRestApiDocAsJson(String camelContextName) throws Exception {
         CamelContext context = this.getLocalCamelContext(camelContextName);
         if (context == null) {
@@ -454,6 +472,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return context.getRestRegistry().apiDocAsJson();
     }
 
+    @Override
     public List<Map<String, String>> getEndpoints(String camelContextName) throws Exception {
         List<Map<String, String>> answer = new ArrayList<>();
 
@@ -480,6 +499,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return answer;
     }
 
+    @Override
     public List<Map<String, String>> getEndpointRuntimeStatistics(String camelContextName) throws Exception {
         List<Map<String, String>> answer = new ArrayList<>();
 
@@ -530,6 +550,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         return answer;
     }
 
+    @Override
     public List<Map<String, String>> getRestServices(String camelContextName) throws Exception {
         List<Map<String, String>> answer = new ArrayList<>();
 
@@ -571,7 +592,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         if (camelContextName != null) {
             CamelContext context = this.getLocalCamelContext(camelContextName);
             if (context != null) {
-                List<Transformer> transformers = new ArrayList<Transformer>(context.getTransformerRegistry().values());
+                List<Transformer> transformers = new ArrayList<>(context.getTransformerRegistry().values());
                 for (Transformer transformer : transformers) {
                     Map<String, String> row = new LinkedHashMap<>();
                     row.put("camelContextName", context.getName());
@@ -594,7 +615,7 @@ public abstract class AbstractLocalCamelController extends AbstractCamelControll
         if (camelContextName != null) {
             CamelContext context = this.getLocalCamelContext(camelContextName);
             if (context != null) {
-                List<Validator> validators = new ArrayList<Validator>(context.getValidatorRegistry().values());
+                List<Validator> validators = new ArrayList<>(context.getValidatorRegistry().values());
                 for (Validator validator : validators) {
                     Map<String, String> row = new LinkedHashMap<>();
                     row.put("camelContextName", context.getName());

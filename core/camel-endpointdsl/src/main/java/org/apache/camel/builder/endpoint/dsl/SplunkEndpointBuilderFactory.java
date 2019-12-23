@@ -27,7 +27,6 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The splunk component allows to publish or search for events in Splunk.
@@ -55,7 +54,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointConsumerBuilder app(String app) {
-            setProperty("app", app);
+            doSetProperty("app", app);
             return this;
         }
         /**
@@ -67,7 +66,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -79,7 +78,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -90,7 +89,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointConsumerBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -101,7 +100,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointConsumerBuilder owner(String owner) {
-            setProperty("owner", owner);
+            doSetProperty("owner", owner);
             return this;
         }
         /**
@@ -112,7 +111,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointConsumerBuilder port(int port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -123,7 +122,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointConsumerBuilder port(String port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -134,7 +133,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointConsumerBuilder scheme(String scheme) {
-            setProperty("scheme", scheme);
+            doSetProperty("scheme", scheme);
             return this;
         }
         /**
@@ -152,7 +151,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -170,7 +169,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -181,7 +180,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder count(int count) {
-            setProperty("count", count);
+            doSetProperty("count", count);
             return this;
         }
         /**
@@ -192,7 +191,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder count(String count) {
-            setProperty("count", count);
+            doSetProperty("count", count);
             return this;
         }
         /**
@@ -203,7 +202,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder earliestTime(String earliestTime) {
-            setProperty("earliestTime", earliestTime);
+            doSetProperty("earliestTime", earliestTime);
             return this;
         }
         /**
@@ -215,7 +214,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder initEarliestTime(
                 String initEarliestTime) {
-            setProperty("initEarliestTime", initEarliestTime);
+            doSetProperty("initEarliestTime", initEarliestTime);
             return this;
         }
         /**
@@ -226,7 +225,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder latestTime(String latestTime) {
-            setProperty("latestTime", latestTime);
+            doSetProperty("latestTime", latestTime);
             return this;
         }
         /**
@@ -237,7 +236,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder savedSearch(String savedSearch) {
-            setProperty("savedSearch", savedSearch);
+            doSetProperty("savedSearch", savedSearch);
             return this;
         }
         /**
@@ -248,7 +247,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder search(String search) {
-            setProperty("search", search);
+            doSetProperty("search", search);
             return this;
         }
         /**
@@ -261,7 +260,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -274,32 +273,31 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
          * Sets streaming mode. Streaming mode sends exchanges as they are
          * received, rather than in a batch.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: consumer
          */
-        default SplunkEndpointConsumerBuilder streaming(Boolean streaming) {
-            setProperty("streaming", streaming);
+        default SplunkEndpointConsumerBuilder streaming(boolean streaming) {
+            doSetProperty("streaming", streaming);
             return this;
         }
         /**
          * Sets streaming mode. Streaming mode sends exchanges as they are
          * received, rather than in a batch.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder streaming(String streaming) {
-            setProperty("streaming", streaming);
+            doSetProperty("streaming", streaming);
             return this;
         }
         /**
@@ -312,7 +310,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -325,7 +323,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -338,7 +336,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -351,7 +349,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -368,7 +366,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -385,7 +383,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -398,7 +396,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -411,7 +409,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -423,7 +421,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -435,7 +433,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -448,7 +446,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -461,7 +459,33 @@ public interface SplunkEndpointBuilderFactory {
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default SplunkEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default SplunkEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -474,7 +498,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -488,7 +512,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -503,7 +527,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -518,41 +542,24 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default SplunkEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -561,12 +568,12 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -576,7 +583,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -588,7 +595,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -600,7 +607,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -611,7 +618,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -623,7 +630,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -636,7 +643,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -648,7 +655,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -659,7 +666,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: security
          */
         default SplunkEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -671,7 +678,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -683,7 +690,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: security
          */
         default SplunkEndpointConsumerBuilder sslProtocol(String sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -694,7 +701,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: security
          */
         default SplunkEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -708,7 +715,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
-            setProperty("useSunHttpsHandler", useSunHttpsHandler);
+            doSetProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
         }
         /**
@@ -722,7 +729,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointConsumerBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
-            setProperty("useSunHttpsHandler", useSunHttpsHandler);
+            doSetProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
         }
     }
@@ -749,7 +756,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -765,7 +772,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -777,7 +784,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -790,7 +797,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -806,7 +813,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -822,7 +829,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -835,7 +842,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -848,7 +855,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -861,7 +868,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -874,7 +881,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -896,7 +903,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointProducerBuilder app(String app) {
-            setProperty("app", app);
+            doSetProperty("app", app);
             return this;
         }
         /**
@@ -908,7 +915,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -920,7 +927,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -931,7 +938,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointProducerBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -942,7 +949,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointProducerBuilder owner(String owner) {
-            setProperty("owner", owner);
+            doSetProperty("owner", owner);
             return this;
         }
         /**
@@ -953,7 +960,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointProducerBuilder port(int port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -964,7 +971,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointProducerBuilder port(String port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -975,7 +982,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointProducerBuilder scheme(String scheme) {
-            setProperty("scheme", scheme);
+            doSetProperty("scheme", scheme);
             return this;
         }
         /**
@@ -986,7 +993,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: producer
          */
         default SplunkEndpointProducerBuilder eventHost(String eventHost) {
-            setProperty("eventHost", eventHost);
+            doSetProperty("eventHost", eventHost);
             return this;
         }
         /**
@@ -997,7 +1004,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: producer
          */
         default SplunkEndpointProducerBuilder index(String index) {
-            setProperty("index", index);
+            doSetProperty("index", index);
             return this;
         }
         /**
@@ -1017,7 +1024,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1037,7 +1044,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1048,7 +1055,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: producer
          */
         default SplunkEndpointProducerBuilder raw(boolean raw) {
-            setProperty("raw", raw);
+            doSetProperty("raw", raw);
             return this;
         }
         /**
@@ -1059,7 +1066,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: producer
          */
         default SplunkEndpointProducerBuilder raw(String raw) {
-            setProperty("raw", raw);
+            doSetProperty("raw", raw);
             return this;
         }
         /**
@@ -1070,7 +1077,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: producer
          */
         default SplunkEndpointProducerBuilder source(String source) {
-            setProperty("source", source);
+            doSetProperty("source", source);
             return this;
         }
         /**
@@ -1081,7 +1088,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: producer
          */
         default SplunkEndpointProducerBuilder sourceType(String sourceType) {
-            setProperty("sourceType", sourceType);
+            doSetProperty("sourceType", sourceType);
             return this;
         }
         /**
@@ -1093,7 +1100,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointProducerBuilder tcpReceiverPort(
                 int tcpReceiverPort) {
-            setProperty("tcpReceiverPort", tcpReceiverPort);
+            doSetProperty("tcpReceiverPort", tcpReceiverPort);
             return this;
         }
         /**
@@ -1105,7 +1112,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointProducerBuilder tcpReceiverPort(
                 String tcpReceiverPort) {
-            setProperty("tcpReceiverPort", tcpReceiverPort);
+            doSetProperty("tcpReceiverPort", tcpReceiverPort);
             return this;
         }
         /**
@@ -1116,7 +1123,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: security
          */
         default SplunkEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1128,7 +1135,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointProducerBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -1140,7 +1147,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: security
          */
         default SplunkEndpointProducerBuilder sslProtocol(String sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -1151,7 +1158,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: security
          */
         default SplunkEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -1165,7 +1172,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointProducerBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
-            setProperty("useSunHttpsHandler", useSunHttpsHandler);
+            doSetProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
         }
         /**
@@ -1179,7 +1186,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointProducerBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
-            setProperty("useSunHttpsHandler", useSunHttpsHandler);
+            doSetProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
         }
     }
@@ -1203,7 +1210,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1216,7 +1223,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1229,7 +1236,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1242,7 +1249,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1264,7 +1271,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointBuilder app(String app) {
-            setProperty("app", app);
+            doSetProperty("app", app);
             return this;
         }
         /**
@@ -1275,7 +1282,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointBuilder connectionTimeout(int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1286,7 +1293,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointBuilder connectionTimeout(String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1297,7 +1304,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointBuilder host(String host) {
-            setProperty("host", host);
+            doSetProperty("host", host);
             return this;
         }
         /**
@@ -1308,7 +1315,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointBuilder owner(String owner) {
-            setProperty("owner", owner);
+            doSetProperty("owner", owner);
             return this;
         }
         /**
@@ -1319,7 +1326,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointBuilder port(int port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -1330,7 +1337,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointBuilder port(String port) {
-            setProperty("port", port);
+            doSetProperty("port", port);
             return this;
         }
         /**
@@ -1341,7 +1348,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: common
          */
         default SplunkEndpointBuilder scheme(String scheme) {
-            setProperty("scheme", scheme);
+            doSetProperty("scheme", scheme);
             return this;
         }
         /**
@@ -1352,7 +1359,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: security
          */
         default SplunkEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1364,7 +1371,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointBuilder sslProtocol(
                 SSLSecurityProtocol sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -1376,7 +1383,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: security
          */
         default SplunkEndpointBuilder sslProtocol(String sslProtocol) {
-            setProperty("sslProtocol", sslProtocol);
+            doSetProperty("sslProtocol", sslProtocol);
             return this;
         }
         /**
@@ -1387,7 +1394,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: security
          */
         default SplunkEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -1401,7 +1408,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointBuilder useSunHttpsHandler(
                 boolean useSunHttpsHandler) {
-            setProperty("useSunHttpsHandler", useSunHttpsHandler);
+            doSetProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
         }
         /**
@@ -1415,7 +1422,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default SplunkEndpointBuilder useSunHttpsHandler(
                 String useSunHttpsHandler) {
-            setProperty("useSunHttpsHandler", useSunHttpsHandler);
+            doSetProperty("useSunHttpsHandler", useSunHttpsHandler);
             return this;
         }
     }
@@ -1439,7 +1446,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1452,7 +1459,7 @@ public interface SplunkEndpointBuilderFactory {
          */
         default AdvancedSplunkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1464,7 +1471,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSplunkEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1476,7 +1483,7 @@ public interface SplunkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSplunkEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1495,7 +1502,7 @@ public interface SplunkEndpointBuilderFactory {
      * The splunk component allows to publish or search for events in Splunk.
      * 
      * Category: log,monitoring
-     * Available as of version: 2.13
+     * Since: 2.13
      * Maven coordinates: org.apache.camel:camel-splunk
      * 
      * Syntax: <code>splunk:name</code>

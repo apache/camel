@@ -18,10 +18,10 @@ package org.apache.camel.component.cometd;
 
 import java.util.List;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -39,10 +39,10 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
     private int port;
     private String uri;
     
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("sslContextParameters")
+    public SSLContextParameters addSslContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword("changeit");
         
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -56,9 +56,7 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
         sslContextParameters.setKeyManagers(kmp);
         sslContextParameters.setTrustManagers(tmp);
         
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("sslContextParameters", sslContextParameters);
-        return registry;
+        return sslContextParameters;
     }
 
     @Test
@@ -77,7 +75,7 @@ public class SslContextParametersInUriCometdProducerConsumerTest extends CamelTe
     @Override
     @Before
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(23500);
+        port = AvailablePortFinder.getNextAvailable();
         uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
                 + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
         super.setUp();

@@ -47,7 +47,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder currency(Object currency) {
-            setProperty("currency", currency);
+            doSetProperty("currency", currency);
             return this;
         }
         /**
@@ -59,31 +59,58 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder currency(String currency) {
-            setProperty("currency", currency);
+            doSetProperty("currency", currency);
             return this;
         }
         /**
          * The currency pair.
          * 
-         * The option is a: <code>org.knowm.xchange.currency.CurrencyPair</code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default XChangeEndpointBuilder currencyPair(Object currencyPair) {
-            setProperty("currencyPair", currencyPair);
-            return this;
-        }
-        /**
-         * The currency pair.
-         * 
-         * The option will be converted to a
-         * <code>org.knowm.xchange.currency.CurrencyPair</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
         default XChangeEndpointBuilder currencyPair(String currencyPair) {
-            setProperty("currencyPair", currencyPair);
+            doSetProperty("currencyPair", currencyPair);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default XChangeEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default XChangeEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -96,7 +123,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder method(XChangeMethod method) {
-            setProperty("method", method);
+            doSetProperty("method", method);
             return this;
         }
         /**
@@ -109,7 +136,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder method(String method) {
-            setProperty("method", method);
+            doSetProperty("method", method);
             return this;
         }
         /**
@@ -122,7 +149,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder service(XChangeService service) {
-            setProperty("service", service);
+            doSetProperty("service", service);
             return this;
         }
         /**
@@ -135,7 +162,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: producer
          */
         default XChangeEndpointBuilder service(String service) {
-            setProperty("service", service);
+            doSetProperty("service", service);
             return this;
         }
     }
@@ -159,7 +186,7 @@ public interface XChangeEndpointBuilderFactory {
          */
         default AdvancedXChangeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -172,7 +199,7 @@ public interface XChangeEndpointBuilderFactory {
          */
         default AdvancedXChangeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -184,7 +211,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -196,7 +223,7 @@ public interface XChangeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -231,7 +258,7 @@ public interface XChangeEndpointBuilderFactory {
      * exchanges for trading and accessing market data.
      * 
      * Category: bitcoin,blockchain
-     * Available as of version: 2.21
+     * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-xchange
      * 
      * Syntax: <code>xchange:name</code>
@@ -239,7 +266,7 @@ public interface XChangeEndpointBuilderFactory {
      * Path parameter: name (required)
      * The exchange to connect to
      */
-    default XChangeEndpointBuilder xChange(String path) {
+    default XChangeEndpointBuilder xchange(String path) {
         class XChangeEndpointBuilderImpl extends AbstractEndpointBuilder implements XChangeEndpointBuilder, AdvancedXChangeEndpointBuilder {
             public XChangeEndpointBuilderImpl(String path) {
                 super("xchange", path);

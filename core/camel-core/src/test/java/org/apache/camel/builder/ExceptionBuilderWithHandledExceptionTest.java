@@ -66,7 +66,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
         MockEndpoint mock = getMockEndpoint(ERROR_QUEUE);
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(MESSAGE_INFO, "Handled exchange with IOException");
-        
+
         try {
             template.sendBodyAndHeader("direct:a", "Hello IOE", "foo", "something that does not match");
             fail("Should have thrown a IOException");
@@ -78,22 +78,17 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
         MockEndpoint.assertIsSatisfied(result, mock);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // START SNIPPET: exceptionBuilder1
-                onException(NullPointerException.class)
-                    .maximumRedeliveries(0)
-                    .handled(true)
-                    .setHeader(MESSAGE_INFO, constant("Handled exchange with NullPointerException"))
+                onException(NullPointerException.class).maximumRedeliveries(0).handled(true).setHeader(MESSAGE_INFO, constant("Handled exchange with NullPointerException"))
                     .to(ERROR_QUEUE);
 
-                onException(IOException.class)
-                    .maximumRedeliveries(0)
-                    .handled(header("foo").isEqualTo("bar"))
-                    .setHeader(MESSAGE_INFO, constant("Handled exchange with IOException"))
+                onException(IOException.class).maximumRedeliveries(0).handled(header("foo").isEqualTo("bar")).setHeader(MESSAGE_INFO, constant("Handled exchange with IOException"))
                     .to(ERROR_QUEUE);
                 // END SNIPPET: exceptionBuilder1
 
@@ -106,7 +101,7 @@ public class ExceptionBuilderWithHandledExceptionTest extends ContextTestSupport
                             // specialized IOException
                             throw new ConnectException("Forced for testing - cannot connect to remote server");
                         }
-                        exchange.getOut().setBody("Hello World");
+                        exchange.getMessage().setBody("Hello World");
                     }
                 }).to("mock:result");
             }

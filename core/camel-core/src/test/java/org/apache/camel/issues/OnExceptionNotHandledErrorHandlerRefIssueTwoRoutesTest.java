@@ -61,7 +61,7 @@ public class OnExceptionNotHandledErrorHandlerRefIssueTwoRoutesTest extends Cont
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myDLC", new DeadLetterChannelBuilder("mock:dead"));
-        return  jndi;
+        return jndi;
     }
 
     @Override
@@ -71,16 +71,9 @@ public class OnExceptionNotHandledErrorHandlerRefIssueTwoRoutesTest extends Cont
             public void configure() throws Exception {
                 errorHandler(new ErrorHandlerBuilderRef("myDLC"));
 
-                from("direct:foo")
-                    .to("mock:foo")
-                    .throwException(new IllegalArgumentException("Damn Foo"));
+                from("direct:foo").to("mock:foo").throwException(new IllegalArgumentException("Damn Foo"));
 
-                from("direct:start")
-                    .onException(IllegalArgumentException.class)
-                        .handled(false)
-                        .to("mock:handled")
-                    .end()
-                    .to("mock:a")
+                from("direct:start").onException(IllegalArgumentException.class).handled(false).to("mock:handled").end().to("mock:a")
                     .throwException(new IllegalArgumentException("Damn"));
             }
         };

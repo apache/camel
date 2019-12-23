@@ -38,12 +38,11 @@ public class DeadLetterChannelLogExhaustedMessageHistoryTest extends ContextTest
             public void configure() throws Exception {
                 // no delay to speedup test
                 errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3)
-                        // need to turn on logging handled and exhausted to see this with DLC
-                        .logHandled(true).logExhausted(true).logExhaustedMessageHistory(true));
+                    // need to turn on logging handled and exhausted to see this
+                    // with DLC
+                    .logHandled(true).logExhausted(true).logExhaustedMessageHistory(true));
 
-                from("direct:start")
-                    .log("Incoming ${body}")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.syslog;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -78,7 +79,7 @@ public class MinaDataFormatTest extends CamelTestSupport {
                 DataFormat syslogDataFormat = new SyslogDataFormat();
 
                 // we setup a Syslog  listener on a random port.
-                from("mina2:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {
+                from("mina:udp://127.0.0.1:" + serverPort).unmarshal(syslogDataFormat).process(new Processor() {
                     public void process(Exchange ex) {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }

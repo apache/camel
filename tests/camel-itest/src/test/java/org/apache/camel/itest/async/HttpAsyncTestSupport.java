@@ -26,7 +26,7 @@ public class HttpAsyncTestSupport extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(23000);
+        port = AvailablePortFinder.getNextAvailable();
     }
 
     protected int getPort() {

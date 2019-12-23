@@ -26,7 +26,7 @@ public class KMSComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonKMSClientMock clientMock = new AmazonKMSClientMock();
         context.getRegistry().bind("amazonKmsClient", clientMock);
-        KMSComponent component = new KMSComponent(context);
+        KMSComponent component = context.getComponent("aws-kms", KMSComponent.class);
         KMSEndpoint endpoint = (KMSEndpoint)component.createEndpoint("aws-kms://TestDomain");
 
         assertNotNull(endpoint.getConfiguration().getKmsClient());
@@ -35,7 +35,7 @@ public class KMSComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
-        KMSComponent component = new KMSComponent(context);
+        KMSComponent component = context.getComponent("aws-kms", KMSComponent.class);
         KMSEndpoint endpoint = (KMSEndpoint)component.createEndpoint("aws-kms://TestDomain");
     }
 }

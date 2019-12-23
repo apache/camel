@@ -20,6 +20,7 @@ import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.management.MXBean;
 
 /**
@@ -378,6 +379,13 @@ public interface CamelCatalog {
     String blueprintSchemaAsXml();
 
     /**
+     * Returns the camel-main json schema
+     *
+     * @return the camel-main json schema
+     */
+    String mainJsonSchema();
+
+    /**
      * Parses the endpoint uri and constructs a key/value properties of each option
      *
      * @param uri  the endpoint uri
@@ -464,6 +472,14 @@ public interface CamelCatalog {
      * @return validation result
      */
     LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text);
+
+    /**
+     * Parses and validates the configuration property
+     *
+     * @param text  the configuration text
+     * @return validation result
+     */
+    ConfigurationPropertiesValidationResult validateConfigurationProperty(String text);
 
     /**
      * Returns the component name from the given endpoint uri

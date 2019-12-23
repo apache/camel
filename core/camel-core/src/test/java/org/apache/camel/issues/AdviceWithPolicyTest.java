@@ -54,10 +54,7 @@ public class AdviceWithPolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .policy(new MyPolicy())
-                    .to("mock:a").id("a")
-                    .to("mock:b").id("b");
+                from("direct:start").policy(new MyPolicy()).to("mock:a").id("a").to("mock:b").id("b");
             }
         };
     }

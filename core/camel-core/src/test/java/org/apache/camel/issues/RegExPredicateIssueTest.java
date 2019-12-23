@@ -27,11 +27,7 @@ public class RegExPredicateIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .choice()
-                        .when(bodyAs(String.class).regex("^0.*$")).to("mock:result")
-                        .otherwise().to("mock:other")
-                    .end();
+                from("direct:a").choice().when(bodyAs(String.class).regex("^0.*$")).to("mock:result").otherwise().to("mock:other").end();
             }
         };
     }

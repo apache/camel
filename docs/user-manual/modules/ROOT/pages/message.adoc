@@ -1,5 +1,5 @@
 [[message-eip]]
-== Message
+= Message
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/Message.html[Message] from
@@ -7,7 +7,7 @@ the xref:enterprise-integration-patterns.adoc[EIP patterns] using the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Message.html[Message]
 interface.
 
-image:http://www.enterpriseintegrationpatterns.com/img/MessageSolution.gif[image]
+image::eip/MessageSolution.gif[image]
 
 To support various message xref:exchange-pattern.adoc[exchange patterns]
 like one way xref:event-message.adoc[Event Message] and
@@ -41,4 +41,4 @@ from("direct:startInOut")
   .inOut("bean:process");
 ----
 
-See https://github.com/apache/camel/blob/master/camel-core/src/main/docs/eips/to-eip.adoc[to-eip with pattern]
+See xref:to-eip.adoc[to-eip with pattern]

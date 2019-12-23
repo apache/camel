@@ -41,7 +41,8 @@ public class RecipientListParallelAggregateThreadPoolIssueTest extends ContextTe
         int num1 = context.getTypeConverter().convertTo(int.class, before);
         int num2 = context.getTypeConverter().convertTo(int.class, after);
         int diff = num2 - num1;
-        // should be at least 10 + 1 other threads (10 in parallel pool + 1 in aggregate pool)
+        // should be at least 10 + 1 other threads (10 in parallel pool + 1 in
+        // aggregate pool)
         // we run unit test per jmv fork, so there may be a hanging thread
         assertTrue("There should be 12 or more threads in use, was: " + diff, diff >= 11);
     }
@@ -53,8 +54,7 @@ public class RecipientListParallelAggregateThreadPoolIssueTest extends ContextTe
             public void configure() throws Exception {
                 context.getExecutorServiceManager().setThreadNamePattern("#counter#");
 
-                from("direct:start")
-                        .recipientList(header("foo")).parallelProcessing();
+                from("direct:start").recipientList(header("foo")).parallelProcessing();
 
                 from("direct:a").to("log:a").transform(constant("a")).to("mock:result");
                 from("direct:b").to("log:b").transform(constant("b")).to("mock:result");

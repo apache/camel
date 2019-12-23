@@ -33,7 +33,6 @@ import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.model.Model;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Debugger;
@@ -52,6 +51,7 @@ import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.ReactiveExecutor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteController;
@@ -86,6 +86,11 @@ public final class DefaultConfigurationConfigurer {
      * @param config       the configuration
      */
     public static void configure(CamelContext camelContext, DefaultConfigurationProperties config) throws Exception {
+        camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setExtendedStatistics(config.isBeanIntrospectionExtendedStatistics());
+        if (config.getBeanIntrospectionLoggingLevel() != null) {
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setLoggingLevel(config.getBeanIntrospectionLoggingLevel());
+        }
+
         if (!config.isJmxEnabled()) {
             camelContext.disableJMX();
         }
@@ -136,12 +141,12 @@ public final class DefaultConfigurationConfigurer {
         camelContext.setMessageHistory(config.isMessageHistory());
         camelContext.setLogMask(config.isLogMask());
         camelContext.setLogExhaustedMessageBody(config.isLogExhaustedMessageBody());
-        camelContext.setHandleFault(config.isHandleFault());
         camelContext.setAutoStartup(config.isAutoStartup());
         camelContext.setAllowUseOriginalMessage(config.isAllowUseOriginalMessage());
         camelContext.setUseBreadcrumb(config.isUseBreadcrumb());
         camelContext.setUseDataType(config.isUseDataType());
         camelContext.setUseMDCLogging(config.isUseMdcLogging());
+        camelContext.setMDCLoggingKeysPattern(config.getMdcLoggingKeysPattern());
         camelContext.setLoadTypeConverters(config.isLoadTypeConverters());
 
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
@@ -151,7 +156,14 @@ public final class DefaultConfigurationConfigurer {
             camelContext.getManagementStrategy().getManagementAgent().setCreateConnector(config.isJmxCreateConnector());
         }
 
+        // global endpoint configurations
+        camelContext.getGlobalEndpointConfiguration().setBasicPropertyBinding(config.isEndpointBasicPropertyBinding());
+        camelContext.getGlobalEndpointConfiguration().setBridgeErrorHandler(config.isEndpointBridgeErrorHandler());
+        camelContext.getGlobalEndpointConfiguration().setLazyStartProducer(config.isEndpointLazyStartProducer());
+
+        camelContext.setBacklogTracing(config.isBacklogTracing());
         camelContext.setTracing(config.isTracing());
+        camelContext.setTracingPattern(config.getTracingPattern());
 
         if (config.getThreadNamePattern() != null) {
             camelContext.getExecutorServiceManager().setThreadNamePattern(config.getThreadNamePattern());
@@ -174,13 +186,13 @@ public final class DefaultConfigurationConfigurer {
         final ManagementStrategy managementStrategy = camelContext.getManagementStrategy();
         final ExtendedCamelContext ecc = camelContext.adapt(ExtendedCamelContext.class);
 
+        PropertiesComponent pc = getSingleBeanOfType(registry, PropertiesComponent.class);
+        if (pc != null) {
+            ecc.setPropertiesComponent(pc);
+        }
         BacklogTracer bt = getSingleBeanOfType(registry, BacklogTracer.class);
         if (bt != null) {
             ecc.setExtension(BacklogTracer.class, bt);
-        }
-        HandleFault hf = getSingleBeanOfType(registry, HandleFault.class);
-        if (hf != null) {
-            ecc.addInterceptStrategy(hf);
         }
         InflightRepository ir = getSingleBeanOfType(registry, InflightRepository.class);
         if (ir != null) {

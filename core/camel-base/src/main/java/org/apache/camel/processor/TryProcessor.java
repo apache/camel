@@ -48,16 +48,19 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
         this.finallyProcessor = finallyProcessor;
     }
 
+    @Override
     public String toString() {
         String catchText = catchClauses == null || catchClauses.isEmpty() ? "" : " Catches {" + catchClauses + "}";
         String finallyText = (finallyProcessor == null) ? "" : " Finally {" + finallyProcessor + "}";
         return "Try {" + tryProcessor + "}" + catchText + finallyText;
     }
 
+    @Override
     public String getTraceLabel() {
         return "doTry";
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
 
         exchange.getContext().getReactiveExecutor().schedule(new TryState(exchange, callback));
@@ -99,6 +102,7 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
             }
         }
 
+        @Override
         public String toString() {
             return "TryState[" + exchange.getExchangeId() + "]";
         }
@@ -118,14 +122,17 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
         return it.hasNext();
     }
 
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(tryProcessor, catchClauses, finallyProcessor);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(tryProcessor, catchClauses, finallyProcessor);
     }
 
+    @Override
     public List<Processor> next() {
         if (!hasNext()) {
             return null;
@@ -143,14 +150,17 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
         return answer;
     }
 
+    @Override
     public boolean hasNext() {
         return tryProcessor != null || catchClauses != null && !catchClauses.isEmpty() || finallyProcessor != null;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

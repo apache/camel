@@ -34,7 +34,6 @@ import com.amazonaws.services.sns.model.ListTopicsResult;
 import com.amazonaws.services.sns.model.SetTopicAttributesRequest;
 import com.amazonaws.services.sns.model.Topic;
 import com.amazonaws.services.sns.util.Topics;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -70,6 +69,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.configuration = configuration;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -77,21 +77,24 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     /**
      * To use a custom HeaderFilterStrategy to map headers to/from Camel.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SnsProducer(this);
     }
 
     @Override
-    public void doStart() throws Exception {
-        super.doStart();
+    public void doInit() throws Exception {
+        super.doInit();
         snsClient = configuration.getAmazonSNSClient() != null
             ? configuration.getAmazonSNSClient() : createSNSClient();
 
@@ -198,6 +201,7 @@ public class SnsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyProtocol(configuration.getProxyProtocol());
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
             isClientConfigFound = true;

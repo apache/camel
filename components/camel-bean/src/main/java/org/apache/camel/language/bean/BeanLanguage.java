@@ -78,10 +78,12 @@ public class BeanLanguage extends LanguageSupport {
         this.method = method;
     }
 
+    @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
 
+    @Override
     public Expression createExpression(String expression) {
         // favour using the configured options
         if (bean != null) {
@@ -130,6 +132,7 @@ public class BeanLanguage extends LanguageSupport {
         }
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

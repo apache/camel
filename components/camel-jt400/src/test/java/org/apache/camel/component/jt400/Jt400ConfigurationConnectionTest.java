@@ -26,6 +26,7 @@ public class Jt400ConfigurationConnectionTest extends Jt400TestSupport {
     private Jt400Configuration jt400Configuration;
     private AS400 connection;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -35,6 +36,7 @@ public class Jt400ConfigurationConnectionTest extends Jt400TestSupport {
         connection = jt400Configuration.getConnection();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (connection != null) {

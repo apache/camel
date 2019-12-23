@@ -1,7 +1,8 @@
 [[mvel-language]]
-== MVEL Language
+= MVEL Language
+:page-source: components/camel-mvel/src/main/docs/mvel-language.adoc
 
-*Available as of Camel version 2.0*
+*Since Camel 2.0*
 
 Camel allows Mvel to be used as an Expression or
 Predicate the DSL or
@@ -23,7 +24,7 @@ you can construct the syntax as follows:
 "getRequest().getBody().getFamilyName()"
 ----------------------------------------
 
-### Mvel Options
+== Mvel Options
 
 // language options: START
 The MVEL language supports 1 options, which are listed below.
@@ -37,14 +38,14 @@ The MVEL language supports 1 options, which are listed below.
 |===
 // language options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-mvel-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -52,7 +53,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 5 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -60,15 +61,16 @@ The component supports 5 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.mvel.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.mvel.enabled* | Enable mvel component | true | Boolean
-| *camel.component.mvel.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.language.mvel.enabled* | Enable mvel language | true | Boolean
+| *camel.component.mvel.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.mvel.enabled* | Whether to enable auto configuration of the mvel component. This is enabled by default. |  | Boolean
+| *camel.component.mvel.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+| *camel.language.mvel.enabled* | Whether to enable auto configuration of the mvel language. This is enabled by default. |  | Boolean
 | *camel.language.mvel.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-### Variables
+== Variables
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -95,9 +97,9 @@ The component supports 5 options, which are listed below.
 |property(name, type) |Type |the property by the given name as the given type
 |=======================================================================
 
-### Samples
+== Samples
 
-For example you could use Mvel inside a xref:message-filter.adoc[Message
+For example you could use Mvel inside a xref:manual::filter-eip.adoc[Message
 Filter] in XML
 
 [source,java]
@@ -118,9 +120,9 @@ And the sample using Java DSL:
    from("seda:foo").filter().mvel("request.headers.foo == 'bar'").to("seda:bar");
 ---------------------------------------------------------------------------------
 
-### Loading script from external resource
+== Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
@@ -132,7 +134,7 @@ eg to refer to a file on the classpath you can do:
 .setHeader("myHeader").mvel("resource:classpath:script.mvel")
 -------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use Mvel in your camel routes you need to add the a dependency on
 *camel-mvel* which implements the Mvel language.

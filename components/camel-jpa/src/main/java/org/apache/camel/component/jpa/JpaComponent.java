@@ -18,6 +18,7 @@ package org.apache.camel.component.jpa;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
@@ -121,6 +122,7 @@ public class JpaComponent extends DefaultComponent {
                 endpoint.setEntityType(type);
             }
         }
+        setProperties(endpoint, options);
         return endpoint;
     }
 

@@ -21,7 +21,6 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.junit.Test;
 
 public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
@@ -34,9 +33,7 @@ public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
         properties.put("foo", "bar");
 
         camelContext.getRegistry().bind("myProp", properties);
-
-        PropertiesComponent pc = camelContext.getComponent("properties", PropertiesComponent.class);
-        pc.addLocation("ref:myProp");
+        camelContext.getPropertiesComponent().addLocation("ref:myProp");
 
         return camelContext;
     }
@@ -61,21 +58,10 @@ public class PropertiesAvailableEverywhereTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // Properties in headers
-                from("direct:header-start")
-                    .setHeader("foo", simple("{{foo}}"))
-                    .choice()
-                        .when(simple("${header.foo} == 'bar'"))
-                        .to("mock:header-ok")
-                    .otherwise()
-                        .to("mock:ko");
+                from("direct:header-start").setHeader("foo", simple("{{foo}}")).choice().when(simple("${header.foo} == 'bar'")).to("mock:header-ok").otherwise().to("mock:ko");
 
                 // Properties in choices
-                from("direct:choice-start")
-                    .choice()
-                        .when(simple("'{{foo}}' == 'bar'"))
-                            .to("mock:choice-ok")
-                        .otherwise()
-                            .to("mock:ko");
+                from("direct:choice-start").choice().when(simple("'{{foo}}' == 'bar'")).to("mock:choice-ok").otherwise().to("mock:ko");
 
                 // Properties in URI
                 from("direct:direct-start").to("direct:direct-{{foo}}");

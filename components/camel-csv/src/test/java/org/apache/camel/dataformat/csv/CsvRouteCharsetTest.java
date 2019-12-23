@@ -40,6 +40,7 @@ public class CsvRouteCharsetTest extends CamelTestSupport {
         assertEquals("Lücky Luke", data.get(2).get(0));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

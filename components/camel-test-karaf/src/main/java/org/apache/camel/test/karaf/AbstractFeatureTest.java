@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.function.Consumer;
+
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;

@@ -32,6 +32,7 @@ public class InvertingPackageScanFilter implements PackageScanFilter {
         this.filter = filter;
     }
 
+    @Override
     public boolean matches(Class<?> type) {
         return !filter.matches(type);
     }

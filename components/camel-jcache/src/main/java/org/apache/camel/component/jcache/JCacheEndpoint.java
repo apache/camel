@@ -35,7 +35,7 @@ public class JCacheEndpoint extends DefaultEndpoint {
     @Metadata(required = true)
     private final String cacheName;
     @UriParam
-    private final JCacheConfiguration cacheConfiguration;
+    private final JCacheConfiguration configuration;
 
     private volatile JCacheManager<Object, Object> cacheManager;
 
@@ -43,22 +43,28 @@ public class JCacheEndpoint extends DefaultEndpoint {
         super(uri, component);
 
         this.cacheName = configuration.getCacheName();
-        this.cacheConfiguration = configuration;
+        this.configuration = configuration;
+    }
+
+    public JCacheConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override
     public Producer createProducer() throws Exception {
-        return new JCacheProducer(this, cacheConfiguration);
+        return new JCacheProducer(this, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new JCacheConsumer(this, processor);
+        JCacheConsumer consumer = new JCacheConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
     protected void doStart() throws Exception {
-        cacheManager = JCacheHelper.createManager(cacheConfiguration);
+        cacheManager = JCacheHelper.createManager(configuration);
     }
 
     @Override

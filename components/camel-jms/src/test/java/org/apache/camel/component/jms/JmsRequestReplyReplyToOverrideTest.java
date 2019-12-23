@@ -74,6 +74,7 @@ public class JmsRequestReplyReplyToOverrideTest extends CamelTestSupport {
 
     private class Responder implements Runnable {
 
+        @Override
         public void run() {
             try {
                 LOG.debug("Waiting for request");

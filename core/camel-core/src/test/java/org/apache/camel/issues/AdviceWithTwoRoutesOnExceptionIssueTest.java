@@ -34,16 +34,14 @@ public class AdviceWithTwoRoutesOnExceptionIssueTest extends ContextTestSupport 
         RouteReifier.adviceWith(context.getRouteDefinition("a"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint()
-                    .to("mock:error");
+                interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint().to("mock:error");
             }
         });
 
         RouteReifier.adviceWith(context.getRouteDefinition("b"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock:b").skipSendToOriginalEndpoint()
-                    .to("mock:error");
+                interceptSendToEndpoint("mock:b").skipSendToOriginalEndpoint().to("mock:error");
             }
         });
 
@@ -76,10 +74,7 @@ public class AdviceWithTwoRoutesOnExceptionIssueTest extends ContextTestSupport 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true)
-                    .setBody(simple("Handling ${exception.message}"))
-                    .to("mock:handled");
+                onException(Exception.class).handled(true).setBody(simple("Handling ${exception.message}")).to("mock:handled");
 
                 from("direct:a").routeId("a").to("mock:a");
 

@@ -1,16 +1,21 @@
 [[beanstalk-component]]
-== Beanstalk Component
+= Beanstalk Component
+:page-source: components/camel-beanstalk/src/main/docs/beanstalk-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 Camel Beanstalk project provides a Camel component for job retrieval and
 post-processing of Beanstalk jobs.
 
 You can find the detailed explanation of Beanstalk job lifecycle
-at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
+at http://github.com/kr/beanstalkd/blob/v1.3/doc/protocol.txt[Beanstalk
 protocol].
 
-### Dependencies
+== Dependencies
 
 Maven users need to add the following dependency to their `pom.xml`
 
@@ -25,15 +30,15 @@ Maven users need to add the following dependency to their `pom.xml`
 
 where `${camel-version`} must be replaced by the actual version of Camel.
 
-### URI format
+== URI format
 
 [source,xml]
 ------------------------------------------
 beanstalk://[host[:port]][/tube][?options]
 ------------------------------------------
 
-You may omit either `port` or both `host` and `port`: for the Beanstalk
-defaults to be used (“localhost” and 11300). If you omit `tube`,
+You may omit either `port` or both `host` and `port`: for the Beanstalk
+defaults to be used (“localhost” and 11300). If you omit `tube`,
 Beanstalk component will use the tube with name “default”.
 
 When listening, you may probably want to watch for jobs from several
@@ -46,27 +51,28 @@ beanstalk://localhost:11300/tube1+tube2
 
 Tube name will be URL decoded, so if your tube names include special
 characters like + or ?, you need to URL-encode them appropriately, or
-use the RAW syntax, see xref:how-do-i-configure-endpoints.adoc[more
+use the RAW syntax, see xref:manual::faq/how-do-i-configure-endpoints.adoc[more
 details here].
 
 By the way, you cannot specify several tubes when you are writing jobs
 into Beanstalk.
 
-### Beanstalk options
+== Beanstalk options
 
 
 
 // component options: START
-The Beanstalk component supports 3 options, which are listed below.
+The Beanstalk component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionSettings Factory* (common) | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings) |  | ConnectionSettings Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *connectionSettings Factory* (common) | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings) |  | ConnectionSettingsFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -82,7 +88,7 @@ beanstalk:connectionSettings
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,7 +98,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (28 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -109,7 +115,7 @@ with the following path and query parameters:
 | *useBlockIO* (consumer) | Whether to use blockIO. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -119,24 +125,25 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-beanstalk-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -144,7 +151,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -152,43 +159,44 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.beanstalk.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.beanstalk.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.beanstalk.connection-settings-factory* | Custom ConnectionSettingsFactory. Specify which ConnectionSettingsFactory to use to make connections to Beanstalkd. Especially useful for unit testing without beanstalkd daemon (you can mock ConnectionSettings). The option is a org.apache.camel.component.beanstalk.ConnectionSettingsFactory type. |  | String
-| *camel.component.beanstalk.enabled* | Enable beanstalk component | true | Boolean
-| *camel.component.beanstalk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.beanstalk.enabled* | Whether to enable auto configuration of the beanstalk component. This is enabled by default. |  | Boolean
+| *camel.component.beanstalk.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
-Producer behavior is affected by the `command` parameter which tells
+Producer behavior is affected by the `command` parameter which tells
 what to do with the job, it can be
 
 The consumer may delete the job immediately after reserving it or wait
 until Camel routes process it. While the first scenario is more like a
 “message queue”, the second is similar to “job queue”. This behavior is
-controlled by `consumer.awaitJob` parameter, which equals `true` by
+controlled by `consumer.awaitJob` parameter, which equals `true` by
 default (following Beanstalkd nature).
 
-When synchronous, the consumer calls `delete` on successful job
-completion and calls `bury` on failure. You can choose which command to
+When synchronous, the consumer calls `delete` on successful job
+completion and calls `bury` on failure. You can choose which command to
 execute in the case of failure by
-specifying `consumer.onFailure` parameter in the URI. It can take values
-of `bury`, `delete` or `release`.
+specifying `consumer.onFailure` parameter in the URI. It can take values
+of `bury`, `delete` or `release`.
 
-There is a boolean parameter `consumer.useBlockIO` which corresponds to
+There is a boolean parameter `consumer.useBlockIO` which corresponds to
 the same parameter in JavaBeanstalkClient library. By default it
-is `true`.
+is `true`.
 
-Be careful when specifying `release`, as the failed job will immediately
+Be careful when specifying `release`, as the failed job will immediately
 become available in the same tube and your consumer will try to acquire
-it again. You can `release` and specify _jobDelay_ though.
+it again. You can `release` and specify _jobDelay_ though.
 
-The beanstalk consumer is a Scheduled xref:polling-consumer.adoc[Polling
+The beanstalk consumer is a Scheduled xref:manual::polling-consumer.adoc[Polling
 Consumer] which means there is more options you can configure, such as
 how frequent the consumer should poll. For more details
-see Polling Consumer.
+see Polling Consumer.
 
-### Consumer Headers
+== Consumer Headers
 
 The consumer stores a number of job headers in the Exchange message:
 
@@ -218,7 +226,7 @@ queue
 |_beanstalk.kicks_ |int |the number of times this job has been kicked
 |=======================================================================
 
-### Examples
+== Examples
 
 This Camel component lets you both request the jobs for processing and
 supply them to Beanstalkd daemon. Our simple demo routes may look like
@@ -247,20 +255,14 @@ from("timer:dig?period=30seconds").
 In the first route we are listening for new jobs in tube “testTube”.
 When they are arriving, we are trying to parse integer value from the
 message body. If done successful, we log it and this successful exchange
-completion makes Camel component to _delete_ this job from Beanstalk
+completion makes Camel component to _delete_ this job from Beanstalk
 automatically. Contrary, when we cannot parse the job data, the exchange
-failed and the Camel component _buries_ it by default, so that it can be
+failed and the Camel component _buries_ it by default, so that it can be
 processed later or probably we are going to inspect failed jobs
 manually.
 
-So the second route periodically requests Beanstalk to _kick_ 10 jobs
+So the second route periodically requests Beanstalk to _kick_ 10 jobs
 out of buried and/or delayed state to the normal queue.
 
- 
+ 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

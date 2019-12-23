@@ -18,7 +18,6 @@ package org.apache.camel.core.osgi;
 
 import java.io.IOException;
 
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.junit.Test;
 
@@ -27,21 +26,16 @@ public class OsgiFactoryFinderTest extends CamelOsgiTestSupport {
     @Test
     public void testFindClass() throws Exception {
         OsgiFactoryFinder finder = new OsgiFactoryFinder(getBundleContext(), new DefaultClassResolver(), "META-INF/services/org/apache/camel/component/");
-        Class<?> clazz = finder.findClass("file_test", "strategy.factory.");
+        Class<?> clazz = finder.findClass("file_test", "strategy.factory.").orElse(null);
         assertNotNull("We should get the file strategy factory here", clazz);
         
+        assertFalse(finder.findClass("nofile", "strategy.factory.").isPresent());
+
         try {
-            clazz = finder.findClass("nofile", "strategy.factory.");
+            finder.findClass("file_test", "nostrategy.factory.");
             fail("We should get exception here");
         } catch (Exception ex) {
-            assertTrue("Should get NoFactoryAvailableException", ex instanceof NoFactoryAvailableException);
-        }
-        
-        try {
-            clazz = finder.findClass("file_test", "nostrategy.factory.");
-            fail("We should get exception here");
-        } catch (Exception ex) {
-            assertTrue("Should get IOException", ex instanceof IOException);
+            assertTrue("Should get IOException", ex.getCause() instanceof IOException);
         }
     }
 

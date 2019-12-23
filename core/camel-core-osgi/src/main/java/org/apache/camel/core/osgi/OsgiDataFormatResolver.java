@@ -39,6 +39,7 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
         this.bundleContext = bundleContext;
     }
 
+    @Override
     public DataFormat resolveDataFormat(String name, CamelContext context) {
         // lookup in registry first
         DataFormat dataFormat = ResolverHelper.lookupDataFormatInRegistryWithFallback(context, name);
@@ -53,6 +54,7 @@ public class OsgiDataFormatResolver implements DataFormatResolver {
         return dataFormat;
     }
 
+    @Override
     public DataFormat createDataFormat(String name, CamelContext context) {
         DataFormat dataFormat = null;
 

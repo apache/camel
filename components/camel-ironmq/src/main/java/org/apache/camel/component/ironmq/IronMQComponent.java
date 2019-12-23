@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.ScheduledPollEndpoint;
 
 /**
  * Represents the component that manages {@link IronMQEndpoint}.
@@ -52,8 +51,7 @@ public class IronMQComponent extends DefaultComponent {
         }
 
         Endpoint endpoint = new IronMQEndpoint(uri, this, ironMQConfiguration);
-        ((ScheduledPollEndpoint)endpoint).setConsumerProperties(parameters);
-
+        setProperties(endpoint, parameters);
         return endpoint;
     }
 }

@@ -26,7 +26,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
@@ -46,11 +45,18 @@ public class DdbComponentVerifierExtension extends DefaultComponentVerifierExten
     // Parameters validation
     // *********************************
 
+
+    /**
+     * Basic check of the parameters (they are not empty)
+     *
+     * @param parameters
+     * @return
+     */
     @Override
     protected Result verifyParameters(Map<String, Object> parameters) {
 
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.PARAMETERS).error(ResultErrorHelper.requiresOption("accessKey", parameters))
-            .error(ResultErrorHelper.requiresOption("secretKey", parameters)).error(ResultErrorHelper.requiresOption("region", parameters));
+                .error(ResultErrorHelper.requiresOption("secretKey", parameters)).error(ResultErrorHelper.requiresOption("region", parameters));
 
         // Validate using the catalog
 
@@ -63,6 +69,13 @@ public class DdbComponentVerifierExtension extends DefaultComponentVerifierExten
     // Connectivity validation
     // *********************************
 
+    /**
+     * To verify the connectivity, we will try a basic test connection to extract the 
+     * list of tables and see if it fails
+     *
+     * @param parameters
+     * @return
+     */
     @Override
     protected Result verifyConnectivity(Map<String, Object> parameters) {
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
@@ -75,8 +88,8 @@ public class DdbComponentVerifierExtension extends DefaultComponentVerifierExten
             client.listTables();
         } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
-                .detail("aws_ddb_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
-                .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
+                    .detail("aws_ddb_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
+                    .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);
 
             builder.error(errorBuilder.build());
         } catch (Exception e) {

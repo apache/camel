@@ -1,7 +1,11 @@
 [[zookeeper-component]]
-== ZooKeeper Component
+= ZooKeeper Component
 
-*Available as of Camel version 2.9*
+*Since Camel 2.9*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The ZooKeeper component allows interaction with a
 http://hadoop.apache.org/zookeeper/[ZooKeeper] cluster and exposes the
@@ -26,7 +30,7 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
@@ -36,10 +40,10 @@ zookeeper://zookeeper-server[:port][/path][?options]
 The path from the URI specifies the node in the ZooKeeper server (a.k.a.
 _znode_) that will be the target of the endpoint:
 
-### Options
+== Options
 
 // component options: START
-The ZooKeeper component supports 3 options, which are listed below.
+The ZooKeeper component supports 4 options, which are listed below.
 
 
 
@@ -47,8 +51,9 @@ The ZooKeeper component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use a shared ZooKeeperConfiguration |  | ZooKeeperConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -61,7 +66,7 @@ zookeeper:serverUrls/path
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,13 +77,12 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *awaitExistence* (common) | *Deprecated* Not in use | true | boolean
 | *listChildren* (common) | Whether the children of the node should be listed | false | boolean
 | *timeout* (common) | The time interval to wait on connection before timing out. | 5000 | int
 | *backoff* (consumer) | The time interval to backoff for after an error before retrying. | 5000 | long
@@ -95,14 +99,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-zookeeper-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -118,6 +122,7 @@ The component supports 58 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.zookeeper.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.zookeeper.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.zookeeper.cluster.service.attributes* | Custom service attributes. |  | Map
 | *camel.component.zookeeper.cluster.service.auth-info-list* |  |  | List
 | *camel.component.zookeeper.cluster.service.base-path* |  |  | String
@@ -148,8 +153,8 @@ The component supports 58 options, which are listed below.
 | *camel.component.zookeeper.configuration.send-empty-message-on-delete* | Upon the delete of a znode, should an empty message be send to the consumer | true | Boolean
 | *camel.component.zookeeper.configuration.servers* | The zookeeper server hosts |  | List
 | *camel.component.zookeeper.configuration.timeout* | The time interval to wait on connection before timing out. | 5000 | Integer
-| *camel.component.zookeeper.enabled* | Enable zookeeper component | true | Boolean
-| *camel.component.zookeeper.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.zookeeper.enabled* | Whether to enable auto configuration of the zookeeper component. This is enabled by default. |  | Boolean
+| *camel.component.zookeeper.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.zookeeper.service-registry.attributes* | Custom service attributes. |  | Map
 | *camel.component.zookeeper.service-registry.auth-info-list* |  |  | List
 | *camel.component.zookeeper.service-registry.base-path* |  |  | String
@@ -174,15 +179,14 @@ The component supports 58 options, which are listed below.
 | *camel.component.zookeeper.service-registry.service-host* |  |  | String
 | *camel.component.zookeeper.service-registry.session-timeout* |  |  | Long
 | *camel.component.zookeeper.service-registry.session-timeout-unit* |  |  | TimeUnit
-| *camel.component.zookeeper.configuration.await-existence* | *Deprecated* Not in use | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
-### Use cases
+== Use cases
 
-#### Reading from a _znode_
+=== Reading from a _znode_
 
 The following snippet will read the data from the _znode_
 `/somepath/somenode/` provided that it already exists. The data
@@ -202,7 +206,7 @@ endpoint await its creation:
 from("zookeeper://localhost:39913/somepath/somenode?awaitCreation=true").to("mock:result");
 ----
 
-#### Reading from a _znode_
+=== Reading from a _znode_
 
 When data is read due to a `WatchedEvent` received from the ZooKeeper
 ensemble, the `CamelZookeeperEventType` header holds ZooKeeper's
@@ -211,7 +215,7 @@ value from that `WatchedEvent`. If the data is read initially (not
 triggered by a `WatchedEvent`) the `CamelZookeeperEventType` header will not
 be set.
 
-#### Writing to a _znode_
+=== Writing to a _znode_
 
 The following snippet will write the payload of the exchange into the
 znode at `/somepath/somenode/` provided that it already exists:

@@ -76,13 +76,9 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .aggregate(header("id"), new UseLatestAggregationStrategy())
-                        .aggregationRepository(sharedAggregationRepository)
-                        .optimisticLocking()
-                        // trigger completion every 5th second
-                        .completionInterval(getName().equals("testCamelContext1Wins") ? 5000 : 10000)
-                    .to("mock:result");
+                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).aggregationRepository(sharedAggregationRepository).optimisticLocking()
+                    // trigger completion every 5th second
+                    .completionInterval(getName().equals("testCamelContext1Wins") ? 5000 : 10000).to("mock:result");
                 // END SNIPPET: e1
             }
         };
@@ -94,13 +90,9 @@ public class DistributedCompletionIntervalTest extends AbstractDistributedTest {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .aggregate(header("id"), new UseLatestAggregationStrategy())
-                        .aggregationRepository(sharedAggregationRepository)
-                        .optimisticLocking()
-                        // trigger completion every 5th second
-                        .completionInterval(getName().equals("testCamelContext1Wins") ? 10000 : 5000)
-                    .to("mock:result");
+                from("direct:start").aggregate(header("id"), new UseLatestAggregationStrategy()).aggregationRepository(sharedAggregationRepository).optimisticLocking()
+                    // trigger completion every 5th second
+                    .completionInterval(getName().equals("testCamelContext1Wins") ? 10000 : 5000).to("mock:result");
                 // END SNIPPET: e1
             }
         };

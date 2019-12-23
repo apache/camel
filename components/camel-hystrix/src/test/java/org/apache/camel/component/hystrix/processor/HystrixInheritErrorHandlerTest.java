@@ -43,7 +43,7 @@ public class HystrixInheritErrorHandlerTest extends CamelTestSupport {
                 from("direct:start")
                     .to("log:start")
                     // turn on Camel's error handler on hystrix so it can do redeliveries
-                    .hystrix().inheritErrorHandler(true)
+                    .circuitBreaker().inheritErrorHandler(true)
                         .to("mock:a")
                         .throwException(new IllegalArgumentException("Forced"))
                     .end()

@@ -55,6 +55,7 @@ public class MessageLossSimulator extends AbstractPhaseInterceptor<Message> {
         }
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         Object maps =
             RMContextUtils.retrieveMAPs(message, false, true);

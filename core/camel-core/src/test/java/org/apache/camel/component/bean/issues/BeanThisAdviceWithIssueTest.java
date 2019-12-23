@@ -38,23 +38,19 @@ public class BeanThisAdviceWithIssueTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:mytest")
-                    .id(ROUTE_ID)
-                    .bean(this, "hello", false)
-                    .to("log:out");
+                from("direct:mytest").id(ROUTE_ID).bean(this, "hello", false).to("log:out");
             }
 
             public void hello(final Exchange exchange) {
             }
         });
 
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context,
-                new AdviceWithRouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        weaveAddLast().to("mock:extract");
-                    }
-                });
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                weaveAddLast().to("mock:extract");
+            }
+        });
 
         context.start();
 

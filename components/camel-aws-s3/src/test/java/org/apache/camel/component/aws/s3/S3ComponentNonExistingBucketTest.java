@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.amazonaws.services.s3.model.PutObjectRequest;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -39,7 +38,7 @@ public class S3ComponentNonExistingBucketTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock client = new AmazonS3ClientMock();
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 

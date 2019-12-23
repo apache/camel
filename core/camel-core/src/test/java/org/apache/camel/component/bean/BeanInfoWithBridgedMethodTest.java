@@ -74,6 +74,7 @@ public class BeanInfoWithBridgedMethodTest extends ContextTestSupport {
 
     public static class MyService implements Service<Request> {
 
+        @Override
         public int process(Request request) {
             return request.x + 1;
         }
@@ -81,6 +82,7 @@ public class BeanInfoWithBridgedMethodTest extends ContextTestSupport {
 
     static class MyPackagePrivateService implements Service<Request> {
 
+        @Override
         public int process(Request request) {
             return request.x + 2;
         }

@@ -1,0 +1,18 @@
+[[batch-config-eip]]
+= Batch-config EIP
+
+Batch-processing resequence EIP
+
+// eip options: START
+The Batch-config EIP supports 5 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *batchSize* | Sets the size of the batch to be re-ordered. The default size is 100. | 100 | Integer
+| *batchTimeout* | Sets the timeout for collecting elements to be re-ordered. The default timeout is 1000 msec. | 1000 | Long
+| *allowDuplicates* | Whether to allow duplicates. | false | Boolean
+| *reverse* | Whether to reverse the ordering. | false | Boolean
+| *ignoreInvalidExchanges* | Whether to ignore invalid exchanges | false | Boolean
+|===
+// eip options: END

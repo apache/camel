@@ -19,8 +19,8 @@ package org.apache.camel.component.aws.ses;
 import java.util.Arrays;
 import java.util.List;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -46,6 +46,8 @@ public class SesConfiguration implements Cloneable {
     private String returnPath;
     @UriParam
     private List<String> replyToAddresses;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
     private String proxyHost;
     @UriParam
@@ -150,6 +152,17 @@ public class SesConfiguration implements Cloneable {
     
     public void setReplyToAddresses(String replyToAddresses) {
         this.replyToAddresses = Arrays.asList(replyToAddresses.split(","));
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the SES client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
     
     public String getProxyHost() {

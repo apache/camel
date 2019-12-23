@@ -35,12 +35,10 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .wireTap("direct:foo").copy(false).newExchange(exchange -> {
-                        exchange.getIn().setBody("Bye World");
-                        exchange.getIn().setHeader("foo", "bar");
-                    }).to("mock:result");
-
+                from("direct:start").wireTap("direct:foo").copy(false).newExchange(exchange -> {
+                    exchange.getIn().setBody("Bye World");
+                    exchange.getIn().setHeader("foo", "bar");
+                }).to("mock:result");
 
                 from("direct:foo").to("mock:foo");
                 // END SNIPPET: e1
@@ -75,9 +73,7 @@ public class WireTapUsingFireAndForgetTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("direct:start")
-                    .wireTap("direct:foo").copy(false).newExchangeBody(constant("Bye World"))
-                    .to("mock:result");
+                from("direct:start").wireTap("direct:foo").copy(false).newExchangeBody(constant("Bye World")).to("mock:result");
 
                 from("direct:foo").to("mock:foo");
                 // END SNIPPET: e2

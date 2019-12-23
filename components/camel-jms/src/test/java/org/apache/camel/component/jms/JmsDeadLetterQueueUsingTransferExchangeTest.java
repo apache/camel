@@ -57,6 +57,7 @@ public class JmsDeadLetterQueueUsingTransferExchangeTest extends CamelTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

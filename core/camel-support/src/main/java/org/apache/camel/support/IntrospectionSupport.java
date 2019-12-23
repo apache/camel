@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -57,7 +58,10 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * <p/>
  * This implementation will use a cache when the {@link #getProperties(Object, java.util.Map, String)}
  * method is being used. Also the {@link #cacheClass(Class)} method gives access to the introspect cache.
+ *
+ * @deprecated use {@link org.apache.camel.spi.BeanIntrospection}
  */
+@Deprecated
 public final class IntrospectionSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
@@ -66,7 +70,7 @@ public final class IntrospectionSupport {
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
     @SuppressWarnings("unchecked")
-    private static final Map<Class<?>, ClassInfo> CACHE = LRUCacheFactory.newLRUWeakCache(1000);
+    private static final Map<Class<?>, BeanIntrospection.ClassInfo> CACHE = LRUCacheFactory.newLRUWeakCache(1000);
     private static final Pattern SECRETS = Pattern.compile(".*(passphrase|password|secretKey).*", Pattern.CASE_INSENSITIVE);
 
     static {
@@ -99,25 +103,6 @@ public final class IntrospectionSupport {
     }
 
     /**
-     * Structure of an introspected class.
-     */
-    public static final class ClassInfo {
-        public Class<?> clazz;
-        public MethodInfo[] methods;
-    }
-
-    /**
-     * Structure of an introspected method.
-     */
-    public static final class MethodInfo {
-        public Method method;
-        public Boolean isGetter;
-        public Boolean isSetter;
-        public String getterOrSetterShorthandName;
-        public Boolean hasGetterAndSetter;
-    }
-
-    /**
      * Utility classes should not have a public constructor.
      */
     private IntrospectionSupport() {
@@ -129,11 +114,22 @@ public final class IntrospectionSupport {
      * This implementation will clear its introspection cache.
      */
     public static void stop() {
+        clearCache();
+    }
+
+    /**
+     * Clears the introspection cache.
+     */
+    public static void clearCache() {
         if (LOG.isDebugEnabled() && CACHE instanceof LRUCache) {
             LRUCache localCache = (LRUCache) IntrospectionSupport.CACHE;
             LOG.debug("Clearing cache[size={}, hits={}, misses={}, evicted={}]", localCache.size(), localCache.getHits(), localCache.getMisses(), localCache.getEvicted());
         }
         CACHE.clear();
+    }
+
+    public static long getCacheCounter() {
+        return CACHE.size();
     }
 
     public static boolean isGetter(Method method) {
@@ -259,9 +255,9 @@ public final class IntrospectionSupport {
             optionPrefix = "";
         }
 
-        ClassInfo cache = cacheClass(target.getClass());
+        BeanIntrospection.ClassInfo cache = cacheClass(target.getClass());
 
-        for (MethodInfo info : cache.methods) {
+        for (BeanIntrospection.MethodInfo info : cache.methods) {
             Method method = info.method;
             // we can only get properties if we have both a getter and a setter
             if (info.isGetter && info.hasGetterAndSetter) {
@@ -288,10 +284,10 @@ public final class IntrospectionSupport {
      * Introspects the given class.
      *
      * @param clazz the class
-     * @return the introspection result as a {@link ClassInfo} structure.
+     * @return the introspection result as a {@link BeanIntrospection.ClassInfo} structure.
      */
-    public static ClassInfo cacheClass(Class<?> clazz) {
-        ClassInfo cache = CACHE.get(clazz);
+    public static BeanIntrospection.ClassInfo cacheClass(Class<?> clazz) {
+        BeanIntrospection.ClassInfo cache = CACHE.get(clazz);
         if (cache == null) {
             cache = doIntrospectClass(clazz);
             CACHE.put(clazz, cache);
@@ -299,22 +295,22 @@ public final class IntrospectionSupport {
         return cache;
     }
 
-    private static ClassInfo doIntrospectClass(Class<?> clazz) {
-        ClassInfo answer = new ClassInfo();
+    private static BeanIntrospection.ClassInfo doIntrospectClass(Class<?> clazz) {
+        BeanIntrospection.ClassInfo answer = new BeanIntrospection.ClassInfo();
         answer.clazz = clazz;
 
         // loop each method on the class and gather details about the method
         // especially about getter/setters
-        List<MethodInfo> found = new ArrayList<>();
+        List<BeanIntrospection.MethodInfo> found = new ArrayList<>();
         Method[] methods = clazz.getMethods();
-        Map<String, MethodInfo> getters = new HashMap<>(methods.length);
-        Map<String, MethodInfo> setters = new HashMap<>(methods.length);
+        Map<String, BeanIntrospection.MethodInfo> getters = new HashMap<>(methods.length);
+        Map<String, BeanIntrospection.MethodInfo> setters = new HashMap<>(methods.length);
         for (Method method : methods) {
             if (EXCLUDED_METHODS.contains(method)) {
                 continue;
             }
 
-            MethodInfo cache = new MethodInfo();
+            BeanIntrospection.MethodInfo cache = new BeanIntrospection.MethodInfo();
             cache.method = method;
             if (isGetter(method)) {
                 cache.isGetter = true;
@@ -335,7 +331,7 @@ public final class IntrospectionSupport {
 
         // for all getter/setter, find out if there is a corresponding getter/setter,
         // so we have a read/write bean property.
-        for (MethodInfo info : found) {
+        for (BeanIntrospection.MethodInfo info : found) {
             info.hasGetterAndSetter = false;
             if (info.isGetter) {
                 info.hasGetterAndSetter = setters.containsKey(info.getterOrSetterShorthandName);
@@ -344,10 +340,14 @@ public final class IntrospectionSupport {
             }
         }
 
-        answer.methods = found.toArray(new MethodInfo[found.size()]);
+        answer.methods = found.toArray(new BeanIntrospection.MethodInfo[found.size()]);
         return answer;
     }
 
+    /**
+     * @deprecated use {@link org.apache.camel.util.PropertiesHelper}
+     */
+    @Deprecated
     public static boolean hasProperties(Map<String, Object> properties, String optionPrefix) {
         ObjectHelper.notNull(properties, "properties");
 
@@ -484,10 +484,18 @@ public final class IntrospectionSupport {
         return setProperties(target, properties, optionPrefix, false);
     }
 
+    /**
+     * @deprecated use {@link org.apache.camel.util.PropertiesHelper}
+     */
+    @Deprecated
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix) {
         return extractProperties(properties, optionPrefix, true);
     }
 
+    /**
+     * @deprecated use {@link org.apache.camel.util.PropertiesHelper}
+     */
+    @Deprecated
     public static Map<String, Object> extractProperties(Map<String, Object> properties, String optionPrefix, boolean remove) {
         ObjectHelper.notNull(properties, "properties");
 
@@ -510,6 +518,9 @@ public final class IntrospectionSupport {
         return rc;
     }
 
+    /**
+     * @deprecated use {@link org.apache.camel.util.PropertiesHelper}
+     */
     @Deprecated
     public static Map<String, String> extractStringProperties(Map<String, Object> properties) {
         ObjectHelper.notNull(properties, "properties");
@@ -714,7 +725,7 @@ public final class IntrospectionSupport {
                     } else {
                         // We need to convert it
                         // special for boolean values with string values as we only want to accept "true" or "false"
-                        if (parameterType == Boolean.class || parameterType == boolean.class && ref instanceof String) {
+                        if ((parameterType == Boolean.class || parameterType == boolean.class) && ref instanceof String) {
                             String val = (String) ref;
                             if (!val.equalsIgnoreCase("true") && !val.equalsIgnoreCase("false")) {
                                 throw new IllegalArgumentException("Cannot convert the String value: " + ref + " to type: " + parameterType
@@ -773,11 +784,8 @@ public final class IntrospectionSupport {
 
     static boolean isPropertyPlaceholder(CamelContext context, Object value) {
         if (context != null) {
-            PropertiesComponent pc = context.getPropertiesComponent(false);
-            if (pc != null) {
-                return value.toString().contains(pc.getPrefixToken())
-                        && value.toString().contains(pc.getSuffixToken());
-            }
+            String text = value.toString();
+            return text.contains(PropertiesComponent.PREFIX_TOKEN) && text.contains(PropertiesComponent.SUFFIX_TOKEN);
         }
         return false;
     }

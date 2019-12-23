@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.RuntimeCamelException;
@@ -32,6 +33,7 @@ public class SpringTransactionalClientDataSourceTransactedTest extends SpringTes
 
     protected JdbcTemplate jdbc;
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/spring/interceptor/springTransactionalClientDataSource.xml");

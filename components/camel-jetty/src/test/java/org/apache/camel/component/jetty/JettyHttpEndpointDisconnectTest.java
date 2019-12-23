@@ -20,7 +20,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * Unit test to verify that the Jetty HTTP connector is correctly disconnected on shutdown
+ * Unit test to verify that the Jetty HTTP connector is correctly disconnected
+ * on shutdown
  */
 public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
 
@@ -32,6 +33,7 @@ public class JettyHttpEndpointDisconnectTest extends BaseJettyTest {
         assertEquals("Connector should have been removed", 0, JettyHttpComponent.CONNECTORS.size());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

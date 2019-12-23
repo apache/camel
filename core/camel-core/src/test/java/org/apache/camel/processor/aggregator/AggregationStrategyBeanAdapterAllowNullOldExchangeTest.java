@@ -45,10 +45,7 @@ public class AggregationStrategyBeanAdapterAllowNullOldExchangeTest extends Cont
                 myStrategy = new AggregationStrategyBeanAdapter(appender, "append");
                 myStrategy.setAllowNullOldExchange(true);
 
-                from("direct:start")
-                    .aggregate(constant(true), myStrategy)
-                        .completionSize(3)
-                        .to("mock:result");
+                from("direct:start").aggregate(constant(true), myStrategy).completionSize(3).to("mock:result");
             }
         };
     }

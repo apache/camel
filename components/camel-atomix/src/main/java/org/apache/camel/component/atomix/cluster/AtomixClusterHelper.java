@@ -21,12 +21,14 @@ import java.util.Properties;
 
 import io.atomix.AtomixReplica;
 import io.atomix.catalyst.transport.Address;
+import io.atomix.catalyst.transport.Transport;
 import io.atomix.copycat.server.storage.Storage;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public final class AtomixClusterHelper {
+
     private AtomixClusterHelper() {
     }
 
@@ -35,7 +37,7 @@ public final class AtomixClusterHelper {
     }
 
     public static AtomixReplica createReplica(CamelContext camelContext, Address address, AtomixClusterConfiguration configuration) throws Exception {
-        AtomixReplica atomix = configuration.getAtomix();
+        AtomixReplica atomix = (AtomixReplica) configuration.getAtomix();
 
         if (atomix == null) {
             final AtomixReplica.Builder atomixBuilder;
@@ -59,10 +61,9 @@ public final class AtomixClusterHelper {
 
             atomixBuilder.withStorage(storageBuilder.build());
 
-            if (configuration.getTransport() != null) {
-                atomixBuilder.withTransport(
-                    camelContext.getInjector().newInstance(configuration.getTransport())
-                );
+            if (configuration.getTransportClassName() != null) {
+                Class<? extends Transport> clazz = camelContext.getClassResolver().resolveMandatoryClass(configuration.getTransportClassName(), Transport.class);
+                atomixBuilder.withTransport(camelContext.getInjector().newInstance(clazz));
             }
             if (configuration.getClientTransport() != null) {
                 atomixBuilder.withClientTransport(

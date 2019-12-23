@@ -46,7 +46,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder inputType(JoltInputOutputType inputType) {
-            setProperty("inputType", inputType);
+            doSetProperty("inputType", inputType);
             return this;
         }
         /**
@@ -83,7 +83,45 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder inputType(String inputType) {
-            setProperty("inputType", inputType);
+            doSetProperty("inputType", inputType);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default JoltEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default JoltEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -96,7 +134,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder outputType(JoltInputOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -109,7 +147,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -122,7 +160,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder transformDsl(JoltTransformType transformDsl) {
-            setProperty("transformDsl", transformDsl);
+            doSetProperty("transformDsl", transformDsl);
             return this;
         }
         /**
@@ -135,7 +173,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: producer
          */
         default JoltEndpointBuilder transformDsl(String transformDsl) {
-            setProperty("transformDsl", transformDsl);
+            doSetProperty("transformDsl", transformDsl);
             return this;
         }
     }
@@ -159,7 +197,7 @@ public interface JoltEndpointBuilderFactory {
          */
         default AdvancedJoltEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -172,7 +210,7 @@ public interface JoltEndpointBuilderFactory {
          */
         default AdvancedJoltEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -184,7 +222,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJoltEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -196,7 +234,7 @@ public interface JoltEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJoltEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -227,7 +265,7 @@ public interface JoltEndpointBuilderFactory {
      * specification (such as JSON-JSON transformation).
      * 
      * Category: transformation
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-jolt
      * 
      * Syntax: <code>jolt:resourceUri</code>

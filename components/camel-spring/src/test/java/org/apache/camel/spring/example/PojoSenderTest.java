@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.example;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Before;
@@ -60,6 +61,7 @@ public class PojoSenderTest extends SpringTestSupport {
         mySender = getMandatoryBean(MySender.class, "mySender");
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/pojoSender.xml");
     }

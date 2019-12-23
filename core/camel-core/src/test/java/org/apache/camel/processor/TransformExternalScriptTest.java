@@ -20,13 +20,12 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class TransformExternalScriptTest extends TransformViaDSLTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start")
-                        .transform().simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")
-                        .to("mock:result");
+                from("direct:start").transform().simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt").to("mock:result");
                 // END SNIPPET: example
             }
         };

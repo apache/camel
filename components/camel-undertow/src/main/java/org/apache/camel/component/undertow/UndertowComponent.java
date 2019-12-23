@@ -19,7 +19,7 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -42,13 +42,13 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.RestProducerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.support.RestProducerFactoryHelper;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.FileUtil;
-import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
@@ -60,7 +60,7 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 public class UndertowComponent extends DefaultComponent implements RestConsumerFactory, RestApiConsumerFactory, RestProducerFactory, SSLContextParametersAware {
 
     private final Map<UndertowHostKey, UndertowHost> undertowRegistry = new ConcurrentHashMap<>();
-    private final Set<HttpHandlerRegistrationInfo> handlers = new HashSet<>();
+    private final Set<HttpHandlerRegistrationInfo> handlers = new LinkedHashSet<>();
 
     @Metadata(label = "advanced")
     private UndertowHttpBinding undertowHttpBinding;
@@ -70,6 +70,8 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
     private boolean useGlobalSslContextParameters;
     @Metadata(label = "advanced")
     private UndertowHostOptions hostOptions;
+    @Metadata(label = "consumer", defaultValue = "false")
+    private boolean muteException;
 
     public UndertowComponent() {
         this(null);
@@ -87,7 +89,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, parameters);
 
         // any additional channel options
-        Map<String, Object> options = IntrospectionSupport.extractProperties(parameters, "option.");
+        Map<String, Object> options = PropertiesHelper.extractProperties(parameters, "option.");
 
         // determine sslContextParameters
         SSLContextParameters sslParams = this.sslContextParameters;
@@ -99,6 +101,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         UndertowEndpoint endpoint = createEndpointInstance(endpointUri, this);
         // set options from component
         endpoint.setSslContextParameters(sslParams);
+        endpoint.setMuteException(muteException);
         // Prefer endpoint configured over component configured
         if (undertowHttpBinding == null) {
             // fallback to component configured
@@ -188,35 +191,19 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {
-            if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.allLocalIp) {
-                host = "0.0.0.0";
-            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
-                host = HostUtils.getLocalHostName();
-            } else if (config.getHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
-                host = HostUtils.getLocalIp();
-            }
+            host = RestComponentHelper.resolveRestHostName(host, config);
         }
 
-        Map<String, Object> map = new HashMap<>();
+        Map<String, Object> map = RestComponentHelper.initRestEndpointProperties(getComponentName(), config);
         // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals(getComponentName())) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
-        }
 
-        boolean explicitOptions = true;
+        
         // must use upper case for restrict
         String restrict = verb.toUpperCase(Locale.US);
-        // allow OPTIONS in rest-dsl to allow clients to call the API and have responses with ALLOW headers
-        if (!restrict.contains("OPTIONS")) {
-            restrict += ",OPTIONS";
-            // this is not an explicit OPTIONS path in the rest-dsl
-            explicitOptions = false;
-        }
-
+        
+        boolean explicitOptions = restrict.contains("OPTIONS");
         boolean cors = config.isEnableCORS();
+
         if (cors) {
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
@@ -224,22 +211,14 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
             // the rest-dsl is using OPTIONS
             map.put("optionsEnabled", "true");
         }
-
-        String query = URISupport.createQueryString(map);
-
-        String url;
+        
         if (api) {
-            url = getComponentName() + ":%s://%s:%s/%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
-        } else {
-            url = getComponentName() + ":%s://%s:%s/%s?matchOnUriPrefix=false&httpMethodRestrict=%s";
+            map.put("matchOnUriPrefix", "true");
         }
+        
+        RestComponentHelper.addHttpRestrictParam(map, verb, !explicitOptions);
 
-        // get the endpoint
-        url = String.format(url, scheme, host, port, path, restrict);
-
-        if (!query.isEmpty()) {
-            url = url + "&" + query;
-        }
+        String url = RestComponentHelper.createRestConsumerUrl(getComponentName(), scheme, host, port, path, map);
 
         UndertowEndpoint endpoint = camelContext.getEndpoint(url, UndertowEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
@@ -275,10 +254,13 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         if (!ObjectHelper.isEmpty(uriTemplate)) {
             url += "/" + uriTemplate;
         }
-        
-        RestConfiguration config = configuration;
+
+        RestConfiguration config = getCamelContext().getRestConfiguration(getComponentName(), false);
         if (config == null) {
-            config = camelContext.getRestConfiguration(getComponentName(), true);
+            config = getCamelContext().getRestConfiguration();
+        }
+        if (config == null) {
+            config = getCamelContext().getRestConfiguration(getComponentName(), true);
         }
 
         Map<String, Object> map = new HashMap<>();
@@ -332,6 +314,7 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
 
         host.validateEndpointURI(uri);
         handlers.add(registrationInfo);
+
         return host.registerHandler(registrationInfo, handler);
     }
 
@@ -339,8 +322,15 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
         final URI uri = registrationInfo.getUri();
         final UndertowHostKey key = new UndertowHostKey(uri.getHost(), uri.getPort(), sslContext);
         final UndertowHost host = undertowRegistry.get(key);
+
         handlers.remove(registrationInfo);
-        host.unregisterHandler(registrationInfo);
+
+        // if the route is not automatically started, then the undertow registry
+        // may not have any instance of UndertowHost associated to the given
+        // registrationInfo
+        if (host != null) {
+            host.unregisterHandler(registrationInfo);
+        }
     }
 
     protected UndertowHost createUndertowHost(UndertowHostKey key) {
@@ -391,6 +381,17 @@ public class UndertowComponent extends DefaultComponent implements RestConsumerF
      */
     public void setHostOptions(UndertowHostOptions hostOptions) {
         this.hostOptions = hostOptions;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     */
+    public void setMuteException(boolean muteException) {
+        this.muteException = muteException;
     }
 
     public ComponentVerifierExtension getVerifier() {

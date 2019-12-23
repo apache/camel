@@ -22,9 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class IrcPrivmsgTest extends IrcIntegrationTestSupport {
@@ -48,6 +45,7 @@ public class IrcPrivmsgTest extends IrcIntegrationTestSupport {
         }
     }   
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

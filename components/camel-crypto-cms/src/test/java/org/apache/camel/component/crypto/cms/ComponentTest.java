@@ -89,6 +89,7 @@ public class ComponentTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         simpleReg = new SimpleRegistry();
         CamelContext context = new DefaultCamelContext(simpleReg);

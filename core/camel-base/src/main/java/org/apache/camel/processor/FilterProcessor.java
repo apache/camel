@@ -78,14 +78,17 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
         return "Filter[if: " + predicate + " do: " + getProcessor() + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getTraceLabel() {
         return "filter[if: " + predicate + "]";
     }

@@ -31,6 +31,7 @@ public class Bean {
     }
 
     public static class SubClass extends BaseClass {
+        @Override
         public String hi() {
             return "Hello from Sub";
         }

@@ -23,8 +23,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to test preMoveNamePrefix option.
@@ -32,12 +34,12 @@ import org.junit.Test;
 public class FromFtpPreMoveFilePrefixTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&consumer.delay=5000"
+        return "ftp://admin@localhost:" + getPort() + "/movefile?password=admin&binary=false&delay=5000"
                 + "&preMove=done/${file:name}";
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -53,7 +55,7 @@ public class FromFtpPreMoveFilePrefixTest extends FtpServerTestSupport {
 
         // assert the file is moved
         File file = new File(FTP_ROOT_DIR + "/movefile/done/hello.txt");
-        assertTrue("The file should have been moved", file.exists());
+        assertTrue(file.exists(), "The file should have been moved");
     }
     
     private void prepareFtpServer() throws Exception {
@@ -70,9 +72,10 @@ public class FromFtpPreMoveFilePrefixTest extends FtpServerTestSupport {
 
         // assert file is created
         File file = new File(FTP_ROOT_DIR + "/movefile/hello.txt");
-        assertTrue("The file should exists", file.exists());
+        assertTrue(file.exists(), "The file should exists");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

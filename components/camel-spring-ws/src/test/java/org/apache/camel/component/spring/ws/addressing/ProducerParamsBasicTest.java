@@ -43,6 +43,7 @@ public class ProducerParamsBasicTest extends CamelSpringTestSupport {
     @Produce
     private ProducerTemplate template;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

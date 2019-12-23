@@ -60,7 +60,8 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final String[] EXCLUDE_DOC_FILES = {
         "camel-core-osgi", "camel-core-xml",
-        "camel-http-common", "camel-jetty-common"
+        "camel-http-common", "camel-jetty-common",
+        "camel-debezium-common"
     };
 
     private static final Pattern LABEL_PATTERN = Pattern.compile("\\\"label\\\":\\s\\\"([\\w,]+)\\\"");
@@ -129,6 +130,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File schemasOutDir;
 
     /**
+     * The output directory for main
+     */
+    @Parameter(defaultValue = "${project.build.directory}/classes/org/apache/camel/catalog/main")
+    protected File mainOutDir;
+
+    /**
      * The components directory where all the Apache Camel components are
      */
     @Parameter(defaultValue = "${project.build.directory}/../../../components")
@@ -137,7 +144,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
     /**
      * The camel-core directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-engine")
     protected File coreDir;
 
     /**
@@ -171,6 +178,12 @@ public class PrepareCatalogMojo extends AbstractMojo {
     protected File blueprintSchemaDir;
 
     /**
+     * The directory where the camel-main metadata are
+     */
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-main/target/classes/META-INF")
+    protected File mainDir;
+
+    /**
      * Maven ProjectHelper.
      */
     @Component
@@ -183,6 +196,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         executeModel();
         Set<String> components = executeComponents();
@@ -192,6 +206,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         executeDocuments(components, dataformats, languages, others);
         executeArchetypes();
         executeXmlSchemas();
+        executeMain();
     }
 
     protected void executeModel() throws MojoExecutionException, MojoFailureException {
@@ -341,8 +356,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-as2-component/target/classes");
                         } else if ("camel-salesforce".equals(dir.getName())) {
                             target = new File(dir, "camel-salesforce-component/target/classes");
-                        } else if ("camel-linkedin".equals(dir.getName())) {
-                            target = new File(dir, "camel-linkedin-component/target/classes");
                         } else if ("camel-olingo2".equals(dir.getName())) {
                             target = new File(dir, "camel-olingo2-component/target/classes");
                         } else if ("camel-olingo4".equals(dir.getName())) {
@@ -841,13 +854,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                         || "camel-http-common".equals(dir.getName())
                         || "camel-jetty-common".equals(dir.getName());
                     boolean special2 = "camel-as2".equals(dir.getName())
-                        || "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
                         || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName())
                         || "camel-fhir".equals(dir.getName());
-                    if (special || special2) {
+                    boolean special3 = "camel-debezium-common".equals(dir.getName());
+                    if (special || special2 || special3) {
                         continue;
                     }
 
@@ -1011,6 +1024,22 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
     }
 
+    protected void executeMain() throws MojoExecutionException, MojoFailureException {
+        getLog().info("Copying camel-main metadata");
+
+        mainOutDir.mkdirs();
+
+        File file = new File(mainDir, "camel-main-configuration-metadata.json");
+        if (file.exists() && file.isFile()) {
+            File to = new File(mainOutDir, file.getName());
+            try {
+                copyFile(file, to);
+            } catch (IOException e) {
+                throw new MojoFailureException("Cannot copy file from " + file + " -> " + to, e);
+            }
+        }
+    }
+
     protected void executeDocuments(Set<String> components, Set<String> dataformats, Set<String> languages, Set<String> others) throws MojoExecutionException, MojoFailureException {
         getLog().info("Copying all Camel documents (ascii docs)");
 
@@ -1032,8 +1061,6 @@ public class PrepareCatalogMojo extends AbstractMojo {
                             target = new File(dir, "camel-as2-component/src/main/docs");
                         } else if ("camel-salesforce".equals(dir.getName())) {
                             target = new File(dir, "camel-salesforce-component/src/main/docs");
-                        } else if ("camel-linkedin".equals(dir.getName())) {
-                            target = new File(dir, "camel-linkedin-component/src/main/docs");
                         } else if ("camel-olingo2".equals(dir.getName())) {
                             target = new File(dir, "camel-olingo2-component/src/main/docs");
                         } else if ("camel-olingo4".equals(dir.getName())) {
@@ -1066,6 +1093,10 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         if (coreDir != null && coreDir.isDirectory()) {
             File target = new File(coreDir, "src/main/docs");
+            findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
+        }
+        if (baseDir != null && baseDir.isDirectory()) {
+            File target = new File(baseDir, "src/main/docs");
             findAsciiDocFilesRecursive(target, adocFiles, new CamelAsciiDocFileFilter());
             // also look in camel-jaxp
             target = new File(coreDir, "../camel-jaxp/src/main/docs");
@@ -1188,13 +1219,13 @@ public class PrepareCatalogMojo extends AbstractMojo {
                 component = "ftp";
             } 
             String name = component + "-component";
-            if (!docs.contains(name) && (!component.equalsIgnoreCase("linkedin") && !component.equalsIgnoreCase("salesforce") && !component.equalsIgnoreCase("servicenow"))) {
+            if (!docs.contains(name) && (!component.equalsIgnoreCase("salesforce") && !component.equalsIgnoreCase("servicenow"))) {
                 missing.add(name);
             }
         }
         if (!missing.isEmpty()) {
             getLog().info("");
-            getLog().warn("\tMissing .adoc component documentation  : " + missing.size());
+            getLog().warn("\tMissing .adoc component documentation: " + missing.size());
             for (String name : missing) {
                 getLog().warn("\t\t" + name);
             }
@@ -1213,7 +1244,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         if (!missing.isEmpty()) {
             getLog().info("");
-            getLog().warn("\tMissing .adoc dataformat documentation  : " + missing.size());
+            getLog().warn("\tMissing .adoc dataformat documentation: " + missing.size());
             for (String name : missing) {
                 getLog().warn("\t\t" + name);
             }
@@ -1228,7 +1259,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         if (!missing.isEmpty()) {
             getLog().info("");
-            getLog().warn("\tMissing .adoc language documentation  : " + missing.size());
+            getLog().warn("\tMissing .adoc language documentation: " + missing.size());
             for (String name : missing) {
                 getLog().warn("\t\t" + name);
             }
@@ -1243,7 +1274,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
         }
         if (!missing.isEmpty()) {
             getLog().info("");
-            getLog().warn("\tMissing .adoc other documentation  : " + missing.size());
+            getLog().warn("\tMissing .adoc other documentation: " + missing.size());
             for (String name : missing) {
                 getLog().warn("\t\t" + name);
             }

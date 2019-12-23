@@ -17,6 +17,7 @@
 package org.apache.camel.example.cxf.jaxrs;
 
 import java.util.Collections;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -45,6 +46,7 @@ public final class JAXRSClient {
         public TestResponseExceptionMapper() {
         }
         
+        @Override
         public BookNotFoundFault fromResponse(Response r) {
             Object value = r.getMetadata().getFirst("BOOK-HEADER");
             if (value != null) {

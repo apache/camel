@@ -121,6 +121,7 @@ public class CxfRsProducerHeaderTest extends AbstractJUnit4SpringContextTests {
     
     public static class HttpProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Message out = exchange.getOut();

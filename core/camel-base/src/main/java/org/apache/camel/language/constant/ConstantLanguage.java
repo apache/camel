@@ -33,14 +33,17 @@ public class ConstantLanguage implements Language, IsSingleton {
         return ExpressionBuilder.constantExpression(value);
     }
 
+    @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
 
+    @Override
     public Expression createExpression(String expression) {
         return ConstantLanguage.constant(expression);
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

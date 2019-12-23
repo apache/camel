@@ -16,18 +16,21 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+
 /**
  * Test to verify that the polling consumer delivers an empty Exchange when the
  * sendEmptyMessageWhenIdle property is set and a polling event yields no results.
  */
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-
 public class SqsConsumerIdleMessageTest extends CamelTestSupport {
-    
+
+    @BindToRegistry("amazonSQSClient")
+    private AmazonSQSClientMock client = new AmazonSQSClientMock();
+
     @Test
     public void testConsumeIdleMessages() throws Exception {
         Thread.sleep(110);
@@ -37,25 +40,13 @@ public class SqsConsumerIdleMessageTest extends CamelTestSupport {
         assertTrue(mock.getExchanges().get(0).getIn().getBody() == null);
         assertTrue(mock.getExchanges().get(1).getIn().getBody() == null);
     }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonSQSClientMock clientMock = new AmazonSQSClientMock();        
-        registry.bind("amazonSQSClient", clientMock);
-        
-        return registry;
-    }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5"
-                        + "&sendEmptyMessageWhenIdle=true")
-                    .to("mock:result");
+                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&delay=50&maxMessagesPerPoll=5" + "&sendEmptyMessageWhenIdle=true").to("mock:result");
             }
         };
     }

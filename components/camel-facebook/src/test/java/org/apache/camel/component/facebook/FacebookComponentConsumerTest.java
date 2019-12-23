@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 
 import facebook4j.FacebookException;
 import facebook4j.api.SearchMethods;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
@@ -127,15 +126,15 @@ public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
 
                 for (String name : searchNames) {
                     if (!excludedNames.contains(name)) {
-                        // consumer.sendEmptyMessageWhenIdle is true since user may not have some items like events
+                        // sendEmptyMessageWhenIdle is true since user may not have some items like events
                         from("facebook://" + name + "?reading.limit=10&reading.locale=en.US&reading.since="
-                            + since + "&consumer.initialDelay=1000&consumer.sendEmptyMessageWhenIdle=true&"
+                            + since + "&initialDelay=1000&sendEmptyMessageWhenIdle=true&"
                             + getOauthParams())
                             .to("mock:consumeResult" + name);
                     }
 
                     from("facebook://" + name + "?query=cheese&reading.limit=10&reading.locale=en.US&reading.since="
-                        + since + "&consumer.initialDelay=1000&" + getOauthParams())
+                        + since + "&initialDelay=1000&" + getOauthParams())
                         .to("mock:consumeQueryResult" + name);
                 }
 

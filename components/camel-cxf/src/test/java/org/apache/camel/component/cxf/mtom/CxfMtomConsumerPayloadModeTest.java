@@ -49,7 +49,6 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 
-
 /**
  * Unit test for exercising MTOM feature of a CxfConsumer in PAYLOAD mode
  */
@@ -88,6 +87,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
     // START SNIPPET: consumer
     public static class MyProcessor implements Processor {
 
+        @Override
         @SuppressWarnings("unchecked")
         public void process(Exchange exchange) throws Exception {
             CxfPayload<SoapHeader> in = exchange.getIn().getBody(CxfPayload.class);

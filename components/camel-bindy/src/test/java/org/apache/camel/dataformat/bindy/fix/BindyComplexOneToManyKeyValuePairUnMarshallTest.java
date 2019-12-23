@@ -56,6 +56,7 @@ public class BindyComplexOneToManyKeyValuePairUnMarshallTest extends CommonBindy
     public static class ContextConfig extends RouteBuilder {
         BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Order.class);
 
+        @Override
         public void configure() {
             from(URI_DIRECT_START).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);
         }

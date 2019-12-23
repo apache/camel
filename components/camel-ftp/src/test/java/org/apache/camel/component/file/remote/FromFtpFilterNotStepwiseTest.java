@@ -21,6 +21,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FromFtpFilterNotStepwiseTest extends FromFtpFilterTest {
 
+    @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filter?password=admin&binary=false&filter=#myFilter&stepwise=false";
     }

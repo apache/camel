@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.nio.file.Paths;
@@ -25,11 +26,10 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class FileURLDecodingTest extends ContextTestSupport {
-    
+
     static final String TARGET_DIR = "target/data/files";
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -48,26 +48,27 @@ public class FileURLDecodingTest extends ContextTestSupport {
         context.stop();
         super.tearDown();
     }
-    
+
     @Test
     public void testSimpleFile() throws Exception {
         assertTargetFile("data.txt", "data.txt");
     }
-    
+
     @Test
     public void testFilePlus() throws Exception {
         assertTargetFile("data+.txt", "data .txt");
     }
-    
+
     @Test
     public void testFileSpace() throws Exception {
         assertTargetFile("data%20.txt", "data .txt");
     }
-    
+
     @Test
     public void testFile2B() throws Exception {
         assertTargetFile("data%2B.txt", "data .txt");
     }
+
     @Test
     public void testFileRaw2B() throws Exception {
         assertTargetFile("RAW(data%2B.txt)", "data%2B.txt");
@@ -77,7 +78,7 @@ public class FileURLDecodingTest extends ContextTestSupport {
     public void testFileRawPlus() throws Exception {
         assertTargetFile("RAW(data+.txt)", "data+.txt");
     }
-   
+
     @Test
     public void testFileRawSpace() throws Exception {
         assertTargetFile("RAW(data%20.txt)", "data%20.txt");
@@ -87,31 +88,29 @@ public class FileURLDecodingTest extends ContextTestSupport {
     public void testFileRaw2520() throws Exception {
         assertTargetFile("RAW(data%2520.txt)", "data%2520.txt");
     }
-    
+
     @Test
     public void testFileWithTwoHundredPercent() throws Exception {
         assertTargetFile("RAW(data%%.txt)", "data%%.txt");
     }
-   
-   
+
     private void assertTargetFile(final String encoded, final String expected) throws Exception {
-        
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start").to("file:" + TARGET_DIR + "?fileName=" + encoded);
             }
         });
-        
+
         context.start();
-            
+
         String result = template.requestBody("direct:start", "Kermit", String.class);
         assertEquals("Kermit", result);
-        
+
         BufferedReader br = new BufferedReader(new FileReader(Paths.get(TARGET_DIR, expected).toFile()));
         assertEquals("Kermit", br.readLine());
         br.close();
     }
-
 
 }

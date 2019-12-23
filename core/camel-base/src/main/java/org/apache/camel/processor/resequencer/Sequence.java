@@ -81,6 +81,7 @@ public class Sequence<E> extends TreeSet<E> {
      * 
      * @return this sequence's comparator.
      */
+    @Override
     public SequenceElementComparator<E> comparator() {
         return comparator;
     }
@@ -96,6 +97,7 @@ public class Sequence<E> extends TreeSet<E> {
      * @param e an element which is compared to elements of this sequence.
      * @return an element of this sequence or <code>null</code>.
      */
+    @Override
     public E higher(E e) {
         boolean found = false;
         for (E current : this) {
@@ -120,6 +122,7 @@ public class Sequence<E> extends TreeSet<E> {
      * @param e an element which is compared to elements of this sequence.
      * @return an element of this sequence or <code>null</code>.
      */
+    @Override
     public E lower(E e) {
         E last = null;
         for (E current : this) {

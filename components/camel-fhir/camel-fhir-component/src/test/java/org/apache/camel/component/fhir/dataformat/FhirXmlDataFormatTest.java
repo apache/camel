@@ -82,6 +82,7 @@ public class FhirXmlDataFormatTest extends CamelTestSupport {
         return patient;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

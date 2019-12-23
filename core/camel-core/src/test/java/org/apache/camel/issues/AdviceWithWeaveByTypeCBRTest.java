@@ -46,15 +46,8 @@ public class AdviceWithWeaveByTypeCBRTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform(simple("Hello ${body}"))
-                    .log("Got ${body}")
-                    .to("mock:result")
-                    .choice()
-                        .when(header("foo").isEqualTo("bar"))
-                        .to("mock:resultA")
-                    .otherwise()
-                        .to("mock:resultB");
+                from("direct:start").transform(simple("Hello ${body}")).log("Got ${body}").to("mock:result").choice().when(header("foo").isEqualTo("bar")).to("mock:resultA")
+                    .otherwise().to("mock:resultB");
             }
         };
     }

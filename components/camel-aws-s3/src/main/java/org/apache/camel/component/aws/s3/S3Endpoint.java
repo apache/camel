@@ -42,10 +42,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The aws-s3 component is used for storing and retrieving objecct from Amazon
- * S3 Storage Service.
+ * The aws-s3 component is used for storing and retrieving object from Amazon S3
+ * Storage Service.
  */
-@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3:bucketNameOrArn", label = "cloud,file")
+@UriEndpoint(firstVersion = "2.8.0", scheme = "aws-s3", title = "AWS S3 Storage Service", syntax = "aws-s3://bucketNameOrArn", label = "cloud,file")
 public class S3Endpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
@@ -67,6 +67,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         S3Consumer s3Consumer = new S3Consumer(this, processor);
         configureConsumer(s3Consumer);
@@ -74,6 +75,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         return s3Consumer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new S3Producer(this);
     }
@@ -97,7 +99,7 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         String prefix = getConfiguration().getPrefix();
 
         try {
-            s3Client.listObjects(new ListObjectsRequest(bucketName, prefix, null, null, 0));
+            s3Client.listObjects(new ListObjectsRequest(bucketName, prefix, null, null, maxMessagesPerPoll));
             LOG.trace("Bucket [{}] already exists", bucketName);
             return;
         } catch (AmazonServiceException ase) {
@@ -222,7 +224,8 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     /**
      * Gets the maximum number of messages as a limit to poll at each polling.
      * <p/>
-     * Is default unlimited, but use 0 or negative number to disable it as
+     * Gets the maximum number of messages as a limit to poll at each polling.
+     * The default value is 10. Use 0 or a negative number to set it as
      * unlimited.
      */
     public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {

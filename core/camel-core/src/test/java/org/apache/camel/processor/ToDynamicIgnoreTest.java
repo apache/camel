@@ -48,8 +48,7 @@ public class ToDynamicIgnoreTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toD("mock:${header.foo}", true);
+                from("direct:start").toD("mock:${header.foo}", true);
             }
         };
     }

@@ -55,9 +55,11 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
     private boolean alwaysReauthenticate;
     private boolean useThreadSecurityContext = true;
 
+    @Override
     public void beforeWrap(RouteContext routeContext, NamedNode definition) {
     }
 
+    @Override
     public Processor wrap(RouteContext routeContext, Processor processor) {
         // wrap the processor with authorizeDelegateProcessor
         return new AuthorizeDelegateProcess(processor);
@@ -116,6 +118,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
             super(processor);
         }
         
+        @Override
         public void process(Exchange exchange) throws Exception {
             beforeProcess(exchange);
             processNext(exchange);
@@ -123,6 +126,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
         
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         Assert.notNull(this.authenticationManager, "An AuthenticationManager is required");
         Assert.notNull(this.accessDecisionManager, "An AccessDecisionManager is required");
@@ -171,6 +175,7 @@ public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements
         return this.authenticationManager;
     }
 
+    @Override
     public void setApplicationEventPublisher(ApplicationEventPublisher applicationEventPublisher) {
         this.eventPublisher = applicationEventPublisher;
     }

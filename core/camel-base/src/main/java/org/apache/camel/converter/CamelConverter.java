@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
  * Some useful converters for Camel APIs such as to convert a {@link Predicate} or {@link Expression}
  * to a {@link Processor}
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class CamelConverter {
 
     /**
@@ -38,17 +38,18 @@ public final class CamelConverter {
     @Converter
     public static Processor toProcessor(final Predicate predicate) {
         return exchange -> {
+            // the response from a predicate should be set on OUT
             boolean answer = predicate.matches(exchange);
             Message out = exchange.getOut();
             out.copyFrom(exchange.getIn());
             out.setBody(answer);
         };
-
     }
 
     @Converter
     public static Processor toProcessor(final Expression expression) {
         return exchange -> {
+            // the response from a expression should be set on OUT
             Object answer = expression.evaluate(exchange, Object.class);
             Message out = exchange.getOut();
             out.copyFrom(exchange.getIn());

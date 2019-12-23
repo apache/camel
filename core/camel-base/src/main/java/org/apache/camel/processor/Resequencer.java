@@ -108,6 +108,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         return "Resequencer[to: " + getProcessor() + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "resequencer";
     }
@@ -224,6 +225,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         return processor;
     }
 
+    @Override
     public List<Processor> next() {
         if (!hasNext()) {
             return null;
@@ -233,14 +235,17 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         return answer;
     }
 
+    @Override
     public boolean hasNext() {
         return processor != null;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -303,11 +308,13 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         }
     }
 
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
         sender.start();
     }
 
+    @Override
     protected void doStop() throws Exception {
         sender.cancel();
         ServiceHelper.stopService(processor);
@@ -317,6 +324,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
     /**
      * Enqueues an exchange for later batch processing.
      */
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             // if batch consumer is enabled then we need to adjust the batch size

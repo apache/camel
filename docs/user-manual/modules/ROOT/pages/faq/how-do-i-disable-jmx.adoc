@@ -1,5 +1,5 @@
 [[HowdoIdisableJMX-HowdoIdisableJMX]]
-=== How do I disable JMX?
+= How do I disable JMX?
 
 You can disable JMX instrumentation agent by setting Java VM system
 property as follow. The property value is treated as boolean.

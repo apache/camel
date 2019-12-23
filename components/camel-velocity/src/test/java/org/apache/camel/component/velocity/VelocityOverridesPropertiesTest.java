@@ -39,6 +39,7 @@ public class VelocityOverridesPropertiesTest extends CamelTestSupport {
         assertEquals("Christian", exchange.getOut().getHeader("name"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

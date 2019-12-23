@@ -49,6 +49,7 @@ public class JmsFilenameHeaderTest extends CamelTestSupport {
         assertTrue("The file should have been produced with filename: " + filename, file.exists());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -58,6 +59,7 @@ public class JmsFilenameHeaderTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -34,8 +34,10 @@ public class VmShouldUseConsumerContext extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // using "toD" instead of "to" make use of the exchange context to resolve the direct endpoint at route execution.
-                // if the exchange context is not the excepted one, the toD will fail
+                // using "toD" instead of "to" make use of the exchange context
+                // to resolve the direct endpoint at route execution.
+                // if the exchange context is not the excepted one, the toD will
+                // fail
                 from("vm:test").toD("direct:process");
                 from("direct:process").to("mock:result");
             }

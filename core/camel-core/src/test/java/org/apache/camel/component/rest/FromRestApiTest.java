@@ -54,8 +54,7 @@ public class FromRestApiTest extends ContextTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost").component("dummy-rest").apiContextPath("/api");
 
-                rest("/say/hello")
-                    .get().to("log:hello");
+                rest("/say/hello").get().to("log:hello");
             }
         };
     }

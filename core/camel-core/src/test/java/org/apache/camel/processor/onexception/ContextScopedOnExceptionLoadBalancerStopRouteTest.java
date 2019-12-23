@@ -76,8 +76,7 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         template.sendBody("direct:start", "World");
 
         // give time for route to stop
-        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() ->
-            assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("errorRoute")));
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(ServiceStatus.Stopped, context.getRouteController().getRouteStatus("errorRoute")));
 
         template.sendBody("direct:start", "Kaboom");
 
@@ -96,23 +95,12 @@ public class ContextScopedOnExceptionLoadBalancerStopRouteTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true)
-                    .loadBalance().roundRobin().to("seda:error", "seda:error2").end()
-                    .to("mock:exception");
+                onException(Exception.class).handled(true).loadBalance().roundRobin().to("seda:error", "seda:error2").end().to("mock:exception");
 
-                from("direct:start")
-                    .to("mock:start")
-                    .choice()
-                        .when(body().contains("Kaboom"))
-                            .throwException(new IllegalArgumentException("Forced"))
-                        .otherwise()
-                            .transform(body().prepend("Bye "))
-                    .to("mock:result");
+                from("direct:start").to("mock:start").choice().when(body().contains("Kaboom")).throwException(new IllegalArgumentException("Forced")).otherwise()
+                    .transform(body().prepend("Bye ")).to("mock:result");
 
-                from("seda:error").routeId("errorRoute")
-                    .to("controlbus:route?action=stop&routeId=errorRoute&async=true")
-                    .to("mock:error");
+                from("seda:error").routeId("errorRoute").to("controlbus:route?action=stop&routeId=errorRoute&async=true").to("mock:error");
             }
         };
     }

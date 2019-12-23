@@ -18,6 +18,7 @@ package org.apache.camel.example.cdi.test;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.inject.Inject;
 
 import org.apache.camel.Exchange;
@@ -34,7 +35,6 @@ import org.junit.runner.RunWith;
 
 import static org.hamcrest.Matchers.contains;
 import static org.junit.Assert.assertThat;
-
 
 @RunWith(CamelCdiRunner.class)
 public class OrderTest {

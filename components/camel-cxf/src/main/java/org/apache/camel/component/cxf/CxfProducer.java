@@ -79,7 +79,7 @@ public class CxfProducer extends DefaultAsyncProducer {
         }
 
 
-        endpoint.getChainedCxfEndpointConfigurer().configureClient(client);
+        endpoint.getChainedCxfConfigurer().configureClient(client);
     }
 
     @Override
@@ -94,6 +94,7 @@ public class CxfProducer extends DefaultAsyncProducer {
    
     // As the cxf client async and sync api is implement different,
     // so we don't delegate the sync process call to the async process 
+    @Override
     public boolean process(Exchange camelExchange, AsyncCallback callback) {
         log.trace("Process exchange: {} in an async way.", camelExchange);
         
@@ -132,6 +133,7 @@ public class CxfProducer extends DefaultAsyncProducer {
      * This processor binds Camel exchange to a CXF exchange and
      * invokes the CXF client.
      */
+    @Override
     public void process(Exchange camelExchange) throws Exception {
         log.trace("Process exchange: {} in sync way.", camelExchange);
         
@@ -188,7 +190,7 @@ public class CxfProducer extends DefaultAsyncProducer {
         camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
         log.trace("Set Camel Exchange property: {}={}", DataFormat.class.getName(), dataFormat);
         
-        if (endpoint.getMergeProtocolHeaders()) {
+        if (endpoint.isMergeProtocolHeaders()) {
             camelExchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
         }
         

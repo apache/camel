@@ -22,9 +22,9 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class CamelJaxbSpringTest extends CamelJaxbTest {
     
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         setUseRouteBuilder(false);
         final AbstractXmlApplicationContext applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/jaxb/CamelJaxbTest.xml");

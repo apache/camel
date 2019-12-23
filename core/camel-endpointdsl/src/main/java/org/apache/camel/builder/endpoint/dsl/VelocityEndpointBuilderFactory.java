@@ -45,7 +45,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -67,7 +67,47 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default VelocityEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default VelocityEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -79,7 +119,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder loaderCache(boolean loaderCache) {
-            setProperty("loaderCache", loaderCache);
+            doSetProperty("loaderCache", loaderCache);
             return this;
         }
         /**
@@ -91,7 +131,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder loaderCache(String loaderCache) {
-            setProperty("loaderCache", loaderCache);
+            doSetProperty("loaderCache", loaderCache);
             return this;
         }
         /**
@@ -103,7 +143,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: producer
          */
         default VelocityEndpointBuilder propertiesFile(String propertiesFile) {
-            setProperty("propertiesFile", propertiesFile);
+            doSetProperty("propertiesFile", propertiesFile);
             return this;
         }
     }
@@ -127,7 +167,7 @@ public interface VelocityEndpointBuilderFactory {
          */
         default AdvancedVelocityEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -140,7 +180,7 @@ public interface VelocityEndpointBuilderFactory {
          */
         default AdvancedVelocityEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -152,7 +192,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -164,7 +204,7 @@ public interface VelocityEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -173,7 +213,7 @@ public interface VelocityEndpointBuilderFactory {
      * Transforms the message using a Velocity template.
      * 
      * Category: transformation
-     * Available as of version: 1.2
+     * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-velocity
      * 
      * Syntax: <code>velocity:resourceUri</code>

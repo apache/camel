@@ -11,6 +11,11 @@
 			"sourceType":"org.apache.camel.main.HystrixConfigurationProperties"
 		},
 		{
+			"name":"camel.resilience4j",
+			"description":"camel-resilience4j configurations.",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties"
+		},
+		{
 			"name":"camel.rest",
 			"description":"camel-rest configurations.",
 			"sourceType":"org.apache.camel.spi.RestConfiguration"
@@ -28,49 +33,49 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether auto configuration of components, dataformats, languages is enabled or not. When enabled the configuration parameters are loaded from the properties component and optionally from the classpath file META-INF\/services\/org\/apache\/camel\/autowire.properties. You can prefix the parameters in the properties file with: - camel.component.name.option1=value1 - camel.component.name.option2=value2 - camel.dataformat.name.option1=value1 - camel.dataformat.name.option2=value2 - camel.language.name.option1=value1 - camel.language.name.option2=value2 Where name is the name of the component, dataformat or language such as seda,direct,jaxb. The auto configuration also works for any options on components that is a complex type (not standard Java type) and there has been an explicit single bean instance registered to the Camel registry via the org.apache.camel.spi.Registry#bind(String,Object) method or by using the org.apache.camel.BindToRegistry annotation style. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.auto-configuration-environment-variables-enabled",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether auto configuration should include OS environment variables as well. When enabled this allows to overrule any configuration using an OS environment variable. For example to set a shutdown timeout of 5 seconds: CAMEL_MAIN_SHUTDOWNTIMEOUT=5. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.auto-configuration-fail-fast",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether auto configuration should fail fast when configuring one ore more properties fails for whatever reason such as a invalid property name, etc. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.auto-configuration-log-summary",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether auto configuration should log a summary with the configured properties. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.auto-startup",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether the object should automatically start when Camel starts. Important: Currently only routes can be disabled, as CamelContext's are always started. Note: When setting auto startup false on CamelContext then that takes precedence and no routes is started. You would need to start CamelContext explicit using the org.apache.camel.CamelContext.start() method, to start the context, and then you would need to start the routes manually using CamelContext.getRouteController().startRoute(String). Default is true to always start up.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.autowire-component-properties",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether autowiring components with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. This option is default enabled.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.autowire-component-properties-allow-private-setter",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether autowiring components allows to use private setter method when setting the value. This may be needed in some rare situations when some configuration classes may configure via constructors over setters. But constructor configuration is more cumbersome to use via .properties files etc.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.autowire-component-properties-deep",
@@ -79,11 +84,35 @@
 			"description":"Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed) with properties that are of same type, which has been added to the Camel registry, as a singleton instance. This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components. This option is default disabled."
 		},
 		{
+			"name":"camel.main.autowire-component-properties-non-null-only",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Whether to only autowire if the property has no default value or has not been configured explicit. This option is default disabled."
+		},
+		{
+			"name":"camel.main.backlog-tracing",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether backlog tracing is enabled or not. Default is false."
+		},
+		{
+			"name":"camel.main.bean-introspection-extended-statistics",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets whether bean introspection uses extended statistics. The default is false."
+		},
+		{
+			"name":"camel.main.bean-introspection-logging-level",
+			"type":"org.apache.camel.LoggingLevel",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets the logging level used by bean introspection, logging activity of its usage. The default is TRACE."
+		},
+		{
 			"name":"camel.main.consumer-template-cache-size",
 			"type":"int",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Consumer template endpoints cache size.",
-			"defaultValue":"1000"
+			"defaultValue":1000
 		},
 		{
 			"name":"camel.main.duration-hit-exit-code",
@@ -110,6 +139,24 @@
 			"description":"To specify for how long time in seconds to keep running the JVM before automatic terminating the JVM. You can use this to run Camel for a short while."
 		},
 		{
+			"name":"camel.main.endpoint-basic-property-binding",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities. The default value is false."
+		},
+		{
+			"name":"camel.main.endpoint-bridge-error-handler",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN\/ERROR level and ignored. The default value is false."
+		},
+		{
+			"name":"camel.main.endpoint-lazy-start-producer",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. The default value is false."
+		},
+		{
 			"name":"camel.main.endpoint-runtime-statistics-enabled",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
@@ -122,17 +169,23 @@
 			"description":"Directory to load additional configuration files that contains configuration values that takes precedence over any other configuration. This can be used to refer to files that may have secret configuration that has been mounted on the file system for containers. You can specify a pattern to load from sub directories and a name pattern such as \/var\/app\/secret\/.properties, multiple directories can be separated by comma."
 		},
 		{
-			"name":"camel.main.handle-fault",
-			"type":"boolean",
-			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
-			"description":"Sets whether fault handling is enabled or not. Default is false."
-		},
-		{
 			"name":"camel.main.hangup-interceptor-enabled",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
 			"description":"Whether to use graceful hangup when Camel is stopping or when the JVM terminates.",
-			"defaultValue":"true"
+			"defaultValue":true
+		},
+		{
+			"name":"camel.main.java-routes-exclude-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Used for exclusive filtering component scanning of RouteBuilder classes with Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to exclude all classes starting with Bar use: &#42;&#42;\/Bar&#42; To exclude all routes form a specific package use: com\/mycompany\/bar\/&#42; To exclude all routes form a specific package and its sub-packages use double wildcards: com\/mycompany\/bar\/&#42;&#42; And to exclude all routes from two specific packages use: com\/mycompany\/bar\/&#42;,com\/mycompany\/stuff\/&#42;"
+		},
+		{
+			"name":"camel.main.java-routes-include-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Used for inclusive filtering component scanning of RouteBuilder classes with Component annotation. The exclusive filtering takes precedence over inclusive filtering. The pattern is using Ant-path style pattern. Multiple patterns can be specified separated by comma. For example to include all classes starting with Foo use: &#42;&#42;\/Foo To include all routes form a specific package use: com\/mycompany\/foo\/&#42; To include all routes form a specific package and its sub-packages use double wildcards: com\/mycompany\/foo\/&#42;&#42; And to include all routes from two specific packages use: com\/mycompany\/foo\/&#42;,com\/mycompany\/stuff\/&#42;"
 		},
 		{
 			"name":"camel.main.jmx-create-connector",
@@ -145,7 +198,7 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Enable JMX in your Camel application.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.jmx-management-name-pattern",
@@ -166,7 +219,7 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Whether to load custom type converters by scanning classpath. This is used for backwards compatibility with Camel 2.x. Its recommended to migrate to use fast type converter loading by setting Converter(loader = true) on your custom type converter classes.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.log-debug-max-chars",
@@ -187,11 +240,17 @@
 			"description":"Sets whether log mask is enabled or not. Default is false."
 		},
 		{
+			"name":"camel.main.mdc-logging-keys-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Sets the pattern used for determine which custom MDC keys to propagate during message routing when the routing engine continues routing asynchronously for the given message. Setting this pattern to will propagate all custom keys. Or setting the pattern to foo,bar will propagate any keys starting with either foo or bar. Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name. The match rules are applied in this order (case insensitive): 1. exact match, returns true 2. wildcard match (pattern ends with a and the name starts with the pattern), returns true 3. regular expression match, returns true 4. otherwise returns false"
+		},
+		{
 			"name":"camel.main.message-history",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether message history is enabled or not. Default is true.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.name",
@@ -200,11 +259,17 @@
 			"description":"Sets the name of the CamelContext."
 		},
 		{
+			"name":"camel.main.package-scan-route-builders",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.MainConfigurationProperties",
+			"description":"Sets package names for scanning for org.apache.camel.builder.RouteBuilder classes as candidates to be included. If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder classes with Component. In other words only use this for Camel Main in standalone mode."
+		},
+		{
 			"name":"camel.main.producer-template-cache-size",
 			"type":"int",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Producer template endpoints cache size.",
-			"defaultValue":"1000"
+			"defaultValue":1000
 		},
 		{
 			"name":"camel.main.route-filter-exclude-pattern",
@@ -219,25 +284,32 @@
 			"description":"Used for filtering routes routes matching the given pattern, which follows the following rules: - Match by route id - Match by route input endpoint uri The matching is using exact match, by wildcard and regular expression as documented by PatternHelper#matchPattern(String,String) . For example to only include routes which starts with foo in their route id's, use: include=foo&#42; And to exclude routes which starts from JMS endpoints, use: exclude=jms:&#42; Multiple patterns can be separated by comma, for example to exclude both foo and bar routes, use: exclude=foo&#42;,bar&#42; Exclude takes precedence over include."
 		},
 		{
+			"name":"camel.main.routes-collector-enabled",
+			"type":"boolean",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Whether the routes collector is enabled or not. When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and also load additional XML routes from the file system. The routes collector is default enabled.",
+			"defaultValue":true
+		},
+		{
 			"name":"camel.main.shutdown-log-inflight-exchanges-on-timeout",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether to log information about the inflight Exchanges which are still running during a shutdown which didn't complete without the given timeout.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.shutdown-now-on-timeout",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether to force shutdown of all consumers when a timeout occurred and thus not all consumers was shutdown within that period. You should have good reasons to set this option to false as it means that the routes keep running and is halted abruptly when CamelContext has been shutdown.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.shutdown-routes-in-reverse-order",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Sets whether routes should be shutdown in reverse or the same order as they where started.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.shutdown-suppress-logging-on-timeout",
@@ -250,7 +322,7 @@
 			"type":"int",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Timeout in seconds to graceful shutdown Camel.",
-			"defaultValue":"300"
+			"defaultValue":300
 		},
 		{
 			"name":"camel.main.stream-caching-any-spool-rules",
@@ -275,7 +347,7 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"Whether to remove stream caching temporary directory when stopping. This option is default true.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.main.stream-caching-spool-cipher",
@@ -326,6 +398,12 @@
 			"description":"Sets whether tracing is enabled or not. Default is false."
 		},
 		{
+			"name":"camel.main.tracing-pattern",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Tracing pattern to match which node EIPs to trace. For example to match all To EIP nodes, use to. The pattern matches by node and route id's Multiple patterns can be separated by comma."
+		},
+		{
 			"name":"camel.main.use-breadcrumb",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
@@ -342,6 +420,20 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
 			"description":"To turn on MDC logging"
+		},
+		{
+			"name":"camel.main.xml-rests",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Directory to scan for adding additional XML rests. You can turn this off by setting the value to false. Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;\/&#42;camel&#42;.xml Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you specific the exact name for each XML file is faster as no classpath scanning is needed. Multiple directories can be specified and separated by comma, such as: file:\/myapp\/mycamel\/&#42;.xml,file:\/myapp\/myothercamel\/&#42;.xml",
+			"defaultValue":"classpath:camel-rest\/*.xml"
+		},
+		{
+			"name":"camel.main.xml-routes",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.DefaultConfigurationProperties",
+			"description":"Directory to scan for adding additional XML routes. You can turn this off by setting the value to false. Files can be loaded from either classpath or file by prefixing with classpath: or file: Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;\/&#42;camel&#42;.xml Notice when using wildcards, then there is additional overhead as the classpath is scanned, where as if you specific the exact name for each XML file is faster as no classpath scanning is needed. Multiple directories can be specified and separated by comma, such as: file:\/myapp\/mycamel\/&#42;.xml,file:\/myapp\/myothercamel\/&#42;.xml",
+			"defaultValue":"classpath:camel\/*.xml"
 		},
 		{
 			"name":"camel.hystrix.allow-maximum-size-to-diverge-from-core-size",
@@ -530,6 +622,120 @@
 			"description":"Duration of statistical rolling window in milliseconds. This is passed into HystrixRollingNumber inside each HystrixThreadPoolMetrics instance."
 		},
 		{
+			"name":"camel.resilience4j.automatic-transition-from-open-to-half-open-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Enables automatic transition from OPEN to HALF_OPEN state once the waitDurationInOpenState has passed."
+		},
+		{
+			"name":"camel.resilience4j.bulkhead-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Whether bulkhead is enabled or not on the circuit breaker."
+		},
+		{
+			"name":"camel.resilience4j.bulkhead-max-concurrent-calls",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the max amount of concurrent calls the bulkhead will support."
+		},
+		{
+			"name":"camel.resilience4j.bulkhead-max-wait-duration",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures a maximum amount of time which the calling thread will wait to enter the bulkhead. If bulkhead has space available, entry is guaranteed and immediate. If bulkhead is full, calling threads will contest for space, if it becomes available. maxWaitDuration can be set to 0. Note: for threads running on an event-loop or equivalent (rx computation pool, etc), setting maxWaitDuration to 0 is highly recommended. Blocking an event-loop thread will most likely have a negative effect on application throughput."
+		},
+		{
+			"name":"camel.resilience4j.circuit-breaker-ref",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreaker instance to lookup and use from the registry. When using this, then any other circuit breaker options are not in use."
+		},
+		{
+			"name":"camel.resilience4j.config-ref",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Refers to an existing io.github.resilience4j.circuitbreaker.CircuitBreakerConfig instance to lookup and use from the registry."
+		},
+		{
+			"name":"camel.resilience4j.failure-rate-threshold",
+			"type":"java.lang.Float",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the failure rate threshold in percentage. If the failure rate is equal or greater than the threshold the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 50 percentage."
+		},
+		{
+			"name":"camel.resilience4j.minimum-number-of-calls",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures configures the minimum number of calls which are required (per sliding window period) before the CircuitBreaker can calculate the error rate. For example, if minimumNumberOfCalls is 10, then at least 10 calls must be recorded, before the failure rate can be calculated. If only 9 calls have been recorded the CircuitBreaker will not transition to open even if all 9 calls have failed. Default minimumNumberOfCalls is 100"
+		},
+		{
+			"name":"camel.resilience4j.permitted-number-of-calls-in-half-open-state",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the number of permitted calls when the CircuitBreaker is half open. The size must be greater than 0. Default size is 10."
+		},
+		{
+			"name":"camel.resilience4j.sliding-window-size",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the size of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. slidingWindowSize configures the size of the sliding window. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. The slidingWindowSize must be greater than 0. The minimumNumberOfCalls must be greater than 0. If the slidingWindowType is COUNT_BASED, the minimumNumberOfCalls cannot be greater than slidingWindowSize . If the slidingWindowType is TIME_BASED, you can pick whatever you want. Default slidingWindowSize is 100."
+		},
+		{
+			"name":"camel.resilience4j.sliding-window-type",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the type of the sliding window which is used to record the outcome of calls when the CircuitBreaker is closed. Sliding window can either be count-based or time-based. If slidingWindowType is COUNT_BASED, the last slidingWindowSize calls are recorded and aggregated. If slidingWindowType is TIME_BASED, the calls of the last slidingWindowSize seconds are recorded and aggregated. Default slidingWindowType is COUNT_BASED."
+		},
+		{
+			"name":"camel.resilience4j.slow-call-duration-threshold",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the duration threshold (seconds) above which calls are considered as slow and increase the slow calls percentage. Default value is 60 seconds."
+		},
+		{
+			"name":"camel.resilience4j.slow-call-rate-threshold",
+			"type":"java.lang.Float",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures a threshold in percentage. The CircuitBreaker considers a call as slow when the call duration is greater than slowCallDurationThreshold(Duration. When the percentage of slow calls is equal or greater the threshold, the CircuitBreaker transitions to open and starts short-circuiting calls. The threshold must be greater than 0 and not greater than 100. Default value is 100 percentage which means that all recorded calls must be slower than slowCallDurationThreshold."
+		},
+		{
+			"name":"camel.resilience4j.timeout-cancel-running-future",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures whether cancel is called on the running future. Defaults to true."
+		},
+		{
+			"name":"camel.resilience4j.timeout-duration",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the thread execution timeout (millis). Default value is 1000 millis (1 second)."
+		},
+		{
+			"name":"camel.resilience4j.timeout-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Whether timeout is enabled or not on the circuit breaker. Default is false."
+		},
+		{
+			"name":"camel.resilience4j.timeout-executor-service-ref",
+			"type":"java.lang.String",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"References to a custom thread pool to use when timeout is enabled (uses ForkJoinPool#commonPool() by default)"
+		},
+		{
+			"name":"camel.resilience4j.wait-duration-in-open-state",
+			"type":"java.lang.Integer",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Configures the wait duration (in seconds) which specifies how long the CircuitBreaker should stay open, before it switches to half open. Default value is 60 seconds."
+		},
+		{
+			"name":"camel.resilience4j.writable-stack-trace-enabled",
+			"type":"java.lang.Boolean",
+			"sourceType":"org.apache.camel.main.Resilience4jConfigurationProperties",
+			"description":"Enables writable stack traces. When set to false, Exception.getStackTrace returns a zero length array. This may be used to reduce log spam when the circuit breaker is open as the cause of the exceptions is already known (the circuit breaker is short-circuiting calls)."
+		},
+		{
 			"name":"camel.rest.api-component",
 			"type":"java.lang.String",
 			"sourceType":"org.apache.camel.spi.RestConfiguration",
@@ -612,7 +818,7 @@
 			"name":"camel.rest.context-path",
 			"type":"java.lang.String",
 			"sourceType":"org.apache.camel.spi.RestConfiguration",
-			"description":"Sets a leading context-path the REST services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty or camel-netty4-http that includes a HTTP server."
+			"description":"Sets a leading context-path the REST services will be using. This can be used when using components such as camel-servlet where the deployed web application is deployed using a context-path. Or for components such as camel-jetty or camel-netty-http that includes a HTTP server."
 		},
 		{
 			"name":"camel.rest.cors-headers",
@@ -686,14 +892,14 @@
 			"type":"boolean",
 			"sourceType":"org.apache.camel.spi.RestConfiguration",
 			"description":"Whether to skip binding output if there is a custom HTTP error code, and instead use the response body as-is. This option is default true.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.rest.use-x-forward-headers",
 			"type":"boolean",
 			"sourceType":"org.apache.camel.spi.RestConfiguration",
 			"description":"WWhether to use X-Forward headers to set host etc. for Swagger. This option is default true.",
-			"defaultValue":"true"
+			"defaultValue":true
 		},
 		{
 			"name":"camel.rest.xml-data-format",

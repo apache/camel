@@ -29,8 +29,9 @@ import org.apache.camel.test.AvailablePortFinder;
  */
 public class JmsToHttpWithRollbackRoute extends JmsToHttpRoute {
 
+    @Override
     public void configure() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(8000);
+        port = AvailablePortFinder.getNextAvailable();
 
         // configure a global transacted error handler
         errorHandler(transactionErrorHandler(required));

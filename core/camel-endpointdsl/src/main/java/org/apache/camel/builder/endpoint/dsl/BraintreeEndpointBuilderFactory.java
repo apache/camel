@@ -16,13 +16,18 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Level;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * The braintree component is used for integrating with the Braintree Payment
@@ -51,7 +56,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder environment(String environment) {
-            setProperty("environment", environment);
+            doSetProperty("environment", environment);
             return this;
         }
         /**
@@ -62,7 +67,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -73,7 +78,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder merchantId(String merchantId) {
-            setProperty("merchantId", merchantId);
+            doSetProperty("merchantId", merchantId);
             return this;
         }
         /**
@@ -84,7 +89,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -95,7 +100,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointConsumerBuilder publicKey(String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -113,7 +118,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -131,7 +136,393 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default BraintreeEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default BraintreeEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder backoffErrorThreshold(
+                int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder backoffErrorThreshold(
+                String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder backoffIdleThreshold(
+                int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder backoffIdleThreshold(
+                String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder backoffMultiplier(
+                int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder backoffMultiplier(
+                String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder initialDelay(
+                String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder runLoggingLevel(
+                LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder runLoggingLevel(
+                String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder scheduledExecutorService(
+                ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder scheduledExecutorService(
+                String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder schedulerProperties(
+                Map<String, Object> schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder schedulerProperties(
+                String schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder startScheduler(
+                boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder startScheduler(
+                String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder useFixedDelay(
+                boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BraintreeEndpointConsumerBuilder useFixedDelay(
+                String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -142,7 +533,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -153,7 +544,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -165,7 +556,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointConsumerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
     }
@@ -192,7 +583,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -208,7 +599,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -220,7 +611,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -233,7 +624,39 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedBraintreeEndpointConsumerBuilder pollStrategy(
+                PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedBraintreeEndpointConsumerBuilder pollStrategy(
+                String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -247,7 +670,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -260,7 +683,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -273,7 +696,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -285,7 +708,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -298,7 +721,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpReadTimeout(
                 String httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -311,7 +734,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -324,7 +747,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -336,7 +759,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
                 Level httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
         /**
@@ -349,7 +772,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointConsumerBuilder httpLogLevel(
                 String httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
     }
@@ -371,7 +794,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder environment(String environment) {
-            setProperty("environment", environment);
+            doSetProperty("environment", environment);
             return this;
         }
         /**
@@ -382,7 +805,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -393,7 +816,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder merchantId(String merchantId) {
-            setProperty("merchantId", merchantId);
+            doSetProperty("merchantId", merchantId);
             return this;
         }
         /**
@@ -404,7 +827,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -415,7 +838,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointProducerBuilder publicKey(String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -435,7 +858,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default BraintreeEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -455,7 +878,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default BraintreeEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -466,7 +889,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -477,7 +900,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -489,7 +912,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointProducerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
     }
@@ -514,7 +937,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -527,7 +950,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -540,7 +963,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -552,7 +975,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -565,7 +988,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder httpReadTimeout(
                 String httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -578,7 +1001,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -591,7 +1014,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -603,7 +1026,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
                 Level httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
         /**
@@ -616,7 +1039,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointProducerBuilder httpLogLevel(
                 String httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
     }
@@ -638,7 +1061,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder environment(String environment) {
-            setProperty("environment", environment);
+            doSetProperty("environment", environment);
             return this;
         }
         /**
@@ -649,7 +1072,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -660,7 +1083,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder merchantId(String merchantId) {
-            setProperty("merchantId", merchantId);
+            doSetProperty("merchantId", merchantId);
             return this;
         }
         /**
@@ -671,7 +1094,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -682,7 +1105,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: common
          */
         default BraintreeEndpointBuilder publicKey(String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -693,7 +1116,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -704,7 +1127,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -716,7 +1139,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: proxy
          */
         default BraintreeEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
     }
@@ -740,7 +1163,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -753,7 +1176,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -766,7 +1189,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -778,7 +1201,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 Integer httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -791,7 +1214,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder httpReadTimeout(
                 String httpReadTimeout) {
-            setProperty("httpReadTimeout", httpReadTimeout);
+            doSetProperty("httpReadTimeout", httpReadTimeout);
             return this;
         }
         /**
@@ -803,7 +1226,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -815,7 +1238,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -826,7 +1249,7 @@ public interface BraintreeEndpointBuilderFactory {
          * Group: logging
          */
         default AdvancedBraintreeEndpointBuilder httpLogLevel(Level httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
         /**
@@ -839,7 +1262,7 @@ public interface BraintreeEndpointBuilderFactory {
          */
         default AdvancedBraintreeEndpointBuilder httpLogLevel(
                 String httpLogLevel) {
-            setProperty("httpLogLevel", httpLogLevel);
+            doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
     }
@@ -849,7 +1272,7 @@ public interface BraintreeEndpointBuilderFactory {
      * Payment System.
      * 
      * Category: api,cloud,payment
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-braintree
      * 
      * Syntax: <code>braintree:apiName/methodName</code>

@@ -21,7 +21,7 @@ import org.apache.camel.TypeConverters;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.Variant;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class ValueConverter implements TypeConverters {
     private ValueConverter() {
     }

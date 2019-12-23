@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -35,8 +36,7 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .recipientList(simple("mock:${in.header.queue}"));
+                from("direct:start").recipientList(simple("mock:${in.header.queue}"));
             }
         });
         context.start();
@@ -73,7 +73,6 @@ public class RecipientListWithSimpleExpressionTest extends ContextTestSupport {
             return "mock:" + queue;
         }
     }
-
 
     @Test
     public void testStatic() throws Exception {

@@ -20,7 +20,6 @@ import java.time.ZonedDateTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 
 /**
@@ -29,6 +28,10 @@ import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 //CHECKSTYLE:OFF
 @XStreamAlias("Task")
 public class Task extends AbstractSObjectBase {
+
+    public Task() {
+        getAttributes().setType("Task");
+    }
 
     private ZonedDateTime ActivityDate;
 
@@ -52,6 +55,19 @@ public class Task extends AbstractSObjectBase {
     @JsonProperty("Description")
     public void setDescription(final String description) {
         Description = description;
+    }
+
+    @XStreamAlias("What")
+    private AbstractSObjectBase What;
+
+    @JsonProperty("What")
+    public AbstractSObjectBase getWhat() {
+        return this.What;
+    }
+
+    @JsonProperty("What")
+    public void setWhat(AbstractSObjectBase What) {
+        this.What = What;
     }
 }
 //CHECKSTYLE:ON

@@ -23,17 +23,17 @@ import java.util.Map;
 
 import com.twilio.http.TwilioRestClient;
 import org.apache.camel.Consumer;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.TypeConverter;
 import org.apache.camel.component.twilio.internal.TwilioApiCollection;
 import org.apache.camel.component.twilio.internal.TwilioApiName;
 import org.apache.camel.component.twilio.internal.TwilioConstants;
 import org.apache.camel.component.twilio.internal.TwilioPropertiesHelper;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.component.AbstractApiEndpoint;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodPropertiesHelper;
@@ -104,9 +104,9 @@ public class TwilioEndpoint extends AbstractApiEndpoint<TwilioApiName, TwilioCon
         }
         String methodName = EXECUTOR_METHOD_MAP.get(method.getName());
         try {
-            TypeConverter typeConverter = getCamelContext().getTypeConverter();
+            BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
             for (Map.Entry<String, Object> p : properties.entrySet()) {
-                IntrospectionSupport.setProperty(typeConverter, executor, p.getKey(), p.getValue());
+                beanIntrospection.setProperty(getCamelContext(), executor, p.getKey(), p.getValue());
             }
             return doExecute(executor, methodName, properties);
         } catch (Exception e) {

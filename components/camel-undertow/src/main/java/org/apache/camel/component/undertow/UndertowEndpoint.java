@@ -19,11 +19,11 @@ package org.apache.camel.component.undertow;
 import java.net.URI;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.net.ssl.SSLContext;
 
 import io.undertow.server.HttpServerExchange;
 import io.undertow.server.handlers.accesslog.AccessLogReceiver;
-
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -86,6 +86,8 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Boolean throwExceptionOnFailure = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "false")
     private Boolean transferException = Boolean.FALSE;
+    @UriParam(label = "consumer", defaultValue = "false")
+    private Boolean muteException = Boolean.FALSE;
     @UriParam(label = "producer", defaultValue = "true")
     private Boolean keepAlive = Boolean.TRUE;
     @UriParam(label = "producer", defaultValue = "true")
@@ -104,7 +106,19 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     private Integer sendTimeout = 30000;
     @UriParam(label = "consumer,websocket", defaultValue = "false")
     private boolean fireWebSocketChannelEvents;
-
+    @UriParam(label = "consumer,advanced",
+        description = "Specifies a comma-delimited set of Undertow HttpHandler instances to lookup in your Registry."
+        + " These handlers are added to the Undertow handler chain (for example, to add security)."
+        + " Important: You can not use different handlers with different Undertow endpoints using the same port number."
+        + " The handlers is associated to the port number. If you need different handlers, then use different port numbers.")
+    private String handlers;
+    @UriParam(
+            label = "producer", defaultValue = "true",
+            description = "If the option is true, UndertowProducer will set the Host header to the value contained in the current exchange Host header,"
+            + " useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client,"
+            + " this allows applications which use the Host header to generate accurate URL's for a proxied service."
+    )
+    private boolean preserveHostHeader = true;
     public UndertowEndpoint(String uri, UndertowComponent component) {
         super(uri, component);
         this.component = component;
@@ -197,6 +211,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         this.matchOnUriPrefix = matchOnUriPrefix;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -204,6 +219,7 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -247,12 +263,24 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
         this.transferException = transferException;
     }
 
+    public Boolean getMuteException() {
+        return muteException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     */
+    public void setMuteException(Boolean muteException) {
+        this.muteException = muteException;
+    }
+
     public UndertowHttpBinding getUndertowHttpBinding() {
         if (undertowHttpBinding == null) {
             // create a new binding and use the options from this endpoint
             undertowHttpBinding = new DefaultUndertowHttpBinding(useStreaming);
             undertowHttpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             undertowHttpBinding.setTransferException(getTransferException());
+            undertowHttpBinding.setMuteException(getMuteException());
         }
         return undertowHttpBinding;
     }
@@ -388,6 +416,12 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
     public void setFireWebSocketChannelEvents(boolean fireWebSocketChannelEvents) {
         this.fireWebSocketChannelEvents = fireWebSocketChannelEvents;
     }
+    public void setPreserveHostHeader(boolean preserveHostHeader) {
+        this.preserveHostHeader = preserveHostHeader;
+    }
+    public boolean isPreserveHostHeader() {
+        return preserveHostHeader;
+    }
 
     @Override
     protected void doStart() throws Exception {
@@ -493,6 +527,20 @@ public class UndertowEndpoint extends DefaultEndpoint implements AsyncEndpoint, 
      */
     public void setAccessLogReceiver(AccessLogReceiver accessLogReceiver) {
         this.accessLogReceiver = accessLogReceiver;
+    }
+
+    public String getHandlers() {
+        return handlers;
+    }
+
+    /**
+     * Specifies a comma-delimited set of io.undertow.server.HttpHandler instances in your Registry (such as your Spring ApplicationContext).
+     * These handlers are added to the Undertow handler chain (for example, to add security).
+     * Important: You can not use different handlers with different Undertow endpoints using the same port number.
+     * The handlers is associated to the port number. If you need different handlers, then use different port numbers.
+     */
+    public void setHandlers(String handlers) {
+        this.handlers = handlers;
     }
 
 }

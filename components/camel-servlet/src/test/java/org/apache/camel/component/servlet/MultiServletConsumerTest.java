@@ -26,6 +26,7 @@ import org.junit.Test;
 
 public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
 
+    @Override
     protected String getConfiguration() {
         return "/org/apache/camel/component/servlet/multiServletWeb.xml";
     }
@@ -64,6 +65,7 @@ public class MultiServletConsumerTest extends ServletCamelRouterTestSupport {
         return response.getText();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {

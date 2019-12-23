@@ -48,28 +48,15 @@ public class AsyncEndpointTryCatchFinallyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .doTry()
-                            .process(new Processor() {
-                                public void process(Exchange exchange) throws Exception {
-                                    beforeThreadName = Thread.currentThread().getName();
-                                }
-                            })
-                            .to("async:bye:camel?failFirstAttempts=1")
-                        .doCatch(Exception.class)
-                            .process(new Processor() {
-                                public void process(Exchange exchange) throws Exception {
-                                    afterThreadName = Thread.currentThread().getName();
-                                }
-                            })
-                        .doFinally()
-                            .to("log:after")
-                            .to("mock:after")
-                            .transform(constant("Bye World"))
-                        .end()
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("log:before").doTry().process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).to("async:bye:camel?failFirstAttempts=1").doCatch(Exception.class).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).doFinally().to("log:after").to("mock:after").transform(constant("Bye World")).end().to("mock:result");
             }
         };
     }

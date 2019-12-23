@@ -42,6 +42,7 @@ public final class SameDocumentUriDereferencer implements URIDereferencer {
 
     
 
+    @Override
     public Data dereference(URIReference uriReference, XMLCryptoContext context) throws URIReferenceException {
 
         if (uriReference == null) {

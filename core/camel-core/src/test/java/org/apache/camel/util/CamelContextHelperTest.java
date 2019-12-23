@@ -16,12 +16,15 @@
  */
 package org.apache.camel.util;
 
+import java.util.concurrent.Callable;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.CamelContextHelper;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class CamelContextHelperTest extends ContextTestSupport {
@@ -31,6 +34,38 @@ public class CamelContextHelperTest extends ContextTestSupport {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("foo", new MyFooBean());
         return jndi;
+    }
+
+    @Test
+    public void testParsing() {
+        eq(() -> CamelContextHelper.parseBoolean(context, "TRUE"), true);
+        eq(() -> CamelContextHelper.parseBoolean(context, "true"), true);
+        eq(() -> CamelContextHelper.parseBoolean(context, "FALSE"), false);
+        eq(() -> CamelContextHelper.parseBoolean(context, "false"), false);
+        eq(() -> CamelContextHelper.parseBoolean(context, "TrUe"), true);
+        eq(() -> CamelContextHelper.parseBoolean(context, "FaLsE"), false);
+        fl(() -> CamelContextHelper.parseBoolean(context, "5"), IllegalArgumentException.class);
+
+        eq(() -> CamelContextHelper.parseInteger(context, "5"), 5);
+        eq(() -> CamelContextHelper.parseInteger(context, "-5"), -5);
+        fl(() -> CamelContextHelper.parseInteger(context, "5.0"), IllegalArgumentException.class);
+    }
+
+    private <T> void eq(Callable<T> r, T value) {
+        try {
+            T t = r.call();
+            assertEquals(value, t);
+        } catch (Throwable t) {
+            Assert.fail("Exception thrown: " + t);
+        }
+    }
+    private <T> void fl(Callable<T> r, Class<? extends Exception> exceptionClass) {
+        try {
+            r.call();
+            fail("Should have thrown an exception");
+        } catch (Throwable t) {
+            assertTrue("Expected a " + exceptionClass + " exception", exceptionClass.isInstance(t));
+        }
     }
 
     @Test

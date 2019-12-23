@@ -21,8 +21,8 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.interceptor.BreakpointSupport;
 import org.apache.camel.spi.Breakpoint;
-
 import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -39,8 +39,7 @@ public class CamelSpringRunnerProvidesBreakpointTest
     @Override
     public void testProvidesBreakpoint() {
         assertNotNull(camelContext.getDebugger());
-        assertNotNull(camelContext2.getDebugger());
-        
+
         start.sendBody("David");
         
         assertNotNull(camelContext.getDebugger());

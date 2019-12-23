@@ -72,14 +72,17 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         }
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         if (startTime == 0) {
             startTime = System.currentTimeMillis();
@@ -95,6 +98,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
         }
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             process(exchange);
@@ -229,6 +233,7 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
      */
     private final class ScheduledLogTask implements Runnable {
 
+        @Override
         public void run() {
             // only run if CamelContext has been fully started
             if (!camelContext.getStatus().isStarted()) {

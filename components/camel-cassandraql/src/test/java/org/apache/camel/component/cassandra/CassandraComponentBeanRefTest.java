@@ -20,7 +20,8 @@ import com.datastax.driver.core.Cluster;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.cassandraunit.CassandraCQLUnit;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,12 +38,10 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
     public CassandraCQLUnit cassandra = CassandraUnitUtils.cassandraCQLUnit();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
         if (canTest()) {
-            Cluster cluster = Cluster.builder()
-                    .addContactPoint("localhost")
-                    .build();
+            Cluster cluster = Cluster.builder().addContactPoint("localhost").build();
             registry.bind("cassandraCluster", cluster);
             registry.bind("cassandraSession", cluster.connect("camel_ks"));
             registry.bind("insertCql", CQL);
@@ -54,10 +53,8 @@ public class CassandraComponentBeanRefTest extends BaseCassandraTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:inputSession")
-                        .to(SESSION_URI);
-                from("direct:inputCluster")
-                        .to(CLUSTER_URI);
+                from("direct:inputSession").to(SESSION_URI);
+                from("direct:inputCluster").to(CLUSTER_URI);
             }
         };
     }

@@ -21,6 +21,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FtpChangedRootDirReadLockFastExistCheckTest extends FtpChangedRootDirReadLockTest {
 
+    @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/?password=admin&readLock=changed&readLockCheckInterval=1000&delete=true&fastExistsCheck=true";
     }

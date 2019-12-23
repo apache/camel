@@ -39,7 +39,8 @@ public class VmWaitForTaskCompleteTest extends AbstractVmTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         // we send an in only but we use Always to wait for it to complete
-        // and since the route changes the payload we can get the response anyway
+        // and since the route changes the payload we can get the response
+        // anyway
         Exchange out = template2.send("direct:start", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Hello World");
@@ -60,7 +61,7 @@ public class VmWaitForTaskCompleteTest extends AbstractVmTestSupport {
             }
         };
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilderForSecondContext() throws Exception {
         return new RouteBuilder() {

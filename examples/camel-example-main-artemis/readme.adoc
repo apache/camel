@@ -17,6 +17,20 @@ via two different styles
   that performs classpath scanning to auto-detect the JMS client and prepare for autowiring
   by generating the `META-INF/services/org/apache/camel/autowire.properties` file.
 
+=== Generating tooling meta-data
+
+The `camel-main-maven-plugin` is used for pre-scanning your project and prepare
+autowiring and spring boot tooling support by classpath scanning.
+
+You can run manually via
+
+    mvn camel-main:generate
+
+However this example is using this plugin to generate autowiring for Apache Artemis,
+which are generated in `target/classes/META-INF/services/org/apache/camel/autowire.properties`.
+
+See also more details in `application.properties`
+
 === How to run
 
 First install https://activemq.apache.org/components/artemis/[Apache ActiveMQ Artemis]
@@ -29,8 +43,14 @@ and `admin` as password:
 
 Then you can run this example using
 
-    mvn camel:run   
+    mvn camel-main:generate camel:run
 
-=== More information
+=== Help and contributions
 
-You can find more information about Apache Camel at the website: http://camel.apache.org/
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

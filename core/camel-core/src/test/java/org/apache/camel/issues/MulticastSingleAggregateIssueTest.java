@@ -39,13 +39,9 @@ public class MulticastSingleAggregateIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").multicast(new SumAggregateBean())
-                    .to("direct:foo")
-                .end()
-                .to("mock:a");
+                from("direct:a").multicast(new SumAggregateBean()).to("direct:foo").end().to("mock:a");
 
-                from("direct:foo")
-                    .bean(IncreaseOne.class);
+                from("direct:foo").bean(IncreaseOne.class);
             }
         };
     }
@@ -59,6 +55,7 @@ public class MulticastSingleAggregateIssueTest extends ContextTestSupport {
 
     public static class SumAggregateBean implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             newExchange.getIn().setHeader("foo", "I was here");
 

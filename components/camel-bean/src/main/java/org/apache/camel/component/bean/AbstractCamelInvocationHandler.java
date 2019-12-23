@@ -68,19 +68,10 @@ public abstract class AbstractCamelInvocationHandler implements InvocationHandle
     }
 
     private static Object getBody(Exchange exchange, Class<?> type) throws InvalidPayloadException {
-        // get the body from the Exchange from either OUT or IN
-        if (exchange.hasOut()) {
-            if (exchange.getOut().getBody() != null) {
-                return exchange.getOut().getMandatoryBody(type);
-            } else {
-                return null;
-            }
+        if (exchange.getMessage().getBody() != null) {
+            return exchange.getMessage().getMandatoryBody(type);
         } else {
-            if (exchange.getIn().getBody() != null) {
-                return exchange.getIn().getMandatoryBody(type);
-            } else {
-                return null;
-            }
+            return null;
         }
     }
 

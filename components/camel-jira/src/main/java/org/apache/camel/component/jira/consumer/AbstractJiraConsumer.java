@@ -74,5 +74,6 @@ public abstract class AbstractJiraConsumer extends ScheduledPollConsumer {
         return endpoint.getClient();
     }
 
+    @Override
     protected abstract int poll() throws Exception;
 }

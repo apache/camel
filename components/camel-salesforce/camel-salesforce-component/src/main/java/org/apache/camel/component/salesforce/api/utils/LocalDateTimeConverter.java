@@ -32,7 +32,8 @@ final class LocalDateTimeConverter implements SingleValueConverter {
     }
 
     @Override
-    public boolean canConvert(@SuppressWarnings("rawtypes") final Class type) {
+    public boolean canConvert(@SuppressWarnings("rawtypes")
+    final Class type) {
         return LocalDateTime.class.equals(type);
     }
 
@@ -47,7 +48,7 @@ final class LocalDateTimeConverter implements SingleValueConverter {
             return null;
         }
 
-        final LocalDateTime localDateTime = (LocalDateTime) value;
+        final LocalDateTime localDateTime = (LocalDateTime)value;
 
         return ISO_OFFSET_DATE_TIME.format(localDateTime.atZone(ZoneId.systemDefault()));
     }

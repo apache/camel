@@ -42,10 +42,8 @@ public class StreamCachingRecipientListTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setStreamCaching(true);
 
-                from("direct:a")
-                    .recipientList(header("mySlip"));
+                from("direct:a").recipientList(header("mySlip"));
             }
         };
     }
 }
-

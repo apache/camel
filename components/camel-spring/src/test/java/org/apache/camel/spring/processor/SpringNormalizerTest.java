@@ -22,6 +22,7 @@ import org.apache.camel.processor.NormalizerTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringNormalizerTest extends NormalizerTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/normalizer.xml");
     }

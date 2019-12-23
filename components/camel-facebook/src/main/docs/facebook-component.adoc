@@ -1,10 +1,14 @@
 [[facebook-component]]
-== Facebook Component
+= Facebook Component
 
-*Available as of Camel version 2.14*
+*Since Camel 2.14*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Facebook component provides access to all of the Facebook APIs
-accessible using http://facebook4j.org/en/index.html[Facebook4J]. It
+accessible using https://facebook4j.github.io/en/index.html[Facebook4J]. It
 allows producing messages to retrieve, add, and delete posts, likes,
 comments, photos, albums, videos, photos, checkins, locations, links,
 etc. It also supports APIs that allow polling for posts, users,
@@ -33,14 +37,14 @@ for this component:
     </dependency>
 -----------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
   facebook://[endpoint]?[options]
 ---------------------------------
 
-### FacebookComponent
+== FacebookComponent
 
 The facebook component can be configured with the Facebook account
 settings below, which are mandatory. The values can be provided to the
@@ -53,7 +57,7 @@ to application APIs.
 
 
 // component options: START
-The Facebook component supports 3 options, which are listed below.
+The Facebook component supports 4 options, which are listed below.
 
 
 
@@ -61,8 +65,9 @@ The Facebook component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared configuration |  | FacebookConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -79,7 +84,7 @@ facebook:methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (104 parameters):
+=== Query Parameters (104 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -202,14 +207,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-facebook-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -217,7 +222,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 30 options, which are listed below.
+The component supports 31 options, which are listed below.
 
 
 
@@ -225,6 +230,7 @@ The component supports 30 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.facebook.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.facebook.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.facebook.configuration.client-u-r-l* | Facebook4J API client URL |  | String
 | *camel.component.facebook.configuration.client-version* | Facebook4J client API version |  | String
 | *camel.component.facebook.configuration.debug-enabled* | Enables deubg output. Effective only with the embedded logger | false | Boolean
@@ -252,14 +258,14 @@ The component supports 30 options, which are listed below.
 | *camel.component.facebook.configuration.rest-base-u-r-l* | API base URL | https://graph.facebook.com/ | String
 | *camel.component.facebook.configuration.use-s-s-l* | Use SSL | true | Boolean
 | *camel.component.facebook.configuration.video-base-u-r-l* | Video API base URL | https://graph-video.facebook.com/ | String
-| *camel.component.facebook.enabled* | Enable facebook component | true | Boolean
-| *camel.component.facebook.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.facebook.enabled* | Whether to enable auto configuration of the facebook component. This is enabled by default. |  | Boolean
+| *camel.component.facebook.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 Producer endpoints can use endpoint names and options from the table
 below. Endpoints can also use the short name without the *get* or
@@ -280,8 +286,7 @@ value in the incoming message body.
 
 Any of the endpoint options can be provided in either the endpoint URI,
 or dynamically in a message header. The message header name must be of
-the format
-*CamelFacebook.https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=option&linkCreation=true&fromPageId=34020899[option]*.
+the format `CamelFacebook.option`.
 For example, the *userId* option value in the previous route could
 alternately be provided in the message header *CamelFacebook.userId*.
 Note that the inBody option overrides message header, e.g. the endpoint
@@ -293,11 +298,10 @@ return a boolean, return true for success and false otherwise. In case
 of Facebook API errors the endpoint will throw a RuntimeCamelException
 with a facebook4j.FacebookException cause.
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 Any of the producer endpoints that take a
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=reading&linkCreation=true&fromPageId=34020899[reading#reading]
-parameter can be used as a consumer endpoint. The polling consumer uses
+reading parameter can be used as a consumer endpoint. The polling consumer uses
 the *since* and *until* fields to get responses within the polling
 interval. In addition to other reading fields, an initial *since* value
 can be provided in the endpoint for the first poll.
@@ -308,15 +312,12 @@ camel-facebook creates one route exchange per returned object. As an
 example, if *"facebook://home"* results in five posts, the route will be
 executed five times (once for each Post).
 
-### Reading Options
+== Reading Options
 
 The *reading* option of type *facebook4j.Reading* adds support for
 reading parameters, which allow selecting specific fields, limits the
 number of results, etc. For more information see
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=Graph+API&linkCreation=true&fromPageId=34020899[Graph
-API#reading] -
-https://developers.facebook.com/docs/reference/api/#reading[Facebook
-Developers].
+https://developers.facebook.com/docs/reference/api/#reading[Graph API documentation].
 
 It is also used by consumer endpoints to poll Facebook data to avoid
 sending duplicate messages across polls.
@@ -326,14 +327,12 @@ The reading option can be a reference or value of type
 options in either the endpoint URI or exchange header with
 *CamelFacebook.* prefix.
 
-### Message header
+== Message header
 
-Any of the
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=URI+options&linkCreation=true&fromPageId=34020899[URI
-options#urioptions] can be provided in a message header for producer
-endpoints with *CamelFacebook.* prefix.
+Any of the URI options can be provided in a message header for producer
+endpoints with `CamelFacebook.` prefix.
 
-### Message body
+== Message body
 
 All result message bodies utilize objects provided by the Facebook4J
 API. Producer endpoints can specify the option name for incoming message
@@ -343,7 +342,7 @@ For endpoints that return an array, or *facebook4j.ResponseList*, or
 *java.util.List*, a consumer endpoint will map every elements in the
 list to distinct messages.
 
-### Use cases
+== Use cases
 
 To create a post within your Facebook profile, send this producer a
 facebook4j.PostUpdate body.
@@ -354,13 +353,13 @@ facebook4j.PostUpdate body.
         .to("facebook://postFeed/inBody=postUpdate);
 ----------------------------------------------------
 
-To poll, every 5 sec (You can set the xref:polling-consumer.adoc[polling
-consumer] options by adding a prefix of "consumer"), all statuses on
+To poll, every 5 sec (You can set the xref:manual::polling-consumer.adoc[polling
+consumer] options by adding a prefix of "consumer"), all statuses on
 your home feed:
 
 [source,java]
 -----------------------------------------------
-    from("facebook://home?consumer.delay=5000")
+    from("facebook://home?delay=5000")
         .to("bean:blah");
 -----------------------------------------------
 

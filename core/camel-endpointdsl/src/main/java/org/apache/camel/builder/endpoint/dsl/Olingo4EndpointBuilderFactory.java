@@ -17,12 +17,16 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * Communicates with OData 4.0 services using Apache Olingo OData API.
@@ -51,7 +55,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -64,7 +68,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -76,7 +80,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -89,7 +93,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -102,7 +106,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -119,7 +123,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -136,7 +140,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -152,7 +156,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpClientBuilder(
                 Object httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -168,7 +172,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpClientBuilder(
                 String httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -182,7 +186,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -196,7 +200,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder httpHeaders(String httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -207,7 +211,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -218,7 +222,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder proxy(Object proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -230,7 +234,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder proxy(String proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -242,7 +246,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder serviceUri(String serviceUri) {
-            setProperty("serviceUri", serviceUri);
+            doSetProperty("serviceUri", serviceUri);
             return this;
         }
         /**
@@ -254,7 +258,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointConsumerBuilder socketTimeout(int socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -267,7 +271,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder socketTimeout(
                 String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -280,7 +284,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -293,7 +297,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -311,7 +315,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -329,7 +333,418 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default Olingo4EndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default Olingo4EndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * For endpoints that return an array or collection, a consumer endpoint
+         * will map every element to distinct messages, unless splitResult is
+         * set to false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default Olingo4EndpointConsumerBuilder splitResult(boolean splitResult) {
+            doSetProperty("splitResult", splitResult);
+            return this;
+        }
+        /**
+         * For endpoints that return an array or collection, a consumer endpoint
+         * will map every element to distinct messages, unless splitResult is
+         * set to false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default Olingo4EndpointConsumerBuilder splitResult(String splitResult) {
+            doSetProperty("splitResult", splitResult);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder backoffErrorThreshold(
+                int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder backoffErrorThreshold(
+                String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder backoffIdleThreshold(
+                int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder backoffIdleThreshold(
+                String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder backoffMultiplier(
+                int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder backoffMultiplier(
+                String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder initialDelay(String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder runLoggingLevel(
+                LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder runLoggingLevel(
+                String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder scheduledExecutorService(
+                ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder scheduledExecutorService(
+                String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder schedulerProperties(
+                Map<String, Object> schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder schedulerProperties(
+                String schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder startScheduler(
+                boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder startScheduler(
+                String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder useFixedDelay(
+                boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default Olingo4EndpointConsumerBuilder useFixedDelay(
+                String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -356,7 +771,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -372,7 +787,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -384,7 +799,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -397,7 +812,39 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedOlingo4EndpointConsumerBuilder pollStrategy(
+                PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedOlingo4EndpointConsumerBuilder pollStrategy(
+                String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -410,7 +857,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -423,7 +870,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -436,7 +883,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -449,7 +896,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -472,7 +919,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -485,7 +932,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -497,7 +944,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -510,7 +957,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -523,7 +970,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -540,7 +987,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -557,7 +1004,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -573,7 +1020,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpClientBuilder(
                 Object httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -589,7 +1036,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpClientBuilder(
                 String httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -603,7 +1050,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -617,7 +1064,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder httpHeaders(String httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -628,7 +1075,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -639,7 +1086,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder proxy(Object proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -651,7 +1098,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder proxy(String proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -663,7 +1110,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder serviceUri(String serviceUri) {
-            setProperty("serviceUri", serviceUri);
+            doSetProperty("serviceUri", serviceUri);
             return this;
         }
         /**
@@ -675,7 +1122,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointProducerBuilder socketTimeout(int socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -688,7 +1135,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder socketTimeout(
                 String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -701,7 +1148,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -714,7 +1161,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -734,7 +1181,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -754,7 +1201,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -778,7 +1225,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -791,7 +1238,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -804,7 +1251,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -817,7 +1264,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -840,7 +1287,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -852,7 +1299,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder connectTimeout(String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -864,7 +1311,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -877,7 +1324,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder filterAlreadySeen(
                 boolean filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -890,7 +1337,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder filterAlreadySeen(
                 String filterAlreadySeen) {
-            setProperty("filterAlreadySeen", filterAlreadySeen);
+            doSetProperty("filterAlreadySeen", filterAlreadySeen);
             return this;
         }
         /**
@@ -907,7 +1354,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpAsyncClientBuilder(
                 Object httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -924,7 +1371,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpAsyncClientBuilder(
                 String httpAsyncClientBuilder) {
-            setProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
+            doSetProperty("httpAsyncClientBuilder", httpAsyncClientBuilder);
             return this;
         }
         /**
@@ -940,7 +1387,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpClientBuilder(
                 Object httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -956,7 +1403,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpClientBuilder(
                 String httpClientBuilder) {
-            setProperty("httpClientBuilder", httpClientBuilder);
+            doSetProperty("httpClientBuilder", httpClientBuilder);
             return this;
         }
         /**
@@ -970,7 +1417,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder httpHeaders(
                 Map<String, String> httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -984,7 +1431,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder httpHeaders(String httpHeaders) {
-            setProperty("httpHeaders", httpHeaders);
+            doSetProperty("httpHeaders", httpHeaders);
             return this;
         }
         /**
@@ -995,7 +1442,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -1006,7 +1453,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder proxy(Object proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -1018,7 +1465,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder proxy(String proxy) {
-            setProperty("proxy", proxy);
+            doSetProperty("proxy", proxy);
             return this;
         }
         /**
@@ -1030,7 +1477,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder serviceUri(String serviceUri) {
-            setProperty("serviceUri", serviceUri);
+            doSetProperty("serviceUri", serviceUri);
             return this;
         }
         /**
@@ -1042,7 +1489,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder socketTimeout(int socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -1054,7 +1501,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: common
          */
         default Olingo4EndpointBuilder socketTimeout(String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -1067,7 +1514,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1080,7 +1527,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default Olingo4EndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1104,7 +1551,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1117,7 +1564,7 @@ public interface Olingo4EndpointBuilderFactory {
          */
         default AdvancedOlingo4EndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1129,7 +1576,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedOlingo4EndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1141,7 +1588,7 @@ public interface Olingo4EndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedOlingo4EndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1150,7 +1597,7 @@ public interface Olingo4EndpointBuilderFactory {
      * Communicates with OData 4.0 services using Apache Olingo OData API.
      * 
      * Category: cloud
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-olingo4
      * 
      * Syntax: <code>olingo4:apiName/methodName</code>

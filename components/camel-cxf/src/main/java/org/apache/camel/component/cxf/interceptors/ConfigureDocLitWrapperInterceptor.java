@@ -35,6 +35,7 @@ public class ConfigureDocLitWrapperInterceptor extends AbstractInDatabindingInte
         this.unwrapParameterFlag = unwrapParameterFlag;
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         message.put("org.apache.cxf.interceptor.DocLiteralInInterceptor.DocLiteralInInterceptor.keep-parameters-wrapper", unwrapParameterFlag);
         message.put("org.apache.cxf.wsdl.interceptors.DocLiteralInInterceptor.DocLiteralInInterceptor.keep-parameters-wrapper", unwrapParameterFlag);

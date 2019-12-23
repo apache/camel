@@ -19,7 +19,8 @@ package org.apache.camel.component.salesforce.api.dto.composite;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Default {@link ReferenceGenerator} implementation that generates a counted sequence of references (ref1, ref2, ...).
+ * Default {@link ReferenceGenerator} implementation that generates a counted
+ * sequence of references (ref1, ref2, ...).
  */
 public class Counter implements ReferenceGenerator {
 

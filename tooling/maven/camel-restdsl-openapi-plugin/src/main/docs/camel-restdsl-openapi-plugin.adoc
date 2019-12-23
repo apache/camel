@@ -1,0 +1,185 @@
+= Camel REST DSL OpenApi Maven Plugin
+
+The Camel REST DSL OpenApi Maven Plugin supports the following goals
+
+ - camel-restdsl-openapi:generate - To generate consumer REST DSL
+ RouteBuilder source code from OpenApi specification
+
+ - camel-restdsl-openapi:generate-with-dto - To generate consumer REST DSL
+ RouteBuilder source code from OpenApi specification and with DTO model
+ classes generated via the swagger-codegen-maven-plugin.
+
+ - camel-restdsl-openapi:generate-xml - To generate consumer REST DSL
+ XML source code from OpenApi specification
+
+ - camel-restdsl-openapi:generate-xml-with-dto - To generate consumer REST DSL
+ XML source code from OpenApi specification  and with DTO model
+ classes generated via the swagger-codegen-maven-plugin.
+
+== Adding plugin to Maven pom.xml
+
+This plugin can be added to your Maven pom.xml file by adding it to the `<plugins>` section,
+for example in a Spring Boot application:
+
+[source,xml]
+----
+<build>
+  <plugins>
+    <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+    </plugin>
+
+    <plugin>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-restdsl-openapi-plugin</artifactId>
+      <version>3.1.0</version>
+    </plugin>
+
+  </plugins>
+</build>
+----
+
+The plugin can then be executed via its prefix `camel-restdsl-openapi` as shown
+
+    $mvn camel-restdsl-openapi generate
+
+== camel-restdsl-openapi:generate
+
+The `camel-restdsl-openapi:generate` goal of the Camel REST DSL
+OpenApi Maven Plugin is used to generate REST DSL RouteBuilder
+implementation source code from Maven.
+
+=== Options
+
+The plugin supports the following options which can be configured from
+the command line (use `-D` syntax), or defined in the `pom.xml` file 
+in the `<configuration>` tag.
+
+|========================================
+| Parameter | Default Value | Description
+| `skip` | `false` | Set to `true` to skip code generation.
+| `filterOperation` | | Used for including only the operation ids specified. Multiple ids can be separated by comma. Wildcards can be used, eg `find*` to include all operations starting with `find`.
+| `specificationUri` | `src/spec/openapi.json` | URI of the OpenApi specification, supports filesystem paths, HTTP and classpath resources, by default `src/spec/openapi.json` within the project directory.  Supports JSON and YAML.
+| `className` | from `title` or `RestDslRoute` | Name of the generated class, taken from the OpenApi specification title or set to `RestDslRoute` by default
+| `packageName` | from `host` or `rest.dsl.generated` | Name of the package for the generated class, taken from the OpenApi specification host value or `rest.dsl.generated` by default
+| `indent` | `"&nbsp;&nbsp;&nbsp;&nbsp;"` | What identing character(s) to use, by default four spaces, you can use `\t` to signify tab character
+| `outputDirectory` | `generated-sources/restdsl-openapi` | Where to place the generated source file, by default `generated-sources/restdsl-openapi` within the project directory
+| `destinationGenerator` | | Fully qualified class name of the class that implements `org.apache.camel.generator.openapi.DestinationGenerator` interface for customizing destination endpoint
+| `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used. 
+| `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`. |
+|========================================
+
+=== Spring Boot Project with Servlet component
+
+If the Maven project is a Spring Boot project and `restConfiguration` is enabled and the servlet component
+is being used as REST component, then this plugin will autodetect the package name (if packageName has not been explicit configured)
+ where the `@SpringBootApplication` main class is located, and use the same package name
+ for generating Rest DSL source code and a needed `CamelRestController` support class.
+
+== camel-restdsl-openapi:generate-with-dto
+
+Works as `generate` goal but also generates DTO model classes by automatic executing
+the swagger-codegen-maven-plugin to generate java source code of the DTO model classes
+from the OpenApi specification.
+
+This plugin has been scoped and limited to only support a good effort set of defaults for
+using the swagger-codegen-maven-plugin to generate the model DTOs. If you need more power
+and flexibility then use the https://github.com/swagger-api/swagger-codegen/tree/3.0.0/modules/swagger-codegen-maven-plugin[Swagger Codegen Maven Plugin]
+directly to generate the DTO and not this plugin.
+
+The DTO classes may require additional dependencies such as:
+[source,xml]
+----
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.threeten</groupId>
+      <artifactId>threetenbp</artifactId>
+      <version>1.3.7</version>
+    </dependency>
+----
+
+=== Options
+
+The plugin supports the following *additional* options
+
+|========================================
+| Parameter | Default Value | Description
+| `swaggerCodegenMavenPluginVersion` | 3.0.14 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
+| `modelOutput` | | Target output path (default is \${project.build.directory}/generated-sources/openapi)
+| `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
+| `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
+| `modelNameSuffix` | | Sets the pre- or suffix for model classes and enums
+| `modelWithXml` | true | Enable XML annotations inside the generated models (only works with ibraries that provide support for JSON and XML)
+|========================================
+
+
+== camel-restdsl-openapi:generate-xml
+
+The `camel-restdsl-openapi:generate-xml` goal of the Camel REST DSL
+OpenApi Maven Plugin is used to generate REST DSL XML
+implementation source code from Maven.
+
+=== Options
+
+The plugin supports the following options which can be configured from
+the command line (use `-D` syntax), or defined in the `pom.xml` file
+in the `<configuration>` tag.
+
+|========================================
+| Parameter | Default Value | Description
+| `skip` | `false` | Set to `true` to skip code generation.
+| `filterOperation` | | Used for including only the operation ids specified. Multiple ids can be separated by comma. Wildcards can be used, eg `find*` to include all operations starting with `find`.
+| `specificationUri` | `src/spec/openapi.json` | URI of the OpenApi specification, by default `src/spec/openapi.json` within the project directory. Supports JSON and YAML.
+| `outputDirectory` | `generated-sources/restdsl-openapi` | Where to place the generated source file, by default `generated-sources/restdsl-openapi` within the project directory
+| `fileName` | `camel-rest.xml` | The name of the XML file as output.
+| `blueprint` | `false` | If enabled generates OSGi Blueprint XML instead of Spring XML.
+| `destinationGenerator` | | Fully qualified class name of the class that implements `org.apache.camel.generator.openapi.DestinationGenerator` interface for customizing destination endpoint
+| `restConfiguration` | `true` | Whether to include generation of the rest configuration with detected rest component to be used.
+| `apiContextPath` | | Define openapi endpoint path if `restConfiguration` is set to `true`. |
+|========================================
+
+== camel-restdsl-openapi:generate-xml-with-dto
+
+Works as `generate-xml` goal but also generates DTO model classes by automatic executing
+the swagger-codegen-maven-plugin to generate java source code of the DTO model classes
+from the OpenApi specification.
+
+This plugin has been scoped and limited to only support a good effort set of defaults for
+using the swagger-codegen-maven-plugin to generate the model DTOs. If you need more power
+and flexibility then use the https://github.com/swagger-api/swagger-codegen/tree/master/modules/swagger-codegen-maven-plugin[Swagger Codegen Maven Plugin]
+directly to generate the DTO and not this plugin.
+
+The DTO classes may require additional dependencies such as:
+[source,xml]
+----
+    <dependency>
+      <groupId>com.google.code.gson</groupId>
+      <artifactId>gson</artifactId>
+      <version>2.8.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.threeten</groupId>
+      <artifactId>threetenbp</artifactId>
+      <version>1.3.7</version>
+    </dependency>
+----
+
+=== Options
+
+The plugin supports the following *additional* options
+
+|========================================
+| Parameter | Default Value | Description
+| `swaggerCodegenMavenPluginVersion` | 3.0.14 | The version of the `io.swagger.codegen.v3:swagger-codegen-maven-plugin` maven plugin to be used.
+| `modelOutput` | | Target output path (default is \${project.build.directory}/generated-sources/openapi)
+| `modelPackage` | `io.swagger.client.model` | The package to use for generated model objects/classes
+| `modelNamePrefix` | | Sets the pre- or suffix for model classes and enums
+| `modelNameSuffix` | | Sets the pre- or suffix for model classes and enums
+| `modelWithXml` | true | Enable XML annotations inside the generated models (only works with ibraries that provide support for JSON and XML)
+|========================================
+

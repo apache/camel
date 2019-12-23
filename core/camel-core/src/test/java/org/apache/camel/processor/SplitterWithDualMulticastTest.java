@@ -31,13 +31,16 @@ public class SplitterWithDualMulticastTest extends ContextTestSupport {
         getMockEndpoint("mock:result").allMessages().header("beer").isNull();
 
         getMockEndpoint("mock:split").expectedBodiesReceived("A", "B", "C");
-        // should have the bar header because multicast uses UseLatestAggregationStrategy by default
+        // should have the bar header because multicast uses
+        // UseLatestAggregationStrategy by default
         getMockEndpoint("mock:split").expectedHeaderReceived("bar", 123);
-        // should NOT have the foo header because multicast uses UseLatestAggregationStrategy by default
+        // should NOT have the foo header because multicast uses
+        // UseLatestAggregationStrategy by default
         getMockEndpoint("mock:split").allMessages().header("foo").isNull();
 
         getMockEndpoint("mock:split2").expectedBodiesReceived("A", "B", "C");
-        // should have the bar header from the previous multicast (which value 123)
+        // should have the bar header from the previous multicast (which value
+        // 123)
         getMockEndpoint("mock:split2").expectedHeaderReceived("bar", 123);
         // should have the beer which was set on the 2nd multicast
         getMockEndpoint("mock:split2").expectedHeaderReceived("beer", "Carlsberg");
@@ -54,20 +57,9 @@ public class SplitterWithDualMulticastTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(","))
-                        .multicast()
-                            .setHeader("foo", constant("ABC"))
-                            .setHeader("bar", constant(123))
-                        .end()
-                        .to("log:split?showHeaders=true", "mock:split")
-                        .multicast()
-                            .setHeader("bar", constant(456))
-                            .setHeader("beer", constant("Carlsberg"))
-                        .end()
-                        .to("log:split2?showHeaders=true", "mock:split2")
-                    .end()
-                    .to("log:result?showHeaders=true", "mock:result");
+                from("direct:start").split(body().tokenize(",")).multicast().setHeader("foo", constant("ABC")).setHeader("bar", constant(123)).end()
+                    .to("log:split?showHeaders=true", "mock:split").multicast().setHeader("bar", constant(456)).setHeader("beer", constant("Carlsberg")).end()
+                    .to("log:split2?showHeaders=true", "mock:split2").end().to("log:result?showHeaders=true", "mock:result");
             }
         };
     }

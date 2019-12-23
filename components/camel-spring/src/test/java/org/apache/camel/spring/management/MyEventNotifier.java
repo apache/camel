@@ -26,6 +26,7 @@ public class MyEventNotifier extends EventNotifierSupport {
 
     private List<CamelEvent> events = new ArrayList<>();
 
+    @Override
     public void notify(CamelEvent event) throws Exception {
         events.add(event);
     }

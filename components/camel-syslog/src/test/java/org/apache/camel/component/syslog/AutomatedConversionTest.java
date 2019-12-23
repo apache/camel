@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.syslog;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -79,7 +80,7 @@ public class AutomatedConversionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // we setup a Syslog listener on a random port.
-                from("mina2:udp://127.0.0.1:" + serverPort).unmarshal().syslog().process(new Processor() {
+                from("mina:udp://127.0.0.1:" + serverPort).unmarshal().syslog().process(new Processor() {
                     @Override
                     public void process(Exchange ex) {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);

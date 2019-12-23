@@ -149,7 +149,7 @@ public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("beanstalk:tube?consumer.onFailure=release").routeId("foo")
+                from("beanstalk:tube?onFailure=release").routeId("foo")
                         .process(processor).to("mock:result");
             }
         };

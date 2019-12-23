@@ -23,6 +23,7 @@ import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 
 public class SendMessageUsage implements TelegramMethodUsage {
 
+    @Override
     public void run(CamelContext context) {
         ProducerTemplate template = context.createProducerTemplate();
         OutgoingTextMessage msg = new OutgoingTextMessage();

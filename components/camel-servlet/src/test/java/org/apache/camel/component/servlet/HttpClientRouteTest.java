@@ -17,6 +17,7 @@
 package org.apache.camel.component.servlet;
 
 import java.io.ByteArrayInputStream;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -28,7 +29,6 @@ import com.meterware.httpunit.WebResponse;
 import com.meterware.servletunit.ServletUnitClient;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateProducerException;
-import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
@@ -198,6 +198,7 @@ public class HttpClientRouteTest extends ServletCamelRouterTestSupport {
         }
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new MyServletRoute();
     }

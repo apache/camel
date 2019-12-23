@@ -42,32 +42,6 @@ public interface ZooKeeperEndpointBuilderFactory {
             return (AdvancedZooKeeperEndpointConsumerBuilder) this;
         }
         /**
-         * Not in use.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointConsumerBuilder awaitExistence(
-                boolean awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
-         * Not in use.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointConsumerBuilder awaitExistence(
-                String awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
          * Whether the children of the node should be listed.
          * 
          * The option is a: <code>boolean</code> type.
@@ -76,7 +50,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointConsumerBuilder listChildren(
                 boolean listChildren) {
-            setProperty("listChildren", listChildren);
+            doSetProperty("listChildren", listChildren);
             return this;
         }
         /**
@@ -88,7 +62,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointConsumerBuilder listChildren(
                 String listChildren) {
-            setProperty("listChildren", listChildren);
+            doSetProperty("listChildren", listChildren);
             return this;
         }
         /**
@@ -99,7 +73,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -110,7 +84,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -121,7 +95,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder backoff(long backoff) {
-            setProperty("backoff", backoff);
+            doSetProperty("backoff", backoff);
             return this;
         }
         /**
@@ -132,7 +106,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder backoff(String backoff) {
-            setProperty("backoff", backoff);
+            doSetProperty("backoff", backoff);
             return this;
         }
         /**
@@ -150,7 +124,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -168,7 +142,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -179,7 +153,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder repeat(boolean repeat) {
-            setProperty("repeat", repeat);
+            doSetProperty("repeat", repeat);
             return this;
         }
         /**
@@ -190,7 +164,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder repeat(String repeat) {
-            setProperty("repeat", repeat);
+            doSetProperty("repeat", repeat);
             return this;
         }
         /**
@@ -203,7 +177,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointConsumerBuilder sendEmptyMessageOnDelete(
                 boolean sendEmptyMessageOnDelete) {
-            setProperty("sendEmptyMessageOnDelete", sendEmptyMessageOnDelete);
+            doSetProperty("sendEmptyMessageOnDelete", sendEmptyMessageOnDelete);
             return this;
         }
         /**
@@ -216,7 +190,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointConsumerBuilder sendEmptyMessageOnDelete(
                 String sendEmptyMessageOnDelete) {
-            setProperty("sendEmptyMessageOnDelete", sendEmptyMessageOnDelete);
+            doSetProperty("sendEmptyMessageOnDelete", sendEmptyMessageOnDelete);
             return this;
         }
     }
@@ -243,7 +217,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -259,7 +233,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -271,7 +245,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -284,7 +258,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -297,7 +271,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -310,7 +284,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -323,7 +297,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -336,7 +310,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -351,32 +325,6 @@ public interface ZooKeeperEndpointBuilderFactory {
             return (AdvancedZooKeeperEndpointProducerBuilder) this;
         }
         /**
-         * Not in use.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointProducerBuilder awaitExistence(
-                boolean awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
-         * Not in use.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointProducerBuilder awaitExistence(
-                String awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
          * Whether the children of the node should be listed.
          * 
          * The option is a: <code>boolean</code> type.
@@ -385,7 +333,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointProducerBuilder listChildren(
                 boolean listChildren) {
-            setProperty("listChildren", listChildren);
+            doSetProperty("listChildren", listChildren);
             return this;
         }
         /**
@@ -397,7 +345,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointProducerBuilder listChildren(
                 String listChildren) {
-            setProperty("listChildren", listChildren);
+            doSetProperty("listChildren", listChildren);
             return this;
         }
         /**
@@ -408,7 +356,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: common
          */
         default ZooKeeperEndpointProducerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -419,7 +367,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: common
          */
         default ZooKeeperEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -430,7 +378,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder create(boolean create) {
-            setProperty("create", create);
+            doSetProperty("create", create);
             return this;
         }
         /**
@@ -441,7 +389,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder create(String create) {
-            setProperty("create", create);
+            doSetProperty("create", create);
             return this;
         }
         /**
@@ -452,7 +400,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder createMode(String createMode) {
-            setProperty("createMode", createMode);
+            doSetProperty("createMode", createMode);
             return this;
         }
         /**
@@ -472,7 +420,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -492,7 +440,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default ZooKeeperEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -516,7 +464,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -529,7 +477,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -542,7 +490,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -555,7 +503,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -570,30 +518,6 @@ public interface ZooKeeperEndpointBuilderFactory {
             return (AdvancedZooKeeperEndpointBuilder) this;
         }
         /**
-         * Not in use.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointBuilder awaitExistence(boolean awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
-         * Not in use.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        @Deprecated
-        default ZooKeeperEndpointBuilder awaitExistence(String awaitExistence) {
-            setProperty("awaitExistence", awaitExistence);
-            return this;
-        }
-        /**
          * Whether the children of the node should be listed.
          * 
          * The option is a: <code>boolean</code> type.
@@ -601,7 +525,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: common
          */
         default ZooKeeperEndpointBuilder listChildren(boolean listChildren) {
-            setProperty("listChildren", listChildren);
+            doSetProperty("listChildren", listChildren);
             return this;
         }
         /**
@@ -612,7 +536,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: common
          */
         default ZooKeeperEndpointBuilder listChildren(String listChildren) {
-            setProperty("listChildren", listChildren);
+            doSetProperty("listChildren", listChildren);
             return this;
         }
         /**
@@ -623,7 +547,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: common
          */
         default ZooKeeperEndpointBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -634,7 +558,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: common
          */
         default ZooKeeperEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -658,7 +582,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -671,7 +595,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          */
         default AdvancedZooKeeperEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -683,7 +607,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedZooKeeperEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -695,7 +619,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedZooKeeperEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -704,7 +628,7 @@ public interface ZooKeeperEndpointBuilderFactory {
      * The zookeeper component allows interaction with a ZooKeeper cluster.
      * 
      * Category: clustering
-     * Available as of version: 2.9
+     * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-zookeeper
      * 
      * Syntax: <code>zookeeper:serverUrls/path</code>
@@ -715,7 +639,7 @@ public interface ZooKeeperEndpointBuilderFactory {
      * Path parameter: path (required)
      * The node in the ZooKeeper server (aka znode)
      */
-    default ZooKeeperEndpointBuilder zooKeeper(String path) {
+    default ZooKeeperEndpointBuilder zookeeper(String path) {
         class ZooKeeperEndpointBuilderImpl extends AbstractEndpointBuilder implements ZooKeeperEndpointBuilder, AdvancedZooKeeperEndpointBuilder {
             public ZooKeeperEndpointBuilderImpl(String path) {
                 super("zookeeper", path);

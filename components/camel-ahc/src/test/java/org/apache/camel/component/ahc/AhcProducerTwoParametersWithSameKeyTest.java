@@ -22,7 +22,11 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  *
@@ -34,7 +38,7 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
         Exchange out = template.request("ahc:http://localhost:{{port}}/myapp?from=me&to=foo&to=bar", null);
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
+        assertFalse(out.isFailed(), "Should not fail");
         assertEquals("OK", out.getOut().getBody(String.class));
         assertEquals("yes", out.getOut().getHeader("bar"));
     }
@@ -53,7 +57,7 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
         });
 
         assertNotNull(out);
-        assertFalse("Should not fail", out.isFailed());
+        assertFalse(out.isFailed(), "Should not fail");
         assertEquals("OK", out.getOut().getBody(String.class));
         assertEquals("yes", out.getOut().getHeader("bar"));
 

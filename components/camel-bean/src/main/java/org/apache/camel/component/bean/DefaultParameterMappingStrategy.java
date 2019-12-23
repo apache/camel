@@ -37,6 +37,7 @@ public class DefaultParameterMappingStrategy implements ParameterMappingStrategy
         loadDefaultRegistry();
     }
 
+    @Override
     public Expression getDefaultParameterTypeExpression(Class<?> parameterType) {
         return parameterTypeToExpressionMap.get(parameterType);
     }

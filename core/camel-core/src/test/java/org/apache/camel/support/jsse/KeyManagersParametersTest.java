@@ -28,81 +28,81 @@ import org.apache.camel.CamelContext;
 import org.junit.Test;
 
 public class KeyManagersParametersTest extends AbstractJsseParametersTest {
-    
+
     protected KeyStoreParameters createMinimalKeyStoreParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        
-        ksp.setResource("org/apache/camel/support/jsse/localhost.ks");
+
+        ksp.setResource("org/apache/camel/support/jsse/localhost.p12");
         ksp.setPassword("changeit");
-        
+        ksp.setType("PKCS12");
+
         return ksp;
     }
-    
+
     protected KeyManagersParameters createMinimalKeyManagersParameters() {
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setKeyStore(this.createMinimalKeyStoreParameters());
         kmp.setKeyPassword("changeit");
-        
+
         return kmp;
     }
-    
+
     @Test
     public void testPropertyPlaceholders() throws Exception {
-        
+
         CamelContext context = this.createPropertiesPlaceholderAwareContext();
-        
+
         KeyStoreParameters ksp = new KeyStoreParameters();
         ksp.setCamelContext(context);
-        
+
         ksp.setType("{{keyStoreParameters.type}}");
         ksp.setProvider("{{keyStoreParameters.provider}}");
         ksp.setResource("{{keyStoreParameters.resource}}");
         ksp.setPassword("{{keyStoreParamerers.password}}");
-        
+
         KeyManagersParameters kmp = new KeyManagersParameters();
         kmp.setCamelContext(context);
         kmp.setKeyStore(ksp);
-        
+
         kmp.setKeyPassword("{{keyManagersParameters.keyPassword}}");
         kmp.setAlgorithm("{{keyManagersParameters.algorithm}}");
         kmp.setProvider("{{keyManagersParameters.provider}}");
-        
+
         KeyManager[] kms = kmp.createKeyManagers();
         validateKeyManagers(kms);
     }
-    
+
     @Test
     public void testCreateKeyManagers() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
-        
+
         KeyManager[] kms = kmp.createKeyManagers();
         validateKeyManagers(kms);
     }
-    
+
     @Test
     public void testExplicitAlgorithm() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         kmp.setAlgorithm(KeyManagerFactory.getDefaultAlgorithm());
-        
+
         KeyManager[] kms = kmp.createKeyManagers();
         validateKeyManagers(kms);
     }
-    
+
     @Test
     public void testExplicitProvider() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
-        kmp.setProvider(KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm())
-                        .getProvider().getName());
-        
+        kmp.setProvider(KeyManagerFactory.getInstance(KeyManagerFactory.getDefaultAlgorithm()).getProvider().getName());
+
         KeyManager[] kms = kmp.createKeyManagers();
         validateKeyManagers(kms);
     }
-    
+
     @Test
     public void testInvalidPassword() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         kmp.setKeyPassword("");
-        
+
         try {
             kmp.createKeyManagers();
             fail();
@@ -110,12 +110,12 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
             // expected
         }
     }
-    
+
     @Test
     public void testInvalidExplicitAlgorithm() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         kmp.setAlgorithm("dsfsdfsdfdsfdsF");
-        
+
         try {
             kmp.createKeyManagers();
             fail();
@@ -123,12 +123,12 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
             // expected
         }
     }
-    
+
     @Test
     public void testInvalidExplicitProvider() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
         kmp.setProvider("dsfsdfsdfdsfdsF");
-        
+
         try {
             kmp.createKeyManagers();
             fail();
@@ -136,24 +136,24 @@ public class KeyManagersParametersTest extends AbstractJsseParametersTest {
             // expected
         }
     }
-    
+
     @Test
     public void testAliasedKeyManager() throws Exception {
         KeyManagersParameters kmp = this.createMinimalKeyManagersParameters();
-        
+
         KeyManager[] kms = kmp.createKeyManagers();
         assertEquals(1, kms.length);
         assertTrue(kms[0] instanceof X509KeyManager);
-        
-        kms[0] = new AliasedX509ExtendedKeyManager("server", (X509KeyManager)kms[0]);
-        AliasedX509ExtendedKeyManager km = (AliasedX509ExtendedKeyManager) kms[0];
-        assertNotNull(km.getPrivateKey("server"));
+
+        kms[0] = new AliasedX509ExtendedKeyManager("localhost", (X509KeyManager)kms[0]);
+        AliasedX509ExtendedKeyManager km = (AliasedX509ExtendedKeyManager)kms[0];
+        assertNotNull(km.getPrivateKey("localhost"));
     }
 
     protected void validateKeyManagers(KeyManager[] kms) {
         assertEquals(1, kms.length);
         assertTrue(kms[0] instanceof X509KeyManager);
-        X509KeyManager km = (X509KeyManager) kms[0];
-        assertNotNull(km.getPrivateKey("server"));
+        X509KeyManager km = (X509KeyManager)kms[0];
+        assertNotNull(km.getPrivateKey("localhost"));
     }
 }

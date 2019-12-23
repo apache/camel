@@ -19,10 +19,10 @@ package org.apache.camel.component.properties.route2;
 import org.apache.camel.BeanInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.FooBar;
-import org.apache.camel.spring.SpringRouteBuilder;
 
-public class SpringBeanInjectRoute extends SpringRouteBuilder {
+public class SpringBeanInjectRoute extends RouteBuilder {
 
     @BeanInject("foo")
     private FooBar greeting;

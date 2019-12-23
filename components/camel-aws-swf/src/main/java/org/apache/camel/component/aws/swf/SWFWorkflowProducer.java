@@ -26,7 +26,6 @@ import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class SWFWorkflowProducer extends DefaultProducer {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(SWFWorkflowProducer.class);
     private final CamelSWFWorkflowClient camelSWFClient;
@@ -42,6 +41,7 @@ public class SWFWorkflowProducer extends DefaultProducer {
         this.camelSWFClient = camelSWFClient;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         LOGGER.debug("processing workflow task " + exchange);
 

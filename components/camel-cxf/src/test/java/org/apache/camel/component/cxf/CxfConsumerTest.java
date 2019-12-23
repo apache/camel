@@ -34,7 +34,6 @@ import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.junit.Test;
 
-
 public class CxfConsumerTest extends CamelTestSupport {
     protected static final String SIMPLE_ENDPOINT_ADDRESS = "http://localhost:"
         + CXFTestSupport.getPort1() + "/CxfConsumerTest/test";
@@ -56,6 +55,7 @@ public class CxfConsumerTest extends CamelTestSupport {
     }
     
     // START SNIPPET: example
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

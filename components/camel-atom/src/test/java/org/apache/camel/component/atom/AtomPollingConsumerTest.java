@@ -63,6 +63,7 @@ public class AtomPollingConsumerTest extends CamelTestSupport {
         assertEquals("file:src/test/data/feed.atom", endpoint.getFeedUri());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

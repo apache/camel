@@ -27,7 +27,6 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The camel etcd component allows you to work with Etcd, a distributed reliable
@@ -40,7 +39,7 @@ public interface EtcdEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the etcd component.
+     * Builder for endpoint consumers for the Etcd component.
      */
     public interface EtcdEndpointConsumerBuilder
             extends
@@ -56,7 +55,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointConsumerBuilder recursive(boolean recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -67,7 +66,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointConsumerBuilder recursive(String recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -78,7 +77,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointConsumerBuilder servicePath(String servicePath) {
-            setProperty("servicePath", servicePath);
+            doSetProperty("servicePath", servicePath);
             return this;
         }
         /**
@@ -89,7 +88,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointConsumerBuilder timeout(Long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -100,7 +99,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointConsumerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -111,7 +110,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointConsumerBuilder uris(String uris) {
-            setProperty("uris", uris);
+            doSetProperty("uris", uris);
             return this;
         }
         /**
@@ -129,7 +128,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -147,7 +146,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -159,7 +158,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
                 boolean sendEmptyExchangeOnTimeout) {
-            setProperty("sendEmptyExchangeOnTimeout", sendEmptyExchangeOnTimeout);
+            doSetProperty("sendEmptyExchangeOnTimeout", sendEmptyExchangeOnTimeout);
             return this;
         }
         /**
@@ -171,7 +170,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
                 String sendEmptyExchangeOnTimeout) {
-            setProperty("sendEmptyExchangeOnTimeout", sendEmptyExchangeOnTimeout);
+            doSetProperty("sendEmptyExchangeOnTimeout", sendEmptyExchangeOnTimeout);
             return this;
         }
         /**
@@ -184,7 +183,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -197,7 +196,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -210,7 +209,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -223,7 +222,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -236,7 +235,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -249,7 +248,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -266,7 +265,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -283,7 +282,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -296,7 +295,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -309,7 +308,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -321,7 +320,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -333,7 +332,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -346,7 +345,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -359,7 +358,33 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default EtcdEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default EtcdEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -372,7 +397,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -386,7 +411,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -401,7 +426,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -416,41 +441,24 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default EtcdEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -459,12 +467,12 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -474,7 +482,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -486,7 +494,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -497,7 +505,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -508,7 +516,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -520,7 +528,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -532,7 +540,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -544,7 +552,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -555,7 +563,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: security
          */
         default EtcdEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -568,7 +576,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -581,7 +589,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -592,13 +600,13 @@ public interface EtcdEndpointBuilderFactory {
          * Group: security
          */
         default EtcdEndpointConsumerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint consumers for the etcd component.
+     * Advanced builder for endpoint consumers for the Etcd component.
      */
     public interface AdvancedEtcdEndpointConsumerBuilder
             extends
@@ -619,7 +627,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -635,7 +643,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -647,7 +655,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -660,7 +668,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -671,7 +679,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder fromIndex(Long fromIndex) {
-            setProperty("fromIndex", fromIndex);
+            doSetProperty("fromIndex", fromIndex);
             return this;
         }
         /**
@@ -682,7 +690,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder fromIndex(String fromIndex) {
-            setProperty("fromIndex", fromIndex);
+            doSetProperty("fromIndex", fromIndex);
             return this;
         }
         /**
@@ -698,7 +706,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -714,7 +722,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -727,7 +735,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -740,7 +748,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -753,7 +761,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -766,13 +774,13 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
 
     /**
-     * Builder for endpoint producers for the etcd component.
+     * Builder for endpoint producers for the Etcd component.
      */
     public interface EtcdEndpointProducerBuilder
             extends
@@ -788,7 +796,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointProducerBuilder recursive(boolean recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -799,7 +807,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointProducerBuilder recursive(String recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -810,7 +818,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointProducerBuilder servicePath(String servicePath) {
-            setProperty("servicePath", servicePath);
+            doSetProperty("servicePath", servicePath);
             return this;
         }
         /**
@@ -821,7 +829,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointProducerBuilder timeout(Long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -832,7 +840,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -843,7 +851,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointProducerBuilder uris(String uris) {
-            setProperty("uris", uris);
+            doSetProperty("uris", uris);
             return this;
         }
         /**
@@ -863,7 +871,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -883,7 +891,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -894,7 +902,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: producer
          */
         default EtcdEndpointProducerBuilder timeToLive(Integer timeToLive) {
-            setProperty("timeToLive", timeToLive);
+            doSetProperty("timeToLive", timeToLive);
             return this;
         }
         /**
@@ -906,7 +914,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: producer
          */
         default EtcdEndpointProducerBuilder timeToLive(String timeToLive) {
-            setProperty("timeToLive", timeToLive);
+            doSetProperty("timeToLive", timeToLive);
             return this;
         }
         /**
@@ -917,7 +925,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: security
          */
         default EtcdEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -930,7 +938,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -943,7 +951,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -954,13 +962,13 @@ public interface EtcdEndpointBuilderFactory {
          * Group: security
          */
         default EtcdEndpointProducerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint producers for the etcd component.
+     * Advanced builder for endpoint producers for the Etcd component.
      */
     public interface AdvancedEtcdEndpointProducerBuilder
             extends
@@ -978,7 +986,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -991,7 +999,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1004,7 +1012,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1017,13 +1025,13 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
 
     /**
-     * Builder for endpoint for the etcd component.
+     * Builder for endpoint for the Etcd component.
      */
     public interface EtcdEndpointBuilder
             extends
@@ -1039,7 +1047,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointBuilder recursive(boolean recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -1050,7 +1058,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointBuilder recursive(String recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -1061,7 +1069,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointBuilder servicePath(String servicePath) {
-            setProperty("servicePath", servicePath);
+            doSetProperty("servicePath", servicePath);
             return this;
         }
         /**
@@ -1072,7 +1080,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointBuilder timeout(Long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1083,7 +1091,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -1094,7 +1102,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: common
          */
         default EtcdEndpointBuilder uris(String uris) {
-            setProperty("uris", uris);
+            doSetProperty("uris", uris);
             return this;
         }
         /**
@@ -1105,7 +1113,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: security
          */
         default EtcdEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1118,7 +1126,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1131,7 +1139,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default EtcdEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1142,13 +1150,13 @@ public interface EtcdEndpointBuilderFactory {
          * Group: security
          */
         default EtcdEndpointBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint for the etcd component.
+     * Advanced builder for endpoint for the Etcd component.
      */
     public interface AdvancedEtcdEndpointBuilder
             extends
@@ -1166,7 +1174,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1179,7 +1187,7 @@ public interface EtcdEndpointBuilderFactory {
          */
         default AdvancedEtcdEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1191,7 +1199,7 @@ public interface EtcdEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEtcdEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1203,17 +1211,17 @@ public interface EtcdEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEtcdEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
     /**
-     * etcd (camel-etcd)
+     * Etcd (camel-etcd)
      * The camel etcd component allows you to work with Etcd, a distributed
      * reliable key-value store.
      * 
      * Category: clustering,database
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-etcd
      * 
      * Syntax: <code>etcd:namespace/path</code>

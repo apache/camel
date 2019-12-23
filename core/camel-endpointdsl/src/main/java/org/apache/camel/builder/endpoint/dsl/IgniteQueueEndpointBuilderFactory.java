@@ -41,6 +41,129 @@ public interface IgniteQueueEndpointBuilderFactory {
             return (AdvancedIgniteQueueEndpointBuilder) this;
         }
         /**
+         * The queue capacity. Default: non-bounded.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder capacity(int capacity) {
+            doSetProperty("capacity", capacity);
+            return this;
+        }
+        /**
+         * The queue capacity. Default: non-bounded.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder capacity(String capacity) {
+            doSetProperty("capacity", capacity);
+            return this;
+        }
+        /**
+         * The collection configuration. Default: empty configuration. You can
+         * also conveniently set inner properties by using configuration.xyz=123
+         * options.
+         * 
+         * The option is a:
+         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder configuration(Object configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The collection configuration. Default: empty configuration. You can
+         * also conveniently set inner properties by using configuration.xyz=123
+         * options.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder configuration(String configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The operation to invoke on the Ignite Queue. Superseded by the
+         * IgniteConstants.IGNITE_QUEUE_OPERATION header in the IN message.
+         * Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR,
+         * RETAIN_ALL, ARRAY, DRAIN, ELEMENT, PEEK, OFFER, POLL, TAKE, PUT.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ignite.queue.IgniteQueueOperation</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder operation(
+                IgniteQueueOperation operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to invoke on the Ignite Queue. Superseded by the
+         * IgniteConstants.IGNITE_QUEUE_OPERATION header in the IN message.
+         * Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR,
+         * RETAIN_ALL, ARRAY, DRAIN, ELEMENT, PEEK, OFFER, POLL, TAKE, PUT.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ignite.queue.IgniteQueueOperation</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
@@ -50,7 +173,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          */
         default IgniteQueueEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -63,7 +186,29 @@ public interface IgniteQueueEndpointBuilderFactory {
          */
         default IgniteQueueEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            return this;
+        }
+        /**
+         * The queue timeout in milliseconds. Default: no timeout.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder timeoutMillis(Long timeoutMillis) {
+            doSetProperty("timeoutMillis", timeoutMillis);
+            return this;
+        }
+        /**
+         * The queue timeout in milliseconds. Default: no timeout.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteQueueEndpointBuilder timeoutMillis(String timeoutMillis) {
+            doSetProperty("timeoutMillis", timeoutMillis);
             return this;
         }
         /**
@@ -76,7 +221,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          */
         default IgniteQueueEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -89,7 +234,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          */
         default IgniteQueueEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
     }
@@ -113,7 +258,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          */
         default AdvancedIgniteQueueEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -126,7 +271,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          */
         default AdvancedIgniteQueueEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -139,7 +284,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          */
         default AdvancedIgniteQueueEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -152,7 +297,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          */
         default AdvancedIgniteQueueEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -185,7 +330,7 @@ public interface IgniteQueueEndpointBuilderFactory {
      * you to interact with Ignite Queue data structures.
      * 
      * Category: nosql,cache
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 
      * Syntax: <code>ignite-queue:name</code>

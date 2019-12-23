@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
 
 public class GZIPHelperTest {
 
-    private static byte[] sampleBytes = new byte[]{1, 2, 3, 1, 2, 3};
+    private static byte[] sampleBytes = new byte[] {1, 2, 3, 1, 2, 3};
     private static String sampleString = "<Hello>World</Hello>";
 
     @Test
@@ -55,15 +55,15 @@ public class GZIPHelperTest {
         byte[] bytes = IOConverter.toBytes(inputStream);
         assertArrayEquals(sampleBytes, bytes);
     }
-    
+
     @Test
     public void testCompressAndUnCompressData() throws IOException {
         InputStream inputStream = GZIPHelper.compressGzip("gzip", new ByteArrayInputStream(sampleString.getBytes()));
         assertNotNull("The inputStream should not be null.", inputStream);
-        inputStream = GZIPHelper.uncompressGzip("gzip", inputStream);        
+        inputStream = GZIPHelper.uncompressGzip("gzip", inputStream);
         String result = IOConverter.toString(inputStream, null);
         assertEquals("The result is wrong.", sampleString, result);
-        
+
     }
 
     @Test
@@ -80,7 +80,7 @@ public class GZIPHelperTest {
         assertTrue(GZIPHelper.isGzip("gzip"));
         assertTrue(GZIPHelper.isGzip("GZip"));
 
-        assertFalse(GZIPHelper.isGzip((String) null));
+        assertFalse(GZIPHelper.isGzip((String)null));
         assertFalse(GZIPHelper.isGzip("zip"));
     }
 

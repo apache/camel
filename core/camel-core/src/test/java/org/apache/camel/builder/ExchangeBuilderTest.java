@@ -23,7 +23,6 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.Assert;
 import org.junit.Test;
 
-
 public class ExchangeBuilderTest extends Assert {
     private static final DefaultCamelContext CONTEXT = new DefaultCamelContext();
     private static final String BODY = "Message Body";
@@ -40,16 +39,11 @@ public class ExchangeBuilderTest extends Assert {
         assertEquals(exchange.getPattern(), builtExchange.getPattern());
     }
 
-
     @Test
     public void testBuildAnExchangeWithBodyHeaderAndPattern() throws Exception {
 
-        Exchange exchange = ExchangeBuilder.anExchange(CONTEXT)
-                .withBody(BODY)
-                .withHeader(KEY, VALUE)
-                .withProperty(PROPERTY_KEY, PROPERTY_VALUE)
-                .withPattern(ExchangePattern.InOut)
-                .build();
+        Exchange exchange = ExchangeBuilder.anExchange(CONTEXT).withBody(BODY).withHeader(KEY, VALUE).withProperty(PROPERTY_KEY, PROPERTY_VALUE).withPattern(ExchangePattern.InOut)
+            .build();
 
         assertEquals(exchange.getIn().getBody(), BODY);
         assertEquals(exchange.getIn().getHeader(KEY), VALUE);
@@ -58,4 +52,3 @@ public class ExchangeBuilderTest extends Assert {
     }
 
 }
-

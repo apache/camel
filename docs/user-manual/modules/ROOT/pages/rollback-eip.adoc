@@ -1,5 +1,6 @@
 [[rollback-eip]]
-== Rollback EIP
+= Rollback EIP
+:page-source: core/camel-core-engine/src/main/docs/eips/rollback-eip.adoc
 Rollback might be needed if there is a transaction or transactional pieces in your design.
 
 Camel recommends supporting the
@@ -7,9 +8,9 @@ http://www.enterpriseintegrationpatterns.com/TransactionalClient.html[Transactio
 Client] from the xref:enterprise-integration-patterns.adoc[EIP patterns]
 using spring transactions.
 
-image:http://www.enterpriseintegrationpatterns.com/img/TransactionalClientSolution.gif[image]
+image::eip/TransactionalClientSolution.gif[image]
 
-Transaction Oriented Endpoints like https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS] support using a
+Transaction Oriented Endpoints like xref:components::jms-component.adoc[JMS] support using a
 transaction for both inbound and outbound message exchanges. Endpoints
 that support transactions will participate in the current transaction
 context that they are called from.
@@ -54,7 +55,7 @@ component.getConfiguration().setConcurrentConsumers(1);
 ctx.addComponent("activemq", component);
 ----
 
-=== Options
+== Options
 // eip options: START
 The Rollback EIP supports 3 options which are listed below:
 
@@ -67,7 +68,7 @@ The Rollback EIP supports 3 options which are listed below:
 |===
 // eip options: END
 
-==== Transaction Policies
+=== Transaction Policies
 
 Outbound endpoints will automatically enlist in the current transaction
 context. But what if you do not want your outbound endpoint to enlist in
@@ -113,9 +114,9 @@ from("activemq:queue:foo").policy(requirenew).to("activemq:queue:bar");
 from("activemq:queue:foo").policy(notsupported).to("activemq:queue:bar");
 ----
 
-==== OSGi Blueprint
+=== OSGi Blueprint
 
-If you are using https://github.com/apache/camel/blob/master/docs/user-manual/en/using-osgi-blueprint-with-camel.adoc[OSGi
+If you are using xref:using-osgi-blueprint-with-camel.adoc[OSGi
 Blueprint] then you most likely have to explicit declare a policy and
 refer to the policy from the transacted in the route.
 
@@ -138,7 +139,7 @@ And then refer to "required" from the route:
 </route>
 --------------------------------------------------------
 
-=== Database Sample
+== Database Sample
 
 In this sample we want to ensure that two endpoints is under transaction
 control. These two endpoints inserts data into a database. +
@@ -148,15 +149,15 @@ test].
 
 First of all we setup the usual spring stuff in its configuration file.
 Here we have defined a DataSource to the HSQLDB and a most
-importantly the Spring DataSource TransactionManager that is doing the
+importantly the Spring DataSource TransactionManager that is doing the
 heavy lifting of ensuring our transactional policies. You are of course
-free to use any of the Spring based TransactionManager, eg. if you are
+free to use any of the Spring based TransactionManager, eg. if you are
 in a full blown J2EE container you could use JTA or the WebLogic or
 WebSphere specific managers.
 
 As we use the new convention over configuration we do *not* need to
 configure a transaction policy bean, so we do not have any
-`PROPAGATION_REQUIRED` beans. All the beans needed to be configured is
+`PROPAGATION_REQUIRED` beans. All the beans needed to be configured is
 *standard* Spring beans only, eg. there are no Camel specific
 configuration at
 all.https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/spring/interceptor/springTransactionalClientDataSourceMinimalConfiguration.xml[springTransactionalClientDataSourceMinimalConfiguration]Then
@@ -169,7 +170,7 @@ is all that is needed to configure a Camel route as being transacted.
 Just remember to use the *transacted* DSL. The rest is standard Spring
 XML to setup the transaction manager.
 
-=== JMS Sample
+== JMS Sample
 
 In this sample we want to listen for messages on a queue and process the
 messages with our business logic java code and send them along. Since
@@ -188,28 +189,28 @@ Transaction error handler
 When a route is marked as transacted using *transacted* Camel will
 automatic use the
 xref:transactionerrorhandler.adoc[TransactionErrorHandler] as
-https://github.com/apache/camel/blob/master/docs/user-manual/en/error-handler.adoc[Error Handler]. It supports basically the same
+xref:error-handler.adoc[Error Handler]. It supports basically the same
 feature set as the xref:defaulterrorhandler.adoc[DefaultErrorHandler],
 so you can for instance use xref:exception-clause.adoc[Exception Clause]
 as well.
 
-=== Integration Testing with Spring
+== Integration Testing with Spring
 
 An Integration Test here means a test runner class annotated
 `@RunWith(SpringJUnit4ClassRunner.class).`
 
 When following the Spring Transactions documentation it is tempting to
-annotate your integration test with `@Transactional` then seed your
+annotate your integration test with `@Transactional` then seed your
 database before firing up the route to be tested and sending a message
 in. This is incorrect as Spring will have an in-progress transaction,
 and Camel will wait on this before proceeding, leading to the route
 timing out.
 
 Instead, remove the `@Transactional` annotation from the test method and
-seed the test data within a `TransactionTemplate` execution which will
+seed the test data within a `TransactionTemplate` execution which will
 ensure the data is committed to the database before Camel attempts to
 pick up and use the transaction manager. A simple
-example https://github.com/rajivj2/example2/blob/master/src/test/java/com/example/NotificationRouterIT.java[can
+example https://github.com/rajivj2/example2/blob/master/src/test/java/com/example/NotificationRouterIT.java[can
 be found on GitHub].
 
 Spring's transactional model ensures each transaction is bound to one
@@ -220,9 +221,8 @@ test thread and expecting a separate thread created by your Camel route
 to be participate, which it cannot. You can, in your test, mock the
 parts that cause separate threads to avoid this issue.
 
-=== Using multiple routes with different propagation behaviors
+== Using multiple routes with different propagation behaviors
 
-*Available as of Camel 2.2* +
 Suppose you want to route a message through two routes and by which the
 2nd route should run in its own transaction. How do you do that? You use
 propagation behaviors for that where you configure it as follows:
@@ -240,12 +240,3 @@ case of any exceptions we should handle it and just rollback this
 transaction. This is done using the `markRollbackOnlyLast` which tells
 Camel to only do it for the current transaction and not globally.
 
-==== See Also
-
-* xref:error-handling-in-camel.adoc[Error handling in Camel]
-* xref:transactionerrorhandler.adoc[TransactionErrorHandler]
-* https://github.com/apache/camel/blob/master/docs/user-manual/en/error-handler.adoc[Error Handler]
-* https://github.com/apache/camel/blob/master/components/camel-jms/src/main/docs/jms-component.adoc[JMS]
-* https://github.com/apache/camel/blob/master/docs/user-manual/en/oncompletion.adoc[On Completion]
-
-xref:using-this-pattern.adoc[Using This Pattern]

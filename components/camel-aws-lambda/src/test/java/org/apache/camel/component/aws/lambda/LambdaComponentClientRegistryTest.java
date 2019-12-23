@@ -17,7 +17,6 @@
 package org.apache.camel.component.aws.lambda;
 
 import com.amazonaws.services.lambda.AWSLambdaClient;
-
 import org.apache.camel.PropertyBindingException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -31,7 +30,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
 
         AWSLambdaClient awsLambdaClient = mock(AWSLambdaClient.class);
         context.getRegistry().bind("awsLambdaClient", awsLambdaClient);
-        LambdaComponent component = new LambdaComponent(context);
+        LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
                 "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
 
@@ -41,7 +40,7 @@ public class LambdaComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = PropertyBindingException.class)
     public void createEndpointWithMinimalKMSClientMisconfiguration() throws Exception {
 
-        LambdaComponent component = new LambdaComponent(context);
+        LambdaComponent component = context.getComponent("aws-lambda", LambdaComponent.class);
         LambdaEndpoint endpoint = (LambdaEndpoint) component.createEndpoint(
                 "aws-lambda://myFunction?operation=getFunction&awsLambdaClient=#awsLambdaClient&accessKey=xxx&secretKey=yyy");
     }

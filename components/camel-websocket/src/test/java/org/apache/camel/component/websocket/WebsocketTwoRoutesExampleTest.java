@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.websocket;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
@@ -40,7 +41,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(16310);
+        port = AvailablePortFinder.getNextAvailable();
         super.setUp();
     }
 

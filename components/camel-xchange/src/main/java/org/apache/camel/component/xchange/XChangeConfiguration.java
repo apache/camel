@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xchange;
 
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -60,7 +59,7 @@ public class XChangeConfiguration {
     @UriParam(description = "The currency") 
     private Currency currency;
     @UriParam(description = "The currency pair") 
-    private CurrencyPair currencyPair;
+    private String currencyPair;
 
     public XChangeConfiguration(XChangeComponent component) {
         ObjectHelper.notNull(component, "component");
@@ -94,16 +93,27 @@ public class XChangeConfiguration {
         return currency;
     }
 
+    public void setCurrency(Currency currency) {
+        this.currency = currency;
+    }
+
     public void setCurrency(String curr) {
         this.currency = Currency.getInstanceNoCreate(curr);
     }
 
-    public CurrencyPair getCurrencyPair() {
+    public CurrencyPair getAsCurrencyPair() {
+        if (currencyPair != null) {
+            return new CurrencyPair(currencyPair);
+        }
+        return null;
+    }
+
+    public String getCurrencyPair() {
         return currencyPair;
     }
 
-    public void setCurrencyPair(String pair) {
-        this.currencyPair = new CurrencyPair(pair);
+    public void setCurrencyPair(String currencyPair) {
+        this.currencyPair = currencyPair;
     }
 
     @SuppressWarnings("unchecked")

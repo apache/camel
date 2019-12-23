@@ -152,10 +152,10 @@ public class OtherOptionModel {
     }
 
     public String getShortJavaType() {
-        // TODO: use watermark in the others
-        return getShortJavaType(40);
+        return StringHelper.getClassShortName(javaType);
     }
 
+    @Deprecated
     public String getShortJavaType(int watermark) {
 
         String text = StringHelper.getClassShortName(javaType);
@@ -183,11 +183,6 @@ public class OtherOptionModel {
             text = text.substring(0, text.length() - 3);
         } else if (text.endsWith("<T>>")) {
             text = text.substring(0, text.length() - 4);
-        }
-
-        // TODO: dirty hack for AUTO_ACKNOWLEDGE which we should wrap
-        if ("AUTO_ACKNOWLEDGE".equals(text)) {
-            return "AUTO_ ACKNOWLEDGE";
         }
 
         return text;

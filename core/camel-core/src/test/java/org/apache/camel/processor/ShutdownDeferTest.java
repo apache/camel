@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.File;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -68,20 +69,20 @@ public class ShutdownDeferTest extends ContextTestSupport {
             @Override
             // START SNIPPET: e1
             public void configure() throws Exception {
-                from("seda:foo")
-                    .startupOrder(1)
-                    .to("file://target/data/deferred");
+                from("seda:foo").startupOrder(1).to("file://target/data/deferred");
 
-                // use file component to transfer files from route 1 -> route 2 as it
-                // will normally suspend, but by deferring this we can let route 1
+                // use file component to transfer files from route 1 -> route 2
+                // as it
+                // will normally suspend, but by deferring this we can let route
+                // 1
                 // complete while shutting down
                 MyDeferFileEndpoint defer = new MyDeferFileEndpoint("file://target/data/deferred?initialDelay=0&delay=10", getContext().getComponent("file"));
                 defer.setFile(new File("target/data/deferred"));
 
                 from(defer)
-                    // defer shutting down this route as the 1st route depends upon it
-                    .startupOrder(2).shutdownRoute(Defer)
-                    .to("mock:bar");
+                    // defer shutting down this route as the 1st route depends
+                    // upon it
+                    .startupOrder(2).shutdownRoute(Defer).to("mock:bar");
             }
             // END SNIPPET: e1
         };

@@ -1,0 +1,35 @@
+[[roundRobin-eip]]
+= Round Robin EIP
+
+Round Robin Load Balancer. With this Load Balancing policy, a random endpoint is selected for each exchange.
+
+== Options
+
+// eip options: START
+The Round Robin EIP has no options.
+// eip options: END
+
+== Examples
+
+In this case we are using the header test as correlation expression:
+
+[source,java]
+----
+from("direct:start")
+    .loadBalance()
+    .roundRobin()
+    .to("seda:x", "seda:y", "seda:z");
+----
+
+In XML you'll have a route like this
+
+[source,xml]
+----
+<from uri="direct:start"/>
+    <loadBalance>
+       <roundRobin/>
+       <to uri="seda:x"/>      
+       <to uri="seda:y"/>      
+       <to uri="seda:z"/>       
+    </loadBalance> 
+----

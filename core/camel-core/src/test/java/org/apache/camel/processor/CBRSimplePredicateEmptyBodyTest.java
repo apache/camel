@@ -40,16 +40,9 @@ public class CBRSimplePredicateEmptyBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when().simple("${header.name} == null")
-                            .to("mock:unknown")
-                        .otherwise()
-                            .to("mock:known")
-                    .end();
+                from("direct:start").choice().when().simple("${header.name} == null").to("mock:unknown").otherwise().to("mock:known").end();
             }
         };
     }
 
 }
-

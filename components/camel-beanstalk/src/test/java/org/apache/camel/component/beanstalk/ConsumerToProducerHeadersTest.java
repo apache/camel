@@ -18,13 +18,12 @@ package org.apache.camel.component.beanstalk;
 
 import java.util.HashMap;
 import java.util.Map;
-import com.surftools.BeanstalkClient.Job;
 
+import com.surftools.BeanstalkClient.Job;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.junit.Test;
 
 import static org.mockito.ArgumentMatchers.anyInt;

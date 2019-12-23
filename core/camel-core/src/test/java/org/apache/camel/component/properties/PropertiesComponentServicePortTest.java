@@ -32,10 +32,7 @@ public class PropertiesComponentServicePortTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("mock:foo")
-                        .transform().constant("someserver:{{service.port:FOO}}")
-                        .to("mock:bar");
+                from("direct:start").to("mock:foo").transform().constant("someserver:{{service.port:FOO}}").to("mock:bar");
             }
         });
         context.start();
@@ -54,10 +51,7 @@ public class PropertiesComponentServicePortTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("mock:foo")
-                        .transform().constant("myotherserver:{{service.port:BAR:8888}}")
-                        .to("mock:bar");
+                from("direct:start").to("mock:foo").transform().constant("myotherserver:{{service.port:BAR:8888}}").to("mock:bar");
             }
         });
         context.start();

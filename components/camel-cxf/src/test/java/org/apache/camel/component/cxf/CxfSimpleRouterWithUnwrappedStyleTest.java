@@ -32,10 +32,12 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
     private String serviceEndpointURI = "cxf://" + getServiceAddress() + "?" + SERVICE_CLASS + "&wrappedStyle=false";
     
     
+    @Override
     protected void configureFactory(ServerFactoryBean svrBean) {
         svrBean.getServiceFactory().setWrapped(false);
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -45,6 +47,7 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
         };
     }
     
+    @Override
     protected HelloService getCXFClient() throws Exception {
         ClientProxyFactoryBean proxyFactory = new ClientProxyFactoryBean();
         ClientFactoryBean clientBean = proxyFactory.getClientFactoryBean();
@@ -55,11 +58,13 @@ public class CxfSimpleRouterWithUnwrappedStyleTest extends CxfSimpleRouterTest {
         return client;
     }
     
+    @Override
     @Test
     public void testOnwayInvocation() throws Exception {
         // ignore the invocation without parameter, as the document-literal doesn't support the invocation without parameter.
     }
     
+    @Override
     @Test
     public void testInvokingServiceFromCXFClient() throws Exception {        
         HelloService client = getCXFClient();

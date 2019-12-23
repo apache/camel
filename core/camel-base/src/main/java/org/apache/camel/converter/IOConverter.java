@@ -39,11 +39,14 @@ import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.ByteBuffer;
+import java.util.Iterator;
 import java.util.Properties;
+import java.util.stream.Stream;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.InputStreamIterator;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * Some core java.io based <a
  * href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class IOConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(IOConverter.class);
@@ -61,6 +64,12 @@ public final class IOConverter {
      * Utility classes should not have a public constructor.
      */
     private IOConverter() {
+    }
+
+    @Converter
+    public static InputStream toInputStream(Stream stream, Exchange exchange) {
+        Iterator it = stream.iterator();
+        return new InputStreamIterator(exchange.getContext().getTypeConverter(), it);
     }
 
     @Converter
@@ -92,10 +101,6 @@ public final class IOConverter {
     public static BufferedWriter toWriter(File file, Exchange exchange) throws IOException {
         FileOutputStream os = new FileOutputStream(file, false);
         return IOHelper.toWriter(os, ExchangeHelper.getCharsetName(exchange));
-    }
-
-    public static BufferedWriter toWriter(File file, boolean append, String charset) throws IOException {
-        return IOHelper.toWriter(new FileOutputStream(file, append), charset);
     }
 
     @Converter

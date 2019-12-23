@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.cassandra;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.camel.AggregationStrategy;
@@ -81,11 +82,8 @@ public class CassandraAggregationSerializedHeadersTest extends CamelTestSupport 
                         return oldExchange;
                     }
                 };
-                from("direct:input")
-                        .aggregate(header("aggregationId"), aggregationStrategy)
-                        .completionSize(3).completionTimeout(3000L)
-                        .aggregationRepository(aggregationRepository)
-                        .to("mock:output");
+                from("direct:input").aggregate(header("aggregationId"), aggregationStrategy).completionSize(3).completionTimeout(3000L).aggregationRepository(aggregationRepository)
+                    .to("mock:output");
             }
         };
     }

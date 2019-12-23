@@ -27,20 +27,16 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
     private final Class<?> type;
     private final BeanInfo beanInfo;
 
+    public ConstantTypeBeanHolder(Class<?> type, CamelContext context) {
+        this(type, new BeanInfo(context, type));
+    }
+
     public ConstantTypeBeanHolder(Class<?> type, BeanInfo beanInfo) {
         ObjectHelper.notNull(type, "type");
         ObjectHelper.notNull(beanInfo, "beanInfo");
 
         this.type = type;
         this.beanInfo = beanInfo;
-    }
-
-    public ConstantTypeBeanHolder(Class<?> type, CamelContext context) {
-        this(type, new BeanInfo(context, type));
-    }
-
-    public ConstantTypeBeanHolder(Class<?> type, CamelContext context, ParameterMappingStrategy parameterMappingStrategy) {
-        this(type, new BeanInfo(context, type, parameterMappingStrategy));
     }
 
     /**
@@ -58,31 +54,37 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
         return type.toString();
     }
 
+    @Override
     public Object getBean()  {
-        // only create a bean if we have constructors
-        if (beanInfo.hasPublicConstructors()) {
-            return getBeanInfo().getCamelContext().getInjector().newInstance(type);
+        // only create a bean if we have a default no-arg constructor
+        if (beanInfo.hasPublicNoArgConstructors()) {
+            return getBeanInfo().getCamelContext().getInjector().newInstance(type, false);
         } else {
             return null;
         }
     }
 
+    @Override
     public Processor getProcessor() {
         return null;
     }
 
+    @Override
     public boolean supportProcessor() {
         return false;
     }
 
+    @Override
     public BeanInfo getBeanInfo() {
         return beanInfo;
     }
 
+    @Override
     public BeanInfo getBeanInfo(Object bean) {
         return null;
     }
 
+    @Override
     public Class<?> getType() {
         return type;
     }

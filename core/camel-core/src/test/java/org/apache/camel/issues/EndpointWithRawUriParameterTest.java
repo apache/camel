@@ -120,7 +120,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<String> lines = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        List<String> lines = (List<String>)getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
         assertEquals(2, lines.size());
         assertEquals("abc", lines.get(0));
         assertEquals("def", lines.get(1));
@@ -134,7 +134,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        List<String> lines = (List<String>) getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
+        List<String> lines = (List<String>)getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getHeader("lines");
         assertEquals(2, lines.size());
         assertEquals("++abc++", lines.get(0));
         assertEquals("++def++", lines.get(1));
@@ -181,29 +181,17 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("mycomponent", new MyComponent());
 
-                from("direct:start")
-                    .to("mycomponent:foo?username=scott&password=RAW(++%%w?rd))")
-                    .to("mock:result");
+                from("direct:start").to("mycomponent:foo?username=scott&password=RAW(++%%w?rd))").to("mock:result");
 
-                from("direct:lines")
-                    .to("mycomponent:foo?lines=abc&lines=def")
-                    .to("mock:result");
+                from("direct:lines").to("mycomponent:foo?lines=abc&lines=def").to("mock:result");
 
-                from("direct:rawlines")
-                    .to("mycomponent:foo?lines=RAW(++abc++)&lines=RAW(++def++)")
-                    .to("mock:result");
+                from("direct:rawlines").to("mycomponent:foo?lines=RAW(++abc++)&lines=RAW(++def++)").to("mock:result");
 
-                from("direct:fail")
-                    .to("mycomponent:foo?password=foo)+bar&username=scott")
-                    .to("mock:result");
+                from("direct:fail").to("mycomponent:foo?password=foo)+bar&username=scott").to("mock:result");
 
-                from("direct:ok")
-                    .to("mycomponent:foo?password=RAW(foo)+bar)&username=scott")
-                    .to("mock:result");
+                from("direct:ok").to("mycomponent:foo?password=RAW(foo)+bar)&username=scott").to("mock:result");
 
-                from("direct:okDynamic")
-                    .toD("mycomponent:foo?password=RAW{foo)+bar}&username=scott")
-                    .to("mock:result");
+                from("direct:okDynamic").toD("mycomponent:foo?password=RAW{foo)+bar}&username=scott").to("mock:result");
             }
         };
     }

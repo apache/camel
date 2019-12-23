@@ -44,6 +44,7 @@ public class SpringCustomPredicateTest extends SpringTestSupport {
 
     public static class MyPredicate implements Predicate {
 
+        @Override
         public boolean matches(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             if (body.contains("Camel")) {

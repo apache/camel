@@ -48,8 +48,7 @@ public class MulticastCompletedPropertyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .multicast().to("mock:a", "mock:b", "mock:c");
+                from("direct:start").multicast().to("mock:a", "mock:b", "mock:c");
             }
         };
     }

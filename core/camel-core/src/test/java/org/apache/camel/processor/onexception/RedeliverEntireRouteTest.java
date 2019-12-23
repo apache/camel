@@ -43,20 +43,16 @@ public class RedeliverEntireRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                        .maximumRedeliveries(3).redeliveryDelay(0);
+                onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0);
 
-                from("direct:start")
-                    .to("mock:a")
-                    // this route has error handler, so any exception will redeliver (eg calling the foo route again)
-                    .to("direct:foo")
-                    .to("mock:result");
+                from("direct:start").to("mock:a")
+                    // this route has error handler, so any exception will
+                    // redeliver (eg calling the foo route again)
+                    .to("direct:foo").to("mock:result");
 
-                // this route has no error handler, so any exception will not be redelivered
-                from("direct:foo")
-                    .errorHandler(noErrorHandler())
-                    .log("Calling foo route redelivery count: ${header.CamelRedeliveryCounter}")
-                    .to("mock:b")
+                // this route has no error handler, so any exception will not be
+                // redelivered
+                from("direct:foo").errorHandler(noErrorHandler()).log("Calling foo route redelivery count: ${header.CamelRedeliveryCounter}").to("mock:b")
                     .throwException(new IllegalArgumentException("Forced"));
             }
         };

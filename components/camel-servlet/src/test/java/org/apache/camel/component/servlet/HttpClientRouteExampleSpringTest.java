@@ -40,12 +40,14 @@ public class HttpClientRouteExampleSpringTest extends ServletCamelRouterTestSupp
         assertEquals("Get a wrong response text.", "Hello Willem how are you?", response.getText());
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         startCamelContext = false;
         super.setUp();
     }
    
+    @Override
     protected String getConfiguration() {
         return "/org/apache/camel/component/servlet/web-example.xml";
     }

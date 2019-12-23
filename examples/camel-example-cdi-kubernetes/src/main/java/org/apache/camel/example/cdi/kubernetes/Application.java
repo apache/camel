@@ -19,6 +19,7 @@ package org.apache.camel.example.cdi.kubernetes;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.List;
+
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
@@ -28,7 +29,6 @@ import io.fabric8.kubernetes.api.model.Pod;
 import io.fabric8.kubernetes.client.KubernetesClientException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.properties.PropertiesComponent;
 
 /**
@@ -40,7 +40,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
  */
 public class Application {
 
-    @ContextName("camel-example-kubernetes-cdi")
+    @ApplicationScoped
     static class KubernetesRoute extends RouteBuilder {
 
         @Override

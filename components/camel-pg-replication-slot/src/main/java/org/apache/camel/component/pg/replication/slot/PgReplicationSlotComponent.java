@@ -21,7 +21,7 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 
 /**
  * Represents the component that manages {@link PgReplicationSlotEndpoint}.
@@ -34,7 +34,7 @@ public class PgReplicationSlotComponent extends DefaultComponent {
         PgReplicationSlotEndpoint endpoint = new PgReplicationSlotEndpoint(uri, this);
         setProperties(endpoint, parameters);
 
-        Map<String, Object> slotOptions = IntrospectionSupport.extractProperties(parameters, "slotOptions.");
+        Map<String, Object> slotOptions = PropertiesHelper.extractProperties(parameters, "slotOptions.");
         endpoint.setSlotOptions(slotOptions);
 
         return endpoint;

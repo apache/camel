@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.stream.StreamSupport;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderDeserializer;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.header.internals.RecordHeader;
 import org.junit.After;
@@ -37,6 +37,9 @@ import org.junit.Test;
 public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
 
     public static final String TOPIC = "test";
+    
+    @BindToRegistry("myHeaderDeserializer")
+    private MyKafkaHeaderDeserializer deserializer = new MyKafkaHeaderDeserializer();
 
     @EndpointInject("kafka:" + TOPIC
             + "?groupId=group1&autoOffsetReset=earliest&keyDeserializer=org.apache.kafka.common.serialization.StringDeserializer&"
@@ -71,13 +74,6 @@ public class KafkaConsumerFullTest extends BaseEmbeddedKafkaTest {
                 from(from).routeId("foo").to(to);
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myHeaderDeserializer", new MyKafkaHeaderDeserializer());
-        return jndi;
     }
 
     @Test

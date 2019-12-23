@@ -26,6 +26,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.AssertionClause;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.eclipse.neoscada.protocol.iec60870.asdu.types.Value;
 import org.eclipse.neoscada.protocol.iec60870.server.data.model.WriteModel.Request;
@@ -61,7 +62,7 @@ public class ConnectionTest extends CamelTestSupport {
     @Override
     protected RoutesBuilder createRouteBuilder() throws Exception {
 
-        final int port = Ports.pickServerPort();
+        final int port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override

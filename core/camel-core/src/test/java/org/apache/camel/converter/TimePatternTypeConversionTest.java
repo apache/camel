@@ -26,19 +26,19 @@ public class TimePatternTypeConversionTest extends ContextTestSupport {
         long milliseconds = context.getTypeConverter().convertTo(long.class, "444");
         assertEquals(Long.valueOf("444").longValue(), milliseconds);
     }
-    
+
     @Test
     public void testForNoSideEffects2() throws Exception {
         long milliseconds = context.getTypeConverter().convertTo(long.class, "-72");
         assertEquals(Long.valueOf("-72").longValue(), milliseconds);
     }
-    
+
     @Test
     public void testHMSTimePattern() throws Exception {
         long milliseconds = context.getTypeConverter().convertTo(long.class, "1hours30m1s");
         assertEquals(5401000, milliseconds);
     }
-    
+
     @Test
     public void testMTimePattern() throws Exception {
         long milliseconds = context.getTypeConverter().convertTo(long.class, "30m55s");

@@ -19,26 +19,15 @@ package org.apache.camel.component.couchdb;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.when;
+public class CouchDbComponentTest extends CamelTestSupport {
 
-@RunWith(MockitoJUnitRunner.class)
-public class CouchDbComponentTest {
-
-    @Mock
-    private CamelContext context;
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
 
     @Test
     public void testEndpointCreated() throws Exception {
@@ -47,14 +36,12 @@ public class CouchDbComponentTest {
         String uri = "couchdb:http://localhost:5984/db";
         String remaining = "http://localhost:5984/db";
 
-        Endpoint endpoint = new CouchDbComponent(context).createEndpoint(uri, remaining, params);
+        CouchDbEndpoint endpoint = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
         assertNotNull(endpoint);
     }
 
     @Test
     public void testPropertiesSet() throws Exception {
-        when(context.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
-
         Map<String, Object> params = new HashMap<>();
         params.put("createDatabase", true);
         params.put("username", "coldplay");
@@ -67,7 +54,7 @@ public class CouchDbComponentTest {
         String uri = "couchdb:http://localhost:14/db";
         String remaining = "http://localhost:14/db";
 
-        CouchDbEndpoint endpoint = new CouchDbComponent(context).createEndpoint(uri, remaining, params);
+        CouchDbEndpoint endpoint = context.getComponent("couchdb", CouchDbComponent.class).createEndpoint(uri, remaining, params);
         assertEquals("http", endpoint.getProtocol());
         assertEquals("localhost", endpoint.getHostname());
         assertEquals("db", endpoint.getDatabase());

@@ -66,14 +66,13 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel(ERROR_QUEUE).maximumRedeliveries(0).redeliveryDelay(100));
 
-                onException(MyUserException.class).onWhen(header("user").isNotNull())
-                    .maximumRedeliveries(1).redeliveryDelay(0)
-                    .to(ERROR_USER_QUEUE);
+                onException(MyUserException.class).onWhen(header("user").isNotNull()).maximumRedeliveries(1).redeliveryDelay(0).to(ERROR_USER_QUEUE);
 
                 from("direct:a").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -81,7 +80,7 @@ public class DefaultExceptionPolicyStrategyUsingOnlyWhenTest extends ContextTest
                         if ("Hello Camel".equals(s)) {
                             throw new MyUserException("Forced for testing");
                         }
-                        exchange.getOut().setBody("Hello World");
+                        exchange.getMessage().setBody("Hello World");
                     }
                 }).to("mock:result");
             }

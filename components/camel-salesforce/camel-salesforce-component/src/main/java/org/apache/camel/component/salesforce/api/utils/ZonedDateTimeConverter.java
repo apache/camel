@@ -30,7 +30,8 @@ final class ZonedDateTimeConverter implements SingleValueConverter {
     }
 
     @Override
-    public boolean canConvert(@SuppressWarnings("rawtypes") final Class type) {
+    public boolean canConvert(@SuppressWarnings("rawtypes")
+    final Class type) {
         return ZonedDateTime.class.equals(type);
     }
 
@@ -45,7 +46,7 @@ final class ZonedDateTimeConverter implements SingleValueConverter {
             return null;
         }
 
-        final ZonedDateTime zonedDateTime = (ZonedDateTime) value;
+        final ZonedDateTime zonedDateTime = (ZonedDateTime)value;
 
         return ISO_OFFSET_DATE_TIME.format(zonedDateTime);
     }

@@ -18,9 +18,6 @@ package org.apache.camel.cdi;
 
 import java.util.function.Function;
 
-import static java.lang.String.format;
-import static java.util.Objects.nonNull;
-
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.UnsatisfiedResolutionException;
@@ -34,6 +31,9 @@ import org.apache.camel.cdi.xml.ErrorHandlerDefinition;
 import org.apache.camel.cdi.xml.RedeliveryPolicyFactoryBean;
 import org.apache.camel.processor.errorhandler.RedeliveryPolicy;
 
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.String.format;
+import static java.util.Objects.nonNull;
 import static org.apache.camel.cdi.BeanManagerHelper.getReferenceByName;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 
@@ -81,13 +81,16 @@ final class XmlErrorHandlerFactoryBean extends SyntheticBean<ErrorHandlerBuilder
 
     private void setProperties(DefaultErrorHandlerBuilder builder) throws Exception {
         if (nonNull(handler.getDeadLetterHandleNewException())) {
-            builder.setDeadLetterHandleNewException(handler.getDeadLetterHandleNewException());
+            builder.setDeadLetterHandleNewException(Boolean.parseBoolean(handler.getDeadLetterHandleNewException()));
         }
         builder.setDeadLetterUri(handler.getDeadLetterUri());
         builder.setExecutorServiceRef(handler.getExecutorServiceRef());
         builder.setRetryWhileRef(handler.getRetryWhileRef());
         if (nonNull(handler.getUseOriginalMessage())) {
-            builder.setUseOriginalMessage(handler.getUseOriginalMessage());
+            builder.setUseOriginalMessage(parseBoolean(handler.getUseOriginalMessage()));
+        }
+        if (nonNull(handler.getUseOriginalBody())) {
+            builder.setUseOriginalBody(Boolean.parseBoolean(handler.getUseOriginalBody()));
         }
 
         if (isNotEmpty(handler.getOnExceptionOccurredRef())) {

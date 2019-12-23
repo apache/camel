@@ -63,6 +63,7 @@ public class PullRequestCommentProducer extends AbstractGitHubProducer {
         initService(issueService);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Integer pullRequestNumber = exchange.getIn().getHeader(GitHubConstants.GITHUB_PULLREQUEST, Integer.class);
         Integer inResponseTo = exchange.getIn().getHeader(GitHubConstants.GITHUB_INRESPONSETO, Integer.class);

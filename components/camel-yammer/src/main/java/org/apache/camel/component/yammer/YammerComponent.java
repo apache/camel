@@ -38,6 +38,7 @@ public class YammerComponent extends DefaultComponent {
     @Metadata(label = "advanced")
     private YammerConfiguration config;
     
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // by default use config for each endpoint; use from component level if one has been explicitly set
         YammerConfiguration endpointConfig = getConfig();

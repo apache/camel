@@ -59,6 +59,7 @@ public class JmsPassThroughtJmsKeyFormatStrategyUsingJmsConfigurationTest extend
         assertEquals("VALUE_3", mock.getReceivedExchanges().get(0).getIn().getHeaders().get("HEADER_3"));
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

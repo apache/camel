@@ -21,8 +21,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * Tests that a Seda producer supports the blockWhenFull option by blocking
- * when a message is sent while the queue is full.
+ * Tests that a Seda producer supports the blockWhenFull option by blocking when
+ * a message is sent while the queue is full.
  */
 public class SedaBlockWhenFullTest extends ContextTestSupport {
     private static final int QUEUE_SIZE = 1;
@@ -55,8 +55,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
 
             sendTwoOverCapacity(SEDA_WITH_OFFER_TIMEOUT_URI, QUEUE_SIZE);
 
-            fail("Failed to insert element into queue, "
-                    + "after timeout of " + seda.getOfferTimeout() + " milliseconds");
+            fail("Failed to insert element into queue, " + "after timeout of " + seda.getOfferTimeout() + " milliseconds");
         } catch (Exception e) {
             assertIsInstanceOf(IllegalStateException.class, e.getCause());
         }
@@ -85,7 +84,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
         sendTwoOverCapacity(BLOCK_WHEN_FULL_URI, QUEUE_SIZE);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testAsyncSedaBlockingWhenFull() throws Exception {
         getMockEndpoint(MOCK_URI).setExpectedMessageCount(QUEUE_SIZE + 1);
@@ -108,7 +107,7 @@ public class SedaBlockWhenFullTest extends ContextTestSupport {
             template.sendBody(uri, "Message " + i);
         }
     }
-    
+
     private void asyncSendTwoOverCapacity(String uri, int capacity) {
         for (int i = 0; i < (capacity + 2); i++) {
             template.asyncSendBody(uri, "Message " + i);

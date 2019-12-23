@@ -18,11 +18,8 @@ package org.apache.camel.component.kafka.embedded;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.net.ServerSocket;
 
-import org.apache.commons.lang.RandomStringUtils;
-
+import org.apache.commons.lang3.RandomStringUtils;
 
 final class TestUtils {
 
@@ -42,19 +39,6 @@ final class TestUtils {
 
     public static String perTest(String directory) {
         return RandomStringUtils.randomAlphanumeric(8) + "-" + directory;
-    }
-
-    public static int getAvailablePort() {
-        try {
-            ServerSocket socket = new ServerSocket(0);
-            try {
-                return socket.getLocalPort();
-            } finally {
-                socket.close();
-            }
-        } catch (IOException e) {
-            throw new IllegalStateException("Cannot find available port: " + e.getMessage(), e);
-        }
     }
 
     public static boolean deleteFile(File path) throws FileNotFoundException {

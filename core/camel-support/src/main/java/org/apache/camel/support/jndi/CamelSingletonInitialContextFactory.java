@@ -42,6 +42,7 @@ public class CamelSingletonInitialContextFactory extends CamelInitialContextFact
      * @return the created context.
      * @throws javax.naming.NamingException is thrown if creation failed.
      */
+    @Override
     public synchronized Context getInitialContext(Hashtable<?, ?> environment) throws NamingException {
         if (context == null) {
             context = super.getInitialContext(environment);

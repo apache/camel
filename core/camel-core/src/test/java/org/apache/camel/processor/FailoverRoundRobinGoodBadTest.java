@@ -38,16 +38,11 @@ public class FailoverRoundRobinGoodBadTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .loadBalance().failover(1, true, true).
-                        to("direct:good", "direct:bad");
+                from("direct:start").loadBalance().failover(1, true, true).to("direct:good", "direct:bad");
 
-                from("direct:good")
-                    .to("mock:good");
+                from("direct:good").to("mock:good");
 
-                from("direct:bad")
-                    .to("mock:bad")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:bad").to("mock:bad").throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

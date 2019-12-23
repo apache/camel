@@ -32,6 +32,7 @@ public class MyBatisBeanProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         SqlSession session;
 

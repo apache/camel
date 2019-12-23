@@ -65,7 +65,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
         
     @BeforeClass
     public static void setupTestServer() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(39913);
+        port = AvailablePortFinder.getNextAvailable();
         
         LOG.info("Starting Zookeeper Test Infrastructure");
         server = new TestZookeeperServer(getServerPort(), clearServerData());
@@ -193,6 +193,7 @@ public class ZooKeeperTestSupport extends CamelTestSupport {
             return zk.getData(znode, false, new Stat());
         }
 
+        @Override
         public void process(WatchedEvent event) {
             if (event.getState() == KeeperState.SyncConnected) {
                 log.info("TestClient connected");

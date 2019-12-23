@@ -63,7 +63,7 @@ public class ActiveMQReplyToHeaderUsingConverterTest extends CamelTestSupport {
         firstMessage.header("JMSType").isEqualTo(messageType);
         firstMessage.header("JMSXGroupID").isEqualTo(groupID);
 
-        Map<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<>();
         headers.put("cheese", 123);
         if (useReplyToHeader) {
             headers.put("JMSReplyTo", replyQueueName);
@@ -91,6 +91,7 @@ public class ActiveMQReplyToHeaderUsingConverterTest extends CamelTestSupport {
         assertMessageHeader(in, "JMSXGroupID", groupID);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -101,6 +102,7 @@ public class ActiveMQReplyToHeaderUsingConverterTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

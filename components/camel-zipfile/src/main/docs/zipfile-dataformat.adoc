@@ -1,7 +1,7 @@
 [[zipfile-dataformat]]
-== Zip File DataFormat
+= Zip File DataFormat
 
-*Available as of Camel version 2.11*
+*Since Camel 2.11*
 
 The Zip File Data Format is a message compression
 and de-compression format. Messages can be marshalled (compressed) to
@@ -9,7 +9,7 @@ Zip files containing a single entry, and Zip files containing a single
 entry can be unmarshalled (decompressed) to the original file contents.
 This data format supports ZIP64, as long as Java 7 or later is being used].
 
-=== ZipFile Options
+== ZipFile Options
 
 // dataformat options: START
 The Zip File dataformat supports 4 options, which are listed below.
@@ -26,14 +26,14 @@ The Zip File dataformat supports 4 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-zipfile-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -50,14 +50,14 @@ The component supports 5 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.dataformat.zipfile.allow-empty-directory* | If the zip file has more then one entry, setting this option to true, allows to get the iterator even if the directory is empty | false | Boolean
 | *camel.dataformat.zipfile.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.zipfile.enabled* | Enable zipfile dataformat | true | Boolean
+| *camel.dataformat.zipfile.enabled* | Whether to enable auto configuration of the zipfile data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.zipfile.preserve-path-elements* | If the file name contains path elements, setting this option to true, allows the path to be maintained in the zip file. | false | Boolean
 | *camel.dataformat.zipfile.using-iterator* | If the zip file has more then one entry, the setting this option to true, allows to work with the splitter EIP, to split the data using an iterator in a streaming mode. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 ND
 
-=== Marshal
+== Marshal
 
 In this example we marshal a regular text/XML payload to a compressed
 payload using Zip file compression, and send it to an ActiveMQ queue
@@ -105,7 +105,7 @@ from("direct:start")
 This route would result in a Zip file named "report.txt.zip" in the
 output directory, containing a single Zip entry named "report.txt".
 
-=== Unmarshal
+== Unmarshal
 
 In this example we unmarshal a Zip file payload from an ActiveMQ queue
 called MY_QUEUE to its original format, and forward it for processing to
@@ -127,7 +127,7 @@ work.
 ZipFileDataFormat zipFile = new ZipFileDataFormat();
 zipFile.setUsingIterator(true);
 
-from("file:src/test/resources/org/apache/camel/dataformat/zipfile/?consumer.delay=1000&noop=true")
+from("file:src/test/resources/org/apache/camel/dataformat/zipfile/?delay=1000&noop=true")
     .unmarshal(zipFile)
     .split(body(Iterator.class)).streaming()
         .process(new UnZippedMessageProcessor())
@@ -139,19 +139,19 @@ like this
 
 [source,java]
 ----
-from("file:src/test/resources/org/apache/camel/dataformat/zipfile?consumer.delay=1000&noop=true")
+from("file:src/test/resources/org/apache/camel/dataformat/zipfile?delay=1000&noop=true")
     .split(new ZipSplitter()).streaming()
         .process(new UnZippedMessageProcessor())
     .end();
 ----
 
-=== Aggregate
+== Aggregate
 
 [NOTE]
 Please note that this aggregation strategy requires eager completion check to work properly.
 
 In this example we aggregate all text files found in the input directory
-into a single Zip file that is stored in the output directory. 
+into a single Zip file that is stored in the output directory. 
 
 [source,java]
 ----
@@ -161,10 +161,10 @@ from("file:input/directory?antInclude=*/.txt")
         .to("file:output/directory");
 ----
 
-The outgoing `CamelFileName` message header is created using
-java.io.File.createTempFile, with the ".zip" suffix. If you want to
+The outgoing `CamelFileName` message header is created using
+java.io.File.createTempFile, with the ".zip" suffix. If you want to
 override this behavior, then you can set the value of
-the `CamelFileName` header explicitly in your route:
+the `CamelFileName` header explicitly in your route:
 
 [source,java]
 ----
@@ -175,7 +175,7 @@ from("file:input/directory?antInclude=*/.txt")
         .to("file:output/directory");
 ----
 
-=== Dependencies
+== Dependencies
 
 To use Zip files in your camel routes you need to add a dependency on
 *camel-zipfile* which implements this data format.

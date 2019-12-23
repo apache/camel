@@ -23,4 +23,9 @@ public class PahoSpanDecorator extends AbstractMessagingSpanDecorator {
         return "paho";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.paho.PahoComponent";
+    }
+
 }

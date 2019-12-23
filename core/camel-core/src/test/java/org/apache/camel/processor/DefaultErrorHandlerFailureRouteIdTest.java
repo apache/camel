@@ -23,7 +23,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 /**
- * Unit test to test that route id of the failed route is available to the end user.
+ * Unit test to test that route id of the failed route is available to the end
+ * user.
  */
 public class DefaultErrorHandlerFailureRouteIdTest extends ContextTestSupport {
 
@@ -53,14 +54,9 @@ public class DefaultErrorHandlerFailureRouteIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").routeId("foo")
-                    .to("mock:foo")
-                    .to("direct:bar")
-                    .to("mock:result");
+                from("direct:foo").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
 
-                from("direct:bar").routeId("bar")
-                    .to("mock:bar")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:bar").routeId("bar").to("mock:bar").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

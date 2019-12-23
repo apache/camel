@@ -22,7 +22,6 @@ import java.util.Map;
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
@@ -64,6 +63,7 @@ public class MultiPartFormTest extends BaseUndertowTest {
         assertEquals("Get a wrong result", "A binary file of some kind", result);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

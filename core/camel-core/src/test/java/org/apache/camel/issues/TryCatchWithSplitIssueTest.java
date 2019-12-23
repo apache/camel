@@ -52,29 +52,21 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("error", new GenerateError());
         return jndi;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start")
-                    .split(body().tokenize("@"))
-                    .doTry()
-                        .to("bean:error")
-                        .to("mock:result")
-                    .doCatch(Exception.class)
-                        .to("mock:error")
-                    .doFinally()
-                        .to("mock:foo")
-                        .to("mock:bar")
-                    .end();
+                from("direct:start").split(body().tokenize("@")).doTry().to("bean:error").to("mock:result").doCatch(Exception.class).to("mock:error").doFinally().to("mock:foo")
+                    .to("mock:bar").end();
             }
 
         };

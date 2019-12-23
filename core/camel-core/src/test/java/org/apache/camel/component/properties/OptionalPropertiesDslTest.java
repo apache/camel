@@ -48,10 +48,11 @@ public class OptionalPropertiesDslTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // use a property placeholder for the option stopOnException on the Multicast EIP
-                    // which should have the value of {{stop}} key being looked up in the properties file
-                    .multicast().placeholder("stopOnException", "stop")
-                        .to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
+                    // use a property placeholder for the option stopOnException
+                    // on the Multicast EIP
+                    // which should have the value of {{stop}} key being looked
+                    // up in the properties file
+                    .multicast().placeholder("stopOnException", "stop").to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
                 // END SNIPPET: e1
             }
         };
@@ -60,9 +61,7 @@ public class OptionalPropertiesDslTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
-        context.addComponent("properties", pc);
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
 

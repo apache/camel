@@ -56,6 +56,7 @@ public class CxfConsumerResponseTest extends CamelTestSupport {
     }
 
     // START SNIPPET: example
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

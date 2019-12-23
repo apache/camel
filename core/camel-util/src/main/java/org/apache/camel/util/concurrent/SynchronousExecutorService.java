@@ -33,28 +33,34 @@ public class SynchronousExecutorService extends AbstractExecutorService {
 
     private volatile boolean shutdown;
 
+    @Override
     public void shutdown() {
         shutdown = true;
     }
 
+    @Override
     public List<Runnable> shutdownNow() {
         // not implemented
         return null;
     }
 
+    @Override
     public boolean isShutdown() {
         return shutdown;
     }
 
+    @Override
     public boolean isTerminated() {
         return shutdown;
     }
 
+    @Override
     public boolean awaitTermination(long time, TimeUnit unit) throws InterruptedException {
         // not implemented
         return true;
     }
 
+    @Override
     public void execute(Runnable runnable) {
         // run the task synchronously
         runnable.run();

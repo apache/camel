@@ -76,21 +76,13 @@ public class DumpModelAsXmlRoutePredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                   .filter(simple("${body} > 10"))
-                     .to("mock:result");
+                from("direct:start").routeId("myRoute").filter(simple("${body} > 10")).to("mock:result");
 
-                from("direct:other").routeId("myOtherRoute")
-                   .filter(xpath("/foo"))
-                     .to("mock:result");
+                from("direct:other").routeId("myOtherRoute").filter(xpath("/foo")).to("mock:result");
 
-                from("direct:foo").routeId("myFooRoute")
-                   .filter().header("bar")
-                     .to("mock:result");
+                from("direct:foo").routeId("myFooRoute").filter().header("bar").to("mock:result");
 
-                from("direct:bean").routeId("myBeanRoute")
-                   .filter().method("myCoolBean")
-                     .to("mock:result");
+                from("direct:bean").routeId("myBeanRoute").filter().method("myCoolBean").to("mock:result");
             }
         };
     }

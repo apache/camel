@@ -18,8 +18,6 @@ package org.apache.camel.component.nats;
 
 import java.io.IOException;
 
-import io.nats.client.Message;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -40,7 +38,7 @@ public class NatsConsumerWithRedeliveryTest extends NatsTestSupport {
     private MockEndpoint exception;
 
     @Test
-    public void testConsumer() throws InterruptedException, IOException {
+    public void testConsumer() throws Exception {
         mockResultEndpoint.setExpectedMessageCount(1);
         mockResultEndpoint.setAssertPeriod(1000);
 
@@ -62,18 +60,14 @@ public class NatsConsumerWithRedeliveryTest extends NatsTestSupport {
                 onException(Exception.class).maximumRedeliveries(REDELIVERY_COUNT).retryAttemptedLogLevel(LoggingLevel.INFO).retriesExhaustedLogLevel(LoggingLevel.ERROR)
                     .redeliveryDelay(10).to("mock:exception").handled(true);
 
-                from("direct:send").to("nats://" + getNatsUrl() + "?topic=test&flushConnection=true");
-                from("nats://" + getNatsUrl() + "?topic=test&flushConnection=true").choice().when(new Predicate() {
+                from("direct:send").to("nats:test?flushConnection=true");
 
-                    @Override
-                    public boolean matches(Exchange exchange) {
-                        Message g = exchange.getIn().getBody(Message.class);
-                        String s = new String(g.getData());
-                        if (s.contains("test")) {
-                            return true;
-                        }
-                        return false;
+                from("nats:test?flushConnection=true").choice().when(exchange -> {
+                    String s = exchange.getMessage().getBody(String.class);
+                    if (s.contains("test")) {
+                        return true;
                     }
+                    return false;
                 }).throwException(RuntimeCamelException.class, "Test for this").end().to(mockResultEndpoint);
             }
         };

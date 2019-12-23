@@ -55,6 +55,7 @@ public class JtaTransactionErrorHandler extends RedeliveryErrorHandler {
                 null,
                 false,
                 false,
+                false,
                 retryWhile,
                 executorService,
                 null,

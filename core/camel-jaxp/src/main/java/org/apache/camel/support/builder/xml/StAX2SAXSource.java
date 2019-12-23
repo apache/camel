@@ -50,6 +50,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         setInputSource(new InputSource());
     }
 
+    @Override
     public XMLReader getXMLReader() {
         return this;
     }
@@ -66,8 +67,7 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
                 // Attributes are handled in START_ELEMENT
                 case XMLStreamConstants.ATTRIBUTE:
                     break;
-                case XMLStreamConstants.CDATA:
-                {
+                case XMLStreamConstants.CDATA: {
                     if (lexicalHandler != null) {
                         lexicalHandler.startCDATA();
                     }
@@ -80,16 +80,14 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
                     }
                     break;
                 }
-                case XMLStreamConstants.CHARACTERS:
-                {
+                case XMLStreamConstants.CHARACTERS: {
                     int length = streamReader.getTextLength();
                     int start = streamReader.getTextStart();
                     char[] chars = streamReader.getTextCharacters();
                     contentHandler.characters(chars, start, length);
                     break;
                 }
-                case XMLStreamConstants.SPACE:
-                {
+                case XMLStreamConstants.SPACE: {
                     int length = streamReader.getTextLength();
                     int start = streamReader.getTextStart();
                     char[] chars = streamReader.getTextCharacters();
@@ -285,18 +283,22 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         }
     }
 
+    @Override
     public boolean getFeature(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
         return false;
     }
 
+    @Override
     public void setFeature(String name, boolean value)
         throws SAXNotRecognizedException, SAXNotSupportedException {
     }
 
+    @Override
     public Object getProperty(String name) throws SAXNotRecognizedException, SAXNotSupportedException {
         return null;
     }
 
+    @Override
     public void setProperty(String name, Object value)
         throws SAXNotRecognizedException, SAXNotSupportedException {
         if ("http://xml.org/sax/properties/lexical-handler".equals(name)) {
@@ -306,20 +308,25 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         }
     }
 
+    @Override
     public void setEntityResolver(EntityResolver resolver) {
     }
 
+    @Override
     public EntityResolver getEntityResolver() {
         return null;
     }
 
+    @Override
     public void setDTDHandler(DTDHandler handler) {
     }
 
+    @Override
     public DTDHandler getDTDHandler() {
         return null;
     }
 
+    @Override
     public void setContentHandler(ContentHandler handler) {
         this.contentHandler = handler;
         if (handler instanceof LexicalHandler
@@ -328,21 +335,26 @@ public class StAX2SAXSource extends SAXSource implements XMLReader {
         }
     }
 
+    @Override
     public ContentHandler getContentHandler() {
         return this.contentHandler;
     }
 
+    @Override
     public void setErrorHandler(ErrorHandler handler) {
     }
 
+    @Override
     public ErrorHandler getErrorHandler() {
         return null;
     }
 
+    @Override
     public void parse(InputSource input) throws SAXException {
         parse();
     }
 
+    @Override
     public void parse(String systemId) throws SAXException {
         parse();
     }

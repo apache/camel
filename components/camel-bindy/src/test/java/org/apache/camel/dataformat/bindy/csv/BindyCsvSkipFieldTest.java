@@ -30,7 +30,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-
 @ContextConfiguration
 public class BindyCsvSkipFieldTest  extends AbstractJUnit4SpringContextTests {
 
@@ -57,6 +56,7 @@ public class BindyCsvSkipFieldTest  extends AbstractJUnit4SpringContextTests {
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(CsvSkipField.class);
 
+        @Override
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat)
                     .process(new Processor() {

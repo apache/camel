@@ -18,7 +18,6 @@ package org.apache.camel.impl.engine;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatFactory;
 import org.apache.camel.spi.DataFormatResolver;
@@ -67,14 +66,12 @@ public class DefaultDataFormatResolver implements DataFormatResolver {
     private DataFormat createDataFormatFromResource(String name, CamelContext context) {
         DataFormat dataFormat = null;
 
-        Class<?> type = null;
+        Class<?> type;
         try {
             if (dataformatFactory == null) {
                 dataformatFactory = context.adapt(ExtendedCamelContext.class).getFactoryFinder(DATAFORMAT_RESOURCE_PATH);
             }
-            type = dataformatFactory.findClass(name);
-        } catch (NoFactoryAvailableException e) {
-            // ignore
+            type = dataformatFactory.findClass(name).orElse(null);
         } catch (Exception e) {
             throw new IllegalArgumentException("Invalid URI, no DataFormat registered for scheme: " + name, e);
         }

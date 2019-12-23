@@ -1,7 +1,12 @@
 [[sip-component]]
-== SIP Component
+= SIP Component
+:page-source: components/camel-sip/src/main/docs/sip-component.adoc
 
-*Available as of Camel version 2.5*
+*Since Camel 2.5*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The SIP component in Camel is a communication component, based on the
 Jain SIP implementation (available under the JCP license).
@@ -46,7 +51,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 The URI scheme for a sip endpoint is as follows:
 
@@ -62,7 +67,7 @@ UDP.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 The SIP Component offers an extensive set of configuration options &
 capability to create custom stateful headers needed to propagate state
@@ -70,15 +75,16 @@ via the SIP protocol.
 
 
 // component options: START
-The SIP component supports 2 options, which are listed below.
+The SIP component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -93,7 +99,7 @@ sip:uri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,7 +109,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (46 parameters):
+=== Query Parameters (46 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -158,14 +164,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-sip-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -173,7 +179,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -181,15 +187,16 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.sip.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.sip.enabled* | Enable sip component | true | Boolean
-| *camel.component.sip.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.sip.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.sip.enabled* | Whether to enable auto configuration of the sip component. This is enabled by default. |  | Boolean
+| *camel.component.sip.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-### Sending Messages to/from a SIP endpoint
+== Sending Messages to/from a SIP endpoint
 
-#### Creating a Camel SIP Publisher
+=== Creating a Camel SIP Publisher
 
 In the example below, a SIP Publisher is created to send SIP Event
 publications to  +
@@ -213,7 +220,7 @@ producerTemplate.sendBodyAndHeader(
     Request.PUBLISH);  
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Creating a Camel SIP Subscriber
+=== Creating a Camel SIP Subscriber
 
 In the example below, a SIP Subscriber is created to receive SIP Event
 publications sent to  +

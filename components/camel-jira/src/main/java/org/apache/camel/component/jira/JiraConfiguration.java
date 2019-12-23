@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.jira;
 
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 
 @UriParams
-public class JiraConfiguration {
+public class JiraConfiguration implements Cloneable {
 
     @UriParam(label = "security", secret = true)
     private String verificationCode;
@@ -136,5 +137,13 @@ public class JiraConfiguration {
      */
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public JiraConfiguration copy() {
+        try {
+            return (JiraConfiguration)super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 }

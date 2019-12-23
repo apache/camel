@@ -18,11 +18,11 @@ package org.apache.camel.component.consul.endpoint;
 
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.CoordinateClient;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
+import org.apache.camel.spi.InvokeOnHeader;
 
 public final class ConsulCoordinatesProducer extends AbstractConsulProducer<CoordinateClient> {
 
@@ -32,19 +32,11 @@ public final class ConsulCoordinatesProducer extends AbstractConsulProducer<Coor
 
     @InvokeOnHeader(ConsulCoordinatesActions.DATACENTERS)
     protected void datacenters(Message message) throws Exception {
-        setBodyAndResult(
-            message,
-            getClient().getDatacenters()
-        );
+        setBodyAndResult(message, getClient().getDatacenters());
     }
 
     @InvokeOnHeader(ConsulCoordinatesActions.NODES)
     protected void nodes(Message message) throws Exception {
-        setBodyAndResult(
-            message,
-            getClient().getNodes(
-                message.getHeader(ConsulConstants.CONSUL_DATACENTER, getConfiguration().getDatacenter(), String.class)
-            )
-        );
+        setBodyAndResult(message, getClient().getNodes(message.getHeader(ConsulConstants.CONSUL_DATACENTER, getConfiguration().getDatacenter(), String.class)));
     }
 }

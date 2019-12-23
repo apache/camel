@@ -105,12 +105,9 @@ public class DynamicRouterOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class)
                     // setting delay to zero is just to make unit testing faster
-                    .redeliveryDelay(0)
-                    .maximumRedeliveries(5);
+                    .redeliveryDelay(0).maximumRedeliveries(5);
 
-                from("direct:start")
-                    .dynamicRouter(method(DynamicRouterOnExceptionTest.class, "whereTo"))
-                    .to("mock:end");
+                from("direct:start").dynamicRouter(method(DynamicRouterOnExceptionTest.class, "whereTo")).to("mock:end");
             }
         };
     }

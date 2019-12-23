@@ -36,21 +36,21 @@ import org.optaplanner.core.api.solver.SolverFactory;
 public class OptaPlannerEndpoint extends DefaultEndpoint {
     private static final Map<String, Solver<Object>> SOLVERS = new HashMap<>();
 
-    @UriParam
-    private OptaPlannerConfiguration configuration;
     private SolverFactory<Object> solverFactory;
 
-    public OptaPlannerEndpoint() {
-    }
+    @UriParam
+    private OptaPlannerConfiguration configuration;
 
     public OptaPlannerEndpoint(String uri, Component component, OptaPlannerConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-        ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
-        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
     }
 
-    protected Solver<Object> getOrCreateSolver(String solverId) throws Exception {
+    public OptaPlannerConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    protected Solver<Object> getOrCreateSolver(String solverId) {
         synchronized (SOLVERS) {
             Solver<Object> solver = SOLVERS.get(solverId);
             if (solver == null) {
@@ -72,21 +72,31 @@ public class OptaPlannerEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
+    public Producer createProducer() {
         return new OptaPlannerProducer(this, configuration);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new OptaPlannerConsumer(this, processor, configuration);
+        OptaPlannerConsumer consumer = new OptaPlannerConsumer(this, processor, configuration);
+        configureConsumer(consumer);
+        return consumer;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        ClassLoader classLoader = getCamelContext().getApplicationContextClassLoader();
+        solverFactory = SolverFactory.createFromXmlResource(configuration.getConfigFile(), classLoader);
     }
 
     @Override
     protected void doStop() throws Exception {
         synchronized (SOLVERS) {
-            for (Solver<Object> solver : SOLVERS.values()) {
-                solver.terminateEarly();
-                SOLVERS.remove(solver);
+            for (Map.Entry<String, Solver<Object>> solver: SOLVERS.entrySet()) {
+                solver.getValue().terminateEarly();
+                SOLVERS.remove(solver.getKey());
             }
         }
         super.doStop();

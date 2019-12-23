@@ -27,7 +27,6 @@ import com.amazonaws.regions.Regions;
 import com.amazonaws.services.mq.AmazonMQ;
 import com.amazonaws.services.mq.AmazonMQClientBuilder;
 import com.amazonaws.services.mq.model.ListBrokersRequest;
-
 import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExtension;
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;

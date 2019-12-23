@@ -35,6 +35,7 @@ public class AntPathMatcherGenericFileFilter<T> implements GenericFileFilter<T> 
         filter.setIncludes(includes);
     }
 
+    @Override
     public boolean accept(GenericFile<T> file) {
         // directories should always be accepted by ANT path matcher
         if (file.isDirectory()) {

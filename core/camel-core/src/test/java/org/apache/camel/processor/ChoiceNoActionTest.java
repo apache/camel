@@ -40,13 +40,12 @@ public class ChoiceNoActionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .choice()
-                        .when(body().isEqualTo("Hello World")).to("mock:world");
-                    // other kind of messages take no action
+                from("direct:start").choice().when(body().isEqualTo("Hello World")).to("mock:world");
+                // other kind of messages take no action
             }
         };
     }

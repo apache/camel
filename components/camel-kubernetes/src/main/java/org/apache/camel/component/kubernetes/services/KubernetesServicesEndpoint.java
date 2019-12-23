@@ -22,15 +22,12 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Service Accounts component provides a producer to execute service operations
- * and a consumer to consume service events.
+ * The Kubernetes Services component provides a producer to execute
+ * service operations and a consumer to consume service events.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-services", title = "Kubernetes Services",
-    syntax = "kubernetes-services:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-services", title = "Kubernetes Services", syntax = "kubernetes-services:masterUrl", label = "container,cloud,paas")
 public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesServicesEndpoint(String uri, KubernetesServicesComponent component, KubernetesConfiguration config) {
@@ -44,7 +41,10 @@ public class KubernetesServicesEndpoint extends AbstractKubernetesEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesServicesConsumer(this, processor);
+        Consumer consumer = new KubernetesServicesConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
+
     }
 
 }

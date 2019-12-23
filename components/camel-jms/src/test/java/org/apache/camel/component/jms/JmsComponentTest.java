@@ -57,6 +57,7 @@ public class JmsComponentTest extends CamelTestSupport {
         assertEquals(15000, endpoint.getTransactionTimeout());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -91,6 +92,7 @@ public class JmsComponentTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

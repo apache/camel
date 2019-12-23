@@ -176,6 +176,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
         }
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // deny processing if we are not started
         if (!isRunAllowed()) {
@@ -220,8 +221,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
 
         in.setHeader(RabbitMQConstants.REPLY_TO, replyManager.getReplyTo());
 
-        // remove the OVERRIDE header so it does not propagate
-        String exchangeName = (String) exchange.getIn().removeHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        String exchangeName = (String) exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
         // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
@@ -252,8 +252,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
     }
 
     private boolean processInOnly(Exchange exchange, AsyncCallback callback) throws Exception {
-        // remove the OVERRIDE header so it does not propagate
-        String exchangeName = (String) exchange.getIn().removeHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        String exchangeName = (String) exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
         // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
@@ -339,9 +338,7 @@ public class RabbitMQProducer extends DefaultAsyncProducer {
                 } catch (Exception e) {
                     throw new FailedToCreateProducerException(getEndpoint(), e);
                 } finally {
-                    if (ac != null) {
-                        Thread.currentThread().setContextClassLoader(current);
-                    }
+                    Thread.currentThread().setContextClassLoader(current);
                 }
                 started.set(true);
             }

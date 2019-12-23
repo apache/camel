@@ -25,6 +25,7 @@ import org.junit.Test;
 public class Jt400ComponentDefaultConnectionPoolTest extends Jt400TestSupport {
     private Jt400Component component;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -40,6 +41,7 @@ public class Jt400ComponentDefaultConnectionPoolTest extends Jt400TestSupport {
         }
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (component != null) {

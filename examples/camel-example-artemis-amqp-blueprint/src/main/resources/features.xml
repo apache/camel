@@ -24,7 +24,7 @@
         <feature version="${project.version}">camel</feature>
         <feature version="${project.version}">camel-blueprint</feature>
         <feature version="${project.version}">camel-amqp</feature>
-        <feature version="${project.version}">camel-netty4-http</feature>
+        <feature version="${project.version}">camel-netty-http</feature>
         <bundle>mvn:org.apache.camel.example/${project.artifactId}/${project.version}</bundle>
     </feature>
 

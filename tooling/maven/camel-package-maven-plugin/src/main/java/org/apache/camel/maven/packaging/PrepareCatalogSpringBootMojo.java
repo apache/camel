@@ -99,7 +99,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
     /**
      * The camel-core directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-engine")
     protected File coreDir;
 
     /**
@@ -121,6 +121,7 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Set<String> starters = findSpringBootStarters();
         executeComponents(starters);
@@ -156,8 +157,6 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                             target = new File(dir, "camel-box-component/target/classes");
                         } else if ("camel-salesforce".equals(dir.getName())) {
                             target = new File(dir, "camel-salesforce-component/target/classes");
-                        } else if ("camel-linkedin".equals(dir.getName())) {
-                            target = new File(dir, "camel-linkedin-component/target/classes");
                         } else if ("camel-servicenow".equals(dir.getName())) {
                             target = new File(dir, "camel-servicenow-component/target/classes");
                         } else {
@@ -437,12 +436,12 @@ public class PrepareCatalogSpringBootMojo extends AbstractMojo {
                         || "camel-jetty-common".equals(dir.getName());
                     boolean special2 = "camel-as2".equals(dir.getName())
                         || "camel-box".equals(dir.getName())
-                        || "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
                         || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName());
-                    if (special || special2) {
+                    boolean special3 = "camel-debezium-common".equals(dir.getName());
+                    if (special || special2 || special3) {
                         continue;
                     }
 

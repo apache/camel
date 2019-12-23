@@ -1,7 +1,8 @@
 [[grok-dataformat]]
-== Grok DataFormat
+= Grok DataFormat
+:page-source: components/camel-grok/src/main/docs/grok-dataformat.adoc
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
 This component provides dataformat for processing inputs with grok patterns.
 Grok patterns are used to process unstructured data into structured objects - `List<Map<String, Object>>`.
@@ -21,7 +22,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Basic usage
+== Basic usage
 
 Extract all IP adresses from input
 [source,java]
@@ -40,12 +41,12 @@ from("file://apacheLogs")
     .to("log:4xx")
 --------------------------------------------------------------------------------
 
-### Predefined patterns
+== Predefined patterns
 
 This component comes with predefined patterns, which are based on Logstash patterns.
 Full list can be found at https://github.com/thekrakken/java-grok/tree/master/src/main/resources/patterns[Java Grok repository]
 
-### Custom patterns
+== Custom patterns
 
 Camel Grok DataFormat supports plugable patterns, which are auto loaded from Camel Registry.
 You can register patterns with Java DSL and Spring DSL
@@ -87,7 +88,7 @@ public class MyRouteBuilder extends RouteBuilder {
 --------------------------------------------------------------------------------
 
 
-### Grok Dataformat Options
+== Grok Dataformat Options
 
 // dataformat options: START
 The Grok dataformat supports 5 options, which are listed below.
@@ -100,19 +101,19 @@ The Grok dataformat supports 5 options, which are listed below.
 | pattern |  | String | The grok pattern to match lines of input
 | flattened | false | Boolean | Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches with same key.
 | allowMultipleMatchesPerLine | true | Boolean | If false, every line of input is matched for pattern only once. Otherwise the line can be scanned multiple times when non-terminal pattern is used.
-| namedOnly | false | Boolean | Whether to capture named expressions only or not (i.e. %{IP:ip} but not \${IP})
+| namedOnly | false | Boolean | Whether to capture named expressions only or not (i.e. %{IP:ip} but not \$\{IP\})
 | contentTypeHeader | false | Boolean | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-grok-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -131,7 +132,7 @@ The component supports 6 options, which are listed below.
 | *camel.dataformat.grok.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.grok.enabled* | Whether to enable auto configuration of the grok data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.grok.flattened* | Turns on flattened mode. In flattened mode the exception is thrown when there are multiple pattern matches with same key. | false | Boolean
-| *camel.dataformat.grok.named-only* | Whether to capture named expressions only or not (i.e. %{IP:ip} but not \${IP}) | false | Boolean
+| *camel.dataformat.grok.named-only* | Whether to capture named expressions only or not (i.e. %{IP:ip} but not \$\{IP\}) | false | Boolean
 | *camel.dataformat.grok.pattern* | The grok pattern to match lines of input |  | String
 |===
 // spring-boot-auto-configure options: END

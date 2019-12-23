@@ -16,13 +16,11 @@
  */
 package org.apache.camel.component.geocoder;
 
-
 import com.google.maps.GeoApiContext;
 import com.google.maps.GeocodingApi;
 import com.google.maps.GeocodingApiRequest;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 

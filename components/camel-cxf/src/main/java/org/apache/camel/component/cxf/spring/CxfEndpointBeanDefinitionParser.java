@@ -29,7 +29,6 @@ import org.apache.cxf.helpers.CastUtils;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 
-
 public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionParser {
 
     @Override
@@ -61,10 +60,10 @@ public class CxfEndpointBeanDefinitionParser extends AbstractCxfBeanDefinitionPa
         if ("endpointName".equals(name) || "serviceName".equals(name)) {
             if (isSpringPlaceHolder(val)) {
                 // set the property with the String value directly
-                mapToProperty(bean, name + "String", val);
+                mapToProperty(bean, name, val);
             } else {
                 QName q = parseQName(e, val);
-                bean.addPropertyValue(name, q);
+                bean.addPropertyValue(name + "AsQName", q);
             }
         } else {
             mapToProperty(bean, name, val);

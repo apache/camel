@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.properties;
+
 import java.io.FileOutputStream;
 
 import org.apache.camel.CamelContext;
@@ -55,9 +56,7 @@ public class PropertiesComponentLoadPropertiesFromFileTrimValuesTest extends Con
 
         fos.close();
 
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("file:target/data/space/space.properties");
-        context.addComponent("properties", pc);
+        context.getPropertiesComponent().setLocation("file:target/data/space/space.properties");
 
         return context;
     }

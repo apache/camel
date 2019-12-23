@@ -44,17 +44,11 @@ public class OnExceptionContinueToRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).continued(true).to("mock:catch");
 
-                from("direct:a")
-                    .to("mock:a")
-                    .to("direct:b")
-                    .to("direct:c");
+                from("direct:a").to("mock:a").to("direct:b").to("direct:c");
 
-                from("direct:b")
-                    .to("mock:b")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:b").to("mock:b").throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:c")
-                    .to("mock:c");
+                from("direct:c").to("mock:c");
             }
         };
     }

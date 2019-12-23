@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -73,6 +74,7 @@ public class NewFileConsumerTest extends ContextTestSupport {
 
         private volatile boolean post;
 
+        @Override
         protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
             return new FileConsumer(this, processor, operations, createGenericFileStrategy()) {
                 @Override

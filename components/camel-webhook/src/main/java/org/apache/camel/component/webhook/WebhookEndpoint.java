@@ -25,6 +25,7 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.support.ObjectHelper;
 
 /**
  * The webhook component allows other Camel components that can receive push notifications to expose
@@ -38,16 +39,9 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
     @UriParam(label = "advanced")
     private WebhookConfiguration configuration;
 
-    public WebhookEndpoint(String uri, WebhookComponent component, WebhookConfiguration configuration, String delegateUri) {
+    public WebhookEndpoint(String uri, WebhookComponent component, WebhookConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-
-        Endpoint delegate = getCamelContext().getEndpoint(delegateUri);
-        if (!(delegate instanceof WebhookCapableEndpoint)) {
-            throw new IllegalArgumentException("The provided endpoint is not capable of being used in webhook mode: " + delegateUri);
-        }
-        delegateEndpoint = (WebhookCapableEndpoint) delegate;
-        delegateEndpoint.setWebhookConfiguration(configuration);
     }
 
     @Override
@@ -73,6 +67,13 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
     protected void doStart() throws Exception {
         super.doStart();
 
+        Endpoint delegate = getCamelContext().getEndpoint(configuration.getEndpointUri());
+        if (!(delegate instanceof WebhookCapableEndpoint)) {
+            throw new IllegalArgumentException("The provided endpoint is not capable of being used in webhook mode: " + configuration.getEndpointUri());
+        }
+        delegateEndpoint = (WebhookCapableEndpoint) delegate;
+        delegateEndpoint.setWebhookConfiguration(configuration);
+
         if (configuration.isWebhookAutoRegister()) {
             log.info("Registering webhook for endpoint {}", delegateEndpoint);
             delegateEndpoint.registerWebhook();
@@ -83,7 +84,7 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (configuration.isWebhookAutoRegister()) {
+        if (configuration.isWebhookAutoRegister() && delegateEndpoint != null) {
             log.info("Unregistering webhook for endpoint {}", delegateEndpoint);
             delegateEndpoint.unregisterWebhook();
         }
@@ -96,5 +97,10 @@ public class WebhookEndpoint extends DefaultEndpoint implements DelegateEndpoint
     @Override
     public WebhookCapableEndpoint getEndpoint() {
         return delegateEndpoint;
+    }
+
+    @Override
+    public boolean isLenientProperties() {
+        return true;
     }
 }

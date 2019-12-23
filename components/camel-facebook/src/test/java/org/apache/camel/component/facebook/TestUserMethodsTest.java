@@ -22,11 +22,8 @@ import java.util.Locale;
 import java.util.Map;
 
 import facebook4j.TestUser;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
-
-
 
 /**
  * Test methods in {@link facebook4j.api.TestUserMethods}

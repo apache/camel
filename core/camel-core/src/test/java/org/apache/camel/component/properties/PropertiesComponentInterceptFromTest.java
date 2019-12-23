@@ -37,11 +37,7 @@ public class PropertiesComponentInterceptFromTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
-        context.addComponent("properties", pc);
-
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
 
@@ -50,14 +46,11 @@ public class PropertiesComponentInterceptFromTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptFrom("{{cool.start}}")
-                    .transform().simple("Bye ${body}");
+                interceptFrom("{{cool.start}}").transform().simple("Bye ${body}");
 
-                from("direct:cool")
-                    .to("mock:cool");
+                from("direct:cool").to("mock:cool");
 
-                from("direct:bar")
-                    .to("mock:bar");
+                from("direct:bar").to("mock:bar");
             }
         };
     }

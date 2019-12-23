@@ -34,7 +34,8 @@ public class FileAsyncStressManually extends ContextTestSupport {
             return;
         }
 
-        // test by starting the unit test FileAsyncStressFileDropper in another JVM
+        // test by starting the unit test FileAsyncStressFileDropper in another
+        // JVM
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(250);
@@ -47,16 +48,14 @@ public class FileAsyncStressManually extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/filestress?readLock=markerFile&maxMessagesPerPoll=25&move=backup")
-                    .threads(10)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // simulate some work with random time to complete
-                            Random ran = new Random();
-                            int delay = ran.nextInt(500) + 10;
-                            Thread.sleep(delay);
-                        }
-                    }).to("mock:result");
+                from("file:target/data/filestress?readLock=markerFile&maxMessagesPerPoll=25&move=backup").threads(10).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // simulate some work with random time to complete
+                        Random ran = new Random();
+                        int delay = ran.nextInt(500) + 10;
+                        Thread.sleep(delay);
+                    }
+                }).to("mock:result");
             }
         };
     }

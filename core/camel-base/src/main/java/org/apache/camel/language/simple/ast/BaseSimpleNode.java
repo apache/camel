@@ -29,6 +29,7 @@ public abstract class BaseSimpleNode implements SimpleNode {
         this.token = token;
     }
 
+    @Override
     public SimpleToken getToken() {
         return token;
     }

@@ -21,7 +21,7 @@ import javax.activation.DataHandler;
 import org.apache.camel.Converter;
 import org.apache.camel.Message;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class AttachmentConverter {
 
     /**

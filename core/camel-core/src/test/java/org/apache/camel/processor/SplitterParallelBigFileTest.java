@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.TimeUnit;
@@ -77,12 +78,9 @@ public class SplitterParallelBigFileTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // lower max pool to 10 for less number of concurrent threads
-                //context.getExecutorServiceStrategy().getDefaultThreadPoolProfile().setMaxPoolSize(10);
+                // context.getExecutorServiceStrategy().getDefaultThreadPoolProfile().setMaxPoolSize(10);
 
-                from("file:target/data/split?initialDelay=0&delay=10")
-                    .split(body().tokenize(LS)).streaming().parallelProcessing()
-                        .to("log:split?groupSize=1000")
-                    .end()
+                from("file:target/data/split?initialDelay=0&delay=10").split(body().tokenize(LS)).streaming().parallelProcessing().to("log:split?groupSize=1000").end()
                     .log("Done splitting ${file:name}");
             }
         };

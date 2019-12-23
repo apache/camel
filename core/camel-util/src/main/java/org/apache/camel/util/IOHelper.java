@@ -96,7 +96,7 @@ public final class IOHelper {
      * object and returns that. If the passed <code>in</code> is already an
      * instance of {@link BufferedInputStream} returns the same passed
      * <code>in</code> reference as is (avoiding double wrapping).
-     * 
+     *
      * @param in the wrapee to be used for the buffering support
      * @return the passed <code>in</code> decorated through a
      *         {@link BufferedInputStream} object as wrapper
@@ -111,7 +111,7 @@ public final class IOHelper {
      * object and returns that. If the passed <code>out</code> is already an
      * instance of {@link BufferedOutputStream} returns the same passed
      * <code>out</code> reference as is (avoiding double wrapping).
-     * 
+     *
      * @param out the wrapee to be used for the buffering support
      * @return the passed <code>out</code> decorated through a
      *         {@link BufferedOutputStream} object as wrapper
@@ -126,7 +126,7 @@ public final class IOHelper {
      * and returns that. If the passed <code>reader</code> is already an
      * instance of {@link BufferedReader} returns the same passed
      * <code>reader</code> reference as is (avoiding double wrapping).
-     * 
+     *
      * @param reader the wrapee to be used for the buffering support
      * @return the passed <code>reader</code> decorated through a
      *         {@link BufferedReader} object as wrapper
@@ -141,7 +141,7 @@ public final class IOHelper {
      * and returns that. If the passed <code>writer</code> is already an
      * instance of {@link BufferedWriter} returns the same passed
      * <code>writer</code> reference as is (avoiding double wrapping).
-     * 
+     *
      * @param writer the wrapee to be used for the buffering support
      * @return the passed <code>writer</code> decorated through a
      *         {@link BufferedWriter} object as wrapper
@@ -430,7 +430,7 @@ public final class IOHelper {
 
     /**
      * Closes the given resources if they are available.
-     * 
+     *
      * @param closeables the objects to close
      */
     public static void close(Closeable... closeables) {
@@ -491,7 +491,7 @@ public final class IOHelper {
 
     /**
      * Get the charset name from the content type string
-     * 
+     *
      * @param contentType
      * @return the charset name, or <tt>UTF-8</tt> if no found
      */
@@ -539,10 +539,16 @@ public final class IOHelper {
         // lookup OS env with upper case key
         String upperKey = key.toUpperCase();
         String value = System.getenv(upperKey);
-        // some OS do not support dashes in keys, so replace with underscore
+
         if (value == null) {
-            String noDashKey = upperKey.replace('-', '_');
-            value = System.getenv(noDashKey);
+            // some OS do not support dashes in keys, so replace with underscore
+            String normalizedKey = upperKey.replace('-', '_');
+
+            // and replace dots with underscores so keys like my.key are
+            // translated to MY_KEY
+            normalizedKey = normalizedKey.replace('.', '_');
+
+            value = System.getenv(normalizedKey);
         }
         return value;
     }

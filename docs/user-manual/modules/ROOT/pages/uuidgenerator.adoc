@@ -1,5 +1,5 @@
 [[UuidGenerator-UuidGenerator]]
-=== UuidGenerator
+= UuidGenerator
 
 Starting with *Camel 2.5*, Camel supports 3rd party UUID generator(s).
 This is useful, if e.g. your messaging provider does not support UUID's
@@ -14,7 +14,7 @@ You only have to implement `org.apache.camel.spi.UuidGenerator` and tell
 Camel, that it should use your custom implementation:
 
 [[UuidGenerator-ConfiguringfromJavaDSL]]
-==== Configuring from Java DSL
+== Configuring from Java DSL
 
 [source,java]
 -----------------------------------------------------------
@@ -25,7 +25,7 @@ Warning: You should not change the UUID generator at runtime (it should only be
 set once)!
 
 [[UuidGenerator-ConfiguringfromSpringDSL]]
-==== Configuring from Spring DSL
+== Configuring from Spring DSL
 
 Camel will configure this UUID generator by doing a lookup in the Spring
 bean registry to find the bean of the type
@@ -44,7 +44,7 @@ bean registry to find the bean of the type
 ---------------------------------------------------------------------------------------
 
 [[UuidGenerator-Providedimplementations]]
-==== Provided implementations
+== Provided implementations
 
 Camel comes with three implementations of
 `org.apache.camel.spi.UuidGenerator`:
@@ -63,7 +63,7 @@ Google App Engine) and therefore you may have to use one of the other
 generators.
 
 [[UuidGenerator-ActiveMQUuidGenerator]]
-==== ActiveMQUuidGenerator
+== ActiveMQUuidGenerator
 
 From *Camel 2.10.7/2.11.1* onwards the JVM system property with key:
 `activemq.idgenerator.port` can be used to assign a specific port which
@@ -72,7 +72,7 @@ number 0 is used. Though in some cloud infrastructures this is not
 allowed, and thus a specific port can be assigned instead.
 
 [[UuidGenerator-Thedefaultgenerator]]
-==== The default generator
+== The default generator
 
 * From Camel 2.5 onwards the `ActiveMQUuidGenerator` is the default
 generator because its the fastest. 

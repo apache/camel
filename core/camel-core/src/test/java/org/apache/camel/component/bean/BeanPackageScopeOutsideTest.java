@@ -37,15 +37,14 @@ public class BeanPackageScopeOutsideTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // this bean is now outside this package
                 bindToRegistry("myBean", new MyPackageScopedBean());
 
-                from("direct:in")
-                    .to("bean:myBean")
-                    .to("mock:result");
+                from("direct:in").to("bean:myBean").to("mock:result");
             }
         };
     }

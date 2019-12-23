@@ -16,12 +16,17 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * The google-calendar component provides access to Google Calendar.
@@ -51,7 +56,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -64,7 +69,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -75,7 +80,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -87,7 +92,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -99,7 +104,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder emailAddress(
                 String emailAddress) {
-            setProperty("emailAddress", emailAddress);
+            doSetProperty("emailAddress", emailAddress);
             return this;
         }
         /**
@@ -110,7 +115,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -123,7 +128,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder p12FileName(
                 String p12FileName) {
-            setProperty("p12FileName", p12FileName);
+            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -137,7 +142,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -151,7 +156,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -163,7 +168,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
         /**
@@ -181,7 +186,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -199,7 +204,396 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleCalendarEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default GoogleCalendarEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder backoffErrorThreshold(
+                int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder backoffErrorThreshold(
+                String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder backoffIdleThreshold(
+                int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder backoffIdleThreshold(
+                String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder backoffMultiplier(
+                int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder backoffMultiplier(
+                String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder initialDelay(
+                long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder initialDelay(
+                String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder repeatCount(
+                long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder repeatCount(
+                String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder runLoggingLevel(
+                LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder runLoggingLevel(
+                String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder scheduledExecutorService(
+                ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder scheduledExecutorService(
+                String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder schedulerProperties(
+                Map<String, Object> schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder schedulerProperties(
+                String schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder startScheduler(
+                boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder startScheduler(
+                String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder useFixedDelay(
+                boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default GoogleCalendarEndpointConsumerBuilder useFixedDelay(
+                String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -227,7 +621,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -243,7 +637,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -255,7 +649,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -268,7 +662,39 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedGoogleCalendarEndpointConsumerBuilder pollStrategy(
+                PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedGoogleCalendarEndpointConsumerBuilder pollStrategy(
+                String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -281,7 +707,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -294,7 +720,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -307,7 +733,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -320,7 +746,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -344,7 +770,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -357,7 +783,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -368,7 +794,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -380,7 +806,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder clientSecret(
                 String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -392,7 +818,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder emailAddress(
                 String emailAddress) {
-            setProperty("emailAddress", emailAddress);
+            doSetProperty("emailAddress", emailAddress);
             return this;
         }
         /**
@@ -403,7 +829,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -416,7 +842,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder p12FileName(
                 String p12FileName) {
-            setProperty("p12FileName", p12FileName);
+            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -430,7 +856,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder refreshToken(
                 String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -444,7 +870,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -456,7 +882,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
         /**
@@ -476,7 +902,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -496,7 +922,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -521,7 +947,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -534,7 +960,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -547,7 +973,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -560,7 +986,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -583,7 +1009,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder accessToken(String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -596,7 +1022,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default GoogleCalendarEndpointBuilder applicationName(
                 String applicationName) {
-            setProperty("applicationName", applicationName);
+            doSetProperty("applicationName", applicationName);
             return this;
         }
         /**
@@ -607,7 +1033,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -618,7 +1044,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -629,7 +1055,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder emailAddress(String emailAddress) {
-            setProperty("emailAddress", emailAddress);
+            doSetProperty("emailAddress", emailAddress);
             return this;
         }
         /**
@@ -640,7 +1066,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -652,7 +1078,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder p12FileName(String p12FileName) {
-            setProperty("p12FileName", p12FileName);
+            doSetProperty("p12FileName", p12FileName);
             return this;
         }
         /**
@@ -665,7 +1091,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder refreshToken(String refreshToken) {
-            setProperty("refreshToken", refreshToken);
+            doSetProperty("refreshToken", refreshToken);
             return this;
         }
         /**
@@ -679,7 +1105,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder scopes(String scopes) {
-            setProperty("scopes", scopes);
+            doSetProperty("scopes", scopes);
             return this;
         }
         /**
@@ -691,7 +1117,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * Group: common
          */
         default GoogleCalendarEndpointBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -715,7 +1141,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -728,7 +1154,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -741,7 +1167,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -754,7 +1180,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          */
         default AdvancedGoogleCalendarEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -763,7 +1189,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
      * The google-calendar component provides access to Google Calendar.
      * 
      * Category: api,cloud
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-google-calendar
      * 
      * Syntax: <code>google-calendar:apiName/methodName</code>

@@ -20,7 +20,7 @@ import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 
 /**
- * Concrete implementation of {@link  CassandraIdempotentRepository} using 2
+ * Concrete implementation of {@link CassandraIdempotentRepository} using 2
  * columns as primary key: name (partition key) and key (clustering key).
  */
 public class NamedCassandraIdempotentRepository extends CassandraIdempotentRepository {
@@ -42,11 +42,11 @@ public class NamedCassandraIdempotentRepository extends CassandraIdempotentRepos
     }
 
     public String getName() {
-        return (String) getPrefixPKValues()[0];
+        return getPrefixPKValues()[0];
     }
 
     public final void setName(String name) {
-        setPrefixPKValues(new String[]{name});
+        setPrefixPKValues(new String[] {name});
     }
 
 }

@@ -17,15 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-box-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-box</artifactId>
@@ -157,7 +156,7 @@
                                 <api>
                                     <apiName>collaborations</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxCollaborationsManager</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <aliases>
                                         <alias>
                                             <methodPattern>addFolderCollaboration</methodPattern>
@@ -192,7 +191,7 @@
                                 <api>
                                     <apiName>comments</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxCommentsManager</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <aliases>
                                         <alias>
                                             <methodPattern>addFileComment</methodPattern>
@@ -223,7 +222,7 @@
                                 <api>
                                     <apiName>event-logs</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxEventLogsManager</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <aliases>
                                         <alias>
                                             <methodPattern>getEnterpriseEvents</methodPattern>
@@ -238,7 +237,7 @@
                                 <api>
                                     <apiName>files</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxFilesManager</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <aliases>
                                         <alias>
                                             <methodPattern>uploadFile</methodPattern>
@@ -324,6 +323,10 @@
                                             <methodPattern>getFileThumbnail</methodPattern>
                                             <methodAlias>thumbnail</methodAlias>
                                         </alias>
+                                        <alias>
+                                            <methodPattern>checkUpload</methodPattern>
+                                            <methodAlias>canUpload</methodAlias>
+                                        </alias>
                                     </aliases>
                                     <nullableOptions>
                                         <nullableOption>fields</nullableOption>
@@ -339,6 +342,7 @@
                                         <nullableOption>unshareDate</nullableOption>
                                         <nullableOption>permissions</nullableOption>
                                         <nullableOption>typeName</nullableOption>
+                                        <nullableOption>check</nullableOption>
                                     </nullableOptions>
                                 </api>
                                 <api>
@@ -464,7 +468,7 @@
                                 <api>
                                     <apiName>search</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxSearchManager</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <aliases>
                                         <alias>
                                             <methodPattern>searchFolder</methodPattern>
@@ -522,7 +526,7 @@
                                 <api>
                                     <apiName>users</apiName>
                                     <proxyClass>org.apache.camel.component.box.api.BoxUsersManager</proxyClass>
-                                    <fromJavadoc/>
+                                    <fromJavadoc />
                                     <aliases>
                                         <alias>
                                             <methodPattern>getCurrentUser</methodPattern>
@@ -573,12 +577,12 @@
                                 </api>
                             </apis>
                             <!-- Specify global values for all APIs here, these are overridden at API level
-                                 <substitutions/>
-                                 <excludeConfigNames/>
-                                 <excludeConfigTypes/>
+                                 <substitutions />
+                                 <excludeConfigNames />
+                                 <excludeConfigTypes />
                                  <extraOptions>
-                                 <fromJavadoc/>
-                                 <aliases/> -->
+                                 <fromJavadoc />
+                                 <aliases /> -->
                         </configuration>
                     </execution>
                 </executions>

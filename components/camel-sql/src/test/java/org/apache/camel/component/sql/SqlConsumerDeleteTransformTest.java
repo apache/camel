@@ -35,6 +35,7 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
     private EmbeddedDatabase db;
     private JdbcTemplate jdbcTemplate;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -45,6 +46,7 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -80,7 +82,7 @@ public class SqlConsumerDeleteTransformTest extends CamelTestSupport {
 
                 // even if we transform the exchange we can still do onConsume as we have the original data at
                 // the point when onConsume is executed
-                from("sql:select * from projects order by id?consumer.initialDelay=0&consumer.delay=50&consumer.onConsume=delete from projects where id = :#id")
+                from("sql:select * from projects order by id?initialDelay=0&delay=50&consumer.onConsume=delete from projects where id = :#id")
                     .transform().simple("The project is ${body[project]}")
                     .to("mock:result");
             }

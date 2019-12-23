@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
  * The handle catch clause has a pipeline processing the exception.
  */
 public class ValidationWithHandlePipelineAndExceptionTest extends ValidationTest {
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -30,13 +31,7 @@ public class ValidationWithHandlePipelineAndExceptionTest extends ValidationTest
 
                 onException(ValidationException.class).to("mock:outer");
 
-                from("direct:start")
-                    .doTry()
-                        .process(validator)
-                        .to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid")
-                        .process(validator);
+                from("direct:start").doTry().process(validator).to("mock:valid").doCatch(ValidationException.class).to("mock:invalid").process(validator);
             }
         };
     }

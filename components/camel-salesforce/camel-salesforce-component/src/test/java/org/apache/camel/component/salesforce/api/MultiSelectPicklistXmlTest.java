@@ -17,7 +17,6 @@
 package org.apache.camel.component.salesforce.api;
 
 import com.thoughtworks.xstream.XStream;
-
 import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.dto.generated.MSPTest;
 import org.junit.Test;
@@ -51,11 +50,11 @@ public class MultiSelectPicklistXmlTest {
 
     @Test
     public void testUnmarshal() throws Exception {
-        MSPTest mspTest = (MSPTest) xStream.fromXML(TEST_XML);
+        MSPTest mspTest = (MSPTest)xStream.fromXML(TEST_XML);
         assertArrayEquals(MSPTest.MSPEnum.values(), mspTest.getMspField());
 
         // test null field value
-        mspTest = (MSPTest) xStream.fromXML(TEST_NULL_XML);
+        mspTest = (MSPTest)xStream.fromXML(TEST_NULL_XML);
         assertNull(mspTest.getMspField());
     }
 

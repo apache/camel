@@ -41,6 +41,7 @@ public interface ManagedWireTapMBean extends ManagedProcessorMBean, ManagedExten
     @ManagedAttribute(description = "Current size of inflight wire tapped exchanges.")
     Integer getTaskSize();
 
+    @Override
     @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
     TabularData extendedInformation();
 

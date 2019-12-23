@@ -19,6 +19,7 @@ package org.apache.camel.component.elasticsearch;
 import java.lang.reflect.InvocationTargetException;
 import java.net.UnknownHostException;
 import java.util.Collections;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
@@ -49,7 +50,6 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 
 import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL;
 import static org.apache.camel.component.elasticsearch.ElasticsearchConstants.PARAM_SCROLL_KEEP_ALIVE_MS;
-
 
 /**
  * Represents an Elasticsearch producer.
@@ -112,8 +112,9 @@ public class ElasticsearchProducer extends DefaultProducer {
         return operationConfig;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
-        if (configuration.getDisconnect() && client == null) {
+        if (configuration.isDisconnect() && client == null) {
             startClient();
         }
         RestHighLevelClient restHighLevelClient = new HighLevelClient(client);
@@ -139,13 +140,6 @@ public class ElasticsearchProducer extends DefaultProducer {
             configIndexName = true;
         }
 
-        boolean configIndexType = false;
-        String indexType = message.getHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, String.class);
-        if (indexType == null) {
-            message.setHeader(ElasticsearchConstants.PARAM_INDEX_TYPE, configuration.getIndexType());
-            configIndexType = true;
-        }
-
         boolean configWaitForActiveShards = false;
         Integer waitForActiveShards = message.getHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS, Integer.class);
         if (waitForActiveShards == null) {
@@ -155,25 +149,46 @@ public class ElasticsearchProducer extends DefaultProducer {
 
         if (operation == ElasticsearchOperation.Index) {
             IndexRequest indexRequest = message.getBody(IndexRequest.class);
+            if (indexRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only Map, String, byte[], XContentBuilder or IndexRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.Update) {
             UpdateRequest updateRequest = message.getBody(UpdateRequest.class);
+            if (updateRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only Map, String, byte[], XContentBuilder or UpdateRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.update(updateRequest, RequestOptions.DEFAULT).getId());
         } else if (operation == ElasticsearchOperation.GetById) {
             GetRequest getRequest = message.getBody(GetRequest.class);
+            if (getRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only String or GetRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.get(getRequest, RequestOptions.DEFAULT));
         } else if (operation == ElasticsearchOperation.Bulk) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+            if (bulkRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only List, Collection or BulkRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.BulkIndex) {
             BulkRequest bulkRequest = message.getBody(BulkRequest.class);
+            if (bulkRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only List, Collection or BulkRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.bulk(bulkRequest, RequestOptions.DEFAULT).getItems());
         } else if (operation == ElasticsearchOperation.Delete) {
             DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
+            if (deleteRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only String or DeleteRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.delete(deleteRequest, RequestOptions.DEFAULT).getResult());
         } else if (operation == ElasticsearchOperation.DeleteIndex) {
-            DeleteRequest deleteRequest = message.getBody(DeleteRequest.class);
-            message.setBody(client.performRequest("Delete", deleteRequest.index()).getStatusLine().getStatusCode());
+            DeleteIndexRequest deleteIndexRequest = message.getBody(DeleteIndexRequest.class);
+            if (deleteIndexRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only String or DeleteIndexRequest is allowed as a type");
+            }
+            message.setBody(restHighLevelClient.indices().delete(deleteIndexRequest, RequestOptions.DEFAULT).isAcknowledged());
         } else if (operation == ElasticsearchOperation.Exists) {
             // ExistsRequest API is deprecated, using SearchRequest instead with size=0 and terminate_after=1
             SearchSourceBuilder sourceBuilder = new SearchSourceBuilder();
@@ -194,8 +209,11 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (operation == ElasticsearchOperation.Search) {
             SearchRequest searchRequest = message.getBody(SearchRequest.class);
+            if (searchRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only Map, String or SearchRequest is allowed as a type");
+            }
             // is it a scroll request ?
-            boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.getUseScroll(), Boolean.class);
+            boolean useScroll = message.getHeader(PARAM_SCROLL, configuration.isUseScroll(), Boolean.class);
             if (useScroll) {
                 int scrollKeepAliveMs = message.getHeader(PARAM_SCROLL_KEEP_ALIVE_MS, configuration.getScrollKeepAliveMs(), Integer.class);
                 ElasticsearchScrollRequestIterator scrollRequestIterator = new ElasticsearchScrollRequestIterator(searchRequest, restHighLevelClient, scrollKeepAliveMs, exchange);
@@ -205,11 +223,12 @@ public class ElasticsearchProducer extends DefaultProducer {
             }
         } else if (operation == ElasticsearchOperation.MultiSearch) {
             MultiSearchRequest searchRequest = message.getBody(MultiSearchRequest.class);
+            if (searchRequest == null) {
+                throw new IllegalArgumentException("Wrong body type. Only MultiSearchRequest is allowed as a type");
+            }
             message.setBody(restHighLevelClient.msearch(searchRequest, RequestOptions.DEFAULT).getResponses());
         } else if (operation == ElasticsearchOperation.Ping) {
             message.setBody(restHighLevelClient.ping(RequestOptions.DEFAULT));
-        } else if (operation == ElasticsearchOperation.Info) {
-            message.setBody(restHighLevelClient.info(RequestOptions.DEFAULT));
         } else {
             throw new IllegalArgumentException(ElasticsearchConstants.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
@@ -225,14 +244,10 @@ public class ElasticsearchProducer extends DefaultProducer {
             message.removeHeader(ElasticsearchConstants.PARAM_INDEX_NAME);
         }
 
-        if (configIndexType) {
-            message.removeHeader(ElasticsearchConstants.PARAM_INDEX_TYPE);
-        }
-
         if (configWaitForActiveShards) {
             message.removeHeader(ElasticsearchConstants.PARAM_WAIT_FOR_ACTIVE_SHARDS);
         }
-        if (configuration.getDisconnect()) {
+        if (configuration.isDisconnect()) {
             IOHelper.close(client);
             IOHelper.close(restHighLevelClient);
             client = null;
@@ -248,7 +263,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     @SuppressWarnings("unchecked")
     protected void doStart() throws Exception {
         super.doStart();
-        if (!configuration.getDisconnect()) {
+        if (!configuration.isDisconnect()) {
             startClient();
         }
     }
@@ -267,7 +282,7 @@ public class ElasticsearchProducer extends DefaultProducer {
 
     private RestClient createClient() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         final RestClientBuilder builder = RestClient.builder(configuration.getHostAddressesList().toArray(new HttpHost[0]));
-        builder.setMaxRetryTimeoutMillis(configuration.getMaxRetryTimeout());
+
         builder.setRequestConfigCallback(requestConfigBuilder ->
             requestConfigBuilder.setConnectTimeout(configuration.getConnectionTimeout()).setSocketTimeout(configuration.getSocketTimeout()));
         if (configuration.getUser() != null && configuration.getPassword() != null) {
@@ -307,7 +322,7 @@ public class ElasticsearchProducer extends DefaultProducer {
     
     private final class HighLevelClient extends RestHighLevelClient {
         private HighLevelClient(RestClient restClient) {
-            super(restClient, (client) -> { }, Collections.emptyList());
+            super(restClient, client -> { }, Collections.emptyList());
         }
     }
 }

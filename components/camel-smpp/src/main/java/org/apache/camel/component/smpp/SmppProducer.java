@@ -114,6 +114,7 @@ public class SmppProducer extends DefaultProducer {
                 .getInstance(configuration));
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         if (session == null) {
             if (this.configuration.isLazySessionCreation()) {

@@ -31,11 +31,11 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
-import org.apache.camel.util.URISupport;
 import spark.Service;
 
 @Component("spark-rest")
@@ -204,7 +204,6 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SparkConfiguration config = getSparkConfiguration().copy();
-        setProperties(config, parameters);
 
         SparkEndpoint answer = new SparkEndpoint(uri, this);
         answer.setSparkConfiguration(config);
@@ -336,20 +335,12 @@ public class SparkComponent extends DefaultComponent implements RestConsumerFact
                 path = contextPath + "/" + path;
             }
         }
-
-        String url;
+        
         if (api) {
-            url = "spark-rest:%s:%s?matchOnUriPrefix=true";
-        } else {
-            url = "spark-rest:%s:%s";
-        }
+            map.put("matchOnUriPrefix", "true");
+        } 
 
-        url = String.format(url, verb, path);
-
-        String query = URISupport.createQueryString(map);
-        if (!query.isEmpty()) {
-            url = url + "?" + query;
-        }
+        String url = RestComponentHelper.createRestConsumerUrl("spark-rest", verb, path, map);
 
         // get the endpoint
         SparkEndpoint endpoint = camelContext.getEndpoint(url, SparkEndpoint.class);

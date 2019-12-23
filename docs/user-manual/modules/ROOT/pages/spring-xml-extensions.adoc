@@ -1,5 +1,5 @@
 [[SpringXMLExtensions-SpringXMLExtensions]]
-=== Spring XML Extensions
+= Spring XML Extensions
 
 The Camel Spring XML Extensions allow you use a very concise XML syntax
 to describe your Camel configuration when you are using spring to wire

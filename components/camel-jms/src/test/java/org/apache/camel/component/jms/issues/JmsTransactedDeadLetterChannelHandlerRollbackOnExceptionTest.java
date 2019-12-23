@@ -72,6 +72,7 @@ public class JmsTransactedDeadLetterChannelHandlerRollbackOnExceptionTest extend
         assertNull("Should not rollback the transaction", dlqBody);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

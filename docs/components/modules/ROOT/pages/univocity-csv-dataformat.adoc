@@ -1,10 +1,11 @@
 [[univocity-csv-dataformat]]
-== uniVocity CSV DataFormat
+= uniVocity CSV DataFormat
+:page-source: components/camel-univocity-parsers/src/main/docs/univocity-csv-dataformat.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
 
-This xref:data-format.adoc[Data
-Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]
+This xref:manual::data-format.adoc[Data
+Format] uses http://www.univocity.com/pages/about-parsers[uniVocity-parsers]
 for reading and writing 3 kinds of tabular data text files:
 
 * CSV (Comma Separated Values), where the values are separated by a
@@ -16,9 +17,7 @@ tabulation
 Thus there are 3 data formats based on uniVocity-parsers.
 
 If you use Maven you can just add the following to your pom.xml,
-substituting the version number for the latest and greatest release
-(see https://cwiki.apache.org/confluence/display/CAMEL/Download[the
-download page for the latest versions]).
+substituting the version number for the latest and greatest release.
 
 [source,xml]
 ----------------------------------------------------
@@ -29,7 +28,7 @@ download page for the latest versions]).
 </dependency>
 ----------------------------------------------------
 
-### Options
+== Options
 
 Most configuration options of the uniVocity-parsers are available in the
 data formats. If you want more information about a particular option,
@@ -40,7 +39,7 @@ page].
 The 3 data formats share common options and have dedicated ones, this
 section presents them all.
 
-### Options
+== Options
 
 
 // dataformat options: START
@@ -73,14 +72,14 @@ The uniVocity CSV dataformat supports 18 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-univocity-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -100,7 +99,7 @@ The component supports 19 options, which are listed below.
 | *camel.dataformat.univocity-csv.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.univocity-csv.delimiter* | The delimiter of values | , | String
 | *camel.dataformat.univocity-csv.empty-value* | The String representation of an empty value |  | String
-| *camel.dataformat.univocity-csv.enabled* | Enable univocity-csv dataformat | true | Boolean
+| *camel.dataformat.univocity-csv.enabled* | Whether to enable auto configuration of the univocity-csv data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.univocity-csv.header-extraction-enabled* | Whether or not the header must be read in the first line of the test document The default value is false | false | Boolean
 | *camel.dataformat.univocity-csv.headers-disabled* | Whether or not the headers are disabled. When defined, this option explicitly sets the headers as null which indicates that there is no header. The default value is false | false | Boolean
 | *camel.dataformat.univocity-csv.ignore-leading-whitespaces* | Whether or not the leading white spaces must be ignored. The default value is true | true | Boolean
@@ -119,7 +118,7 @@ The component supports 19 options, which are listed below.
 
 
 
-### Marshalling usages
+== Marshalling usages
 
 The marshalling accepts either:
 
@@ -128,7 +127,7 @@ The marshalling accepts either:
 
 Any other body will throws an exception.
 
-#### Usage example: marshalling a Map into CSV format
+=== Usage example: marshalling a Map into CSV format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -141,7 +140,7 @@ Any other body will throws an exception.
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Usage example: marshalling a Map into fixed-width format
+=== Usage example: marshalling a Map into fixed-width format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -158,7 +157,7 @@ Any other body will throws an exception.
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Usage example: marshalling a Map into TSV format
+=== Usage example: marshalling a Map into TSV format
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -171,22 +170,22 @@ Any other body will throws an exception.
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-### Unmarshalling usages
+== Unmarshalling usages
 
-The unmarshalling uses an `InputStream` in order to read the data.
+The unmarshalling uses an `InputStream` in order to read the data.
 
 Each row produces either:
 
-* a list with all the values in it (`asMap` option with `false`);
+* a list with all the values in it (`asMap` option with `false`);
 * A map with all the values indexed by the
-headers (`asMap` option with `true`).
+headers (`asMap` option with `true`).
 
 All the rows can either:
 
-* be collected at once into a list (`lazyLoad` option with `false`);
-* be read on the fly using an iterator (`lazyLoad` option with `true`).
+* be collected at once into a list (`lazyLoad` option with `false`);
+* be read on the fly using an iterator (`lazyLoad` option with `true`).
 
-#### Usage example: unmarshalling a CSV format into maps with automatic headers
+=== Usage example: unmarshalling a CSV format into maps with automatic headers
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -199,7 +198,7 @@ All the rows can either:
 </route>
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Usage example: unmarshalling a fixed-width format into lists
+=== Usage example: unmarshalling a fixed-width format into lists
 
 [source,xml]
 ------------------------------------------------------------------------------------------------------------------------------------------------------------------------

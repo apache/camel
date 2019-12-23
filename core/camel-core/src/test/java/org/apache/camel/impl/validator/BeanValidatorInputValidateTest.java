@@ -34,18 +34,11 @@ public class BeanValidatorInputValidateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                validator()
-                    .type("toValidate")
-                    .withBean("testValidator");
+                validator().type("toValidate").withBean("testValidator");
 
-                onException(ValidationException.class)
-                    .handled(true)
-                    .log("Invalid validation: ${exception.message}")
-                    .to("mock:invalid");
+                onException(ValidationException.class).handled(true).log("Invalid validation: ${exception.message}").to("mock:invalid");
 
-                from("direct:in")
-                    .inputTypeWithValidate("toValidate")
-                    .to("mock:out");
+                from("direct:in").inputTypeWithValidate("toValidate").to("mock:out");
             }
         };
     }
@@ -64,7 +57,6 @@ public class BeanValidatorInputValidateTest extends ContextTestSupport {
             }
         }
     }
-
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

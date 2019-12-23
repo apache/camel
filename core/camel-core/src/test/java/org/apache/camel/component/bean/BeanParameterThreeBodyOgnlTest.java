@@ -54,9 +54,7 @@ public class BeanParameterThreeBodyOgnlTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:foo?method=bar(${body[0]},${body[1]},${body[2]})")
-                    .to("mock:result");
+                from("direct:start").to("bean:foo?method=bar(${body[0]},${body[1]},${body[2]})").to("mock:result");
             }
         };
     }

@@ -125,6 +125,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
         private WatchedEvent watchedEvent;
 
+        @Override
         public void run() {
             while (isRunAllowed()) {
                 try {

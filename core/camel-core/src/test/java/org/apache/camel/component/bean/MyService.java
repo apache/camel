@@ -19,7 +19,7 @@ package org.apache.camel.component.bean;
 public interface MyService {
 
     String method(String in) throws MyApplicationException;
-    
+
     MyResponse call(MyRequest in) throws MyApplicationException;
 
 }

@@ -19,10 +19,10 @@ package org.apache.camel.component.salesforce;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalResult;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 public class ApprovalExamplesIntegrationTest extends AbstractApprovalIntegrationTest {
@@ -57,9 +57,8 @@ public class ApprovalExamplesIntegrationTest extends AbstractApprovalIntegration
         assertNotNull("Result should be received", result);
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        final JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("approvalTemplate")
+    public ApprovalRequest approvalReq() throws Exception {
 
         final ApprovalRequest approvalTemplate = new ApprovalRequest();
         approvalTemplate.setActionType(ApprovalRequest.Action.Submit);
@@ -67,9 +66,7 @@ public class ApprovalExamplesIntegrationTest extends AbstractApprovalIntegration
         approvalTemplate.setProcessDefinitionNameOrId("Test_Account_Process");
         approvalTemplate.setSkipEntryCriteria(true);
 
-        jndi.bind("approvalTemplate", approvalTemplate);
-
-        return jndi;
+        return approvalTemplate;
     }
 
     @Override
@@ -79,20 +76,18 @@ public class ApprovalExamplesIntegrationTest extends AbstractApprovalIntegration
             public void configure() throws Exception {
                 // tag::example1Route[]
                 from("direct:example1")//
-                        .setHeader("approval.ContextId", simple("${body['contextId']}"))
-                        .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
-                        .to("salesforce:approval?"//
-                            + "approvalActionType=Submit"//
-                            + "&approvalComments=this is a test"//
-                            + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
-                            + "&approvalSkipEntryCriteria=true");
+                    .setHeader("approval.ContextId", simple("${body['contextId']}")).setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
+                    .to("salesforce:approval?"//
+                        + "approvalActionType=Submit"//
+                        + "&approvalComments=this is a test"//
+                        + "&approvalProcessDefinitionNameOrId=Test_Account_Process"//
+                        + "&approvalSkipEntryCriteria=true");
                 // end::example1Route[]
 
                 // tag::example2Route[]
                 from("direct:example2")//
-                        .setHeader("approval.ContextId", simple("${body['contextId']}"))
-                        .setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
-                        .to("salesforce:approval?approval=#approvalTemplate");
+                    .setHeader("approval.ContextId", simple("${body['contextId']}")).setHeader("approval.NextApproverIds", simple("${body['nextApproverIds']}"))
+                    .to("salesforce:approval?approval=#approvalTemplate");
                 // end::example2Route[]
             }
         };

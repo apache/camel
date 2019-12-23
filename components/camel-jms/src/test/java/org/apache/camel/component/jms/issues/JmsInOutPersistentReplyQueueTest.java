@@ -40,6 +40,7 @@ public class JmsInOutPersistentReplyQueueTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
@@ -47,6 +48,7 @@ public class JmsInOutPersistentReplyQueueTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

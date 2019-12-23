@@ -52,6 +52,7 @@ public class DropboxComponent extends DefaultComponent {
      * @return the camel endpoint
      * @throws Exception
      */
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DropboxConfiguration configuration = new DropboxConfiguration();
 
@@ -73,14 +74,13 @@ public class DropboxComponent extends DefaultComponent {
             configuration.setUploadMode(DropboxUploadMode.valueOf((String)parameters.get("uploadMode")));
         }
 
+        DropboxEndpoint endpoint = new DropboxEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
 
         //pass validation test
         DropboxConfigurationValidator.validateCommonProperties(configuration);
 
-        // and then override from parameters
-        setProperties(configuration, parameters);
-
-        return new DropboxEndpoint(uri, this, configuration);
+        return endpoint;
     }
 
 }

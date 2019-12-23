@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atomix.client.set;
 
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +32,7 @@ import org.apache.camel.spi.UriParam;
     title = "Atomix Set",
     syntax = "atomix-set:resourceName",
     label = "clustering")
-final class AtomixSetEndpoint extends AbstractAtomixClientEndpoint<AtomixSetComponent, AtomixSetConfiguration> {
+public final class AtomixSetEndpoint extends AbstractAtomixClientEndpoint<AtomixSetComponent, AtomixSetConfiguration> {
     @UriParam
     private AtomixSetConfiguration configuration;
 
@@ -48,7 +47,9 @@ final class AtomixSetEndpoint extends AbstractAtomixClientEndpoint<AtomixSetComp
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AtomixSetConsumer(this, processor, getResourceName());
+        AtomixSetConsumer consumer = new AtomixSetConsumer(this, processor, getResourceName());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

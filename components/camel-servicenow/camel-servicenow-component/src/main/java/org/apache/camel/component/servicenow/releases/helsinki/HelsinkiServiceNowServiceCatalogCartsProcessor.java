@@ -31,7 +31,7 @@ import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_R
 import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_CHECKOUT;
 import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_SUBJECT_DELIVERY_ADDRESS;
 import static org.apache.camel.component.servicenow.ServiceNowConstants.ACTION_UPDATE;
-    
+
 class HelsinkiServiceNowServiceCatalogCartsProcessor extends AbstractServiceNowProcessor {
 
     HelsinkiServiceNowServiceCatalogCartsProcessor(ServiceNowEndpoint endpoint) throws Exception {

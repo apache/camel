@@ -65,7 +65,8 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureException;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 import org.apache.camel.component.xmlsecurity.util.TestKeystore;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Before;
@@ -88,6 +89,7 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
             + "<root xmlns=\"http://test/test\"><test>Test Message</test></root>";
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         disableJMX();
@@ -95,8 +97,8 @@ public class XAdESSignaturePropertiesTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = new SimpleRegistry();
         registry.bind("keyAccessorDefault", TestKeystore.getKeyAccessor("bob"));
         registry.bind("xmlSignatureProperties", getXmlSignatureProperties("bob"));
 

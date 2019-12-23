@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.thoughtworks.xstream.XStream;
-
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.apache.camel.component.salesforce.api.utils.XStreamUtils;
 import org.apache.camel.component.salesforce.dto.generated.Account;
@@ -73,44 +72,15 @@ public class SObjectTreeTest extends CompositeTestBase {
         tree.addNode(account2);
 
         final String json = writer.writeValueAsString(tree);
-
-        assertEquals("Should serialize to JSON as in Salesforce example",
-            "{\"records\":["//
-                + "{"//
-                + "\"attributes\":{\"referenceId\":\"ref1\",\"type\":\"Account\"},"//
-                + "\"Industry\":\"Banking\","//
-                + "\"Name\":\"SampleAccount\","//
-                + "\"NumberOfEmployees\":100,"//
-                + "\"Phone\":\"1234567890\","//
-                + "\"Website\":\"www.salesforce.com\","//
-                + "\"Contacts\":{"//
-                + "\"records\":["//
-                + "{"//
-                + "\"attributes\":{\"referenceId\":\"ref2\",\"type\":\"Contact\"},"//
-                + "\"Email\":\"sample@salesforce.com\","//
-                + "\"LastName\":\"Smith\","//
-                + "\"Title\":\"President\""//
-                + "},"//
-                + "{"//
-                + "\"attributes\":{\"referenceId\":\"ref3\",\"type\":\"Contact\"},"//
-                + "\"Email\":\"sample@salesforce.com\","//
-                + "\"LastName\":\"Evans\","//
-                + "\"Title\":\"Vice President\""//
-                + "}"//
-                + "]"//
-                + "}"//
-                + "},"//
-                + "{"//
-                + "\"attributes\":{\"referenceId\":\"ref4\",\"type\":\"Account\"},"//
-                + "\"Industry\":\"Banking\","//
-                + "\"Name\":\"SampleAccount2\","//
-                + "\"NumberOfEmployees\":100,"//
-                + "\"Phone\":\"1234567890\","//
-                + "\"Website\":\"www.salesforce2.com\""//
-                + "}"//
-                + "]"//
-                + "}",
-            json);
+        final String expected = "{" + "\"records\":[" + "{" + "\"Industry\":\"Banking\"," + "\"Name\":\"SampleAccount\"," + "\"NumberOfEmployees\":100,"
+                                + "\"Phone\":\"1234567890\"," + "\"Website\":\"www.salesforce.com\"," + "\"attributes\":{" + "\"referenceId\":\"ref1\"," + "\"type\":\"Account\","
+                                + "\"url\":null" + "}," + "\"Contacts\":{" + "\"records\":[" + "{" + "\"Email\":\"sample@salesforce.com\"," + "\"LastName\":\"Smith\","
+                                + "\"Title\":\"President\"," + "\"attributes\":{" + "\"referenceId\":\"ref2\"," + "\"type\":\"Contact\"," + "\"url\":null" + "}" + "}," + "{"
+                                + "\"Email\":\"sample@salesforce.com\"," + "\"LastName\":\"Evans\"," + "\"Title\":\"Vice President\"," + "\"attributes\":{"
+                                + "\"referenceId\":\"ref3\"," + "\"type\":\"Contact\"," + "\"url\":null" + "}" + "}" + "]" + "}" + "}," + "{" + "\"Industry\":\"Banking\","
+                                + "\"Name\":\"SampleAccount2\"," + "\"NumberOfEmployees\":100," + "\"Phone\":\"1234567890\"," + "\"Website\":\"www.salesforce2.com\","
+                                + "\"attributes\":{" + "\"referenceId\":\"ref4\"," + "\"type\":\"Account\"," + "\"url\":null" + "}" + "}" + "]" + "}";
+        assertEquals("Should serialize to JSON as in Salesforce example", expected, json);
     }
 
     @Test
@@ -125,41 +95,39 @@ public class SObjectTreeTest extends CompositeTestBase {
         final SObjectNode account2 = new SObjectNode(tree, simpleAccount2);
         tree.addNode(account2);
 
-        final XStream xStream = XStreamUtils.createXStream(SObjectTree.class, Account.class, Contact.class,
-            Asset.class);
+        final XStream xStream = XStreamUtils.createXStream(SObjectTree.class, Account.class, Contact.class, Asset.class);
 
         final String xml = xStream.toXML(tree);
 
-        assertEquals("Should serialize to XML as in Salesforce example",
-            "<SObjectTreeRequest>"//
-                + "<records type=\"Account\" referenceId=\"ref1\">"//
-                + "<Name>SampleAccount</Name>"//
-                + "<Phone>1234567890</Phone>"//
-                + "<Website>www.salesforce.com</Website>"//
-                + "<Industry>Banking</Industry>"//
-                + "<NumberOfEmployees>100</NumberOfEmployees>"//
-                + "<Contacts>"//
-                + "<records type=\"Contact\" referenceId=\"ref2\">"//
-                + "<Email>sample@salesforce.com</Email>"//
-                + "<LastName>Smith</LastName>"//
-                + "<Title>President</Title>"//
-                + "</records>"//
-                + "<records type=\"Contact\" referenceId=\"ref3\">"//
-                + "<Email>sample@salesforce.com</Email>"//
-                + "<LastName>Evans</LastName>"//
-                + "<Title>Vice President</Title>"//
-                + "</records>"//
-                + "</Contacts>"//
-                + "</records>"//
-                + "<records type=\"Account\" referenceId=\"ref4\">"//
-                + "<Name>SampleAccount2</Name>"//
-                + "<Phone>1234567890</Phone>"//
-                + "<Website>www.salesforce2.com</Website>"//
-                + "<Industry>Banking</Industry>"//
-                + "<NumberOfEmployees>100</NumberOfEmployees>"//
-                + "</records>"//
-                + "</SObjectTreeRequest>",
-            xml);
+        assertEquals("Should serialize to XML as in Salesforce example", "<SObjectTreeRequest>"//
+                                                                         + "<records type=\"Account\" referenceId=\"ref1\">"//
+                                                                         + "<Name>SampleAccount</Name>"//
+                                                                         + "<Phone>1234567890</Phone>"//
+                                                                         + "<Website>www.salesforce.com</Website>"//
+                                                                         + "<Industry>Banking</Industry>"//
+                                                                         + "<NumberOfEmployees>100</NumberOfEmployees>"//
+                                                                         + "<Contacts>"//
+                                                                         + "<records type=\"Contact\" referenceId=\"ref2\">"//
+                                                                         + "<LastName>Smith</LastName>"//
+                                                                         + "<Email>sample@salesforce.com</Email>"//
+                                                                         + "<Title>President</Title>"//
+                                                                         + "</records>"//
+                                                                         + "<records type=\"Contact\" referenceId=\"ref3\">"//
+                                                                         + "<LastName>Evans</LastName>"//
+                                                                         + "<Email>sample@salesforce.com</Email>"//
+                                                                         + "<Title>Vice President</Title>"//
+                                                                         + "</records>"//
+                                                                         + "</Contacts>"//
+                                                                         + "</records>"//
+                                                                         + "<records type=\"Account\" referenceId=\"ref4\">"//
+                                                                         + "<Name>SampleAccount2</Name>"//
+                                                                         + "<Phone>1234567890</Phone>"//
+                                                                         + "<Website>www.salesforce2.com</Website>"//
+                                                                         + "<Industry>Banking</Industry>"//
+                                                                         + "<NumberOfEmployees>100</NumberOfEmployees>"//
+                                                                         + "</records>"//
+                                                                         + "</SObjectTreeRequest>",
+                     xml);
     }
 
     @Test
@@ -203,9 +171,9 @@ public class SObjectTreeTest extends CompositeTestBase {
         final SObjectNode assetNode = new SObjectNode(tree, asset);
         contactNode.addChild("Assets", assetNode);
 
-        assertEquals("ref1", accountNode.getAttributes().getReferenceId());
-        assertEquals("ref2", contactNode.getAttributes().getReferenceId());
-        assertEquals("ref3", assetNode.getAttributes().getReferenceId());
+        assertEquals("ref1", accountNode.getObject().getAttributes().getReferenceId());
+        assertEquals("ref2", contactNode.getObject().getAttributes().getReferenceId());
+        assertEquals("ref3", assetNode.getObject().getAttributes().getReferenceId());
 
         tree.setIdFor("ref1", "id1");
         tree.setIdFor("ref3", "id3");
@@ -229,13 +197,13 @@ public class SObjectTreeTest extends CompositeTestBase {
         tree.addNode(account2);
 
         final SObjectNode simpleAccountFromTree = tree.records.get(0);
-        assertEquals("ref1", simpleAccountFromTree.getAttributes().getReferenceId());
+        assertEquals("ref1", simpleAccountFromTree.getObject().getAttributes().getReferenceId());
 
         final Iterator<SObjectNode> simpleAccountNodes = simpleAccountFromTree.getChildNodes().iterator();
-        assertEquals("ref2", simpleAccountNodes.next().getAttributes().getReferenceId());
-        assertEquals("ref3", simpleAccountNodes.next().getAttributes().getReferenceId());
+        assertEquals("ref2", simpleAccountNodes.next().getObject().getAttributes().getReferenceId());
+        assertEquals("ref3", simpleAccountNodes.next().getObject().getAttributes().getReferenceId());
 
-        assertEquals("ref4", account2.getAttributes().getReferenceId());
+        assertEquals("ref4", account2.getObject().getAttributes().getReferenceId());
     }
 
     @Test

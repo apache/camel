@@ -191,12 +191,14 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     }
 
     protected class CloseProducerCallback implements ReleaseProducerCallback {
+        @Override
         public void release(MessageProducerResources producer) throws Exception {
             producer.getMessageProducer().close();
         }
     }
 
     protected class ReturnProducerCallback implements ReleaseProducerCallback {
+        @Override
         public void release(MessageProducerResources producer) throws Exception {
             getProducers().returnObject(producer);
         }

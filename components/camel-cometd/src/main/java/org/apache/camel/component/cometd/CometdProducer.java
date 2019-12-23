@@ -59,10 +59,12 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         endpoint.disconnect(this);
     }
 
+    @Override
     public void process(final Exchange exchange) {
         service.process(exchange);
     }
 
+    @Override
     public CometdEndpoint getEndpoint() {
         return endpoint;
     }
@@ -75,6 +77,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         return service;
     }
 
+    @Override
     public void setBayeux(BayeuxServerImpl bayeux) {
         this.bayeux = bayeux;
     }

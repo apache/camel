@@ -39,19 +39,18 @@ public class BeanReturnCallableTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("myBean", new MyBean());
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                        .setHeader("foo", constant("bar"))
-                        .to("bean:myBean")
-                        .to("mock:result");
+                from("direct:in").setHeader("foo", constant("bar")).to("bean:myBean").to("mock:result");
             }
         };
     }

@@ -54,7 +54,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: common
          */
         default DataSetEndpointConsumerBuilder dataSetIndex(String dataSetIndex) {
-            setProperty("dataSetIndex", dataSetIndex);
+            doSetProperty("dataSetIndex", dataSetIndex);
             return this;
         }
         /**
@@ -65,7 +65,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder minRate(int minRate) {
-            setProperty("minRate", minRate);
+            doSetProperty("minRate", minRate);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder minRate(String minRate) {
-            setProperty("minRate", minRate);
+            doSetProperty("minRate", minRate);
             return this;
         }
         /**
@@ -110,7 +110,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder preloadSize(long preloadSize) {
-            setProperty("preloadSize", preloadSize);
+            doSetProperty("preloadSize", preloadSize);
             return this;
         }
         /**
@@ -122,7 +122,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder preloadSize(String preloadSize) {
-            setProperty("preloadSize", preloadSize);
+            doSetProperty("preloadSize", preloadSize);
             return this;
         }
         /**
@@ -134,7 +134,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder produceDelay(long produceDelay) {
-            setProperty("produceDelay", produceDelay);
+            doSetProperty("produceDelay", produceDelay);
             return this;
         }
         /**
@@ -146,7 +146,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder produceDelay(String produceDelay) {
-            setProperty("produceDelay", produceDelay);
+            doSetProperty("produceDelay", produceDelay);
             return this;
         }
     }
@@ -170,7 +170,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -183,7 +183,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -196,7 +196,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -209,7 +209,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -237,7 +237,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: common
          */
         default DataSetEndpointProducerBuilder dataSetIndex(String dataSetIndex) {
-            setProperty("dataSetIndex", dataSetIndex);
+            doSetProperty("dataSetIndex", dataSetIndex);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder consumeDelay(long consumeDelay) {
-            setProperty("consumeDelay", consumeDelay);
+            doSetProperty("consumeDelay", consumeDelay);
             return this;
         }
         /**
@@ -261,7 +261,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder consumeDelay(String consumeDelay) {
-            setProperty("consumeDelay", consumeDelay);
+            doSetProperty("consumeDelay", consumeDelay);
             return this;
         }
         /**
@@ -279,7 +279,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder assertPeriod(long assertPeriod) {
-            setProperty("assertPeriod", assertPeriod);
+            doSetProperty("assertPeriod", assertPeriod);
             return this;
         }
         /**
@@ -297,7 +297,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder assertPeriod(String assertPeriod) {
-            setProperty("assertPeriod", assertPeriod);
+            doSetProperty("assertPeriod", assertPeriod);
             return this;
         }
         /**
@@ -319,7 +319,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder expectedCount(int expectedCount) {
-            setProperty("expectedCount", expectedCount);
+            doSetProperty("expectedCount", expectedCount);
             return this;
         }
         /**
@@ -342,7 +342,37 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointProducerBuilder expectedCount(
                 String expectedCount) {
-            setProperty("expectedCount", expectedCount);
+            doSetProperty("expectedCount", expectedCount);
+            return this;
+        }
+        /**
+         * Sets whether assertIsSatisfied() should fail fast at the first
+         * detected failed expectation while it may otherwise wait for all
+         * expected messages to arrive before performing expectations
+         * verifications. Is by default true. Set to false to use behavior as in
+         * Camel 2.x.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DataSetEndpointProducerBuilder failFast(boolean failFast) {
+            doSetProperty("failFast", failFast);
+            return this;
+        }
+        /**
+         * Sets whether assertIsSatisfied() should fail fast at the first
+         * detected failed expectation while it may otherwise wait for all
+         * expected messages to arrive before performing expectations
+         * verifications. Is by default true. Set to false to use behavior as in
+         * Camel 2.x.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DataSetEndpointProducerBuilder failFast(String failFast) {
+            doSetProperty("failFast", failFast);
             return this;
         }
         /**
@@ -362,7 +392,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -382,7 +412,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -394,7 +424,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder reportGroup(int reportGroup) {
-            setProperty("reportGroup", reportGroup);
+            doSetProperty("reportGroup", reportGroup);
             return this;
         }
         /**
@@ -406,7 +436,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder reportGroup(String reportGroup) {
-            setProperty("reportGroup", reportGroup);
+            doSetProperty("reportGroup", reportGroup);
             return this;
         }
         /**
@@ -419,7 +449,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointProducerBuilder resultMinimumWaitTime(
                 long resultMinimumWaitTime) {
-            setProperty("resultMinimumWaitTime", resultMinimumWaitTime);
+            doSetProperty("resultMinimumWaitTime", resultMinimumWaitTime);
             return this;
         }
         /**
@@ -432,7 +462,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointProducerBuilder resultMinimumWaitTime(
                 String resultMinimumWaitTime) {
-            setProperty("resultMinimumWaitTime", resultMinimumWaitTime);
+            doSetProperty("resultMinimumWaitTime", resultMinimumWaitTime);
             return this;
         }
         /**
@@ -445,7 +475,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointProducerBuilder resultWaitTime(
                 long resultWaitTime) {
-            setProperty("resultWaitTime", resultWaitTime);
+            doSetProperty("resultWaitTime", resultWaitTime);
             return this;
         }
         /**
@@ -458,7 +488,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointProducerBuilder resultWaitTime(
                 String resultWaitTime) {
-            setProperty("resultWaitTime", resultWaitTime);
+            doSetProperty("resultWaitTime", resultWaitTime);
             return this;
         }
         /**
@@ -482,7 +512,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder retainFirst(int retainFirst) {
-            setProperty("retainFirst", retainFirst);
+            doSetProperty("retainFirst", retainFirst);
             return this;
         }
         /**
@@ -506,7 +536,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder retainFirst(String retainFirst) {
-            setProperty("retainFirst", retainFirst);
+            doSetProperty("retainFirst", retainFirst);
             return this;
         }
         /**
@@ -530,7 +560,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder retainLast(int retainLast) {
-            setProperty("retainLast", retainLast);
+            doSetProperty("retainLast", retainLast);
             return this;
         }
         /**
@@ -554,7 +584,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: producer
          */
         default DataSetEndpointProducerBuilder retainLast(String retainLast) {
-            setProperty("retainLast", retainLast);
+            doSetProperty("retainLast", retainLast);
             return this;
         }
         /**
@@ -567,7 +597,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointProducerBuilder sleepForEmptyTest(
                 long sleepForEmptyTest) {
-            setProperty("sleepForEmptyTest", sleepForEmptyTest);
+            doSetProperty("sleepForEmptyTest", sleepForEmptyTest);
             return this;
         }
         /**
@@ -580,7 +610,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default DataSetEndpointProducerBuilder sleepForEmptyTest(
                 String sleepForEmptyTest) {
-            setProperty("sleepForEmptyTest", sleepForEmptyTest);
+            doSetProperty("sleepForEmptyTest", sleepForEmptyTest);
             return this;
         }
     }
@@ -604,7 +634,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
                 boolean copyOnExchange) {
-            setProperty("copyOnExchange", copyOnExchange);
+            doSetProperty("copyOnExchange", copyOnExchange);
             return this;
         }
         /**
@@ -617,7 +647,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
                 String copyOnExchange) {
-            setProperty("copyOnExchange", copyOnExchange);
+            doSetProperty("copyOnExchange", copyOnExchange);
             return this;
         }
         /**
@@ -630,7 +660,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -643,7 +673,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -656,7 +686,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -669,7 +699,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -697,7 +727,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: common
          */
         default DataSetEndpointBuilder dataSetIndex(String dataSetIndex) {
-            setProperty("dataSetIndex", dataSetIndex);
+            doSetProperty("dataSetIndex", dataSetIndex);
             return this;
         }
     }
@@ -721,7 +751,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -734,7 +764,7 @@ public interface DataSetEndpointBuilderFactory {
          */
         default AdvancedDataSetEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -746,7 +776,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDataSetEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -758,7 +788,7 @@ public interface DataSetEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDataSetEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -768,7 +798,7 @@ public interface DataSetEndpointBuilderFactory {
      * testing of your system.
      * 
      * Category: core,testing
-     * Available as of version: 1.3
+     * Since: 1.3
      * Maven coordinates: org.apache.camel:camel-dataset
      * 
      * Syntax: <code>dataset:name</code>
@@ -776,7 +806,7 @@ public interface DataSetEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of DataSet to lookup in the registry
      */
-    default DataSetEndpointBuilder dataSet(String path) {
+    default DataSetEndpointBuilder dataset(String path) {
         class DataSetEndpointBuilderImpl extends AbstractEndpointBuilder implements DataSetEndpointBuilder, AdvancedDataSetEndpointBuilder {
             public DataSetEndpointBuilderImpl(String path) {
                 super("dataset", path);

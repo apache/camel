@@ -28,6 +28,7 @@ import org.slf4j.LoggerFactory;
 public class PrepareRequest implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(PrepareRequest.class);
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         List<String> params = new ArrayList<>();
         params.add(exchange.getIn().getBody(String.class));

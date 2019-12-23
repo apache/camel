@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
-import java.nio.file.Path;
 import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
@@ -40,26 +39,52 @@ public interface IPFSEndpointBuilderFactory {
             return (AdvancedIPFSEndpointBuilder) this;
         }
         /**
-         * The ipfs output directory.
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
          * 
-         * The option is a: <code>java.nio.file.Path</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: producer
          */
-        default IPFSEndpointBuilder outdir(Path outdir) {
-            setProperty("outdir", outdir);
+        default IPFSEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IPFSEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
          * The ipfs output directory.
          * 
-         * The option will be converted to a <code>java.nio.file.Path</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
         default IPFSEndpointBuilder outdir(String outdir) {
-            setProperty("outdir", outdir);
+            doSetProperty("outdir", outdir);
             return this;
         }
     }
@@ -83,7 +108,7 @@ public interface IPFSEndpointBuilderFactory {
          */
         default AdvancedIPFSEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -96,7 +121,7 @@ public interface IPFSEndpointBuilderFactory {
          */
         default AdvancedIPFSEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -108,7 +133,7 @@ public interface IPFSEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -120,7 +145,7 @@ public interface IPFSEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -130,15 +155,22 @@ public interface IPFSEndpointBuilderFactory {
      * System (IPFS).
      * 
      * Category: file,ipfs
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-ipfs
      * 
-     * Syntax: <code>ipfs:host:port/cmd</code>
+     * Syntax: <code>ipfs:ipfsHost:ipfsPort/ipfsCmd</code>
      * 
-     * Path parameter: ipfsCmd
+     * Path parameter: ipfsHost (required)
+     * The ipfs host
+     * 
+     * Path parameter: ipfsPort (required)
+     * The ipfs port
+     * 
+     * Path parameter: ipfsCmd (required)
      * The ipfs command
+     * The value can be one of: add, cat, get, version
      */
-    default IPFSEndpointBuilder iPFS(String path) {
+    default IPFSEndpointBuilder ipfs(String path) {
         class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder, AdvancedIPFSEndpointBuilder {
             public IPFSEndpointBuilderImpl(String path) {
                 super("ipfs", path);

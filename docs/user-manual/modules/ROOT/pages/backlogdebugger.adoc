@@ -1,10 +1,10 @@
 [[BacklogDebugger-BacklogDebugger]]
-=== BacklogDebugger
+= BacklogDebugger
 
-*Available as of Camel 2.12*
+*Since Camel 2.12*
 
 Camel supports a backlog debugger that is used for live debugging of
-message they are routed in Camel. 
+messages that are routed in Camel. 
 The backlog debugger has additional functionality for easier debugging
 aimed at tooling, than the Debugger. The backlog
 debugger is exposed in JMX in the tracer node with the name
@@ -16,7 +16,7 @@ You can enable or disable the BacklogDebugger dynamically, by calling
 `enableDebugger` or `disableDebugger` methods.
 
 [[BacklogDebugger-Options]]
-==== Options
+== Options
 
 [width="100%",cols="10%,20%,70%",options="header",]
 |=======================================================================
@@ -39,7 +39,7 @@ is that the file content has to be read from the file.
 |=======================================================================
 
 [[BacklogDebugger-Operations]]
-==== Operations
+== Operations
 
 [width="100%",cols="10%,20%,70%",options="header",]
 |=======================================================================
@@ -89,14 +89,7 @@ Exchange at the node.
 |=======================================================================
 
 [[BacklogDebugger-Enabling]]
-==== Enabling
+== Enabling
 
 You would need to enable this using the JMX API.
-
-[[BacklogDebugger-SeeAlso]]
-==== See Also
-
-* BacklogTracer
-* xref:debugger.adoc[Debugger]
-* xref:log-component.adoc[Log]
 

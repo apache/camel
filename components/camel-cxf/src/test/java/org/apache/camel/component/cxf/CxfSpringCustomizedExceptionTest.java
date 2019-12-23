@@ -21,7 +21,9 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Text;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -33,7 +35,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
 
 public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
     private static final String EXCEPTION_MESSAGE = "This is an exception test message";
@@ -56,6 +57,7 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         return true;
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();
@@ -64,6 +66,7 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);
@@ -94,10 +97,13 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/CxfCustomizedExceptionContext.xml");
     }
     
-    public static class SOAPFaultFactory {
-        public SoapFault getSoapFault() {
-            return SOAP_FAULT;
+    public static class SOAPFaultProcessor implements Processor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            exchange.getMessage().setBody(SOAP_FAULT);
         }
     }
+
 
 }

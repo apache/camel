@@ -56,6 +56,7 @@ public class OgnlTest extends LanguageTestSupport {
         assertTrue(exchange.hasOut());
     }
 
+    @Override
     protected String getLanguageName() {
         return "ognl";
     }

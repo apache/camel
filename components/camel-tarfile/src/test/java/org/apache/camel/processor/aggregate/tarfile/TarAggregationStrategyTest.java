@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.tarfile;
+
 import java.io.File;
 import java.io.FileInputStream;
 
@@ -76,7 +77,7 @@ public class TarAggregationStrategyTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // Untar file and Split it according to FileEntry
-                from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?consumer.delay=1000&noop=true")
+                from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?delay=1000&noop=true")
                     .setHeader("foo", constant("bar"))
                     .aggregate(tar)
                         .constant(true)

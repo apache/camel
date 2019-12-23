@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
 import java.util.Map;
 
 import org.apache.camel.CamelExecutionException;
@@ -102,7 +103,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
         return false;
     }
 
-    private final  class MyQueueComponent extends DefaultComponent {
+    private final class MyQueueComponent extends DefaultComponent {
 
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -145,7 +146,7 @@ public class EventDrivenPollingConsumerQueueSizeTest extends ContextTestSupport 
 
         @Override
         protected void doStart() throws Exception {
-            consumer = (EventDrivenPollingConsumer) super.createPollingConsumer();
+            consumer = (EventDrivenPollingConsumer)super.createPollingConsumer();
             super.doStart();
         }
     }

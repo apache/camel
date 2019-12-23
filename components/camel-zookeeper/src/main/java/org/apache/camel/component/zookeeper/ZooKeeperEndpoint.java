@@ -44,10 +44,12 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         this.connectionManager = new ZooKeeperConnectionManager(this);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new ZooKeeperProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         ZooKeeperConsumer answer = new ZooKeeperConsumer(this, processor);
         configureConsumer(answer);
@@ -127,22 +129,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
 
     public void setBackoff(long backoff) {
         getConfiguration().setBackoff(backoff);
-    }
-
-    /**
-     * @deprecated The usage of this property has no effect at all.
-     */
-    @Deprecated
-    public boolean getAwaitExistence() {
-        return getConfiguration().shouldAwaitExistence();
-    }
-
-    /**
-     * @deprecated The usage of this property has no effect at all.
-     */
-    @Deprecated
-    public void setAwaitExistence(boolean awaitExistence) {
-        getConfiguration().setAwaitExistence(awaitExistence);
     }
 
     @ManagedOperation

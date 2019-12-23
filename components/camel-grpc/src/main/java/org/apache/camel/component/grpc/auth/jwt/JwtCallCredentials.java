@@ -18,10 +18,8 @@ package org.apache.camel.component.grpc.auth.jwt;
 
 import java.util.concurrent.Executor;
 
-import io.grpc.Attributes;
 import io.grpc.CallCredentials;
 import io.grpc.Metadata;
-import io.grpc.MethodDescriptor;
 import io.grpc.Status;
 import org.apache.camel.component.grpc.GrpcConstants;
 import org.slf4j.Logger;

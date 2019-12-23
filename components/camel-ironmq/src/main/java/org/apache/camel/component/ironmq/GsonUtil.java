@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.google.gson.Gson;
-
 import org.apache.camel.Message;
 
 public final class GsonUtil {
@@ -34,7 +33,6 @@ public final class GsonUtil {
         private String body;
 
         IronMqMessage(String body, Map<String, Object> headers) {
-            super();
             this.headers = headers;
             this.body = body;
         }

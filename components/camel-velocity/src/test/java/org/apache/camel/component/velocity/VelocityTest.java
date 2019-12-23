@@ -66,6 +66,7 @@ public class VelocityTest extends CamelTestSupport {
         assertEquals("Christian", exchange.getOut().getHeader("name"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

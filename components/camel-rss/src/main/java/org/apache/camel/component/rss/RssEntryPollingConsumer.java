@@ -20,7 +20,6 @@ import java.util.Collections;
 import java.util.Date;
 
 import com.rometools.rome.feed.synd.SyndFeed;
-
 import org.apache.camel.Processor;
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEntryPollingConsumer;
@@ -65,6 +64,7 @@ public class RssEntryPollingConsumer extends FeedEntryPollingConsumer {
         list = null;
     }
 
+    @Override
     protected EntryFilter createEntryFilter(Date lastUpdate) {
         return new UpdatedDateFilter(lastUpdate);
     }

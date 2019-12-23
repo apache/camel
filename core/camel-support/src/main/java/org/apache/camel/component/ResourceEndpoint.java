@@ -107,11 +107,13 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
         return ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), uri);
     }
 
+    @Override
     @ManagedAttribute(description = "Whether the resource is cached")
     public boolean isContentCache() {
         return contentCache;
     }
 
+    @Override
     @ManagedOperation(description = "Clears the cached resource, forcing to re-load the resource on next request")
     public void clearContentCache() {
         log.debug("Clearing resource: {} from the content cache", resourceUri);
@@ -122,16 +124,19 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
         return buffer == null;
     }
 
+    @Override
     @ManagedAttribute(description = "Camel context ID")
     public String getCamelId() {
         return getCamelContext().getName();
     }
 
+    @Override
     @ManagedAttribute(description = "Camel ManagementName")
     public String getCamelManagementName() {
         return getCamelContext().getManagementName();
     }
 
+    @Override
     @ManagedAttribute(description = "Endpoint service state")
     public String getState() {
         return getStatus().name();
@@ -140,6 +145,7 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
     /**
      * Sets whether to use resource content cache or not.
      */
+    @Override
     public void setContentCache(boolean contentCache) {
         this.contentCache = contentCache;
     }

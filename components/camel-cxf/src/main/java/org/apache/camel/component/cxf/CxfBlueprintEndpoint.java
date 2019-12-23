@@ -41,6 +41,7 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
         BusFactory.setThreadDefaultBus(null);
     }
     
+    @Override
     public void setServiceClass(String n) throws ClassNotFoundException {
         setServiceClass(bundleContext.getBundle().loadClass(n));
     }
@@ -49,6 +50,7 @@ public class CxfBlueprintEndpoint extends CxfEndpoint {
     // -------------------------------------------------------------------------
 
 
+    @Override
     protected void checkName(Object value, String name) {
         if (ObjectHelper.isEmpty(value)) {
             log.warn("The " + name + " of " + this.getEndpointUri() + " is empty, cxf will try to load the first one in wsdl for you.");

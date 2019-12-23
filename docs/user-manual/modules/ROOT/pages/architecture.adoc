@@ -1,5 +1,5 @@
 [[Architecture-Architecture]]
-=== Architecture
+= Architecture
 
 Camel uses a Java based xref:dsl.adoc[Routing Domain Specific Language (DSL)] 
 or an XML Configuration to configure
@@ -32,9 +32,9 @@ Expression or Predicate to
 make a truly powerful DSL which is extensible to the most suitable
 language depending on your needs. Many of the Languages 
 are also supported as
-xref:annotation-based-expression-language.adoc[Annotation Based Expression Language].
+xref:parameter-binding-annotations.adoc[Annotation Based Expression Language].
 
 [[Architecture-Diagram]]
-==== Diagram
+== Diagram
 
-image:images/architecture.data/camel-components.png[image]
+image::camel-components.png[image]

@@ -62,7 +62,7 @@ public class RabbitMQMessagePublisher {
     }
 
     private Message resolveMessageFrom(final Exchange camelExchange) {
-        Message message = camelExchange.hasOut() ? camelExchange.getOut() : camelExchange.getIn();
+        Message message = camelExchange.getMessage();
 
         // Remove the SERIALIZE_HEADER in case it was previously set
         if (message.getHeaders() != null && message.getHeaders().containsKey(RabbitMQEndpoint.SERIALIZE_HEADER)) {
@@ -104,8 +104,7 @@ public class RabbitMQMessagePublisher {
     }
 
     private void publishToRabbitMQ(final AMQP.BasicProperties properties, final byte[] body) throws IOException {
-        // remove the OVERRIDE header so it does not propagate
-        String exchangeName = (String) message.removeHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
+        String exchangeName = (String) message.getHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME);
         // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_OVERRIDE_NAME
         if (exchangeName == null || endpoint.isBridgeEndpoint()) {
             exchangeName = endpoint.getExchangeName();

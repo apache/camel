@@ -271,6 +271,6 @@ public class IgniteComputeProducer extends DefaultAsyncProducer {
             exchange.getOut().setBody(result);
             callback.done(false);
         }
-    };
+    }
 
 }

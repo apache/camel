@@ -89,6 +89,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         }
     }
 
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         if (stream == null && ciphers == null) {
             Files.copy(file.toPath(), os);
@@ -97,16 +98,19 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         }
     }
 
+    @Override
     public StreamCache copy(Exchange exchange) throws IOException {
         tempFileManager.addExchange(exchange);
         FileInputStreamCache copy = new FileInputStreamCache(tempFileManager);
         return copy;
     }
 
+    @Override
     public boolean inMemory() {
         return false;
     }
 
+    @Override
     public long length() {
         return length;
     }
@@ -202,13 +206,13 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                                 if (outputStream != null) {
                                     outputStream.close();
                                 }
-                                try {
-                                    cleanUpTempFile();
-                                } catch (Exception e) {
-                                    LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
-                                }
                             } catch (Exception e) {
                                 LOG.warn("Error closing streams. This exception will be ignored.", e);
+                            }
+                            try {
+                                cleanUpTempFile();
+                            } catch (Exception e) {
+                                LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
                             }
                         }
                     }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.zookeeper;
 
-import static java.lang.String.format;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.zookeeper.operations.CreateOperation;
@@ -34,6 +32,7 @@ import org.apache.zookeeper.KeeperException.Code;
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
 
+import static java.lang.String.format;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getAclListFromMessage;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateMode;
 import static org.apache.camel.component.zookeeper.ZooKeeperUtils.getCreateModeFromString;
@@ -61,6 +60,7 @@ public class ZooKeeperProducer extends DefaultProducer {
         this.zkm = endpoint.getConnectionManager();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         if (connection == null) {
@@ -171,6 +171,7 @@ public class ZooKeeperProducer extends DefaultProducer {
 
     private class AsyncSetDataCallback implements StatCallback {
 
+        @Override
         public void processResult(int rc, String node, Object ctx, Stat statistics) {
             if (Code.NONODE.equals(Code.get(rc))) {
                 if (configuration.isCreate()) {

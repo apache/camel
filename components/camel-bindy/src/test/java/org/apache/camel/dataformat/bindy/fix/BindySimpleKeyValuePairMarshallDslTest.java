@@ -80,6 +80,7 @@ public class BindySimpleKeyValuePairMarshallDslTest extends AbstractJUnit4Spring
 
     public static class ContextConfig extends RouteBuilder {
         
+        @Override
         public void configure() {
             from("direct:start").marshal()
                 .bindy(BindyType.KeyValue, org.apache.camel.dataformat.bindy.model.fix.simple.Order.class)

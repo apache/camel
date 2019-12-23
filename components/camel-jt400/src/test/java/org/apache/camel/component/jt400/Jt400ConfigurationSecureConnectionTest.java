@@ -26,6 +26,7 @@ public class Jt400ConfigurationSecureConnectionTest extends Jt400SecureTestSuppo
     private Jt400Configuration jt400Configuration;
     private AS400 connection;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -36,6 +37,7 @@ public class Jt400ConfigurationSecureConnectionTest extends Jt400SecureTestSuppo
         connection = jt400Configuration.getConnection();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (connection != null) {

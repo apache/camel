@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.amqp;
+
 import org.apache.activemq.broker.BrokerService;
 import org.apache.camel.CamelContext;
 import org.apache.camel.EndpointInject;
@@ -64,6 +65,7 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -76,6 +78,7 @@ public class AMQPRouteTraceFrameTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

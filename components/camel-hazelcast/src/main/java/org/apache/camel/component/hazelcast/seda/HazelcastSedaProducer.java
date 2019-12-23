@@ -38,6 +38,7 @@ public class HazelcastSedaProducer extends DefaultAsyncProducer {
         this.queue = hzlq;
     }
 
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         checkAndStore(exchange);
         callback.done(true);

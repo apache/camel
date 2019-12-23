@@ -35,6 +35,7 @@ public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V
         this.timeout = timeout;
     }
 
+    @Override
     public K getKey() {
         return key;
     }
@@ -47,10 +48,12 @@ public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V
         this.expireTime = expireTime;
     }
 
+    @Override
     public V getValue() {
         return value;
     }
 
+    @Override
     public V setValue(V value) {
         V oldValue = this.value;
         this.value = value;
@@ -65,6 +68,7 @@ public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V
         this.timeout = timeout;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public int compareTo(Object that) {
         if (this == that) {
@@ -86,6 +90,7 @@ public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V
         return this.key.hashCode() - that.key.hashCode();
     }
 
+    @Override
     public String toString() {
         return key + " (times out after " + timeout + " millis)";
     }

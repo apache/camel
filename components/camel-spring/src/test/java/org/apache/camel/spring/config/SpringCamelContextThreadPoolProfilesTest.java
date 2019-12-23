@@ -30,6 +30,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringCamelContextThreadPoolProfilesTest extends SpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringCamelContextThreadPoolProfilesTest.xml");
     }

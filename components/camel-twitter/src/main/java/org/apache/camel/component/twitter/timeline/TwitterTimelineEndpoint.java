@@ -51,6 +51,14 @@ public class TwitterTimelineEndpoint extends AbstractTwitterEndpoint {
         this.user = user;
     }
 
+    public String getUser() {
+        return user;
+    }
+
+    public void setUser(String user) {
+        this.user = user;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         switch (timelineType) {

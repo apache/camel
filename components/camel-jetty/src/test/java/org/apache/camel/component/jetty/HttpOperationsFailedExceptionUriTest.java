@@ -42,12 +42,11 @@ public class HttpOperationsFailedExceptionUriTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                        }
-                    });
+                from("jetty://http://localhost:{{port}}/foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                    }
+                });
             }
         };
     }

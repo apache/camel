@@ -19,14 +19,13 @@ package org.apache.camel.component.ironmq;
 import java.io.IOException;
 
 import io.iron.ironmq.EmptyQueueException;
-
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -40,7 +39,10 @@ public class FromQueueToQueueTest extends CamelTestSupport {
 
     @EndpointInject("ironmq:testqueue2?client=#ironMock")
     private IronMQEndpoint queue2;
-
+    
+    @BindToRegistry("ironMock")
+    private IronMQClientMock mock = new IronMQClientMock("dummy", "dummy");
+    
     @Test
     public void shouldDeleteMessageFromQueue1() throws Exception {
 
@@ -74,13 +76,6 @@ public class FromQueueToQueueTest extends CamelTestSupport {
                 throw e;
             }
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("ironMock", new IronMQClientMock("dummy", "dummy"));
-        return registry;
     }
 
     @Override

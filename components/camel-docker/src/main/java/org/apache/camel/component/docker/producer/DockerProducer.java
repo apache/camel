@@ -52,7 +52,6 @@ import com.github.dockerjava.api.model.Capability;
 import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
 import com.github.dockerjava.api.model.HostConfig;
-import com.github.dockerjava.api.model.Mount;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
 import com.github.dockerjava.api.model.VolumesFrom;
@@ -87,6 +86,7 @@ public class DockerProducer extends DefaultProducer {
         this.component = (DockerComponent)endpoint.getComponent();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         Message message = exchange.getIn();

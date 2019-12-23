@@ -50,8 +50,7 @@ public class BeanOgnlBodyMethodReturnNullValueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(new ExampleBean(), "doWithFooBar(${body.foo}, ${body.bar})");
+                from("direct:start").bean(new ExampleBean(), "doWithFooBar(${body.foo}, ${body.bar})");
             }
         };
     }

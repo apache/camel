@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.ftp;
+
 import java.io.File;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -42,8 +43,8 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
     
     @BeforeClass
     public static void initPort() throws Exception {
-        ftpPort = AvailablePortFinder.getNextAvailable(20126);
-        httpPort = AvailablePortFinder.getNextAvailable(9193);
+        ftpPort = AvailablePortFinder.getNextAvailable();
+        httpPort = AvailablePortFinder.getNextAvailable();
     }
 
     @Test
@@ -80,12 +81,14 @@ public class FtpAndHttpRecipientListInterceptSendToEndpointIssueTest extends Cam
         };
     }
 
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         initFtpServer();
         ftpServer.start();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

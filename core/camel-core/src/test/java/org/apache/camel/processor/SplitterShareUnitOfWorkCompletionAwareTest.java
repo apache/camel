@@ -35,14 +35,11 @@ public class SplitterShareUnitOfWorkCompletionAwareTest extends ContextTestSuppo
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .split(body(), new MyStrategy()).shareUnitOfWork()
-                        .to("mock:line")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").split(body(), new MyStrategy()).shareUnitOfWork().to("mock:line").end().to("mock:result");
             }
         };
     }

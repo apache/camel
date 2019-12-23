@@ -20,17 +20,21 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertDirectoryEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/multidir/?password=admin&recursive=true&consumer.delay=5000&sortBy=file:path";
+        return "ftp://admin@localhost:" + getPort() + "/multidir/?password=admin&recursive=true&delay=5000&sortBy=file:path";
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -73,6 +77,7 @@ public class FtpConsumerMultipleDirectoriesTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Goodday World", "sub/sub2/godday.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -18,6 +18,7 @@ package org.apache.camel.component.jdbc;
 
 import java.util.Map;
 import java.util.Set;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.Endpoint;
@@ -25,7 +26,7 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 
 @Component("jdbc")
 public class JdbcComponent extends DefaultComponent {
@@ -62,7 +63,7 @@ public class JdbcComponent extends DefaultComponent {
             dataSourceRef = remaining;
         }
 
-        Map<String, Object> params = IntrospectionSupport.extractProperties(parameters, "statement.");
+        Map<String, Object> params = PropertiesHelper.extractProperties(parameters, "statement.");
 
         JdbcEndpoint jdbc = new JdbcEndpoint(uri, this, dataSource);
         jdbc.setDataSourceName(dataSourceRef);

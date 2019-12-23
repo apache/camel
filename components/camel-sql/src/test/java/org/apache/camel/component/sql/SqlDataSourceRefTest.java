@@ -19,10 +19,10 @@ package org.apache.camel.component.sql;
 import java.util.List;
 import java.util.Map;
 
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Test;
@@ -35,8 +35,8 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
     private EmbeddedDatabase db;
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry reg = new SimpleRegistry();
         
         // START SNIPPET: e2
         // this is the database we create with some initial data for our unit test
@@ -44,9 +44,9 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
             .setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
         // END SNIPPET: e2
         
-        jndi.bind("jdbc/myDataSource", db);
+        reg.bind("jdbc/myDataSource", db);
         
-        return jndi;
+        return reg;
     }
 
     @Test
@@ -74,6 +74,7 @@ public class SqlDataSourceRefTest extends CamelTestSupport {
         // END SNIPPET: e3
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

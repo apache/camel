@@ -32,12 +32,11 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // goes directly to mock:dead but we want the caused exception propagated
+                // goes directly to mock:dead but we want the caused exception
+                // propagated
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .to("mock:a")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").to("mock:a").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();
@@ -63,14 +62,11 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("direct:dead"));
 
-                // use a route as DLC to test the cause exception is still propagated
-                from("direct:dead")
-                    .to("log:dead")
-                    .to("mock:dead");
+                // use a route as DLC to test the cause exception is still
+                // propagated
+                from("direct:dead").to("log:dead").to("mock:dead");
 
-                from("direct:start")
-                    .to("mock:a")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").to("mock:a").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();
@@ -94,12 +90,11 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // goes directly to mock:dead but we want the caused exception propagated
+                // goes directly to mock:dead but we want the caused exception
+                // propagated
                 errorHandler(deadLetterChannel("mock:dead").useOriginalMessage());
 
-                from("direct:start")
-                    .to("mock:a")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").to("mock:a").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();
@@ -125,14 +120,11 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("direct:dead").useOriginalMessage());
 
-                // use a route as DLC to test the cause exception is still propagated
-                from("direct:dead")
-                    .to("log:dead")
-                    .to("mock:dead");
+                // use a route as DLC to test the cause exception is still
+                // propagated
+                from("direct:dead").to("log:dead").to("mock:dead");
 
-                from("direct:start")
-                    .to("mock:a")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").to("mock:a").throwException(new IllegalArgumentException("Damn"));
             }
         });
         context.start();
@@ -158,18 +150,15 @@ public class DeadLetterChannelPropagateCausedExceptionTest extends ContextTestSu
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .to("mock:a")
-                    .split(body().tokenize(",")).stopOnException()
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if ("Kaboom".equals(body)) {
-                                    throw new IllegalArgumentException("Damn");
-                                }
-                            }
-                        }).to("mock:line");
+                from("direct:start").to("mock:a").split(body().tokenize(",")).stopOnException().process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if ("Kaboom".equals(body)) {
+                            throw new IllegalArgumentException("Damn");
+                        }
+                    }
+                }).to("mock:line");
             }
         });
         context.start();

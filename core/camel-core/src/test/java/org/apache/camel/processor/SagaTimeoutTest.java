@@ -27,7 +27,6 @@ import org.junit.Test;
 
 public class SagaTimeoutTest extends ContextTestSupport {
 
-
     @Test
     public void testTimeoutCalledCorrectly() throws Exception {
 
@@ -74,21 +73,11 @@ public class SagaTimeoutTest extends ContextTestSupport {
 
                 context.addService(new InMemorySagaService());
 
-                from("direct:saga")
-                        .saga()
-                        .timeout(100, TimeUnit.MILLISECONDS)
-                        .option("id", constant("myid"))
-                        .completionMode(SagaCompletionMode.MANUAL)
-                        .compensation("mock:compensate")
-                        .to("mock:end");
+                from("direct:saga").saga().timeout(100, TimeUnit.MILLISECONDS).option("id", constant("myid")).completionMode(SagaCompletionMode.MANUAL)
+                    .compensation("mock:compensate").to("mock:end");
 
-                from("direct:saga-auto")
-                        .saga()
-                        .timeout(350, TimeUnit.MILLISECONDS)
-                        .option("id", constant("myid"))
-                        .compensation("mock:compensate")
-                        .completion("mock:complete")
-                        .to("mock:end");
+                from("direct:saga-auto").saga().timeout(350, TimeUnit.MILLISECONDS).option("id", constant("myid")).compensation("mock:compensate").completion("mock:complete")
+                    .to("mock:end");
 
             }
         };

@@ -36,6 +36,7 @@ public class LogProducer extends DefaultAsyncProducer {
         this.logger = AsyncProcessorConverterHelper.convert(logger);
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         return logger.process(exchange, callback);
     }

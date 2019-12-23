@@ -40,6 +40,7 @@ public class CamelEndpointDispatcher implements MessageEndpoint {
 
     private MessageEndpoint consumerMessageEndpoint;
 
+    @Override
     public void invoke(MessageContext messageContext) throws Exception {
         Assert.notNull(consumerMessageEndpoint);
         consumerMessageEndpoint.invoke(messageContext);

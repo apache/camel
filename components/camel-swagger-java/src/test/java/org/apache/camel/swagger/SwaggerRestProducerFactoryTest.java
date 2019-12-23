@@ -17,7 +17,7 @@
 package org.apache.camel.swagger;
 
 import org.apache.camel.impl.DefaultCamelContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SwaggerRestProducerFactoryTest {
 

@@ -58,10 +58,12 @@ public class CometdConsumer extends DefaultConsumer implements CometdProducerCon
         super.doStop();
     }
 
+    @Override
     public void setBayeux(BayeuxServerImpl bayeux) {
         this.bayeux = bayeux;
     }
 
+    @Override
     public CometdEndpoint getEndpoint() {
         return endpoint;
     }

@@ -25,6 +25,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.spi.AnnotationBasedProcessorFactory;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.BeanProxyFactory;
 import org.apache.camel.spi.CamelBeanPostProcessor;
@@ -40,6 +41,7 @@ import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.spi.ModelJAXBContextFactory;
 import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.spi.PackageScanResourceResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteStartupOrder;
@@ -195,6 +197,20 @@ public interface ExtendedCamelContext extends CamelContext {
     void setPackageScanClassResolver(PackageScanClassResolver resolver);
 
     /**
+     * Returns the package scanning resource resolver
+     *
+     * @return the resolver
+     */
+    PackageScanResourceResolver getPackageScanResourceResolver();
+
+    /**
+     * Sets the package scanning resource resolver to use
+     *
+     * @param resolver the resolver
+     */
+    void setPackageScanResourceResolver(PackageScanResourceResolver resolver);
+
+    /**
      * Gets the default FactoryFinder which will be used for the loading the factory class from META-INF
      *
      * @return the default factory finder
@@ -332,5 +348,15 @@ public interface ExtendedCamelContext extends CamelContext {
      * @param manager the manager
      */
     void setAsyncProcessorAwaitManager(AsyncProcessorAwaitManager manager);
+
+    /**
+     * Gets the {@link BeanIntrospection}
+     */
+    BeanIntrospection getBeanIntrospection();
+
+    /**
+     * Sets a custom {@link BeanIntrospection}.
+     */
+    void setBeanIntrospection(BeanIntrospection beanIntrospection);
 
 }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -37,14 +38,11 @@ public class FileSortByExpressionTest extends ContextTestSupport {
     }
 
     private void prepareFolder(String folder) {
-        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Paris",
-            Exchange.FILE_NAME, "paris.dat");
+        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Paris", Exchange.FILE_NAME, "paris.dat");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello London",
-            Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello London", Exchange.FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Copenhagen",
-            Exchange.FILE_NAME, "copenhagen.xml");
+        template.sendBodyAndHeader("file:target/data/filesorter/" + folder, "Hello Copenhagen", Exchange.FILE_NAME, "copenhagen.xml");
     }
 
     @Test
@@ -71,8 +69,7 @@ public class FileSortByExpressionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(fileUrl + "b/?initialDelay=0&delay=10&sortBy=reverse:file:ext")
-                    .convertBodyTo(String.class).to("mock:reverse");
+                from(fileUrl + "b/?initialDelay=0&delay=10&sortBy=reverse:file:ext").convertBodyTo(String.class).to("mock:reverse");
             }
         });
 

@@ -1,7 +1,12 @@
 [[flatpack-component]]
-== Flatpack Component
+= Flatpack Component
+:page-source: components/camel-flatpack/src/main/docs/flatpack-component.adoc
 
-*Available as of Camel version 1.4*
+*Since Camel 1.4*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Flatpack component supports fixed width and delimited file parsing
 via the http://flatpack.sourceforge.net[FlatPack library]. +
@@ -22,7 +27,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------------
@@ -39,18 +44,19 @@ flatpack:someName[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### URI Options
+== URI Options
 
 // component options: START
-The Flatpack component supports 2 options, which are listed below.
+The Flatpack component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -63,7 +69,7 @@ flatpack:type:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,7 +80,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (27 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -90,7 +96,7 @@ with the following path and query parameters:
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -100,24 +106,25 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-flatpack-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -125,7 +132,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 13 options, which are listed below.
+The component supports 14 options, which are listed below.
 
 
 
@@ -133,13 +140,14 @@ The component supports 13 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.flatpack.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.flatpack.enabled* | Enable flatpack component | true | Boolean
-| *camel.component.flatpack.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.flatpack.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.flatpack.enabled* | Whether to enable auto configuration of the flatpack component. This is enabled by default. |  | Boolean
+| *camel.component.flatpack.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.dataformat.flatpack.allow-short-lines* | Allows for lines to be shorter than expected and ignores the extra characters | false | Boolean
 | *camel.dataformat.flatpack.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.flatpack.definition* | The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap. |  | String
 | *camel.dataformat.flatpack.delimiter* | The delimiter char (could be ; , or similar) | , | String
-| *camel.dataformat.flatpack.enabled* | Enable flatpack dataformat | true | Boolean
+| *camel.dataformat.flatpack.enabled* | Whether to enable auto configuration of the flatpack data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.flatpack.fixed* | Delimited or fixed. Is by default false = delimited | false | Boolean
 | *camel.dataformat.flatpack.ignore-extra-columns* | Allows for lines to be longer than expected and ignores the extra characters. | false | Boolean
 | *camel.dataformat.flatpack.ignore-first-record* | Whether the first line is ignored for delimited files (for the column headers). Is by default true. | true | Boolean
@@ -149,7 +157,7 @@ The component supports 13 options, which are listed below.
 // spring-boot-auto-configure options: END
 
 
-### Examples
+== Examples
 
 * `flatpack:fixed:foo.pzmap.xml` creates a fixed-width endpoint using
 the `foo.pzmap.xml` file configuration.
@@ -158,7 +166,7 @@ the `foo.pzmap.xml` file configuration.
 * `flatpack:foo` creates a delimited endpoint called `foo` with no file
 configuration.
 
-### Message Headers
+== Message Headers
 
 Camel will store the following headers on the IN message:
 
@@ -170,7 +178,7 @@ Camel will store the following headers on the IN message:
 number of rows.
 |=======================================================================
 
-### Message Body
+== Message Body
 
 The component delivers the data in the IN message as a
 `org.apache.camel.component.flatpack.DataSetList` object that has
@@ -199,7 +207,7 @@ However, you can also always get it as a `List` (even for
   String firstName = row.get("FIRSTNAME");
 ---------------------------------------------------
 
-### Header and Trailer records
+== Header and Trailer records
 
 The header and trailer notions in Flatpack are supported. However, you
 *must* use fixed record IDs:
@@ -230,7 +238,7 @@ trailer. You can omit one or both of them if not needed.
     </RECORD>
 ---------------------------------------------------------------------------
 
-### Using the endpoint
+== Using the endpoint
 
 A common use case is sending a file to this endpoint for further
 processing in a separate route. For example:
@@ -253,7 +261,7 @@ processing in a separate route. For example:
 You can also convert the payload of each message created to a `Map` for
 easy Bean Integration
 
-### Flatpack DataFormat
+== Flatpack DataFormat
 
 The xref:flatpack-component.adoc[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
@@ -271,7 +279,7 @@ Splitter.
 *Notice:* The Flatpack library does currently not support header and
 trailers for the marshal operation.
 
-### Options
+== Options
 
 The data format has the following options:
 
@@ -300,7 +308,7 @@ expected and ignores the extra characters.
 expected and ignores the extra characters.
 |=======================================================================
 
-### Usage
+== Usage
 
 To use the data format, simply instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
@@ -335,7 +343,7 @@ in Java code from e.g. a processor. We marshal the data according to the
 Flatpack format and convert the result as a `String` object and store it
 on a JMS queue.
 
-### Dependencies
+== Dependencies
 
 To use Flatpack in your camel routes you need to add the a dependency on
 *camel-flatpack* which implements this data format.
@@ -353,9 +361,3 @@ the download page for the latest versions).
 </dependency>
 -----------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -42,7 +42,7 @@ public class EnricherRefTest extends ContextTestSupport {
     public void testEnrichRef() throws Exception {
         cool.whenAnyExchangeReceived(new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getOut().setBody("Bye World");
+                exchange.getMessage().setBody("Bye World");
             }
         });
         cool.expectedBodiesReceived("Hello World");

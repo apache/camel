@@ -18,6 +18,7 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.PropertyBindingException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -31,9 +32,7 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .multicast().placeholder("stopOnException", "xxx")
-                        .to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
+                from("direct:start").multicast().placeholder("stopOnException", "xxx").to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
             }
         });
         try {
@@ -50,17 +49,17 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .multicast().placeholder("xxx", "stop")
-                        .to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
+                from("direct:start").multicast().placeholder("xxx", "stop").to("mock:a").throwException(new IllegalAccessException("Damn")).to("mock:b");
             }
         });
         try {
             context.start();
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
-            assertEquals("No setter to set property: xxx to: true on: Multicast[[To[mock:a], ThrowException[java.lang.IllegalAccessException], To[mock:b]]]", cause.getMessage());
+            PropertyBindingException cause = assertIsInstanceOf(PropertyBindingException.class, e.getCause());
+            assertEquals("xxx", cause.getPropertyName());
+            assertEquals("true", cause.getValue());
+            assertTrue(cause.getMessage().startsWith("Error binding property (xxx=true) with name: xxx on bean: Multicast"));
         }
     }
 
@@ -72,9 +71,7 @@ public class OptionalPropertiesDslInvalidSyntaxTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
-        context.addComponent("properties", pc);
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
 

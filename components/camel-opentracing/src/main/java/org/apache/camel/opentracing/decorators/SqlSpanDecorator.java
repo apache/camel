@@ -18,7 +18,6 @@ package org.apache.camel.opentracing.decorators;
 
 import io.opentracing.Span;
 import io.opentracing.tag.Tags;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
@@ -29,6 +28,11 @@ public class SqlSpanDecorator extends AbstractSpanDecorator {
     @Override
     public String getComponent() {
         return "sql";
+    }
+
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.sql.SqlComponent";
     }
 
     @Override

@@ -39,10 +39,7 @@ public class AggregationStrategyBeanAdapterNonStaticMethodTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(constant(true), AggregationStrategies.bean(MyBodyAppender.class, "append"))
-                        .completionSize(3)
-                        .to("mock:result");
+                from("direct:start").aggregate(constant(true), AggregationStrategies.bean(MyBodyAppender.class, "append")).completionSize(3).to("mock:result");
             }
         };
     }

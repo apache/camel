@@ -41,7 +41,8 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
         Processor processor = unwrap(consumerRoute.getProcessor());
         Pipeline pipeline = assertIsInstanceOf(Pipeline.class, processor);
 
-        // there should be a default error handler in front of each processor in this pipeline
+        // there should be a default error handler in front of each processor in
+        // this pipeline
         for (Processor child : pipeline.getProcessors()) {
             Channel channel = assertIsInstanceOf(Channel.class, child);
             assertNotNull("There should be an error handler", channel.getErrorHandler());
@@ -70,7 +71,7 @@ public class DefaultErrorHandlerTest extends ContextTestSupport {
         } catch (RuntimeCamelException e) {
             // expected
         }
-        
+
         assertMockEndpointsSatisfied();
     }
 

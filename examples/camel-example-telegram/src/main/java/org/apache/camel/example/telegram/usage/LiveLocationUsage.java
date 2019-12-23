@@ -28,6 +28,7 @@ public class LiveLocationUsage implements TelegramMethodUsage {
     private double latitude = 59.9386292;
     private double longitude = 30.3141308;
 
+    @Override
     public void run(CamelContext context) throws InterruptedException {
         ProducerTemplate template = context.createProducerTemplate();
         SendLocationMessage msg = new SendLocationMessage(latitude, longitude);

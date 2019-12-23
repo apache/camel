@@ -57,6 +57,7 @@ public class CxfRsCamelTransportTest extends CamelSpringTestSupport {
     @Path("/greeting")
     public static class GreetingResourceBean implements GreetingResource {
 
+        @Override
         @GET
         @Path("/hello/{name}")
         @Consumes("text/plain")

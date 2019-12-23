@@ -19,7 +19,6 @@ package org.apache.camel.opentracing.decorators;
 import java.util.Map;
 
 import io.opentracing.Span;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
@@ -42,6 +41,11 @@ public class KafkaSpanDecorator extends AbstractMessagingSpanDecorator {
     @Override
     public String getComponent() {
         return "kafka";
+    }
+
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.kafka.KafkaComponent";
     }
 
     @Override

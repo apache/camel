@@ -30,6 +30,7 @@ public class DigitalOceanRegionsProducer extends DigitalOceanProducer {
         super(endpoint, configuration);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Regions regions = getEndpoint().getDigitalOceanClient().getAvailableRegions(configuration.getPage());
         LOG.trace("All Regions : page {} [{}] ", regions.getRegions(), configuration.getPage());

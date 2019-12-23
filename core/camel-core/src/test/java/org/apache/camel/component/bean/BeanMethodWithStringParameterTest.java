@@ -57,13 +57,9 @@ public class BeanMethodWithStringParameterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:myBean?method=doSomething('Hello World', 2)")
-                    .to("mock:result");
+                from("direct:start").to("bean:myBean?method=doSomething('Hello World', 2)").to("mock:result");
 
-                from("direct:other")
-                    .to("bean:myBean?method=doSomethingWithExchange('Bye')")
-                    .to("mock:result");
+                from("direct:other").to("bean:myBean?method=doSomethingWithExchange('Bye')").to("mock:result");
             }
         };
     }
@@ -80,7 +76,7 @@ public class BeanMethodWithStringParameterTest extends ContextTestSupport {
         }
 
         public static String doSomethingWithExchange(String name, Exchange exchange) {
-            return name + " " +  exchange.getIn().getBody(String.class);
+            return name + " " + exchange.getIn().getBody(String.class);
         }
 
     }

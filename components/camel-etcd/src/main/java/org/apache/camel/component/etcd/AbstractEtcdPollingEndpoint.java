@@ -26,7 +26,7 @@ import org.apache.camel.support.DefaultPollingEndpoint;
 /**
  * The camel etcd component allows you to work with <a href="https://coreos.com/etcd">Etcd</a>, a distributed reliable key-value store.
  */
-@UriEndpoint(firstVersion = "2.18.0", scheme = "etcd", title = "etcd", syntax = "etcd:namespace/path", label = "clustering,database")
+@UriEndpoint(firstVersion = "2.18.0", scheme = "etcd", title = "Etcd", syntax = "etcd:namespace/path", label = "clustering,database")
 public abstract class AbstractEtcdPollingEndpoint extends DefaultPollingEndpoint implements EtcdEndpoint {
 
     @UriPath(description = "The API namespace to use", enums = "keys,stats,watch")

@@ -34,6 +34,7 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -44,6 +45,7 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -92,7 +94,7 @@ public class SqlConsumerMaxMessagesPerPollTest extends CamelTestSupport {
                 getContext().setTracing(true);
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects where processed = false order by id?maxMessagesPerPoll=2&consumer.initialDelay=0&consumer.delay=50")
+                from("sql:select * from projects where processed = false order by id?maxMessagesPerPoll=2&initialDelay=0&delay=50")
                     .to("mock:result")
                     .to("sql:update projects set processed = true where id = :#id");
             }

@@ -50,7 +50,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: common
          */
         default XmlSignatureEndpointBuilder baseUri(String baseUri) {
-            setProperty("baseUri", baseUri);
+            doSetProperty("baseUri", baseUri);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: common
          */
         default XmlSignatureEndpointBuilder clearHeaders(Boolean clearHeaders) {
-            setProperty("clearHeaders", clearHeaders);
+            doSetProperty("clearHeaders", clearHeaders);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: common
          */
         default XmlSignatureEndpointBuilder clearHeaders(String clearHeaders) {
-            setProperty("clearHeaders", clearHeaders);
+            doSetProperty("clearHeaders", clearHeaders);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder cryptoContextProperties(
                 Map<String, Object> cryptoContextProperties) {
-            setProperty("cryptoContextProperties", cryptoContextProperties);
+            doSetProperty("cryptoContextProperties", cryptoContextProperties);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder cryptoContextProperties(
                 String cryptoContextProperties) {
-            setProperty("cryptoContextProperties", cryptoContextProperties);
+            doSetProperty("cryptoContextProperties", cryptoContextProperties);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder disallowDoctypeDecl(
                 Boolean disallowDoctypeDecl) {
-            setProperty("disallowDoctypeDecl", disallowDoctypeDecl);
+            doSetProperty("disallowDoctypeDecl", disallowDoctypeDecl);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder disallowDoctypeDecl(
                 String disallowDoctypeDecl) {
-            setProperty("disallowDoctypeDecl", disallowDoctypeDecl);
+            doSetProperty("disallowDoctypeDecl", disallowDoctypeDecl);
             return this;
         }
         /**
@@ -157,7 +157,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder omitXmlDeclaration(
                 Boolean omitXmlDeclaration) {
-            setProperty("omitXmlDeclaration", omitXmlDeclaration);
+            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
             return this;
         }
         /**
@@ -172,7 +172,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder omitXmlDeclaration(
                 String omitXmlDeclaration) {
-            setProperty("omitXmlDeclaration", omitXmlDeclaration);
+            doSetProperty("omitXmlDeclaration", omitXmlDeclaration);
             return this;
         }
         /**
@@ -185,7 +185,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder outputXmlEncoding(
                 String outputXmlEncoding) {
-            setProperty("outputXmlEncoding", outputXmlEncoding);
+            doSetProperty("outputXmlEncoding", outputXmlEncoding);
             return this;
         }
         /**
@@ -202,7 +202,47 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder schemaResourceUri(
                 String schemaResourceUri) {
-            setProperty("schemaResourceUri", schemaResourceUri);
+            doSetProperty("schemaResourceUri", schemaResourceUri);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default XmlSignatureEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default XmlSignatureEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -217,7 +257,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder addKeyInfoReference(
                 Boolean addKeyInfoReference) {
-            setProperty("addKeyInfoReference", addKeyInfoReference);
+            doSetProperty("addKeyInfoReference", addKeyInfoReference);
             return this;
         }
         /**
@@ -233,7 +273,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder addKeyInfoReference(
                 String addKeyInfoReference) {
-            setProperty("addKeyInfoReference", addKeyInfoReference);
+            doSetProperty("addKeyInfoReference", addKeyInfoReference);
             return this;
         }
         /**
@@ -249,7 +289,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder canonicalizationMethod(
                 Object canonicalizationMethod) {
-            setProperty("canonicalizationMethod", canonicalizationMethod);
+            doSetProperty("canonicalizationMethod", canonicalizationMethod);
             return this;
         }
         /**
@@ -266,7 +306,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder canonicalizationMethod(
                 String canonicalizationMethod) {
-            setProperty("canonicalizationMethod", canonicalizationMethod);
+            doSetProperty("canonicalizationMethod", canonicalizationMethod);
             return this;
         }
         /**
@@ -280,7 +320,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder contentObjectId(
                 String contentObjectId) {
-            setProperty("contentObjectId", contentObjectId);
+            doSetProperty("contentObjectId", contentObjectId);
             return this;
         }
         /**
@@ -294,7 +334,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder contentReferenceType(
                 String contentReferenceType) {
-            setProperty("contentReferenceType", contentReferenceType);
+            doSetProperty("contentReferenceType", contentReferenceType);
             return this;
         }
         /**
@@ -311,7 +351,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder contentReferenceUri(
                 String contentReferenceUri) {
-            setProperty("contentReferenceUri", contentReferenceUri);
+            doSetProperty("contentReferenceUri", contentReferenceUri);
             return this;
         }
         /**
@@ -327,7 +367,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder digestAlgorithm(
                 String digestAlgorithm) {
-            setProperty("digestAlgorithm", digestAlgorithm);
+            doSetProperty("digestAlgorithm", digestAlgorithm);
             return this;
         }
         /**
@@ -345,7 +385,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: sign
          */
         default XmlSignatureEndpointBuilder keyAccessor(Object keyAccessor) {
-            setProperty("keyAccessor", keyAccessor);
+            doSetProperty("keyAccessor", keyAccessor);
             return this;
         }
         /**
@@ -363,7 +403,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: sign
          */
         default XmlSignatureEndpointBuilder keyAccessor(String keyAccessor) {
-            setProperty("keyAccessor", keyAccessor);
+            doSetProperty("keyAccessor", keyAccessor);
             return this;
         }
         /**
@@ -385,7 +425,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder parentLocalName(
                 String parentLocalName) {
-            setProperty("parentLocalName", parentLocalName);
+            doSetProperty("parentLocalName", parentLocalName);
             return this;
         }
         /**
@@ -398,7 +438,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder parentNamespace(
                 String parentNamespace) {
-            setProperty("parentNamespace", parentNamespace);
+            doSetProperty("parentNamespace", parentNamespace);
             return this;
         }
         /**
@@ -417,7 +457,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: sign
          */
         default XmlSignatureEndpointBuilder parentXpath(Object parentXpath) {
-            setProperty("parentXpath", parentXpath);
+            doSetProperty("parentXpath", parentXpath);
             return this;
         }
         /**
@@ -436,7 +476,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: sign
          */
         default XmlSignatureEndpointBuilder parentXpath(String parentXpath) {
-            setProperty("parentXpath", parentXpath);
+            doSetProperty("parentXpath", parentXpath);
             return this;
         }
         /**
@@ -450,7 +490,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: sign
          */
         default XmlSignatureEndpointBuilder plainText(Boolean plainText) {
-            setProperty("plainText", plainText);
+            doSetProperty("plainText", plainText);
             return this;
         }
         /**
@@ -465,7 +505,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: sign
          */
         default XmlSignatureEndpointBuilder plainText(String plainText) {
-            setProperty("plainText", plainText);
+            doSetProperty("plainText", plainText);
             return this;
         }
         /**
@@ -478,7 +518,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder plainTextEncoding(
                 String plainTextEncoding) {
-            setProperty("plainTextEncoding", plainTextEncoding);
+            doSetProperty("plainTextEncoding", plainTextEncoding);
             return this;
         }
         /**
@@ -495,7 +535,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder prefixForXmlSignatureNamespace(
                 String prefixForXmlSignatureNamespace) {
-            setProperty("prefixForXmlSignatureNamespace", prefixForXmlSignatureNamespace);
+            doSetProperty("prefixForXmlSignatureNamespace", prefixForXmlSignatureNamespace);
             return this;
         }
         /**
@@ -509,7 +549,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: sign
          */
         default XmlSignatureEndpointBuilder properties(Object properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -523,7 +563,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: sign
          */
         default XmlSignatureEndpointBuilder properties(String properties) {
-            setProperty("properties", properties);
+            doSetProperty("properties", properties);
             return this;
         }
         /**
@@ -536,7 +576,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder signatureAlgorithm(
                 String signatureAlgorithm) {
-            setProperty("signatureAlgorithm", signatureAlgorithm);
+            doSetProperty("signatureAlgorithm", signatureAlgorithm);
             return this;
         }
         /**
@@ -550,7 +590,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: sign
          */
         default XmlSignatureEndpointBuilder signatureId(String signatureId) {
-            setProperty("signatureId", signatureId);
+            doSetProperty("signatureId", signatureId);
             return this;
         }
         /**
@@ -569,7 +609,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder transformMethods(
                 List<Object> transformMethods) {
-            setProperty("transformMethods", transformMethods);
+            doSetProperty("transformMethods", transformMethods);
             return this;
         }
         /**
@@ -588,7 +628,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder transformMethods(
                 String transformMethods) {
-            setProperty("transformMethods", transformMethods);
+            doSetProperty("transformMethods", transformMethods);
             return this;
         }
         /**
@@ -612,7 +652,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder xpathsToIdAttributes(
                 List<Object> xpathsToIdAttributes) {
-            setProperty("xpathsToIdAttributes", xpathsToIdAttributes);
+            doSetProperty("xpathsToIdAttributes", xpathsToIdAttributes);
             return this;
         }
         /**
@@ -636,7 +676,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder xpathsToIdAttributes(
                 String xpathsToIdAttributes) {
-            setProperty("xpathsToIdAttributes", xpathsToIdAttributes);
+            doSetProperty("xpathsToIdAttributes", xpathsToIdAttributes);
             return this;
         }
         /**
@@ -647,7 +687,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: verify
          */
         default XmlSignatureEndpointBuilder keySelector(Object keySelector) {
-            setProperty("keySelector", keySelector);
+            doSetProperty("keySelector", keySelector);
             return this;
         }
         /**
@@ -659,7 +699,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * Group: verify
          */
         default XmlSignatureEndpointBuilder keySelector(String keySelector) {
-            setProperty("keySelector", keySelector);
+            doSetProperty("keySelector", keySelector);
             return this;
         }
         /**
@@ -674,7 +714,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder outputNodeSearch(
                 Object outputNodeSearch) {
-            setProperty("outputNodeSearch", outputNodeSearch);
+            doSetProperty("outputNodeSearch", outputNodeSearch);
             return this;
         }
         /**
@@ -689,7 +729,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder outputNodeSearch(
                 String outputNodeSearch) {
-            setProperty("outputNodeSearch", outputNodeSearch);
+            doSetProperty("outputNodeSearch", outputNodeSearch);
             return this;
         }
         /**
@@ -704,7 +744,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder outputNodeSearchType(
                 String outputNodeSearchType) {
-            setProperty("outputNodeSearchType", outputNodeSearchType);
+            doSetProperty("outputNodeSearchType", outputNodeSearchType);
             return this;
         }
         /**
@@ -723,7 +763,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder removeSignatureElements(
                 Boolean removeSignatureElements) {
-            setProperty("removeSignatureElements", removeSignatureElements);
+            doSetProperty("removeSignatureElements", removeSignatureElements);
             return this;
         }
         /**
@@ -743,7 +783,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder removeSignatureElements(
                 String removeSignatureElements) {
-            setProperty("removeSignatureElements", removeSignatureElements);
+            doSetProperty("removeSignatureElements", removeSignatureElements);
             return this;
         }
         /**
@@ -755,7 +795,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder secureValidation(
                 Boolean secureValidation) {
-            setProperty("secureValidation", secureValidation);
+            doSetProperty("secureValidation", secureValidation);
             return this;
         }
         /**
@@ -768,7 +808,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder secureValidation(
                 String secureValidation) {
-            setProperty("secureValidation", secureValidation);
+            doSetProperty("secureValidation", secureValidation);
             return this;
         }
         /**
@@ -788,7 +828,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder validationFailedHandler(
                 Object validationFailedHandler) {
-            setProperty("validationFailedHandler", validationFailedHandler);
+            doSetProperty("validationFailedHandler", validationFailedHandler);
             return this;
         }
         /**
@@ -808,7 +848,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder validationFailedHandler(
                 String validationFailedHandler) {
-            setProperty("validationFailedHandler", validationFailedHandler);
+            doSetProperty("validationFailedHandler", validationFailedHandler);
             return this;
         }
         /**
@@ -842,7 +882,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder xmlSignature2Message(
                 Object xmlSignature2Message) {
-            setProperty("xmlSignature2Message", xmlSignature2Message);
+            doSetProperty("xmlSignature2Message", xmlSignature2Message);
             return this;
         }
         /**
@@ -876,7 +916,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder xmlSignature2Message(
                 String xmlSignature2Message) {
-            setProperty("xmlSignature2Message", xmlSignature2Message);
+            doSetProperty("xmlSignature2Message", xmlSignature2Message);
             return this;
         }
         /**
@@ -891,7 +931,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder xmlSignatureChecker(
                 Object xmlSignatureChecker) {
-            setProperty("xmlSignatureChecker", xmlSignatureChecker);
+            doSetProperty("xmlSignatureChecker", xmlSignatureChecker);
             return this;
         }
         /**
@@ -906,7 +946,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default XmlSignatureEndpointBuilder xmlSignatureChecker(
                 String xmlSignatureChecker) {
-            setProperty("xmlSignatureChecker", xmlSignatureChecker);
+            doSetProperty("xmlSignatureChecker", xmlSignatureChecker);
             return this;
         }
     }
@@ -930,7 +970,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default AdvancedXmlSignatureEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -943,7 +983,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default AdvancedXmlSignatureEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -956,7 +996,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default AdvancedXmlSignatureEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -969,7 +1009,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default AdvancedXmlSignatureEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -985,7 +1025,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default AdvancedXmlSignatureEndpointBuilder uriDereferencer(
                 Object uriDereferencer) {
-            setProperty("uriDereferencer", uriDereferencer);
+            doSetProperty("uriDereferencer", uriDereferencer);
             return this;
         }
         /**
@@ -1002,7 +1042,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          */
         default AdvancedXmlSignatureEndpointBuilder uriDereferencer(
                 String uriDereferencer) {
-            setProperty("uriDereferencer", uriDereferencer);
+            doSetProperty("uriDereferencer", uriDereferencer);
             return this;
         }
     }
@@ -1011,7 +1051,7 @@ public interface XmlSignatureEndpointBuilderFactory {
      * Used to sign and verify exchanges using the XML signature specification.
      * 
      * Category: security,transformation
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-xmlsecurity
      * 
      * Syntax: <code>xmlsecurity:command:name</code>
@@ -1024,7 +1064,7 @@ public interface XmlSignatureEndpointBuilderFactory {
      * The name part in the URI can be chosen by the user to distinguish between
      * different signer/verifier endpoints within the camel context.
      */
-    default XmlSignatureEndpointBuilder xmlSignature(String path) {
+    default XmlSignatureEndpointBuilder xmlsecurity(String path) {
         class XmlSignatureEndpointBuilderImpl extends AbstractEndpointBuilder implements XmlSignatureEndpointBuilder, AdvancedXmlSignatureEndpointBuilder {
             public XmlSignatureEndpointBuilderImpl(String path) {
                 super("xmlsecurity", path);

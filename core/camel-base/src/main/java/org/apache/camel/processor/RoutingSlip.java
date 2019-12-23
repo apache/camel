@@ -102,10 +102,12 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         this.header = null;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -151,10 +153,12 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         return "RoutingSlip[expression=" + expression + " uriDelimiter=" + uriDelimiter + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "routingSlip[" + expression + "]";
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (!isStarted()) {
             exchange.setException(new IllegalStateException("RoutingSlip has not been started: " + this));
@@ -427,6 +431,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         });
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (producerCache == null) {
             producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
@@ -436,10 +441,12 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
         ServiceHelper.startService(producerCache, errorHandler);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache, errorHandler);
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(producerCache, errorHandler);
     }
@@ -452,12 +459,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
      * Returns the outbound message if available. Otherwise return the inbound message.
      */
     private Message getResultMessage(Exchange exchange) {
-        if (exchange.hasOut()) {
-            return exchange.getOut();
-        } else {
-            // if this endpoint had no out (like a mock endpoint) just take the in
-            return exchange.getIn();
-        }
+        return exchange.getMessage();
     }
 
     /**

@@ -27,8 +27,9 @@ import org.apache.camel.spi.RestConfiguration;
 public class DummyRestProcessorFactory implements RestApiProcessorFactory {
 
     @Override
-    public Processor createApiProcessor(CamelContext camelContext, String contextPath, String contextIdPattern, boolean contextIdListing,
-                                        RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    public Processor createApiProcessor(CamelContext camelContext, String contextPath, String contextIdPattern, boolean contextIdListing, RestConfiguration configuration,
+                                        Map<String, Object> parameters)
+        throws Exception {
         return new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {

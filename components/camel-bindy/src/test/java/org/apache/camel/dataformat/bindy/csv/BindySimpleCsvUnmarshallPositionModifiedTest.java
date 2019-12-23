@@ -89,6 +89,7 @@ public class BindySimpleCsvUnmarshallPositionModifiedTest extends AbstractJUnit4
 
         BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassdifferentposition.Order.class);
 
+        @Override
         public void configure() {
 
             // default should errors go to mock:error

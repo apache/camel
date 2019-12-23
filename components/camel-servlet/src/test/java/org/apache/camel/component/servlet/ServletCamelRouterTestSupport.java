@@ -31,6 +31,7 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
     protected ServletRunner sr;
     protected boolean startCamelContext = true;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         InputStream is = this.getClass().getResourceAsStream(getConfiguration());
@@ -43,6 +44,7 @@ public class ServletCamelRouterTestSupport extends CamelTestSupport {
         }
     }
     
+    @Override
     @After
     public void tearDown() throws Exception {
         if (startCamelContext) {

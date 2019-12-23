@@ -73,6 +73,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
     private boolean allowUnmarshallType;
     private boolean contentTypeHeader = true;
     private TimeZone timezone;
+    private boolean autoDiscoverObjectMapper;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Object}
@@ -151,14 +152,17 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         return "json-jackson";
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         this.objectMapper.writerWithView(jsonView).writeValue(stream, graph);
 
@@ -171,6 +175,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         }
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
 
         // is there a header with the unmarshal type?
@@ -395,6 +400,18 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
         this.timezone = timezone;
     }
 
+    public boolean isAutoDiscoverObjectMapper() {
+        return autoDiscoverObjectMapper;
+    }
+
+    /**
+     * If set to true then Jackson will lookup for an objectMapper into the
+     * registry
+     */
+    public void setAutoDiscoverObjectMapper(boolean autoDiscoverObjectMapper) {
+        this.autoDiscoverObjectMapper = autoDiscoverObjectMapper;
+    }
+
     public String getEnableFeatures() {
         return enableFeatures;
     }
@@ -473,15 +490,21 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
 
     @Override
     protected void doStart() throws Exception {
+        boolean objectMapperFoundRegistry = false;
         if (objectMapper == null) {
             // lookup if there is a single default mapper we can use
             if (useDefaultObjectMapper && camelContext != null) {
-                Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
-                if (set.size() == 1) {
-                    objectMapper = set.iterator().next();
-                    log.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
-                } else if (set.size() > 1) {
-                    log.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.", set.size());
+                if (isAutoDiscoverObjectMapper()) {
+                    Set<ObjectMapper> set = camelContext.getRegistry().findByType(ObjectMapper.class);
+                    if (set.size() == 1) {
+                        objectMapper = set.iterator().next();
+                        log.info("Found single ObjectMapper in Registry to use: {}", objectMapper);
+                        objectMapperFoundRegistry = true;
+                    } else if (set.size() > 1) {
+                        log.debug("Found {} ObjectMapper in Registry cannot use as default as there are more than one instance.", set.size());
+                    }
+                } else {
+                    log.warn("The option autoDiscoverObjectMapper is set to false, Camel won't search in the registry");
                 }
             }
             if (objectMapper == null) {
@@ -490,104 +513,108 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat, Dat
             }
         }
 
-        if (enableJaxbAnnotationModule) {
-            // Enables JAXB processing
-            JaxbAnnotationModule module = new JaxbAnnotationModule();
-            log.debug("Registering JaxbAnnotationModule: {}", module);
-            objectMapper.registerModule(module);
-        }
-
-        if (useList) {
-            setCollectionType(ArrayList.class);
-        }
-        if (include != null) {
-            JsonInclude.Include inc = getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
-            objectMapper.setSerializationInclusion(inc);
-        }
-        if (prettyPrint) {
-            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
-        }
-
-        if (enableFeatures != null) {
-            Iterator<?> it = ObjectHelper.createIterator(enableFeatures);
-            while (it.hasNext()) {
-                String enable = it.next().toString();
-                // it can be different kind
-                SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
-                if (sf != null) {
-                    objectMapper.enable(sf);
-                    continue;
-                }
-                DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
-                if (df != null) {
-                    objectMapper.enable(df);
-                    continue;
-                }
-                MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, enable);
-                if (mf != null) {
-                    objectMapper.enable(mf);
-                    continue;
-                }
-                throw new IllegalArgumentException("Enable feature: " + enable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
-            }
-        }
-        if (disableFeatures != null) {
-            Iterator<?> it = ObjectHelper.createIterator(disableFeatures);
-            while (it.hasNext()) {
-                String disable = it.next().toString();
-                // it can be different kind
-                SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
-                if (sf != null) {
-                    objectMapper.disable(sf);
-                    continue;
-                }
-                DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
-                if (df != null) {
-                    objectMapper.disable(df);
-                    continue;
-                }
-                MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, disable);
-                if (mf != null) {
-                    objectMapper.disable(mf);
-                    continue;
-                }
-                throw new IllegalArgumentException("Disable feature: " + disable
-                                                   + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
-            }
-        }
-
-        if (modules != null) {
-            for (Module module : modules) {
-                log.debug("Registering module: {}", module);
-                objectMapper.registerModules(module);
-            }
-        }
-        if (moduleClassNames != null) {
-            Iterable<?> it = ObjectHelper.createIterable(moduleClassNames);
-            for (Object o : it) {
-                String name = o.toString();
-                Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
-                Module module = camelContext.getInjector().newInstance(clazz);
-                log.debug("Registering module: {} -> {}", name, module);
+        if (!objectMapperFoundRegistry) {
+            if (enableJaxbAnnotationModule) {
+                // Enables JAXB processing
+                JaxbAnnotationModule module = new JaxbAnnotationModule();
+                log.debug("Registering JaxbAnnotationModule: {}", module);
                 objectMapper.registerModule(module);
             }
-        }
-        if (moduleRefs != null) {
-            Iterable<?> it = ObjectHelper.createIterable(moduleRefs);
-            for (Object o : it) {
-                String name = o.toString();
-                if (name.startsWith("#")) {
-                    name = name.substring(1);
-                }
-                Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
-                log.debug("Registering module: {} -> {}", name, module);
-                objectMapper.registerModule(module);
+
+            if (useList) {
+                setCollectionType(ArrayList.class);
             }
-        }
-        if (org.apache.camel.util.ObjectHelper.isNotEmpty(timezone)) {
-            log.debug("Setting timezone to Object Mapper: {}", timezone);
-            objectMapper.setTimeZone(timezone);
+            if (include != null) {
+                JsonInclude.Include inc = getCamelContext().getTypeConverter().mandatoryConvertTo(JsonInclude.Include.class, include);
+                objectMapper.setSerializationInclusion(inc);
+            }
+            if (prettyPrint) {
+                objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
+            }
+
+            if (enableFeatures != null) {
+                Iterator<?> it = ObjectHelper.createIterator(enableFeatures);
+                while (it.hasNext()) {
+                    String enable = it.next().toString();
+                    // it can be different kind
+                    SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, enable);
+                    if (sf != null) {
+                        objectMapper.enable(sf);
+                        continue;
+                    }
+                    DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, enable);
+                    if (df != null) {
+                        objectMapper.enable(df);
+                        continue;
+                    }
+                    MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, enable);
+                    if (mf != null) {
+                        objectMapper.enable(mf);
+                        continue;
+                    }
+                    throw new IllegalArgumentException("Enable feature: " + enable
+                                                       + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                }
+            }
+            if (disableFeatures != null) {
+                Iterator<?> it = ObjectHelper.createIterator(disableFeatures);
+                while (it.hasNext()) {
+                    String disable = it.next().toString();
+                    // it can be different kind
+                    SerializationFeature sf = getCamelContext().getTypeConverter().tryConvertTo(SerializationFeature.class, disable);
+                    if (sf != null) {
+                        objectMapper.disable(sf);
+                        continue;
+                    }
+                    DeserializationFeature df = getCamelContext().getTypeConverter().tryConvertTo(DeserializationFeature.class, disable);
+                    if (df != null) {
+                        objectMapper.disable(df);
+                        continue;
+                    }
+                    MapperFeature mf = getCamelContext().getTypeConverter().tryConvertTo(MapperFeature.class, disable);
+                    if (mf != null) {
+                        objectMapper.disable(mf);
+                        continue;
+                    }
+                    throw new IllegalArgumentException("Disable feature: " + disable
+                                                       + " cannot be converted to an accepted enum of types [SerializationFeature,DeserializationFeature,MapperFeature]");
+                }
+            }
+
+            if (modules != null) {
+                for (Module module : modules) {
+                    log.debug("Registering module: {}", module);
+                    objectMapper.registerModules(module);
+                }
+            }
+            if (moduleClassNames != null) {
+                Iterable<?> it = ObjectHelper.createIterable(moduleClassNames);
+                for (Object o : it) {
+                    String name = o.toString();
+                    Class<Module> clazz = camelContext.getClassResolver().resolveMandatoryClass(name, Module.class);
+                    Module module = camelContext.getInjector().newInstance(clazz);
+                    log.debug("Registering module: {} -> {}", name, module);
+                    objectMapper.registerModule(module);
+                }
+            }
+            if (moduleRefs != null) {
+                Iterable<?> it = ObjectHelper.createIterable(moduleRefs);
+                for (Object o : it) {
+                    String name = o.toString();
+                    if (name.startsWith("#")) {
+                        name = name.substring(1);
+                    }
+                    Module module = CamelContextHelper.mandatoryLookup(camelContext, name, Module.class);
+                    log.debug("Registering module: {} -> {}", name, module);
+                    objectMapper.registerModule(module);
+                }
+            }
+            if (org.apache.camel.util.ObjectHelper.isNotEmpty(timezone)) {
+                log.debug("Setting timezone to Object Mapper: {}", timezone);
+                objectMapper.setTimeZone(timezone);
+            }
+        } else {
+            log.warn("The objectMapper was already found in the registry, no customizations will be applied");
         }
     }
 

@@ -1,0 +1,47 @@
+[[setProperty-eip]]
+= Set Property EIP
+
+The SetProperty EIP allows you to set a property on your exchange.
+
+== Options
+
+// eip options: START
+The Set Property EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Name of exchange property to set a new value. The simple language can be used to define a dynamic evaluated exchange property name to be used. Otherwise a constant name will be used. |  | String
+|===
+// eip options: END
+
+== Examples
+
+The following example shows how to use the SetProperty EIP
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        from("direct:a")
+            .setProperty("myProperty", constant("test"))
+            .to("direct:b");
+    }
+};
+----
+
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <setProperty name="myProperty">
+            <constant>test</constant>
+        </setProperty>
+        <to uri="direct:b"/>
+    </route>
+</camelContext>
+----

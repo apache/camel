@@ -28,12 +28,14 @@ public class CxfProducerOperationTest extends CxfProducerTest {
     private static final String NAMESPACE = "http://apache.org/hello_world_soap_http";
 
    
+    @Override
     protected String getSimpleEndpointUri() {
         return "cxf://" + getSimpleServerAddress()
             + "?serviceClass=org.apache.camel.component.cxf.HelloService" 
             + "&defaultOperationName=" + ECHO_OPERATION;
     }
 
+    @Override
     protected String getJaxwsEndpointUri() {
         return "cxf://" + getJaxWsServerAddress()
             + "?serviceClass=org.apache.hello_world_soap_http.Greeter"
@@ -41,6 +43,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
             + "&defaultOperationNamespace=" + NAMESPACE;
     }
 
+    @Override
     protected Exchange sendSimpleMessage() {
         return sendSimpleMessage(getSimpleEndpointUri());
     }
@@ -59,6 +62,7 @@ public class CxfProducerOperationTest extends CxfProducerTest {
 
     }
     
+    @Override
     protected Exchange sendJaxWsMessage() {
         Exchange exchange = template.send(getJaxwsEndpointUri(), new Processor() {
             public void process(final Exchange exchange) {

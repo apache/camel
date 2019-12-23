@@ -16,17 +16,13 @@
  */
 package org.apache.camel.component.box.api;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.stream.Collectors;
 
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxAPIException;
-import com.box.sdk.BoxFolder;
 import com.box.sdk.BoxItem;
-
 import com.box.sdk.BoxSearch;
 import com.box.sdk.BoxSearchParameters;
 import com.box.sdk.PartialCollection;

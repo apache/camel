@@ -24,12 +24,14 @@ import java.util.Map;
 import java.util.Set;
 
 import facebook4j.Reading;
-
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.facebook.FacebookConstants;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.spi.BeanIntrospection;
+import org.apache.camel.util.PropertiesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +67,7 @@ public final class FacebookPropertiesHelper {
      */
     public static void configureReadingProperties(FacebookEndpointConfiguration configuration,
                                                   Map<String, Object> options) {
-        final Map<String, Object> readingProperties = IntrospectionSupport.extractProperties(
+        final Map<String, Object> readingProperties = PropertiesHelper.extractProperties(
             options, FacebookConstants.READING_PREFIX);
         if (!readingProperties.isEmpty()) {
             try {
@@ -115,9 +117,10 @@ public final class FacebookPropertiesHelper {
         return properties;
     }
 
-    public static void getEndpointProperties(FacebookEndpointConfiguration configuration,
+    public static void getEndpointProperties(CamelContext camelContext, FacebookEndpointConfiguration configuration,
                                              Map<String, Object> properties) {
-        if (IntrospectionSupport.getProperties(configuration, properties, null, false)) {
+        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        if (beanIntrospection.getProperties(configuration, properties, null, false)) {
             final Set<String> names = properties.keySet();
             // remove component config properties so we only have endpoint properties
             names.removeAll(COMPONENT_CONFIG_FIELDS);
@@ -128,9 +131,9 @@ public final class FacebookPropertiesHelper {
         }
     }
 
-    public static Set<String> getEndpointPropertyNames(FacebookEndpointConfiguration configuration) {
+    public static Set<String> getEndpointPropertyNames(CamelContext camelContext, FacebookEndpointConfiguration configuration) {
         Map<String, Object> properties = new HashMap<>();
-        getEndpointProperties(configuration, properties);
+        getEndpointProperties(camelContext, configuration, properties);
         return Collections.unmodifiableSet(properties.keySet());
     }
 

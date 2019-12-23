@@ -75,18 +75,22 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Came
         this.timeout = timeout;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -288,34 +292,18 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Came
 
                 // preserve the redelivery stats
                 if (redeliveried != null) {
-                    if (exchange.hasOut()) {
-                        exchange.getOut().setHeader(Exchange.REDELIVERED, redeliveried);
-                    } else {
-                        exchange.getIn().setHeader(Exchange.REDELIVERED, redeliveried);
-                    }
+                    exchange.getMessage().setHeader(Exchange.REDELIVERED, redeliveried);
                 }
                 if (redeliveryCounter != null) {
-                    if (exchange.hasOut()) {
-                        exchange.getOut().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
-                    } else {
-                        exchange.getIn().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
-                    }
+                    exchange.getMessage().setHeader(Exchange.REDELIVERY_COUNTER, redeliveryCounter);
                 }
                 if (redeliveryMaxCounter != null) {
-                    if (exchange.hasOut()) {
-                        exchange.getOut().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
-                    } else {
-                        exchange.getIn().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
-                    }
+                    exchange.getMessage().setHeader(Exchange.REDELIVERY_MAX_COUNTER, redeliveryMaxCounter);
                 }
             }
 
             // set header with the uri of the endpoint enriched so we can use that for tracing etc
-            if (exchange.hasOut()) {
-                exchange.getOut().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
-            } else {
-                exchange.getIn().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
-            }
+            exchange.getMessage().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
         } catch (Throwable e) {
             exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
             callback.done(true);
@@ -361,6 +349,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Came
         return "PollEnrich[" + expression + "]";
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (consumerCache == null) {
             // create consumer cache if we use dynamic expressions for computing the endpoints to poll
@@ -373,16 +362,19 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Came
         ServiceHelper.startService(consumerCache, aggregationStrategy);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(aggregationStrategy, consumerCache);
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(aggregationStrategy, consumerCache);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (newExchange != null) {
                 copyResultsPreservePattern(oldExchange, newExchange);

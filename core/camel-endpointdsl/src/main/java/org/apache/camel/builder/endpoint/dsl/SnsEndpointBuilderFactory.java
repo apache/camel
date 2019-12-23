@@ -48,7 +48,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder amazonSNSClient(Object amazonSNSClient) {
-            setProperty("amazonSNSClient", amazonSNSClient);
+            doSetProperty("amazonSNSClient", amazonSNSClient);
             return this;
         }
         /**
@@ -60,7 +60,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder amazonSNSClient(String amazonSNSClient) {
-            setProperty("amazonSNSClient", amazonSNSClient);
+            doSetProperty("amazonSNSClient", amazonSNSClient);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder amazonSQSClient(Object amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -84,7 +84,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder amazonSQSClient(String amazonSQSClient) {
-            setProperty("amazonSQSClient", amazonSQSClient);
+            doSetProperty("amazonSQSClient", amazonSQSClient);
             return this;
         }
         /**
@@ -95,7 +95,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder autoCreateTopic(boolean autoCreateTopic) {
-            setProperty("autoCreateTopic", autoCreateTopic);
+            doSetProperty("autoCreateTopic", autoCreateTopic);
             return this;
         }
         /**
@@ -106,7 +106,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder autoCreateTopic(String autoCreateTopic) {
-            setProperty("autoCreateTopic", autoCreateTopic);
+            doSetProperty("autoCreateTopic", autoCreateTopic);
             return this;
         }
         /**
@@ -119,7 +119,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default SnsEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -132,7 +132,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default SnsEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -144,7 +144,45 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder kmsMasterKeyId(String kmsMasterKeyId) {
-            setProperty("kmsMasterKeyId", kmsMasterKeyId);
+            doSetProperty("kmsMasterKeyId", kmsMasterKeyId);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SnsEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SnsEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -155,7 +193,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder messageStructure(String messageStructure) {
-            setProperty("messageStructure", messageStructure);
+            doSetProperty("messageStructure", messageStructure);
             return this;
         }
         /**
@@ -166,7 +204,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder policy(String policy) {
-            setProperty("policy", policy);
+            doSetProperty("policy", policy);
             return this;
         }
         /**
@@ -177,7 +215,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -188,7 +226,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -200,7 +238,30 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SNS client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: producer
+         */
+        default SnsEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SNS client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default SnsEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -211,7 +272,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder queueUrl(String queueUrl) {
-            setProperty("queueUrl", queueUrl);
+            doSetProperty("queueUrl", queueUrl);
             return this;
         }
         /**
@@ -225,7 +286,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -237,7 +298,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
                 boolean serverSideEncryptionEnabled) {
-            setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
+            doSetProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
         }
         /**
@@ -249,7 +310,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
                 String serverSideEncryptionEnabled) {
-            setProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
+            doSetProperty("serverSideEncryptionEnabled", serverSideEncryptionEnabled);
             return this;
         }
         /**
@@ -261,7 +322,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -273,7 +334,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder subscribeSNStoSQS(boolean subscribeSNStoSQS) {
-            setProperty("subscribeSNStoSQS", subscribeSNStoSQS);
+            doSetProperty("subscribeSNStoSQS", subscribeSNStoSQS);
             return this;
         }
         /**
@@ -285,7 +346,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: producer
          */
         default SnsEndpointBuilder subscribeSNStoSQS(String subscribeSNStoSQS) {
-            setProperty("subscribeSNStoSQS", subscribeSNStoSQS);
+            doSetProperty("subscribeSNStoSQS", subscribeSNStoSQS);
             return this;
         }
         /**
@@ -296,7 +357,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: security
          */
         default SnsEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -307,7 +368,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: security
          */
         default SnsEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -332,7 +393,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default AdvancedSnsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -345,7 +406,7 @@ public interface SnsEndpointBuilderFactory {
          */
         default AdvancedSnsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -357,7 +418,7 @@ public interface SnsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSnsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -369,9 +430,17 @@ public interface SnsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSnsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
     /**
      * AWS Simple Notification System (camel-aws-sns)
@@ -379,7 +448,7 @@ public interface SnsEndpointBuilderFactory {
      * Notification Topic.
      * 
      * Category: cloud,mobile,messaging
-     * Available as of version: 2.8
+     * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-aws-sns
      * 
      * Syntax: <code>aws-sns:topicNameOrArn</code>
@@ -387,7 +456,7 @@ public interface SnsEndpointBuilderFactory {
      * Path parameter: topicNameOrArn (required)
      * Topic name or ARN
      */
-    default SnsEndpointBuilder sns(String path) {
+    default SnsEndpointBuilder awsSns(String path) {
         class SnsEndpointBuilderImpl extends AbstractEndpointBuilder implements SnsEndpointBuilder, AdvancedSnsEndpointBuilder {
             public SnsEndpointBuilderImpl(String path) {
                 super("aws-sns", path);

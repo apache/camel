@@ -22,7 +22,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-
 public class SedaErrorTest extends ContextTestSupport {
 
     @Test
@@ -36,7 +35,6 @@ public class SedaErrorTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

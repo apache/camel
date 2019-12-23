@@ -29,7 +29,6 @@ import org.apache.camel.spi.Condition;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class DebugSingleStepConditionTest extends ContextTestSupport {
 
     private List<String> logs = new ArrayList<>();

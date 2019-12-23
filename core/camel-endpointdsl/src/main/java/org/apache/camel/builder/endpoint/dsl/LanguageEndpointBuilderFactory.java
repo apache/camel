@@ -47,7 +47,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder binary(boolean binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder binary(String binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder cacheScript(boolean cacheScript) {
-            setProperty("cacheScript", cacheScript);
+            doSetProperty("cacheScript", cacheScript);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder cacheScript(String cacheScript) {
-            setProperty("cacheScript", cacheScript);
+            doSetProperty("cacheScript", cacheScript);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -107,7 +107,47 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LanguageEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LanguageEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -118,7 +158,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder script(String script) {
-            setProperty("script", script);
+            doSetProperty("script", script);
             return this;
         }
         /**
@@ -130,7 +170,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder transform(boolean transform) {
-            setProperty("transform", transform);
+            doSetProperty("transform", transform);
             return this;
         }
         /**
@@ -142,7 +182,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: producer
          */
         default LanguageEndpointBuilder transform(String transform) {
-            setProperty("transform", transform);
+            doSetProperty("transform", transform);
             return this;
         }
     }
@@ -166,7 +206,7 @@ public interface LanguageEndpointBuilderFactory {
          */
         default AdvancedLanguageEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -179,7 +219,7 @@ public interface LanguageEndpointBuilderFactory {
          */
         default AdvancedLanguageEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -191,7 +231,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -203,7 +243,7 @@ public interface LanguageEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -213,7 +253,7 @@ public interface LanguageEndpointBuilderFactory {
      * executes a script by any of the supported Languages in Camel.
      * 
      * Category: core,script
-     * Available as of version: 2.5
+     * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-language
      * 
      * Syntax: <code>language:languageName:resourceUri</code>

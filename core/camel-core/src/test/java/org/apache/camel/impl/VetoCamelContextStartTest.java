@@ -60,7 +60,8 @@ public class VetoCamelContextStartTest extends ContextTestSupport {
 
         @Override
         public void onContextStart(CamelContext context) throws VetoCamelContextStartException {
-            // we just want camel context to not startup, but do not rethrow exception
+            // we just want camel context to not startup, but do not rethrow
+            // exception
             throw new VetoCamelContextStartException("Forced", context, false);
         }
 

@@ -60,6 +60,7 @@ public class JmsRequestReplyExclusiveReplyToTest extends CamelTestSupport {
         }
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

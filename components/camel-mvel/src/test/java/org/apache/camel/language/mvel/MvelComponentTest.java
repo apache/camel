@@ -65,6 +65,7 @@ public class MvelComponentTest extends CamelTestSupport {
         assertEquals("{ \"text\": \"The result is 28\" }", exchange.getOut().getBody());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

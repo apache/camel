@@ -47,11 +47,13 @@ public class NagiosEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(configuration, "configuration");
         return new NagiosProducer(this, getSender());
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Nagios consumer not supported");
     }
@@ -76,7 +78,18 @@ public class NagiosEndpoint extends DefaultEndpoint {
         this.sendSync = sendSync;
     }
 
-    public synchronized PassiveCheckSender getSender() {
+    public PassiveCheckSender getSender() {
+        return sender;
+    }
+
+    public void setSender(PassiveCheckSender sender) {
+        this.sender = sender;
+    }
+
+    @Override
+    protected void doInit() throws Exception {
+        super.doInit();
+
         if (sender == null) {
             if (isSendSync()) {
                 sender = new NagiosPassiveCheckSender(getConfiguration().getNagiosSettings());
@@ -85,10 +98,5 @@ public class NagiosEndpoint extends DefaultEndpoint {
                 sender = new NonBlockingNagiosPassiveCheckSender(getConfiguration().getNagiosSettings());
             }
         }
-        return sender;
-    }
-
-    public void setSender(PassiveCheckSender sender) {
-        this.sender = sender;
     }
 }

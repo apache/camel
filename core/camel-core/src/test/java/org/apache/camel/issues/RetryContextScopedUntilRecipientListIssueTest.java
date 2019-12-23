@@ -26,10 +26,8 @@ public class RetryContextScopedUntilRecipientListIssueTest extends RetryRouteSco
             @Override
             public void configure() throws Exception {
                 onException(Exception.class).redeliveryDelay(0).retryWhile(method("myRetryBean")).end();
-                
-                from("seda:start")
-                    .recipientList(header("recipientListHeader"))
-                    .to("mock:result");
+
+                from("seda:start").recipientList(header("recipientListHeader")).to("mock:result");
 
                 from("direct:foo").to("log:foo").to("mock:foo");
             }

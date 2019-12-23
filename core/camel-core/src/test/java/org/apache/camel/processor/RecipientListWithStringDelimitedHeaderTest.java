@@ -42,6 +42,7 @@ public class RecipientListWithStringDelimitedHeaderTest extends ContextTestSuppo
         template.sendBodyAndHeader("direct:a", "answer", "myHeader", "mock:x, mock:y, mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

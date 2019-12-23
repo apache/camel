@@ -28,6 +28,11 @@ public class AwsSnsSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.aws.sns.SnsComponent";
+    }
+
+    @Override
     protected String getMessageId(Exchange exchange) {
         return (String)exchange.getIn().getHeader(CAMEL_AWS_SNS_MESSAGE_ID);
     }

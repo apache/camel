@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.redis;
 
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.BindToRegistry;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,6 +38,7 @@ import static org.mockito.Mockito.when;
 public class RedisGeoTest extends RedisTestSupport {
 
     @Mock
+    @BindToRegistry("redisTemplate")
     private RedisTemplate<String, String> redisTemplate;
 
     @Mock
@@ -46,13 +47,6 @@ public class RedisGeoTest extends RedisTestSupport {
     @Before
     public void setupTests() {
         when(redisTemplate.opsForGeo()).thenReturn(geoOperations);
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("redisTemplate", redisTemplate);
-        return registry;
     }
 
     @Test

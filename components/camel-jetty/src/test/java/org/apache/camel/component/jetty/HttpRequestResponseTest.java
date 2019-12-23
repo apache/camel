@@ -50,20 +50,23 @@ public class HttpRequestResponseTest extends BaseJettyTest {
     }
 
     public class MyBookService implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             // just get the body as a string
             String body = exchange.getIn().getBody(String.class);
 
-            // we have access to the HttpServletRequest here and we can grab it if we need it
+            // we have access to the HttpServletRequest here and we can grab it
+            // if we need it
             HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
             assertNotNull(req);
 
-            // we have access to the HttpServletResponse here and we can grab it if we need it
+            // we have access to the HttpServletResponse here and we can grab it
+            // if we need it
             HttpServletResponse res = exchange.getIn().getBody(HttpServletResponse.class);
             assertNotNull(res);
 
             // and they should also be on HttpMessage
-            HttpMessage msg = (HttpMessage) exchange.getIn();
+            HttpMessage msg = (HttpMessage)exchange.getIn();
             assertNotNull(msg.getRequest());
             assertNotNull(msg.getResponse());
 

@@ -151,6 +151,14 @@ public class RabbitMQProducerTest {
     }
 
     @Test
+    public void testPropertiesOverrideNameHeader() throws IOException {
+        RabbitMQProducer producer = new RabbitMQProducer(endpoint);
+        message.setHeader(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME, "qweeqwe");
+        AMQP.BasicProperties props = producer.buildProperties(exchange).build();
+        assertNull(props.getHeaders().get(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME));
+    }
+
+    @Test
     public void testPropertiesUsesTimestampHeaderAsLongValue() throws IOException {
         RabbitMQProducer producer = new RabbitMQProducer(endpoint);
         message.setHeader(RabbitMQConstants.TIMESTAMP, "12345123");

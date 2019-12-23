@@ -41,6 +41,122 @@ public interface IgniteIdGenEndpointBuilderFactory {
             return (AdvancedIgniteIdGenEndpointBuilder) this;
         }
         /**
+         * The batch size.
+         * 
+         * The option is a: <code>java.lang.Integer</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteIdGenEndpointBuilder batchSize(Integer batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * The batch size.
+         * 
+         * The option will be converted to a <code>java.lang.Integer</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default IgniteIdGenEndpointBuilder batchSize(String batchSize) {
+            doSetProperty("batchSize", batchSize);
+            return this;
+        }
+        /**
+         * The initial value.
+         * 
+         * The option is a: <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteIdGenEndpointBuilder initialValue(Long initialValue) {
+            doSetProperty("initialValue", initialValue);
+            return this;
+        }
+        /**
+         * The initial value.
+         * 
+         * The option will be converted to a <code>java.lang.Long</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteIdGenEndpointBuilder initialValue(String initialValue) {
+            doSetProperty("initialValue", initialValue);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteIdGenEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteIdGenEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The operation to invoke on the Ignite ID Generator. Superseded by the
+         * IgniteConstants.IGNITE_IDGEN_OPERATION header in the IN message.
+         * Possible values: ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT,
+         * INCREMENT_AND_GET.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ignite.idgen.IgniteIdGenOperation</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteIdGenEndpointBuilder operation(
+                IgniteIdGenOperation operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to invoke on the Ignite ID Generator. Superseded by the
+         * IgniteConstants.IGNITE_IDGEN_OPERATION header in the IN message.
+         * Possible values: ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT,
+         * INCREMENT_AND_GET.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ignite.idgen.IgniteIdGenOperation</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteIdGenEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
@@ -50,7 +166,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          */
         default IgniteIdGenEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -63,7 +179,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          */
         default IgniteIdGenEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -76,7 +192,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          */
         default IgniteIdGenEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -89,7 +205,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          */
         default IgniteIdGenEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
     }
@@ -113,7 +229,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          */
         default AdvancedIgniteIdGenEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -126,7 +242,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          */
         default AdvancedIgniteIdGenEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -139,7 +255,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          */
         default AdvancedIgniteIdGenEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -152,7 +268,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          */
         default AdvancedIgniteIdGenEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -175,7 +291,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
      * allows you to interact with Ignite Atomic Sequences and ID Generators.
      * 
      * Category: nosql,cache,compute
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 
      * Syntax: <code>ignite-idgen:name</code>
@@ -183,7 +299,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
      * Path parameter: name (required)
      * The sequence name.
      */
-    default IgniteIdGenEndpointBuilder igniteIdGen(String path) {
+    default IgniteIdGenEndpointBuilder igniteIdgen(String path) {
         class IgniteIdGenEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteIdGenEndpointBuilder, AdvancedIgniteIdGenEndpointBuilder {
             public IgniteIdGenEndpointBuilderImpl(String path) {
                 super("ignite-idgen", path);

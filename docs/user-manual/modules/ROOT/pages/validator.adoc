@@ -1,7 +1,7 @@
 [[Validator-Validator]]
-== Validator
+= Validator
 
-*Available as of Camel 2.19*
+*Since Camel 2.19*
 
 Validator performs declarative validation of the message according to the declared
 `Input Type` and/or `Output Type` on a route definition which declares the expected
@@ -13,7 +13,7 @@ camel internal processor looks for a corresponding Validator from the registry a
 
 
 [[Validator-DataTypeFormat]]
-=== Data type format
+== Data type format
 
 [source]
 ----
@@ -24,7 +24,7 @@ where *scheme* is the type of data model like `java`, `xml` or `json`, and *name
 data type name.
 
 [[Validator-SupportedValidators]]
-=== Supported Validators
+== Supported Validators
 
 |===
 | Validator | Description
@@ -39,19 +39,19 @@ data type name.
 
 
 [[Validator-CommonOptions]]
-=== Common Options
+== Common Options
 All validators have following common options to specify which data type is supported by the validator.
 `type` must be specified.
 |===
 | Name | Description
 
-| type | xref:Validator-DataTypeFormat.adoc[Data type] to validate.
+| type | xref:validator.adoc#Validator-DataTypeFormat[Data type] to validate.
 |===
 
 
 
 [[Validator-Predicate]]
-=== Predicate Validator Options
+== Predicate Validator Options
 
 |===
 | Name | Description
@@ -79,7 +79,7 @@ XML DSL:
 
 
 [[Validator-Endpoint]]
-=== Endpoint Validator Options
+== Endpoint Validator Options
 
 |===
 | Name | Description
@@ -105,11 +105,11 @@ And here is an example to specify endpoint ref in XML DSL:
 
 Note that the Endpoint Validator just forwards the message to the specified endpoint. In above example,
 camel forwards the message to the `validator:` endpoint, which actually is a
-xref:validator-component.adoc[Validation Component]. You can also use any other validation component like
+xref:components::validator-component.adoc[Validation Component]. You can also use any other validation component like
 Bean Validation Component.
 
 [[Validator-Custom]]
-=== Custom Validator Options
+== Custom Validator Options
 
 Note that Validator must be a subclass of `org.apache.camel.spi.Validator`
 |===
@@ -138,7 +138,7 @@ XML DSL:
 
 
 [[Validator-Examples]]
-=== Examples
+== Examples
 
 For example to declare the Endpoint Validator which uses
 validator component to validate `xml:ABCOrder`, we can do as follows:

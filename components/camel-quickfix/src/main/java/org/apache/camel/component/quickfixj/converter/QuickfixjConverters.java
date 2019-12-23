@@ -42,7 +42,7 @@ import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.EVENT_CATEG
 import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.MESSAGE_TYPE_KEY;
 import static org.apache.camel.component.quickfixj.QuickfixjEndpoint.SESSION_ID_KEY;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class QuickfixjConverters {
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjConverters.class);
 

@@ -53,28 +53,10 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                    .to("log:input")
-                    .transform().header("dude")
-                    .choice()
-                        .when().header("gold")
-                            .to("mock:gold")
-                            .filter().header("extra-gold")
-                                .to("mock:extra-gold")
-                            .endChoice()
-                        .when().simple("${body} contains 'Camel'")
-                            .to("mock:camel")
-                        .otherwise()
-                            .to("mock:other")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").routeId("myRoute").to("log:input").transform().header("dude").choice().when().header("gold").to("mock:gold").filter().header("extra-gold")
+                    .to("mock:extra-gold").endChoice().when().simple("${body} contains 'Camel'").to("mock:camel").otherwise().to("mock:other").end().to("mock:result");
 
-                from("seda:a").routeId("a")
-                    .setProperty("foo").constant("bar")
-                    .choice()
-                        .when(header("test").isNotNull()).log("not null")
-                        .when(xpath("/foo/bar")).log("xpath")
-                    .end()
+                from("seda:a").routeId("a").setProperty("foo").constant("bar").choice().when(header("test").isNotNull()).log("not null").when(xpath("/foo/bar")).log("xpath").end()
                     .to("mock:a");
             }
         };

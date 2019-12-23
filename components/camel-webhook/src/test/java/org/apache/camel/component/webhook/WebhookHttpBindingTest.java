@@ -31,18 +31,18 @@ public class WebhookHttpBindingTest extends WebhookTestBase {
 
     @Test
     public void testWrapper() {
-        String result = template.requestBody("netty4-http:http://localhost:" + port
+        String result = template.requestBody("netty-http:http://localhost:" + port
                 + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"), "", String.class);
         assertEquals("msg: webhook", result);
 
-        result = template.requestBodyAndHeader("netty4-http:http://localhost:" + port
+        result = template.requestBodyAndHeader("netty-http:http://localhost:" + port
                 + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"), "", Exchange.HTTP_METHOD, HttpMethods.PUT, String.class);
         assertEquals("msg: webhook", result);
     }
 
     @Test(expected = CamelExecutionException.class)
     public void testGetError() {
-        template.requestBodyAndHeader("netty4-http:http://localhost:" + port, "",
+        template.requestBodyAndHeader("netty-http:http://localhost:" + port, "",
                 Exchange.HTTP_METHOD, HttpMethods.GET, String.class);
     }
 

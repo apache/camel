@@ -33,16 +33,14 @@ public class EnricherNoResourceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                    .enrich("direct:foo")
-                    .to("mock:result");
+                from("direct:a").enrich("direct:foo").to("mock:result");
 
                 // set an empty message
-                from("direct:foo")
-                    .setBody(constant(null));
+                from("direct:foo").setBody(constant(null));
             }
         };
     }

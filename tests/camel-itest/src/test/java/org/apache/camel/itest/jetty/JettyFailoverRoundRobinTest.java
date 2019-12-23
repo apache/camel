@@ -24,10 +24,10 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class JettyFailoverRoundRobinTest extends CamelTestSupport {
-    private static int port1 = AvailablePortFinder.getNextAvailable(23021);
-    private static int port2 = AvailablePortFinder.getNextAvailable(23022);
-    private static int port3 = AvailablePortFinder.getNextAvailable(23023);
-    private static int port4 = AvailablePortFinder.getNextAvailable(23024);
+    private static int port1 = AvailablePortFinder.getNextAvailable();
+    private static int port2 = AvailablePortFinder.getNextAvailable();
+    private static int port3 = AvailablePortFinder.getNextAvailable();
+    private static int port4 = AvailablePortFinder.getNextAvailable();
 
     private String bad = "jetty:http://localhost:" + port1 + "/bad";
     private String bad2 = "jetty:http://localhost:" + port2 + "/bad2";

@@ -59,7 +59,6 @@ public class ConsulRegistry implements Registry {
 
     /* constructor (since spring.xml does not support builder pattern) */
     public ConsulRegistry(String hostname, int port) {
-        super();
         this.hostname = hostname;
         this.port = port;
         this.consul = Consul.builder().withUrl("http://" + this.hostname + ":" + this.port).build();
@@ -78,12 +77,10 @@ public class ConsulRegistry implements Registry {
         key = key.replaceAll("\\$", "/");
         kvClient = consul.keyValueClient();
 
-        return kvClient.getValueAsString(key).map(
-            result -> {
-                byte[] postDecodedValue = ConsulRegistryUtils.decodeBase64(result);
-                return ConsulRegistryUtils.deserialize(postDecodedValue);
-            }
-        ).orElse(null);
+        return kvClient.getValueAsString(key).map(result -> {
+            byte[] postDecodedValue = ConsulRegistryUtils.decodeBase64(result);
+            return ConsulRegistryUtils.deserialize(postDecodedValue);
+        }).orElse(null);
     }
 
     @Override
@@ -95,8 +92,7 @@ public class ConsulRegistry implements Registry {
         try {
             return type.cast(object);
         } catch (Throwable e) {
-            String msg = "Found bean: " + name + " in Consul Registry: " + this + " of type: "
-                    + object.getClass().getName() + "expected type was: " + type;
+            String msg = "Found bean: " + name + " in Consul Registry: " + this + " of type: " + object.getClass().getName() + "expected type was: " + type;
             throw new NoSuchBeanException(name, msg, e);
         }
     }
@@ -167,8 +163,7 @@ public class ConsulRegistry implements Registry {
         SessionClient sessionClient = consul.sessionClient();
         String sessionName = "session_" + UUID.randomUUID().toString();
 
-        SessionCreatedResponse response = sessionClient
-                .createSession(ImmutableSession.builder().name(sessionName).build());
+        SessionCreatedResponse response = sessionClient.createSession(ImmutableSession.builder().name(sessionName).build());
         String sessionId = response.getId();
         kvClient = consul.keyValueClient();
         String lockKey = "lock_" + key;
@@ -190,8 +185,7 @@ public class ConsulRegistry implements Registry {
         // (not sure if that is safe enough, again)
         SessionClient sessionClient = consul.sessionClient();
         String sessionName = "session_" + UUID.randomUUID().toString();
-        SessionCreatedResponse response = sessionClient
-                .createSession(ImmutableSession.builder().name(sessionName).build());
+        SessionCreatedResponse response = sessionClient.createSession(ImmutableSession.builder().name(sessionName).build());
         String sessionId = response.getId();
         kvClient = consul.keyValueClient();
         String lockKey = "lock_" + key;
@@ -201,8 +195,8 @@ public class ConsulRegistry implements Registry {
         if (lookupByName(key) != null) {
             remove(key);
         }
-        Object clone = ConsulRegistryUtils.clone((Serializable) object);
-        byte[] serializedObject = ConsulRegistryUtils.serialize((Serializable) clone);
+        Object clone = ConsulRegistryUtils.clone((Serializable)object);
+        byte[] serializedObject = ConsulRegistryUtils.serialize((Serializable)clone);
         // pre-encode due native encoding issues
         String value = ConsulRegistryUtils.encodeBase64(serializedObject);
         // store the actual class
@@ -296,6 +290,7 @@ public class ConsulRegistry implements Registry {
 
         /**
          * Serializes the given {@code serializable} using Java Serialization
+         * 
          * @param serializable
          * @return the serialized object as a byte array
          */

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -97,9 +98,10 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
             }
 
             //
-            // Allow consumer idle properties to properly handle an empty polling response
+            // Allow consumer idle properties to properly handle an empty
+            // polling response
             //
-            if (result[0] instanceof ClientEntitySet && (((ClientEntitySet) result[0]).getEntities().isEmpty())) {
+            if ((result[0] == null) || (result[0] instanceof ClientEntitySet && (((ClientEntitySet)result[0]).getEntities().isEmpty()))) {
                 return 0;
             } else {
                 int processed = ApiConsumerHelper.getResultsProcessed(this, result[0], isSplitResult());
@@ -114,7 +116,8 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
     @Override
     public void interceptProperties(Map<String, Object> properties) {
         //
-        // If we have a filterAlreadySeen property then initialise the filter index
+        // If we have a filterAlreadySeen property then initialise the filter
+        // index
         //
         Object value = properties.get(Olingo4Endpoint.FILTER_ALREADY_SEEN);
         if (value == null) {
@@ -122,7 +125,8 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
         }
 
         //
-        // Initialise the index if not already and if filterAlreadySeen has been set
+        // Initialise the index if not already and if filterAlreadySeen has been
+        // set
         //
         if (Boolean.parseBoolean(value.toString()) && resultIndex == null) {
             resultIndex = new Olingo4Index();
@@ -143,21 +147,20 @@ public class Olingo4Consumer extends AbstractApiConsumer<Olingo4ApiName, Olingo4
         List<Object> splitResult = new ArrayList<>();
 
         if (result instanceof ClientEntitySet) {
-            ClientEntitySet entitySet = (ClientEntitySet) result;
+            ClientEntitySet entitySet = (ClientEntitySet)result;
             for (ClientEntity entity : entitySet.getEntities()) {
                 //
                 // If $count has been set to true then this value is left behind
                 // on the ClientEntitySet. Therefore, append it to each result.
                 //
                 if (entitySet.getCount() != null) {
-                    ClientValue value = new ClientPrimitiveValueImpl.BuilderImpl()
-                                                            .buildInt32(entitySet.getCount());
+                    ClientValue value = new ClientPrimitiveValueImpl.BuilderImpl().buildInt32(entitySet.getCount());
                     entity.getProperties().add(new ClientPropertyImpl("ResultCount", value));
                 }
                 splitResult.add(entity);
             }
-        } else if (result instanceof ClientValue && ((ClientValue) result).isCollection()) {
-            ClientValue value = (ClientValue) result;
+        } else if (result instanceof ClientValue && ((ClientValue)result).isCollection()) {
+            ClientValue value = (ClientValue)result;
             ClientCollectionValue<ClientValue> collection = value.asCollection();
             collection.forEach(v -> {
                 splitResult.add(v);

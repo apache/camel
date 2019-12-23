@@ -27,7 +27,6 @@ import com.amazonaws.services.simpledb.AmazonSimpleDBClientBuilder;
 import com.amazonaws.services.simpledb.model.CreateDomainRequest;
 import com.amazonaws.services.simpledb.model.DomainMetadataRequest;
 import com.amazonaws.services.simpledb.model.NoSuchDomainException;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -59,10 +58,12 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SdbProducer(this);
     }
@@ -103,6 +104,7 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyProtocol(configuration.getProxyProtocol());
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
             isClientConfigFound = true;

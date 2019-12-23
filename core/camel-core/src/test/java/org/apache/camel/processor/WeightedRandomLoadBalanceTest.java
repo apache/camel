@@ -50,18 +50,16 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                
+
                 // START SNIPPET: example
-                from("direct:start")
-                    .loadBalance().weighted(false, "4,2,1")
-                        .to("mock:x", "mock:y", "mock:z");
+                from("direct:start").loadBalance().weighted(false, "4,2,1").to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
         context.start();
-        
+
         sendMessages(1, 2, 3, 4, 5, 6, 7);
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -74,16 +72,14 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start")
-                    .loadBalance().weighted(false, "2, 1, 3", ",")
-                        .to("mock:x", "mock:y", "mock:z");
+                from("direct:start").loadBalance().weighted(false, "2, 1, 3", ",").to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
         context.start();
-        
+
         sendMessages(1, 2, 3, 4, 5, 6);
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -95,30 +91,26 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                
+
                 // START SNIPPET: example
-                from("direct:start")
-                    .loadBalance().weighted(false, "2-3-5", "-")
-                        .to("mock:x", "mock:y", "mock:z");
+                from("direct:start").loadBalance().weighted(false, "2-3-5", "-").to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
         context.start();
-        
+
         sendBulkMessages(50);
-        
+
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testUnmatchedRatiosToProcessors() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     // START SNIPPET: example
-                    from("direct:start")
-                        .loadBalance().weighted(false, "2,3")
-                            .to("mock:x", "mock:y", "mock:z");
+                    from("direct:start").loadBalance().weighted(false, "2,3").to("mock:x", "mock:y", "mock:z");
                     // END SNIPPET: example
                 }
             });
@@ -129,13 +121,13 @@ public class WeightedRandomLoadBalanceTest extends ContextTestSupport {
             assertEquals("Loadbalacing with 3 should match number of distributions 2", iae.getMessage());
         }
     }
-    
+
     protected void sendBulkMessages(int number) {
         for (int i = 0; i < number; i++) {
             template.sendBodyAndHeader("direct:start", createTestMessage(i), "counter", i);
         }
     }
-    
+
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
             template.sendBodyAndHeader("direct:start", createTestMessage(counter), "counter", counter);

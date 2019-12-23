@@ -77,6 +77,7 @@ public class EmbeddedMojo extends AbstractExecMojo {
     /**
      * This method will run the mojo
      */
+    @Override
     public void execute() throws MojoExecutionException {
         try {
             executeWithoutWrapping();

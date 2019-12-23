@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -60,15 +61,13 @@ public class JoinRoutesTest extends ContextTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:a").choice()
-                        .when(header("foo").isEqualTo("bar")).to("direct:b")
-                        .when(header("foo").isEqualTo("cheese")).to("direct:c")
-                        .otherwise().to("direct:d");
+                from("direct:a").choice().when(header("foo").isEqualTo("bar")).to("direct:b").when(header("foo").isEqualTo("cheese")).to("direct:c").otherwise().to("direct:d");
 
                 from("direct:b").to("mock:result");
                 from("direct:c").to("mock:result");

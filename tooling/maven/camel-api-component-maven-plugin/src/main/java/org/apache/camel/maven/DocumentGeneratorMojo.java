@@ -32,7 +32,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.impl.engine.DefaultBeanIntrospection;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.support.component.ApiCollection;
 import org.apache.camel.support.component.ApiMethod;
 import org.apache.camel.support.component.ApiMethodHelper;
@@ -41,7 +42,6 @@ import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.doxia.siterenderer.RenderingContext;
 import org.apache.maven.doxia.siterenderer.sink.SiteRendererSink;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -118,7 +118,7 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         final Set<String> apiNames = new TreeSet<String>(collection.getApiNames());
         context.put("apiNames", apiNames);
         String suffix;
-        if (apiNames.size() == 1 && ((Set) apiNames).contains("")) {
+        if (apiNames.size() == 1 && apiNames.contains("")) {
             suffix = "://endpoint?[options]";
         } else {
             suffix = "://endpoint-prefix/endpoint?[options]";
@@ -170,8 +170,8 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         // so getDeclaredFields() won't work, like it does for generated endpoint config classes!!!
         final Map<String, String> configFields = new TreeMap<>();
         do {
-            IntrospectionSupport.ClassInfo classInfo = IntrospectionSupport.cacheClass(configClass);
-            for (IntrospectionSupport.MethodInfo method : classInfo.methods) {
+            BeanIntrospection.ClassInfo classInfo = new DefaultBeanIntrospection().cacheClass(configClass);
+            for (BeanIntrospection.MethodInfo method : classInfo.methods) {
                 if (method.isSetter) {
                     configFields.put(method.getterOrSetterShorthandName, getCanonicalName(method.method.getParameterTypes()[0]));
                 }

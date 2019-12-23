@@ -21,8 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FromFtpServerLanguageCodeAndTimeoutTest extends FtpServerTestSupport {
 
@@ -32,7 +32,7 @@ public class FromFtpServerLanguageCodeAndTimeoutTest extends FtpServerTestSuppor
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -58,6 +58,7 @@ public class FromFtpServerLanguageCodeAndTimeoutTest extends FtpServerTestSuppor
         producer.stop();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

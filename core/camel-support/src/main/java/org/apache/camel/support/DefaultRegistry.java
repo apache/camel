@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -169,27 +171,44 @@ public class DefaultRegistry implements Registry, CamelContextAware {
 
     @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
+        Map<String, T> answer = new LinkedHashMap<>();
+
         if (repositories != null) {
             for (BeanRepository r : repositories) {
-                Map<String, T> answer = r.findByTypeWithName(type);
-                if (answer != null) {
-                    return answer;
+                Map<String, T> found = r.findByTypeWithName(type);
+                if (found != null && !found.isEmpty()) {
+                    answer.putAll(found);
                 }
             }
         }
-        return fallbackRegistry.findByTypeWithName(type);
+
+        Map<String, T> found = fallbackRegistry.findByTypeWithName(type);
+        if (found != null && !found.isEmpty()) {
+            answer.putAll(found);
+        }
+
+        return answer;
     }
 
     @Override
     public <T> Set<T> findByType(Class<T> type) {
+        Set<T> answer = new LinkedHashSet<>();
+
         if (repositories != null) {
             for (BeanRepository r : repositories) {
-                Set<T> answer = r.findByType(type);
-                if (answer != null) {
-                    return answer;
+                Set<T> found = r.findByType(type);
+                if (found != null && !found.isEmpty()) {
+                    answer.addAll(found);
                 }
             }
         }
-        return fallbackRegistry.findByType(type);
+
+        Set<T> found = fallbackRegistry.findByType(type);
+        if (found != null && !found.isEmpty()) {
+            answer.addAll(found);
+        }
+
+        return answer;
     }
+    
 }

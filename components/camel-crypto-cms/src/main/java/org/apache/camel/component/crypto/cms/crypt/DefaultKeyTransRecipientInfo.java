@@ -66,6 +66,7 @@ public class DefaultKeyTransRecipientInfo extends DefaultCryptoCmsConfiguration 
     // this.keyEncryptionAlgorithm = keyEncryptionAlgorithm;
     // }
 
+    @Override
     public String toString() {
         return "certificate alias=" + certificateAlias + ", key encryption algorithm=" + keyEncryptionAlgorithm;
     }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.milo.client;
 
-import static java.util.Objects.requireNonNull;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
@@ -27,6 +25,8 @@ import org.apache.camel.support.DefaultConsumer;
 import org.apache.camel.support.DefaultMessage;
 import org.eclipse.milo.opcua.stack.core.types.builtin.DataValue;
 import org.eclipse.milo.opcua.stack.core.types.builtin.ExpandedNodeId;
+
+import static java.util.Objects.requireNonNull;
 
 public class MiloClientConsumer extends DefaultConsumer {
 

@@ -25,11 +25,11 @@ import java.util.function.Supplier;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvokeOnHeader;
-import org.apache.camel.InvokeOnHeaders;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchHeaderException;
 import org.apache.camel.Processor;
+import org.apache.camel.spi.InvokeOnHeader;
+import org.apache.camel.spi.InvokeOnHeaders;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,6 +158,7 @@ public class HeaderSelectorProducer extends BaseSelectorProducer {
         return handlers.get(action);
     }
 
+    @Override
     protected void onMissingProcessor(Exchange exchange) throws Exception {
         throw new IllegalStateException(
             "Unsupported operation " + exchange.getIn().getHeader(headerSupplier.get())

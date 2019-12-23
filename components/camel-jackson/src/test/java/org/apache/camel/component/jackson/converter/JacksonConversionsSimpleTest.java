@@ -37,7 +37,8 @@ public class JacksonConversionsSimpleTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        // enable jackson type converter by setting this property on CamelContext
+        // enable jackson type converter by setting this property on
+        // CamelContext
         context.getGlobalOptions().put(JacksonConstants.ENABLE_TYPE_CONVERTER, "true");
         return context;
     }

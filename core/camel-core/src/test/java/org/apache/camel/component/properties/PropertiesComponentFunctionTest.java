@@ -42,16 +42,13 @@ public class PropertiesComponentFunctionTest extends ContextTestSupport {
 
     @Test
     public void testFunction() throws Exception {
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
         pc.addFunction(new MyFunction());
 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("log:{{sys:os.name}}")
-                        .to("{{beer:FOO}}")
-                        .to("{{beer:BAR}}");
+                from("direct:start").to("log:{{sys:os.name}}").to("{{beer:FOO}}").to("{{beer:BAR}}");
             }
         });
         context.start();

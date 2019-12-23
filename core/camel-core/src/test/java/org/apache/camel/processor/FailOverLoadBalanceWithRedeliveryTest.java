@@ -53,24 +53,25 @@ public class FailOverLoadBalanceWithRedeliveryTest extends ContextTestSupport {
 
                 errorHandler(defaultErrorHandler().maximumRedeliveries(2).redeliveryDelay(0));
 
-                from("direct:start")
-                    .loadBalance().failover().to("direct:a", "direct:b");
+                from("direct:start").loadBalance().failover().to("direct:a", "direct:b");
 
                 from("direct:a")
-                    // disable redelivery here as most often your load balancer over external
-                    // endpoints you do not have control off, such as a web service call
-                    // but we use mock for unit testing so no error handler here please
-                    .errorHandler(noErrorHandler())
-                    .to("mock:a")
-                    .throwException(new IllegalArgumentException("I cannot do this"));
+                    // disable redelivery here as most often your load balancer
+                    // over external
+                    // endpoints you do not have control off, such as a web
+                    // service call
+                    // but we use mock for unit testing so no error handler here
+                    // please
+                    .errorHandler(noErrorHandler()).to("mock:a").throwException(new IllegalArgumentException("I cannot do this"));
 
                 from("direct:b")
-                    // disable redelivery here as most often your load balancer over external
-                    // endpoints you do not have control off, such as a web service call
-                    // but we use mock for unit testing so no error handler here please
-                    .errorHandler(noErrorHandler())
-                    .to("mock:b")
-                    .process(new Processor() {
+                    // disable redelivery here as most often your load balancer
+                    // over external
+                    // endpoints you do not have control off, such as a web
+                    // service call
+                    // but we use mock for unit testing so no error handler here
+                    // please
+                    .errorHandler(noErrorHandler()).to("mock:b").process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // fail on the first try but succeed on the 2nd try
                             if (counter++ < 1) {

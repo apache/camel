@@ -45,13 +45,12 @@ public class MethodFilterTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start").
-                        filter().method("myBean", "matches").
-                        to("mock:result");
+                from("direct:start").filter().method("myBean", "matches").to("mock:result");
                 // END SNIPPET: example
             }
         };
@@ -66,7 +65,7 @@ public class MethodFilterTest extends ContextTestSupport {
 
     // START SNIPPET: filter
     public static class MyBean {
-        public boolean matches(@Header("foo")String location) {
+        public boolean matches(@Header("foo") String location) {
             return "London".equals(location);
         }
     }

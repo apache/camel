@@ -49,6 +49,7 @@ public class SaxonConverterTest extends CamelTestSupport {
     private XPathEvaluator evaluator;
     private NodeInfo doc;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

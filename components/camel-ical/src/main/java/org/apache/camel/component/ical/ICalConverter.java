@@ -22,7 +22,6 @@ import java.util.Date;
 
 import net.fortuna.ical4j.model.Calendar;
 import net.fortuna.ical4j.model.property.DateProperty;
-
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.ExchangeHelper;
@@ -30,7 +29,7 @@ import org.apache.camel.support.ExchangeHelper;
 /**
  * ICal related converter.
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class ICalConverter {
     private ICalConverter() {
         // Helper class

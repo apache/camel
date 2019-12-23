@@ -22,7 +22,6 @@ import java.util.concurrent.TimeoutException;
 import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,7 +35,7 @@ public class NatsAuthTokenConsumerLoadTest extends NatsAuthTokenTestSupport {
     @Test
     public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
         mockResultEndpoint.setExpectedMessageCount(100);
-        Options options = new Options.Builder().server("nats://" + getNatsUrl()).build();
+        Options options = new Options.Builder().server("nats://" + getNatsBrokerUrl()).build();
         Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 100; i++) {
@@ -51,7 +50,7 @@ public class NatsAuthTokenConsumerLoadTest extends NatsAuthTokenTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("nats://"  + getNatsUrl() + "?topic=test").to(mockResultEndpoint);
+                from("nats:test").to(mockResultEndpoint);
             }
         };
     }

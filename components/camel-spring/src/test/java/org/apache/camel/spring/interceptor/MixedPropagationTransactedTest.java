@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,6 +35,7 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
     protected JdbcTemplate jdbc;
     protected boolean useTransactionErrorHandler = true;
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/spring/interceptor/mixedPropagationTransactedTest.xml");
@@ -139,8 +140,9 @@ public class MixedPropagationTransactedTest extends SpringTestSupport {
         assertEquals("Number of books", 2, count);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new SpringRouteBuilder() {
+        return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:required")
                     .transacted("PROPATATION_REQUIRED")

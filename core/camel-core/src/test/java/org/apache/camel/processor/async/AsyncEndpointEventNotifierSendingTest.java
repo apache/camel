@@ -81,10 +81,7 @@ public class AsyncEndpointEventNotifierSendingTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("async:bye:camel?delay=250")
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("async:bye:camel?delay=250").to("mock:result");
             }
         };
     }

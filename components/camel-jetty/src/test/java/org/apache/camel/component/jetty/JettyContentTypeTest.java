@@ -55,7 +55,7 @@ public class JettyContentTypeTest extends BaseJettyTest {
         sendMessageWithContentType(null, false);
         sendMessageWithContentType("UTF-8", false);
     }
-    
+
     @Test
     public void testContentTypeWithGZipEncoding() throws Exception {
         sendMessageWithContentType(null, true);
@@ -85,6 +85,7 @@ public class JettyContentTypeTest extends BaseJettyTest {
     }
 
     public class MyBookService implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             String user = exchange.getIn().getHeader("User", String.class);
             String contentType = ExchangeHelper.getContentType(exchange);

@@ -22,7 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class MessageHistoryStepOnlyTest extends ContextTestSupport {
@@ -59,21 +58,9 @@ public class MessageHistoryStepOnlyTest extends ContextTestSupport {
                 context.setMessageHistory(true);
                 context.getMessageHistoryFactory().setNodePattern("step");
 
-                from("direct:start")
-                        .step("a")
-                            .to("log:foo")
-                            .to("mock:a")
-                        .end()
-                        .step("b")
-                            .to("direct:bar")
-                            .to("mock:b")
-                        .end();
+                from("direct:start").step("a").to("log:foo").to("mock:a").end().step("b").to("direct:bar").to("mock:b").end();
 
-                from("direct:bar")
-                    .step("bar")
-                        .to("log:bar")
-                        .to("mock:bar")
-                    .end();
+                from("direct:bar").step("bar").to("log:bar").to("mock:bar").end();
             }
         };
     }

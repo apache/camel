@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.syslog;
+
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -37,7 +38,7 @@ public class SyslogSpringMinaTest extends CamelSpringTestSupport {
 
     @BeforeClass
     public static void initPort() {
-        serverPort = AvailablePortFinder.getNextAvailable(3000);
+        serverPort = AvailablePortFinder.getNextAvailable();
         System.setProperty("server-port", new Integer(serverPort).toString());
     }
 

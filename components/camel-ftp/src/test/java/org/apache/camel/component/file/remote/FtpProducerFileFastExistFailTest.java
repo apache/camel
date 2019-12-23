@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 public class FtpProducerFileFastExistFailTest extends FtpProducerFileExistFailTest {
 
+    @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/exist?fastExistsCheck=true&password=admin&delay=2000&noop=true&fileExist=Fail";
     }

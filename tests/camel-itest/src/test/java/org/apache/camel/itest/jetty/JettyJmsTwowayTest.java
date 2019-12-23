@@ -32,7 +32,7 @@ import static org.junit.Assert.assertNotNull;
 @ContextConfiguration
 public class JettyJmsTwowayTest extends AbstractJUnit4SpringContextTests {
     
-    private static int port = AvailablePortFinder.getNextAvailable(20123);
+    private static int port = AvailablePortFinder.getNextAvailable();
     private static final String URL = "http://localhost:" + port + "/test";
     static {
         //set them as system properties so Spring can use the property placeholder

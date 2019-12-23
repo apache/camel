@@ -34,6 +34,7 @@ public class MapMailMessagesBugRoute extends RouteBuilder {
         main.run(args);
     }
 
+    @Override
     public void configure() {
         // This is for Office365 host. Set your own host/username/password.
         // When setting option mapMailMessage=true (the default) option peek=true fails with the SEEN flag.

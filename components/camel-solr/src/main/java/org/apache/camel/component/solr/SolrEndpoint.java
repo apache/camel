@@ -67,6 +67,10 @@ public class SolrEndpoint extends DefaultEndpoint {
     private String collection;
     @UriParam
     private String requestHandler;
+    @UriParam(label = "security", secret = true)
+    private String username;
+    @UriParam(label = "security", secret = true)
+    private String password;
 
     public SolrEndpoint(String endpointUri, SolrComponent component, String address) throws Exception {
         super(endpointUri, component);
@@ -80,9 +84,13 @@ public class SolrEndpoint extends DefaultEndpoint {
     /**
      * Set the ZooKeeper host information which the solrCloud could use, such as "zkhost=localhost:8123".
      */
-    public void setZkHost(String zkHost) throws UnsupportedEncodingException {
-        String decoded = URLDecoder.decode(zkHost, "UTF-8");
-        this.zkHost = decoded;
+    public void setZkHost(String zkHost) {
+        try {
+            String decoded = URLDecoder.decode(zkHost, "UTF-8");
+            this.zkHost = decoded;
+        } catch (UnsupportedEncodingException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public String getZkHost() {
@@ -271,6 +279,28 @@ public class SolrEndpoint extends DefaultEndpoint {
      */
     public void setAllowCompression(Boolean allowCompression) {
         this.allowCompression = allowCompression;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    /**
+     * Sets username for basic auth plugin enabled servers
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    /**
+     * Sets password for basic auth plugin enabled servers
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

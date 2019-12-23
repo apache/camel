@@ -23,7 +23,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.corda.CordaConstants.OPERATION;
 import static org.apache.camel.component.corda.CordaConstants.START_TRACKED_FLOW_DYNAMIC;
-import static org.apache.camel.component.corda.CordaConstants.VAULT_TRACK_BY;
 
 @Ignore("This integration test requires a locally running corda node such cordapp-template-java")
 public class CordaConsumerStartTrackedFlowDynamicTest extends CordaConsumerTestSupport {

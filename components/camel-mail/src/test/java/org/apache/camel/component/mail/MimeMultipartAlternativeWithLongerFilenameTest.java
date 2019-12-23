@@ -24,7 +24,6 @@ import javax.activation.FileDataSource;
 import javax.mail.internet.MimeMultipart;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -94,10 +93,11 @@ public class MimeMultipartAlternativeWithLongerFilenameTest extends CamelTestSup
         verifyTheRecivedEmail("Content-Disposition: attachment; filename=myCoolLogo.jpeg");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://ryan@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("pop3://ryan@mymailserver.com?password=secret&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

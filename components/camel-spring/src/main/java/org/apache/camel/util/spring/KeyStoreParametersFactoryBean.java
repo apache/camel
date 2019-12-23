@@ -39,6 +39,7 @@ public class KeyStoreParametersFactoryBean extends AbstractKeyStoreParametersFac
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }

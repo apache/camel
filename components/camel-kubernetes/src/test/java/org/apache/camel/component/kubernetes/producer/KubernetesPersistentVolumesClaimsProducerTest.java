@@ -25,14 +25,14 @@ import io.fabric8.kubernetes.api.model.PersistentVolume;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaim;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimBuilder;
 import io.fabric8.kubernetes.api.model.PersistentVolumeClaimListBuilder;
+import io.fabric8.kubernetes.client.KubernetesClient;
 import io.fabric8.kubernetes.client.server.mock.KubernetesServer;
-
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
 import org.apache.camel.component.kubernetes.KubernetesTestSupport;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Rule;
 import org.junit.Test;
 
@@ -41,11 +41,9 @@ public class KubernetesPersistentVolumesClaimsProducerTest extends KubernetesTes
     @Rule
     public KubernetesServer server = new KubernetesServer();
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("kubernetesClient", server.getClient());
-        return registry;
+    @BindToRegistry("kubernetesClient")
+    public KubernetesClient getClient() throws Exception {
+        return server.getClient();
     }
 
     @Test

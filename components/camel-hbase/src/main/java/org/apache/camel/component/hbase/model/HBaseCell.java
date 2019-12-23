@@ -32,6 +32,7 @@ public class HBaseCell {
     //The value type can be optionally specified for Gets and Scan, to specify how the byte[] read will be converted.
     private Class<?> valueType = String.class;
 
+    @Override
     public String toString() {
         return "HBaseCell=[family=" + family + ", qualifier=" + qualifier + ", value=" + value + ", valueType=" + valueType.getName();
     }

@@ -31,6 +31,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
     protected CamelContext context2;
     protected ProducerTemplate template2;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -45,6 +46,7 @@ public abstract class AbstractDistributedTest extends ContextTestSupport {
         context2.addRoutes(createRouteBuilder2());
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         ServiceHelper.stopAndShutdownServices(context2, template2);

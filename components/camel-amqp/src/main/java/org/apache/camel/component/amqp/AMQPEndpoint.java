@@ -17,7 +17,6 @@
 package org.apache.camel.component.amqp;
 
 import org.apache.camel.AsyncEndpoint;
-import org.apache.camel.component.jms.JmsConsumer;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 

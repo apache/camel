@@ -27,7 +27,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 /**
  * A unit test for java only CXF in payload mode
  */
@@ -65,8 +64,8 @@ public class CxfJavaOnlyCamelContextAwareTest extends CamelTestSupport {
             public void configure() throws Exception {
                 CxfEndpoint endpoint = new CxfEndpoint();
                 endpoint.setAddress("http://localhost:" + port1 + "/PersonService");
-                endpoint.setServiceName(new QName("http://camel.apache.org/wsdl-first", "PersonService"));
-                endpoint.setPortName(new QName("http://camel.apache.org/wsdl-first", "soap"));
+                endpoint.setServiceNameAsQName(new QName("http://camel.apache.org/wsdl-first", "PersonService"));
+                endpoint.setPortNameAsQName(new QName("http://camel.apache.org/wsdl-first", "soap"));
                 endpoint.setWsdlURL("classpath:person.wsdl");
                 endpoint.setDataFormat(DataFormat.PAYLOAD);
                 context.addEndpoint("personService", endpoint);

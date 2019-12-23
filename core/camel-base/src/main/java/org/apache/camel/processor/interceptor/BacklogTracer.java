@@ -75,15 +75,6 @@ public final class BacklogTracer extends ServiceSupport {
     }
 
     /**
-     * A helper method to return the BacklogTracer instance if one is enabled
-     *
-     * @return the backlog tracer or null if none can be found
-     */
-    public static BacklogTracer getBacklogTracer(CamelContext context) {
-        return context.getExtension(BacklogTracer.class);
-    }
-
-    /**
      * Whether or not to trace the given processor definition.
      *
      * @param definition the processor definition

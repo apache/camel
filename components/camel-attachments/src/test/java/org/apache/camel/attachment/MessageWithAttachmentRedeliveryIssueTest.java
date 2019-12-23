@@ -17,6 +17,7 @@
 package org.apache.camel.attachment;
 
 import java.io.File;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 

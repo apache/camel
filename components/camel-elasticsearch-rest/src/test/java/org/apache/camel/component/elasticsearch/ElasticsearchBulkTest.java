@@ -20,11 +20,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.elasticsearch.action.bulk.BulkItemResponse;
 import org.elasticsearch.action.bulk.BulkRequest;
 import org.elasticsearch.action.index.IndexRequest;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
@@ -103,8 +105,8 @@ public class ElasticsearchBulkTest extends ElasticsearchBaseTest {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:bulk_index").to("elasticsearch-rest://elasticsearch?operation=BulkIndex&indexName=twitter&indexType=tweet");
-                from("direct:bulk").to("elasticsearch-rest://elasticsearch?operation=Bulk&indexName=twitter&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                from("direct:bulk_index").to("elasticsearch-rest://elasticsearch?operation=BulkIndex&indexName=twitter");
+                from("direct:bulk").to("elasticsearch-rest://elasticsearch?operation=Bulk&indexName=twitter&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
             }
         };
     }

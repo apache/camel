@@ -34,7 +34,8 @@ public class KubernetesLockConfiguration implements Cloneable {
     public static final long DEFAULT_RETRY_PERIOD_MILLIS = 5000;
 
     /**
-     * Kubernetes namespace containing the pods and the ConfigMap used for locking.
+     * Kubernetes namespace containing the pods and the ConfigMap used for
+     * locking.
      */
     private String kubernetesResourcesNamespace;
 
@@ -44,7 +45,8 @@ public class KubernetesLockConfiguration implements Cloneable {
     private String configMapName = DEFAULT_CONFIGMAP_NAME;
 
     /**
-     * Name of the lock group (or namespace according to the Camel cluster convention) within the chosen ConfigMap.
+     * Name of the lock group (or namespace according to the Camel cluster
+     * convention) within the chosen ConfigMap.
      */
     private String groupName;
 
@@ -59,7 +61,8 @@ public class KubernetesLockConfiguration implements Cloneable {
     private Map<String, String> clusterLabels = new HashMap<>();
 
     /**
-     * A jitter factor to apply in order to prevent all pods to call Kubernetes APIs in the same instant.
+     * A jitter factor to apply in order to prevent all pods to call Kubernetes
+     * APIs in the same instant.
      */
     private double jitterFactor = DEFAULT_JITTER_FACTOR;
 
@@ -69,13 +72,14 @@ public class KubernetesLockConfiguration implements Cloneable {
     private long leaseDurationMillis = DEFAULT_LEASE_DURATION_MILLIS;
 
     /**
-     * The deadline after which the leader must stop its services because it may have lost the leadership.
+     * The deadline after which the leader must stop its services because it may
+     * have lost the leadership.
      */
     private long renewDeadlineMillis = DEFAULT_RENEW_DEADLINE_MILLIS;
 
     /**
-     * The time between two subsequent attempts to check and acquire the leadership.
-     * It is randomized using the jitter factor.
+     * The time between two subsequent attempts to check and acquire the
+     * leadership. It is randomized using the jitter factor.
      */
     private long retryPeriodMillis = DEFAULT_RETRY_PERIOD_MILLIS;
 
@@ -167,7 +171,7 @@ public class KubernetesLockConfiguration implements Cloneable {
 
     public KubernetesLockConfiguration copy() {
         try {
-            KubernetesLockConfiguration copy = (KubernetesLockConfiguration) this.clone();
+            KubernetesLockConfiguration copy = (KubernetesLockConfiguration)this.clone();
             return copy;
         } catch (CloneNotSupportedException e) {
             throw new IllegalStateException("Cannot clone", e);

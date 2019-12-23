@@ -25,6 +25,7 @@ public class SoroushMockServer extends Thread {
     private Server jettyServer;
     private Integer port = 8080;
 
+    @Override
     public void start() {
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         context.setContextPath("/");

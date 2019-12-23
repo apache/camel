@@ -44,7 +44,7 @@ public class XChangeMarketDataProducer extends DefaultProducer {
         if (XChangeMethod.ticker == method) {
             CurrencyPair pair = exchange.getIn().getHeader(HEADER_CURRENCY_PAIR, CurrencyPair.class);
             pair = pair != null ? pair : exchange.getMessage().getBody(CurrencyPair.class);
-            pair = pair != null ? pair : endpoint.getConfiguration().getCurrencyPair();
+            pair = pair != null ? pair : endpoint.getConfiguration().getAsCurrencyPair();
             Ticker ticker = endpoint.getTicker(pair);
             exchange.getMessage().setBody(ticker);
         }

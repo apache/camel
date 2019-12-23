@@ -28,31 +28,31 @@ public class WebhookBasePathTest extends WebhookTestBase {
 
     @Test
     public void testComponentPath() {
-        String result = template.requestBody("netty4-http:http://localhost:" + port + "/base/uri0", "", String.class);
+        String result = template.requestBody("netty-http:http://localhost:" + port + "/base/uri0", "", String.class);
         assertEquals("msg: webhook", result);
     }
 
     @Test
     public void testUriPath() {
-        String result = template.requestBody("netty4-http:http://localhost:" + port + "/base/uri", "", String.class);
+        String result = template.requestBody("netty-http:http://localhost:" + port + "/base/uri", "", String.class);
         assertEquals("uri: webhook", result);
     }
 
     @Test
     public void testAutoPath() {
-        String result = template.requestBody("netty4-http:http://localhost:" + port + "/base"
+        String result = template.requestBody("netty-http:http://localhost:" + port + "/base"
                 + WebhookConfiguration.computeDefaultPath("wb-delegate://auto"), "", String.class);
         assertEquals("auto: webhook", result);
     }
 
     @Test(expected = CamelExecutionException.class)
     public void testRootPathError() {
-        template.requestBody("netty4-http:http://localhost:" + port, "", String.class);
+        template.requestBody("netty-http:http://localhost:" + port, "", String.class);
     }
 
     @Test(expected = CamelExecutionException.class)
     public void testRootBasePathError() {
-        template.requestBody("netty4-http:http://localhost:" + port + "/base/", "", String.class);
+        template.requestBody("netty-http:http://localhost:" + port + "/base/", "", String.class);
     }
 
     @Override

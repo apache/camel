@@ -42,17 +42,9 @@ public class ClaimCheckEipDynamicKeyGetSetTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("mock:a")
-                    .claimCheck(ClaimCheckOperation.Set, "${header.myKey}")
-                    .transform().constant("Bye World")
-                    .to("mock:b")
-                    .claimCheck(ClaimCheckOperation.Get, "${header.myKey}")
-                    .to("mock:c")
-                    .transform().constant("Hi World")
-                    .to("mock:d")
-                    .claimCheck(ClaimCheckOperation.Get, "${header.myKey}")
-                    .to("mock:e");
+                from("direct:start").to("mock:a").claimCheck(ClaimCheckOperation.Set, "${header.myKey}").transform().constant("Bye World").to("mock:b")
+                    .claimCheck(ClaimCheckOperation.Get, "${header.myKey}").to("mock:c").transform().constant("Hi World").to("mock:d")
+                    .claimCheck(ClaimCheckOperation.Get, "${header.myKey}").to("mock:e");
             }
         };
     }

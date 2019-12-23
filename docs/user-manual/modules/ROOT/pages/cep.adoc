@@ -1,14 +1,11 @@
 [[CEP-CamelCEP]]
-== Camel CEP
+= Camel CEP
 
 http://en.wikipedia.org/wiki/Complex_event_processing[Complex Event
 Processing] or
 http://en.wikipedia.org/wiki/Event_stream_processing[Event Stream
 Processing] are approaches of processing streams of events, usually from
 multiple sources.
-
-One approach to CEP with Camel is to use the xref:esper.adoc[Esper
-endpoint] then use Esper's SQL-like DSL for working with event streams.
 
 Another approach to CEP with Camel is to use Camel RX
 which provides a typesafe DSL in Java, Scala, Groovy, clojure for
@@ -19,7 +16,7 @@ http://netflix.github.com/RxJava/javadoc/[API] which is a JVM port of
 the https://rx.codeplex.com/[Reactive Extensions]
 
 [[CEP-CEPwithCamelRX]]
-=== CEP with Camel RX
+== CEP with Camel RX
 
 Camel RX provides various ways to get an
 http://netflix.github.com/RxJava/javadoc/rx/Observable.html[Observable<T>]

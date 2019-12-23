@@ -82,7 +82,8 @@ public class UnitOfWorkProducerTest extends ContextTestSupport {
 
         oneExchangeDone.matchesMockWaitTime();
 
-        // there should be 1 completed events as direct endpoint will be like a direct method call
+        // there should be 1 completed events as direct endpoint will be like a
+        // direct method call
         // and the UoW will be re-used
         assertEquals(1, events.size());
     }

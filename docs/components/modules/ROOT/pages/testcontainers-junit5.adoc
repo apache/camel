@@ -1,0 +1,137 @@
+= Testcontainers
+:page-source: components/camel-testcontainers-junit5/src/main/docs/testcontainers-junit5.adoc
+
+*Available since 3.0.0*
+
+Testing camel components is sometime complex because the 3rd party system a component interacts with does not provide testing facilities and/or is only available as a native application. To reduce this complexity, *Camel Testcontainers JUnit 5* extends standard camel test support providing a way to create and interact with containerized applications.
+
+In order to define leverage testcontainers, add the following dependency to your pom:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-testcontainers-junit5</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+    <scope>test</scope>
+</dependency>
+----
+
+[TIP]
+====
+To learn more about testcontainers, please have a look at the https://www.testcontainers.org[official documentation]
+====
+
+To leverage testcontainers in your tests, you can use `ContainerAwareTestSupport` which is an extension of `CamelTestSupport` which:
+
+- create/destroy containers according to camel context lifecycle
+- inject a custom `PropertiesFunction` to access container specific options from properties
+
+
+To create a container you need to override:
+[source, java]
+----
+protected GenericContainer<?> createContainer()
+----
+
+If you need to create more than one container, you can override the following method:
+[source, java]
+----
+protected List<GenericContainer<?>> createContainers()
+----
+
+The methods above are invoked before the camel context starts and blocks until the containers are reported to be alive. Containers are destroyed once the camel context stops.
+
+[source,java]
+.Example
+----
+@Override
+protected GenericContainer<?> createContainer() {
+    return new GenericContainer<>("consul:1.0.7")
+        .withNetworkAliases("myconsul") // <1>
+        .withExposedPorts(8500)
+        .waitingFor(Wait.forLogMessageContaining("Synced node info", 1)) // <2>
+        .withCommand(
+            "agent",
+            "-dev",
+            "-server",
+            "-bootstrap",
+            "-client",
+            "0.0.0.0",
+            "-log-level",
+            "trace"
+        );
+}
+----
+<1> container name/alias
+<2> container startup condition
+
+[IMPORTANT]
+====
+It is important to give a name/alias to the container so you can then use properties functions to retrieve information such as container's host and port mapping.
+====
+[TIP]
+====
+You may need to wait for some condition to be satisfied before starting your test, to do so you need to configure the test suite to wait for such event using `GenericContainer.waitingFor`. Testcontainers provide a number of ready to use waiting strategy, for more info see the official testcontainers documentation.
+====
+
+Camel Testcontainer provides a PropertiesFunction implementation that can be used to:
+
+- retrieve the container host with the following syntax `container:host:$\{container-name\}`
+- retrieve the port mapping with the following syntax `container:port:$\{exposed-port\}@$\{container-name\}`
+
+[source,java]
+.Example
+----
+public class MyTest extends ContainerAwareTestSupport {
+    @Test
+    public void testPropertyPlaceholders() {
+        GenericContainer<?> container = getContainer("myconsul");
+
+        String host = context.resolvePropertyPlaceholders("{{container:host:myconsul}}");
+        assertThat(host).isEqualTo(container.getContainerIpAddress());
+
+        String port = context.resolvePropertyPlaceholders("{{container:port:8500@myconsul}}");
+        assertThat(port).isEqualTo("" + container.getMappedPort(8500));
+    }
+
+    @Override
+    protected GenericContainer<?> createContainer() {
+        return new GenericContainer<>("consul:1.0.7")
+            .withNetworkAliases("myconsul")
+            .withExposedPorts(8500)
+            .waitingFor(Wait.forLogMessageContaining("Synced node info", 1))
+            .withCommand(
+                "agent",
+                "-dev",
+                "-server",
+                "-bootstrap",
+                "-client",
+                "0.0.0.0",
+                "-log-level",
+                "trace"
+            );
+    }
+}
+----
+
+== Migrating Camel Testcontainers Tests from JUnit 4 to JUnit 5
+Find below some hints to help in migrating camel testcontainers tests from JUnit 4 to JUnit 5.
+
+=== Referencing the Camel Testcontainers JUnit5 library in your project
+Projects using `camel-testcontainers` would need to use `camel-testcontainers-junit5`. For instance, maven users would update their pom.xml file as below:
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-testcontainers-junit5</artifactId>
+  <scope>test</scope>
+</dependency>
+----
+
+Tips: It's possible to run JUnit4 & JUnit5 based camel tests side by side including the following dependencies `camel-testcontainers`,
+`camel-testcontainers-junit5` and `junit-vintage-engine`. This configuration allows to migrate a camel test at once.
+
+=== Typical migration steps linked to JUnit 5 support in Camel Testcontainers
+* Migration steps linked to xref:components::test-junit5.adoc[JUnit 5 support in Camel Test itself] should have been applied first
+* Imports of `org.apache.camel.test.testcontainers.\*` should be replaced with `org.apache.camel.test.testcontainers.junit5.*`

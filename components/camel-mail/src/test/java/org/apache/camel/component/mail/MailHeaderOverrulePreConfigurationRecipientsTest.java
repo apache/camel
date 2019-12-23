@@ -51,10 +51,11 @@ public class MailHeaderOverrulePreConfigurationRecipientsTest extends CamelTestS
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://claus@localhost?to=someone@outhere.com&cc=none@world.com&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("pop3://claus@localhost?to=someone@outhere.com&cc=none@world.com&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

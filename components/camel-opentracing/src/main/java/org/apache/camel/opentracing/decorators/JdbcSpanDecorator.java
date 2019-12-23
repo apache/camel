@@ -18,7 +18,6 @@ package org.apache.camel.opentracing.decorators;
 
 import io.opentracing.Span;
 import io.opentracing.tag.Tags;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
@@ -27,6 +26,11 @@ public class JdbcSpanDecorator extends AbstractSpanDecorator {
     @Override
     public String getComponent() {
         return "jdbc";
+    }
+
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.jdbc.JdbcComponent";
     }
 
     @Override

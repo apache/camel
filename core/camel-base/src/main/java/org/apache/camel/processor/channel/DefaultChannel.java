@@ -25,22 +25,21 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
-import org.apache.camel.Endpoint;
-import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.processor.errorhandler.RedeliveryErrorHandler;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.spi.CamelInternalProcessorAdvice;
+import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.ManagementInterceptStrategy;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.support.OrderedComparator;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -67,11 +66,11 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
     private RouteContext routeContext;
     private boolean routeScoped = true;
 
+    @Override
     public Processor getOutput() {
         // the errorHandler is already decorated with interceptors
         // so it contain the entire chain of processors, so we can safely use it directly as output
         // if no error handler provided we use the output
-        // TODO: Camel 3.0 we should determine the output dynamically at runtime instead of having the
         // the error handlers, interceptors, etc. woven in at design time
         return errorHandler != null ? errorHandler : output;
     }
@@ -95,6 +94,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         this.output = output;
     }
 
+    @Override
     public Processor getNextProcessor() {
         return nextProcessor;
     }
@@ -108,10 +108,12 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         this.errorHandler = errorHandler;
     }
 
+    @Override
     public Processor getErrorHandler() {
         return errorHandler;
     }
 
+    @Override
     public NamedNode getProcessorDefinition() {
         return definition;
     }
@@ -120,6 +122,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         this.definition = definition;
     }
 
+    @Override
     public RouteContext getRouteContext() {
         return routeContext;
     }
@@ -163,7 +166,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
                             NamedNode childDefinition,
                             List<InterceptStrategy> interceptors,
                             Processor nextProcessor,
-                            NamedNode route,
+                            NamedRoute route,
                             boolean first,
                             boolean routeScoped) throws Exception {
         this.routeContext = routeContext;
@@ -189,25 +192,36 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
             instrumentationProcessor = managed.createProcessor(targetOutputDef, nextProcessor);
         }
 
-        // then wrap the output with the tracer and debugger (debugger first,
-        // as we do not want regular tracer to trace the debugger)
-        if (routeContext.isTracing()) {
-            BacklogTracer tracer = getOrCreateBacklogTracer();
-            camelContext.setExtension(BacklogTracer.class, tracer);
-            addAdvice(new BacklogTracerAdvice(tracer, targetOutputDef, route, first));
-        }
-
-        // add debugger as well so we have both tracing and debugging out of the box
-        if (routeContext.isDebugging()) {
-            BacklogDebugger debugger = getOrCreateBacklogDebugger();
-            camelContext.addService(debugger);
-            addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
-        }
-
         if (routeContext.isMessageHistory()) {
             // add message history advice
             MessageHistoryFactory factory = camelContext.getMessageHistoryFactory();
             addAdvice(new MessageHistoryAdvice(factory, targetOutputDef));
+        }
+
+        // then wrap the output with the tracer and debugger (debugger first,
+        // as we do not want regular tracer to trace the debugger)
+        if (routeContext.isDebugging()) {
+            if (camelContext.getDebugger() != null) {
+                // use custom debugger
+                Debugger debugger = camelContext.getDebugger();
+                addAdvice(new DebuggerAdvice(debugger, nextProcessor, targetOutputDef));
+            } else {
+                // use backlog debugger
+                BacklogDebugger debugger = getOrCreateBacklogDebugger();
+                camelContext.addService(debugger);
+                addAdvice(new BacklogDebuggerAdvice(debugger, nextProcessor, targetOutputDef));
+            }
+        }
+
+        if (routeContext.isBacklogTracing()) {
+            // add jmx backlog tracer
+            BacklogTracer backlogTracer = getOrCreateBacklogTracer();
+            addAdvice(new BacklogTracerAdvice(backlogTracer, targetOutputDef, route, first));
+        }
+        if (routeContext.isTracing()) {
+            // add logger tracer
+            Tracer tracer = camelContext.getTracer();
+            addAdvice(new TracingAdvice(tracer, targetOutputDef, route, first));
         }
 
         // sort interceptors according to ordered
@@ -287,6 +301,7 @@ public class DefaultChannel extends CamelInternalProcessor implements Channel {
         }
         if (tracer == null) {
             tracer = BacklogTracer.createTracer(camelContext);
+            camelContext.setExtension(BacklogTracer.class, tracer);
         }
         return tracer;
     }

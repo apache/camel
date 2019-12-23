@@ -52,8 +52,7 @@ public class VmTimeoutIssueTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:end")
-                    .delay(1000).transform().constant("Bye World");
+                from("vm:end").delay(1000).transform().constant("Bye World");
             }
         };
     }
@@ -65,20 +64,14 @@ public class VmTimeoutIssueTest extends AbstractVmTestSupport {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("vm:start1?timeout=1000")
-                    .to("log:AFTER_START1")
-                    .to("vm:end?timeout=500")
-                    .to("log:AFTER_END");
+                from("vm:start1?timeout=1000").to("log:AFTER_START1").to("vm:end?timeout=500").to("log:AFTER_END");
 
-                from("vm:start2?timeout=4000")
-                    .to("log:AFTER_START2")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // this exception will trigger to stop asap
-                            throw new ExchangeTimedOutException(exchange, 2000);
-                        }
-                    })
-                    .to("log:AFTER_PROCESSOR");
+                from("vm:start2?timeout=4000").to("log:AFTER_START2").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // this exception will trigger to stop asap
+                        throw new ExchangeTimedOutException(exchange, 2000);
+                    }
+                }).to("log:AFTER_PROCESSOR");
             }
         };
     }

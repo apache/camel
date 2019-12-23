@@ -1,8 +1,8 @@
-## Kubernetes Components
+= Kubernetes Components
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
 
-The Kubernetes components integrate your application with Kubernetes standalone or on top of Openshift. 
+The Kubernetes components integrate your application with Kubernetes standalone or on top of Openshift. 
 
 The camel-kubernetes consists of 13 components:
 
@@ -26,7 +26,7 @@ In OpenShift, also:
 
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 [source,xml]
 ------------------------------------------------------------
 <dependency>
@@ -38,7 +38,7 @@ their `pom.xml` for this component:
 ------------------------------------------------------------
 
 
-### Headers
+== Headers
 
 [width="100%",options="header"]
 |=======================================================================
@@ -122,13 +122,13 @@ their `pom.xml` for this component:
 |=======================================================================
 
 
-### Usage
+== Usage
 
-#### Producer examples
+=== Producer examples
 
 Here we show some examples of producer using camel-kubernetes.
 
-#### Create a pod
+=== Create a pod
 
 [source,java]
 -------------------------------------------------------------
@@ -138,7 +138,7 @@ from("direct:createPod")
 
 By using the KubernetesConstants.KUBERNETES_POD_SPEC header you can specify your PodSpec and pass it to this operation.
 
-#### Delete a pod
+=== Delete a pod
 
 [source,java]
 -------------------------------------------------------------

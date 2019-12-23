@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
 import javax.persistence.EntityManager;
 
 import org.apache.camel.Consumer;
@@ -76,7 +77,7 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
         assertEquals("Should have no results: " + results, 0, results.size());
 
         // lets produce some objects
-        template.send(endpoint, new Processor() {
+        template.send("jpa://" + Customer.class.getName(), new Processor() {
             public void process(Exchange exchange) {
                 Customer customer = new Customer();
                 customer.setName("Willem");
@@ -142,7 +143,7 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
     }
 
     protected String getEndpointUri() {
-        return "jpa://" + Customer.class.getName() + "?consumer.namedQuery=findAllCustomersWithName&consumer.parameters=#params";
+        return "jpa://" + Customer.class.getName() + "?namedQuery=findAllCustomersWithName&parameters=#params";
     }
 
     @After

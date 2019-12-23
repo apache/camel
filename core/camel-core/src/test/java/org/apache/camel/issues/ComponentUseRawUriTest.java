@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -43,10 +44,12 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
             this.remaining = remaining;
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             throw new UnsupportedOperationException("Not supported yet.");
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             throw new UnsupportedOperationException("Not supported yet.");
         }
@@ -67,6 +70,7 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
             this.bar = bar;
         }
 
+        @Override
         public boolean isSingleton() {
             return true;
         }
@@ -87,7 +91,8 @@ public class ComponentUseRawUriTest extends ContextTestSupport {
 
         @Override
         public boolean useRawUri() {
-            // we want the raw uri, so our component can understand the endpoint configuration as it was typed
+            // we want the raw uri, so our component can understand the endpoint
+            // configuration as it was typed
             return true;
         }
     }

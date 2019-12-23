@@ -39,8 +39,10 @@ public class CamelProduceInterfaceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // we gotta cheat and use proxy builder as ContextTestSupport doesnt do
-                // all the IoC wiring we need when using @Produce on an interface
+                // we gotta cheat and use proxy builder as ContextTestSupport
+                // doesnt do
+                // all the IoC wiring we need when using @Produce on an
+                // interface
                 echo = new ProxyBuilder(context).endpoint("direct:hello").build(Echo.class);
 
                 from("direct:hello").transform(body().prepend("Hello "));

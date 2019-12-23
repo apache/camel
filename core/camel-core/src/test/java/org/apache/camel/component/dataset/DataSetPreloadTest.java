@@ -40,7 +40,7 @@ public class DataSetPreloadTest extends ContextTestSupport {
     @Test
     public void testDataSetPreloadSize() throws Exception {
         MockEndpoint endpoint = getMockEndpoint(uri);
-        endpoint.expectedMessageCount((int) dataSet.getSize());
+        endpoint.expectedMessageCount((int)dataSet.getSize());
 
         context.getRouteController().startAllRoutes();
 

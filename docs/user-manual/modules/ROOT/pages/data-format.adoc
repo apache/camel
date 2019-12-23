@@ -1,87 +1,65 @@
 [[DataFormat-DataFormat]]
-=== Data Format
+= Data Format
 
 Camel supports a pluggable DataFormat to allow messages to be marshalled
 to and from binary or text formats to support a kind of
-xref:messageTranslator-eip.adoc[Message Translator].
+xref:message-translator.adoc[Message Translator].
 
 The following data formats are currently supported:
 
-* Standard JVM object marshalling
-** xref:serialization-dataformat.adoc[Serialization]
-** xref:string-dataformat.adoc[String]
-
 * Object marshalling
-** xref:avro-dataformat.adoc[Avro]
-** xref:boon-dataformat.adoc[Boon]
-** xref:hessian-dataformat.adoc[Hessian]
+** xref:components::avro-dataformat.adoc[Avro]
 ** xref:json.adoc[JSON]
-** xref:protobuf-dataformat.adoc[Protobuf]
-** xref:yaml-snakeyaml-dataformat.adoc[YAML]
+** xref:components::protobuf-dataformat.adoc[Protobuf]
+** xref:components::yaml-snakeyaml-dataformat.adoc[YAML]
 
 * Object/XML marshalling
-** xref:castor-dataformat.adoc[Castor]
-** xref:jaxb-dataformat.adoc[JAXB]
-** xref:xmlBeans-dataformat.adoc[XmlBeans]
-** xref:xstream-dataformat.adoc[XStream]
-** xref:jibx-dataformat.adoc[JiBX]
-** xref:jacksonxml-dataformat.adoc[Jackson XML]
-
-* Object/XML/Webservice marshalling
-** xref:soap-dataformat.adoc[SOAP]
-
-* Direct JSON / XML marshalling
-** xref:xmljson-dataformat.adoc[XmlJson]
+** xref:components::jaxb-dataformat.adoc[JAXB]
+** xref:components::xstream-dataformat.adoc[XStream]
+** xref:components::jacksonxml-dataformat.adoc[Jackson XML]
 
 * Flat data structure marshalling
-** xref:beanio-dataformat.adoc[BeanIO]
-** xref:bindy-dataformat.adoc[Bindy]
-** xref:csv-dataformat.adoc[CSV]
-** xref:edi-dataformat.adoc[EDI]
-** xref:flatpack-dataformat.adoc[Flatpack DataFormat]
-** uniVocity DataFormats xref:univocity-csv-dataformat,CSV>> / <<univocity-tsv-dataformat,TSV>> / <<univocity-fixed-dataformat.adoc[Fixed Length]
+** xref:components::beanio-dataformat.adoc[BeanIO]
+** xref:components::bindy-dataformat.adoc[Bindy]
+** xref:components::csv-dataformat.adoc[CSV]
+** xref:components::flatpack-dataformat.adoc[Flatpack DataFormat]
+** uniVocity DataFormats xref:components::univocity-csv-dataformat.adoc[CSV] / xref:components::univocity-tsv-dataformat.adoc[TSV] / xref:components::univocity-fixed-dataformat.adoc[Fixed Length]
 
 * Domain specific marshalling
-** xref:hl7-dataformat.adoc[HL7 DataFormat]
+** xref:components::hl7-dataformat.adoc[HL7 DataFormat]
 
 * Compression
-** xref:gzip-dataformat.adoc[GZip DataFormat]
-** xref:zip-dataformat.adoc[Zip DataFormat]
-** xref:zipfile-dataformat.adoc[Zip File DataFormat]
-** xref:lzf-dataformat.adoc[LZF Data Format]
-** xref:tar-dataformat.adoc[Tar DataFormat]
+** xref:components::zipfile-dataformat.adoc[Zip File DataFormat]
+** xref:components::lzf-dataformat.adoc[LZF Data Format]
 
 * Security
-** xref:crypto-component.adoc[Crypto]
-** xref:crypto-component.adoc[PGP]
-** xref:secureXML-dataformat.adoc[XMLSecurity DataFormat]
+** xref:components::crypto-component.adoc[Crypto]
+** xref:components::crypto-component.adoc[PGP]
+** xref:components::secureXML-dataformat.adoc[XMLSecurity DataFormat]
 
 * Misc.
-** xref:base64-dataformat.adoc[Base64]
-** xref:custom-dataformat.adoc[Custom DataFormat] -- to use your own
-custom implementation
-** xref:mime-multipart-dataformat.adoc[MIME-Multipart]
-** xref:rss-dataformat.adoc[RSS]
-** xref:tidymarkup-dataformat.adoc[TidyMarkup]
-** xref:syslog-dataformat.adoc[Syslog]
-** xref:ical-dataformat.adoc[ICal]
-** xref:barcode-dataformat.adoc[Barcode] -- to read and generate barcodes
+** xref:components::base64-dataformat.adoc[Base64]
+** xref:components::mime-multipart-dataformat.adoc[MIME-Multipart]
+** xref:components::rss-dataformat.adoc[RSS]
+** xref:components::syslog-dataformat.adoc[Syslog]
+** xref:components::ical-dataformat.adoc[ICal]
+** xref:components::barcode-dataformat.adoc[Barcode] -- to read and generate barcodes
 (QR-Code, PDF417, ...)
 
 And related is the following:
 
-* xref:dataformat-component.adoc[DataFormat Component] for working with
+* xref:components::dataformat-component.adoc[DataFormat Component] for working with
   Data Formats as if it was a regular xref:component.adoc[Component]
   supporting xref:endpoint.adoc[Endpoints] and xref:uris.adoc[URIs].
 * xref:dozer-type-conversion.adoc[Dozer Type Conversion] using Dozer for
   type converting POJOs
 
 [[DataFormat-Unmarshalling]]
-==== Unmarshalling
+== Unmarshalling
 
 If you receive a message from one of the Camel
-xref:component.adoc[Components] such as xref:file-component.adoc[File],
-xref:http-component,HTTP>> or <<jms-component.adoc[JMS] you often want to unmarshal
+xref:component.adoc[Components] such as xref:components::file-component.adoc[File],
+xref:components::http-component.adoc[HTTP] or xref:components::jms-component.adoc[JMS] you often want to unmarshal
 the payload into some bean so that you can process it using some
 xref:bean-integration.adoc[Bean Integration] or perform
 xref:predicate.adoc[Predicate] evaluation and so forth. To do this use
@@ -107,7 +85,7 @@ XML file.
 
 You can also use the DSL itself to define the data format as you use it.
 For example the following uses Java serialization to unmarshal a binary
-file then send it as an ObjectMessage to xref:activemq.adoc[ActiveMQ]
+file then send it as an ObjectMessage to xref:components::activemq-component.adoc[ActiveMQ]
 
 [source,java]
 ----
@@ -117,7 +95,7 @@ from("file://foo/bar").
 ----
 
 [[DataFormat-Marshalling]]
-==== Marshalling
+== Marshalling
 
 Marshalling is the opposite of unmarshalling, where a bean is marshalled
 into some binary or textual format for transmission over some transport
@@ -129,7 +107,7 @@ xref:registry.adoc[Registry].
 
 The following example unmarshals via serialization then marshals using a
 named JAXB data format to perform a kind of
-xref:messageTranslator-eip.adoc[Message Translator]:
+xref:message-translator.adoc[Message Translator]:
 
 [source,java]
 ----
@@ -140,7 +118,7 @@ from("file://foo/bar").
 ----
 
 [[DataFormat-UsingSpringXML]]
-==== Using Spring XML
+== Using Spring XML
 
 This example shows how to configure the data type just once and reuse it
 on multiple routes:

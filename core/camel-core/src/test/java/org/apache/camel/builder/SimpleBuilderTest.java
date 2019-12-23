@@ -91,22 +91,22 @@ public class SimpleBuilderTest extends TestSupport {
         exchange.getIn().setHeader("activateUrl", "http://some/rest/api/(id)/activate");
         assertEquals("http://some/rest/api/12/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\(id\\)\",\"12\")}").evaluate(exchange, String.class));
 
-        //passes when contains { only
+        // passes when contains { only
         exchange.getIn().setHeader("activateUrl", "http://some/rest/api/{id/activate");
         assertEquals("http://some/rest/api/12/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\{id\",\"12\")}").evaluate(exchange, String.class));
 
         String replaced = "http://some/rest/api/{id}/activate".replaceAll("\\{id\\}", "12");
         assertEquals("http://some/rest/api/12/activate", replaced);
 
-        //passes when contains { }
+        // passes when contains { }
         exchange.getIn().setHeader("activateUrl", "http://some/rest/api/{id}/activate");
         assertEquals("http://some/rest/api/12/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\{id\\}\",\"12\")}").evaluate(exchange, String.class));
 
-        //passes when contains { } and another ${body} function
+        // passes when contains { } and another ${body} function
         exchange.getIn().setBody("12");
         assertEquals("http://some/rest/api/12/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\{id\\}\",\"${body}\")}").evaluate(exchange, String.class));
 
-        //passes when } is escaped with \}
+        // passes when } is escaped with \}
         assertEquals("http://some/rest/api/{}/activate", SimpleBuilder.simple("${header.activateUrl.replaceAll(\"\\{id\\}\",\"{\\}\")}").evaluate(exchange, String.class));
     }
 

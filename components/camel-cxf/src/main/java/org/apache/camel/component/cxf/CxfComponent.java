@@ -26,8 +26,7 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
-import org.apache.camel.support.IntrospectionSupport;
-import org.apache.cxf.message.Message;
+import org.apache.camel.util.PropertiesHelper;
 
 /**
  * Defines the <a href="http://camel.apache.org/cxf.html">CXF Component</a>
@@ -120,14 +119,8 @@ public class CxfComponent extends HeaderFilterStrategyComponent implements SSLCo
         setProperties(result, parameters);
 
         // extract the properties.xxx and set them as properties
-        Map<String, Object> properties = IntrospectionSupport.extractProperties(parameters, "properties.");
-        if (properties != null) {
-            result.setProperties(properties);
-        }
-        if (result.getProperties() != null) {
-            // set the properties of MTOM
-            result.setMtomEnabled(Boolean.valueOf((String) result.getProperties().get(Message.MTOM_ENABLED)));
-        }
+        Map<String, Object> properties = PropertiesHelper.extractProperties(parameters, "properties.");
+        result.setProperties(properties);
 
         // use global ssl config if set
         if (result.getSslContextParameters() == null) {

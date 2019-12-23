@@ -52,7 +52,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: common
          */
         default CryptoCmsEndpointBuilder keyStore(KeyStore keyStore) {
-            setProperty("keyStore", keyStore);
+            doSetProperty("keyStore", keyStore);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: common
          */
         default CryptoCmsEndpointBuilder keyStore(String keyStore) {
-            setProperty("keyStore", keyStore);
+            doSetProperty("keyStore", keyStore);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
                 Object keyStoreParameters) {
-            setProperty("keyStoreParameters", keyStoreParameters);
+            doSetProperty("keyStoreParameters", keyStoreParameters);
             return this;
         }
         /**
@@ -97,7 +97,47 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder keyStoreParameters(
                 String keyStoreParameters) {
-            setProperty("keyStoreParameters", keyStoreParameters);
+            doSetProperty("keyStoreParameters", keyStoreParameters);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default CryptoCmsEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default CryptoCmsEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -111,7 +151,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: decrypt
          */
         default CryptoCmsEndpointBuilder password(Character[] password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -125,32 +165,31 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: decrypt
          */
         default CryptoCmsEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
          * If true then the CMS message is base 64 encoded and must be decoded
          * during the processing. Default value is false.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: decrypt_verify
          */
-        default CryptoCmsEndpointBuilder fromBase64(Boolean fromBase64) {
-            setProperty("fromBase64", fromBase64);
+        default CryptoCmsEndpointBuilder fromBase64(boolean fromBase64) {
+            doSetProperty("fromBase64", fromBase64);
             return this;
         }
         /**
          * If true then the CMS message is base 64 encoded and must be decoded
          * during the processing. Default value is false.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: decrypt_verify
          */
         default CryptoCmsEndpointBuilder fromBase64(String fromBase64) {
-            setProperty("fromBase64", fromBase64);
+            doSetProperty("fromBase64", fromBase64);
             return this;
         }
         /**
@@ -164,7 +203,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder contentEncryptionAlgorithm(
                 String contentEncryptionAlgorithm) {
-            setProperty("contentEncryptionAlgorithm", contentEncryptionAlgorithm);
+            doSetProperty("contentEncryptionAlgorithm", contentEncryptionAlgorithm);
             return this;
         }
         /**
@@ -179,7 +218,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
                 Object originatorInformationProvider) {
-            setProperty("originatorInformationProvider", originatorInformationProvider);
+            doSetProperty("originatorInformationProvider", originatorInformationProvider);
             return this;
         }
         /**
@@ -194,7 +233,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder originatorInformationProvider(
                 String originatorInformationProvider) {
-            setProperty("originatorInformationProvider", originatorInformationProvider);
+            doSetProperty("originatorInformationProvider", originatorInformationProvider);
             return this;
         }
         /**
@@ -207,7 +246,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder recipient(List<Object> recipient) {
-            setProperty("recipient", recipient);
+            doSetProperty("recipient", recipient);
             return this;
         }
         /**
@@ -220,7 +259,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder recipient(String recipient) {
-            setProperty("recipient", recipient);
+            doSetProperty("recipient", recipient);
             return this;
         }
         /**
@@ -239,7 +278,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder secretKeyLength(int secretKeyLength) {
-            setProperty("secretKeyLength", secretKeyLength);
+            doSetProperty("secretKeyLength", secretKeyLength);
             return this;
         }
         /**
@@ -258,7 +297,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt
          */
         default CryptoCmsEndpointBuilder secretKeyLength(String secretKeyLength) {
-            setProperty("secretKeyLength", secretKeyLength);
+            doSetProperty("secretKeyLength", secretKeyLength);
             return this;
         }
         /**
@@ -274,7 +313,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 Object unprotectedAttributesGeneratorProvider) {
-            setProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
+            doSetProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
             return this;
         }
         /**
@@ -290,7 +329,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default CryptoCmsEndpointBuilder unprotectedAttributesGeneratorProvider(
                 String unprotectedAttributesGeneratorProvider) {
-            setProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
+            doSetProperty("unprotectedAttributesGeneratorProvider", unprotectedAttributesGeneratorProvider);
             return this;
         }
         /**
@@ -302,7 +341,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt_sign
          */
         default CryptoCmsEndpointBuilder toBase64(Boolean toBase64) {
-            setProperty("toBase64", toBase64);
+            doSetProperty("toBase64", toBase64);
             return this;
         }
         /**
@@ -315,7 +354,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: encrypt_sign
          */
         default CryptoCmsEndpointBuilder toBase64(String toBase64) {
-            setProperty("toBase64", toBase64);
+            doSetProperty("toBase64", toBase64);
             return this;
         }
         /**
@@ -328,7 +367,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: sign
          */
         default CryptoCmsEndpointBuilder includeContent(Boolean includeContent) {
-            setProperty("includeContent", includeContent);
+            doSetProperty("includeContent", includeContent);
             return this;
         }
         /**
@@ -342,7 +381,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: sign
          */
         default CryptoCmsEndpointBuilder includeContent(String includeContent) {
-            setProperty("includeContent", includeContent);
+            doSetProperty("includeContent", includeContent);
             return this;
         }
         /**
@@ -356,7 +395,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: sign
          */
         default CryptoCmsEndpointBuilder signer(List<Object> signer) {
-            setProperty("signer", signer);
+            doSetProperty("signer", signer);
             return this;
         }
         /**
@@ -370,7 +409,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: sign
          */
         default CryptoCmsEndpointBuilder signer(String signer) {
-            setProperty("signer", signer);
+            doSetProperty("signer", signer);
             return this;
         }
         /**
@@ -379,13 +418,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signatures. In the detached signature case, the header contains the
          * Signed Data object.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: verify
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
-                Boolean signedDataHeaderBase64) {
-            setProperty("signedDataHeaderBase64", signedDataHeaderBase64);
+                boolean signedDataHeaderBase64) {
+            doSetProperty("signedDataHeaderBase64", signedDataHeaderBase64);
             return this;
         }
         /**
@@ -394,14 +433,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signatures. In the detached signature case, the header contains the
          * Signed Data object.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: verify
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
                 String signedDataHeaderBase64) {
-            setProperty("signedDataHeaderBase64", signedDataHeaderBase64);
+            doSetProperty("signedDataHeaderBase64", signedDataHeaderBase64);
             return this;
         }
         /**
@@ -410,13 +448,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signer info matches with one of the specified certificates is
          * verified. Default value is true.
          * 
-         * The option is a: <code>java.lang.Boolean</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: verify
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
-                Boolean verifySignaturesOfAllSigners) {
-            setProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
+                boolean verifySignaturesOfAllSigners) {
+            doSetProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
             return this;
         }
         /**
@@ -425,14 +463,13 @@ public interface CryptoCmsEndpointBuilderFactory {
          * signer info matches with one of the specified certificates is
          * verified. Default value is true.
          * 
-         * The option will be converted to a <code>java.lang.Boolean</code>
-         * type.
+         * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: verify
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
                 String verifySignaturesOfAllSigners) {
-            setProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
+            doSetProperty("verifySignaturesOfAllSigners", verifySignaturesOfAllSigners);
             return this;
         }
     }
@@ -456,7 +493,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -469,7 +506,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          */
         default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -481,7 +518,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -493,7 +530,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -504,7 +541,7 @@ public interface CryptoCmsEndpointBuilderFactory {
      * Data format, and verifying CMS Signed Data.
      * 
      * Category: security,transformation
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-crypto-cms
      * 
      * Syntax: <code>crypto-cms:cryptoOperation:name</code>
@@ -520,6 +557,7 @@ public interface CryptoCmsEndpointBuilderFactory {
      * different signer/verifier/encryptor/decryptor endpoints within the camel
      * context.
      */
+    @Deprecated
     default CryptoCmsEndpointBuilder cryptoCms(String path) {
         class CryptoCmsEndpointBuilderImpl extends AbstractEndpointBuilder implements CryptoCmsEndpointBuilder, AdvancedCryptoCmsEndpointBuilder {
             public CryptoCmsEndpointBuilderImpl(String path) {

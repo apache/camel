@@ -156,6 +156,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         return !forceShutdown && super.isRunAllowed();
     }
 
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         AsyncProcessor[] processors = doGetProcessors();
         exchange.getContext().getReactiveExecutor().schedule(new State(exchange, callback, processors)::run);
@@ -261,6 +262,7 @@ public class FailOverLoadBalancer extends LoadBalancerSupport implements Traceab
         return ExchangeHelper.createCopy(exchange, true);
     }
 
+    @Override
     public String getTraceLabel() {
         return "failover";
     }

@@ -31,7 +31,7 @@ import org.apache.jackrabbit.value.StringValue;
 /**
  * A helper class to transform Object into JCR {@link Value} implementations 
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class JcrConverter {
 
     private JcrConverter() {

@@ -24,7 +24,7 @@ import org.junit.Test;
 public class RouteGroupTest extends ContextTestSupport {
 
     @Test
-    public void testRouteGroup()  {
+    public void testRouteGroup() {
         RouteDefinition definition = context.getRouteDefinition("route-id");
         Route route = context.getRoute("route-id");
 
@@ -37,10 +37,7 @@ public class RouteGroupTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .routeId("route-id")
-                    .routeGroup("route-group")
-                    .to("mock:output");
+                from("direct:start").routeId("route-id").routeGroup("route-group").to("mock:output");
             }
         };
     }

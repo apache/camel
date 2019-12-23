@@ -50,7 +50,7 @@ public class JasyptPropertiesTest extends CamelTestSupport {
         pc.setPropertiesParser(jasypt);
 
         // add properties component to camel context
-        context.addComponent("properties", pc);
+        context.setPropertiesComponent(pc);
         // END SNIPPET: e1
 
         return context;

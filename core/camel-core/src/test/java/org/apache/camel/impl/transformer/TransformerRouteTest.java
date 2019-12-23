@@ -49,7 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A TransformerTest demonstrates contract based declarative transformation via Java DSL.
+ * A TransformerTest demonstrates contract based declarative transformation via
+ * Java DSL.
  */
 public class TransformerRouteTest extends ContextTestSupport {
 
@@ -65,7 +66,7 @@ public class TransformerRouteTest extends ContextTestSupport {
                 LOG.info("Asserting String -> XOrderResponse convertion");
                 assertEquals(XOrderResponse.class, exchange.getIn().getBody().getClass());
             }
-            
+
         });
 
         MockEndpoint xyzresult = getMockEndpoint("mock:xyzresult");
@@ -84,7 +85,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         if (answerEx.getException() != null) {
             throw answerEx.getException();
         }
-        assertEquals(AOrderResponse.class, answerEx.getOut().getBody().getClass());
+        assertEquals(AOrderResponse.class, answerEx.getMessage().getBody().getClass());
         assertMockEndpointsSatisfied();
     }
 
@@ -106,7 +107,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         if (answerEx.getException() != null) {
             throw answerEx.getException();
         }
-        assertEquals("{name:XOrderResponse}", answerEx.getOut().getBody(String.class));
+        assertEquals("{name:XOrderResponse}", answerEx.getMessage().getBody(String.class));
         assertMockEndpointsSatisfied();
     }
 
@@ -128,7 +129,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         if (answerEx.getException() != null) {
             throw answerEx.getException();
         }
-        assertEquals("<XOrderResponse/>", answerEx.getOut().getBody(String.class));
+        assertEquals("<XOrderResponse/>", answerEx.getMessage().getBody(String.class));
         assertMockEndpointsSatisfied();
     }
 
@@ -150,7 +151,7 @@ public class TransformerRouteTest extends ContextTestSupport {
         if (answerEx.getException() != null) {
             throw answerEx.getException();
         }
-        assertEquals("name=XOrderResponse", answerEx.getOut().getBody(String.class));
+        assertEquals("name=XOrderResponse", answerEx.getMessage().getBody(String.class));
         assertMockEndpointsSatisfied();
     }
 
@@ -160,63 +161,32 @@ public class TransformerRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 context.getTypeConverterRegistry().addTypeConverters(new MyTypeConverters());
-                from("direct:abc")
-                    .inputType(AOrder.class)
-                    .outputType(AOrderResponse.class)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            LOG.info("Asserting input -> AOrder convertion");
-                            assertEquals(AOrder.class, exchange.getIn().getBody().getClass());
-                        }
-                    })
-                    .inOut("direct:xyz")
-                    .to("mock:abcresult");
+                from("direct:abc").inputType(AOrder.class).outputType(AOrderResponse.class).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        LOG.info("Asserting input -> AOrder convertion");
+                        assertEquals(AOrder.class, exchange.getIn().getBody().getClass());
+                    }
+                }).inOut("direct:xyz").to("mock:abcresult");
 
-                from("direct:xyz")
-                    .inputType(XOrder.class)
-                    .outputType(XOrderResponse.class)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            LOG.info("Asserting input -> XOrder convertion");
-                            assertEquals(XOrder.class, exchange.getIn().getBody().getClass());
-                            exchange.getIn().setBody("response");
-                        }
-                    }).to("mock:xyzresult");
-                
-                transformer()
-                    .scheme("json")
-                    .withDataFormat(new MyJsonDataFormatDefinition());
-                from("direct:dataFormat")
-                    .inputType("json:JsonXOrder")
-                    .outputType("json:JsonXOrderResponse")
-                    .inOut("direct:xyz");
-                
+                from("direct:xyz").inputType(XOrder.class).outputType(XOrderResponse.class).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        LOG.info("Asserting input -> XOrder convertion");
+                        assertEquals(XOrder.class, exchange.getIn().getBody().getClass());
+                        exchange.getIn().setBody("response");
+                    }
+                }).to("mock:xyzresult");
+
+                transformer().scheme("json").withDataFormat(new MyJsonDataFormatDefinition());
+                from("direct:dataFormat").inputType("json:JsonXOrder").outputType("json:JsonXOrderResponse").inOut("direct:xyz");
+
                 context.addComponent("myxml", new MyXmlComponent());
-                transformer()
-                    .fromType("xml:XmlXOrder")
-                    .toType(XOrder.class)
-                    .withUri("myxml:endpoint");
-                transformer()
-                    .fromType(XOrderResponse.class)
-                    .toType("xml:XmlXOrderResponse")
-                    .withUri("myxml:endpoint");
-                from("direct:endpoint")
-                    .inputType("xml:XmlXOrder")
-                    .outputType("xml:XmlXOrderResponse")
-                    .inOut("direct:xyz");
-                
-                transformer()
-                    .fromType("other:OtherXOrder")
-                    .toType(XOrder.class)
-                    .withJava(OtherToXOrderTransformer.class);
-                transformer()
-                    .fromType(XOrderResponse.class)
-                    .toType("other:OtherXOrderResponse")
-                    .withJava(XOrderResponseToOtherTransformer.class);
-                from("direct:custom")
-                    .inputType("other:OtherXOrder")
-                    .outputType("other:OtherXOrderResponse")
-                    .inOut("direct:xyz");
+                transformer().fromType("xml:XmlXOrder").toType(XOrder.class).withUri("myxml:endpoint");
+                transformer().fromType(XOrderResponse.class).toType("xml:XmlXOrderResponse").withUri("myxml:endpoint");
+                from("direct:endpoint").inputType("xml:XmlXOrder").outputType("xml:XmlXOrderResponse").inOut("direct:xyz");
+
+                transformer().fromType("other:OtherXOrder").toType(XOrder.class).withJava(OtherToXOrderTransformer.class);
+                transformer().fromType(XOrderResponse.class).toType("other:OtherXOrderResponse").withJava(XOrderResponseToOtherTransformer.class);
+                from("direct:custom").inputType("other:OtherXOrder").outputType("other:OtherXOrderResponse").inOut("direct:xyz");
             }
         };
     }
@@ -227,19 +197,19 @@ public class TransformerRouteTest extends ContextTestSupport {
             LOG.info("TypeConverter: String -> AOrder");
             return new AOrder();
         }
-        
+
         @Converter
         public XOrder toXOrder(AOrder aorder) {
             LOG.info("TypeConverter: AOrder -> XOrder");
             return new XOrder();
         }
-        
+
         @Converter
         public XOrderResponse toXOrderResponse(String res) {
             LOG.info("TypeConverter: String -> XOrderResponse");
             return new XOrderResponse();
         }
-        
+
         @Converter
         public AOrderResponse toAOrderResponse(XOrderResponse xres) {
             LOG.info("TypeConverter: XOrderResponse -> AOrderResponse");
@@ -274,14 +244,14 @@ public class TransformerRouteTest extends ContextTestSupport {
             });
         }
     }
-    
+
     public static class MyXmlComponent extends DefaultComponent {
         @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return new MyXmlEndpoint();
         }
     }
-    
+
     public static class MyXmlEndpoint extends DefaultEndpoint {
         @Override
         public Producer createProducer() throws Exception {
@@ -296,27 +266,30 @@ public class TransformerRouteTest extends ContextTestSupport {
                         assertEquals("<XOrder/>", input);
                         log.info("Endpoint: XML -> XOrder");
                         exchange.getIn().setBody(new XOrder());
-                        
+
                     }
                     callback.done(true);
                     return true;
                 }
             };
         }
+
         @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             return null;
         }
+
         @Override
         public boolean isSingleton() {
             return false;
         }
+
         @Override
         protected String createEndpointUri() {
             return "myxml:endpoint";
         }
     }
-    
+
     public static class OtherToXOrderTransformer extends Transformer {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
@@ -325,7 +298,7 @@ public class TransformerRouteTest extends ContextTestSupport {
             message.setBody(new XOrder());
         }
     }
-    
+
     public static class XOrderResponseToOtherTransformer extends Transformer {
         @Override
         public void transform(Message message, DataType from, DataType to) throws Exception {
@@ -333,9 +306,16 @@ public class TransformerRouteTest extends ContextTestSupport {
             message.setBody("name=XOrderResponse");
         }
     }
-    
-    public static class AOrder { }
-    public static class AOrderResponse { }
-    public static class XOrder { }
-    public static class XOrderResponse { }
+
+    public static class AOrder {
+    }
+
+    public static class AOrderResponse {
+    }
+
+    public static class XOrder {
+    }
+
+    public static class XOrderResponse {
+    }
 }

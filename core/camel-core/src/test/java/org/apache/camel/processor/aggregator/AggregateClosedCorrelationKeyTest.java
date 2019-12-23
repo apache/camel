@@ -35,10 +35,7 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(2).closeCorrelationKeyOnCompletion(1000)
-                        .to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).closeCorrelationKeyOnCompletion(1000).to("mock:result");
             }
         });
         context.start();
@@ -66,10 +63,7 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(2).closeCorrelationKeyOnCompletion(2)
-                        .to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).closeCorrelationKeyOnCompletion(2).to("mock:result");
             }
         });
         context.start();
@@ -82,11 +76,12 @@ public class AggregateClosedCorrelationKeyTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:start", "D", "id", 2);
         template.sendBodyAndHeader("direct:start", "E", "id", 3);
         template.sendBodyAndHeader("direct:start", "F", "id", 3);
-
+        Thread.sleep(200);
         // 2 of them should now be closed
         int closed = 0;
 
-        // should NOT be closed because only 2 and 3 is remembered as they are the two last used
+        // should NOT be closed because only 2 and 3 is remembered as they are
+        // the two last used
         try {
             template.sendBodyAndHeader("direct:start", "G", "id", 1);
         } catch (CamelExecutionException e) {

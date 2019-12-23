@@ -1,12 +1,16 @@
 [[github-component]]
-== GitHub Component
+= GitHub Component
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The GitHub component interacts with the GitHub API by
-encapsulating http://org.eclipse.egit.github.core[egit-github]. It
+encapsulating http://org.eclipse.egit.github.core[egit-github]. It
 currently provides polling for new pull requests, pull request comments,
-tags, and commits.  It is also able to produce comments on pull
+tags, and commits.  It is also able to produce comments on pull
 requests, as well as close the pull request entirely.
 
 Rather than webhooks, this endpoint relies on simple polling. Reasons
@@ -18,7 +22,7 @@ paging is available in the API)
 * The need to support apps running somewhere not publicly accessible
 where a webhook would fail
 
-Note that the GitHub API is fairly expansive.  Therefore, this component
+Note that the GitHub API is fairly expansive.  Therefore, this component
 could be easily expanded to provide additional interactions.
 
 Maven users will need to add the following dependency to their pom.xml
@@ -33,28 +37,29 @@ for this component:
 </dependency>
 -----------------------------------------
 
-### URI format
+== URI format
 
 [source,text]
 ---------------------------
 github://endpoint[?options]
 ---------------------------
 
-### Mandatory Options:
+== Mandatory Options:
 
 Note that these can be configured directly through the endpoint.
 
 
 // component options: START
-The GitHub component supports 2 options, which are listed below.
+The GitHub component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -69,7 +74,7 @@ github:type/branchName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +85,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+=== Query Parameters (14 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,14 +108,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-github-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -118,7 +123,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -126,15 +131,16 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.github.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.github.enabled* | Enable github component | true | Boolean
-| *camel.component.github.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.github.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.github.enabled* | Whether to enable auto configuration of the github component. This is enabled by default. |  | Boolean
+| *camel.component.github.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================
@@ -151,7 +157,7 @@ request discussion) or org.eclipse.egit.github.core.CommitComment
 |commit |polling |org.eclipse.egit.github.core.RepositoryCommit
 |=======================================================================
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 [width="100%",cols="20%,20%,60%",options="header",]
 |=======================================================================

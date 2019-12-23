@@ -63,16 +63,9 @@ public class RedeliveryErrorHandlerAsyncDelayedTwoCamelContextIssueTest {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .redeliveryDelay(10)
-                    .maximumRedeliveries(5)
-                    .maximumRedeliveryDelay(1000)
-                    .backOffMultiplier(1)
-                    .asyncDelayedRedelivery();
+                onException(Exception.class).redeliveryDelay(10).maximumRedeliveries(5).maximumRedeliveryDelay(1000).backOffMultiplier(1).asyncDelayedRedelivery();
 
-                from("seda://input")
-                    .bean(ProblematicBean.class)
-                    .to("seda://output");
+                from("seda://input").bean(ProblematicBean.class).to("seda://output");
             }
         });
         return context;

@@ -31,11 +31,10 @@ import com.google.api.services.bigquery.model.Table;
 import com.google.api.services.bigquery.model.TableFieldSchema;
 import com.google.api.services.bigquery.model.TableReference;
 import com.google.api.services.bigquery.model.TableSchema;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryComponent;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class BigQueryTestSupport extends CamelTestSupport {
@@ -82,7 +81,7 @@ public class BigQueryTestSupport extends CamelTestSupport {
         component.setConnectionFactory(connectionFactory);
 
         context.addComponent("google-bigquery", component);
-        context.addComponent("properties", new PropertiesComponent("ref:prop"));
+        context.getPropertiesComponent().setLocation("ref:prop");
     }
 
     @Override
@@ -92,11 +91,9 @@ public class BigQueryTestSupport extends CamelTestSupport {
         return context;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("prop", loadProperties());
-        return jndi;
+    @BindToRegistry("prop")
+    public Properties loadRegProperties() throws Exception {
+        return loadProperties();
     }
 
     public GoogleBigQueryConnectionFactory getConnectionFactory() {

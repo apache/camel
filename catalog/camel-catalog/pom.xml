@@ -17,14 +17,13 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>catalog</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-catalog</artifactId>
@@ -126,9 +125,11 @@
                                     </directory>
                                     <!-- the following files are maintained in camel-api and not here, so they are copied over -->
                                     <includes>
+                                        <include>ConfigurationPropertiesValidationResult.java</include>
                                         <include>EndpointValidationResult.java</include>
                                         <include>JSonSchemaResolver.java</include>
                                         <include>LanguageValidationResult.java</include>
+                                        <include>PropertiesValidationResult.java</include>
                                     </includes>
                                 </resource>
                                 <resource>
@@ -246,7 +247,7 @@
                         <goals>
                             <goal>prepare-catalog</goal>
                             <goal>prepare-user-guide</goal>
-                            <goal>prepare-readme</goal>
+                            <goal>update-doc-component-list</goal>
                             <goal>prepare-parent-pom</goal>
                             <goal>prepare-release-pom</goal>
                         </goals>

@@ -71,7 +71,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
                     + " if this option is false to support reading the stream multiple times."
                     + " If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,"
                     + " in case you do not need to read the message payload multiple times."
-                    + " The http/http4 producer will by default cache the response body stream. If setting this option to true,"
+                    + " The http producer will by default cache the response body stream. If setting this option to true,"
                     + " then the producers will not cache the response body stream but use the response stream as-is as the message body.")
     boolean disableStreamCache;
     @UriParam(description = "If enabled and an Exchange failed processing on the consumer side, and if the caused Exception was send back serialized"
@@ -81,6 +81,9 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             + " This is by default turned off. If you enable this then be aware that Java will deserialize the incoming"
             + " data from the request to Java and that can be a potential security risk.")
     boolean transferException;
+    @UriParam(label = "consumer",
+            description = "If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.")
+    boolean muteException;
     @UriParam(label = "producer", defaultValue = "false", description = "Specifies whether a Connection Close header must be added to HTTP Request. By default connectionClose is false.")
     boolean connectionClose;
     @UriParam(label = "consumer,advanced",
@@ -122,11 +125,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             description = "The status codes which are considered a success response. The values are inclusive. Multiple ranges can be"
                     + " defined, separated by comma, e.g. 200-204,209,301-304. Each range must be a single number or from-to with the dash included.")
     private String okStatusCodeRange = "200-299";
-    @UriParam(label = "producer,advanced",
-            description = "Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints."
-                    + " See more details at http://camel.apache.org/urlrewrite.html")
-    @Deprecated
-    private UrlRewrite urlRewrite;
     @UriParam(label = "consumer", defaultValue = "false",
             description = "Configure the consumer to work in async mode")
     private boolean async;
@@ -192,6 +190,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         return (HttpCommonComponent) super.getComponent();
     }
 
+    @Override
     public boolean isLenientProperties() {
         // true to allow dynamic URI options to be configured and passed to external system for eg. the HttpProducer
         return true;
@@ -234,6 +233,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
             httpBinding = new DefaultHttpBinding();
             httpBinding.setHeaderFilterStrategy(getHeaderFilterStrategy());
             httpBinding.setTransferException(isTransferException());
+            httpBinding.setMuteException(isMuteException());
             if (getComponent() != null) {
                 httpBinding.setAllowJavaSerializedObject(getComponent().isAllowJavaSerializedObject());
             }
@@ -283,6 +283,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
         this.httpUri = httpUri;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -290,6 +291,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -358,7 +360,7 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      * if this option is false to support reading the stream multiple times.
      * If you use Servlet to bridge/proxy an endpoint then consider enabling this option to improve performance,
      * in case you do not need to read the message payload multiple times.
-     + The http/http4 producer will by default cache the response body stream. If setting this option to true,
+     + The http producer will by default cache the response body stream. If setting this option to true,
      + then the producers will not cache the response body stream but use the response stream as-is as the message body.
      */
     public void setDisableStreamCache(boolean disable) {
@@ -378,6 +380,10 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
 
     public boolean isTransferException() {
         return transferException;
+    }
+
+    public boolean isMuteException() {
+        return muteException;
     }
     
     public boolean isConnectionClose() {
@@ -402,6 +408,13 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
+    }
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     */
+    public void setMuteException(boolean muteException) { 
+        this.muteException = muteException; 
     }
 
     public boolean isTraceEnabled() {
@@ -436,20 +449,6 @@ public abstract class HttpCommonEndpoint extends DefaultEndpoint implements Head
      */
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
-    }
-
-    @Deprecated
-    public UrlRewrite getUrlRewrite() {
-        return urlRewrite;
-    }
-
-    /**
-     * Refers to a custom org.apache.camel.component.http.UrlRewrite which allows you to rewrite urls when you bridge/proxy endpoints.
-     * See more details at http://camel.apache.org/urlrewrite.html
-     */
-    @Deprecated
-    public void setUrlRewrite(UrlRewrite urlRewrite) {
-        this.urlRewrite = urlRewrite;
     }
 
     public Integer getResponseBufferSize() {

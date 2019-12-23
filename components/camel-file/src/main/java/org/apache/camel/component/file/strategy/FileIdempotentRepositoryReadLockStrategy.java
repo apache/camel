@@ -129,30 +129,37 @@ public class FileIdempotentRepositoryReadLockStrategy extends ServiceSupport imp
         }
     }
 
+    @Override
     public void setTimeout(long timeout) {
         // noop
     }
 
+    @Override
     public void setCheckInterval(long checkInterval) {
         // noop
     }
 
+    @Override
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
     }
 
+    @Override
     public void setMarkerFiler(boolean markerFile) {
         // noop
     }
 
+    @Override
     public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
         // noop
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

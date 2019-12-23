@@ -46,10 +46,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("{{sys:FOO}}")
-                        .transform().constant("{{env:" + env.getKey() + "}}")
-                        .to("mock:bar");
+                from("direct:start").to("{{sys:FOO}}").transform().constant("{{env:" + env.getKey() + "}}").to("mock:bar");
             }
         });
         context.start();
@@ -71,9 +68,7 @@ public class PropertiesComponentDefaultFunctionsTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .to("{{sys:FOO2}}")
-                        .to("{{env:BAR2:mock:bar}}");
+                from("direct:start").to("{{sys:FOO2}}").to("{{env:BAR2:mock:bar}}");
             }
         });
         context.start();

@@ -81,7 +81,7 @@ import org.slf4j.LoggerFactory;
 /**
  * A helper class to transform to and from various JAXB types such as {@link Source} and {@link Document}
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public class XmlConverter {
 
     public static final String OUTPUT_PROPERTIES_PREFIX = "org.apache.camel.xmlconverter.output.";

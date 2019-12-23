@@ -64,6 +64,7 @@ public class FileValidatorRouteTest extends CamelTestSupport {
         assertTrue("Should be able to delete the file", FileUtil.deleteFile(new File("target/validator/invalid.json")));
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/validator");

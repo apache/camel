@@ -16,8 +16,9 @@
  */
 package org.apache.camel.example.cdi;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.model.rest.RestBindingMode;
 
 import static org.apache.camel.model.rest.RestParamType.body;
@@ -26,7 +27,7 @@ import static org.apache.camel.model.rest.RestParamType.path;
 /**
  * Define REST services using the Camel REST DSL
  */
-@ContextName("myCamel")
+@ApplicationScoped
 public class UserRouteBuilder extends RouteBuilder {
 
     @Override

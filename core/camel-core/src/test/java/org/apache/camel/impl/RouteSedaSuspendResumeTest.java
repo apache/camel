@@ -36,7 +36,7 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         mock.expectedBodiesReceived("A");
 
         template.sendBody("seda:foo", "A");
-        
+
         assertMockEndpointsSatisfied();
 
         log.info("Suspending");
@@ -49,7 +49,7 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         assertEquals("Suspended", context.getRouteController().getRouteStatus("foo").name());
         Route route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Suspended", ((StatefulService) route).getStatus().name());
+            assertEquals("Suspended", ((StatefulService)route).getStatus().name());
         }
 
         // need to give seda consumer thread time to idle
@@ -70,7 +70,7 @@ public class RouteSedaSuspendResumeTest extends ContextTestSupport {
         assertEquals("Started", context.getRouteController().getRouteStatus("foo").name());
         route = context.getRoute("foo");
         if (route instanceof StatefulService) {
-            assertEquals("Started", ((StatefulService) route).getStatus().name());
+            assertEquals("Started", ((StatefulService)route).getStatus().name());
         }
     }
 

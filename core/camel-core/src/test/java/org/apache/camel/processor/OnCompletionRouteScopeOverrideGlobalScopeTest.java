@@ -64,19 +64,17 @@ public class OnCompletionRouteScopeOverrideGlobalScopeTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // define a global on completion that is invoked when the exchage is complete
+                // define a global on completion that is invoked when the
+                // exchage is complete
                 onCompletion().to("log:global").to("mock:global");
 
                 // START SNIPPET: e1
                 from("direct:start")
-                    // route scoped onCompletion should override any global onCompletion, and thus its *only*
-                    // the one below that is triggered, any global will *not* be triggered.
-                    .onCompletion()
-                        .to("log:route")
-                        .to("mock:sync")
-                    .end()
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                    // route scoped onCompletion should override any global
+                    // onCompletion, and thus its *only*
+                    // the one below that is triggered, any global will *not* be
+                    // triggered.
+                    .onCompletion().to("log:route").to("mock:sync").end().process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };
@@ -87,6 +85,7 @@ public class OnCompletionRouteScopeOverrideGlobalScopeTest extends ContextTestSu
         public MyProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if ("Kabom".equals(exchange.getIn().getBody())) {
                 throw new IllegalArgumentException("Kabom");

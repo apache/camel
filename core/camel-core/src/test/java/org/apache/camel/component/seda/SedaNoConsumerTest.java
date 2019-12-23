@@ -32,7 +32,6 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         return false;
     }
 
-
     public void testInOnly() throws Exception {
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -68,7 +67,6 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         }
     }
 
-
     @Test
     public void testFailIfNoConsumer() throws Exception {
         context.addRoutes(new RouteBuilder() {
@@ -86,7 +84,6 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(SedaConsumerNotAvailableException.class, e.getCause());
         }
-
 
     }
 
@@ -108,7 +105,6 @@ public class SedaNoConsumerTest extends ContextTestSupport {
         template.sendBody("seda:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
-
 
     }
 

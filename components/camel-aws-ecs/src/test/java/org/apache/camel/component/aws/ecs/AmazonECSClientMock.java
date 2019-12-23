@@ -34,7 +34,6 @@ import com.amazonaws.services.ecs.model.ListClustersResult;
 public class AmazonECSClientMock extends AbstractAmazonECS {
 
     public AmazonECSClientMock() {
-        super();
     }
     
     @Override
@@ -69,7 +68,7 @@ public class AmazonECSClientMock extends AbstractAmazonECS {
     @Override
     public ListClustersResult listClusters(ListClustersRequest request) {
         ListClustersResult res = new ListClustersResult();
-        List<String> list = new ArrayList<String>();
+        List<String> list = new ArrayList<>();
         list.add("Test");
         res.setClusterArns(list);
         return res;

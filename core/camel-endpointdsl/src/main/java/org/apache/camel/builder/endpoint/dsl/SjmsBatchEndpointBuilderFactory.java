@@ -19,10 +19,12 @@ package org.apache.camel.builder.endpoint.dsl;
 import java.util.concurrent.ScheduledExecutorService;
 import javax.annotation.Generated;
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 
 /**
@@ -54,7 +56,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder aggregationStrategy(
                 AggregationStrategy aggregationStrategy) {
-            setProperty("aggregationStrategy", aggregationStrategy);
+            doSetProperty("aggregationStrategy", aggregationStrategy);
             return this;
         }
         /**
@@ -69,7 +71,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder aggregationStrategy(
                 String aggregationStrategy) {
-            setProperty("aggregationStrategy", aggregationStrategy);
+            doSetProperty("aggregationStrategy", aggregationStrategy);
             return this;
         }
         /**
@@ -81,7 +83,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder allowNullBody(boolean allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -93,7 +95,43 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder allowNullBody(String allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default SjmsBatchEndpointBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default SjmsBatchEndpointBuilder bridgeErrorHandler(
+                String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -109,7 +147,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder completionInterval(
                 int completionInterval) {
-            setProperty("completionInterval", completionInterval);
+            doSetProperty("completionInterval", completionInterval);
             return this;
         }
         /**
@@ -125,7 +163,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder completionInterval(
                 String completionInterval) {
-            setProperty("completionInterval", completionInterval);
+            doSetProperty("completionInterval", completionInterval);
             return this;
         }
         /**
@@ -142,7 +180,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder completionPredicate(
                 Predicate completionPredicate) {
-            setProperty("completionPredicate", completionPredicate);
+            doSetProperty("completionPredicate", completionPredicate);
             return this;
         }
         /**
@@ -160,7 +198,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder completionPredicate(
                 String completionPredicate) {
-            setProperty("completionPredicate", completionPredicate);
+            doSetProperty("completionPredicate", completionPredicate);
             return this;
         }
         /**
@@ -171,7 +209,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder completionSize(int completionSize) {
-            setProperty("completionSize", completionSize);
+            doSetProperty("completionSize", completionSize);
             return this;
         }
         /**
@@ -182,7 +220,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder completionSize(String completionSize) {
-            setProperty("completionSize", completionSize);
+            doSetProperty("completionSize", completionSize);
             return this;
         }
         /**
@@ -197,7 +235,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder completionTimeout(int completionTimeout) {
-            setProperty("completionTimeout", completionTimeout);
+            doSetProperty("completionTimeout", completionTimeout);
             return this;
         }
         /**
@@ -213,7 +251,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder completionTimeout(
                 String completionTimeout) {
-            setProperty("completionTimeout", completionTimeout);
+            doSetProperty("completionTimeout", completionTimeout);
             return this;
         }
         /**
@@ -224,7 +262,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder consumerCount(int consumerCount) {
-            setProperty("consumerCount", consumerCount);
+            doSetProperty("consumerCount", consumerCount);
             return this;
         }
         /**
@@ -235,7 +273,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder consumerCount(String consumerCount) {
-            setProperty("consumerCount", consumerCount);
+            doSetProperty("consumerCount", consumerCount);
             return this;
         }
         /**
@@ -250,7 +288,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder eagerCheckCompletion(
                 boolean eagerCheckCompletion) {
-            setProperty("eagerCheckCompletion", eagerCheckCompletion);
+            doSetProperty("eagerCheckCompletion", eagerCheckCompletion);
             return this;
         }
         /**
@@ -265,7 +303,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder eagerCheckCompletion(
                 String eagerCheckCompletion) {
-            setProperty("eagerCheckCompletion", eagerCheckCompletion);
+            doSetProperty("eagerCheckCompletion", eagerCheckCompletion);
             return this;
         }
         /**
@@ -280,7 +318,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -295,7 +333,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -308,7 +346,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -321,7 +359,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder mapJmsMessage(String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -334,7 +372,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder pollDuration(int pollDuration) {
-            setProperty("pollDuration", pollDuration);
+            doSetProperty("pollDuration", pollDuration);
             return this;
         }
         /**
@@ -347,7 +385,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder pollDuration(String pollDuration) {
-            setProperty("pollDuration", pollDuration);
+            doSetProperty("pollDuration", pollDuration);
             return this;
         }
         /**
@@ -362,7 +400,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -377,7 +415,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default SjmsBatchEndpointBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
     }
@@ -390,6 +428,63 @@ public interface SjmsBatchEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default SjmsBatchEndpointBuilder basic() {
             return (SjmsBatchEndpointBuilder) this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedSjmsBatchEndpointBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedSjmsBatchEndpointBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedSjmsBatchEndpointBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedSjmsBatchEndpointBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
         }
         /**
          * Whether to startup the consumer message listener asynchronously, when
@@ -409,7 +504,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -430,7 +525,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -443,7 +538,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -456,7 +551,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -470,7 +565,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -484,7 +579,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -506,7 +601,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -528,7 +623,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -547,7 +642,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
                 int keepAliveDelay) {
-            setProperty("keepAliveDelay", keepAliveDelay);
+            doSetProperty("keepAliveDelay", keepAliveDelay);
             return this;
         }
         /**
@@ -566,7 +661,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
                 String keepAliveDelay) {
-            setProperty("keepAliveDelay", keepAliveDelay);
+            doSetProperty("keepAliveDelay", keepAliveDelay);
             return this;
         }
         /**
@@ -581,7 +676,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -596,7 +691,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -610,7 +705,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder recoveryInterval(
                 int recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -624,7 +719,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder recoveryInterval(
                 String recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -636,7 +731,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -648,7 +743,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -664,7 +759,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(
                 ScheduledExecutorService timeoutCheckerExecutorService) {
-            setProperty("timeoutCheckerExecutorService", timeoutCheckerExecutorService);
+            doSetProperty("timeoutCheckerExecutorService", timeoutCheckerExecutorService);
             return this;
         }
         /**
@@ -680,7 +775,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          */
         default AdvancedSjmsBatchEndpointBuilder timeoutCheckerExecutorService(
                 String timeoutCheckerExecutorService) {
-            setProperty("timeoutCheckerExecutorService", timeoutCheckerExecutorService);
+            doSetProperty("timeoutCheckerExecutorService", timeoutCheckerExecutorService);
             return this;
         }
     }
@@ -690,7 +785,7 @@ public interface SjmsBatchEndpointBuilderFactory {
      * transactional batch consumption from a JMS queue.
      * 
      * Category: messaging
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-sjms
      * 
      * Syntax: <code>sjms-batch:destinationName</code>

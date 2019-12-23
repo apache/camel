@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.util.Comparator;
 
 import org.apache.camel.ContextTestSupport;
@@ -26,7 +27,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Unit test for  the file sorter ref option
+ * Unit test for the file sorter ref option
  */
 public class FileSorterRefTest extends ContextTestSupport {
 
@@ -49,14 +50,11 @@ public class FileSorterRefTest extends ContextTestSupport {
 
     @Test
     public void testSortFiles() throws Exception {
-        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello Paris",
-                Exchange.FILE_NAME, "paris.txt");
+        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello Paris", Exchange.FILE_NAME, "paris.txt");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello London",
-                Exchange.FILE_NAME, "london.txt");
+        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello London", Exchange.FILE_NAME, "london.txt");
 
-        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello Copenhagen",
-                Exchange.FILE_NAME, "copenhagen.txt");
+        template.sendBodyAndHeader("file:target/data/filesorter/", "Hello Copenhagen", Exchange.FILE_NAME, "copenhagen.txt");
 
         context.addRoutes(new RouteBuilder() {
             @Override
@@ -72,6 +70,7 @@ public class FileSorterRefTest extends ContextTestSupport {
 
     // START SNIPPET: e1
     public class MyFileSorter<T> implements Comparator<GenericFile<T>> {
+        @Override
         public int compare(GenericFile<T> o1, GenericFile<T> o2) {
             return o1.getFileName().compareToIgnoreCase(o2.getFileName());
         }

@@ -1,7 +1,12 @@
 [[ftp-component]]
-== FTP Component
+= FTP Component
+:page-source: components/camel-ftp/src/main/docs/ftp-component.adoc
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 This component provides access to remote file systems over the FTP and
 SFTP protocols.
@@ -27,7 +32,7 @@ for this component:
 ----
 
 
-=== URI format
+== URI format
 
 [source,java]
 ----
@@ -40,10 +45,10 @@ Where *directoryname* represents the underlying directory. The directory
 name is a relative path. Absolute path's is *not* supported. The
 relative path can contain nested folders, such as /inbox/us.
 
-The `autoCreate` option is supported. When consumer
+The `autoCreate` option is supported. When consumer
 starts, before polling is scheduled, there's additional FTP operation
 performed to create the directory configured for endpoint. The default
-value for `autoCreate` is `true`.
+value for `autoCreate` is `true`.
 
 If no *username* is provided, then `anonymous` login is attempted using
 no password. +
@@ -61,21 +66,22 @@ SFTP uses http://www.jcraft.com/jsch/[JCraft JSCH].
 support for the Transport Layer Security (TLS) and the Secure Sockets
 Layer (SSL) cryptographic protocols.
 
-=== URI Options
+== URI Options
 
 The options below are exclusive for the FTP component.
 
 
 // component options: START
-The FTP component supports 2 options, which are listed below.
+The FTP component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -90,7 +96,7 @@ ftp:host:port/directoryName
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -102,7 +108,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (110 parameters):
+=== Query Parameters (110 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -137,11 +143,10 @@ with the following path and query parameters:
 | *inProgressRepository* (consumer) | A pluggable in-progress repository org.apache.camel.spi.IdempotentRepository. The in-progress repository is used to account the current in progress files being consumed. By default a memory based repository is used. |  | IdempotentRepository
 | *localWorkDirectory* (consumer) | When consuming, a local work directory can be used to store the remote file content directly in local files, to avoid loading the content into memory. This is beneficial, if you consume a very big remote file and thus can conserve memory. |  | String
 | *onCompletionException Handler* (consumer) | To use a custom org.apache.camel.spi.ExceptionHandler to handle any thrown exceptions that happens during the file on completion process where the consumer does either a commit or rollback. The default implementation will log any exception at WARN level and ignore. |  | ExceptionHandler
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
-| *processStrategy* (consumer) | A pluggable org.apache.camel.component.file.GenericFileProcessStrategy allowing you to implement your own readLock option or similar. Can also be used when special conditions must be met before a file can be consumed, such as a special ready file exists. If this option is set then the readLock option does not apply. |  | GenericFileProcess Strategy
-| *receiveBufferSize* (consumer) | The receive (download) buffer size Used only by FTPClient | 32768 | int
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *processStrategy* (consumer) | A pluggable org.apache.camel.component.file.GenericFileProcessStrategy allowing you to implement your own readLock option or similar. Can also be used when special conditions must be met before a file can be consumed, such as a special ready file exists. If this option is set then the readLock option does not apply. |  | GenericFileProcessStrategy
 | *useList* (consumer) | Whether to allow using LIST command when downloading a file. Default is true. In some use cases you may want to download a specific file and are not allowed to use the LIST command, and therefore you can set this option to false. Notice when using this option, then the specific file to download does not include meta-data information such as file size, timestamp, permissions etc, because those information is only possible to retrieve when LIST command is in use. | true | boolean
-| *fileExist* (producer) | What to do if a file already exists with the same name. Override, which is the default, replaces the existing file. Append - adds content to the existing file. Fail - throws a GenericFileOperationException, indicating that there is already an existing file. Ignore - silently ignores the problem and does not override the existing file, but assumes everything is okay. Move - option requires to use the moveExisting option to be configured as well. The option eagerDeleteTargetFile can be used to control what to do if an moving the file, and there exists already an existing file, otherwise causing the move operation to fail. The Move option will move any existing files, before writing the target file. TryRename is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name, without doing any exists check. This check may be faster on some file systems and especially FTP servers. | Override | GenericFileExist
+| *fileExist* (producer) | What to do if a file already exists with the same name. Override, which is the default, replaces the existing file. - Append - adds content to the existing file. - Fail - throws a GenericFileOperationException, indicating that there is already an existing file. - Ignore - silently ignores the problem and does not override the existing file, but assumes everything is okay. - Move - option requires to use the moveExisting option to be configured as well. The option eagerDeleteTargetFile can be used to control what to do if an moving the file, and there exists already an existing file, otherwise causing the move operation to fail. The Move option will move any existing files, before writing the target file. - TryRename is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name, without doing any exists check. This check may be faster on some file systems and especially FTP servers. | Override | GenericFileExist
 | *flatten* (producer) | Flatten is used to flatten the file name path to strip any leading paths, so it's just the file name. This allows you to consume recursively into sub-directories, but when you eg write the files to another directory they will be written in a single directory. Setting this to true on the producer enforces that any file name in CamelFileName header will be stripped for any leading paths. | false | boolean
 | *jailStartingDirectory* (producer) | Used for jailing (restricting) writing files to the starting directory (and sub) only. This is enabled by default to not allow Camel to write files to outside directories (to be more secured out of the box). You can turn this off to allow writing files to directories outside the starting directory, such as parent or root folders. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -153,12 +158,12 @@ with the following path and query parameters:
 | *disconnectOnBatchComplete* (producer) | Whether or not to disconnect from remote FTP server right after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection to the FTP server. | false | boolean
 | *eagerDeleteTargetFile* (producer) | Whether or not to eagerly delete any existing target file. This option only applies when you use fileExists=Override and the tempFileName option as well. You can use this to disable (set it to false) deleting the target file before the temp file is written. For example you may write big files and want the target file to exists during the temp file is being written. This ensure the target file is only deleted until the very last moment, just before the temp file is being renamed to the target filename. This option is also used to control whether to delete any existing files when fileExist=Move is enabled, and an existing file exists. If this option copyAndDeleteOnRenameFails false, then an exception will be thrown if an existing file existed, if its true, then the existing file is deleted before the move operation. | true | boolean
 | *keepLastModified* (producer) | Will keep the last modified timestamp from the source file (if any). Will use the Exchange.FILE_LAST_MODIFIED header to located the timestamp. This header can contain either a java.util.Date or long with the timestamp. If the timestamp exists and the option is enabled it will set this timestamp on the written file. Note: This option only applies to the file producer. You cannot use this option with any of the \ftp producers. | false | boolean
-| *moveExistingFileStrategy* (producer) | Strategy (Custom Strategy) used to move file with special naming token to use when fileExist=Move is configured. By default, there is an implementation used if no custom strategy is provided |  | FileMoveExisting Strategy
+| *moveExistingFileStrategy* (producer) | Strategy (Custom Strategy) used to move file with special naming token to use when fileExist=Move is configured. By default, there is an implementation used if no custom strategy is provided |  | FileMoveExistingStrategy
 | *sendNoop* (producer) | Whether to send a noop command as a pre-write check before uploading files to the FTP server. This is enabled by default as a validation of the connection is still valid, which allows to silently re-connect to be able to upload the file. However if this causes problems, you can turn this option off. | true | boolean
 | *activePortRange* (advanced) | Set the client side port range in active mode. The syntax is: minPort-maxPort Both port numbers are inclusive, eg 10000-19999 to include all 1xxxx ports. |  | String
 | *autoCreate* (advanced) | Automatically create missing directories in the file's pathname. For the file consumer, that means creating the starting directory. For the file producer, it means the directory the files should be written to. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
-| *bufferSize* (advanced) | Write buffer sized in bytes. | 131072 | int
+| *bufferSize* (advanced) | Buffer size in bytes used for writing files (or in case of FTP for downloading and uploading files). | 131072 | int
 | *connectTimeout* (advanced) | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH | 10000 | int
 | *ftpClient* (advanced) | To use a custom instance of FTPClient |  | FTPClient
 | *ftpClientConfig* (advanced) | To use a custom instance of FTPClientConfig to configure the FTP client the endpoint should use. |  | FTPClientConfig
@@ -188,8 +193,8 @@ with the following path and query parameters:
 | *maxMessagesPerPoll* (filter) | To define a maximum messages to gather per poll. By default no maximum is set. Can be used to set a limit of e.g. 1000 to avoid when starting up the server that there are thousands of files. Set a value of 0 or negative to disabled it. Notice: If this option is in use then the File and FTP components will limit before any sorting. For example if you have 100000 files and use maxMessagesPerPoll=500, then only the first 500 files will be picked up, and then sorted. You can use the eagerMaxMessagesPerPoll option and set this to false to allow to scan all files first and then sort afterwards. |  | int
 | *minDepth* (filter) | The minimum depth to start processing when recursively processing a directory. Using minDepth=1 means the base directory. Using minDepth=2 means the first sub directory. |  | int
 | *move* (filter) | Expression (such as Simple Language) used to dynamically set the filename when moving it after processing. To move files into a .done subdirectory just enter .done. |  | String
-| *exclusiveReadLockStrategy* (lock) | Pluggable read-lock as a org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy implementation. |  | GenericFileExclusive ReadLockStrategy
-| *readLock* (lock) | Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. the file is not in-progress or being written). Camel will wait until the file lock is granted. This option provides the build in strategies: none - No read lock is in use markerFile - Camel creates a marker file (fileName.camelLock) and then holds a lock on it. This option is not available for the FTP component changed - Changed is using file length/modification timestamp to detect whether the file is currently being copied or not. Will at least use 1 sec to determine this, so this option cannot consume files as fast as the others, but can be more reliable as the JDK IO API cannot always determine whether a file is currently being used by another process. The option readLockCheckInterval can be used to set the check frequency. fileLock - is for using java.nio.channels.FileLock. This option is not avail for Windows OS and the FTP component. This approach should be avoided when accessing a remote file system via a mount/share unless that file system supports distributed file locks. rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock. idempotent - (only for file component) idempotent is for using a idempotentRepository as the read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. idempotent-changed - (only for file component) idempotent-changed is for using a idempotentRepository and changed as the combined read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. idempotent-rename - (only for file component) idempotent-rename is for using a idempotentRepository and rename as the combined read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. Notice: The various read locks is not all suited to work in clustered mode, where concurrent consumers on different nodes is competing for the same files on a shared file system. The markerFile using a close to atomic operation to create the empty marker file, but its not guaranteed to work in a cluster. The fileLock may work better but then the file system need to support distributed file locks, and so on. Using the idempotent read lock can support clustering if the idempotent repository supports clustering, such as Hazelcast Component or Infinispan. | none | String
+| *exclusiveReadLockStrategy* (lock) | Pluggable read-lock as a org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy implementation. |  | GenericFileExclusiveReadLockStrategy
+| *readLock* (lock) | Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. the file is not in-progress or being written). Camel will wait until the file lock is granted. This option provides the build in strategies: - none - No read lock is in use - markerFile - Camel creates a marker file (fileName.camelLock) and then holds a lock on it. This option is not available for the FTP component - changed - Changed is using file length/modification timestamp to detect whether the file is currently being copied or not. Will at least use 1 sec to determine this, so this option cannot consume files as fast as the others, but can be more reliable as the JDK IO API cannot always determine whether a file is currently being used by another process. The option readLockCheckInterval can be used to set the check frequency. - fileLock - is for using java.nio.channels.FileLock. This option is not avail for Windows OS and the FTP component. This approach should be avoided when accessing a remote file system via a mount/share unless that file system supports distributed file locks. - rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock. - idempotent - (only for file component) idempotent is for using a idempotentRepository as the read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. - idempotent-changed - (only for file component) idempotent-changed is for using a idempotentRepository and changed as the combined read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. - idempotent-rename - (only for file component) idempotent-rename is for using a idempotentRepository and rename as the combined read-lock. This allows to use read locks that supports clustering if the idempotent repository implementation supports that. Notice: The various read locks is not all suited to work in clustered mode, where concurrent consumers on different nodes is competing for the same files on a shared file system. The markerFile using a close to atomic operation to create the empty marker file, but its not guaranteed to work in a cluster. The fileLock may work better but then the file system need to support distributed file locks, and so on. Using the idempotent read lock can support clustering if the idempotent repository supports clustering, such as Hazelcast Component or Infinispan. | none | String
 | *readLockCheckInterval* (lock) | Interval in millis for the read-lock, if supported by the read lock. This interval is used for sleeping between attempts to acquire the read lock. For example when using the changed read lock, you can set a higher interval period to cater for slow writes. The default of 1 sec. may be too fast if the producer is very slow writing the file. Notice: For FTP the default readLockCheckInterval is 5000. The readLockTimeout value must be higher than readLockCheckInterval, but a rule of thumb is to have a timeout that is at least 2 or more times higher than the readLockCheckInterval. This is needed to ensure that amble time is allowed for the read lock process to try to grab the lock before the timeout was hit. | 1000 | long
 | *readLockDeleteOrphanLock Files* (lock) | Whether or not read lock with marker files should upon startup delete any orphan read lock files, which may have been left on the file system, if Camel was not properly shutdown (such as a JVM crash). If turning this option to false then any orphaned lock file will cause Camel to not attempt to pickup that file, this could also be due another node is concurrently reading files from the same shared directory. | true | boolean
 | *readLockLoggingLevel* (lock) | Logging level used when a read lock could not be acquired. By default a DEBUG is logged. You can change this level, for example to OFF to not have any logging. This option is only applicable for readLock of types: changed, fileLock, idempotent, idempotent-changed, idempotent-rename, rename. | DEBUG | LoggingLevel
@@ -205,10 +210,11 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
@@ -221,14 +227,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-ftp-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -236,7 +242,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -244,15 +250,16 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.ftp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.ftp.enabled* | Enable \ftp component | true | Boolean
-| *camel.component.ftp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.ftp.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.ftp.enabled* | Whether to enable auto configuration of the \ftp component. This is enabled by default. |  | Boolean
+| *camel.component.ftp.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
 
-=== FTPS component default trust store
+== FTPS component default trust store
 
 When using the `ftpClient.` properties related to SSL with the FTPS
 component, the trust store accept all certificates. If you only want
@@ -286,7 +293,7 @@ from("ftp://foo@myserver?password=secret&ftpClient.dataTimeout=30000&ftpClientCo
 You can have as many of these options as you like.
 
 See the documentation of the Apache Commons FTP FTPClientConfig for
-possible options and more details. And as well for Apache Commons FTP
+possible options and more details. And as well for Apache Commons FTP
 FTPClient.
 
 If you do not like having many and long configuration in the url you can
@@ -315,7 +322,7 @@ from("ftp://foo@myserver?password=secret&ftpClientConfig=#myConfig").to("bean:fo
 //=== More URI options
 
 
-=== Examples
+== Examples
 
 ----
 ftp://someone@someftpserver.com/public/upload/images/holiday2008?password=secret&binary=true
@@ -325,7 +332,7 @@ ftp://someoneelse@someotherftpserver.co.uk:12049/reports/2008/password=secret&bi
 ftp://publicftpserver.com/download
 ----
 
-=== Concurrency
+== Concurrency
 
 FTP Consumer does not support concurrency
 
@@ -336,13 +343,13 @@ is only a single endpoint that does not support concurrent consumers.
 
 The FTP producer does *not* have this issue, it supports concurrency.
 
-=== More information
+== More information
 
 This component is an extension of the File component.
 So there are more samples and details on the File
 component page.
 
-=== Default when consuming files
+== Default when consuming files
 
 The FTP consumer will by default leave the consumed
 files untouched on the remote FTP server. You have to configure it
@@ -355,7 +362,7 @@ default move files to a `.camel` sub directory. The reason Camel does
 *not* do this by default for the FTP consumer is that it may lack
 permissions by default to be able to move or delete files.
 
-==== limitations
+=== limitations
 
 The option *readLock* can be used to force Camel *not* to consume files
 that is currently in the progress of being written. However, this option
@@ -371,7 +378,7 @@ restricted to the FTP_ROOT folder. That prevents you from moving files
 outside the FTP area. If you want to move files to another area you can
 use soft links and move files into a soft linked folder.
 
-=== Message Headers
+== Message Headers
 
 The following message headers can be used to affect the behavior of the
 component
@@ -410,7 +417,7 @@ In addition the FTP/FTPS consumer and producer will enrich the Camel
 |`CamelFtpReplyString` |The FTP client reply string
 |=======================================================================
 
-=== About timeouts
+== About timeouts
 
 The two set of libraries (see top) has different API for setting
 timeout. You can use the `connectTimeout` option for both of them to set
@@ -421,7 +428,7 @@ a timeout in millis to establish a network connection. An individual
 for FTP/FTPS as the data timeout, which corresponds to the
 `ftpClient.dataTimeout` value. All timeout values are in millis.
 
-=== Using Local Work Directory
+== Using Local Work Directory
 
 Camel supports consuming from remote FTP servers and downloading the
 files directly into a local work directory. This avoids reading the
@@ -443,14 +450,14 @@ from("ftp://someone@someserver.com?password=secret&localWorkDirectory=/tmp").to(
 ----
 
 [TIP, caption='Optimization by renaming work file']
-====
+===
 The route above is ultra efficient as it avoids reading the entire file content into memory.
 It will download the remote file directly to a local file stream.
 The `java.io.File` handle is then used as the Exchange body. The file producer leverages this fact and can work directly on the work file `java.io.File` handle and perform a `java.io.File.rename` to the target filename.
 As Camel knows it's a local work file, it can optimize and use a rename instead of a file copy, as the work file is meant to be deleted anyway.
-====
+===
 
-=== Stepwise changing directories
+== Stepwise changing directories
 
 Camel FTP can operate in two modes in terms of
 traversing directories when consuming files (eg downloading) or
@@ -485,7 +492,7 @@ FTP server we need to traverse and download files:
 And that we have a file in each of sub-a (a.txt) and sub-b (b.txt)
 folder.
 
-==== Using stepwise=true (default mode)
+== Using stepwise=true (default mode)
 
 [source,java]
 ----
@@ -575,7 +582,7 @@ disconnected.
 As you can see when stepwise is enabled, it will traverse the directory
 structure using CD xxx.
 
-==== Using stepwise=false
+== Using stepwise=false
 
 [source,java]
 ----
@@ -622,7 +629,7 @@ disconnected.
 As you can see when not using stepwise, there are no CD operation
 invoked at all.
 
-=== Samples
+== Samples
 
 In the sample below we set up Camel to download all the reports from the
 FTP server once every hour (60 min) as BINARY content and store it as
@@ -638,7 +645,7 @@ And the route using Spring DSL:
   </route>
 ----
 
-==== Consuming a remote FTPS server (implicit SSL) and client authentication
+=== Consuming a remote FTPS server (implicit SSL) and client authentication
 
 [source,java]
 ----
@@ -648,7 +655,7 @@ from("ftps://admin@localhost:2222/public/camel?password=admin&securityProtocol=S
   .to("bean:foo");
 ----
 
-==== Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
+=== Consuming a remote FTPS server (explicit TLS) and a custom trust store configuration
 
 [source,java]
 ----
@@ -656,7 +663,7 @@ from("ftps://admin@localhost:2222/public/camel?password=admin&ftpClient.trustSto
   .to("bean:foo");
 ----
 
-=== Filter using `org.apache.camel.component.file.GenericFileFilter`
+== Custom filtering
 
 Camel supports pluggable filtering strategies. This strategy it to use
 the build in `org.apache.camel.component.file.GenericFileFilter` in
@@ -681,7 +688,7 @@ spring XML file:
   </route>
 ----
 
-=== Filtering using ANT path matcher
+== Filtering using ANT path matcher
 
 The ANT path matcher is a filter that is shipped out-of-the-box in the
 *camel-spring* jar. So you need to depend on *camel-spring* if you are
@@ -698,7 +705,7 @@ The file paths are matched with the following rules:
 
 The sample below demonstrates how to use it:
 
-=== Using a proxy with SFTP
+== Using a proxy with SFTP
 
 To use an HTTP proxy to connect to your remote host, you can configure
 your route in the following way:
@@ -721,7 +728,7 @@ You can also assign a user name and password to the proxy, if necessary.
 Please consult the documentation for `com.jcraft.jsch.Proxy` to discover
 all options.
 
-=== Setting preferred SFTP authentication method
+== Setting preferred SFTP authentication method
 
 If you want to explicitly specify the list of authentication methods
 that should be used by `sftp` component, use `preferredAuthentications`
@@ -736,7 +743,7 @@ from("sftp://localhost:9999/root?username=admin&password=admin&preferredAuthenti
   to("bean:processFile");
 ----
 
-=== Consuming a single file using a fixed name
+== Consuming a single file using a fixed name
 
 When you want to download a single file and knows the file name, you can
 use `fileName=myFileName.txt` to tell Camel the name of the file to
@@ -771,16 +778,8 @@ single file (if it exists) and grab the file content as a String type:
 String data = template.retrieveBodyNoWait("ftp://admin@localhost:21/nolist/?password=admin&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true", String.class);
 ----
 
-=== Debug logging
+== Debug logging
 
 This component has log level *TRACE* that can be helpful if you have
 problems.
 
-=== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* File2

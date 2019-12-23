@@ -50,6 +50,7 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Tr
         this.message = message;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         Exception cause = exception;
 
@@ -77,15 +78,18 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Tr
         return true;
     }
 
+    @Override
     public String getTraceLabel() {
         String className = this.exception == null ? this.type.getSimpleName() : this.exception.getClass().getSimpleName();
         return "throwException[" + className + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -102,14 +106,17 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Tr
         return message;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public String toString() {
         return "ThrowException";
     }

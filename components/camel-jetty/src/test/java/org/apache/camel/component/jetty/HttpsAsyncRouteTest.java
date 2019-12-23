@@ -22,9 +22,9 @@ import java.io.InputStream;
 import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.Map;
+
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
 
@@ -34,11 +34,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.eclipse.jetty.util.ssl.SslContextFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 
 public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
@@ -46,13 +44,16 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     @Before
     public void setUp() throws Exception {
         port1 = getNextPort();
-        port2 = getNextPort(port1 + 1);
-        
+        port2 = getNextPort();
+
         super.setUp();
-        // ensure jsse clients can validate the self signed dummy localhost cert, 
+        // ensure jsse clients can validate the self signed dummy localhost
+        // cert,
         // use the server keystore as the trust store for these tests
-        URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+        URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
+        setSystemProp("javax.net.ssl.trustStorePassword", "changeit");
+        setSystemProp("javax.net.ssl.trustStoreType", "PKCS12");
     }
 
     @Override
@@ -62,22 +63,25 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         super.tearDown();
     }
 
+    @Override
     protected void setSystemProp(String key, String value) {
         String originalValue = System.setProperty(key, value);
         originalValues.put(key, originalValue != null ? originalValue : NULL_VALUE_MARKER);
     }
 
+    @Override
     protected void restoreSystemProperties() {
         for (Object key : originalValues.keySet()) {
             Object value = originalValues.get(key);
             if (NULL_VALUE_MARKER.equals(value)) {
-                System.clearProperty((String) key);
+                System.clearProperty((String)key);
             } else {
                 System.setProperty((String)key, (String)value);
             }
         }
     }
 
+    @Override
     @Test
     public void testEndpoint() throws Exception {
         // these tests does not run well on Windows
@@ -107,7 +111,8 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
         assertTrue("Should be more than one header but was: " + headers, headers.size() > 0);
     }
-    
+
+    @Override
     @Test
     public void testEndpointWithoutHttps() throws Exception {
         // these tests does not run well on Windows
@@ -124,6 +129,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         assertTrue("mock endpoint was not called", mockEndpoint.getExchanges().isEmpty());
     }
 
+    @Override
     @Test
     public void testHelloEndpoint() throws Exception {
         // these tests does not run well on Windows
@@ -133,7 +139,7 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
 
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         URL url = new URL("https://localhost:" + port1 + "/hello");
-        HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection)url.openConnection();
         SSLContext ssl = SSLContext.getInstance("TLSv1.2");
         ssl.init(null, null, null);
         connection.setSSLSocketFactory(ssl.getSocketFactory());
@@ -146,7 +152,8 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         String data = new String(os.toByteArray());
         assertEquals("<b>Hello World</b>", data);
     }
-    
+
+    @Override
     @Test
     public void testHelloEndpointWithoutHttps() throws Exception {
         // these tests does not run well on Windows
@@ -160,7 +167,8 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
         } catch (SocketException expected) {
         }
     }
-    
+
+    @Override
     protected void invokeHttpEndpoint() throws IOException {
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port1 + "/test", expectedBody, "Content-Type", "application/xml");
         template.sendBodyAndHeader(getHttpProducerScheme() + "localhost:" + port2 + "/test", expectedBody, "Content-Type", "application/xml");
@@ -170,12 +178,12 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws URISyntaxException {
-                JettyHttpComponent componentJetty = (JettyHttpComponent) context.getComponent("jetty");
+                JettyHttpComponent componentJetty = (JettyHttpComponent)context.getComponent("jetty");
                 componentJetty.setSslPassword(pwd);
                 componentJetty.setSslKeyPassword(pwd);
-                URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+                URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
                 componentJetty.setKeystore(keyStoreUrl.toURI().getPath());
-                
+
                 from("jetty:https://localhost:" + port1 + "/test?async=true&useContinuation=false").to("mock:a");
 
                 Processor proc = new Processor() {
@@ -184,10 +192,9 @@ public class HttpsAsyncRouteTest extends HttpsRouteTest {
                     }
                 };
                 from("jetty:https://localhost:" + port1 + "/hello?async=true&useContinuation=false").process(proc);
-                
+
                 from("jetty:https://localhost:" + port2 + "/test?async=true&useContinuation=false").to("mock:b");
             }
         };
     }
 }
-

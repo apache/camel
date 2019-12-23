@@ -1,20 +1,25 @@
 [[google-drive-component]]
-== Google Drive Component
+= Google Drive Component
+:page-source: components/camel-google-drive/src/main/docs/google-drive-component.adoc
 
-*Available as of Camel version 2.14*
+*Since Camel 2.14*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Google Drive component provides access to the
 http://drive.google.com[Google Drive file storage service] via the
 https://developers.google.com/drive/v2/reference[Google Drive Web APIs].
 
 Google Drive uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need to
 https://developers.google.com/drive/web/auth/web-server[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is the
+generating a long-lived refreshToken is the
 https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
@@ -30,7 +35,7 @@ for this component:
         
 -------------------------------------------------------
 
-### URI Format
+== URI Format
 
 '''''
 
@@ -57,24 +62,25 @@ Endpoint prefix can be one of:
 * drive-replies
 * drive-revisions
 
-### GoogleDriveComponent
+== GoogleDriveComponent
 
 
 
 
 
 // component options: START
-The Google Drive component supports 4 options, which are listed below.
+The Google Drive component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (common) | To use the shared configuration |  | GoogleDrive Configuration
-| *clientFactory* (advanced) | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory |  | GoogleDriveClient Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *configuration* (common) | To use the shared configuration |  | GoogleDriveConfiguration
+| *clientFactory* (advanced) | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory |  | GoogleDriveClientFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -94,7 +100,7 @@ google-drive:apiName/methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -105,7 +111,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (14 parameters):
+=== Query Parameters (30 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -113,29 +119,45 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *accessToken* (common) | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *applicationName* (common) | Google drive application name. Example would be camel-google-drive/1.0 |  | String
-| *clientFactory* (common) | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory |  | GoogleDriveClient Factory
+| *clientFactory* (common) | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory |  | GoogleDriveClientFactory
 | *clientId* (common) | Client ID of the drive application |  | String
 | *clientSecret* (common) | Client secret of the drive application |  | String
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *refreshToken* (common) | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *scopes* (common) | Specifies the level of permissions you want a drive application to have to a user account. See \https://developers.google.com/drive/web/scopes for more info. |  | List
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-google-drive-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -143,7 +165,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 12 options, which are listed below.
+The component supports 13 options, which are listed below.
 
 
 
@@ -151,6 +173,7 @@ The component supports 12 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.google-drive.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.google-drive.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.google-drive.client-factory* | To use the GoogleCalendarClientFactory as factory for creating the client. Will by default use BatchGoogleDriveClientFactory. The option is a org.apache.camel.component.google.drive.GoogleDriveClientFactory type. |  | String
 | *camel.component.google-drive.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-drive.configuration.api-name* | What kind of operation to perform |  | GoogleDriveApiName
@@ -160,15 +183,15 @@ The component supports 12 options, which are listed below.
 | *camel.component.google-drive.configuration.method-name* | What sub operation to use for the selected operation |  | String
 | *camel.component.google-drive.configuration.refresh-token* | OAuth 2 refresh token. Using this, the Google Calendar component can obtain a new accessToken whenever the current one expires - a necessity if the application is long-lived. |  | String
 | *camel.component.google-drive.configuration.scopes* | Specifies the level of permissions you want a drive application to have to a user account. See \https://developers.google.com/drive/web/scopes for more info. |  | List
-| *camel.component.google-drive.enabled* | Enable google-drive component | true | Boolean
-| *camel.component.google-drive.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.google-drive.enabled* | Whether to enable auto configuration of the google-drive component. This is enabled by default. |  | Boolean
+| *camel.component.google-drive.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
 
-### Producer Endpoints
+== Producer Endpoints
 
 Producer endpoints can use endpoint prefixes followed by endpoint names
 and associated options described next. A shorthand alias can be used for
@@ -187,9 +210,9 @@ overrides message header, i.e. the endpoint option `inBody=option` would
 override a `CamelGoogleDrive.option` header.
 
 For more information on the endpoints and options see API documentation
-at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
+at: https://developers.google.com/drive/v2/reference/[https://developers.google.com/drive/v2/reference/]
 
-### Consumer Endpoints
+== Consumer Endpoints
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -199,15 +222,15 @@ invocation. Consumer endpoints that return an array or collection will
 generate one exchange per element, and their routes will be executed
 once for each exchange.
 
-### Message Headers
+== Message Headers
 
 Any URI option can be provided in a message header for producer
 endpoints with a `CamelGoogleDrive.` prefix.
 
-### Message Body
+== Message Body
 
 All result message bodies utilize objects provided by the underlying
 APIs used by the GoogleDriveComponent. Producer endpoints can specify
 the option name for incoming message body in the `inBody` endpoint URI
 parameter. For endpoints that return an array or collection, a consumer
-endpoint will map every element to distinct messages.     
+endpoint will map every element to distinct messages.     

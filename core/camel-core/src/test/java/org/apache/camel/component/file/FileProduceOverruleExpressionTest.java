@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -71,8 +72,7 @@ public class FileProduceOverruleExpressionTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .to("file://target/data/write?fileName=copy-of-${file:name}", "mock:result");
+                from("direct:start").to("file://target/data/write?fileName=copy-of-${file:name}", "mock:result");
             }
         };
     }

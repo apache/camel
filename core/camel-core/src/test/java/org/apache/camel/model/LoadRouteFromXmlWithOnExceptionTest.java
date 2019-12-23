@@ -41,7 +41,8 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
     @Test
     public void testLoadRouteFromXmlWitOnException() throws Exception {
         InputStream is = getClass().getResourceAsStream("barOnExceptionRoute.xml");
-        context.addRouteDefinitions(is);
+        RoutesDefinition routes = ModelHelper.loadRoutesDefinition(context, is);
+        context.addRouteDefinitions(routes.getRoutes());
         context.start();
 
         assertNotNull("Loaded bar route should be there", context.getRoute("bar"));
@@ -59,6 +60,7 @@ public class LoadRouteFromXmlWithOnExceptionTest extends ContextTestSupport {
 
     private static final class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("Kabom".equals(body)) {

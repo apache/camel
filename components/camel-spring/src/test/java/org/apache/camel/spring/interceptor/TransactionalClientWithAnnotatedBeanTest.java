@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +53,7 @@ public class TransactionalClientWithAnnotatedBeanTest extends TransactionalClien
         super.setUp();
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/spring/interceptor/transactionalClientWithAnnotatedBeanTest.xml");

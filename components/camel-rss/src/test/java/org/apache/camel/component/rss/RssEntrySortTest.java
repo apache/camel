@@ -20,7 +20,6 @@ import java.util.Date;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
-
 import org.apache.camel.Body;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.builder.RouteBuilder;
@@ -54,11 +53,12 @@ public class RssEntrySortTest extends CamelTestSupport {
         registry.bind("myBean", new MyBean());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&consumer.delay=50").to("mock:sorted");
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=false&consumer.delay=50").to("mock:unsorted");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=true&delay=50").to("mock:sorted");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&sortEntries=false&delay=50").to("mock:unsorted");
             }
         };
     }

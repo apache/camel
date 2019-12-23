@@ -101,7 +101,7 @@ public class GroupProducer extends AbstractKeystoneProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.GROUP_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Group ID");
         final ActionResponse response = osV3Client.identity().groups().delete(id);
-        checkFailure(response, msg, "Delete group with ID " + id);
+        checkFailure(response, exchange, "Delete group with ID " + id);
     }
 
     private void doAddUser(Exchange exchange) {
@@ -111,7 +111,7 @@ public class GroupProducer extends AbstractKeystoneProducer {
         StringHelper.notEmpty(userId, "User ID");
         StringHelper.notEmpty(groupId, "Group ID");
         final ActionResponse response = osV3Client.identity().groups().addUserToGroup(groupId, userId);
-        checkFailure(response, msg, String.format("Add user %s to group %s", userId, groupId));
+        checkFailure(response, exchange, String.format("Add user %s to group %s", userId, groupId));
     }
 
     private void doCheckUserGroup(Exchange exchange) {
@@ -131,7 +131,7 @@ public class GroupProducer extends AbstractKeystoneProducer {
         StringHelper.notEmpty(userId, "User ID");
         StringHelper.notEmpty(groupId, "Group ID");
         final ActionResponse response = osV3Client.identity().groups().removeUserFromGroup(groupId, userId);
-        checkFailure(response, msg, String.format("Delete user %s from group %s", userId, groupId));
+        checkFailure(response, exchange, String.format("Delete user %s from group %s", userId, groupId));
     }
 
     private Group messageToGroup(Message message) {

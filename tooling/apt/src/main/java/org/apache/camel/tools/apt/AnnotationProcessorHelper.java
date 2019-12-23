@@ -325,6 +325,7 @@ public final class AnnotationProcessorHelper {
         try {
             Filer filer = processingEnv.getFiler();
             FileObject resource = filer.createResource(StandardLocation.CLASS_OUTPUT, packageName, fileName);
+            log(processingEnv, "Writing file: " + packageName + "/" + fileName);
             try (Writer w = resource.openWriter(); PrintWriter writer = new PrintWriter(w)) {
                 handler.accept(writer);
             }

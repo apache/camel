@@ -35,5 +35,6 @@ public abstract class Olingo2BatchRequest {
         return headers;
     }
 
+    @Override
     public abstract String toString();
 }

@@ -117,7 +117,7 @@ public class StingQuoteHelperTest extends Assert {
         assertEquals("Hello Camel", out[0]);
         assertEquals("5", out[1]);
         assertEquals("true", out[2]);
-        
+
         out = StringQuoteHelper.splitSafeQuote("*, '', 'arg3'", ',', false);
         assertEquals(3, out.length);
         assertEquals("*", out[0]);

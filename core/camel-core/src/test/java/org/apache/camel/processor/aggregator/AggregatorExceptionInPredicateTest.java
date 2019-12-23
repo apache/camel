@@ -34,15 +34,15 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
     public void testExceptionInAggregationStrategy() throws Exception {
         testExceptionInFlow("direct:start");
     }
-    
+
     @Test
     public void testExceptionInPredicate() throws Exception {
         testExceptionInFlow("direct:predicate");
     }
-    
+
     private void testExceptionInFlow(String startUri) throws Exception {
         // failed first aggregation
-        
+
         getMockEndpoint("mock:handled").expectedMessageCount(1);
 
         // second aggregated
@@ -61,33 +61,26 @@ public class AggregatorExceptionInPredicateTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
-                from("direct:start")
-                    .aggregate(header("id"))
-                    .completionTimeout(500)
-                    .aggregationStrategy(new AggregationStrategy() {
-                    
-                        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                            Object body = newExchange.getIn().getBody();
-                            if ("Damn".equals(body)) {
-                                throw new IllegalArgumentException();
-                            }
-                            return newExchange;
-                        }
-                    })
-                    .to("mock:result");
+                from("direct:start").aggregate(header("id")).completionTimeout(500).aggregationStrategy(new AggregationStrategy() {
 
-                from("direct:predicate")
-                    .aggregate(new Expression() {
-                    
-                        public <T> T evaluate(Exchange exchange, Class<T> type) {
-                            if (exchange.getIn().getBody().equals("Damn")) {
-                                throw new IllegalArgumentException();
-                            }
-                            return ExpressionBuilder.headerExpression("id").evaluate(exchange, type);
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        Object body = newExchange.getIn().getBody();
+                        if ("Damn".equals(body)) {
+                            throw new IllegalArgumentException();
                         }
-                    }, new UseLatestAggregationStrategy())
-                    .completionTimeout(500)
-                    .to("mock:result");
+                        return newExchange;
+                    }
+                }).to("mock:result");
+
+                from("direct:predicate").aggregate(new Expression() {
+
+                    public <T> T evaluate(Exchange exchange, Class<T> type) {
+                        if (exchange.getIn().getBody().equals("Damn")) {
+                            throw new IllegalArgumentException();
+                        }
+                        return ExpressionBuilder.headerExpression("id").evaluate(exchange, type);
+                    }
+                }, new UseLatestAggregationStrategy()).completionTimeout(500).to("mock:result");
             }
         };
     }

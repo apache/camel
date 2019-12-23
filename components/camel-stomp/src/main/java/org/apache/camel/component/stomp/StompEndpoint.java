@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncEndpoint;
@@ -57,16 +58,16 @@ import static org.fusesource.stomp.client.Constants.UNSUBSCRIBE;
 @UriEndpoint(firstVersion = "2.12.0", scheme = "stomp", title = "Stomp", syntax = "stomp:destination", label = "messaging")
 public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, HeaderFilterStrategyAware {
 
+    private CallbackConnection connection;
+    private Stomp stomp;
+    private final List<StompConsumer> consumers = new CopyOnWriteArrayList<>();
+
     @UriPath(description = "Name of the queue") @Metadata(required = true)
     private String destination;
     @UriParam
     private StompConfiguration configuration;
-    private CallbackConnection connection;
-    private Stomp stomp;
     @UriParam(label = "advanced", description = "To use a custom HeaderFilterStrategy to filter header to and from Camel message.")
     private HeaderFilterStrategy headerFilterStrategy;
-
-    private final List<StompConsumer> consumers = new CopyOnWriteArrayList<>();
 
     public StompEndpoint(String uri, StompComponent component, StompConfiguration configuration, String destination) {
         super(uri, component);
@@ -74,12 +75,20 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         this.destination = destination;
     }
 
+    public StompConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new StompProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new StompConsumer(this, processor);
+        StompConsumer consumer = new StompConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override
@@ -91,6 +100,12 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         stomp.setPasscode(configuration.getPasscode());
         if (configuration.getSslContextParameters() != null) {
             stomp.setSslContext(configuration.getSslContextParameters().createSSLContext(getCamelContext()));
+        }
+        if (configuration.getVersion() != null && !configuration.getVersion().isEmpty()) {
+            stomp.setVersion(configuration.getVersion());
+        }
+        if (configuration.getCustomHeaders() != null && !configuration.getCustomHeaders().isEmpty()) {
+            stomp.setCustomHeaders(configuration.getCustomHeaders());
         }
         stomp.connectCallback(promise);
         if (configuration.getHost() != null && !configuration.getHost().isEmpty()) {
@@ -115,6 +130,8 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
                         if (!consumers.isEmpty()) {
                             Exchange exchange = createExchange();
                             exchange.getIn().setBody(value.content());
+                            exchange.getIn().setHeaders(value.headerMap().entrySet().stream()
+                                    .collect(Collectors.toMap(e -> e.getKey().toString(), Map.Entry::getValue)));
                             for (StompConsumer consumer : consumers) {
                                 consumer.processExchange(exchange);
                             }
@@ -208,6 +225,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
         return connection.nextId();
     }
     
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
             headerFilterStrategy = new DefaultHeaderFilterStrategy();
@@ -218,6 +236,7 @@ public class StompEndpoint extends DefaultEndpoint implements AsyncEndpoint, Hea
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         this.headerFilterStrategy = strategy;
     }

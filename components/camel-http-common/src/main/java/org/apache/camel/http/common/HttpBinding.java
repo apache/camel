@@ -17,6 +17,7 @@
 package org.apache.camel.http.common;
 
 import java.io.IOException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -125,6 +126,11 @@ public interface HttpBinding {
     boolean isTransferException();
 
     /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     */
+    boolean isMuteException();
+
+    /**
      * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object
      * <p/>
      * This is by default turned off. If you enable this then be aware that Java will deserialize the incoming
@@ -169,6 +175,11 @@ public interface HttpBinding {
      * data from the request to Java and that can be a potential security risk.
      */
     void setTransferException(boolean transferException);
+
+    /**
+     * If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace.
+     */
+    void setMuteException(boolean muteException);
 
     /**
      * Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object

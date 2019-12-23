@@ -30,6 +30,7 @@ public class CxfJavaMtomProducerPayloadTest extends CxfMtomConsumerTest {
         MTOM_ENDPOINT_URI + "&properties.mtom-enabled=true"
         + "&defaultOperationName=Detail";
     
+    @Override
     @SuppressWarnings("unchecked")
     @Test
     public void testInvokingService() throws Exception {   

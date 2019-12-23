@@ -19,28 +19,28 @@ package org.apache.camel.component.kubernetes;
 public interface KubernetesCategory {
 
     String NAMESPACES = "namespaces";
-    
+
     String SERVICES = "services";
-    
+
     String REPLICATION_CONTROLLERS = "replicationControllers";
-    
+
     String PODS = "pods";
-    
+
     String PERSISTENT_VOLUMES = "persistentVolumes";
-    
+
     String PERSISTENT_VOLUMES_CLAIMS = "persistentVolumesClaims";
-    
+
     String SECRETS = "secrets";
-    
+
     String RESOURCES_QUOTA = "resourcesQuota";
-    
+
     String SERVICE_ACCOUNTS = "serviceAccounts";
-    
+
     String NODES = "nodes";
-    
+
     String CONFIGMAPS = "configMaps";
-    
+
     String BUILDS = "builds";
-    
+
     String BUILD_CONFIGS = "buildConfigs";
 }

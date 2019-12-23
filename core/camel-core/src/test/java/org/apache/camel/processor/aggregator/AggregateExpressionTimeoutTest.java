@@ -49,11 +49,12 @@ public class AggregateExpressionTimeoutTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // aggregate all exchanges correlated by the id header.
-                    // Aggregate them using the BodyInAggregatingStrategy strategy which
-                    // and the timeout header contains the timeout in millis of inactivity them timeout and complete the aggregation
+                    // Aggregate them using the BodyInAggregatingStrategy
+                    // strategy which
+                    // and the timeout header contains the timeout in millis of
+                    // inactivity them timeout and complete the aggregation
                     // and send it to mock:aggregated
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionTimeout(header("timeout")).completionTimeoutCheckerInterval(10)
-                        .to("mock:aggregated");
+                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionTimeout(header("timeout")).completionTimeoutCheckerInterval(10).to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

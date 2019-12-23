@@ -1,10 +1,15 @@
 [[google-bigquery-sql-component]]
-== Google BigQuery Standard SQL Component
+= Google BigQuery Standard SQL Component
+:page-source: components/camel-google-bigquery/src/main/docs/google-bigquery-sql-component.adoc
 
-*Available as of Camel version 2.23*
+*Since Camel 2.23*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The Google BigQuery SQL component provides access
-to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
+to https://cloud.google.com/bigquery/[Cloud BigQuery Infrastructure] via
 the https://developers.google.com/apis-explorer/#p/bigquery/v2/bigquery.jobs.query[Google Client Services API].
 
 The current implementation supports only standard SQL
@@ -26,7 +31,7 @@ for this component:
 
 [[GoogleBigQuery-AuthenticationConfiguration]]
 
-=== Authentication Configuration
+== Authentication Configuration
 
 Google BigQuery component authentication is targeted for use with the GCP Service Accounts.
 For more information please refer to https://cloud.google.com/docs/authentication[Google Cloud Platform Auth Guide]
@@ -45,7 +50,7 @@ https://developers.google.com/identity/protocols/application-default-credentials
 
 Service Account Email and Service Account Key can be found in the GCP JSON credentials file as client_email and private_key respectively.
 
-=== URI Format
+== URI Format
 
 [source,text]
 --------------------------------------------------------
@@ -60,7 +65,7 @@ Examples:
 --------------------------------------------------------
 where
 
- * parameters in form \${name} are extracted from message headers and formed the translated query
+ * parameters in form $\{name\} are extracted from message headers and formed the translated query
  * parameters in form @name are extracted from body or message headers and sent to Google Bigquery
 
 You can externalize your SQL queries to files in the classpath or file system as shown:
@@ -71,10 +76,10 @@ You can externalize your SQL queries to files in the classpath or file system as
 
 
 
-=== Options
+== Options
 
 // component options: START
-The Google BigQuery Standard SQL component supports 4 options, which are listed below.
+The Google BigQuery Standard SQL component supports 5 options, which are listed below.
 
 
 
@@ -82,9 +87,10 @@ The Google BigQuery Standard SQL component supports 4 options, which are listed 
 |===
 | Name | Description | Default | Type
 | *projectId* (producer) | Google Cloud Project Id |  | String
-| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQuery ConnectionFactory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default one will be used |  | GoogleBigQueryConnectionFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -92,43 +98,43 @@ The Google BigQuery Standard SQL component supports 4 options, which are listed 
 The Google BigQuery Standard SQL endpoint is configured using URI syntax:
 
 ----
-google-bigquery-sql:query
+google-bigquery-sql:projectId:query
 ----
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *projectId* | *Required* Google Cloud Project Id |  | String
 | *query* | *Required* BigQuery standard SQL query |  | String
+| *projectId* | *Required* Google Cloud Project Id |  | String
 |===
 
 
-==== Query Parameters (4 parameters):
+=== Query Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used. |  | GoogleBigQuery ConnectionFactory
+| *connectionFactory* (producer) | ConnectionFactory to obtain connection to Bigquery Service. If non provided the default will be used. |  | GoogleBigQueryConnectionFactory
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-google-bigquery-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -136,7 +142,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 8 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -144,18 +150,19 @@ The component supports 8 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.google-bigquery-sql.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.google-bigquery-sql.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.google-bigquery-sql.connection-factory.credentials-file-location* |  |  | String
 | *camel.component.google-bigquery-sql.connection-factory.service-account* |  |  | String
 | *camel.component.google-bigquery-sql.connection-factory.service-account-key* |  |  | String
 | *camel.component.google-bigquery-sql.connection-factory.service-u-r-l* |  |  | String
 | *camel.component.google-bigquery-sql.enabled* | Whether to enable auto configuration of the google-bigquery-sql component. This is enabled by default. |  | Boolean
+| *camel.component.google-bigquery-sql.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.google-bigquery-sql.project-id* | Google Cloud Project Id |  | String
-| *camel.component.google-bigquery-sql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-=== Ouput Message Headers
+== Ouput Message Headers
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -164,6 +171,6 @@ The component supports 8 options, which are listed below.
 |=======================================================================
 
 
-=== Producer Endpoints
+== Producer Endpoints
 
 Google BigQuery SQL endpoint expects the payload to be either empty or a map of query parameters.

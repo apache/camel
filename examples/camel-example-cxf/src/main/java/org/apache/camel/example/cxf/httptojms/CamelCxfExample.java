@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.CxfComponent;
 import org.apache.camel.component.cxf.CxfEndpoint;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.hello_world_soap_http.Greeter;
@@ -73,8 +72,6 @@ public final class CamelCxfExample {
         // START SNIPPET: e1
         CamelContext context = new DefaultCamelContext();
         // END SNIPPET: e1
-        PropertiesComponent pc = new PropertiesComponent();
-        context.addComponent("properties", pc);
         // Set up the JMS broker and the CXF SOAP over JMS server
         // START SNIPPET: e2
         JmsBroker broker = new JmsBroker();

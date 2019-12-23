@@ -27,7 +27,6 @@ import com.amazonaws.services.kafka.model.DescribeClusterRequest;
 import com.amazonaws.services.kafka.model.DescribeClusterResult;
 import com.amazonaws.services.kafka.model.ListClustersRequest;
 import com.amazonaws.services.kafka.model.ListClustersResult;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -47,6 +46,7 @@ public class MSKProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
         case listClusters:

@@ -34,8 +34,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class StringSourceTest extends Assert {
-    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
-            new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
+    protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(), new ReflectionInjector(),
+                                                                 new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()), false);
     protected String expectedBody = "<hello>world!</hello>";
 
     @Before
@@ -54,11 +54,10 @@ public class StringSourceTest extends Assert {
         output.writeObject(expected);
         output.close();
 
-
         ObjectInputStream in = new ObjectInputStream(new ByteArrayInputStream(buffer.toByteArray()));
         Object object = in.readObject();
         assertTrue("is a StringSource", object instanceof StringSource);
-        StringSource actual = (StringSource) object;
+        StringSource actual = (StringSource)object;
 
         assertEquals("source.text", expected.getPublicId(), actual.getPublicId());
         assertEquals("source.text", expected.getSystemId(), actual.getSystemId());

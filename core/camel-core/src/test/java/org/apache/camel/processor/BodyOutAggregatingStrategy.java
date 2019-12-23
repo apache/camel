@@ -21,11 +21,12 @@ import org.apache.camel.Exchange;
 
 public class BodyOutAggregatingStrategy implements AggregationStrategy {
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange != null) {
             String oldBody = oldExchange.getIn().getBody(String.class);
             String newBody = newExchange.getIn().getBody(String.class);
-            newExchange.getOut().setBody(oldBody + "+" + newBody);
+            newExchange.getMessage().setBody(oldBody + "+" + newBody);
         }
 
         return newExchange;

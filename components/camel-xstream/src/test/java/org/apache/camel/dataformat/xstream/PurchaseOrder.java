@@ -39,6 +39,7 @@ public class PurchaseOrder {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return (int) (name.hashCode() + (price * 100) + (amount * 100));
     }

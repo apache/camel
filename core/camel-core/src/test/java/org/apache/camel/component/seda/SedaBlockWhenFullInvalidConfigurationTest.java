@@ -33,8 +33,7 @@ public class SedaBlockWhenFullInvalidConfigurationTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("seda:foo?blockWhenFull=true&blockWhenFull=true");
+                from("direct:start").to("seda:foo?blockWhenFull=true&blockWhenFull=true");
             }
         });
         try {

@@ -27,22 +27,32 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     private boolean autoConfigurationLogSummary = true;
     private boolean autowireComponentProperties = true;
     private boolean autowireComponentPropertiesDeep;
+    private boolean autowireComponentPropertiesNonNullOnly;
     private boolean autowireComponentPropertiesAllowPrivateSetter = true;
     private int durationHitExitCode;
     private boolean hangupInterceptorEnabled = true;
+    private String packageScanRouteBuilders;
 
     // extended configuration
     private final HystrixConfigurationProperties hystrixConfigurationProperties = new HystrixConfigurationProperties(this);
+    private final Resilience4jConfigurationProperties resilience4jConfigurationProperties = new Resilience4jConfigurationProperties(this);
     private final RestConfigurationProperties restConfigurationProperties = new RestConfigurationProperties(this);
 
     // extended
     // --------------------------------------------------------------
 
     /**
-     * To configure Hystrix EIP
+     * To configure Circuit Breaker EIP with Hystrix
      */
     public HystrixConfigurationProperties hystrix() {
         return hystrixConfigurationProperties;
+    }
+
+    /**
+     * To configure Circuit Breaker EIP with Resilience4j
+     */
+    public Resilience4jConfigurationProperties resilience4j() {
+        return resilience4jConfigurationProperties;
     }
 
     /**
@@ -154,6 +164,19 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
         this.autowireComponentPropertiesDeep = autowireComponentPropertiesDeep;
     }
 
+    public boolean isAutowireComponentPropertiesNonNullOnly() {
+        return autowireComponentPropertiesNonNullOnly;
+    }
+
+    /**
+     * Whether to only autowire if the property has no default value or has not been configured explicit.
+     * <p/>
+     * This option is default disabled.
+     */
+    public void setAutowireComponentPropertiesNonNullOnly(boolean autowireComponentPropertiesNonNullOnly) {
+        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
+    }
+
     public boolean isAutowireComponentPropertiesAllowPrivateSetter() {
         return autowireComponentPropertiesAllowPrivateSetter;
     }
@@ -176,6 +199,19 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public void setHangupInterceptorEnabled(boolean hangupInterceptorEnabled) {
         this.hangupInterceptorEnabled = hangupInterceptorEnabled;
+    }
+
+    public String getPackageScanRouteBuilders() {
+        return packageScanRouteBuilders;
+    }
+
+    /**
+     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be included.
+     * If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder
+     * classes with `@Component`. In other words only use this for Camel Main in standalone mode.
+     */
+    public void setPackageScanRouteBuilders(String packageScanRouteBuilders) {
+        this.packageScanRouteBuilders = packageScanRouteBuilders;
     }
 
     public int getDurationHitExitCode() {
@@ -274,6 +310,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
     }
 
     /**
+     * Whether to only autowire if the property has no default value or has not been configured explicit.
+     * <p/>
+     * This option is default disabled.
+     */
+    public MainConfigurationProperties withAutowireComponentPropertiesNonNullOnly(boolean autowireComponentPropertiesNonNullOnly) {
+        this.autowireComponentPropertiesNonNullOnly = autowireComponentPropertiesNonNullOnly;
+        return this;
+    }
+
+    /**
      * Whether autowiring components (with deep nesting by attempting to walk as deep down the object graph by creating new empty objects on the way if needed)
      * with properties that are of same type, which has been added to the Camel registry, as a singleton instance.
      * This is used for convention over configuration to inject DataSource, AmazonLogin instances to the components.
@@ -298,6 +344,16 @@ public class MainConfigurationProperties extends DefaultConfigurationProperties<
      */
     public MainConfigurationProperties withDurationHitExitCode(int durationHitExitCode) {
         this.durationHitExitCode = durationHitExitCode;
+        return this;
+    }
+
+    /**
+     * Sets package names for scanning for {@link org.apache.camel.builder.RouteBuilder} classes as candidates to be included.
+     * If you are using Spring Boot then its instead recommended to use Spring Boots component scanning and annotate your route builder
+     * classes with `@Component`. In other words only use this for Camel Main in standalone mode.
+     */
+    public MainConfigurationProperties withPackageScanRouteBuilders(String packageScanRouteBuilders) {
+        this.packageScanRouteBuilders = packageScanRouteBuilders;
         return this;
     }
 

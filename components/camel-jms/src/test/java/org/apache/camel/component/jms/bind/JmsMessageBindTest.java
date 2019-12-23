@@ -54,6 +54,7 @@ public class JmsMessageBindTest extends CamelSpringTestSupport {
     }
 
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/bind/spring.xml");
     }

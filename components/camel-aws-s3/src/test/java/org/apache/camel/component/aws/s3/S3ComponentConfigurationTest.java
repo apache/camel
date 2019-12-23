@@ -17,8 +17,6 @@
 package org.apache.camel.component.aws.s3;
 
 import com.amazonaws.regions.Regions;
-
-import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -29,7 +27,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
 
         AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         context.getRegistry().bind("amazonS3Client", clientMock);
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?amazonS3Client=#amazonS3Client&accessKey=xxx&secretKey=yyy");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -46,7 +44,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithMinimalCredentialsConfiguration() throws Exception {
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?accessKey=xxx&secretKey=yyy");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -64,7 +62,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMinimalArnConfiguration() throws Exception {
         AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         context.getRegistry().bind("amazonS3Client", clientMock);
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://arn:aws:s3:::MyBucket?amazonS3Client=#amazonS3Client&accessKey=xxx&secretKey=yyy");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -75,7 +73,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
 
         AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         context.getRegistry().bind("amazonS3Client", clientMock);
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?amazonS3Client=#amazonS3Client");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -94,7 +92,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithMaximalConfiguration() throws Exception {
         AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         context.getRegistry().bind("amazonS3Client", clientMock);
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component
             .createEndpoint("aws-s3://MyBucket?amazonS3Client=#amazonS3Client"
                             + "&accessKey=xxx&secretKey=yyy&region=us-west-1&deleteAfterRead=false&maxMessagesPerPoll=1&policy=%7B%22Version%22%3A%222008-10-17%22,%22Id%22%3A%22Policy4324355464%22,"
@@ -118,25 +116,25 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutBucketName() throws Exception {
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         component.createEndpoint("aws-s3:// ");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         component.createEndpoint("aws-s3://MyTopic?secretKey=yyy");
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         component.createEndpoint("aws-s3://MyTopic?accessKey=xxx");
     }
 
     @Test
     public void createEndpointWithComponentElements() throws Exception {
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket");
@@ -148,7 +146,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithComponentAndEndpointElements() throws Exception {
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         component.setAccessKey("XXX");
         component.setSecretKey("YYY");
         component.setRegion(Regions.US_WEST_1.toString());
@@ -163,7 +161,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithChunkedEncoding() throws Exception {
 
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?chunkedEncodingDisabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -175,7 +173,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithAccelerateMode() throws Exception {
 
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?accelerateModeEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -187,7 +185,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithDualstack() throws Exception {
 
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?dualstackEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -199,7 +197,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithPayloadSigning() throws Exception {
 
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?payloadSigningEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -211,7 +209,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     @Test
     public void createEndpointWithForceGlobalBucketAccess() throws Exception {
 
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?forceGlobalBucketAccessEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -219,12 +217,13 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
         assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
         assertTrue(endpoint.getConfiguration().isForceGlobalBucketAccessEnabled());
     }
-    
+
     @Test
     public void createEndpointWithAutocreateOption() throws Exception {
 
-        S3Component component = new S3Component(context);
-        S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket?forceGlobalBucketAccessEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1&autoCreateBucket=false");
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
+        S3Endpoint endpoint = (S3Endpoint)component
+            .createEndpoint("aws-s3://MyBucket?forceGlobalBucketAccessEnabled=true&accessKey=xxx&secretKey=yyy&region=US_WEST_1&autoCreateBucket=false");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
         assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
@@ -237,7 +236,7 @@ public class S3ComponentConfigurationTest extends CamelTestSupport {
     public void createEndpointWithoutSecretKeyAndAccessKeyConfiguration() throws Exception {
         AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         context.getRegistry().bind("amazonS3Client", clientMock);
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         component.createEndpoint("aws-s3://MyTopic?amazonS3Client=#amazonS3Client");
     }
 }

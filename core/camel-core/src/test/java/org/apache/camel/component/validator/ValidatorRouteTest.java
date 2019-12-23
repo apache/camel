@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.validator;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -41,8 +42,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
+        template.sendBody("direct:start", "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -52,10 +52,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         validEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:startHeaders",
-                null,
-                "headerToValidate",
-                "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
+        template.sendBodyAndHeader("direct:startHeaders", null, "headerToValidate", "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -65,8 +62,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>");
+        template.sendBody("direct:start", "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -76,10 +72,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:startHeaders",
-                null,
-                "headerToValidate",
-                "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>");
+        template.sendBodyAndHeader("direct:startHeaders", null, "headerToValidate", "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>");
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -117,8 +110,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBody("direct:start",
-                "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>".getBytes());
+        template.sendBody("direct:start", "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>".getBytes());
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -128,10 +120,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
         invalidEndpoint.expectedMessageCount(1);
         finallyEndpoint.expectedMessageCount(1);
 
-        template.sendBodyAndHeader("direct:startHeaders",
-                null,
-                "headerToValidate",
-                "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>".getBytes());
+        template.sendBodyAndHeader("direct:startHeaders", null, "headerToValidate", "<mail xmlns='http://foo.com/bar'><body>Hello world!</body></mail>".getBytes());
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
@@ -144,7 +133,7 @@ public class ValidatorRouteTest extends ContextTestSupport {
 
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
-    
+
     @Test
     public void testConcurrentUseNotASharedSchema() throws Exception {
         validEndpoint.expectedMessageCount(10);
@@ -162,7 +151,8 @@ public class ValidatorRouteTest extends ContextTestSupport {
         }
 
         try {
-            // wait for test completion, timeout after 30 sec to let other unit test run to not wait forever
+            // wait for test completion, timeout after 30 sec to let other unit
+            // test run to not wait forever
             assertTrue(latch.await(30000L, TimeUnit.MILLISECONDS));
             assertEquals("Latch should be zero", 0, latch.getCount());
         } finally {
@@ -186,37 +176,18 @@ public class ValidatorRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .doTry()
-                        .to("validator:org/apache/camel/component/validator/schema.xsd")
-                        .to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid")
-                    .doFinally()
-                        .to("mock:finally")
-                    .end();
+                from("direct:start").doTry().to("validator:org/apache/camel/component/validator/schema.xsd").to("mock:valid").doCatch(ValidationException.class).to("mock:invalid")
+                    .doFinally().to("mock:finally").end();
 
-                from("direct:startHeaders")
-                    .doTry()
-                        .to("validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate")
-                        .to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid")
-                    .doFinally()
-                        .to("mock:finally")
-                    .end();
+                from("direct:startHeaders").doTry().to("validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate").to("mock:valid")
+                    .doCatch(ValidationException.class).to("mock:invalid").doFinally().to("mock:finally").end();
 
-                from("direct:startNoHeaderException")
-                        .to("validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate")
-                        .to("mock:valid");
+                from("direct:startNoHeaderException").to("validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate").to("mock:valid");
 
-                from("direct:startNullHeaderNoFail")
-                        .to("validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate&failOnNullHeader=false")
-                        .to("mock:valid");
-
-                from("direct:useNotASharedSchema")
-                    .to("validator:org/apache/camel/component/validator/schema.xsd?useSharedSchema=false")
+                from("direct:startNullHeaderNoFail").to("validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate&failOnNullHeader=false")
                     .to("mock:valid");
+
+                from("direct:useNotASharedSchema").to("validator:org/apache/camel/component/validator/schema.xsd?useSharedSchema=false").to("mock:valid");
             }
         };
     }

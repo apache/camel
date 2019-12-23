@@ -30,12 +30,9 @@ public class SedaFileIdempotentTimeoutIssueTest extends SedaFileIdempotentIssueT
             public void configure() throws Exception {
                 onException(RuntimeException.class).process(new ShutDown());
 
-                from("file:target/data/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10")
-                    .to("log:begin")
-                    .inOut("seda:process?timeout=100");
+                from("file:target/data/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10").to("log:begin").inOut("seda:process?timeout=100");
 
-                from("seda:process")
-                    .throwException(new RuntimeException("Testing with exception"));
+                from("seda:process").throwException(new RuntimeException("Testing with exception"));
             }
         };
     }

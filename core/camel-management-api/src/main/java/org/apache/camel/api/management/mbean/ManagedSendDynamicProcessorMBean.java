@@ -41,6 +41,7 @@ public interface ManagedSendDynamicProcessorMBean extends ManagedProcessorMBean,
     @ManagedAttribute(description = "Whether an optimised component (SendDynamicAware) is in use")
     Boolean isOptimised();
 
+    @Override
     @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
     TabularData extendedInformation();
 

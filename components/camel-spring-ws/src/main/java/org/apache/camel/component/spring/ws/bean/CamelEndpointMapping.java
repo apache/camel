@@ -19,6 +19,7 @@ package org.apache.camel.component.spring.ws.bean;
 import java.net.URISyntaxException;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+
 import javax.xml.XMLConstants;
 import javax.xml.namespace.QName;
 import javax.xml.transform.TransformerException;
@@ -211,6 +212,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
     /**
      * Used by Camel Spring Web Services endpoint to register consumers
      */
+    @Override
     public void addConsumer(EndpointMappingKey key, MessageEndpoint endpoint) {
         endpoints.put(key, endpoint);
     }
@@ -218,6 +220,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
     /**
      * Used by Camel Spring Web Services endpoint to unregister consumers
      */
+    @Override
     public void removeConsumer(Object key) {
         endpoints.remove(key);
     }
@@ -236,6 +239,7 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
         this.transformerFactory = transformerFactory;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         if (transformerFactory == null) {
             transformerFactory = TransformerFactory.newInstance();
@@ -243,16 +247,19 @@ public class CamelEndpointMapping extends AbstractEndpointMapping implements Ini
         }
     }
 
+    @Override
     public final void setActorOrRole(String actorOrRole) {
         Assert.notNull(actorOrRole, "actorOrRole must not be null");
         actorsOrRoles = new String[] {actorOrRole};
     }
 
+    @Override
     public final void setActorsOrRoles(String[] actorsOrRoles) {
         Assert.notEmpty(actorsOrRoles, "actorsOrRoles must not be empty");
         this.actorsOrRoles = actorsOrRoles;
     }
 
+    @Override
     public final void setUltimateReceiver(boolean ultimateReceiver) {
         this.isUltimateReceiver = ultimateReceiver;
     }

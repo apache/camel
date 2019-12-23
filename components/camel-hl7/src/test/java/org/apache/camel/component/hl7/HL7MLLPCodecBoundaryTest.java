@@ -20,11 +20,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import ca.uhn.hl7v2.model.v25.message.MDM_T02;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
@@ -34,18 +34,18 @@ import org.junit.Test;
  */
 public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("hl7codec")
+    public HL7MLLPCodec addHl7MllpCodec() throws Exception {
         HL7MLLPCodec codec = new HL7MLLPCodec();
         codec.setCharset("iso-8859-1");
-        jndi.bind("hl7codec", codec);
-        return jndi;
+        return codec;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
+                from("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         // check presence of correct message type
                         exchange.getIn().getBody(MDM_T02.class);
@@ -55,7 +55,7 @@ public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
         };
     }
 
-    @Test 
+    @Test
     public void testSendHL7Message() throws Exception {
         BufferedReader in = IOHelper.buffered(new InputStreamReader(getClass().getResourceAsStream("/mdm_t02-1022.txt")));
         String line = "";
@@ -69,7 +69,7 @@ public class HL7MLLPCodecBoundaryTest extends HL7TestSupport {
         assertEquals(1022, message.length());
         MockEndpoint mockEndpoint = getMockEndpoint("mock:result");
         mockEndpoint.expectedMessageCount(1);
-        template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message);
+        template.requestBody("mina:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message);
         mockEndpoint.assertIsSatisfied();
     }
 

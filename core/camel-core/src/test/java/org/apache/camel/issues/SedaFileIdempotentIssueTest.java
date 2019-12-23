@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.concurrent.CountDownLatch;
@@ -69,12 +70,9 @@ public class SedaFileIdempotentIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(RuntimeException.class).process(new ShutDown());
 
-                from("file:target/data/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10")
-                    .to("log:begin")
-                    .inOut("seda:process");
+                from("file:target/data/inbox?idempotent=true&noop=true&idempotentRepository=#repo&initialDelay=0&delay=10").to("log:begin").inOut("seda:process");
 
-                from("seda:process")
-                    .throwException(new RuntimeException("Testing with exception"));
+                from("seda:process").throwException(new RuntimeException("Testing with exception"));
             }
         };
     }

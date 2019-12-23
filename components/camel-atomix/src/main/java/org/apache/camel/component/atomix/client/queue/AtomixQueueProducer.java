@@ -19,9 +19,9 @@ package org.apache.camel.component.atomix.client.queue;
 import io.atomix.collections.DistributedQueue;
 import io.atomix.resource.ReadConsistency;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientProducer;
+import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_ACTION;
@@ -29,7 +29,7 @@ import static org.apache.camel.component.atomix.client.AtomixClientConstants.RES
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_READ_CONSISTENCY;
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.RESOURCE_VALUE;
 
-final class AtomixQueueProducer extends AbstractAtomixClientProducer<AtomixQueueEndpoint, DistributedQueue> {
+public final class AtomixQueueProducer extends AbstractAtomixClientProducer<AtomixQueueEndpoint, DistributedQueue> {
     private final AtomixQueueConfiguration configuration;
 
     protected AtomixQueueProducer(AtomixQueueEndpoint endpoint) {

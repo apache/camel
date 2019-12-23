@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,6 +67,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         svrBean.create();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

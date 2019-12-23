@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -94,6 +95,7 @@ public class LevelDBAggregateRecoverWithRedeliveryPolicyTest extends CamelTestSu
 
     public static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

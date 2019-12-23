@@ -44,16 +44,16 @@ public class BeanPipelineTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:input").
-                    pipeline("bean:foo", "bean:bar?method=usingExchange", "bean:baz").
-                    to("mock:result");
+                from("direct:input").pipeline("bean:foo", "bean:bar?method=usingExchange", "bean:baz").to("mock:result");
             }
         };
     }
 
+    @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("foo", new FooBean());
@@ -77,8 +77,8 @@ public class BeanPipelineTest extends ContextTestSupport {
             String body = exchange.getIn().getBody(String.class);
             assertEquals("Hello World", body);
             assertEquals("Claus", exchange.getIn().getHeader("from"));
-            exchange.getOut().setHeader("from", "James");
-            exchange.getOut().setBody("Hello World from James");
+            exchange.getMessage().setHeader("from", "James");
+            exchange.getMessage().setBody("Hello World from James");
         }
     }
 

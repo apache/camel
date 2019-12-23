@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 
 import io.opentracing.Span;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.slf4j.Logger;
@@ -36,6 +35,11 @@ public class RestSpanDecorator extends AbstractHttpSpanDecorator {
     @Override
     public String getComponent() {
         return "rest";
+    }
+
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.rest.RestComponent";
     }
 
     @Override

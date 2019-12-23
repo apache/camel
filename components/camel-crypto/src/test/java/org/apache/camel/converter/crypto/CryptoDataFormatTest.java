@@ -18,6 +18,7 @@ package org.apache.camel.converter.crypto;
 
 import java.io.ByteArrayInputStream;
 import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.Map;
@@ -25,9 +26,11 @@ import java.util.Map;
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,7 +39,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class CryptoDataFormatTest extends CamelTestSupport {
-    
+
     @Test
     public void testBasicSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:basic-encryption");
@@ -61,12 +64,12 @@ public class CryptoDataFormatTest extends CamelTestSupport {
     public void testSymmetricWithMD5HMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac-algorithm");
     }
-    
+
     @Test
     public void testSymmetricWithSHA256HMAC() throws Exception {
         doRoundTripEncryptionTests("direct:hmac-sha-256-algorithm");
     }
-    
+
     @Test
     public void testKeySuppliedAsHeader() throws Exception {
         KeyGenerator generator = KeyGenerator.getInstance("DES");
@@ -89,21 +92,38 @@ public class CryptoDataFormatTest extends CamelTestSupport {
         Exchange received = mock.getReceivedExchanges().get(0);
         validateHeaderIsCleared(received);
     }
-    
+
     @Test
     public void test3DESECBSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:3des-ecb-encryption");
     }
-    
+
     @Test
     public void test3DESCBCSymmetric() throws Exception {
         doRoundTripEncryptionTests("direct:3des-cbc-encryption");
     }
-    
+
     @Test
     public void testAES128ECBSymmetric() throws Exception {
         if (checkUnrestrictedPoliciesInstalled()) {
             doRoundTripEncryptionTests("direct:aes-128-ecb-encryption");
+        }
+    }
+
+    @Test
+    public void testAES128GCMSymmetric() throws Exception {
+        if (checkUnrestrictedPoliciesInstalled()) {
+            doRoundTripEncryptionTests("direct:aes-gcm-encryption");
+        }
+    }
+
+    @Test
+    public void testNoAlgorithm() throws Exception {
+        try {
+            doRoundTripEncryptionTests("direct:no-algorithm");
+            fail("Failure expected on no algorithm specified");
+        } catch (CamelExecutionException ex) {
+            assertTrue(ex.getCause() instanceof NoSuchAlgorithmException);
         }
     }
 
@@ -140,6 +160,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
         }
     }
 
+    @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
@@ -268,7 +289,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 KeyGenerator generator = KeyGenerator.getInstance("DESede");
 
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("DESede/ECB/PKCS5Padding", generator.generateKey());
-                
+
                 from("direct:3des-ecb-encryption")
                     .marshal(cryptoFormat)
                     .to("mock:encrypted")
@@ -288,10 +309,10 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 CryptoDataFormat encCryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", key);
                 encCryptoFormat.setInitializationVector(iv);
                 encCryptoFormat.setShouldInlineInitializationVector(true);
-                
+
                 CryptoDataFormat decCryptoFormat = new CryptoDataFormat("DES/CBC/PKCS5Padding", key);
                 decCryptoFormat.setShouldInlineInitializationVector(true);
-                
+
                 from("direct:3des-cbc-encryption")
                     .marshal(encCryptoFormat)
                     .to("mock:encrypted")
@@ -305,13 +326,52 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 KeyGenerator generator = KeyGenerator.getInstance("AES");
 
                 CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES/ECB/PKCS5Padding", generator.generateKey());
-                
+
                 from("direct:aes-128-ecb-encryption")
                     .marshal(cryptoFormat)
                     .to("mock:encrypted")
                     .unmarshal(cryptoFormat)
                     .to("mock:unencrypted");
                 // END SNIPPET: AES-128-ECB
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                KeyGenerator generator = KeyGenerator.getInstance("AES");
+                generator.init(128);
+
+                SecureRandom random = new SecureRandom();
+                byte[] iv = new byte[12];
+                random.nextBytes(iv);
+
+                GCMParameterSpec paramSpec = new GCMParameterSpec(128, iv);
+
+                CryptoDataFormat cryptoFormat = new CryptoDataFormat("AES/GCM/NoPadding", generator.generateKey());
+                cryptoFormat.setAlgorithmParameterSpec(paramSpec);
+
+                from("direct:aes-gcm-encryption")
+                    .marshal(cryptoFormat)
+                    .to("mock:encrypted")
+                    .unmarshal(cryptoFormat)
+                    .to("mock:unencrypted");
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                KeyGenerator generator = KeyGenerator.getInstance("DES");
+
+                byte[] iv = new byte[8];
+                SecureRandom random = new SecureRandom();
+                random.nextBytes(iv);
+
+                CryptoDataFormat cryptoFormat = new CryptoDataFormat();
+                cryptoFormat.setKey(generator.generateKey());
+                cryptoFormat.setInitializationVector(iv);
+                // cryptoFormat.setAlgorithm("DES/CBC/PKCS5Padding");
+
+                from("direct:no-algorithm")
+                    .marshal(cryptoFormat)
+                    .to("mock:encrypted")
+                    .unmarshal(cryptoFormat)
+                    .to("mock:unencrypted");
             }
         }};
     }
@@ -325,7 +385,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
         mockEp.expectedMessageCount(expected);
         return mockEp;
     }
-    
+
     public static boolean checkUnrestrictedPoliciesInstalled() {
         try {
             byte[] data = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07};

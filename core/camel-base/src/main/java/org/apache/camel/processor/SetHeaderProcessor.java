@@ -51,8 +51,7 @@ public class SetHeaderProcessor extends AsyncProcessorSupport implements Traceab
                 return true;
             }
 
-            boolean out = exchange.hasOut();
-            Message old = out ? exchange.getOut() : exchange.getIn();
+            Message old = exchange.getMessage();
 
             String key = headerName.evaluate(exchange, String.class);
             old.setHeader(key, newHeader);
@@ -70,14 +69,17 @@ public class SetHeaderProcessor extends AsyncProcessorSupport implements Traceab
         return "SetHeader(" + headerName + ", " + expression + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "setHeader[" + headerName + ", " + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

@@ -53,7 +53,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -110,29 +110,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastListEndpointConsumerBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastListEndpointConsumerBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -150,7 +128,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -168,212 +146,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Define the polling timeout of the Queue consumer in Poll mode.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastListEndpointConsumerBuilder pollingTimeout(
-                long pollingTimeout) {
-            setProperty("pollingTimeout", pollingTimeout);
-            return this;
-        }
-        /**
-         * Define the polling timeout of the Queue consumer in Poll mode.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastListEndpointConsumerBuilder pollingTimeout(
-                String pollingTimeout) {
-            setProperty("pollingTimeout", pollingTimeout);
-            return this;
-        }
-        /**
-         * Define the Pool size for Queue Consumer Executor.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastListEndpointConsumerBuilder poolSize(int poolSize) {
-            setProperty("poolSize", poolSize);
-            return this;
-        }
-        /**
-         * Define the Pool size for Queue Consumer Executor.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastListEndpointConsumerBuilder poolSize(String poolSize) {
-            setProperty("poolSize", poolSize);
-            return this;
-        }
-        /**
-         * Define the Queue Consumer mode: Listen or Poll.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastListEndpointConsumerBuilder queueConsumerMode(
-                HazelcastQueueConsumerMode queueConsumerMode) {
-            setProperty("queueConsumerMode", queueConsumerMode);
-            return this;
-        }
-        /**
-         * Define the Queue Consumer mode: Listen or Poll.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastListEndpointConsumerBuilder queueConsumerMode(
-                String queueConsumerMode) {
-            setProperty("queueConsumerMode", queueConsumerMode);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder onErrorDelay(
-                int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder onErrorDelay(
-                String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder pollTimeout(
-                String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder transacted(
-                boolean transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder transacted(
-                String transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder transferExchange(
-                boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointConsumerBuilder transferExchange(
-                String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -400,7 +173,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -416,7 +189,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -428,7 +201,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -441,7 +214,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -454,7 +227,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -467,7 +240,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -480,7 +253,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -493,7 +266,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -519,7 +292,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -534,7 +307,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -548,7 +321,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -562,7 +335,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -576,29 +349,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastListEndpointProducerBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastListEndpointProducerBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -618,7 +369,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -638,140 +389,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder onErrorDelay(
-                int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder onErrorDelay(
-                String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder pollTimeout(
-                String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder transacted(
-                boolean transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder transacted(
-                String transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder transferExchange(
-                boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointProducerBuilder transferExchange(
-                String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -795,7 +413,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -808,7 +426,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -821,7 +439,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -834,7 +452,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -860,7 +478,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -875,7 +493,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -889,7 +507,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -903,7 +521,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -917,157 +535,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default HazelcastListEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastListEndpointBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastListEndpointBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder onErrorDelay(int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder onErrorDelay(String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder pollTimeout(String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder transferExchange(
-                boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastListEndpointBuilder transferExchange(
-                String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
     }
@@ -1091,7 +559,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1104,7 +572,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1117,7 +585,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1130,7 +598,7 @@ public interface HazelcastListEndpointBuilderFactory {
          */
         default AdvancedHazelcastListEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1178,22 +646,13 @@ public interface HazelcastListEndpointBuilderFactory {
         readOnceTail,
         capacity;
     }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> enum.
-     */
-    enum HazelcastQueueConsumerMode {
-        listen,
-        poll;
-    }
     /**
      * Hazelcast List (camel-hazelcast)
      * The hazelcast-list component is used to access Hazelcast distributed
      * list.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-list:cacheName</code>

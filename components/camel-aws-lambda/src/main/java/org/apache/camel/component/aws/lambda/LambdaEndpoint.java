@@ -49,10 +49,12 @@ public class LambdaEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new LambdaProducer(this);
     }
@@ -86,6 +88,7 @@ public class LambdaEndpoint extends DefaultEndpoint {
 
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             ClientConfiguration clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyProtocol(configuration.getProxyProtocol());
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
             builder = builder.withClientConfiguration(clientConfiguration);

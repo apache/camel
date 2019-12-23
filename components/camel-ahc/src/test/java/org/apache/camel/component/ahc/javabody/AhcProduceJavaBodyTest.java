@@ -24,7 +24,13 @@ import org.apache.camel.component.ahc.AhcConstants;
 import org.apache.camel.component.ahc.BaseAhcTest;
 import org.apache.camel.component.jetty.JettyHttpComponent;
 import org.apache.camel.http.common.HttpCommonComponent;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *

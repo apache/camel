@@ -21,12 +21,13 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 
 /**
@@ -55,6 +56,7 @@ public class FacebookComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         FacebookEndpointConfiguration config = copyComponentProperties();
         final FacebookEndpoint endpoint = new FacebookEndpoint(uri, this, remaining, config);
@@ -73,7 +75,8 @@ public class FacebookComponent extends DefaultComponent {
 
     private FacebookEndpointConfiguration copyComponentProperties() throws Exception {
         Map<String, Object> componentProperties = new HashMap<>();
-        IntrospectionSupport.getProperties(configuration, componentProperties, null, false);
+        BeanIntrospection beanIntrospection = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection();
+        beanIntrospection.getProperties(configuration, componentProperties, null, false);
 
         // create endpoint configuration with component properties
         FacebookEndpointConfiguration config = new FacebookEndpointConfiguration();

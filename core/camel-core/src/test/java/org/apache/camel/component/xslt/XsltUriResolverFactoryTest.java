@@ -135,6 +135,7 @@ public class XsltUriResolverFactoryTest extends ContextTestSupport {
             super(context, location);
         }
 
+        @Override
         public Source resolve(String href, String base) throws TransformerException {
             Source result = super.resolve(href, base);
             resolvedResourceUris.add(href);

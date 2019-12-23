@@ -77,12 +77,14 @@ public class ApnsEndpoint extends ScheduledPollEndpoint {
         return consumers;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         ApnsConsumer apnsConsumer = new ApnsConsumer(this, processor);
         configureConsumer(apnsConsumer);
         return apnsConsumer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new ApnsProducer(this);
     }

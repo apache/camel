@@ -28,6 +28,7 @@ public class SpringManagedNamePatternTest extends ManagedNamePatternTest {
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedNamePatternTest.xml");
     }

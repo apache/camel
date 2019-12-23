@@ -46,47 +46,35 @@ public class ExceptionThrownFromOnExceptionNoEndlessLoopTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IOException.class)
-                    .redeliveryDelay(0)
-                    .maximumRedeliveries(3)
-                    .to("mock:b")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            ON_EXCEPTION_RETRY.incrementAndGet();
-                            // exception thrown here, should not trigger the
-                            // onException(IllegalArgumentException.class) as we would
-                            // then go into endless loop
-                            throw new IllegalArgumentException("Not supported");
-                        }
-                    })
-                    .to("mock:c");
+                onException(IOException.class).redeliveryDelay(0).maximumRedeliveries(3).to("mock:b").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        ON_EXCEPTION_RETRY.incrementAndGet();
+                        // exception thrown here, should not trigger the
+                        // onException(IllegalArgumentException.class) as we
+                        // would
+                        // then go into endless loop
+                        throw new IllegalArgumentException("Not supported");
+                    }
+                }).to("mock:c");
 
-                onException(IllegalArgumentException.class)
-                    .to("mock:d")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            ON_EXCEPTION_2_RETRY.incrementAndGet();
-                            throw new IOException("Some other IOException");
-                        }
-                    })
-                    .to("mock:e");
+                onException(IllegalArgumentException.class).to("mock:d").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        ON_EXCEPTION_2_RETRY.incrementAndGet();
+                        throw new IOException("Some other IOException");
+                    }
+                }).to("mock:e");
 
-                from("direct:start")
-                    .to("direct:intermediate")
-                    .to("mock:result");
+                from("direct:start").to("direct:intermediate").to("mock:result");
 
-                from("direct:intermediate")
-                    .to("mock:a")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            RETRY.incrementAndGet();
-                            throw new IOException("IO error");
-                        }
-                    })
-                    .to("mock:end");
+                from("direct:intermediate").to("mock:a").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        RETRY.incrementAndGet();
+                        throw new IOException("IO error");
+                    }
+                }).to("mock:end");
             }
         });
         context.start();
@@ -115,4 +103,3 @@ public class ExceptionThrownFromOnExceptionNoEndlessLoopTest extends ContextTest
     }
 
 }
-

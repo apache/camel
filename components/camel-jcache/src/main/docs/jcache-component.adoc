@@ -1,18 +1,22 @@
 [[jcache-component]]
-== JCache Component
+= JCache Component
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The JCache component enables you to perform caching operations using JSR107/JCache as cache implementation.
 
-### URI Format
+== URI Format
 
 [source,java]
 ----------------------------
 jcache:cacheName[?options]
 ----------------------------
 
-### URI Options
+== URI Options
 
 // endpoint options: START
 The JCache endpoint is configured using URI syntax:
@@ -23,7 +27,7 @@ jcache:cacheName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -33,7 +37,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -49,7 +53,7 @@ with the following path and query parameters:
 | *storeByValue* (common) | If cache should use store-by-value or store-by-reference semantics | true | boolean
 | *writeThrough* (common) | If write-through caching should be used | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
-| *filteredEvents* (consumer) | Events a consumer should filter. If using filteredEvents option, then eventFilters one will be ignored |  | List
+| *filteredEvents* (consumer) | Events a consumer should filter (multiple events can be separated by comma). If using filteredEvents option, then eventFilters one will be ignored |  | String
 | *oldValueRequired* (consumer) | if the old value is required for events | false | boolean
 | *synchronous* (consumer) | if the event listener should block the thread causing the event | false | boolean
 | *eventFilters* (consumer) | The CacheEntryEventFilter. If using eventFilters option, then filteredEvents one will be ignored |  | List
@@ -66,14 +70,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-jcache-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -81,7 +85,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 9 options, which are listed below.
 
 
 
@@ -89,12 +93,14 @@ The component supports 7 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.jcache.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.jcache.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.jcache.cache-configuration* | A Configuration for the Cache. The option is a javax.cache.configuration.Configuration type. |  | String
-| *camel.component.jcache.cache-configuration-properties* | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager. The option is a java.util.Properties type. |  | String
+| *camel.component.jcache.cache-configuration-properties* | Properties to configure jcache |  | Map
+| *camel.component.jcache.cache-configuration-properties-ref* | References to an existing Properties or Map to lookup in the registry to use for configuring jcache. |  | String
 | *camel.component.jcache.caching-provider* | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
 | *camel.component.jcache.configuration-uri* | An implementation specific URI for the CacheManager |  | String
-| *camel.component.jcache.enabled* | Enable jcache component | true | Boolean
-| *camel.component.jcache.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.jcache.enabled* | Whether to enable auto configuration of the jcache component. This is enabled by default. |  | Boolean
+| *camel.component.jcache.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -107,7 +113,7 @@ The component supports 7 options, which are listed below.
 
 
 // component options: START
-The JCache component supports 6 options, which are listed below.
+The JCache component supports 8 options, which are listed below.
 
 
 
@@ -116,10 +122,12 @@ The JCache component supports 6 options, which are listed below.
 | Name | Description | Default | Type
 | *cachingProvider* (common) | The fully qualified class name of the javax.cache.spi.CachingProvider |  | String
 | *cacheConfiguration* (common) | A Configuration for the Cache |  | Configuration
-| *cacheConfiguration Properties* (common) | The Properties for the javax.cache.spi.CachingProvider to create the CacheManager |  | Properties
+| *cacheConfiguration Properties* (common) | Properties to configure jcache |  | Map
+| *cacheConfiguration PropertiesRef* (common) | References to an existing Properties or Map to lookup in the registry to use for configuring jcache. |  | String
 | *configurationUri* (common) | An implementation specific URI for the CacheManager |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -143,7 +151,7 @@ The policy needs a JCache Cache. It can be set directly by _.setCache()_ or the 
 
 Similar caching solution is available for example in Spring using the @Cacheable annotation.
 
-=== JCachePolicy Fields
+== JCachePolicy Fields
 
 
 [width="100%",cols="2,5,3,2",options="header"]
@@ -157,10 +165,10 @@ Similar caching solution is available for example in Spring using the @Cacheable
 | *enabled* | If policy is not enabled, no wrapper processor is added to the route. It has impact only during startup, not during runtime. For example it can be used to disable caching from properties. | true | boolean
 |===
 
-## How to determine cache to use?
+== How to determine cache to use?
 
 
-### Set cache
+== Set cache
 
 The cache used by the policy can be set directly. This means you have to configure the cache yourself and get a JCache Cache object,
  but this gives the most flexibility. For example it can be setup in the config xml of the cache provider (Hazelcast, EhCache, ...)
@@ -184,7 +192,7 @@ from("direct:get-orders")
     .bean(OrderService.class,"findOrderById(${body})");
 ----------------------------
 
-### Set cacheManager
+== Set cacheManager
 
 If the _cache_ is not set, the policy will try to lookup or create the cache automatically.
  If the _cacheManager_ is set on the policy, it will try to get cache with the set _cacheName_ (routeId by default) from the CacheManager.
@@ -203,7 +211,7 @@ jcachePolicy.setCacheManager(cacheManager);
 jcachePolicy.setCacheName("items")
 ----------------------------
 
-### Find cacheManager
+== Find cacheManager
 
 If _cacheManager_ (and the _cache_) is not set, the policy will try to find a JCache CacheManager object:
 
@@ -219,7 +227,7 @@ from("direct:get-orders").routeId("getorders")
     .bean(OrderService.class,"findOrderById(${body})");
 ----------------------------
 
-### Partially wrapped route
+== Partially wrapped route
 
 In the examples above the whole route was executed or skipped. A policy can be used to wrap only a segment of the route instead of all processors.
 
@@ -236,9 +244,9 @@ from("direct:get-orders")
 
 The _.log()_ at the beginning and at the end of the route is always called, but the section inside _.policy()_ and _.end()_ is executed based on the cache.
 
-## KeyExpression
+== KeyExpression
 
-By default the policy uses the received Exchange body as _key_, so the default expression is like _simple("${body})_.
+By default the policy uses the received Exchange body as _key_, so the default expression is like _simple("$\{body\})_.
  We can set a different Camel Expression as _keyExpression_ which will be evaluated to determine the key.
  For example if we try to find an _order_ by an _orderId_ which is in the message headers,
  set _header("orderId")_ (or _simple("${header.orderId})_ as _keyExpression_.
@@ -264,9 +272,9 @@ from("direct:get-orders")
     .bean(OrderService.class,"findOrderById(${header.orderId})");
 ----------------------------
 
-## Camel XML DSL examples
+== Camel XML DSL examples
 
-### Use JCachePolicy in an XML route
+== Use JCachePolicy in an XML route
 
 In Camel XML DSL we need a named reference to the JCachePolicy instance (registered in CamelContext or simply in Spring).
  We have to wrap the route between <policy>...</policy> tags after <from>.
@@ -305,7 +313,7 @@ See this example when only a part of the route is wrapped:
 ----------------------------
 
 
-### Define CachePolicy in Spring
+== Define CachePolicy in Spring
 
 It's more convenient to create a JCachePolicy in Java especially within a RouteBuilder using the Camel DSL expressions,
  but see this example to define it in a Spring XML:
@@ -322,7 +330,7 @@ It's more convenient to create a JCachePolicy in Java especially within a RouteB
 </bean>
 ----------------------------
 
-### Create Cache from XML
+== Create Cache from XML
 
 It's not strictly speaking related to Camel XML DLS, but JCache providers usually have a way to configure the cache in an XML file.
  For example with Hazelcast you can add a _hazelcast.xml_ to classpath to configure the cache "spring" used in the example above.
@@ -346,7 +354,7 @@ It's not strictly speaking related to Camel XML DLS, but JCache providers usuall
 ----------------------------
 
 
-=== Special scenarios and error handling
+== Special scenarios and error handling
 
 If the Cache used by the policy is closed (can be done dynamically), the whole caching functionality is skipped,
  the route will be executed every time.

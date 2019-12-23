@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.Cluster;
 import com.hazelcast.core.HazelcastInstance;
-
 import com.hazelcast.core.IList;
 import com.hazelcast.core.Member;
 import com.hazelcast.core.MembershipEvent;
@@ -30,7 +29,6 @@ import com.hazelcast.core.MembershipListener;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;

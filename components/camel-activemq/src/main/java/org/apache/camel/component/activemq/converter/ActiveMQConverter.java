@@ -19,11 +19,9 @@ package org.apache.camel.component.activemq.converter;
 import org.apache.activemq.command.ActiveMQDestination;
 import org.apache.camel.Converter;
 
-/**
- * 
- */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public class ActiveMQConverter {
+
     /**
      * Converts a URL in ActiveMQ syntax to a destination such as to support
      * "queue://foo.bar" or 'topic://bar.whatnot". Things default to queues if

@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.mail.util.ByteArrayDataSource;
@@ -49,6 +50,7 @@ public class MimeMultipartDataFormatTest extends CamelTestSupport {
     private Exchange exchange;
     private AttachmentMessage in;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

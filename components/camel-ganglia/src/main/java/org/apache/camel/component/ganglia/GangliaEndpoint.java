@@ -46,11 +46,13 @@ public class GangliaEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(configuration, "configuration");
         return new GangliaProducer(this, getPublisher());
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Ganglia consumer not supported");
     }

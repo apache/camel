@@ -22,13 +22,13 @@ import org.apache.avro.specific.SpecificData;
 public class SpecificDataNoCache extends SpecificData {
 
     public SpecificDataNoCache() {
-        super();
     }
 
     public SpecificDataNoCache(ClassLoader classLoader) {
         super(classLoader);
     }
 
+    @Override
     public Object newRecord(Object old, Schema schema) {
         Class c = new SpecificDataNoCache().getClass(schema);
         return c == null ? super.newRecord(old, schema) : (c.isInstance(old) ? old : newInstance(c, schema));

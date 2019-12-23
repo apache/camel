@@ -43,20 +43,16 @@ public class RetryWhilePredicateExpressionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .handled(true)
-                    .redeliveryDelay(0)
-                    .retryWhile(new Predicate() {
-                        @Override
-                        public boolean matches(Exchange exchange) {
-                            Predicate predicate = and(simple("${body.areWeCool} == 'no'"), isNotNull(header("foo")));
-                            boolean answer = predicate.matches(exchange);
-                            return answer;
-                        }
-                    });
+                onException(IllegalArgumentException.class).handled(true).redeliveryDelay(0).retryWhile(new Predicate() {
+                    @Override
+                    public boolean matches(Exchange exchange) {
+                        Predicate predicate = and(simple("${body.areWeCool} == 'no'"), isNotNull(header("foo")));
+                        boolean answer = predicate.matches(exchange);
+                        return answer;
+                    }
+                });
 
-                from("direct:start")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

@@ -18,7 +18,6 @@ package org.apache.camel.component.hazelcast.replicatedmap;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ReplicatedMap;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;

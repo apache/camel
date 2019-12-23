@@ -39,26 +39,32 @@ public class SynchronousDelegateProducer implements Producer {
         this.producer = producer;
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return producer.getEndpoint();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         producer.process(exchange);
     }
 
+    @Override
     public void init() {
         producer.init();
     }
 
+    @Override
     public void start() {
         ServiceHelper.startService(producer);
     }
 
+    @Override
     public void stop() {
         ServiceHelper.stopService(producer);
     }
 
+    @Override
     public boolean isSingleton() {
         return producer.isSingleton();
     }

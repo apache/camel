@@ -24,6 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class SpringTransactionalClientDataWithRouteScopedOnExceptionAndRollbackUsingTransactedTest extends SpringTransactionalClientDataWithOnExceptionAndRollbackUsingTransactedTest {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/spring/interceptor/springTransactionalClientDataWithRouteScopedOnExceptionAndRollbackUsingTransacted.xml");

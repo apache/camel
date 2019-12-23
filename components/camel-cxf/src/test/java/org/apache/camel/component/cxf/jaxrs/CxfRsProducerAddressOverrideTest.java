@@ -176,6 +176,7 @@ public class CxfRsProducerAddressOverrideTest extends CamelSpringTestSupport {
             this.address = address;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.setPattern(ExchangePattern.InOut);
             Message inMessage = exchange.getIn();

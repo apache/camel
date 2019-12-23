@@ -22,19 +22,22 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
-@Ignore
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+@Disabled
 public class FtpConsumerIPV6BodyAsStringTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@[::1]:" + getPort() + "/tmp4/camel?password=admin&consumer.delay=5000";
+        return "ftp://admin@[::1]:" + getPort() + "/tmp4/camel?password=admin&delay=5000";
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -62,6 +65,7 @@ public class FtpConsumerIPV6BodyAsStringTest extends FtpServerTestSupport {
         producer.stop();
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

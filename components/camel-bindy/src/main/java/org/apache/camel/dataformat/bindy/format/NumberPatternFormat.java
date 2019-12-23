@@ -49,6 +49,7 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
         this.rounding = rounding;
     }
 
+    @Override
     public String format(T object) throws Exception {
         if (getNumberFormat() != null) {
             return this.getNumberFormat().format(object);
@@ -57,6 +58,7 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
         }
     }
 
+    @Override
     public abstract T parse(String string) throws Exception;
 
     /**
@@ -87,6 +89,7 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
         return format;
     }
 
+    @Override
     public String getPattern() {
         return pattern;
     }

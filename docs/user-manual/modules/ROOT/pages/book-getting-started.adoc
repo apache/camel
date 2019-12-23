@@ -1,11 +1,11 @@
 [[chapter-getting-started]]
 [[BookGettingStarted-GettingStartedwithApacheCamel]]
-== Getting Started with Apache Camel
+= Getting Started with Apache Camel
 
 [[BookGettingStarted-eip-book]]
 
 [[BookGettingStarted-TheEnterpriseIntegrationPatternsEIPBook]]
-=== The _Enterprise Integration Patterns_ (EIP) book
+== The _Enterprise Integration Patterns_ (EIP) book
 
 The purpose of a _patterns_ book is not to advocate new techniques that
 the authors have invented, but rather to document existing best
@@ -30,7 +30,7 @@ name and most are also given a graphical symbol, intended to be used in
 architectural diagrams.
 
 [[BookGettingStarted-TheCamelproject]]
-=== The Camel project
+== The Camel project
 
 Camel (http://camel.apache.org) is an open-source, Java-based project
 that helps the user implement many of the design patterns in the EIP
@@ -39,7 +39,7 @@ book, it would be a good idea for people who work with Camel to have the
 EIP book as a reference.
 
 [[BookGettingStarted-OnlinedocumentationforCamel]]
-=== Online documentation for Camel
+== Online documentation for Camel
 
 The documentation is all under the Documentation category on the
 right-side menu of the Camel website (also available in
@@ -51,7 +51,7 @@ http://www.manning.com/ibsen/chapter1sample.pdf[free Chapter One (pdf)],
 which is highly recommended to read to get more familiar with Camel.
 
 [[BookGettingStarted-Ausefultipfornavigatingtheonlinedocumentation]]
-==== A useful tip for navigating the online documentation
+=== A useful tip for navigating the online documentation
 
 The breadcrumbs at the top of the online Camel documentation can help
 you navigate between parent and child subsections. +
@@ -73,7 +73,7 @@ bookmarks to pages that you frequently reference can also save time.
 [[BookGettingStarted-online-javadoc-docs]]
 
 [[BookGettingStarted-OnlineJavadocdocumentation]]
-=== Online Javadoc documentation
+== Online Javadoc documentation
 
 The Apache Camel website provides
 http://camel.apache.org/maven/current/camel-core/apidocs/index.html[Javadoc
@@ -90,7 +90,7 @@ http://camel.apache.org/maven/current/camel-spring/apidocs/index.html[Spring
 API].
 
 [[BookGettingStarted-ConceptsandterminologyfundamentaltoCamel]]
-=== Concepts and terminology fundamental to Camel
+== Concepts and terminology fundamental to Camel
 
 In this section some of the concepts and terminology that are
 fundamental to Camel are explained. This section is not meant as a
@@ -99,7 +99,7 @@ complete Camel tutorial, but as a first step in that direction.
 [[BookGettingStarted-endpoint]]
 
 [[BookGettingStarted-Endpoint]]
-==== Endpoint
+=== Endpoint
 
 The term _endpoint_ is often used when talking about inter-process
 communication. For example, in client-server communication, the client
@@ -174,7 +174,7 @@ the http://camel.apache.org/maven/current/camel-ftp/apidocs/[FTP Javadoc
 hierarchy].
 
 [[BookGettingStarted-CamelContext]]
-==== CamelContext
+=== CamelContext
 
 A `CamelContext` object represents the Camel runtime system. You
 typically have one `CamelContext` object in an application. A typical
@@ -209,7 +209,7 @@ test may fail due to messages not having had a chance to be fully
 processed.
 
 [[BookGettingStarted-CamelTemplate]]
-==== CamelTemplate
+=== CamelTemplate
 
 Camel used to have a class called `CamelClient`, but this was renamed to
 be `CamelTemplate` to be similar to a naming convention used in some
@@ -228,7 +228,7 @@ move along routes – discussed in xref:book-getting-started.adoc[Section
 [[BookGettingStarted-url-uri-urn-iri]]
 
 [[BookGettingStarted-TheMeaningofURL,URI,URNandIRI]]
-==== The Meaning of URL, URI, URN and IRI
+=== The Meaning of URL, URI, URN and IRI
 
 Some Camel methods take a parameter that is a _URI_ string. Many people
 know that a URI is "something like a URL" but do not properly understand
@@ -274,7 +274,7 @@ a IRI can contain those same letters and digits, and _also_ European
 accented characters, Greek letters, Chinese ideograms and so on.
 
 [[BookGettingStarted-Components]]
-==== Components
+=== Components
 
 _Component_ is confusing terminology; _EndpointFactory_ would have been
 more appropriate because a `Component` is a factory for creating
@@ -402,7 +402,7 @@ than (as claimed) a URI.
 [[BookGettingStarted-message-and-exchange]]
 
 [[BookGettingStarted-MessageandExchange]]
-==== Message and Exchange
+=== Message and Exchange
 
 The `Message` interface provides an abstraction for a single message,
 such as a request, reply or exception message.
@@ -434,7 +434,7 @@ generic types that are instantiated on (a class that implements)
 the generic signatures of classes and methods.
 
 [[BookGettingStarted-Processor]]
-==== Processor
+=== Processor
 
 The `Processor` interface represents a class that processes a message.
 The signature of this interface is shown below:
@@ -468,7 +468,7 @@ is, condition).
 [[BookGettingStarted-routes]]
 
 [[BookGettingStarted-Routes,RouteBuildersandJavaDSL]]
-==== Routes, RouteBuilders and Java DSL
+=== Routes, RouteBuilders and Java DSL
 
 A _route_ is the step-by-step movement of a `Message` from an input
 queue, through arbitrary types of decision making (such as filters and
@@ -479,7 +479,7 @@ scope of this document. The other way is through what Camel calls a Java
 _DSL_ (domain-specific language).
 
 [[BookGettingStarted-IntroductiontoJavaDSL]]
-===== Introduction to Java DSL
+==== Introduction to Java DSL
 
 For many people, the term "domain-specific language" implies a compiler
 or interpreter that can process an input file containing keywords and
@@ -529,7 +529,7 @@ a `RouteBuilder` wrapper around it) and add it to the `CamelContext`
 object associated with the `RouteBuilder`.
 
 [[BookGettingStarted-CritiqueofJavaDSL]]
-===== Critique of Java DSL
+==== Critique of Java DSL
 
 The online Camel documentation compares Java DSL favorably against the
 alternative of configuring routes and endpoints in a XML-based Spring
@@ -551,7 +551,7 @@ BNF would almost certainly be significantly less than the effort
 currently required to study the API of the `RouterBuilder` classes.
 
 [[BookGettingStarted-ContinueLearningaboutCamel]]
-==== Continue Learning about Camel
+=== Continue Learning about Camel
 
 Return to the main Getting Started page for
 additional introductory reference information.

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -41,13 +42,13 @@ public class ScriptExternalTest extends ContextTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
                     // should not affect the body
-                    .script(simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt"))
-                    .to("mock:result");
+                    .script(simple("resource:classpath:org/apache/camel/processor/mysimplescript.txt")).to("mock:result");
             }
         };
     }

@@ -28,6 +28,7 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
     private HttpHeaderFilterStrategy filter;
     private Exchange exchange;
 
+    @Override
     @Before
     public void setUp() {
         filter = new HttpHeaderFilterStrategy();

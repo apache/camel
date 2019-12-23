@@ -18,7 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FtpConnectTimeoutTest extends FtpServerTestSupport {
 
@@ -36,6 +36,7 @@ public class FtpConnectTimeoutTest extends FtpServerTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.LinkOption;
@@ -95,9 +96,7 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
 
                 @Override
                 public void configure() throws Exception {
-                    from("direct:writeBadChmod1")
-                            .to("file://" + TEST_DIRECTORY + "?chmod=abc")
-                            .to("mock:badChmod1");
+                    from("direct:writeBadChmod1").to("file://" + TEST_DIRECTORY + "?chmod=abc").to("mock:badChmod1");
                 }
             });
             fail("Expected FailedToCreateRouteException");
@@ -105,11 +104,15 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
             assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
             PropertyBindingException pbe = assertIsInstanceOf(PropertyBindingException.class, e.getCause().getCause());
             assertEquals("chmod", pbe.getPropertyName());
+            IllegalArgumentException iae = assertIsInstanceOf(IllegalArgumentException.class, pbe.getCause());
+            assertEquals("chmod option [abc] is not valid", iae.getMessage());
         }
     }
 
     /**
-     * Write a file without chmod set, should work normally and not throw an exception for invalid chmod value
+     * Write a file without chmod set, should work normally and not throw an
+     * exception for invalid chmod value
+     * 
      * @throws Exception
      */
     @Test
@@ -133,18 +136,12 @@ public class FileProducerChmodOptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 // Valid chmod values
-                from("direct:write666")
-                        .to("file://" + TEST_DIRECTORY + "?chmod=666")
-                        .to("mock:chmod666");
+                from("direct:write666").to("file://" + TEST_DIRECTORY + "?chmod=666").to("mock:chmod666");
 
-                from("direct:write0755")
-                        .to("file://" + TEST_DIRECTORY + "?chmod=0755")
-                        .to("mock:chmod0755");
+                from("direct:write0755").to("file://" + TEST_DIRECTORY + "?chmod=0755").to("mock:chmod0755");
 
                 // No chmod
-                from("direct:writeNoChmod")
-                        .to("file://" + TEST_DIRECTORY)
-                        .to("mock:noChmod");
+                from("direct:writeNoChmod").to("file://" + TEST_DIRECTORY).to("mock:noChmod");
             }
         };
     }

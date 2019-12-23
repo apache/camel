@@ -64,22 +64,16 @@ public class FileConsumerSharedThreadPollTest extends ContextTestSupport {
                 pool = new ThreadPoolBuilder(context).poolSize(1).buildScheduled(this, "MySharedPool");
                 context.getRegistry().bind("myPool", pool);
 
-                from("file:target/data/a?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("a")
-                    .to("direct:shared");
+                from("file:target/data/a?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("a").to("direct:shared");
 
-                from("file:target/data/b?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("b")
-                    .to("direct:shared");
+                from("file:target/data/b?initialDelay=0&delay=10&scheduledExecutorService=#myPool").routeId("b").to("direct:shared");
 
-                from("direct:shared").routeId("shared")
-                    .convertBodyTo(String.class)
-                    .log("Get ${file:name} using ${threadName}")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().setHeader("threadName", Thread.currentThread().getName());
-                        }
-                    })
-                    .to("mock:result");
+                from("direct:shared").routeId("shared").convertBodyTo(String.class).log("Get ${file:name} using ${threadName}").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setHeader("threadName", Thread.currentThread().getName());
+                    }
+                }).to("mock:result");
             }
         };
     }

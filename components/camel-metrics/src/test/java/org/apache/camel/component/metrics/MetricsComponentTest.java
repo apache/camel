@@ -22,9 +22,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.codahale.metrics.MetricRegistry;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.impl.engine.DefaultBeanIntrospection;
 import org.apache.camel.spi.Registry;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +49,7 @@ import static org.mockito.Mockito.when;
 public class MetricsComponentTest {
 
     @Mock
-    private CamelContext camelContext;
+    private ExtendedCamelContext camelContext;
 
     @Mock
     private Registry camelRegistry;
@@ -72,6 +73,8 @@ public class MetricsComponentTest {
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
         when(camelContext.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class)).thenReturn(metricRegistry);
+        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(camelContext);
+        when(camelContext.getBeanIntrospection()).thenReturn(new DefaultBeanIntrospection());
 
         Map<String, Object> params = new HashMap<>();
         Long value = System.currentTimeMillis();
@@ -95,6 +98,8 @@ public class MetricsComponentTest {
         when(camelContext.getRegistry()).thenReturn(camelRegistry);
         when(camelContext.resolvePropertyPlaceholders(anyString())).then(returnsFirstArg());
         when(camelRegistry.lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class)).thenReturn(metricRegistry);
+        when(camelContext.adapt(ExtendedCamelContext.class)).thenReturn(camelContext);
+        when(camelContext.getBeanIntrospection()).thenReturn(new DefaultBeanIntrospection());
         Map<String, Object> params = new HashMap<>();
         Long value = System.currentTimeMillis();
         params.put("mark", value);

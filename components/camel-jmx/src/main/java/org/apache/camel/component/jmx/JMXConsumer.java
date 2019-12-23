@@ -115,7 +115,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
             try {
                 initNetworkConnection();
             } catch (IOException e) {
-                if (!mJmxEndpoint.getTestConnectionOnStartup()) {
+                if (!mJmxEndpoint.isTestConnectionOnStartup()) {
                     log.warn("Failed to connect to JMX server. >> {}", e.getMessage());
                     scheduleDelayedStart();
                     return;
@@ -172,7 +172,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
                     doStart();
                 } catch (Exception e) {
                     log.error("An unrecoverable exception has occurred while starting the JMX consumer"
-                                + "for endpoint {}", URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), e);
+                                + " for endpoint {}", URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()), e);
                 }
             }
         };
@@ -197,7 +197,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
                         || connectionNotification.getType().equals(JMXConnectionNotification.CLOSED) 
                         || connectionNotification.getType().equals(JMXConnectionNotification.FAILED)) {
                 log.warn("Lost JMX connection for : {}", URISupport.sanitizeUri(mJmxEndpoint.getEndpointUri()));
-                if (mJmxEndpoint.getReconnectOnConnectionFailure()) {
+                if (mJmxEndpoint.isReconnectOnConnectionFailure()) {
                     scheduleReconnect();
                 } else {
                     log.warn("The JMX consumer will not be reconnected. Use 'reconnectOnConnectionFailure' to "
@@ -316,6 +316,7 @@ public class JMXConsumer extends DefaultConsumer implements NotificationListener
      *
      * @see javax.management.NotificationListener#handleNotification(javax.management.Notification, java.lang.Object)
      */
+    @Override
     public void handleNotification(Notification aNotification, Object aHandback) {
         JMXEndpoint ep = getEndpoint();
         Exchange exchange = getEndpoint().createExchange();

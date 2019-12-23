@@ -34,6 +34,7 @@ public class ServletRootPathTest extends ServletCamelRouterTestSupport {
         assertEquals("The response message is wrong ", "Bye World", response.getText());
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

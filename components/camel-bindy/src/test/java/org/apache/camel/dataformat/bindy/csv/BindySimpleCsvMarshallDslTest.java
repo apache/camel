@@ -92,6 +92,7 @@ public class BindySimpleCsvMarshallDslTest extends AbstractJUnit4SpringContextTe
 
     public static class ContextConfig extends RouteBuilder {
 
+        @Override
         public void configure() {
             BindyDataFormat bindy = new BindyDataFormat();
             bindy.setLocale("en");

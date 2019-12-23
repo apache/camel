@@ -19,10 +19,8 @@ package org.apache.camel.component.exec;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-
 import org.junit.Before;
 import org.junit.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;

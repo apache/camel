@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.bean;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Header;
@@ -54,14 +55,11 @@ public class FileBeanParameterBindingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/foo")
-                    .to("bean:foo?method=before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().setHeader("bar", 123);
-                        }
-                    }).to("bean:foo?method=after")
-                    .to("mock:result");
+                from("file:target/data/foo").to("bean:foo?method=before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setHeader("bar", 123);
+                    }
+                }).to("bean:foo?method=after").to("mock:result");
 
             }
         };

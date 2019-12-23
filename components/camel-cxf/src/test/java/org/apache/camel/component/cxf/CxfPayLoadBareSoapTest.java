@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.jws.WebService;
@@ -28,7 +29,6 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
 
 public class CxfPayLoadBareSoapTest extends CamelTestSupport {
 
@@ -83,6 +83,7 @@ public class CxfPayLoadBareSoapTest extends CamelTestSupport {
     public static class BareSoapServiceImpl implements BareSoapService {
         private AtomicInteger invocations = new AtomicInteger(0);
 
+        @Override
         public void doSomething() {
             invocations.incrementAndGet();
         }

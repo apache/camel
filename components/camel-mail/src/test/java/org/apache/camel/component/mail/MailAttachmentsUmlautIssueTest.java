@@ -25,7 +25,6 @@ import javax.activation.FileDataSource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
@@ -92,10 +91,11 @@ public class MailAttachmentsUmlautIssueTest extends CamelTestSupport {
         producer.stop();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://james@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

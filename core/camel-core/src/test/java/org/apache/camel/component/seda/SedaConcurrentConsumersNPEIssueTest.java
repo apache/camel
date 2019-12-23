@@ -37,8 +37,7 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
             context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
-            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                    + " seda://foo?concurrentConsumers=5", e.getMessage());
+            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:" + " seda://foo?concurrentConsumers=5", e.getMessage());
         }
     }
 
@@ -58,8 +57,7 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
             context.getRouteController().startRoute("first");
             fail("Should have thrown exception");
         } catch (FailedToStartRouteException e) {
-            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:"
-                    + " seda://foo?concurrentConsumers=5", e.getMessage());
+            assertEquals("Failed to start route first because of Multiple consumers for the same endpoint is not allowed:" + " seda://foo?concurrentConsumers=5", e.getMessage());
         }
     }
 
@@ -71,7 +69,7 @@ public class SedaConcurrentConsumersNPEIssueTest extends ContextTestSupport {
                 from("seda:foo?concurrentConsumers=5").routeId("first").noAutoStartup().to("mock:result");
 
                 from("seda:foo?concurrentConsumers=5").routeId("second").to("mock:result");
-                
+
                 from("direct:foo").routeId("third").noAutoStartup().to("mock:result");
             }
         };

@@ -36,6 +36,7 @@ public class BlueprintModelJAXBContextFactory extends DefaultModelJAXBContextFac
         return classLoader;
     }
 
+    @Override
     protected String getPackages() {
         // we nedd to have a class from each different package with jaxb models
         // and we must use the .class for the classloader to work in OSGi

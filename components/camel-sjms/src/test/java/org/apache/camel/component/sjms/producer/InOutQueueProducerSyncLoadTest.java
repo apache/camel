@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.sjms.producer;
+
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

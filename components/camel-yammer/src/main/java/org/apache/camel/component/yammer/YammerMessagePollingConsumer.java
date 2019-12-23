@@ -19,7 +19,6 @@ package org.apache.camel.component.yammer;
 import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.yammer.model.Messages;

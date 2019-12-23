@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.processor.idempotent;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -33,6 +34,7 @@ public class FileConsumerIdempotentLoadStoreTest extends ContextTestSupport {
 
     private IdempotentRepository repo;
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/idempotent/fileConsumerIdempotentTest.xml");
     }

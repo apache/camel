@@ -25,24 +25,12 @@ public class RouteScopedOnExceptionLoadBalancerStopRouteTest extends ContextScop
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .onException(Exception.class)
-                        .handled(true)
-                        .loadBalance().roundRobin().to("seda:error", "seda:error2").end()
-                        .to("mock:exception")
-                    .end()
+                from("direct:start").onException(Exception.class).handled(true).loadBalance().roundRobin().to("seda:error", "seda:error2").end().to("mock:exception").end()
                     // route starts here
-                    .to("mock:start")
-                    .choice()
-                        .when(body().contains("Kaboom"))
-                            .throwException(new IllegalArgumentException("Forced"))
-                        .otherwise()
-                            .transform(body().prepend("Bye "))
+                    .to("mock:start").choice().when(body().contains("Kaboom")).throwException(new IllegalArgumentException("Forced")).otherwise().transform(body().prepend("Bye "))
                     .to("mock:result");
 
-                from("seda:error").routeId("errorRoute")
-                    .to("controlbus:route?action=stop&routeId=errorRoute&async=true")
-                    .to("mock:error");
+                from("seda:error").routeId("errorRoute").to("controlbus:route?action=stop&routeId=errorRoute&async=true").to("mock:error");
             }
         };
     }

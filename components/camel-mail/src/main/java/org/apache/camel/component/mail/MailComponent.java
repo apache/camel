@@ -30,7 +30,7 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -50,7 +50,6 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
     }
 
     public MailComponent(MailConfiguration configuration) {
-        super();
         this.configuration = configuration;
     }
 
@@ -100,7 +99,7 @@ public class MailComponent extends HeaderFilterStrategyComponent implements SSLC
         }
 
         // special for searchTerm.xxx options
-        Map<String, Object> sstParams = IntrospectionSupport.extractProperties(parameters, "searchTerm.");
+        Map<String, Object> sstParams = PropertiesHelper.extractProperties(parameters, "searchTerm.");
         if (!sstParams.isEmpty()) {
             // use SimpleSearchTerm as POJO to store the configuration and then convert that to the actual SearchTerm
             SimpleSearchTerm sst = new SimpleSearchTerm();

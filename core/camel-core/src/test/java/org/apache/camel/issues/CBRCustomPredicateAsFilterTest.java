@@ -33,6 +33,7 @@ public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
 
         private List<String> bodies = new ArrayList<>();
 
+        @Override
         public boolean matches(Exchange exchange) {
             String body = exchange.getIn().getBody(String.class);
             bodies.add(body);
@@ -66,10 +67,7 @@ public class CBRCustomPredicateAsFilterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(filter).to("mock:good")
-                        .otherwise().to("mock:secret");
+                from("direct:start").choice().when(filter).to("mock:good").otherwise().to("mock:secret");
             }
         };
     }

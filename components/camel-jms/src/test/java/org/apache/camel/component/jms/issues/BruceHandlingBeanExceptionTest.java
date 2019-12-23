@@ -27,7 +27,7 @@ import org.junit.Test;
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Unit test for request-reply with jms where processing the input could cause: OK, FAULT or Exception
+ * Unit test for request-reply with jms where processing the input could cause: OK or Exception
  */
 public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
 
@@ -38,18 +38,13 @@ public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSendFailure() throws Exception {
-        Object out = template.requestBody("activemq:queue:fault", "Hello World");
-        assertEquals("This is a fault message", out);
-    }
-
-    @Test
     public void testSendError() throws Exception {
         Object out = template.requestBody("activemq:queue:error", "Hello World");
         IllegalArgumentException e = assertIsInstanceOf(IllegalArgumentException.class, out);
         assertEquals("Forced exception by unit test", e.getMessage());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -64,8 +59,6 @@ public class BruceHandlingBeanExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:queue:ok").transform(constant("Bye World"));
-
-                from("activemq:queue:fault").setFaultBody(constant("This is a fault message"));
 
                 from("activemq:queue:error?transferException=true").bean(MyExceptionBean.class);
             }

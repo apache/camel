@@ -45,17 +45,14 @@ public class OnExceptionContinuedNoFailureProcessorTest extends ContextTestSuppo
                 errorHandler(deadLetterChannel("mock:error"));
 
                 // continue runtime exception
-                onException(RuntimeException.class)
-                    .continued(true);
+                onException(RuntimeException.class).continued(true);
 
-                from("direct:start").
-                    process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new RuntimeException("FAIL!");
-                        }
-                    }).
-                    to("mock:end");
+                from("direct:start").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new RuntimeException("FAIL!");
+                    }
+                }).to("mock:end");
             }
         };
     }

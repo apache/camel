@@ -18,6 +18,7 @@ package org.apache.camel.component.hbase.mapping;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.camel.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

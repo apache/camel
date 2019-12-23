@@ -45,6 +45,7 @@ public class BeanMethodWithExchangeTest extends CamelTestSupport {
         Assert.assertFalse(result.getMessage(AttachmentMessage.class).getAttachments().containsKey("attachment"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

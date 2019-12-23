@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atomix.client.messaging;
 
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +32,7 @@ import org.apache.camel.spi.UriParam;
     title = "Atomix Messaging",
     syntax = "atomix-messaging:resourceName",
     label = "clustering")
-final class AtomixMessagingEndpoint extends AbstractAtomixClientEndpoint<AtomixMessagingComponent, AtomixMessagingConfiguration> {
+public final class AtomixMessagingEndpoint extends AbstractAtomixClientEndpoint<AtomixMessagingComponent, AtomixMessagingConfiguration> {
     @UriParam
     private AtomixMessagingConfiguration configuration;
 
@@ -48,7 +47,9 @@ final class AtomixMessagingEndpoint extends AbstractAtomixClientEndpoint<AtomixM
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AtomixMessagingConsumer(this, processor);
+        AtomixMessagingConsumer consumer = new AtomixMessagingConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

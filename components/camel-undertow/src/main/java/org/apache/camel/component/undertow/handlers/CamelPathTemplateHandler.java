@@ -64,7 +64,7 @@ public class CamelPathTemplateHandler implements HttpHandler {
         return handlers.isEmpty();
     }
 
-    public CamelMethodHandler getDefault() {
+    public synchronized CamelMethodHandler getDefault() {
         return this.defaultHandlerWrapper.get();
     }
 
@@ -73,6 +73,7 @@ public class CamelPathTemplateHandler implements HttpHandler {
         handlerString = null;
     }
 
+    @Override
     public String toString() {
         if (handlerString == null) {
             handlerString = "CamelPathTemplateHandler[default=" + defaultHandlerWrapper.get() + ", " + handlers + "]";

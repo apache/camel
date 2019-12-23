@@ -29,7 +29,6 @@ import com.amazonaws.services.simpleemail.model.SendEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendEmailResult;
 import com.amazonaws.services.simpleemail.model.SendRawEmailRequest;
 import com.amazonaws.services.simpleemail.model.SendRawEmailResult;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -48,6 +47,7 @@ public class SesProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         if (!(exchange.getIn().getBody() instanceof javax.mail.Message)) {
             SendEmailRequest request = createMailRequest(exchange);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.io.IOException;
 import java.net.SocketException;
 
@@ -41,11 +42,11 @@ public class FailOverLoadBalanceWrappedExceptionNoLuckTest extends ContextTestSu
         y = getMockEndpoint("mock:y");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").loadBalance()
-                    .failover(IOException.class).to("direct:x", "direct:y");
+                from("direct:start").loadBalance().failover(IOException.class).to("direct:x", "direct:y");
 
                 from("direct:x").to("mock:x").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

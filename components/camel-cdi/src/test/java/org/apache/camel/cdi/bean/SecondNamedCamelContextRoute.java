@@ -16,10 +16,13 @@
  */
 package org.apache.camel.cdi.bean;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
+import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Named;
 
-@ContextName("second")
+import org.apache.camel.builder.RouteBuilder;
+
+@ApplicationScoped
+@Named("second")
 public class SecondNamedCamelContextRoute extends RouteBuilder {
 
     @Override

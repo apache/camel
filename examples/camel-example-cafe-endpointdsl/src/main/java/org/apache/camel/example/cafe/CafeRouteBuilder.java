@@ -92,6 +92,7 @@ public class CafeRouteBuilder extends EndpointRouteBuilder {
     }
 
     //START SNIPPET: RouteConfig
+    @Override
     public void configure() {
         
         from(direct("cafe"))

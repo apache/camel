@@ -34,8 +34,6 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-
-
 @ContextConfiguration
 public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
 
@@ -108,6 +106,7 @@ public class BindyImpliedTest extends AbstractJUnit4SpringContextTests {
     // *************************************************************************
 
     public static class ContextConfig extends RouteBuilder {
+        @Override
         public void configure() {
             BindyDataFormat bindy = new BindyDataFormat();
             bindy.setClassType(Record.class);

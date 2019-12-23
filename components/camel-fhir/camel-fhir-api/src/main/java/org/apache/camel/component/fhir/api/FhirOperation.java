@@ -17,15 +17,14 @@
 package org.apache.camel.component.fhir.api;
 
 import java.util.Map;
+
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IOperationProcessMsg;
 import ca.uhn.fhir.rest.gclient.IOperationProcessMsgMode;
 import ca.uhn.fhir.rest.gclient.IOperationUnnamed;
 import ca.uhn.fhir.rest.gclient.IOperationUntyped;
 import ca.uhn.fhir.rest.gclient.IOperationUntypedWithInput;
-
 import org.apache.camel.util.ObjectHelper;
-
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseParameters;
 import org.hl7.fhir.instance.model.api.IBaseResource;

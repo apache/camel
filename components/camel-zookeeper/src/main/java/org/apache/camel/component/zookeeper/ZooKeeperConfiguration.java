@@ -45,9 +45,6 @@ public class ZooKeeperConfiguration implements Cloneable {
     private int timeout = 5000;
     @UriParam(label = "consumer", defaultValue = "5000")
     private long backoff = 5000;
-    @UriParam(defaultValue = "true")
-    @Deprecated
-    private boolean awaitExistence = true;
     @UriParam(label = "consumer")
     private boolean repeat;
     @UriParam
@@ -151,23 +148,6 @@ public class ZooKeeperConfiguration implements Cloneable {
      */
     public void setRepeat(boolean repeat) {
         this.repeat = repeat;
-    }
-
-    /**
-     * @deprecated The usage of this option has no effect at all.
-     */
-    @Deprecated
-    public boolean shouldAwaitExistence() {
-        return awaitExistence;
-    }
-
-    /**
-     * Not in use
-     * @deprecated The usage of this option has no effect at all.
-     */
-    @Deprecated
-    public void setAwaitExistence(boolean awaitExistence) {
-        this.awaitExistence = awaitExistence;
     }
 
     public long getBackoff() {

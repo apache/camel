@@ -23,7 +23,6 @@ import com.splunk.Index;
 import com.splunk.IndexCollection;
 import com.splunk.InputCollection;
 import com.splunk.TcpInput;
-
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Producer;

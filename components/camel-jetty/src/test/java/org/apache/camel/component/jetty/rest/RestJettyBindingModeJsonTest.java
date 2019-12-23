@@ -66,9 +66,7 @@ public class RestJettyBindingModeJsonTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json);
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .post("new").type(UserJaxbPojo.class)
-                        .to("mock:input");
+                rest("/users/").post("new").type(UserJaxbPojo.class).to("mock:input");
             }
         };
     }

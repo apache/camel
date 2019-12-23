@@ -96,10 +96,12 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
         factory = null;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -108,11 +110,13 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Data
         return factory;
     }
 
+    @Override
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         List<Object> models = getModels(exchange, body);
         writeModels(stream, models);
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         if (isUnmarshalSingleObject()) {
             return readSingleModel(exchange, stream);

@@ -1,7 +1,8 @@
 [[tidyMarkup-dataformat]]
-== TidyMarkup DataFormat
+= TidyMarkup DataFormat
+:page-source: components/camel-tagsoup/src/main/docs/tidyMarkup-dataformat.adoc
 
-*Available as of Camel version 2.0*
+*Since Camel 2.0*
 
 TidyMarkup is a Data Format that uses the
 http://www.ccil.org/~cowan/XML/tagsoup/[TagSoup] to tidy up HTML. It can
@@ -17,7 +18,7 @@ rendering the pdf manuals. And then the mysterious symbols vanished.
 TidyMarkup only supports the *unmarshal* operation
 as we really don't want to turn well formed HTML into ugly HTML.
 
-### TidyMarkup Options
+== TidyMarkup Options
 
 
 
@@ -35,14 +36,14 @@ The TidyMarkup dataformat supports 3 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-tagsoup-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -59,7 +60,7 @@ The component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.dataformat.tidymarkup.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.tidymarkup.data-object-type* | What data type to unmarshal as, can either be org.w3c.dom.Node or java.lang.String. Is by default org.w3c.dom.Node | org.w3c.dom.Node | String
-| *camel.dataformat.tidymarkup.enabled* | Enable tidymarkup dataformat | true | Boolean
+| *camel.dataformat.tidymarkup.enabled* | Whether to enable auto configuration of the tidyMarkup data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.tidymarkup.omit-xml-declaration* | When returning a String, do we omit the XML declaration in the top. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
@@ -67,7 +68,7 @@ The component supports 4 options, which are listed below.
 
 
 
-### Java DSL Example
+== Java DSL Example
 
 An example where the consumer provides some HTML
 
@@ -76,7 +77,7 @@ An example where the consumer provides some HTML
 from("file://site/inbox").unmarshal().tidyMarkup().to("file://site/blogs");
 ---------------------------------------------------------------------------
 
-### Spring XML Example
+== Spring XML Example
 
 The following example shows how to use TidyMarkup
 to unmarshal using Spring
@@ -94,7 +95,7 @@ to unmarshal using Spring
 </camelContext>
 -----------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use TidyMarkup in your camel routes you need to add the a dependency
 on *camel-tagsoup* which implements this data format.

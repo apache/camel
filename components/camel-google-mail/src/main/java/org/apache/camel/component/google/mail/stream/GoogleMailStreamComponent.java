@@ -19,7 +19,6 @@ package org.apache.camel.component.google.mail.stream;
 import java.util.Map;
 
 import com.google.api.services.gmail.Gmail;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.mail.BatchGoogleMailClientFactory;
@@ -88,7 +87,6 @@ public class GoogleMailStreamComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final GoogleMailStreamConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
         GoogleMailStreamEndpoint endpoint = new GoogleMailStreamEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
         return endpoint;

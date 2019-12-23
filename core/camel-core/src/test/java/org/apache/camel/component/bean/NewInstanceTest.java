@@ -56,6 +56,7 @@ public class NewInstanceTest extends ContextTestSupport {
         return jndiContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

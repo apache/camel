@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.support;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -89,7 +90,8 @@ public class GroupTokenIteratorTest extends TestSupport {
     @Test
     public void testGroupIteratorWithDifferentEncodingFromDefault() throws Exception {
         if (Charset.defaultCharset() == StandardCharsets.UTF_8) {
-            // can't think of test case where having default charset set to UTF-8 is affected
+            // can't think of test case where having default charset set to
+            // UTF-8 is affected
             return;
         }
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -42,7 +43,8 @@ public class FilerConsumerShouldSkipDoneFileTest extends ContextTestSupport {
         // write the done file
         template.sendBodyAndHeader("file:target/data/done", "", Exchange.FILE_NAME, "done");
 
-        // wait a bit and it should not pickup the written file as there are no target file
+        // wait a bit and it should not pickup the written file as there are no
+        // target file
         Thread.sleep(250);
 
         assertMockEndpointsSatisfied();
@@ -70,9 +72,7 @@ public class FilerConsumerShouldSkipDoneFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=done&initialDelay=0&delay=10")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file:target/data/done?doneFileName=done&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

@@ -18,6 +18,7 @@ package org.apache.camel.component.fhir.dataformat.spring;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import ca.uhn.fhir.context.FhirContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;

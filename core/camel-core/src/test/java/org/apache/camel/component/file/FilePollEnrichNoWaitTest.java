@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -54,16 +55,10 @@ public class FilePollEnrichNoWaitTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?delay=0&period=10").routeId("foo")
-                    .log("Trigger timer foo")
+                from("timer:foo?delay=0&period=10").routeId("foo").log("Trigger timer foo")
                     // use 0 as timeout for no wait
-                    .pollEnrich("file:target/data/pollenrich?initialDelay=0&delay=10&move=done", 0)
-                    .convertBodyTo(String.class)
-                    .filter(body().isNull())
-                        .stop()
-                    .end()
-                    .log("Polled filed ${file:name}")
-                    .to("mock:result");
+                    .pollEnrich("file:target/data/pollenrich?initialDelay=0&delay=10&move=done", 0).convertBodyTo(String.class).filter(body().isNull()).stop().end()
+                    .log("Polled filed ${file:name}").to("mock:result");
             }
         };
     }

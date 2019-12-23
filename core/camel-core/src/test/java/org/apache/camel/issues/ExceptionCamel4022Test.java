@@ -66,25 +66,14 @@ public class ExceptionCamel4022Test extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:dlc").redeliveryDelay(0).maximumRedeliveries(3));
 
                 // onException that does NOT handle the exception
-                onException(Exception.class)
-                    .logStackTrace(false)
-                    .process(new MyExceptionThrower("Damn Again"))
-                    .to("mock:onexception");
+                onException(Exception.class).logStackTrace(false).process(new MyExceptionThrower("Damn Again")).to("mock:onexception");
 
                 // route
-                from("direct:start")
-                    .to("mock:a")
-                    .to("direct:intermediate")
-                    .to("mock:result2");
+                from("direct:start").to("mock:a").to("direct:intermediate").to("mock:result2");
 
                 // 2nd route
-                from("direct:intermediate")
-                    .to("mock:b")
-                    .setBody(constant("<some-value/>"))
-                    .process(new MyExceptionThrower("Damn"))
-                    .to("mock:intermediate");
+                from("direct:intermediate").to("mock:b").setBody(constant("<some-value/>")).process(new MyExceptionThrower("Damn")).to("mock:intermediate");
             }
         };
     }
 }
-

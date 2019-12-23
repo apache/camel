@@ -57,7 +57,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder async(boolean async) {
-            setProperty("async", async);
+            doSetProperty("async", async);
             return this;
         }
         /**
@@ -83,7 +83,47 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder async(String async) {
-            setProperty("async", async);
+            doSetProperty("async", async);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ControlBusEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ControlBusEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -95,7 +135,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder loggingLevel(LoggingLevel loggingLevel) {
-            setProperty("loggingLevel", loggingLevel);
+            doSetProperty("loggingLevel", loggingLevel);
             return this;
         }
         /**
@@ -108,7 +148,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder loggingLevel(String loggingLevel) {
-            setProperty("loggingLevel", loggingLevel);
+            doSetProperty("loggingLevel", loggingLevel);
             return this;
         }
         /**
@@ -119,7 +159,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder restartDelay(int restartDelay) {
-            setProperty("restartDelay", restartDelay);
+            doSetProperty("restartDelay", restartDelay);
             return this;
         }
         /**
@@ -130,7 +170,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder restartDelay(String restartDelay) {
-            setProperty("restartDelay", restartDelay);
+            doSetProperty("restartDelay", restartDelay);
             return this;
         }
         /**
@@ -142,7 +182,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: producer
          */
         default ControlBusEndpointBuilder routeId(String routeId) {
-            setProperty("routeId", routeId);
+            doSetProperty("routeId", routeId);
             return this;
         }
     }
@@ -166,7 +206,7 @@ public interface ControlBusEndpointBuilderFactory {
          */
         default AdvancedControlBusEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -179,7 +219,7 @@ public interface ControlBusEndpointBuilderFactory {
          */
         default AdvancedControlBusEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -192,7 +232,7 @@ public interface ControlBusEndpointBuilderFactory {
          */
         default AdvancedControlBusEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -204,7 +244,7 @@ public interface ControlBusEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedControlBusEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -214,7 +254,7 @@ public interface ControlBusEndpointBuilderFactory {
      * based on the Control Bus EIP pattern.
      * 
      * Category: core,monitoring
-     * Available as of version: 2.11
+     * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-controlbus
      * 
      * Syntax: <code>controlbus:command:language</code>
@@ -231,7 +271,7 @@ public interface ControlBusEndpointBuilderFactory {
      * groovy, header, jsonpath, mvel, ognl, ref, simple, spel, sql, terser,
      * tokenize, xpath, xquery, xtokenize
      */
-    default ControlBusEndpointBuilder controlBus(String path) {
+    default ControlBusEndpointBuilder controlbus(String path) {
         class ControlBusEndpointBuilderImpl extends AbstractEndpointBuilder implements ControlBusEndpointBuilder, AdvancedControlBusEndpointBuilder {
             public ControlBusEndpointBuilderImpl(String path) {
                 super("controlbus", path);

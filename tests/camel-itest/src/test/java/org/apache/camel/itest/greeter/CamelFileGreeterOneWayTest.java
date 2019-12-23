@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.greeter;
+
 import java.io.File;
 
 import javax.xml.ws.Endpoint;
@@ -37,7 +38,7 @@ public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
     
     private static Endpoint endpoint;
     private static GreeterImpl greeterImpl;
-    private static int port = AvailablePortFinder.getNextAvailable(20000);
+    private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 

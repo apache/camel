@@ -45,9 +45,7 @@ public class DefaultErrorHandlerOnPrepareTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(defaultErrorHandler().onPrepareFailure(new MyPrepareProcessor()));
 
-                from("direct:start")
-                    .log("Incoming ${body}")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

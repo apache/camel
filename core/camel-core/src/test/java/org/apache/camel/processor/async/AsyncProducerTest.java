@@ -50,21 +50,15 @@ public class AsyncProducerTest extends ContextTestSupport {
                 context.addComponent("async", new MyAsyncComponent());
                 Producer myAsyncProducer = context.getEndpoint("async:bye:camel").createProducer();
 
-                from("direct:start")
-                    .to("mock:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .process(myAsyncProducer)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .to("mock:after")
-                    .to("mock:result");
+                from("direct:start").to("mock:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).process(myAsyncProducer).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).to("mock:after").to("mock:result");
             }
         };
     }

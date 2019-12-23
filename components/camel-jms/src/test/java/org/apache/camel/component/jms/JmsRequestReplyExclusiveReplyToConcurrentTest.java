@@ -68,6 +68,7 @@ public class JmsRequestReplyExclusiveReplyToConcurrentTest extends CamelTestSupp
         executor.shutdownNow();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

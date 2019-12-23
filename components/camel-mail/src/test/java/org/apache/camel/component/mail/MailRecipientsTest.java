@@ -122,6 +122,7 @@ public class MailRecipientsTest extends CamelTestSupport {
         assertEquals("me@you.org", msg.getRecipients(Message.RecipientType.CC)[0].toString());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -53,6 +53,7 @@ public interface ManagedRecipientListMBean extends ManagedProcessorMBean, Manage
     @ManagedAttribute(description = "The total timeout specified in millis, when using parallel processing.")
     Long getTimeout();
 
+    @Override
     @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
     TabularData extendedInformation();
 

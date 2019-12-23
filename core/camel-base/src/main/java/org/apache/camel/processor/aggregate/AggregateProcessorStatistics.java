@@ -67,6 +67,11 @@ public interface AggregateProcessorStatistics {
     long getCompletedByForce();
 
     /**
+     * Total number of exchanged discarded
+     */
+    long getDiscarded();
+
+    /**
      * Reset the counters
      */
     void reset();

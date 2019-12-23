@@ -48,6 +48,7 @@ public class ScpComponent extends RemoteFileComponent<ScpFile> {
         return new ScpEndpoint(uri, this, new ScpConfiguration(new URI(query >= 0 ? uri.substring(0, query) : uri)));
     }
 
+    @Override
     protected void afterPropertiesSet(GenericFileEndpoint<ScpFile> endpoint) throws Exception {
         // noop
     }

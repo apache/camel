@@ -114,13 +114,6 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * An expression of an outbound message
-     */
-    public T outMessage() {
-        return delegate.outMessage();
-    }
-
-    /**
      * A functional expression of an outbound message
      */
     public T outMessage(final Function<Message, Object> function) {
@@ -205,13 +198,6 @@ public class MockExpressionClause<T> implements Expression, Predicate {
     }
 
     /**
-     * An expression of an outbound message body
-     */
-    public T outBody() {
-        return delegate.outBody();
-    }
-
-    /**
      * A functional expression of an outbound message body
      */
     public T outBody(final Function<Object, Object> function) {
@@ -233,13 +219,6 @@ public class MockExpressionClause<T> implements Expression, Predicate {
                     exchange.getOut().getHeaders());
             }
         });
-    }
-
-    /**
-     * An expression of an outbound message body converted to the expected type
-     */
-    public T outBody(Class<?> expectedType) {
-        return delegate.outBody(expectedType);
     }
 
     /**
@@ -278,20 +257,6 @@ public class MockExpressionClause<T> implements Expression, Predicate {
      */
     public T headers() {
         return delegate.headers();
-    }
-
-    /**
-     * An expression of an outbound message header of the given name
-     */
-    public T outHeader(String name) {
-        return delegate.outHeader(name);
-    }
-
-    /**
-     * An expression of the outbound headers
-     */
-    public T outHeaders() {
-        return delegate.outHeaders();
     }
 
     /**

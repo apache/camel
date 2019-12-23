@@ -58,6 +58,7 @@ public class SpringSagaTest extends ContextTestSupport {
         resultEndpoint.assertIsNotSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/saga.xml");
     }

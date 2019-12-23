@@ -22,7 +22,6 @@ import java.util.List;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.Message;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 
@@ -43,18 +42,11 @@ public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            Message in = exchange.getIn();
-
             @SuppressWarnings("unchecked")
             List<T> list = expression.evaluate(exchange, List.class);
             list.sort(comparator);
 
-            if (exchange.getPattern().isOutCapable()) {
-                Message out = exchange.getOut();
-                out.copyFromWithNewBody(in, list);
-            } else {
-                in.setBody(list);
-            }
+            exchange.getMessage().setBody(list);
         } catch (Exception e) {
             exchange.setException(e);
         }
@@ -63,6 +55,7 @@ public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, 
         return true;
     }
 
+    @Override
     public String toString() {
         return "Sort[" + expression + "]";
     }
@@ -72,10 +65,12 @@ public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, 
         return "sort[" + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

@@ -66,9 +66,7 @@ public class AdviceWithRoutePolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routePolicy(new MyRoutePolicy())
-                    .to("mock:foo")
-                    .to("mock:bar");
+                from("direct:start").routePolicy(new MyRoutePolicy()).to("mock:foo").to("mock:bar");
             }
         };
     }

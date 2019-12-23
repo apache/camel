@@ -24,14 +24,16 @@ import org.apache.camel.util.StopWatch;
 /**
  * The direct producer.
  * <p/>
- * If blocking is enabled ({@code DirectEndpoint#isBlock}) then the DirectEndpoint will create an instance
- * of this class instead of {@code DirectProducer}.
- * This producers {@code process} method will block for the configured duration ({@code DirectEndpoint#getTimeout},
- * default to 30 seconds). After which if a consumer is still unavailable a DirectConsumerNotAvailableException
- * will be thrown.
+ * If blocking is enabled ({@code DirectEndpoint#isBlock}) then the
+ * DirectEndpoint will create an instance of this class instead of
+ * {@code DirectProducer}. This producers {@code process} method will block for
+ * the configured duration ({@code DirectEndpoint#getTimeout}, default to 30
+ * seconds). After which if a consumer is still unavailable a
+ * DirectConsumerNotAvailableException will be thrown.
  * <p/>
- * Implementation note: Concurrent Producers will block for the duration it takes to determine if a
- * consumer is available, but actual consumer execution will happen concurrently.
+ * Implementation note: Concurrent Producers will block for the duration it
+ * takes to determine if a consumer is available, but actual consumer execution
+ * will happen concurrently.
  */
 public class DirectVmBlockingProducer extends DefaultAsyncProducer {
 
@@ -42,10 +44,12 @@ public class DirectVmBlockingProducer extends DefaultAsyncProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         getConsumer(exchange).getProcessor().process(exchange);
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             return getConsumer(exchange).getAsyncProcessor().process(exchange, callback);
@@ -60,9 +64,13 @@ public class DirectVmBlockingProducer extends DefaultAsyncProducer {
         DirectVmConsumer answer = endpoint.getConsumer();
         if (answer == null) {
             // okay then await until we have a consumer or we timed out
-            answer = awaitConsumer();
-            if (answer == null) {
+            if (endpoint.isFailIfNoConsumers()) {
                 throw new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+            } else {
+                answer = awaitConsumer();
+                if (answer == null) {
+                    throw new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+                }
             }
         }
 

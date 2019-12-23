@@ -56,6 +56,7 @@ public class BindySimpleCsvIntegerMarshallTest extends AbstractJUnit4SpringConte
     }
 
     public static class ContextConfig extends RouteBuilder {
+        @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(MyOrder.class);
             camelDataFormat.setLocale("en_US");

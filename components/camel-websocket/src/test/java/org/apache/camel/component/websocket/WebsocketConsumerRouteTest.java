@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.websocket;
 
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -36,7 +35,7 @@ public class WebsocketConsumerRouteTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(16200);
+        port = AvailablePortFinder.getNextAvailable();
         super.setUp();
     }
 

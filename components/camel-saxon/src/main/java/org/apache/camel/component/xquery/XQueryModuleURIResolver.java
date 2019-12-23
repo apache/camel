@@ -35,6 +35,7 @@ public class XQueryModuleURIResolver implements ModuleURIResolver {
         this.xqueryComponent = xqueryComponent;
     }
 
+    @Override
     public StreamSource[] resolve(String moduleURI, String baseURI, String[] locations) throws XPathException {
         StreamSource[] ss = new StreamSource[locations.length];
         try {

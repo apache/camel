@@ -17,7 +17,6 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.Map;
-import java.util.Set;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -53,7 +52,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManager(Object cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -65,7 +64,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder cacheManager(String cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -77,7 +76,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -90,7 +89,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -102,7 +101,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -115,7 +114,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -128,7 +127,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -146,7 +145,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -164,7 +163,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -176,7 +175,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder eventFiring(
                 EventFiring eventFiring) {
-            setProperty("eventFiring", eventFiring);
+            doSetProperty("eventFiring", eventFiring);
             return this;
         }
         /**
@@ -188,7 +187,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventFiring(String eventFiring) {
-            setProperty("eventFiring", eventFiring);
+            doSetProperty("eventFiring", eventFiring);
             return this;
         }
         /**
@@ -200,7 +199,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
                 EventOrdering eventOrdering) {
-            setProperty("eventOrdering", eventOrdering);
+            doSetProperty("eventOrdering", eventOrdering);
             return this;
         }
         /**
@@ -213,32 +212,20 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
                 String eventOrdering) {
-            setProperty("eventOrdering", eventOrdering);
+            doSetProperty("eventOrdering", eventOrdering);
             return this;
         }
         /**
-         * Set the type of events to listen for.
+         * Set the type of events to listen for
+         * (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED). You can specify multiple
+         * entries separated by comma.
          * 
-         * The option is a:
-         * <code>java.util.Set&lt;org.ehcache.event.EventType&gt;</code> type.
-         * 
-         * Group: consumer
-         */
-        default EhcacheEndpointConsumerBuilder eventTypes(
-                Set<EventType> eventTypes) {
-            setProperty("eventTypes", eventTypes);
-            return this;
-        }
-        /**
-         * Set the type of events to listen for.
-         * 
-         * The option will be converted to a
-         * <code>java.util.Set&lt;org.ehcache.event.EventType&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventTypes(String eventTypes) {
-            setProperty("eventTypes", eventTypes);
+            doSetProperty("eventTypes", eventTypes);
             return this;
         }
     }
@@ -265,7 +252,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -281,7 +268,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -293,7 +280,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -306,7 +293,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -319,7 +306,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -332,7 +319,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -346,7 +333,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -360,21 +347,20 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
          * A map of cache configuration to be used to create caches.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
                 Map<String, Object> configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
@@ -382,39 +368,24 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder configurations(
                 String configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointConsumerBuilder keyType(
-                Class<Object> keyType) {
-            setProperty("keyType", keyType);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -427,7 +398,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -440,33 +411,19 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointConsumerBuilder valueType(
-                Class<Object> valueType) {
-            setProperty("valueType", valueType);
-            return this;
-        }
-        /**
-         * The cache value type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder valueType(
                 String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
@@ -489,7 +446,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManager(Object cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -501,7 +458,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointProducerBuilder cacheManager(String cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -513,7 +470,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -526,7 +483,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -538,7 +495,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -551,7 +508,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -564,7 +521,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -576,7 +533,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -588,7 +545,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder key(Object key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -600,7 +557,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder key(String key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -620,7 +577,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -640,7 +597,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -664,7 +621,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -677,7 +634,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -691,7 +648,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -705,21 +662,20 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
          * A map of cache configuration to be used to create caches.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
                 Map<String, Object> configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
@@ -727,39 +683,24 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder configurations(
                 String configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointProducerBuilder keyType(
-                Class<Object> keyType) {
-            setProperty("keyType", keyType);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -772,7 +713,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -785,33 +726,19 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointProducerBuilder valueType(
-                Class<Object> valueType) {
-            setProperty("valueType", valueType);
-            return this;
-        }
-        /**
-         * The cache value type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder valueType(
                 String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
@@ -834,7 +761,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointBuilder cacheManager(Object cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -846,7 +773,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointBuilder cacheManager(String cacheManager) {
-            setProperty("cacheManager", cacheManager);
+            doSetProperty("cacheManager", cacheManager);
             return this;
         }
         /**
@@ -858,7 +785,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
                 Object cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -871,7 +798,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointBuilder cacheManagerConfiguration(
                 String cacheManagerConfiguration) {
-            setProperty("cacheManagerConfiguration", cacheManagerConfiguration);
+            doSetProperty("cacheManagerConfiguration", cacheManagerConfiguration);
             return this;
         }
         /**
@@ -882,7 +809,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: common
          */
         default EhcacheEndpointBuilder configurationUri(String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -895,7 +822,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointBuilder createCacheIfNotExist(
                 boolean createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
         /**
@@ -908,7 +835,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default EhcacheEndpointBuilder createCacheIfNotExist(
                 String createCacheIfNotExist) {
-            setProperty("createCacheIfNotExist", createCacheIfNotExist);
+            doSetProperty("createCacheIfNotExist", createCacheIfNotExist);
             return this;
         }
     }
@@ -932,7 +859,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -945,7 +872,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -959,7 +886,7 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -973,21 +900,20 @@ public interface EhcacheEndpointBuilderFactory {
          */
         default AdvancedEhcacheEndpointBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
          * A map of cache configuration to be used to create caches.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configurations(
                 Map<String, Object> configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
@@ -995,38 +921,24 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String,
-         * org.ehcache.config.CacheConfiguration&lt;java.lang.Object,
-         * java.lang.Object&gt;&gt;</code> type.
+         * org.ehcache.config.CacheConfiguration&gt;</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder configurations(
                 String configurations) {
-            setProperty("configurations", configurations);
+            doSetProperty("configurations", configurations);
             return this;
         }
         /**
          * The cache key type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointBuilder keyType(Class<Object> keyType) {
-            setProperty("keyType", keyType);
-            return this;
-        }
-        /**
-         * The cache key type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder keyType(String keyType) {
-            setProperty("keyType", keyType);
+            doSetProperty("keyType", keyType);
             return this;
         }
         /**
@@ -1038,7 +950,7 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1050,31 +962,18 @@ public interface EhcacheEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
          * The cache value type, default java.lang.Object.
          * 
-         * The option is a: <code>java.lang.Class&lt;java.lang.Object&gt;</code>
-         * type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedEhcacheEndpointBuilder valueType(Class<Object> valueType) {
-            setProperty("valueType", valueType);
-            return this;
-        }
-        /**
-         * The cache value type, default java.lang.Object.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;java.lang.Object&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder valueType(String valueType) {
-            setProperty("valueType", valueType);
+            doSetProperty("valueType", valueType);
             return this;
         }
     }
@@ -1094,24 +993,13 @@ public interface EhcacheEndpointBuilderFactory {
         UNORDERED,
         ORDERED;
     }
-
-    /**
-     * Proxy enum for <code>org.ehcache.event.EventType</code> enum.
-     */
-    enum EventType {
-        EVICTED,
-        EXPIRED,
-        REMOVED,
-        CREATED,
-        UPDATED;
-    }
     /**
      * Ehcache (camel-ehcache)
      * The ehcache component enables you to perform caching operations using
      * Ehcache as cache implementation.
      * 
      * Category: cache,datagrid,clustering
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-ehcache
      * 
      * Syntax: <code>ehcache:cacheName</code>

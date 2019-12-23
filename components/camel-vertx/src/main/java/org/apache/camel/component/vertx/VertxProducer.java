@@ -27,8 +27,6 @@ import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 
-import static org.apache.camel.component.vertx.VertxHelper.getVertxBody;
-
 public class VertxProducer extends DefaultAsyncProducer {
 
     public VertxProducer(VertxEndpoint endpoint) {
@@ -54,11 +52,11 @@ public class VertxProducer extends DefaultAsyncProducer {
         boolean reply = ExchangeHelper.isOutCapable(exchange);
         boolean pubSub = getEndpoint().isPubSub();
 
-        Object body = getVertxBody(exchange);
+        Object body = exchange.getMessage().getBody();
         if (body != null) {
             if (reply) {
                 log.debug("Sending to: {} with body: {}", address, body);
-                eventBus.send(address, body, new CamelReplyHandler(exchange, callback));
+                eventBus.request(address, body, new CamelReplyHandler(exchange, callback));
                 return false;
             } else {
                 if (pubSub) {

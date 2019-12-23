@@ -40,10 +40,12 @@ public class ExchangePatternProcessor extends AsyncProcessorSupport implements I
         exchangePattern = ep;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -52,6 +54,7 @@ public class ExchangePatternProcessor extends AsyncProcessorSupport implements I
         return exchangePattern;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         exchange.setPattern(exchangePattern);
         callback.done(true);

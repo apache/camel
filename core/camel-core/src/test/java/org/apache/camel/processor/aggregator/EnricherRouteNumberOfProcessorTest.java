@@ -40,30 +40,25 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .enrich("direct:enrich", new AggregationStrategy() {
-                        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                            if (oldExchange == null) {
-                                return newExchange;
-                            }
-                            // should always be in
-                            String body = newExchange.getIn().getBody(String.class);
-                            assertNotNull(body);
+                from("direct:start").enrich("direct:enrich", new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        if (oldExchange == null) {
                             return newExchange;
                         }
-                    })
-                    .to("mock:foo")
-                    .end()
-                    .to("mock:result");
+                        // should always be in
+                        String body = newExchange.getIn().getBody(String.class);
+                        assertNotNull(body);
+                        return newExchange;
+                    }
+                }).to("mock:foo").end().to("mock:result");
 
-                from("direct:enrich")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            assertFalse("Should not have out", failed);
-                            String s = exchange.getIn().getBody(String.class);
-                            exchange.getIn().setBody("Hi " + s);
-                        }
-                    });
+                from("direct:enrich").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertFalse("Should not have out", failed);
+                        String s = exchange.getIn().getBody(String.class);
+                        exchange.getIn().setBody("Hi " + s);
+                    }
+                });
             }
         });
         context.start();
@@ -86,32 +81,25 @@ public class EnricherRouteNumberOfProcessorTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .enrich("direct:enrich", new AggregationStrategy() {
-                        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                            if (oldExchange == null) {
-                                return newExchange;
-                            }
-                            // should always be in
-                            String body = newExchange.getIn().getBody(String.class);
-                            assertNotNull(body);
+                from("direct:start").enrich("direct:enrich", new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        if (oldExchange == null) {
                             return newExchange;
                         }
-                    })
-                        .to("mock:foo")
-                    .end()
-                    .to("mock:result");
+                        // should always be in
+                        String body = newExchange.getIn().getBody(String.class);
+                        assertNotNull(body);
+                        return newExchange;
+                    }
+                }).to("mock:foo").end().to("mock:result");
 
-                from("direct:enrich")
-                    .pipeline("log:a", "log:b")
-                    .to("log:foo")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            assertFalse("Should not have out", failed);
-                            String s = exchange.getIn().getBody(String.class);
-                            exchange.getIn().setBody("Hi " + s);
-                        }
-                    });
+                from("direct:enrich").pipeline("log:a", "log:b").to("log:foo").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertFalse("Should not have out", failed);
+                        String s = exchange.getIn().getBody(String.class);
+                        exchange.getIn().setBody("Hi " + s);
+                    }
+                });
             }
         });
         context.start();

@@ -21,7 +21,6 @@ import java.io.File;
 import javax.activation.DataHandler;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.builder.RouteBuilder;
@@ -36,10 +35,7 @@ import org.junit.Test;
 public class MultiPartFormTest extends BaseJettyTest {
     private HttpEntity createMultipartRequestEntity() throws Exception {
         File file = new File("src/test/resources/log4j2.properties");
-        return MultipartEntityBuilder.create()
-                .addTextBody("comment", "A binary file of some kind")
-                .addBinaryBody(file.getName(), file)
-                .build();
+        return MultipartEntityBuilder.create().addTextBody("comment", "A binary file of some kind").addBinaryBody(file.getName(), file).build();
 
     }
 
@@ -63,6 +59,7 @@ public class MultiPartFormTest extends BaseJettyTest {
         assertEquals("Get a wrong result", "A binary file of some kind", result);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -93,13 +90,13 @@ public class MultiPartFormTest extends BaseJettyTest {
                         // "text/plain", data.getContentType());
                         assertEquals("Got the wrong name", "log4j2.properties", data.getName());
 
-                        assertTrue("We should get the data from the DataHandle", data.getDataSource()
-                            .getInputStream().available() > 0);
+                        assertTrue("We should get the data from the DataHandle", data.getDataSource().getInputStream().available() > 0);
 
                         // The other form date can be get from the message
                         // header
 
-                        // For binary attachment, header should also be populated by DataHandler but not payload
+                        // For binary attachment, header should also be
+                        // populated by DataHandler but not payload
                         Object header = in.getHeader("log4j2.properties");
                         assertEquals(DataHandler.class, header.getClass());
                         assertEquals(data, header);

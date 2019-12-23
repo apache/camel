@@ -62,15 +62,18 @@ public class FileOperations implements GenericFileOperations<File> {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void setEndpoint(GenericFileEndpoint<File> endpoint) {
         this.endpoint = (FileEndpoint) endpoint;
     }
 
+    @Override
     public boolean deleteFile(String name) throws GenericFileOperationFailedException {
         File file = new File(name);
         return FileUtil.deleteFile(file);
     }
 
+    @Override
     public boolean renameFile(String from, String to) throws GenericFileOperationFailedException {
         boolean renamed = false;
         File file = new File(from);
@@ -88,6 +91,7 @@ public class FileOperations implements GenericFileOperations<File> {
         return renamed;
     }
 
+    @Override
     public boolean existsFile(String name) throws GenericFileOperationFailedException {
         File file = new File(name);
         return file.exists();
@@ -135,6 +139,7 @@ public class FileOperations implements GenericFileOperations<File> {
         return true;
     }
 
+    @Override
     public boolean buildDirectory(String directory, boolean absolute) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
 
@@ -152,6 +157,9 @@ public class FileOperations implements GenericFileOperations<File> {
         File endpointPath = endpoint.getFile();
         File target = new File(directory);
 
+        // check if directory is a path
+        boolean isPath = directory.contains("/") || directory.contains("\\");
+
         File path;
         if (absolute) {
             // absolute path
@@ -159,16 +167,19 @@ public class FileOperations implements GenericFileOperations<File> {
         } else if (endpointPath.equals(target)) {
             // its just the root of the endpoint path
             path = endpointPath;
-        } else {
+        } else if (isPath) {
             // relative after the endpoint path
             String afterRoot = StringHelper.after(directory, endpointPath.getPath() + File.separator);
             if (ObjectHelper.isNotEmpty(afterRoot)) {
                 // dir is under the root path
                 path = new File(endpoint.getFile(), afterRoot);
             } else {
-                // dir is relative to the root path
-                path = new File(endpoint.getFile(), directory);
+                // dir path is relative to the root path
+                path = new File(directory);
             }
+        } else {
+            // dir is a child of the root path
+            path = new File(endpoint.getFile(), directory);
         }
 
         // We need to make sure that this is thread-safe and only one thread tries to create the path directory at the same time.
@@ -183,29 +194,35 @@ public class FileOperations implements GenericFileOperations<File> {
         }
     }
 
+    @Override
     public List<File> listFiles() throws GenericFileOperationFailedException {
         // noop
         return null;
     }
 
+    @Override
     public List<File> listFiles(String path) throws GenericFileOperationFailedException {
         // noop
         return null;
     }
 
+    @Override
     public void changeCurrentDirectory(String path) throws GenericFileOperationFailedException {
         // noop
     }
 
+    @Override
     public void changeToParentDirectory() throws GenericFileOperationFailedException {
         // noop
     }
 
+    @Override
     public String getCurrentDirectory() throws GenericFileOperationFailedException {
         // noop
         return null;
     }
 
+    @Override
     public boolean retrieveFile(String name, Exchange exchange, long size) throws GenericFileOperationFailedException {
         // noop as we use type converters to read the body content for java.io.File
         return true;
@@ -216,6 +233,7 @@ public class FileOperations implements GenericFileOperations<File> {
         // noop as we used type converters to read the body content for java.io.File
     }
 
+    @Override
     public boolean storeFile(String fileName, Exchange exchange, long size) throws GenericFileOperationFailedException {
         ObjectHelper.notNull(endpoint, "endpoint");
 
@@ -260,10 +278,11 @@ public class FileOperations implements GenericFileOperations<File> {
             String charset = endpoint.getCharset();
 
             // we can optimize and use file based if no charset must be used, and the input body is a file
+            // however optimization cannot be applied when content should be appended to target file
             File source = null;
             boolean fileBased = false;
-            if (charset == null) {
-                // if no charset, then we can try using file directly (optimized)
+            if (charset == null && endpoint.getFileExist() != GenericFileExist.Append) {
+                // if no charset and not in appending mode, then we can try using file directly (optimized)
                 Object body = exchange.getIn().getBody();
                 if (body instanceof WrappedFile) {
                     body = ((WrappedFile<?>) body).getFile();
@@ -400,6 +419,7 @@ public class FileOperations implements GenericFileOperations<File> {
     }
 
     private void writeFileByStream(InputStream in, File target) throws IOException {
+        boolean exists = target.exists();
         try (SeekableByteChannel out = prepareOutputFileChannel(target)) {
             
             LOG.debug("Using InputStream to write file: {}", target);
@@ -414,12 +434,21 @@ public class FileOperations implements GenericFileOperations<File> {
                 out.write(byteBuffer);
                 byteBuffer.clear();
             }
+
+            boolean append = endpoint.getFileExist() == GenericFileExist.Append;
+            if (append && exists && endpoint.getAppendChars() != null) {
+                byteBuffer = ByteBuffer.wrap(endpoint.getAppendChars().getBytes());
+                out.write(byteBuffer);
+                byteBuffer.clear();
+            }
+
         } finally {
             IOHelper.close(in, target.getName(), LOG);
         }
     }
 
     private void writeFileByReaderWithCharset(Reader in, File target, String charset) throws IOException {
+        boolean exists = target.exists();
         boolean append = endpoint.getFileExist() == GenericFileExist.Append;
         try (Writer out = Files.newBufferedWriter(target.toPath(), Charset.forName(charset), 
                                                   StandardOpenOption.WRITE,
@@ -428,6 +457,10 @@ public class FileOperations implements GenericFileOperations<File> {
             LOG.debug("Using Reader to write file: {} with charset: {}", target, charset);
             int size = endpoint.getBufferSize();
             IOHelper.copy(in, out, size);
+
+            if (append && exists && endpoint.getAppendChars() != null) {
+                out.write(endpoint.getAppendChars());
+            }
         } finally {
             IOHelper.close(in, target.getName(), LOG);
         }

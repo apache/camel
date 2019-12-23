@@ -20,9 +20,9 @@ import java.time.Duration;
 
 import io.nats.client.Connection;
 import io.nats.client.Connection.Status;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public class NatsProducer extends DefaultProducer {
@@ -40,16 +40,20 @@ public class NatsProducer extends DefaultProducer {
     
     @Override
     public void process(Exchange exchange) throws Exception {
-        NatsConfiguration config = getEndpoint().getNatsConfiguration();
-        String body = exchange.getIn().getMandatoryBody(String.class);
+        NatsConfiguration config = getEndpoint().getConfiguration();
+        byte[] body = exchange.getIn().getBody(byte[].class);
+        if (body == null) {
+            // fallback to use string
+            body = exchange.getIn().getMandatoryBody(String.class).getBytes();
+        }
 
         log.debug("Publishing to topic: {}", config.getTopic());
         
         if (ObjectHelper.isNotEmpty(config.getReplySubject())) {
             String replySubject = config.getReplySubject();
-            connection.publish(config.getTopic(), replySubject, body.getBytes());
+            connection.publish(config.getTopic(), replySubject, body);
         } else {
-            connection.publish(config.getTopic(), body.getBytes());
+            connection.publish(config.getTopic(), body);
         }
     }
     
@@ -59,19 +63,19 @@ public class NatsProducer extends DefaultProducer {
         log.debug("Starting Nats Producer");
         
         log.debug("Getting Nats Connection");
-        connection = getEndpoint().getNatsConfiguration().getConnection() != null 
-            ? getEndpoint().getNatsConfiguration().getConnection() : getEndpoint().getConnection();
+        connection = getEndpoint().getConfiguration().getConnection() != null
+            ? getEndpoint().getConfiguration().getConnection() : getEndpoint().getConnection();
     }
 
     @Override
     protected void doStop() throws Exception {
         log.debug("Stopping Nats Producer");
-        if (ObjectHelper.isEmpty(getEndpoint().getNatsConfiguration().getConnection())) {
+        if (ObjectHelper.isEmpty(getEndpoint().getConfiguration().getConnection())) {
             log.debug("Closing Nats Connection");
             if (connection != null && !connection.getStatus().equals(Status.CLOSED)) {
-                if (getEndpoint().getNatsConfiguration().isFlushConnection()) {
+                if (getEndpoint().getConfiguration().isFlushConnection()) {
                     log.debug("Flushing Nats Connection");
-                    connection.flush(Duration.ofMillis(getEndpoint().getNatsConfiguration().getFlushTimeout()));
+                    connection.flush(Duration.ofMillis(getEndpoint().getConfiguration().getFlushTimeout()));
                 }
                 connection.close();
             }

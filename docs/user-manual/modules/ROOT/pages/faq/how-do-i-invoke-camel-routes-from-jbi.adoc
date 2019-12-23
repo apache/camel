@@ -1,5 +1,5 @@
 [[HowdoIinvokeCamelroutesfromJBI-HowdoIinvokeCamelroutesfromJBI]]
-=== How do I invoke Camel routes from JBI?
+= How do I invoke Camel routes from JBI?
 
 When you use the JBI endpoint as follows:
 

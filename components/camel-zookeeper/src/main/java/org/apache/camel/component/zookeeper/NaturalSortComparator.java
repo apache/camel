@@ -42,7 +42,7 @@ public class NaturalSortComparator implements Comparator<CharSequence> {
         }
     }
 
-    private Order order;;
+    private Order order;
 
     public NaturalSortComparator() {
         this(Order.Ascending);
@@ -54,6 +54,7 @@ public class NaturalSortComparator implements Comparator<CharSequence> {
         }
     }
 
+    @Override
     public int compare(CharSequence first, CharSequence second) {
         if (first == null && second == null) {
             return 0;

@@ -55,18 +55,22 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
     private EndpointUtilizationStatistics inputUtilization;
     private EndpointUtilizationStatistics outputUtilization;
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public boolean isEnabled() {
         return enabled;
     }
 
+    @Override
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
@@ -317,18 +321,22 @@ public class DefaultRuntimeEndpointRegistry extends EventNotifierSupport impleme
             this.hits = hits;
         }
 
+        @Override
         public String getUri() {
             return uri;
         }
 
+        @Override
         public String getRouteId() {
             return routeId;
         }
 
+        @Override
         public String getDirection() {
             return direction;
         }
 
+        @Override
         public long getHits() {
             return hits;
         }

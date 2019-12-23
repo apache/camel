@@ -31,6 +31,7 @@ public class SpringMDCWithBreadcrumbDisabledTest extends SpringMDCTest {
 
     public static class ProcessorA implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("route-a", MDC.get("camel.routeId"));
             assertNull("Should not have breadcrumb", exchange.getIn().getHeader("camel.breadcrumbId"));
@@ -39,6 +40,7 @@ public class SpringMDCWithBreadcrumbDisabledTest extends SpringMDCTest {
 
     public static class ProcessorB implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("route-b", MDC.get("camel.routeId"));
             assertNull("Should not have breadcrumb", exchange.getIn().getHeader("camel.breadcrumbId"));

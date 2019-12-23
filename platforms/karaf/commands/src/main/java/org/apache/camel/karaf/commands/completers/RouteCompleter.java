@@ -32,6 +32,7 @@ import org.apache.karaf.shell.support.completers.StringsCompleter;
 @Service
 public class RouteCompleter extends CamelControllerImpl implements Completer {
 
+    @Override
     public int complete(Session session, CommandLine commandLine, List<String> candidates) {
 
         // grab selected camel context from the first argument

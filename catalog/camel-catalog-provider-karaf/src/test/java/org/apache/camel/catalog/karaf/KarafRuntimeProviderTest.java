@@ -62,8 +62,6 @@ public class KarafRuntimeProviderTest {
 
         assertTrue(names.contains("ftp"));
         assertTrue(names.contains("paxlogging"));
-        // camel-ejb does not work in Karaf
-        assertFalse(names.contains("ejb"));
     }
 
     @Test

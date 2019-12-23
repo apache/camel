@@ -31,6 +31,7 @@ public class CamelRootHandler implements HttpHandler {
         pathHandler = new CamelPathHandler(defaultHandler);
     }
 
+    @Override
     public void handleRequest(HttpServerExchange exchange) throws Exception {
         pathHandler.handleRequest(exchange);
     }
@@ -140,6 +141,7 @@ public class CamelRootHandler implements HttpHandler {
         return pathHandler.isEmpty();
     }
 
+    @Override
     public String toString() {
         return pathHandler.toString();
     }

@@ -40,9 +40,7 @@ public class DefaultErrorHandlerLogExhaustedMessageHistoryTest extends ContextTe
                 // no delay to speedup test
                 errorHandler(defaultErrorHandler().redeliveryDelay(0).maximumRedeliveries(3).logExhaustedMessageHistory(true));
 
-                from("direct:start")
-                    .log("Incoming ${body}")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

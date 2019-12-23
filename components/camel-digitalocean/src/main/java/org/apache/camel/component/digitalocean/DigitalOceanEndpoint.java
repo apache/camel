@@ -61,6 +61,7 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         LOG.trace("Resolve producer digitalocean endpoint {{}}", configuration.getResource());
 
@@ -93,6 +94,7 @@ public class DigitalOceanEndpoint extends DefaultEndpoint {
 
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }

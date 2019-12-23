@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -54,12 +55,11 @@ public class FileConsumeMoveRelativeNameTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(fileUrl)
-                        .routeId("foo").noAutoStartup()
-                        .convertBodyTo(String.class).to("mock:result");
+                from(fileUrl).routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
             }
         };
     }

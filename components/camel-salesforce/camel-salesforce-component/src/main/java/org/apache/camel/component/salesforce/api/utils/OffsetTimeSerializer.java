@@ -27,8 +27,7 @@ final class OffsetTimeSerializer extends com.fasterxml.jackson.datatype.jsr310.s
     private static final long serialVersionUID = 1L;
 
     private OffsetTimeSerializer() {
-        super(com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer.INSTANCE, null,
-            DateTimeHandling.ISO_OFFSET_TIME);
+        super(com.fasterxml.jackson.datatype.jsr310.ser.OffsetTimeSerializer.INSTANCE, null, DateTimeHandling.ISO_OFFSET_TIME);
     }
 
 }

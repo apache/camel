@@ -96,7 +96,7 @@ public class ImmediateConsumerTest extends BeanstalkMockTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("beanstalk:tube?consumer.awaitJob=false").process(processor).to("mock:result");
+                from("beanstalk:tube?awaitJob=false").process(processor).to("mock:result");
             }
         };
     }

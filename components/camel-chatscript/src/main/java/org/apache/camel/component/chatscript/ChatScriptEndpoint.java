@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.chatscript;
 
-
-
-
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -32,13 +29,18 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
+
 import static org.apache.camel.component.chatscript.utils.ChatScriptConstants.DEFAULT_PORT;
+
 /**
  * Represents a ChatScript endpoint.
  */
-@UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botname",  producerOnly = true, label = "ai,chatscript")
-public class ChatScriptEndpoint extends DefaultEndpoint { 
-    @UriPath (description = "Hostname or IP of the server on which CS server is running") 
+@UriEndpoint(firstVersion = "3.0.0", scheme = "chatscript", title = "ChatScript", syntax = "chatscript:host:port/botName",  producerOnly = true, label = "ai,chatscript")
+public class ChatScriptEndpoint extends DefaultEndpoint {
+
+    private ChatScriptBot bot;
+
+    @UriPath (description = "Hostname or IP of the server on which CS server is running")
     @Metadata(required = true)
     private String host;
     @UriPath(description = "Port on which ChatScript is listening to", defaultValue = "" + DEFAULT_PORT)
@@ -46,11 +48,11 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
     @UriPath(description = "Name of the Bot in CS to converse with")
     @Metadata(required = true)
     private String botName;
-    @UriParam(description = "Username who initializes the CS conversation. To be set when chat is initialized from camel route", label = "username")
+    @UriParam(description = "Username who initializes the CS conversation. To be set when chat is initialized from camel route")
     private String chatUserName;
-    @UriParam (description = "Issues :reset command to start a new conversation everytime", label = "reset", defaultValue = "false")
-    private boolean resetchat;
-    private ChatScriptBot bot;
+    @UriParam (description = "Issues :reset command to start a new conversation everytime", defaultValue = "false")
+    private boolean resetChat;
+
     public ChatScriptEndpoint() {
     }
 
@@ -76,11 +78,11 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
 
     }
     public boolean isResetChat() {
-        return resetchat;
+        return resetChat;
     }
 
-    public void setResetchat(boolean resetChat) {
-        this.resetchat = resetChat;
+    public void setResetChat(boolean resetChat) {
+        this.resetChat = resetChat;
     }
 
     public String getChatUserName() {
@@ -91,10 +93,12 @@ public class ChatScriptEndpoint extends DefaultEndpoint {
         this.chatUserName = chatusername;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new ChatScriptProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Chatscript consumer not supported");
     }

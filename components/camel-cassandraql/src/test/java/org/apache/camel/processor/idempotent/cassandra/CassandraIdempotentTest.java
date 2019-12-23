@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.idempotent.cassandra;
+
 import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.Session;
 import org.apache.camel.builder.RouteBuilder;
@@ -60,9 +61,7 @@ public class CassandraIdempotentTest extends BaseCassandraTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:input")
-                        .idempotentConsumer(header("idempotentId"), idempotentRepository)
-                        .to("mock:output");
+                from("direct:input").idempotentConsumer(header("idempotentId"), idempotentRepository).to("mock:output");
             }
         };
     }

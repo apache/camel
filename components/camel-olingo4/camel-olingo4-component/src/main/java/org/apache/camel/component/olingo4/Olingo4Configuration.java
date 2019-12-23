@@ -17,13 +17,14 @@
 package org.apache.camel.component.olingo4;
 
 import java.util.Map;
+
 import org.apache.camel.component.olingo4.internal.Olingo4ApiName;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.jsse.SSLContextParameters;
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.http.HttpHost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -41,7 +42,8 @@ public class Olingo4Configuration {
     @UriPath
     @Metadata(required = true)
     private Olingo4ApiName apiName;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String methodName;
     @UriParam
     private String serviceUri;
@@ -63,6 +65,8 @@ public class Olingo4Configuration {
     private HttpClientBuilder httpClientBuilder;
     @UriParam
     private boolean filterAlreadySeen;
+    @UriParam(label = "consumer", defaultValue = "true")
+    private boolean splitResult = true;
 
     public Olingo4ApiName getApiName() {
         return apiName;
@@ -91,7 +95,8 @@ public class Olingo4Configuration {
     }
 
     /**
-     * Target OData service base URI, e.g. http://services.odata.org/OData/OData.svc
+     * Target OData service base URI, e.g.
+     * http://services.odata.org/OData/OData.svc
      */
     public void setServiceUri(String serviceUri) {
         this.serviceUri = serviceUri;
@@ -102,7 +107,8 @@ public class Olingo4Configuration {
     }
 
     /**
-     * Content-Type header value can be used to specify JSON or XML message format, defaults to application/json;charset=utf-8
+     * Content-Type header value can be used to specify JSON or XML message
+     * format, defaults to application/json;charset=utf-8
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
@@ -113,7 +119,8 @@ public class Olingo4Configuration {
     }
 
     /**
-     * Custom HTTP headers to inject into every request, this could include OAuth tokens, etc.
+     * Custom HTTP headers to inject into every request, this could include
+     * OAuth tokens, etc.
      */
     public void setHttpHeaders(Map<String, String> httpHeaders) {
         this.httpHeaders = httpHeaders;
@@ -124,7 +131,8 @@ public class Olingo4Configuration {
     }
 
     /**
-     * HTTP connection creation timeout in milliseconds, defaults to 30,000 (30 seconds)
+     * HTTP connection creation timeout in milliseconds, defaults to 30,000 (30
+     * seconds)
      */
     public void setConnectTimeout(int connectTimeout) {
         this.connectTimeout = connectTimeout;
@@ -168,8 +176,10 @@ public class Olingo4Configuration {
     }
 
     /**
-     * Custom HTTP async client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext.
-     * Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely
+     * Custom HTTP async client builder for more complex HTTP client
+     * configuration, overrides connectionTimeout, socketTimeout, proxy and
+     * sslContext. Note that a socketTimeout MUST be specified in the builder,
+     * otherwise OData requests could block indefinitely
      */
     public void setHttpAsyncClientBuilder(HttpAsyncClientBuilder httpAsyncClientBuilder) {
         this.httpAsyncClientBuilder = httpAsyncClientBuilder;
@@ -180,8 +190,10 @@ public class Olingo4Configuration {
     }
 
     /**
-     * Custom HTTP client builder for more complex HTTP client configuration, overrides connectionTimeout, socketTimeout, proxy and sslContext.
-     * Note that a socketTimeout MUST be specified in the builder, otherwise OData requests could block indefinitely
+     * Custom HTTP client builder for more complex HTTP client configuration,
+     * overrides connectionTimeout, socketTimeout, proxy and sslContext. Note
+     * that a socketTimeout MUST be specified in the builder, otherwise OData
+     * requests could block indefinitely
      */
     public void setHttpClientBuilder(HttpClientBuilder httpClientBuilder) {
         this.httpClientBuilder = httpClientBuilder;
@@ -190,47 +202,55 @@ public class Olingo4Configuration {
     /**
      * Filter flag for filtering out already seen results
      */
-    public boolean getFilterAlreadySeen() {
+    public boolean isFilterAlreadySeen() {
         return filterAlreadySeen;
     }
 
     /**
-     * Set this to true to filter out results that have already been communicated by this component.
+     * Set this to true to filter out results that have already been
+     * communicated by this component.
+     * 
      * @param filterAlreadySeen
      */
     public void setFilterAlreadySeen(boolean filterAlreadySeen) {
         this.filterAlreadySeen = filterAlreadySeen;
     }
 
+    public boolean isSplitResult() {
+        return splitResult;
+    }
+
+    /**
+     * For endpoints that return an array or collection, a consumer endpoint will map every element to distinct messages, unless
+     * splitResult is set to false.
+     */
+    public void setSplitResult(boolean splitResult) {
+        this.splitResult = splitResult;
+    }
+
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .append(serviceUri)
-            .append(contentType)
-            .append(httpHeaders)
-            .append(connectTimeout)
-            .append(socketTimeout)
-            .append(proxy)
-            .append(sslContextParameters)
-            .append(httpAsyncClientBuilder)
-            .append(httpClientBuilder)
-            .hashCode();
+        return new HashCodeBuilder().append(serviceUri).append(contentType).append(httpHeaders).append(connectTimeout).append(socketTimeout).append(proxy)
+            .append(sslContextParameters).append(httpAsyncClientBuilder).append(httpClientBuilder).hashCode();
     }
 
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Olingo4Configuration) {
-            Olingo4Configuration other = (Olingo4Configuration) obj;
-            return serviceUri == null ? other.serviceUri == null : serviceUri.equals(other.serviceUri)
-                && contentType == null ? other.contentType == null : contentType.equals(other.contentType)
-                && httpHeaders == null ? other.httpHeaders == null : httpHeaders.equals(other.httpHeaders)
-                && connectTimeout == other.connectTimeout
-                && socketTimeout == other.socketTimeout
-                && proxy == null ? other.proxy == null : proxy.equals(other.proxy)
-                && sslContextParameters == null ? other.sslContextParameters == null : sslContextParameters.equals(other.sslContextParameters)
-                && httpAsyncClientBuilder == null ? other.httpAsyncClientBuilder == null
-                : httpAsyncClientBuilder.equals(other.httpAsyncClientBuilder)
-                && httpClientBuilder == null ? other.httpClientBuilder == null : httpClientBuilder.equals(other.httpClientBuilder);
+            Olingo4Configuration other = (Olingo4Configuration)obj;
+            return serviceUri == null
+                ? other.serviceUri == null
+                : serviceUri.equals(other.serviceUri) && contentType == null
+                    ? other.contentType == null
+                    : contentType.equals(other.contentType) && httpHeaders == null
+                        ? other.httpHeaders == null
+                        : httpHeaders.equals(other.httpHeaders) && connectTimeout == other.connectTimeout && socketTimeout == other.socketTimeout && proxy == null
+                            ? other.proxy == null
+                            : proxy.equals(other.proxy) && sslContextParameters == null
+                                ? other.sslContextParameters == null
+                                : sslContextParameters.equals(other.sslContextParameters) && httpAsyncClientBuilder == null
+                                    ? other.httpAsyncClientBuilder == null : httpAsyncClientBuilder.equals(other.httpAsyncClientBuilder) && httpClientBuilder == null
+                                        ? other.httpClientBuilder == null : httpClientBuilder.equals(other.httpClientBuilder);
         }
         return false;
     }

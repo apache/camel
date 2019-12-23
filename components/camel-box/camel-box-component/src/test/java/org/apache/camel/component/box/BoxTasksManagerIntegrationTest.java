@@ -29,7 +29,6 @@ import com.box.sdk.BoxTask;
 import com.box.sdk.BoxTask.Action;
 import com.box.sdk.BoxTaskAssignment;
 import com.box.sdk.BoxUser;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxTasksManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;

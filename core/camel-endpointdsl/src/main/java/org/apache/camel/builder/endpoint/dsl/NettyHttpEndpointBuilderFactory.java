@@ -38,7 +38,7 @@ public interface NettyHttpEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Netty4 HTTP component.
+     * Builder for endpoint consumers for the Netty HTTP component.
      */
     public interface NettyHttpEndpointConsumerBuilder
             extends
@@ -61,7 +61,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder bridgeEndpoint(
                 boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder bridgeEndpoint(
                 String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder keepAlive(boolean keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -125,7 +125,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -137,7 +137,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder reuseAddress(
                 boolean reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -149,7 +149,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder reuseAddress(
                 String reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder reuseChannel(
                 boolean reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -189,7 +189,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder reuseChannel(
                 String reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -211,7 +211,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -222,7 +222,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder tcpNoDelay(boolean tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -233,7 +233,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder tcpNoDelay(String tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -246,7 +246,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder matchOnUriPrefix(
                 boolean matchOnUriPrefix) {
-            setProperty("matchOnUriPrefix", matchOnUriPrefix);
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
         }
         /**
@@ -259,7 +259,33 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
-            setProperty("matchOnUriPrefix", matchOnUriPrefix);
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default NettyHttpEndpointConsumerBuilder muteException(
+                boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default NettyHttpEndpointConsumerBuilder muteException(
+                String muteException) {
+            doSetProperty("muteException", muteException);
             return this;
         }
         /**
@@ -273,7 +299,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder send503whenSuspended(
                 boolean send503whenSuspended) {
-            setProperty("send503whenSuspended", send503whenSuspended);
+            doSetProperty("send503whenSuspended", send503whenSuspended);
             return this;
         }
         /**
@@ -287,34 +313,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder send503whenSuspended(
                 String send503whenSuspended) {
-            setProperty("send503whenSuspended", send503whenSuspended);
-            return this;
-        }
-        /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder decoder(Object decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder decoder(String decoder) {
-            setProperty("decoder", decoder);
+            doSetProperty("send503whenSuspended", send503whenSuspended);
             return this;
         }
         /**
@@ -330,7 +329,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointConsumerBuilder decoders(List<Object> decoders) {
-            setProperty("decoders", decoders);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -346,34 +345,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointConsumerBuilder decoders(String decoders) {
-            setProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder encoder(Object encoder) {
-            setProperty("encoder", encoder);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointConsumerBuilder encoder(String encoder) {
-            setProperty("encoder", encoder);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -389,7 +361,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointConsumerBuilder encoders(List<Object> encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -405,7 +377,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointConsumerBuilder encoders(String encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -417,7 +389,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder enabledProtocols(
                 String enabledProtocols) {
-            setProperty("enabledProtocols", enabledProtocols);
+            doSetProperty("enabledProtocols", enabledProtocols);
             return this;
         }
         /**
@@ -428,7 +400,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder keyStoreFile(File keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -440,7 +412,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder keyStoreFile(
                 String keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -453,7 +425,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder keyStoreFormat(
                 String keyStoreFormat) {
-            setProperty("keyStoreFormat", keyStoreFormat);
+            doSetProperty("keyStoreFormat", keyStoreFormat);
             return this;
         }
         /**
@@ -467,7 +439,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder keyStoreResource(
                 String keyStoreResource) {
-            setProperty("keyStoreResource", keyStoreResource);
+            doSetProperty("keyStoreResource", keyStoreResource);
             return this;
         }
         /**
@@ -480,7 +452,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder needClientAuth(
                 boolean needClientAuth) {
-            setProperty("needClientAuth", needClientAuth);
+            doSetProperty("needClientAuth", needClientAuth);
             return this;
         }
         /**
@@ -493,7 +465,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder needClientAuth(
                 String needClientAuth) {
-            setProperty("needClientAuth", needClientAuth);
+            doSetProperty("needClientAuth", needClientAuth);
             return this;
         }
         /**
@@ -505,37 +477,37 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder passphrase(String passphrase) {
-            setProperty("passphrase", passphrase);
+            doSetProperty("passphrase", passphrase);
             return this;
         }
         /**
          * Refers to a
-         * org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration
+         * org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration
          * for configuring secure web resources.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
          * 
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder securityConfiguration(
                 Object securityConfiguration) {
-            setProperty("securityConfiguration", securityConfiguration);
+            doSetProperty("securityConfiguration", securityConfiguration);
             return this;
         }
         /**
          * Refers to a
-         * org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration
+         * org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration
          * for configuring secure web resources.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpSecurityConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration</code> type.
          * 
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder securityConfiguration(
                 String securityConfiguration) {
-            setProperty("securityConfiguration", securityConfiguration);
+            doSetProperty("securityConfiguration", securityConfiguration);
             return this;
         }
         /**
@@ -549,7 +521,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder securityOptions(
                 Map<String, Object> securityOptions) {
-            setProperty("securityOptions", securityOptions);
+            doSetProperty("securityOptions", securityOptions);
             return this;
         }
         /**
@@ -564,7 +536,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder securityOptions(
                 String securityOptions) {
-            setProperty("securityOptions", securityOptions);
+            doSetProperty("securityOptions", securityOptions);
             return this;
         }
         /**
@@ -577,7 +549,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder securityProvider(
                 String securityProvider) {
-            setProperty("securityProvider", securityProvider);
+            doSetProperty("securityProvider", securityProvider);
             return this;
         }
         /**
@@ -589,7 +561,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder ssl(boolean ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -601,7 +573,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder ssl(String ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -616,7 +588,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -631,7 +603,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -644,7 +616,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -657,7 +629,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -668,7 +640,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder sslHandler(Object sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -680,7 +652,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder sslHandler(String sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -692,7 +664,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder trustStoreFile(
                 File trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -704,7 +676,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder trustStoreFile(
                 String trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -718,7 +690,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder trustStoreResource(
                 String trustStoreResource) {
-            setProperty("trustStoreResource", trustStoreResource);
+            doSetProperty("trustStoreResource", trustStoreResource);
             return this;
         }
         /**
@@ -736,7 +708,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -754,13 +726,13 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Netty4 HTTP component.
+     * Advanced builder for endpoint consumers for the Netty HTTP component.
      */
     public interface AdvancedNettyHttpEndpointConsumerBuilder
             extends
@@ -780,7 +752,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder backlog(int backlog) {
-            setProperty("backlog", backlog);
+            doSetProperty("backlog", backlog);
             return this;
         }
         /**
@@ -795,12 +767,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder backlog(String backlog) {
-            setProperty("backlog", backlog);
+            doSetProperty("backlog", backlog);
             return this;
         }
         /**
          * When netty works on nio mode, it uses default bossCount parameter
-         * from Netty, which is 1. User can use this operation to override the
+         * from Netty, which is 1. User can use this option to override the
          * default bossCount from Netty.
          * 
          * The option is a: <code>int</code> type.
@@ -808,12 +780,12 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossCount(int bossCount) {
-            setProperty("bossCount", bossCount);
+            doSetProperty("bossCount", bossCount);
             return this;
         }
         /**
          * When netty works on nio mode, it uses default bossCount parameter
-         * from Netty, which is 1. User can use this operation to override the
+         * from Netty, which is 1. User can use this option to override the
          * default bossCount from Netty.
          * 
          * The option will be converted to a <code>int</code> type.
@@ -822,7 +794,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossCount(
                 String bossCount) {
-            setProperty("bossCount", bossCount);
+            doSetProperty("bossCount", bossCount);
             return this;
         }
         /**
@@ -835,7 +807,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossGroup(
                 Object bossGroup) {
-            setProperty("bossGroup", bossGroup);
+            doSetProperty("bossGroup", bossGroup);
             return this;
         }
         /**
@@ -849,7 +821,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossGroup(
                 String bossGroup) {
-            setProperty("bossGroup", bossGroup);
+            doSetProperty("bossGroup", bossGroup);
             return this;
         }
         /**
@@ -862,7 +834,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder chunkedMaxContentLength(
                 int chunkedMaxContentLength) {
-            setProperty("chunkedMaxContentLength", chunkedMaxContentLength);
+            doSetProperty("chunkedMaxContentLength", chunkedMaxContentLength);
             return this;
         }
         /**
@@ -875,7 +847,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder chunkedMaxContentLength(
                 String chunkedMaxContentLength) {
-            setProperty("chunkedMaxContentLength", chunkedMaxContentLength);
+            doSetProperty("chunkedMaxContentLength", chunkedMaxContentLength);
             return this;
         }
         /**
@@ -888,7 +860,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder compression(
                 boolean compression) {
-            setProperty("compression", compression);
+            doSetProperty("compression", compression);
             return this;
         }
         /**
@@ -901,7 +873,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder compression(
                 String compression) {
-            setProperty("compression", compression);
+            doSetProperty("compression", compression);
             return this;
         }
         /**
@@ -914,7 +886,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disconnectOnNoReply(
                 boolean disconnectOnNoReply) {
-            setProperty("disconnectOnNoReply", disconnectOnNoReply);
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
         }
         /**
@@ -927,7 +899,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disconnectOnNoReply(
                 String disconnectOnNoReply) {
-            setProperty("disconnectOnNoReply", disconnectOnNoReply);
+            doSetProperty("disconnectOnNoReply", disconnectOnNoReply);
             return this;
         }
         /**
@@ -940,7 +912,33 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
-            setProperty("httpMethodRestrict", httpMethodRestrict);
+            doSetProperty("httpMethodRestrict", httpMethodRestrict);
+            return this;
+        }
+        /**
+         * Whether Netty HTTP server should log a WARN if decoding the HTTP
+         * request failed and a HTTP Status 400 (bad request) is returned.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedNettyHttpEndpointConsumerBuilder logWarnOnBadRequest(
+                boolean logWarnOnBadRequest) {
+            doSetProperty("logWarnOnBadRequest", logWarnOnBadRequest);
+            return this;
+        }
+        /**
+         * Whether Netty HTTP server should log a WARN if decoding the HTTP
+         * request failed and a HTTP Status 400 (bad request) is returned.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedNettyHttpEndpointConsumerBuilder logWarnOnBadRequest(
+                String logWarnOnBadRequest) {
+            doSetProperty("logWarnOnBadRequest", logWarnOnBadRequest);
             return this;
         }
         /**
@@ -958,7 +956,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder mapHeaders(
                 boolean mapHeaders) {
-            setProperty("mapHeaders", mapHeaders);
+            doSetProperty("mapHeaders", mapHeaders);
             return this;
         }
         /**
@@ -976,7 +974,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder mapHeaders(
                 String mapHeaders) {
-            setProperty("mapHeaders", mapHeaders);
+            doSetProperty("mapHeaders", mapHeaders);
             return this;
         }
         /**
@@ -990,7 +988,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder maxHeaderSize(
                 int maxHeaderSize) {
-            setProperty("maxHeaderSize", maxHeaderSize);
+            doSetProperty("maxHeaderSize", maxHeaderSize);
             return this;
         }
         /**
@@ -1004,33 +1002,33 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder maxHeaderSize(
                 String maxHeaderSize) {
-            setProperty("maxHeaderSize", maxHeaderSize);
+            doSetProperty("maxHeaderSize", maxHeaderSize);
             return this;
         }
         /**
          * To use a custom NettyServerBootstrapFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.NettyServerBootstrapFactory</code> type.
+         * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyServerBootstrapFactory(
                 Object nettyServerBootstrapFactory) {
-            setProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
+            doSetProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
             return this;
         }
         /**
          * To use a custom NettyServerBootstrapFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.NettyServerBootstrapFactory</code> type.
+         * <code>org.apache.camel.component.netty.NettyServerBootstrapFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyServerBootstrapFactory(
                 String nettyServerBootstrapFactory) {
-            setProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
+            doSetProperty("nettyServerBootstrapFactory", nettyServerBootstrapFactory);
             return this;
         }
         /**
@@ -1038,13 +1036,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * more details.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettySharedHttpServer</code> type.
+         * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
          * 
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettySharedHttpServer(
                 Object nettySharedHttpServer) {
-            setProperty("nettySharedHttpServer", nettySharedHttpServer);
+            doSetProperty("nettySharedHttpServer", nettySharedHttpServer);
             return this;
         }
         /**
@@ -1052,13 +1050,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * more details.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettySharedHttpServer</code> type.
+         * <code>org.apache.camel.component.netty.http.NettySharedHttpServer</code> type.
          * 
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettySharedHttpServer(
                 String nettySharedHttpServer) {
-            setProperty("nettySharedHttpServer", nettySharedHttpServer);
+            doSetProperty("nettySharedHttpServer", nettySharedHttpServer);
             return this;
         }
         /**
@@ -1071,7 +1069,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder noReplyLogLevel(
                 LoggingLevel noReplyLogLevel) {
-            setProperty("noReplyLogLevel", noReplyLogLevel);
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**
@@ -1085,7 +1083,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder noReplyLogLevel(
                 String noReplyLogLevel) {
-            setProperty("noReplyLogLevel", noReplyLogLevel);
+            doSetProperty("noReplyLogLevel", noReplyLogLevel);
             return this;
         }
         /**
@@ -1101,7 +1099,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
                 LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
-            setProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
+            doSetProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
             return this;
         }
         /**
@@ -1118,7 +1116,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
                 String serverClosedChannelExceptionCaughtLogLevel) {
-            setProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
+            doSetProperty("serverClosedChannelExceptionCaughtLogLevel", serverClosedChannelExceptionCaughtLogLevel);
             return this;
         }
         /**
@@ -1131,7 +1129,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverExceptionCaughtLogLevel(
                 LoggingLevel serverExceptionCaughtLogLevel) {
-            setProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
+            doSetProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
             return this;
         }
         /**
@@ -1145,33 +1143,33 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverExceptionCaughtLogLevel(
                 String serverExceptionCaughtLogLevel) {
-            setProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
+            doSetProperty("serverExceptionCaughtLogLevel", serverExceptionCaughtLogLevel);
             return this;
         }
         /**
          * To use a custom ServerInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.ServerInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverInitializerFactory(
                 Object serverInitializerFactory) {
-            setProperty("serverInitializerFactory", serverInitializerFactory);
+            doSetProperty("serverInitializerFactory", serverInitializerFactory);
             return this;
         }
         /**
          * To use a custom ServerInitializerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.ServerInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ServerInitializerFactory</code> type.
          * 
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverInitializerFactory(
                 String serverInitializerFactory) {
-            setProperty("serverInitializerFactory", serverInitializerFactory);
+            doSetProperty("serverInitializerFactory", serverInitializerFactory);
             return this;
         }
         /**
@@ -1184,7 +1182,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder traceEnabled(
                 boolean traceEnabled) {
-            setProperty("traceEnabled", traceEnabled);
+            doSetProperty("traceEnabled", traceEnabled);
             return this;
         }
         /**
@@ -1197,7 +1195,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder traceEnabled(
                 String traceEnabled) {
-            setProperty("traceEnabled", traceEnabled);
+            doSetProperty("traceEnabled", traceEnabled);
             return this;
         }
         /**
@@ -1206,8 +1204,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * space character. Notice this option is used by the default
          * org.apache.camel.component.netty.http.NettyHttpBinding and therefore
          * if you implement a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding then you
-         * would need to decode the headers accordingly to this option.
+         * org.apache.camel.component.netty.http.NettyHttpBinding then you would
+         * need to decode the headers accordingly to this option.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1215,7 +1213,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder urlDecodeHeaders(
                 boolean urlDecodeHeaders) {
-            setProperty("urlDecodeHeaders", urlDecodeHeaders);
+            doSetProperty("urlDecodeHeaders", urlDecodeHeaders);
             return this;
         }
         /**
@@ -1224,8 +1222,8 @@ public interface NettyHttpEndpointBuilderFactory {
          * space character. Notice this option is used by the default
          * org.apache.camel.component.netty.http.NettyHttpBinding and therefore
          * if you implement a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding then you
-         * would need to decode the headers accordingly to this option.
+         * org.apache.camel.component.netty.http.NettyHttpBinding then you would
+         * need to decode the headers accordingly to this option.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1233,7 +1231,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder urlDecodeHeaders(
                 String urlDecodeHeaders) {
-            setProperty("urlDecodeHeaders", urlDecodeHeaders);
+            doSetProperty("urlDecodeHeaders", urlDecodeHeaders);
             return this;
         }
         /**
@@ -1246,7 +1244,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder usingExecutorService(
                 boolean usingExecutorService) {
-            setProperty("usingExecutorService", usingExecutorService);
+            doSetProperty("usingExecutorService", usingExecutorService);
             return this;
         }
         /**
@@ -1259,7 +1257,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder usingExecutorService(
                 String usingExecutorService) {
-            setProperty("usingExecutorService", usingExecutorService);
+            doSetProperty("usingExecutorService", usingExecutorService);
             return this;
         }
         /**
@@ -1274,7 +1272,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -1289,7 +1287,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -1302,7 +1300,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder channelGroup(
                 Object channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -1315,7 +1313,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder channelGroup(
                 String channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -1323,13 +1321,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -1337,13 +1335,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -1370,7 +1368,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -1397,7 +1395,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -1411,7 +1409,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1425,7 +1423,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1441,7 +1439,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nativeTransport(
                 boolean nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
@@ -1457,39 +1455,39 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nativeTransport(
                 String nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyHttpBinding(
                 Object nettyHttpBinding) {
-            setProperty("nettyHttpBinding", nettyHttpBinding);
+            doSetProperty("nettyHttpBinding", nettyHttpBinding);
             return this;
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nettyHttpBinding(
                 String nettyHttpBinding) {
-            setProperty("nettyHttpBinding", nettyHttpBinding);
+            doSetProperty("nettyHttpBinding", nettyHttpBinding);
             return this;
         }
         /**
@@ -1505,7 +1503,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder options(
                 Map<String, Object> options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -1521,7 +1519,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder options(String options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -1534,7 +1532,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSize(
                 int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1547,7 +1545,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -1560,7 +1558,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -1573,7 +1571,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -1586,7 +1584,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder sendBufferSize(
                 int sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1599,7 +1597,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder sendBufferSize(
                 String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -1619,7 +1617,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1639,7 +1637,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1656,7 +1654,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1673,13 +1671,13 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -1687,13 +1685,13 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerCount(
                 int workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -1701,7 +1699,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerCount(
                 String workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
@@ -1716,7 +1714,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerGroup(
                 Object workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
         /**
@@ -1732,7 +1730,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder workerGroup(
                 String workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
         /**
@@ -1748,7 +1746,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1764,7 +1762,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -1776,7 +1774,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1789,7 +1787,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -1802,7 +1800,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1815,33 +1813,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointConsumerBuilder bootstrapConfiguration(
-                Object bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointConsumerBuilder bootstrapConfiguration(
-                String bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1854,7 +1826,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1867,13 +1839,13 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
 
     /**
-     * Builder for endpoint producers for the Netty4 HTTP component.
+     * Builder for endpoint producers for the Netty HTTP component.
      */
     public interface NettyHttpEndpointProducerBuilder
             extends
@@ -1896,7 +1868,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder bridgeEndpoint(
                 boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -1914,7 +1886,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder bridgeEndpoint(
                 String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -1926,7 +1898,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -1938,7 +1910,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -1949,7 +1921,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder keepAlive(boolean keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -1960,7 +1932,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -1972,7 +1944,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder reuseAddress(
                 boolean reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -1984,7 +1956,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder reuseAddress(
                 String reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -2004,7 +1976,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder reuseChannel(
                 boolean reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -2024,7 +1996,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder reuseChannel(
                 String reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -2035,7 +2007,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -2046,7 +2018,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -2057,7 +2029,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder tcpNoDelay(boolean tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -2068,7 +2040,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -2081,7 +2053,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -2094,7 +2066,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -2107,7 +2079,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder cookieHandler(
                 Object cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -2120,7 +2092,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder cookieHandler(
                 String cookieHandler) {
-            setProperty("cookieHandler", cookieHandler);
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -2135,7 +2107,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder requestTimeout(
                 long requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2150,7 +2122,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder requestTimeout(
                 String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2164,7 +2136,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -2178,34 +2150,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
-            return this;
-        }
-        /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder decoder(Object decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder decoder(String decoder) {
-            setProperty("decoder", decoder);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -2221,7 +2166,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointProducerBuilder decoders(List<Object> decoders) {
-            setProperty("decoders", decoders);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -2237,34 +2182,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointProducerBuilder decoders(String decoders) {
-            setProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder encoder(Object encoder) {
-            setProperty("encoder", encoder);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointProducerBuilder encoder(String encoder) {
-            setProperty("encoder", encoder);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -2280,7 +2198,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointProducerBuilder encoders(List<Object> encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -2296,7 +2214,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointProducerBuilder encoders(String encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -2308,7 +2226,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder enabledProtocols(
                 String enabledProtocols) {
-            setProperty("enabledProtocols", enabledProtocols);
+            doSetProperty("enabledProtocols", enabledProtocols);
             return this;
         }
         /**
@@ -2319,7 +2237,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder keyStoreFile(File keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -2331,7 +2249,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder keyStoreFile(
                 String keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -2344,7 +2262,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder keyStoreFormat(
                 String keyStoreFormat) {
-            setProperty("keyStoreFormat", keyStoreFormat);
+            doSetProperty("keyStoreFormat", keyStoreFormat);
             return this;
         }
         /**
@@ -2358,7 +2276,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder keyStoreResource(
                 String keyStoreResource) {
-            setProperty("keyStoreResource", keyStoreResource);
+            doSetProperty("keyStoreResource", keyStoreResource);
             return this;
         }
         /**
@@ -2370,7 +2288,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder passphrase(String passphrase) {
-            setProperty("passphrase", passphrase);
+            doSetProperty("passphrase", passphrase);
             return this;
         }
         /**
@@ -2383,7 +2301,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder securityProvider(
                 String securityProvider) {
-            setProperty("securityProvider", securityProvider);
+            doSetProperty("securityProvider", securityProvider);
             return this;
         }
         /**
@@ -2395,7 +2313,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder ssl(boolean ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -2407,7 +2325,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder ssl(String ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -2422,7 +2340,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -2437,7 +2355,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -2450,7 +2368,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2463,7 +2381,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2474,7 +2392,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder sslHandler(Object sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -2486,7 +2404,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder sslHandler(String sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -2498,7 +2416,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder trustStoreFile(
                 File trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -2510,7 +2428,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder trustStoreFile(
                 String trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -2524,7 +2442,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder trustStoreResource(
                 String trustStoreResource) {
-            setProperty("trustStoreResource", trustStoreResource);
+            doSetProperty("trustStoreResource", trustStoreResource);
             return this;
         }
         /**
@@ -2544,7 +2462,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -2564,13 +2482,13 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint producers for the Netty4 HTTP component.
+     * Advanced builder for endpoint producers for the Netty HTTP component.
      */
     public interface AdvancedNettyHttpEndpointProducerBuilder
             extends
@@ -2582,26 +2500,26 @@ public interface NettyHttpEndpointBuilderFactory {
          * To use a custom ClientInitializerFactory.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.ClientInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
          * 
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder clientInitializerFactory(
                 Object clientInitializerFactory) {
-            setProperty("clientInitializerFactory", clientInitializerFactory);
+            doSetProperty("clientInitializerFactory", clientInitializerFactory);
             return this;
         }
         /**
          * To use a custom ClientInitializerFactory.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.ClientInitializerFactory</code> type.
+         * <code>org.apache.camel.component.netty.ClientInitializerFactory</code> type.
          * 
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder clientInitializerFactory(
                 String clientInitializerFactory) {
-            setProperty("clientInitializerFactory", clientInitializerFactory);
+            doSetProperty("clientInitializerFactory", clientInitializerFactory);
             return this;
         }
         /**
@@ -2614,7 +2532,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder lazyChannelCreation(
                 boolean lazyChannelCreation) {
-            setProperty("lazyChannelCreation", lazyChannelCreation);
+            doSetProperty("lazyChannelCreation", lazyChannelCreation);
             return this;
         }
         /**
@@ -2627,7 +2545,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder lazyChannelCreation(
                 String lazyChannelCreation) {
-            setProperty("lazyChannelCreation", lazyChannelCreation);
+            doSetProperty("lazyChannelCreation", lazyChannelCreation);
             return this;
         }
         /**
@@ -2642,7 +2560,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder okStatusCodeRange(
                 String okStatusCodeRange) {
-            setProperty("okStatusCodeRange", okStatusCodeRange);
+            doSetProperty("okStatusCodeRange", okStatusCodeRange);
             return this;
         }
         /**
@@ -2664,7 +2582,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolEnabled(
                 boolean producerPoolEnabled) {
-            setProperty("producerPoolEnabled", producerPoolEnabled);
+            doSetProperty("producerPoolEnabled", producerPoolEnabled);
             return this;
         }
         /**
@@ -2686,7 +2604,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolEnabled(
                 String producerPoolEnabled) {
-            setProperty("producerPoolEnabled", producerPoolEnabled);
+            doSetProperty("producerPoolEnabled", producerPoolEnabled);
             return this;
         }
         /**
@@ -2700,7 +2618,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxActive(
                 int producerPoolMaxActive) {
-            setProperty("producerPoolMaxActive", producerPoolMaxActive);
+            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
             return this;
         }
         /**
@@ -2714,7 +2632,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxActive(
                 String producerPoolMaxActive) {
-            setProperty("producerPoolMaxActive", producerPoolMaxActive);
+            doSetProperty("producerPoolMaxActive", producerPoolMaxActive);
             return this;
         }
         /**
@@ -2726,7 +2644,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxIdle(
                 int producerPoolMaxIdle) {
-            setProperty("producerPoolMaxIdle", producerPoolMaxIdle);
+            doSetProperty("producerPoolMaxIdle", producerPoolMaxIdle);
             return this;
         }
         /**
@@ -2738,7 +2656,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxIdle(
                 String producerPoolMaxIdle) {
-            setProperty("producerPoolMaxIdle", producerPoolMaxIdle);
+            doSetProperty("producerPoolMaxIdle", producerPoolMaxIdle);
             return this;
         }
         /**
@@ -2752,7 +2670,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinEvictableIdle(
                 long producerPoolMinEvictableIdle) {
-            setProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
+            doSetProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
             return this;
         }
         /**
@@ -2766,7 +2684,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinEvictableIdle(
                 String producerPoolMinEvictableIdle) {
-            setProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
+            doSetProperty("producerPoolMinEvictableIdle", producerPoolMinEvictableIdle);
             return this;
         }
         /**
@@ -2779,7 +2697,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinIdle(
                 int producerPoolMinIdle) {
-            setProperty("producerPoolMinIdle", producerPoolMinIdle);
+            doSetProperty("producerPoolMinIdle", producerPoolMinIdle);
             return this;
         }
         /**
@@ -2792,7 +2710,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinIdle(
                 String producerPoolMinIdle) {
-            setProperty("producerPoolMinIdle", producerPoolMinIdle);
+            doSetProperty("producerPoolMinIdle", producerPoolMinIdle);
             return this;
         }
         /**
@@ -2804,7 +2722,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder useRelativePath(
                 boolean useRelativePath) {
-            setProperty("useRelativePath", useRelativePath);
+            doSetProperty("useRelativePath", useRelativePath);
             return this;
         }
         /**
@@ -2816,7 +2734,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder useRelativePath(
                 String useRelativePath) {
-            setProperty("useRelativePath", useRelativePath);
+            doSetProperty("useRelativePath", useRelativePath);
             return this;
         }
         /**
@@ -2831,7 +2749,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -2846,7 +2764,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -2859,7 +2777,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder channelGroup(
                 Object channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -2872,7 +2790,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder channelGroup(
                 String channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -2880,13 +2798,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -2894,13 +2812,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -2927,7 +2845,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -2954,7 +2872,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -2968,7 +2886,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -2982,7 +2900,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -2998,7 +2916,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder nativeTransport(
                 boolean nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
@@ -3014,39 +2932,39 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder nativeTransport(
                 String nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder nettyHttpBinding(
                 Object nettyHttpBinding) {
-            setProperty("nettyHttpBinding", nettyHttpBinding);
+            doSetProperty("nettyHttpBinding", nettyHttpBinding);
             return this;
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder nettyHttpBinding(
                 String nettyHttpBinding) {
-            setProperty("nettyHttpBinding", nettyHttpBinding);
+            doSetProperty("nettyHttpBinding", nettyHttpBinding);
             return this;
         }
         /**
@@ -3062,7 +2980,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder options(
                 Map<String, Object> options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -3078,7 +2996,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder options(String options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -3091,7 +3009,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSize(
                 int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -3104,7 +3022,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -3117,7 +3035,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -3130,7 +3048,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -3143,7 +3061,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder sendBufferSize(
                 int sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -3156,7 +3074,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder sendBufferSize(
                 String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -3176,7 +3094,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -3196,7 +3114,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -3213,7 +3131,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -3230,13 +3148,13 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option is a: <code>int</code> type.
          * 
@@ -3244,13 +3162,13 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerCount(
                 int workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
@@ -3258,7 +3176,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerCount(
                 String workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
@@ -3273,7 +3191,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerGroup(
                 Object workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
         /**
@@ -3289,7 +3207,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder workerGroup(
                 String workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
         /**
@@ -3302,7 +3220,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3315,33 +3233,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder bootstrapConfiguration(
-                Object bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointProducerBuilder bootstrapConfiguration(
-                String bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3354,7 +3246,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3367,13 +3259,13 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
 
     /**
-     * Builder for endpoint for the Netty4 HTTP component.
+     * Builder for endpoint for the Netty HTTP component.
      */
     public interface NettyHttpEndpointBuilder
             extends
@@ -3395,7 +3287,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -3412,7 +3304,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -3424,7 +3316,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -3436,7 +3328,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -3447,7 +3339,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder keepAlive(boolean keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -3458,7 +3350,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder keepAlive(String keepAlive) {
-            setProperty("keepAlive", keepAlive);
+            doSetProperty("keepAlive", keepAlive);
             return this;
         }
         /**
@@ -3469,7 +3361,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder reuseAddress(boolean reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -3480,7 +3372,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder reuseAddress(String reuseAddress) {
-            setProperty("reuseAddress", reuseAddress);
+            doSetProperty("reuseAddress", reuseAddress);
             return this;
         }
         /**
@@ -3499,7 +3391,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder reuseChannel(boolean reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -3518,7 +3410,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder reuseChannel(String reuseChannel) {
-            setProperty("reuseChannel", reuseChannel);
+            doSetProperty("reuseChannel", reuseChannel);
             return this;
         }
         /**
@@ -3529,7 +3421,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder sync(boolean sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -3540,7 +3432,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder sync(String sync) {
-            setProperty("sync", sync);
+            doSetProperty("sync", sync);
             return this;
         }
         /**
@@ -3551,7 +3443,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder tcpNoDelay(boolean tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -3562,34 +3454,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: common
          */
         default NettyHttpEndpointBuilder tcpNoDelay(String tcpNoDelay) {
-            setProperty("tcpNoDelay", tcpNoDelay);
-            return this;
-        }
-        /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder decoder(Object decoder) {
-            setProperty("decoder", decoder);
-            return this;
-        }
-        /**
-         * To use a single decoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder decoder(String decoder) {
-            setProperty("decoder", decoder);
+            doSetProperty("tcpNoDelay", tcpNoDelay);
             return this;
         }
         /**
@@ -3605,7 +3470,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointBuilder decoders(List<Object> decoders) {
-            setProperty("decoders", decoders);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -3621,34 +3486,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointBuilder decoders(String decoders) {
-            setProperty("decoders", decoders);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option is a: <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder encoder(Object encoder) {
-            setProperty("encoder", encoder);
-            return this;
-        }
-        /**
-         * To use a single encoder. This options is deprecated use encoders
-         * instead.
-         * 
-         * The option will be converted to a
-         * <code>io.netty.channel.ChannelHandler</code> type.
-         * 
-         * Group: codec
-         */
-        @Deprecated
-        default NettyHttpEndpointBuilder encoder(String encoder) {
-            setProperty("encoder", encoder);
+            doSetProperty("decoders", decoders);
             return this;
         }
         /**
@@ -3664,7 +3502,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointBuilder encoders(List<Object> encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -3680,7 +3518,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: codec
          */
         default NettyHttpEndpointBuilder encoders(String encoders) {
-            setProperty("encoders", encoders);
+            doSetProperty("encoders", encoders);
             return this;
         }
         /**
@@ -3692,7 +3530,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder enabledProtocols(
                 String enabledProtocols) {
-            setProperty("enabledProtocols", enabledProtocols);
+            doSetProperty("enabledProtocols", enabledProtocols);
             return this;
         }
         /**
@@ -3703,7 +3541,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder keyStoreFile(File keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -3714,7 +3552,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder keyStoreFile(String keyStoreFile) {
-            setProperty("keyStoreFile", keyStoreFile);
+            doSetProperty("keyStoreFile", keyStoreFile);
             return this;
         }
         /**
@@ -3726,7 +3564,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder keyStoreFormat(String keyStoreFormat) {
-            setProperty("keyStoreFormat", keyStoreFormat);
+            doSetProperty("keyStoreFormat", keyStoreFormat);
             return this;
         }
         /**
@@ -3740,7 +3578,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder keyStoreResource(
                 String keyStoreResource) {
-            setProperty("keyStoreResource", keyStoreResource);
+            doSetProperty("keyStoreResource", keyStoreResource);
             return this;
         }
         /**
@@ -3752,7 +3590,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder passphrase(String passphrase) {
-            setProperty("passphrase", passphrase);
+            doSetProperty("passphrase", passphrase);
             return this;
         }
         /**
@@ -3765,7 +3603,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder securityProvider(
                 String securityProvider) {
-            setProperty("securityProvider", securityProvider);
+            doSetProperty("securityProvider", securityProvider);
             return this;
         }
         /**
@@ -3777,7 +3615,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder ssl(boolean ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -3789,7 +3627,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder ssl(String ssl) {
-            setProperty("ssl", ssl);
+            doSetProperty("ssl", ssl);
             return this;
         }
         /**
@@ -3804,7 +3642,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder sslClientCertHeaders(
                 boolean sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -3819,7 +3657,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder sslClientCertHeaders(
                 String sslClientCertHeaders) {
-            setProperty("sslClientCertHeaders", sslClientCertHeaders);
+            doSetProperty("sslClientCertHeaders", sslClientCertHeaders);
             return this;
         }
         /**
@@ -3832,7 +3670,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -3845,7 +3683,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -3856,7 +3694,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder sslHandler(Object sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -3868,7 +3706,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder sslHandler(String sslHandler) {
-            setProperty("sslHandler", sslHandler);
+            doSetProperty("sslHandler", sslHandler);
             return this;
         }
         /**
@@ -3879,7 +3717,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder trustStoreFile(File trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -3890,7 +3728,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: security
          */
         default NettyHttpEndpointBuilder trustStoreFile(String trustStoreFile) {
-            setProperty("trustStoreFile", trustStoreFile);
+            doSetProperty("trustStoreFile", trustStoreFile);
             return this;
         }
         /**
@@ -3904,13 +3742,13 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default NettyHttpEndpointBuilder trustStoreResource(
                 String trustStoreResource) {
-            setProperty("trustStoreResource", trustStoreResource);
+            doSetProperty("trustStoreResource", trustStoreResource);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint for the Netty4 HTTP component.
+     * Advanced builder for endpoint for the Netty HTTP component.
      */
     public interface AdvancedNettyHttpEndpointBuilder
             extends
@@ -3930,7 +3768,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -3945,7 +3783,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -3958,7 +3796,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder channelGroup(
                 Object channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -3971,7 +3809,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder channelGroup(
                 String channelGroup) {
-            setProperty("channelGroup", channelGroup);
+            doSetProperty("channelGroup", channelGroup);
             return this;
         }
         /**
@@ -3979,13 +3817,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder configuration(
                 Object configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -3993,13 +3831,13 @@ public interface NettyHttpEndpointBuilderFactory {
          * this endpoint.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpConfiguration</code> type.
+         * <code>org.apache.camel.component.netty.http.NettyHttpConfiguration</code> type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder configuration(
                 String configuration) {
-            setProperty("configuration", configuration);
+            doSetProperty("configuration", configuration);
             return this;
         }
         /**
@@ -4026,7 +3864,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -4053,7 +3891,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -4067,7 +3905,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -4081,7 +3919,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -4097,7 +3935,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder nativeTransport(
                 boolean nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
@@ -4113,39 +3951,39 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder nativeTransport(
                 String nativeTransport) {
-            setProperty("nativeTransport", nativeTransport);
+            doSetProperty("nativeTransport", nativeTransport);
             return this;
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder nettyHttpBinding(
                 Object nettyHttpBinding) {
-            setProperty("nettyHttpBinding", nettyHttpBinding);
+            doSetProperty("nettyHttpBinding", nettyHttpBinding);
             return this;
         }
         /**
          * To use a custom
-         * org.apache.camel.component.netty4.http.NettyHttpBinding for binding
+         * org.apache.camel.component.netty.http.NettyHttpBinding for binding
          * to/from Netty and Camel Message API.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.netty4.http.NettyHttpBinding</code>
+         * <code>org.apache.camel.component.netty.http.NettyHttpBinding</code>
          * type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder nettyHttpBinding(
                 String nettyHttpBinding) {
-            setProperty("nettyHttpBinding", nettyHttpBinding);
+            doSetProperty("nettyHttpBinding", nettyHttpBinding);
             return this;
         }
         /**
@@ -4161,7 +3999,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder options(
                 Map<String, Object> options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -4177,7 +4015,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder options(String options) {
-            setProperty("options", options);
+            doSetProperty("options", options);
             return this;
         }
         /**
@@ -4190,7 +4028,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSize(
                 int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -4203,7 +4041,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSize(
                 String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("receiveBufferSize", receiveBufferSize);
             return this;
         }
         /**
@@ -4216,7 +4054,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSizePredictor(
                 int receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -4229,7 +4067,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSizePredictor(
                 String receiveBufferSizePredictor) {
-            setProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
+            doSetProperty("receiveBufferSizePredictor", receiveBufferSizePredictor);
             return this;
         }
         /**
@@ -4242,7 +4080,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder sendBufferSize(
                 int sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -4255,7 +4093,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder sendBufferSize(
                 String sendBufferSize) {
-            setProperty("sendBufferSize", sendBufferSize);
+            doSetProperty("sendBufferSize", sendBufferSize);
             return this;
         }
         /**
@@ -4275,7 +4113,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -4295,7 +4133,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -4312,7 +4150,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -4329,33 +4167,33 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder workerCount(int workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
          * When netty works on nio mode, it uses default workerCount parameter
-         * from Netty, which is cpu_core_threads x 2. User can use this
-         * operation to override the default workerCount from Netty.
+         * from Netty (which is cpu_core_threads x 2). User can use this option
+         * to override the default workerCount from Netty.
          * 
          * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder workerCount(String workerCount) {
-            setProperty("workerCount", workerCount);
+            doSetProperty("workerCount", workerCount);
             return this;
         }
         /**
@@ -4369,7 +4207,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder workerGroup(Object workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
         /**
@@ -4384,7 +4222,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder workerGroup(String workerGroup) {
-            setProperty("workerGroup", workerGroup);
+            doSetProperty("workerGroup", workerGroup);
             return this;
         }
         /**
@@ -4397,7 +4235,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -4410,33 +4248,7 @@ public interface NettyHttpEndpointBuilderFactory {
          */
         default AdvancedNettyHttpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option is a: <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointBuilder bootstrapConfiguration(
-                Object bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
-            return this;
-        }
-        /**
-         * To use a custom configured NettyServerBootstrapConfiguration for
-         * configuring this endpoint.
-         * 
-         * The option will be converted to a <code>java.lang.Object</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedNettyHttpEndpointBuilder bootstrapConfiguration(
-                String bootstrapConfiguration) {
-            setProperty("bootstrapConfiguration", bootstrapConfiguration);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -4448,7 +4260,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -4460,17 +4272,17 @@ public interface NettyHttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
     /**
-     * Netty4 HTTP (camel-netty4-http)
+     * Netty HTTP (camel-netty-http)
      * Netty HTTP server and client using the Netty 4.x library.
      * 
      * Category: http
-     * Available as of version: 2.14
-     * Maven coordinates: org.apache.camel:camel-netty4-http
+     * Since: 2.14
+     * Maven coordinates: org.apache.camel:camel-netty-http
      * 
      * Syntax: <code>netty-http:protocol:host:port/path</code>
      * 

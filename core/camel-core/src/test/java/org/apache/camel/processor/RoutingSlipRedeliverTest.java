@@ -87,41 +87,36 @@ public class RoutingSlipRedeliverTest extends ContextTestSupport {
                 // try to redeliver up till 3 times
                 errorHandler(defaultErrorHandler().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start")
-                    .routingSlip(header("mySlip"));
+                from("direct:start").routingSlip(header("mySlip"));
 
-                from("direct:a")
-                    .to("log:a")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // should be same input body
-                            assertEquals("Hello World", exchange.getIn().getBody());
-                            assertFalse("Should not have OUT", exchange.hasOut());
-                            assertNull(exchange.getException());
+                from("direct:a").to("log:a").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        // should be same input body
+                        assertEquals("Hello World", exchange.getIn().getBody());
+                        assertFalse("Should not have OUT", exchange.hasOut());
+                        assertNull(exchange.getException());
 
-                            counter++;
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                        counter++;
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
 
-                from("direct:b")
-                    .to("log:b")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // should be same input body
-                            assertEquals("Hello World", exchange.getIn().getBody());
-                            assertFalse("Should not have OUT", exchange.hasOut());
-                            assertNull(exchange.getException());
+                from("direct:b").to("log:b").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        // should be same input body
+                        assertEquals("Hello World", exchange.getIn().getBody());
+                        assertFalse("Should not have OUT", exchange.hasOut());
+                        assertNull(exchange.getException());
 
-                            // mutate IN body
-                            exchange.getIn().setBody("Bye World");
+                        // mutate IN body
+                        exchange.getIn().setBody("Bye World");
 
-                            counter++;
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                        counter++;
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
             }
         };
     }

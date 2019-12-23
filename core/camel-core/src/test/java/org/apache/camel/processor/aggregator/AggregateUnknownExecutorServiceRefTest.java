@@ -37,12 +37,9 @@ public class AggregateUnknownExecutorServiceRefTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .aggregate(header("id"), new BodyInAggregatingStrategy())
-                            // use an unknown executor service ref should fail
-                            .completionSize(3).executorServiceRef("myUnknownProfile")
-                            .to("log:foo")
-                            .to("mock:aggregated");
+                    from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
+                        // use an unknown executor service ref should fail
+                        .completionSize(3).executorServiceRef("myUnknownProfile").to("log:foo").to("mock:aggregated");
                 }
             });
             context.start();

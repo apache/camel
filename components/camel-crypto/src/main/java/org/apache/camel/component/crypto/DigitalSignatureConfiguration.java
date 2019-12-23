@@ -49,8 +49,8 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private KeyStore keystore;
     @UriParam(label = "advanced", secret = true)
     private SecureRandom secureRandom;
-    @UriParam(defaultValue = "SHA1WithDSA")
-    private String algorithm = "SHA1WithDSA";
+    @UriParam(defaultValue = "SHA256withRSA")
+    private String algorithm = "SHA256withRSA";
     @UriParam(label = "advanced", defaultValue = "" + 2048)
     private Integer bufferSize = 2048;
     @UriParam
@@ -59,8 +59,8 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private String signatureHeaderName;
     @UriParam
     private String alias;
-    @UriParam(label = "security", javaType = "java.lang.String", secret = true)
-    private char[] password;
+    @UriParam(label = "security", secret = true)
+    private String password;
     @UriParam(label = "advanced")
     private PublicKey publicKey;
     @UriParam(label = "advanced")
@@ -88,10 +88,12 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
         }
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return context;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         // TODO: this is wrong a configuration should not have CamelContext
         this.context = camelContext;
@@ -149,8 +151,8 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     /**
      * Get the PrivateKey that should be used to sign the exchange
      */
-    public PrivateKey getPrivateKey() throws Exception {
-        return getPrivateKey(alias, password);
+    public PrivateKey getPrivateKey() {
+        return getPrivateKey(alias, password.toCharArray());
     }
 
     /**
@@ -160,7 +162,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      * @param alias the alias used to retrieve the Certificate from the keystore.
      */
     public PrivateKey getPrivateKey(String alias) throws Exception {
-        return getPrivateKey(alias, password);
+        return getPrivateKey(alias, password.toCharArray());
     }
 
     /**
@@ -169,10 +171,14 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      *
      * @param alias the alias used to retrieve the Certificate from the keystore.
      */
-    public PrivateKey getPrivateKey(String alias, char[] password) throws Exception {
+    public PrivateKey getPrivateKey(String alias, char[] password) {
         PrivateKey pk = null;
         if (alias != null && keystore != null) {
-            pk = (PrivateKey)keystore.getKey(alias, password);
+            try {
+                pk = (PrivateKey)keystore.getKey(alias, password);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
         if (pk == null) {
             pk = privateKey;
@@ -187,6 +193,10 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      */
     public void setPrivateKey(PrivateKey privateKey) {
         this.privateKey = privateKey;
+    }
+
+    public String getPrivateKeyName() {
+        return privateKeyName;
     }
 
     /**
@@ -209,6 +219,10 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      */
     public void setPublicKey(PublicKey publicKey) {
         this.publicKey = publicKey;
+    }
+
+    public String getPublicKeyName() {
+        return publicKeyName;
     }
 
     /**
@@ -257,7 +271,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      * Get the explicitly configured {@link Certificate} that should be used to
      * verify the signature in the exchange.
      */
-    public Certificate getCertificate() throws Exception {
+    public Certificate getCertificate() {
         return certificate;
     }
 
@@ -267,6 +281,10 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      */
     public void setCertificate(Certificate certificate) {
         this.certificate = certificate;
+    }
+
+    public String getCertificateName() {
+        return certificateName;
     }
 
     /**
@@ -308,6 +326,10 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
         this.keystore = keystore;
     }
 
+    public String getKeystoreName() {
+        return keystoreName;
+    }
+
     /**
      * Sets the reference name for a Keystore that can be found in the registry.
      */
@@ -326,14 +348,14 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     /**
      * Gets the password used to access an aliased {@link PrivateKey} in the KeyStore.
      */
-    public char[] getPassword() {
+    public String getPassword() {
         return password;
     }
 
     /**
      * Sets the password used to access an aliased {@link PrivateKey} in the KeyStore.
      */
-    public void setPassword(char[] password) {
+    public void setPassword(String password) {
         this.password = password;
     }
 
@@ -350,10 +372,14 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      * supplied and there is only a single entry in the Keystore, then this
      * single entry will be used.
      */
-    public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) throws Exception {
+    public void setKeyStoreParameters(KeyStoreParameters keyStoreParameters) {
         this.keyStoreParameters = keyStoreParameters;
         if (keyStoreParameters != null) {
-            this.keystore = keyStoreParameters.createKeyStore();
+            try {
+                this.keystore = keyStoreParameters.createKeyStore();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 
@@ -362,6 +388,10 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
      */
     public SecureRandom getSecureRandom() {
         return secureRandom;
+    }
+
+    public String getSecureRandomName() {
+        return secureRandomName;
     }
 
     /**

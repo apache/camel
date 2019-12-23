@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.telegram;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
-import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.DefaultAsyncProducer;
 
 /**
  * A producer that sends messages to Telegram through the bot API.
  */
-public class TelegramProducer extends DefaultProducer {
+public class TelegramProducer extends DefaultAsyncProducer {
 
     private TelegramEndpoint endpoint;
 
@@ -33,12 +34,13 @@ public class TelegramProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
+    public boolean process(Exchange exchange, AsyncCallback callback) {
 
         if (exchange.getIn().getBody() == null) {
             // fail fast
             log.debug("Received exchange with empty body, skipping");
-            return;
+            callback.done(true);
+            return true;
         }
 
         TelegramConfiguration config = endpoint.getConfiguration();
@@ -57,15 +59,13 @@ public class TelegramProducer extends DefaultProducer {
             message.setChatId(chatId);
         }
 
-        TelegramService service = TelegramServiceProvider.get().getService();
+        final TelegramService service = endpoint.getTelegramService();
 
         log.debug("Message being sent is: {}", message);
         log.debug("Headers of message being sent are: {}", exchange.getIn().getHeaders());
 
-        Object receivedMessage = service.sendMessage(config.getAuthorizationToken(), message);
-        log.debug("Message being received is: {}", receivedMessage);
-
-        exchange.getOut().setBody(receivedMessage);
+        service.sendMessage(exchange, callback, message);
+        return false;
     }
 
     private String resolveChatId(TelegramConfiguration config, OutgoingMessage message, Exchange exchange) {

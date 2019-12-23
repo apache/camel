@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.stomp;
 
+import java.util.Properties;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -35,6 +37,10 @@ public class StompConfiguration implements Cloneable {
     private String host;
     @UriParam(label = "security")
     private SSLContextParameters sslContextParameters;
+    @UriParam
+    private String version;
+    @UriParam
+    private Properties customHeaders;
 
     /**
      * Returns a copy of this configuration
@@ -103,4 +109,25 @@ public class StompConfiguration implements Cloneable {
         this.sslContextParameters = sslContextParameters;
     }
 
+    public String getVersion() {
+        return version;
+    }
+
+    /**
+     * The stomp version (1.1, or 1.2)
+     */
+    public void setVersion(String version) {
+        this.version = version;
+    }
+
+    public Properties getCustomHeaders() {
+        return customHeaders;
+    }
+
+    /**
+     * To set custom headers
+     */
+    public void setCustomHeaders(Properties customHeaders) {
+        this.customHeaders = customHeaders;
+    }
 }

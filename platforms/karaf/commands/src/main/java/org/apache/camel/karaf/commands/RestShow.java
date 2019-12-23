@@ -33,6 +33,7 @@ public class RestShow extends CamelControllerImpl implements Action {
     @Completion(CamelContextCompleter.class)
     String name;
 
+    @Override
     public Object execute() throws Exception {
         RestShowCommand command = new RestShowCommand(name);
         return command.execute(this, System.out, System.err);

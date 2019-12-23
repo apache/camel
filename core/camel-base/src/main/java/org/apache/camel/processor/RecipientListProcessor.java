@@ -91,22 +91,27 @@ public class RecipientListProcessor extends MulticastProcessor {
             this.pattern = pattern;
         }
 
+        @Override
         public int getIndex() {
             return index;
         }
 
+        @Override
         public Exchange getExchange() {
             return exchange;
         }
 
+        @Override
         public Producer getProducer() {
             return producer;
         }
 
+        @Override
         public Processor getProcessor() {
             return prepared;
         }
 
+        @Override
         public void begin() {
             // we have already acquired and prepare the producer
             LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
@@ -121,6 +126,7 @@ public class RecipientListProcessor extends MulticastProcessor {
             }
         }
 
+        @Override
         public void done() {
             LOG.trace("RecipientProcessorExchangePair #{} done: {}", index, exchange);
             try {
@@ -263,6 +269,7 @@ public class RecipientListProcessor extends MulticastProcessor {
         return null;
     }
 
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         if (producerCache == null) {
@@ -271,11 +278,13 @@ public class RecipientListProcessor extends MulticastProcessor {
         ServiceHelper.startService(producerCache);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
         super.doStop();
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(producerCache);
         super.doShutdown();

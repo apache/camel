@@ -25,6 +25,7 @@ public class CamelMockLanguageResolver implements LanguageResolver {
     // Delegate to the DefaultLanguageResolver
     private LanguageResolver delegate = new DefaultLanguageResolver();
 
+    @Override
     public Language resolveLanguage(String name, CamelContext context) {
         return delegate.resolveLanguage(name, context);
     }

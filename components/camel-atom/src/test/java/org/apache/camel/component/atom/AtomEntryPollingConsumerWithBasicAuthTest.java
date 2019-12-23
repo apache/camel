@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atom;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -26,13 +27,13 @@ public class AtomEntryPollingConsumerWithBasicAuthTest extends AtomEntryPollingC
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&consumer.delay=500&username=camel&password=camelPass")
+                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&delay=500&username=camel&password=camelPass")
                         .to("mock:result1");
 
-                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&filter=false&consumer.delay=500&username=camel&password=camelPass")
+                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&filter=false&delay=500&username=camel&password=camelPass")
                         .to("mock:result2");
 
-                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&filter=true&lastUpdate=#myDate&consumer.delay=500&username=camel&password=camelPass")
+                from("atom:http://localhost:" + JettyTestServer.getInstance().port + "/?splitEntries=true&filter=true&lastUpdate=#myDate&delay=500&username=camel&password=camelPass")
                         .to("mock:result3");
             }
         };

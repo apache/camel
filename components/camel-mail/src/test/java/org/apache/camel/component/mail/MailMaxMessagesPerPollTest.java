@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -82,10 +83,11 @@ public class MailMaxMessagesPerPollTest extends CamelTestSupport {
         folder.close(true);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100&maxMessagesPerPoll=3"
+                from("pop3://jones@localhost?password=secret&initialDelay=100&delay=100&maxMessagesPerPoll=3"
                     + "&delete=true").to("mock:result");
             }
         };

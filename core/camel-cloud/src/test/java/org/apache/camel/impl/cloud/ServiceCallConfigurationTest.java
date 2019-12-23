@@ -30,6 +30,7 @@ import org.apache.camel.model.cloud.ServiceCallConfigurationDefinition;
 import org.apache.camel.model.cloud.ServiceCallDefinitionConstants;
 import org.apache.camel.model.cloud.ServiceCallExpressionConfiguration;
 import org.apache.camel.model.language.SimpleExpression;
+import org.apache.camel.processor.channel.DefaultChannel;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -441,7 +442,11 @@ public class ServiceCallConfigurationTest {
     // **********************************************
 
     private DefaultServiceCallProcessor findServiceCallProcessor(Route route) {
+
         for (Processor processor : route.navigate().next()) {
+            if (processor instanceof DefaultChannel) {
+                processor = ((DefaultChannel) processor).getNextProcessor();
+            }
             if (processor instanceof DefaultServiceCallProcessor) {
                 return (DefaultServiceCallProcessor)processor;
             }

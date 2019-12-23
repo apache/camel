@@ -27,10 +27,10 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StringHelper;
@@ -80,7 +80,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
         }
 
         String newFilename = filename + ".zip";
-        exchange.getOut().setHeader(FILE_NAME, newFilename);
+        exchange.getMessage().setHeader(FILE_NAME, newFilename);
     }
 
     @Override
@@ -96,7 +96,7 @@ public class ZipFileDataFormat extends ServiceSupport implements DataFormat, Dat
             try {
                 ZipEntry entry = zis.getNextEntry();
                 if (entry != null) {
-                    exchange.getOut().setHeader(FILE_NAME, entry.getName());
+                    exchange.getMessage().setHeader(FILE_NAME, entry.getName());
                     IOHelper.copy(zis, osb);
                 }
 

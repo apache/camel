@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.interceptors;
 
-
 import javax.xml.soap.SOAPMessage;
 
 import org.apache.cxf.binding.soap.SoapMessage;
@@ -30,6 +29,7 @@ public class CxfMessageSoapHeaderOutInterceptor extends AbstractPhaseInterceptor
         super(Phase.PRE_PROTOCOL);
         addAfter(SAAJOutInterceptor.class.getName());
     }
+    @Override
     public void handleMessage(SoapMessage message) {
         // remove the soap header to avoid the endless loop
         SOAPMessage saaj = message.getContent(SOAPMessage.class);

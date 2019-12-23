@@ -47,6 +47,7 @@ public class XQueryEndpointTest extends CamelSpringTestSupport {
         assertEquals("bean.subject", "Hey", bean.getSubject());
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/xquery/camelContext.xml");
     }

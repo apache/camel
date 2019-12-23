@@ -27,7 +27,6 @@ import io.netty.channel.ChannelHandler.Sharable;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.handler.codec.MessageToMessageDecoder;
-
 import org.acplt.oncrpc.OncRpcException;
 import org.acplt.oncrpc.XdrAble;
 import org.acplt.oncrpc.XdrBufferDecodingStream;
@@ -45,17 +44,14 @@ import org.junit.rules.ExpectedException;
 
 import static info.ganglia.gmetric4j.gmetric.GMetricSlope.NEGATIVE;
 import static info.ganglia.gmetric4j.gmetric.GMetricType.FLOAT;
-
 import static info.ganglia.gmetric4j.xdr.v31x.Ganglia_msg_formats.gmetadata_full;
 import static info.ganglia.gmetric4j.xdr.v31x.Ganglia_msg_formats.gmetric_string;
-
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_DMAX;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_METRIC_NAME;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_SLOPE;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_TMAX;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_TYPE;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_UNITS;
-
 import static org.apache.camel.component.ganglia.GangliaConstants.GROUP_NAME;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_DMAX;
 import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_NAME;
@@ -66,7 +62,7 @@ import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_UNITS;
 
 /**
  * {@code GangliaProtocolV31CamelTest} is not shipped with an embedded gmond
- * agent. The gmond agent is mocked with the help of camel-netty4 codecs and a
+ * agent. The gmond agent is mocked with the help of camel-netty codecs and a
  * mock endpoint. As underlying UDP packets are not guaranteed to be delivered,
  * loose assertions are performed.
  */
@@ -218,7 +214,7 @@ public class GangliaProtocolV31CamelTest extends CamelGangliaTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty4:udp://localhost:" + getTestPort() + "/?decoders=#protocolV31Decoder").to(mockGmond);
+                from("netty:udp://localhost:" + getTestPort() + "/?decoders=#protocolV31Decoder").to(mockGmond);
             }
         };
     }

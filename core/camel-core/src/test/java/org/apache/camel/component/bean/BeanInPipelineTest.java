@@ -34,6 +34,7 @@ public class BeanInPipelineTest extends ContextTestSupport {
         assertEquals("Start:onetwothree", response);
     }
 
+    @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("one", new MyBean("one"));
@@ -42,11 +43,11 @@ public class BeanInPipelineTest extends ContextTestSupport {
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
-                    .pipeline("bean:one", "bean:two", "log:x", "log:y", "bean:three");
+                from("direct:start").pipeline("bean:one", "bean:two", "log:x", "log:y", "bean:three");
             }
         };
     }

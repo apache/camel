@@ -61,9 +61,7 @@ public class ProxyReturnFutureTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:echo")
-                    .delay(250)
-                    .transform().constant("Four");
+                from("direct:echo").delay(250).transform().constant("Four");
             }
         };
     }

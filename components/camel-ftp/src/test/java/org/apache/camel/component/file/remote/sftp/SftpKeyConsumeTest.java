@@ -22,12 +22,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.IOHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SftpKeyConsumeTest extends SftpServerTestSupport {
 
@@ -60,14 +60,16 @@ public class SftpKeyConsumeTest extends SftpServerTestSupport {
         return output.toByteArray();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @BindToRegistry("privateKey")
+    public byte[] addPrivateKey() throws Exception {
 
-        registry.bind("privateKey", getBytesFromFile("./src/test/resources/id_rsa"));
-        registry.bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
+        return getBytesFromFile("./src/test/resources/id_rsa");
+    }
+    
+    @BindToRegistry("knownHosts")
+    public byte[] addKnownHosts() throws Exception {
 
-        return registry;
+        return getBytesFromFile("./src/test/resources/id_rsa");
     }
 
     @Override

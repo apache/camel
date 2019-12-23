@@ -44,20 +44,16 @@ public class LoopCopyErrorTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .loop(3).copy()
-                        .process(new Processor() {
-                            int invoked;
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                if (invoked++ > 1) {
-                                    throw new IllegalArgumentException("Forced");
-                                }
-                            }
-                        })
-                        .to("mock:loop")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").loop(3).copy().process(new Processor() {
+                    int invoked;
+
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        if (invoked++ > 1) {
+                            throw new IllegalArgumentException("Forced");
+                        }
+                    }
+                }).to("mock:loop").end().to("mock:result");
             }
         };
     }

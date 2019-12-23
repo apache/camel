@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.aws.ec2;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2Client;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -39,6 +38,8 @@ public class EC2Configuration implements Cloneable {
     @UriParam(label = "producer")
     @Metadata(required = true)
     private EC2Operations operation;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "producer")
     private String proxyHost;
     @UriParam(label = "producer")
@@ -91,6 +92,17 @@ public class EC2Configuration implements Cloneable {
     public void setOperation(EC2Operations operation) {
         this.operation = operation;
     } 
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the EC2 client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
+    }
     
     public String getProxyHost() {
         return proxyHost;

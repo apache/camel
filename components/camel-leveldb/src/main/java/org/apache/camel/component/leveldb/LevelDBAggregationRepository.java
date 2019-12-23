@@ -95,6 +95,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         this.repositoryName = repositoryName;
     }
 
+    @Override
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
         log.debug("Adding key [{}] -> {}", key, exchange);
         try {
@@ -125,6 +126,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         return null;
     }
 
+    @Override
     public Exchange get(final CamelContext camelContext, final String key) {
         Exchange answer = null;
 
@@ -144,6 +146,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         return answer;
     }
 
+    @Override
     public void remove(final CamelContext camelContext, final String key, final Exchange exchange) {
         log.debug("Removing key [{}]", key);
 
@@ -177,6 +180,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         }
     }
 
+    @Override
     public void confirm(final CamelContext camelContext, final String exchangeId) {
         log.debug("Confirming exchangeId [{}]", exchangeId);
 
@@ -190,6 +194,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         }
     }
 
+    @Override
     public Set<String> getKeys() {
         final Set<String> keys = new LinkedHashSet<>();
 
@@ -226,6 +231,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         return Collections.unmodifiableSet(keys);
     }
 
+    @Override
     public Set<String> scan(CamelContext camelContext) {
         final Set<String> answer = new LinkedHashSet<>();
 
@@ -266,6 +272,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
 
     }
 
+    @Override
     public Exchange recover(CamelContext camelContext, final String exchangeId) {
         Exchange answer = null;
 
@@ -342,38 +349,47 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         this.returnOldExchange = returnOldExchange;
     }
 
+    @Override
     public void setRecoveryInterval(long interval, TimeUnit timeUnit) {
         this.recoveryInterval = timeUnit.toMillis(interval);
     }
 
+    @Override
     public void setRecoveryInterval(long interval) {
         this.recoveryInterval = interval;
     }
 
+    @Override
     public long getRecoveryIntervalInMillis() {
         return recoveryInterval;
     }
 
+    @Override
     public boolean isUseRecovery() {
         return useRecovery;
     }
 
+    @Override
     public void setUseRecovery(boolean useRecovery) {
         this.useRecovery = useRecovery;
     }
 
+    @Override
     public int getMaximumRedeliveries() {
         return maximumRedeliveries;
     }
 
+    @Override
     public void setMaximumRedeliveries(int maximumRedeliveries) {
         this.maximumRedeliveries = maximumRedeliveries;
     }
 
+    @Override
     public String getDeadLetterUri() {
         return deadLetterUri;
     }
 
+    @Override
     public void setDeadLetterUri(String deadLetterUri) {
         this.deadLetterUri = deadLetterUri;
     }

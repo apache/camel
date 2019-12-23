@@ -32,7 +32,6 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.staxutils.StaxUtils;
 
-
 /**
  * CxfMessage body type when {@link DataFormat#PAYLOAD} is used.
  */
@@ -150,6 +149,7 @@ public class CxfPayload<T> {
         return nsMap;
     }
 
+    @Override
     public String toString() {
         // do not load or print the payload body etc as we do not want to load that into memory etc
         return super.toString();

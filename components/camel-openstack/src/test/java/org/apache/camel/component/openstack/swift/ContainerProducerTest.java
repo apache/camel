@@ -37,9 +37,7 @@ import org.openstack4j.model.storage.object.options.ContainerListOptions;
 import org.openstack4j.model.storage.object.options.CreateUpdateContainerOptions;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.isNull;
@@ -91,8 +89,6 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         verify(containerService).create(containerNameCaptor.capture(), optionsCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertNull(optionsCaptor.getValue());
-
-        assertFalse(msg.isFault());
     }
 
     @Test
@@ -107,7 +103,6 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
         verify(containerService).create(containerNameCaptor.capture(), optionsCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
         assertEquals(options, optionsCaptor.getValue());
-        assertFalse(msg.isFault());
     }
 
     @Test
@@ -152,21 +147,6 @@ public class ContainerProducerTest extends SwiftProducerTestSupport {
 
         verify(containerService).delete(containerNameCaptor.capture());
         assertEquals(CONTAINER_NAME, containerNameCaptor.getValue());
-
-        assertFalse(msg.isFault());
-    }
-
-    @Test
-    public void deleteObjectFailTest() throws Exception {
-        final String failMessage = "fail";
-        when(containerService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failMessage, 401));
-        msg.setHeader(OpenstackConstants.OPERATION, OpenstackConstants.DELETE);
-        msg.setHeader(SwiftConstants.CONTAINER_NAME, CONTAINER_NAME);
-
-        producer.process(exchange);
-
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failMessage));
     }
 
     @Test

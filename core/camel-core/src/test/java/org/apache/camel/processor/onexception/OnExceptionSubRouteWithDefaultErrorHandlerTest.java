@@ -29,17 +29,12 @@ public class OnExceptionSubRouteWithDefaultErrorHandlerTest extends OnExceptionR
             @Override
             public void configure() throws Exception {
                 // here we start the routing with the consumer
-                from("direct:start")
-                    .onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true).end()
-                    .onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler").end()
+                from("direct:start").onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true).end().onException(MyFunctionalException.class)
+                    .maximumRedeliveries(0).handled(true).to("bean:myOwnHandler").end()
 
-                    .choice()
-                        .when().xpath("//type = 'myType'").to("bean:myServiceBean")
-                    .end()
-                    .to("mock:result");
+                    .choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end().to("mock:result");
             }
         };
     }
-
 
 }

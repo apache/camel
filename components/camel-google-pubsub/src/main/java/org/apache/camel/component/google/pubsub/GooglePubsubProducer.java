@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GooglePubsubProducer extends DefaultProducer {
 
-    private Logger logger;
+    public Logger logger;
 
     public GooglePubsubProducer(GooglePubsubEndpoint endpoint) throws Exception {
         super(endpoint);
@@ -52,9 +52,8 @@ public class GooglePubsubProducer extends DefaultProducer {
     }
 
     /**
-     * The incoming message is expected to be either
-     * - a List of Exchanges (aggregated)
-     * - an Exchange
+     * The incoming message is expected to be either - a List of Exchanges
+     * (aggregated) - an Exchange
      */
     @Override
     public void process(Exchange exchange) throws Exception {
@@ -67,10 +66,7 @@ public class GooglePubsubProducer extends DefaultProducer {
         }
 
         if (logger.isDebugEnabled()) {
-            logger.debug("uploader thread/id: "
-                                 + Thread.currentThread().getId()
-                                 + " / " + exchange.getExchangeId()
-                                 + " . api call completed.");
+            logger.debug("uploader thread/id: " + Thread.currentThread().getId() + " / " + exchange.getExchangeId() + " . api call completed.");
         }
 
         sendMessages(entryList);
@@ -90,7 +86,7 @@ public class GooglePubsubProducer extends DefaultProducer {
             entryList = new ArrayList<>();
             entryList.add(exchange);
         } else {
-            entryList = (List<Exchange>) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
+            entryList = (List<Exchange>)exchange.getProperty(Exchange.GROUPED_EXCHANGE);
         }
 
         return entryList;
@@ -98,7 +94,7 @@ public class GooglePubsubProducer extends DefaultProducer {
 
     private void sendMessages(List<Exchange> exchanges) throws Exception {
 
-        GooglePubsubEndpoint endpoint = (GooglePubsubEndpoint) getEndpoint();
+        GooglePubsubEndpoint endpoint = (GooglePubsubEndpoint)getEndpoint();
         String topicName = String.format("projects/%s/topics/%s", endpoint.getProjectId(), endpoint.getDestinationName());
 
         List<PubsubMessage> messages = new ArrayList<>();
@@ -109,9 +105,9 @@ public class GooglePubsubProducer extends DefaultProducer {
             Object body = exchange.getIn().getBody();
 
             if (body instanceof String) {
-                message.encodeData(((String) body).getBytes("UTF-8"));
+                message.encodeData(((String)body).getBytes("UTF-8"));
             } else if (body instanceof byte[]) {
-                message.encodeData((byte[]) body);
+                message.encodeData((byte[])body);
             } else {
                 message.encodeData(serialize(body));
             }
@@ -127,13 +123,9 @@ public class GooglePubsubProducer extends DefaultProducer {
 
         PublishRequest publishRequest = new PublishRequest().setMessages(messages);
 
-        PublishResponse response = endpoint.getPubsub()
-                                           .projects()
-                                           .topics()
-                                           .publish(topicName, publishRequest)
-                                           .execute();
+        PublishResponse response = endpoint.getPubsub().projects().topics().publish(topicName, publishRequest).execute();
 
-        List<String> sentMessageIds  = response.getMessageIds();
+        List<String> sentMessageIds = response.getMessageIds();
 
         int i = 0;
         for (Exchange entry : exchanges) {

@@ -48,13 +48,13 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
         String out = template.requestBody("direct:bye", "Camel", String.class);
         assertEquals("Bye Camel", out);
     }
-    
+
     @Test
     public void testBeanExplicitMethodInvocationStringBody() throws Exception {
         String out = template.requestBody("direct:foo", "Camel", String.class);
         assertEquals("String", out);
     }
-    
+
     @Test
     public void testBeanExplicitMethodInvocationInputStreamBody() throws Exception {
         String out = template.requestBody("direct:foo", new ByteArrayInputStream("Camel".getBytes()), String.class);
@@ -69,7 +69,7 @@ public class BeanExplicitMethodAmbiguousTest extends ContextTestSupport {
                 from("direct:hello").bean("dummy", "hello", true);
 
                 from("direct:bye").bean("dummy", true);
-                
+
                 from("direct:foo").bean("dummy", "bar", true);
             }
         };

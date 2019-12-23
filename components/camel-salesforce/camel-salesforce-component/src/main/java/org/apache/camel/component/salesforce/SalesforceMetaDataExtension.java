@@ -28,7 +28,6 @@ import java.util.function.Consumer;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.extension.metadata.AbstractMetaDataExtension;
 import org.apache.camel.component.extension.metadata.MetaDataBuilder;
@@ -78,7 +77,7 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
 
     JsonSchema singleObjectSchema(final Map<String, Object> parameters) throws Exception {
         return SalesforceClientTemplate.invoke(getCamelContext(), parameters,
-            client -> fetchSingleObjectSchema(client, (String) parameters.get(SalesforceEndpointConfig.SOBJECT_NAME)));
+        client -> fetchSingleObjectSchema(client, (String)parameters.get(SalesforceEndpointConfig.SOBJECT_NAME)));
     }
 
     static JsonSchema fetch(final Consumer<ResponseCallback> restMethod, final SchemaMapper callback) {
@@ -108,8 +107,7 @@ public class SalesforceMetaDataExtension extends AbstractMetaDataExtension {
     }
 
     static JsonSchema fetchSingleObjectSchema(final RestClient client, final String objectName) {
-        return fetch(callback -> client.getDescription(objectName, Collections.emptyMap(), callback),
-            SalesforceMetaDataExtension::mapSingleObjectSchema);
+        return fetch(callback -> client.getDescription(objectName, Collections.emptyMap(), callback), SalesforceMetaDataExtension::mapSingleObjectSchema);
     }
 
     static JsonSchema mapAllObjectsSchema(final InputStream stream) throws IOException {

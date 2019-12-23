@@ -1,4 +1,4 @@
-= Camel Example RabbitMQ
+== Camel Example RabbitMQ
 
 This example shows how to work with a simple Apache Camel application that routes message to RabbitMQ.
 
@@ -12,7 +12,7 @@ This can be configured in the `application.properties` file.
 The login information is the default `guest/guest` account, which can be configured
 in the `application.properties` file as well.
 
-== How to run
+=== How to run
 
 The sample requires a RabbitMQ broker to be running.
 
@@ -24,6 +24,12 @@ Then you can run this example using
 
     mvn spring-boot:run
 
-== More information
+=== Help and contributions
 
-You can find more information about Apache Camel at the website: http://camel.apache.org/
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

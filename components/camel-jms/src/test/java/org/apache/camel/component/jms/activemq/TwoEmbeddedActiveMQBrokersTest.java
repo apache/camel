@@ -37,6 +37,7 @@ public class TwoEmbeddedActiveMQBrokersTest extends CamelSpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("classpath:org/apache/camel/component/jms/activemq/twoActiveMQBrokers.xml");
     }

@@ -61,11 +61,7 @@ public class MulticastNoStopOnExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .multicast()
-                        .to("direct:foo", "direct:bar", "direct:baz")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").multicast().to("direct:foo", "direct:bar", "direct:baz").end().to("mock:result");
 
                 from("direct:foo").to("mock:foo");
 
@@ -78,6 +74,7 @@ public class MulticastNoStopOnExceptionTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("Kaboom".equals(body)) {

@@ -40,16 +40,15 @@ public class LoopTestProcessor implements Processor {
         this.index = 0;
     }
 
+    @Override
     public void process(Exchange exchange) {
         Integer c = exchange.getProperty(Exchange.LOOP_SIZE, Integer.class);
         Integer i = exchange.getProperty(Exchange.LOOP_INDEX, Integer.class);
         if (c == null || c.intValue() != this.count) {
-            exchange.setException(new CamelException(
-                "Invalid count value.  Expected " + this.count + " but was " + c));
+            exchange.setException(new CamelException("Invalid count value.  Expected " + this.count + " but was " + c));
         }
         if (i == null || i.intValue() != this.index++) {
-            exchange.setException(new CamelException(
-                "Invalid index value.  Expected " + this.index + " but was " + i));
+            exchange.setException(new CamelException("Invalid index value.  Expected " + this.index + " but was " + i));
         }
     }
 }

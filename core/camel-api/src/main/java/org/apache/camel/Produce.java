@@ -57,11 +57,6 @@ public @interface Produce {
     String property() default "";
 
     /**
-     * Id of {@link CamelContext} to use
-     */
-    String context() default "";
-
-    /**
      * Whether to use bean parameter binding
      */
     boolean binding() default true;

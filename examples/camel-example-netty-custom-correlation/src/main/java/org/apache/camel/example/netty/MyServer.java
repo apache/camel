@@ -39,7 +39,7 @@ public final class MyServer {
 
         @Override
         public void configure() throws Exception {
-            from("netty4:tcp://localhost:4444?sync=true&encoders=#myEncoder&decoders=#myDecoder")
+            from("netty:tcp://localhost:4444?sync=true&encoders=#myEncoder&decoders=#myDecoder")
                 .log("Request:  ${id}:${body}")
                 .filter(simple("${body} contains 'beer'"))
                     // use some delay when its beer to make responses interleaved

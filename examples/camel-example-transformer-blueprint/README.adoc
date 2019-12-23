@@ -1,0 +1,58 @@
+== Declarative Transformer example using Blueprint XML
+
+=== Introduction
+
+This example shows how to work with declarative transformation by
+declaring data types.
+
+=== Build
+
+You will need to compile this example first:
+
+....
+mvn compile
+....
+
+=== Run without container
+
+To run the example, type
+
+....
+mvn camel:run
+....
+
+To stop the example hit ctrl+c.
+
+=== Run on karaf container
+
+To run the example on the karaf container
+
+==== Step 1: Start karaf container
+
+....
+karaf / karaf.bat
+....
+
+==== Step 2: Deploy
+
+....
+feature:repo-add mvn:org.apache.camel.example/camel-example-transformer-blueprint/${version}/xml/features
+feature:install camel-example-transformer-blueprint
+....
+
+==== Step 3: Check the output
+
+You will see the output by log:tail or in ${karaf}/data/karaf.log
+
+You can see the routing rules by looking at the Blueprint XML
+configuration lives in `+src/main/resources/OSGI-INF/blueprint+`
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

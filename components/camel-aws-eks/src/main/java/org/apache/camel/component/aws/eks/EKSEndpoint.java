@@ -24,7 +24,6 @@ import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.eks.AmazonEKS;
 import com.amazonaws.services.eks.AmazonEKSClientBuilder;
-
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -35,7 +34,7 @@ import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * The aws-kms is used for managing Amazon EKS
+ * The aws-eks is used for managing Amazon EKS
  */
 @UriEndpoint(firstVersion = "3.0.0", scheme = "aws-eks", title = "AWS EKS", syntax = "aws-eks:label", producerOnly = true, label = "cloud,management")
 public class EKSEndpoint extends ScheduledPollEndpoint {
@@ -50,10 +49,12 @@ public class EKSEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot receive messages from this endpoint");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new EKSProducer(this);
     }
@@ -90,6 +91,7 @@ public class EKSEndpoint extends ScheduledPollEndpoint {
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
             clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyProtocol(configuration.getProxyProtocol());
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
             isClientConfigFound = true;

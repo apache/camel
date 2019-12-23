@@ -26,15 +26,18 @@ import org.springframework.beans.factory.InitializingBean;
 public class Customer extends RouteBuilder implements InitializingBean, CamelContextAware {
     private CamelContext camelContext;
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
         
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         if (camelContext != null) {
             // setup a timer to send the cafe order

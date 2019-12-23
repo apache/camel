@@ -24,10 +24,12 @@ import org.junit.Test;
 
 public class MyBatisQueueTest extends MyBatisTestSupport {
     
+    @Override
     protected boolean createTestData() {
         return false;
     }
     
+    @Override
     protected String getCreateStatement() {
         return "create table ACCOUNT (ACC_ID INTEGER, ACC_FIRST_NAME VARCHAR(255), ACC_LAST_NAME VARCHAR(255), ACC_EMAIL VARCHAR(255), PROCESSED BOOLEAN DEFAULT false)";
     }
@@ -74,7 +76,7 @@ public class MyBatisQueueTest extends MyBatisTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("mybatis:selectUnprocessedAccounts?consumer.onConsume=consumeAccount").to("mock:results");
+                from("mybatis:selectUnprocessedAccounts?onConsume=consumeAccount").to("mock:results");
                 // END SNIPPET: e1
 
                 from("direct:start").to("mybatis:insertAccount?statementType=Insert");

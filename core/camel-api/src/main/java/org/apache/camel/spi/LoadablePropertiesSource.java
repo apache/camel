@@ -17,6 +17,7 @@
 package org.apache.camel.spi;
 
 import java.util.Properties;
+import java.util.function.Predicate;
 
 import org.apache.camel.Ordered;
 
@@ -35,4 +36,12 @@ public interface LoadablePropertiesSource extends PropertiesSource {
      * @return the loaded properties
      */
     Properties loadProperties();
+
+    /**
+     * Loads the properties from the source filtering them out according to a predicate.
+     *
+     * @param filter the predicate used to filter out properties based on the key.
+     * @return the properties loaded.
+     */
+    Properties loadProperties(Predicate<String> filter);
 }

@@ -17,9 +17,9 @@
 package org.apache.camel.zipkin;
 
 import java.util.Locale;
+import java.util.Map;
 
 import brave.SpanCustomizer;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
@@ -50,10 +50,17 @@ final class ZipkinClientRequestAdapter {
         if (eventNotifier.isIncludeMessageBody() || eventNotifier.isIncludeMessageBodyStreams()) {
             boolean streams = eventNotifier.isIncludeMessageBodyStreams();
             StreamCache cache = prepareBodyForLogging(exchange, streams);
-            String body = MessageHelper.extractBodyForLogging(exchange.hasOut() ? exchange.getOut() : exchange.getIn(), "", streams, streams);
+            String body = MessageHelper.extractBodyForLogging(exchange.getMessage(), "", streams, streams);
             span.tag("camel.client.exchange.message.request.body", body);
             if (cache != null) {
                 cache.reset();
+            }
+        }
+        
+        Map<String, String> customTags = exchange.getProperty("camel.client.customtags", Map.class);
+        if (customTags != null && !customTags.isEmpty()) {
+            for (Map.Entry<String, String> tag : customTags.entrySet()) {
+                span.tag("custom." + tag.getKey(), tag.getValue());
             }
         }
     }

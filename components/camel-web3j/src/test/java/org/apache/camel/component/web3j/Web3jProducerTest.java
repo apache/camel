@@ -29,7 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.Response;

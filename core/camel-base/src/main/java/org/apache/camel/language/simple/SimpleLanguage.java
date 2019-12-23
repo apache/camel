@@ -155,6 +155,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         }
     }
 
+    @Override
     public Predicate createPredicate(String expression) {
         ObjectHelper.notNull(expression, "expression");
 
@@ -174,6 +175,7 @@ public class SimpleLanguage extends LanguageSupport implements StaticService {
         return answer;
     }
 
+    @Override
     public Expression createExpression(String expression) {
         ObjectHelper.notNull(expression, "expression");
 

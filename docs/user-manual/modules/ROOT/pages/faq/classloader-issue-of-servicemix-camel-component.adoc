@@ -1,5 +1,5 @@
 [[Classloaderissueofservicemixcamelcomponent-Classloaderissueofservicemixcamelcomponent]]
-=== Classloader issue of servicemix-camel component
+= Classloader issue of servicemix-camel component
 
 We got some classloader issue about the camel processor which after the
 JBI endpoint recently, so I add this entry for some explanation about

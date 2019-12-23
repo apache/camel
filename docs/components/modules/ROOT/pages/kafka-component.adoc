@@ -1,10 +1,15 @@
 [[kafka-component]]
-== Kafka Component
+= Kafka Component
+:page-source: components/camel-kafka/src/main/docs/kafka-component.adoc
 
-*Available as of Camel version 2.13*
+*Since Camel 2.13*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Kafka component is used for communicating with
-http://kafka.apache.org/[Apache Kafka] message broker.
+http://kafka.apache.org/[Apache Kafka] message broker.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component.
@@ -20,7 +25,7 @@ for this component.
 ------------------------------------------------------------
 
 
-=== URI format
+== URI format
 
 [source,java]
 ---------------------------
@@ -29,11 +34,11 @@ kafka:topic[?options]
 ---------------------------
 
 
-=== Options
+== Options
 
 
 // component options: START
-The Kafka component supports 9 options, which are listed below.
+The Kafka component supports 10 options, which are listed below.
 
 
 
@@ -46,9 +51,10 @@ The Kafka component supports 9 options, which are listed below.
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *breakOnFirstError* (consumer) | This options controls what happens when a consumer is processing an exchange and it fails. If the option is false then the consumer continues to the next message and processes it. If the option is true then the consumer breaks out, and will seek back to offset of the message that caused a failure, and then re-attempt to process this message. However this can lead to endless processing of the same message if its bound to fail every time, eg a poison message. Therefore its recommended to deal with that for example by using Camel's error handler. | false | boolean
 | *allowManualCommit* (consumer) | Whether to allow doing manual commits via KafkaManualCommit. If this option is enabled then an instance of KafkaManualCommit is stored on the Exchange message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | boolean
-| *kafkaManualCommit Factory* (consumer) | Factory to use for creating KafkaManualCommit instances. This allows to plugin a custom factory to create custom KafkaManualCommit instances in case special logic is needed when doing manual commits that deviates from the default implementation that comes out of the box. |  | KafkaManualCommit Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *kafkaManualCommit Factory* (consumer) | Factory to use for creating KafkaManualCommit instances. This allows to plugin a custom factory to create custom KafkaManualCommit instances in case special logic is needed when doing manual commits that deviates from the default implementation that comes out of the box. |  | KafkaManualCommitFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -63,7 +69,7 @@ kafka:topic
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -73,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (97 parameters):
+=== Query Parameters (95 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -114,9 +120,7 @@ with the following path and query parameters:
 | *valueDeserializer* (consumer) | Deserializer class for value that implements the Deserializer interface. | org.apache.kafka.common.serialization.StringDeserializer | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *bridgeEndpoint* (producer) | If the option is true, then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message. | false | boolean
 | *bufferMemorySize* (producer) | The total bytes of memory the producer can use to buffer records waiting to be sent to the server. If records are sent faster than they can be delivered to the server the producer will either block or throw an exception based on the preference specified by block.on.buffer.full.This setting should correspond roughly to the total memory the producer will use, but is not a hard bound since not all memory the producer uses is used for buffering. Some additional memory will be used for compression (if compression is enabled) as well as for maintaining in-flight requests. | 33554432 | Integer
-| *circularTopicDetection* (producer) | If the option is true, then KafkaProducer will detect if the message is attempted to be sent back to the same topic it may come from, if the message was original from a kafka consumer. If the KafkaConstants.TOPIC header is the same as the original kafka consumer topic, then the header setting is ignored, and the topic of the producer endpoint is used. In other words this avoids sending the same message back to where it came from. This option is not in use if the option bridgeEndpoint is set to true. | true | boolean
 | *compressionCodec* (producer) | This parameter allows you to specify the compression codec for all data generated by this producer. Valid values are none, gzip and snappy. | none | String
 | *connectionMaxIdleMs* (producer) | Close idle connections after the number of milliseconds specified by this config. | 540000 | Integer
 | *enableIdempotence* (producer) | If set to 'true' the producer will ensure that exactly one copy of each message is written in the stream. If 'false', producer retries may write duplicates of the retried message in the stream. If set to true this option will require max.in.flight.requests.per.connection to be set to 1 and retries cannot be zero and additionally acks must be set to 'all'. | false | boolean
@@ -153,7 +157,7 @@ with the following path and query parameters:
 | *interceptorClasses* (monitoring) | Sets interceptors for producer or consumers. Producer interceptors have to be classes implementing org.apache.kafka.clients.producer.ProducerInterceptor Consumer interceptors have to be classes implementing org.apache.kafka.clients.consumer.ConsumerInterceptor Note that if you use Producer interceptor on a consumer it will throw a class cast exception in runtime |  | String
 | *kerberosBeforeReloginMin Time* (security) | Login thread sleep time between refresh attempts. | 60000 | Integer
 | *kerberosInitCmd* (security) | Kerberos kinit command path. Default is /usr/bin/kinit | /usr/bin/kinit | String
-| *kerberosPrincipalToLocal Rules* (security) | A list of rules for mapping from principal names to short names (typically operating system usernames). The rules are evaluated in order and the first rule that matches a principal name is used to map it to a short name. Any later rules in the list are ignored. By default, principal names of the form {username}/{hostname}{REALM} are mapped to {username}. For more details on the format please see the security authorization and acls documentation.. Multiple values can be separated by comma | DEFAULT | String
+| *kerberosPrincipalToLocal Rules* (security) | A list of rules for mapping from principal names to short names (typically operating system usernames). The rules are evaluated in order and the first rule that matches a principal name is used to map it to a short name. Any later rules in the list are ignored. By default, principal names of the form \{username\}/\{hostname\}\{REALM\} are mapped to \{username\}. For more details on the format please see the security authorization and acls documentation.. Multiple values can be separated by comma | DEFAULT | String
 | *kerberosRenewJitter* (security) | Percentage of random jitter added to the renewal time. | 0.05 | Double
 | *kerberosRenewWindowFactor* (security) | Login thread will sleep until the specified window factor of time from last refresh to ticket's expiry has been reached, at which time it will try to renew the ticket. | 0.8 | Double
 | *saslJaasConfig* (security) | Expose the kafka sasl.jaas.config parameter Example: org.apache.kafka.common.security.plain.PlainLoginModule required username=USERNAME password=PASSWORD; |  | String
@@ -172,21 +176,21 @@ with the following path and query parameters:
 | *sslProtocol* (security) | The SSL protocol used to generate the SSLContext. Default setting is TLS, which is fine for most cases. Allowed values in recent JVMs are TLS, TLSv1.1 and TLSv1.2. SSL, SSLv2 and SSLv3 may be supported in older JVMs, but their usage is discouraged due to known security vulnerabilities. | TLS | String
 | *sslProvider* (security) | The name of the security provider used for SSL connections. Default value is the default security provider of the JVM. |  | String
 | *sslTrustmanagerAlgorithm* (security) | The algorithm used by trust manager factory for SSL connections. Default value is the trust manager factory algorithm configured for the Java Virtual Machine. | PKIX | String
+| *sslTruststoreLocation* (security) | The location of the trust store file. |  | String
 | *sslTruststoreType* (security) | The file format of the trust store file. Default value is JKS. | JKS | String
 | *schemaRegistryURL* (confluent) | URL of the Confluent Platform schema registry servers to use. The format is host1:port1,host2:port2. This is known as schema.registry.url in the Confluent Platform documentation. This option is only available in the Confluent Platform (not standard Apache Kafka) |  | String
-| *sslTruststoreLocation* (security) | The location of the trust store file. |  | String
 | *sslTruststorePassword* (security) | The password for the trust store file. |  | String
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-kafka-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -194,7 +198,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 101 options, which are listed below.
+The component supports 100 options, which are listed below.
 
 
 
@@ -204,6 +208,7 @@ The component supports 101 options, which are listed below.
 | *camel.component.kafka.allow-manual-commit* | Whether to allow doing manual commits via KafkaManualCommit. If this option is enabled then an instance of KafkaManualCommit is stored on the Exchange message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | Boolean
 | *camel.component.kafka.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.kafka.break-on-first-error* | This options controls what happens when a consumer is processing an exchange and it fails. If the option is false then the consumer continues to the next message and processes it. If the option is true then the consumer breaks out, and will seek back to offset of the message that caused a failure, and then re-attempt to process this message. However this can lead to endless processing of the same message if its bound to fail every time, eg a poison message. Therefore its recommended to deal with that for example by using Camel's error handler. | false | Boolean
+| *camel.component.kafka.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.kafka.brokers* | URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers. This option is known as bootstrap.servers in the Kafka documentation. |  | String
 | *camel.component.kafka.configuration.allow-manual-commit* | Whether to allow doing manual commits via {@link KafkaManualCommit}. <p/> If this option is enabled then an instance of {@link KafkaManualCommit} is stored on the {@link Exchange} message header, which allows end users to access this API and perform manual offset commits via the Kafka consumer. | false | Boolean
 | *camel.component.kafka.configuration.auto-commit-enable* | If true, periodically commit to ZooKeeper the offset of messages already fetched by the consumer. This committed offset will be used when the process fails as the position from which the new consumer will begin. | true | Boolean
@@ -211,11 +216,9 @@ The component supports 101 options, which are listed below.
 | *camel.component.kafka.configuration.auto-commit-on-stop* | Whether to perform an explicit auto commit when the consumer stops to ensure the broker has a commit from the last consumed message. This requires the option autoCommitEnable is turned on. The possible values are: sync, async, or none. And sync is the default value. | sync | String
 | *camel.component.kafka.configuration.auto-offset-reset* | What to do when there is no initial offset in ZooKeeper or if an offset is out of range: earliest : automatically reset the offset to the earliest offset latest : automatically reset the offset to the latest offset fail: throw exception to the consumer | latest | String
 | *camel.component.kafka.configuration.break-on-first-error* | This options controls what happens when a consumer is processing an exchange and it fails. If the option is <tt>false</tt> then the consumer continues to the next message and processes it. If the option is <tt>true</tt> then the consumer breaks out, and will seek back to offset of the message that caused a failure, and then re-attempt to process this message. However this can lead to endless processing of the same message if its bound to fail every time, eg a poison message. Therefore its recommended to deal with that for example by using Camel's error handler. | false | Boolean
-| *camel.component.kafka.configuration.bridge-endpoint* | If the option is true, then KafkaProducer will ignore the KafkaConstants.TOPIC header setting of the inbound message. | false | Boolean
 | *camel.component.kafka.configuration.brokers* | URL of the Kafka brokers to use. The format is host1:port1,host2:port2, and the list can be a subset of brokers or a VIP pointing to a subset of brokers. <p/> This option is known as <tt>bootstrap.servers</tt> in the Kafka documentation. |  | String
 | *camel.component.kafka.configuration.buffer-memory-size* | The total bytes of memory the producer can use to buffer records waiting to be sent to the server. If records are sent faster than they can be delivered to the server the producer will either block or throw an exception based on the preference specified by block.on.buffer.full.This setting should correspond roughly to the total memory the producer will use, but is not a hard bound since not all memory the producer uses is used for buffering. Some additional memory will be used for compression (if compression is enabled) as well as for maintaining in-flight requests. | 33554432 | Integer
 | *camel.component.kafka.configuration.check-crcs* | Automatically check the CRC32 of the records consumed. This ensures no on-the-wire or on-disk corruption to the messages occurred. This check adds some overhead, so it may be disabled in cases seeking extreme performance. | true | Boolean
-| *camel.component.kafka.configuration.circular-topic-detection* | If the option is true, then KafkaProducer will detect if the message is attempted to be sent back to the same topic it may come from, if the message was original from a kafka consumer. If the KafkaConstants.TOPIC header is the same as the original kafka consumer topic, then the header setting is ignored, and the topic of the producer endpoint is used. In other words this avoids sending the same message back to where it came from. This option is not in use if the option bridgeEndpoint is set to true. | true | Boolean
 | *camel.component.kafka.configuration.client-id* | The client id is a user-specified string sent in each request to help trace calls. It should logically identify the application making the request. |  | String
 | *camel.component.kafka.configuration.compression-codec* | This parameter allows you to specify the compression codec for all data generated by this producer. Valid values are "none", "gzip" and "snappy". | none | String
 | *camel.component.kafka.configuration.connection-max-idle-ms* | Close idle connections after the number of milliseconds specified by this config. | 540000 | Integer
@@ -234,7 +237,7 @@ The component supports 101 options, which are listed below.
 | *camel.component.kafka.configuration.kafka-header-serializer* | Sets custom KafkaHeaderDeserializer for serialization camel headers values to kafka headers values. |  | KafkaHeaderSerializer
 | *camel.component.kafka.configuration.kerberos-before-relogin-min-time* | Login thread sleep time between refresh attempts. | 60000 | Integer
 | *camel.component.kafka.configuration.kerberos-init-cmd* | Kerberos kinit command path. Default is /usr/bin/kinit | /usr/bin/kinit | String
-| *camel.component.kafka.configuration.kerberos-principal-to-local-rules* | A list of rules for mapping from principal names to short names (typically operating system usernames). The rules are evaluated in order and the first rule that matches a principal name is used to map it to a short name. Any later rules in the list are ignored. By default, principal names of the form {username}/{hostname}@{REALM} are mapped to {username}. For more details on the format please see the security authorization and acls documentation.. <p/> Multiple values can be separated by comma | DEFAULT | String
+| *camel.component.kafka.configuration.kerberos-principal-to-local-rules* | A list of rules for mapping from principal names to short names (typically operating system usernames). The rules are evaluated in order and the first rule that matches a principal name is used to map it to a short name. Any later rules in the list are ignored. By default, principal names of the form \{username\}/\{hostname\}@\{REALM\} are mapped to \{username\}. For more details on the format please see the security authorization and acls documentation.. <p/> Multiple values can be separated by comma | DEFAULT | String
 | *camel.component.kafka.configuration.kerberos-renew-jitter* | Percentage of random jitter added to the renewal time. | 0.05 | Double
 | *camel.component.kafka.configuration.kerberos-renew-window-factor* | Login thread will sleep until the specified window factor of time from last refresh to ticket's expiry has been reached, at which time it will try to renew the ticket. | 0.8 | Double
 | *camel.component.kafka.configuration.key* | The record key (or null if no key is specified). If this option has been configured then it take precedence over header {@link KafkaConstants#KEY} |  | String
@@ -297,9 +300,9 @@ The component supports 101 options, which are listed below.
 | *camel.component.kafka.configuration.worker-pool* | To use a custom worker pool for continue routing {@link Exchange} after kafka server has acknowledge the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing. |  | ExecutorService
 | *camel.component.kafka.configuration.worker-pool-core-size* | Number of core threads for the worker pool for continue routing {@link Exchange} after kafka server has acknowledge the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing. | 10 | Integer
 | *camel.component.kafka.configuration.worker-pool-max-size* | Maximum number of threads for the worker pool for continue routing {@link Exchange} after kafka server has acknowledge the message that was sent to it from {@link KafkaProducer} using asynchronous non-blocking processing. | 20 | Integer
-| *camel.component.kafka.enabled* | Enable kafka component | true | Boolean
+| *camel.component.kafka.enabled* | Whether to enable auto configuration of the kafka component. This is enabled by default. |  | Boolean
 | *camel.component.kafka.kafka-manual-commit-factory* | Factory to use for creating KafkaManualCommit instances. This allows to plugin a custom factory to create custom KafkaManualCommit instances in case special logic is needed when doing manual commits that deviates from the default implementation that comes out of the box. The option is a org.apache.camel.component.kafka.KafkaManualCommitFactory type. |  | String
-| *camel.component.kafka.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.kafka.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.kafka.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 | *camel.component.kafka.worker-pool* | To use a shared custom worker pool for continue routing Exchange after kafka server has acknowledge the message that was sent to it from KafkaProducer using asynchronous non-blocking processing. If using this option then you must handle the lifecycle of the thread pool to shut the pool down when no longer needed. The option is a java.util.concurrent.ExecutorService type. |  | String
 |===
@@ -310,9 +313,9 @@ For more information about Producer/Consumer configuration:
 http://kafka.apache.org/documentation.html#newconsumerconfigs[http://kafka.apache.org/documentation.html#newconsumerconfigs]
 http://kafka.apache.org/documentation.html#producerconfigs[http://kafka.apache.org/documentation.html#producerconfigs]
 
-=== Message headers
+== Message headers
 
-==== Consumer headers
+=== Consumer headers
 
 The following headers are available when consuming messages from Kafka.
 [width="100%",cols="2m,2m,1m,5",options="header"]
@@ -327,16 +330,19 @@ The following headers are available when consuming messages from Kafka.
 | KafkaConstants.MANUAL_COMMIT             | "CamelKafkaManualCommit"          | KafkaManualCommit | Can be used for forcing manual offset commit when using Kafka consumer. |
 |===
 
-==== Producer headers
+=== Producer headers
 
 Before sending a message to Kafka you can configure the following headers.
 [width="100%",cols="2m,2m,1m,5",options="header"]
 |===
 | Header constant              | Header value          | Type    | Description
 | KafkaConstants.KEY           | "kafka.KEY"           | Object  | *Required* The key of the message in order to ensure that all related message goes in the same partition
-| KafkaConstants.TOPIC         | "kafka.TOPIC"         | String  | The topic to which send the message (only read if the `bridgeEndpoint` endpoint parameter is `true`)
+| KafkaConstants.OVERRIDE_TOPIC | "kafka.OVERRIDE_TOPIC" | String  | The topic to which send the message (override and takes precedence), and the header is not preserved. |
 | KafkaConstants.PARTITION_KEY | "kafka.PARTITION_KEY" | Integer | Explicitly specify the partition (only used if the `KafkaConstants.KEY` header is defined)
 |===
+
+If you want to send a message to a dynamic topic then use `KafkaConstants.OVERRIDE_TOPIC` as its used as a one-time header
+that are not send along the message, as its removed in the producer.
 
 After the message is sent to Kafka, the following headers are available
 [width="100%",cols="2m,2m,1m,5",options="header"]
@@ -346,9 +352,9 @@ After the message is sent to Kafka, the following headers are available
 |===
 
 
-=== Samples
+== Samples
 
-==== Consuming messages from Kafka
+=== Consuming messages from Kafka
 
 Here is the minimal route you need in order to read messages from Kafka.
 
@@ -385,7 +391,7 @@ Here how to use it :
 FileStateRepository repository = FileStateRepository.fileStateRepository(new File("/path/to/repo.dat"));
 
 // Bind this repository into the Camel registry
-JndiRegistry registry = new JndiRegistry();
+Registry registry = createCamelRegistry();
 registry.bind("offsetRepo", repository);
 
 // Configure the camel context
@@ -405,9 +411,9 @@ camelContext.addRoutes(new RouteBuilder() {
     }
 });
 ----
- 
+ 
 
-==== Producing messages to Kafka
+=== Producing messages to Kafka
 
 Here is the minimal route you need in order to write messages to Kafka.
 
@@ -419,7 +425,7 @@ from("direct:start")
     .to("kafka:test?brokers=localhost:9092");
 ----
 
-=== SSL configuration
+== SSL configuration
 
 You have 2 different ways to configure the SSL communication on the Kafka` component.
 
@@ -451,7 +457,7 @@ SSLContextParameters scp = new SSLContextParameters();
 scp.setKeyManagers(kmp);
 
 // Bind this SSLContextParameters into the Camel registry
-JndiRegistry registry = new JndiRegistry();
+Registry registry = createCamelRegistry();
 registry.bind("ssl", scp);
 
 // Configure the camel context
@@ -472,7 +478,7 @@ camelContext.addRoutes(new RouteBuilder() {
 });
 ----
 
-=== Using the Kafka idempotent repository
+== Using the Kafka idempotent repository
 *Available from Camel 2.19*
 
 The `camel-kafka` library provides a Kafka topic-based idempotent repository. This repository stores broadcasts all changes to idempotent state (add/remove) in a Kafka topic, and populates a local in-memory cache for each repository's process instance through event sourcing.
@@ -546,8 +552,8 @@ In XML:
 </bean>
 ----
 
-=== Using manual commit with Kafka consumer
-*Available as of Camel 2.21*
+== Using manual commit with Kafka consumer
+*Since Camel 2.21*
 
 By default the Kafka consumer will use auto commit, where the offset will be committed automatically in the background using a given interval.
 
@@ -578,8 +584,8 @@ This will force a synchronous commit which will block until the commit is acknow
 If you want to use a custom implementation of `KafkaManualCommit` then you can configure a custom `KafkaManualCommitFactory`
 on the `KafkaComponent` that creates instances of your custom implementation.
 
-=== Kafka Headers propagation
-*Available as of Camel 2.22*
+== Kafka Headers propagation
+*Since Camel 2.22*
 
 When consuming messages from Kafka, headers will be propagated to camel exchange headers automatically.
 Producing flow backed by same behaviour - camel headers of particular exchange will be propagated to kafka message headers.

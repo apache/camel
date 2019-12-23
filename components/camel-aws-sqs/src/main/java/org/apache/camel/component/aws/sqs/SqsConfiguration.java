@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.sqs.AmazonSQS;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -39,6 +39,8 @@ public class SqsConfiguration implements Cloneable {
     private String queueOwnerAWSAccountId;
     @UriParam
     private String region;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "proxy")
     private String proxyHost;
     @UriParam(label = "proxy")
@@ -100,6 +102,10 @@ public class SqsConfiguration implements Cloneable {
     // dead letter queue properties
     @UriParam(label = "queue")
     private String redrivePolicy;
+
+    // Likely used only for testing
+    @UriParam(defaultValue = "https")
+    private String protocol = "https";
 
     /**
      * Whether or not the queue is a FIFO queue
@@ -367,7 +373,8 @@ public class SqsConfiguration implements Cloneable {
 
     /**
      * Specify the queue region which could be used with queueOwnerAWSAccountId
-     * to build the service URL. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
+     * to build the service URL. When using this parameter, the configuration
+     * will expect the capitalized name of the region (for example AP_EAST_1)
      * You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
@@ -397,6 +404,17 @@ public class SqsConfiguration implements Cloneable {
      */
     public void setQueueUrl(String queueUrl) {
         this.queueUrl = queueUrl;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the SQS client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {
@@ -476,6 +494,10 @@ public class SqsConfiguration implements Cloneable {
         }
     }
 
+    public void setMessageGroupIdStrategy(MessageGroupIdStrategy messageGroupIdStrategy) {
+        this.messageGroupIdStrategy = messageGroupIdStrategy;
+    }
+
     public MessageGroupIdStrategy getMessageGroupIdStrategy() {
         return messageGroupIdStrategy;
     }
@@ -500,6 +522,10 @@ public class SqsConfiguration implements Cloneable {
         }
     }
 
+    public void setMessageDeduplicationIdStrategy(MessageDeduplicationIdStrategy messageDeduplicationIdStrategy) {
+        this.messageDeduplicationIdStrategy = messageDeduplicationIdStrategy;
+    }
+
     public SqsOperations getOperation() {
         return operation;
     }
@@ -520,6 +546,17 @@ public class SqsConfiguration implements Cloneable {
      */
     public void setAutoCreateQueue(boolean autoCreateQueue) {
         this.autoCreateQueue = autoCreateQueue;
+    }
+
+    public String getProtocol() {
+        return protocol;
+    }
+
+    /**
+     * The underlying protocol used to communicate with SQS
+     */
+    public void setProtocol(String protocol) {
+        this.protocol = protocol;
     }
 
     // *************************************************

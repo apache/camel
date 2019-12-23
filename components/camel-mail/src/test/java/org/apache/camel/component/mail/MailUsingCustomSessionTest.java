@@ -23,10 +23,10 @@ import java.util.Properties;
 import javax.mail.Message;
 import javax.mail.Session;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,25 +34,20 @@ import org.jvnet.mock_javamail.Mailbox;
 
 public class MailUsingCustomSessionTest extends CamelTestSupport {
 
-    private Session mailSession;
+    @BindToRegistry("myCustomMailSession")
+    private Session mailSession = Session.getInstance(new Properties());
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         Mailbox.clearAll();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        mailSession = Session.getInstance(new Properties());
-        registry.bind("myCustomMailSession", mailSession);
-        return registry;
-    }
-
     @Test
     public void testEndpointConfigurationWithCustomSession() {
-        // Verify that the mail session bound to the bean registry is identical to the session tied to the endpoint configuration
+        // Verify that the mail session bound to the bean registry is identical
+        // to the session tied to the endpoint configuration
         assertSame(mailSession, getEndpointMailSession("smtp://james@localhost?session=#myCustomMailSession"));
     }
 
@@ -85,7 +80,7 @@ public class MailUsingCustomSessionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("pop3://james@localhost?session=#myCustomMailSession&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("pop3://james@localhost?session=#myCustomMailSession&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

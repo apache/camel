@@ -29,12 +29,8 @@
     <bean id="myFTPEndpoint" class="org.apache.camel.component.file.remote.FtpEndpoint">
         <property name="camelContext" ref="camel"/>
         <property name="configuration" ref="ftpConfig"/>
-        <property name="consumerProperties">
-            <map key-type="java.lang.String">
-                <entry key="initialDelay" value="1000"/>
-                <entry key="delay" value="5000"/>
-            </map>
-        </property>
+        <property name="initialDelay" value="1000"/>
+        <property name="delay" value="5000"/>
     </bean>
 
     <bean id="ftpConfig" class="org.apache.camel.component.file.remote.FtpConfiguration">

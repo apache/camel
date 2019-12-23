@@ -35,7 +35,6 @@ import org.openstack4j.model.identity.v3.Group;
 import org.openstack4j.model.network.Network;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -153,14 +152,6 @@ public class GroupProducerTest extends KeystoneProducerTestSupport {
 
         verify(groupService).delete(groupIdCaptor.capture());
         assertEquals(networkID, groupIdCaptor.getValue());
-        assertFalse(msg.isFault());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(groupService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failureMessage));
     }
 
     private void assertEqualsGroup(Group old, Group newGroup) {

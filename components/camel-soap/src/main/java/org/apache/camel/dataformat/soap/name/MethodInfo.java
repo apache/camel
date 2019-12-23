@@ -52,7 +52,7 @@ public final class MethodInfo {
         for (TypeInfo typeInfo : in) {
             if (inTypeMap.containsKey(typeInfo.getTypeName())
                 && (!(typeInfo.getTypeName().equals("javax.xml.ws.Holder")))
-                && (!(inTypeMap.get(typeInfo.getTypeName()).equals(typeInfo.getElName())))) {
+                && (!(inTypeMap.get(typeInfo.getTypeName()).getElName().equals(typeInfo.getElName())))) {
                 throw new RuntimeCamelException("Ambiguous QName mapping. The type [ "
                                                   + typeInfo.getTypeName()
                                                   + " ] is already mapped to a QName in this method."

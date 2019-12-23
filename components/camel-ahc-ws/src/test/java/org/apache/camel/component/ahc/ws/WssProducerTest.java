@@ -26,9 +26,9 @@ import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.ServerConnector;
 import org.eclipse.jetty.server.SslConnectionFactory;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
-@Ignore("Not yet migrated to work with Jetty 9")
+@Disabled("Not yet migrated to work with Jetty 9")
 public class WssProducerTest extends WsProducerTestBase {
     protected static final String PW = "changeit";
     
@@ -57,7 +57,7 @@ public class WssProducerTest extends WsProducerTestBase {
     private static SSLContextParameters defineSSLContextServerParameters() {
 
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword(PW);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -82,7 +82,7 @@ public class WssProducerTest extends WsProducerTestBase {
 
     private static SSLContextParameters defineSSLContextClientParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword(PW);
 
         TrustManagersParameters tmp = new TrustManagersParameters();

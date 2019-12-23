@@ -728,6 +728,7 @@ public class MllpServerResource extends ExternalResource {
         /**
          * Accept TCP connections and create ClientSocketThreads for them
          */
+        @Override
         public void run() {
             log.info("Accepting connections on port {}", serverSocket.getLocalPort());
             this.setName("MllpServerResource$AcceptSocketThread - " + serverSocket.getLocalSocketAddress().toString());
@@ -1029,6 +1030,7 @@ public class MllpServerResource extends ExternalResource {
          *
          * The exact behaviour of this method is very configurable, allowing simulation of varies error conditions.
          */
+        @Override
         public void run() {
             String localAddress = clientSocket.getLocalAddress().toString();
             String remoteAddress = clientSocket.getRemoteSocketAddress().toString();

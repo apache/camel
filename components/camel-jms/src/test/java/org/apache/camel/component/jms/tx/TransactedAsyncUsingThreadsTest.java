@@ -30,6 +30,7 @@ public class TransactedAsyncUsingThreadsTest extends CamelSpringTestSupport {
     private static String thread1;
     private static String thread2;
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/component/jms/tx/TransactedAsyncUsingThreadsTest.xml");

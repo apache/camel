@@ -16,7 +16,6 @@
  */
 package org.apache.camel.support;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.AsyncProducer;
@@ -28,10 +27,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.Producer;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HasId;
+import org.apache.camel.spi.PropertyConfigurer;
+import org.apache.camel.spi.PropertyConfigurerAware;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -62,7 +61,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
                     + " the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed"
                     + " then creating and starting the producer may take a little time and prolong the total processing time of the processing.")
     private boolean lazyStartProducer;
-    @UriParam(label = "consumer", optionalPrefix = "consumer.", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
+    @UriParam(label = "consumer", description = "Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while"
                     + " the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler."
                     + " By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored.")
     private boolean bridgeErrorHandler;
@@ -82,9 +81,6 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     @UriParam(label = "advanced",
             description = "Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities")
     private boolean basicPropertyBinding;
-    // these options are not really in use any option related to the consumer has a specific option on the endpoint
-    // and consumerProperties was added from the very start of Camel.
-    private Map<String, Object> consumerProperties;
     // pooling consumer options only related to EventDrivenPollingConsumer which are very seldom in use
     // so lets not expose them in the component docs as it will be included in every component
     private int pollingConsumerQueueSize = 1000;
@@ -118,6 +114,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     protected DefaultEndpoint() {
     }
 
+    @Override
     public int hashCode() {
         return getEndpointUri().hashCode() * 37 + 1;
     }
@@ -153,10 +150,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * Returns a unique String ID which can be used for aliasing without having
      * to use the whole URI which is not unique
      */
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public String getEndpointUri() {
         if (endpointUri == null) {
             endpointUri = createEndpointUri();
@@ -168,6 +167,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return endpointUri;
     }
 
+    @Override
     public String getEndpointKey() {
         if (isLenientProperties()) {
             // only use the endpoint uri without parameters as the properties are lenient
@@ -183,6 +183,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         }
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -203,10 +204,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return component;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         // should not call configurePollingConsumer when its EventDrivenPollingConsumer
         if (log.isDebugEnabled()) {
@@ -219,10 +222,12 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return consumer;
     }
 
+    @Override
     public Exchange createExchange() {
         return createExchange(getExchangePattern());
     }
 
+    @Override
     public Exchange createExchange(ExchangePattern pattern) {
         return new DefaultExchange(this, pattern);
     }
@@ -306,8 +311,8 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     /**
      * To let the consumer use a custom ExceptionHandler.
-     + Notice if the option bridgeErrorHandler is enabled then this options is not in use.
-     + By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.
+     * Notice if the option bridgeErrorHandler is enabled then this options is not in use.
+     * By default the consumer will deal with exceptions, that will be logged at WARN/ERROR level and ignored.
      */
     public void setExceptionHandler(ExceptionHandler exceptionHandler) {
         this.exceptionHandler = exceptionHandler;
@@ -383,11 +388,9 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         this.pollingConsumerBlockTimeout = pollingConsumerBlockTimeout;
     }
 
+    @Override
     public void configureProperties(Map<String, Object> options) {
-        Map<String, Object> consumerProperties = IntrospectionSupport.extractProperties(options, "consumer.");
-        if (consumerProperties != null && !consumerProperties.isEmpty()) {
-            setConsumerProperties(consumerProperties);
-        }
+        // noop
     }
 
     /**
@@ -398,15 +401,28 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
      * @param bean        the bean
      * @param parameters  properties to set
      */
-    protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
-        if (basicPropertyBinding) {
+    public void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
+        if (parameters == null || parameters.isEmpty()) {
+            return;
+        }
+
+        boolean basic = basicPropertyBinding || "true".equals(parameters.getOrDefault("basicPropertyBinding", "false"));
+        if (basic) {
             // use basic binding
             PropertyBindingSupport.build()
                     .withPlaceholder(false).withNesting(false).withDeepNesting(false).withReference(false)
                     .bind(camelContext, bean, parameters);
         } else {
+            PropertyConfigurer configurer = null;
+            if (bean instanceof Component) {
+                configurer = getComponent().getComponentPropertyConfigurer();
+            } else if (bean instanceof Endpoint) {
+                configurer = getComponent().getEndpointPropertyConfigurer();
+            } else if (bean instanceof PropertyConfigurerAware) {
+                configurer = ((PropertyConfigurerAware) bean).getPropertyConfigurer(bean);
+            }
             // use advanced binding
-            PropertyBindingSupport.bindProperties(camelContext, bean, parameters);
+            PropertyBindingSupport.build().withConfigurer(configurer).bind(camelContext, bean, parameters);
         }
     }
 
@@ -452,56 +468,25 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         return false;
     }
 
-    public Map<String, Object> getConsumerProperties() {
-        if (consumerProperties == null) {
-            // must create empty if none exists
-            consumerProperties = new HashMap<>();
-        }
-        return consumerProperties;
-    }
-
-    public void setConsumerProperties(Map<String, Object> consumerProperties) {
-        // append consumer properties
-        if (consumerProperties != null && !consumerProperties.isEmpty()) {
-            if (this.consumerProperties == null) {
-                this.consumerProperties = new HashMap<>(consumerProperties);
-            } else {
-                this.consumerProperties.putAll(consumerProperties);
-            }
-        }
-    }
-
     protected void configureConsumer(Consumer consumer) throws Exception {
         // inject CamelContext
         if (consumer instanceof CamelContextAware) {
             ((CamelContextAware) consumer).setCamelContext(getCamelContext());
         }
 
-        if (consumerProperties != null) {
-            // use a defensive copy of the consumer properties as the methods below will remove the used properties
-            // and in case we restart routes, we need access to the original consumer properties again
-            Map<String, Object> copy = new HashMap<>(consumerProperties);
-
-            // configure consumer
-            setProperties(consumer, copy);
-
-            // special consumer.bridgeErrorHandler option
-            Object bridge = copy.remove("bridgeErrorHandler");
-            if ("true".equals(bridge)) {
-                if (consumer instanceof DefaultConsumer) {
-                    DefaultConsumer defaultConsumer = (DefaultConsumer) consumer;
-                    defaultConsumer.setExceptionHandler(new BridgeExceptionHandlerToErrorHandler(defaultConsumer));
-                } else {
-                    throw new IllegalArgumentException("Option consumer.bridgeErrorHandler is only supported by endpoints,"
-                            + " having their consumer extend DefaultConsumer. The consumer is a " + consumer.getClass().getName() + " class.");
-                }
+        if (bridgeErrorHandler) {
+            if (consumer instanceof DefaultConsumer) {
+                DefaultConsumer defaultConsumer = (DefaultConsumer) consumer;
+                defaultConsumer.setExceptionHandler(new BridgeExceptionHandlerToErrorHandler(defaultConsumer));
+            } else {
+                throw new IllegalArgumentException("Option bridgeErrorHandler is only supported by endpoints,"
+                        + " having their consumer extend DefaultConsumer. The consumer is a " + consumer.getClass().getName() + " class.");
             }
-
-            if (!this.isLenientProperties() && copy.size() > 0) {
-                throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + copy.size()
-                    + " parameters that couldn't be set on the endpoint consumer."
-                    + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                    + " Unknown consumer parameters=[" + copy + "]");
+        }
+        if (exceptionHandler != null) {
+            if (consumer instanceof DefaultConsumer) {
+                DefaultConsumer defaultConsumer = (DefaultConsumer) consumer;
+                defaultConsumer.setExceptionHandler(exceptionHandler);
             }
         }
     }
@@ -512,14 +497,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     protected void doInit() throws Exception {
-        // the bridgeErrorHandler/exceptionHandler was originally configured with consumer. prefix, such as consumer.bridgeErrorHandler=true
-        // so if they have been configured on the endpoint then map to the old naming style
-        if (bridgeErrorHandler) {
-            getConsumerProperties().put("bridgeErrorHandler", "true");
-        }
-        if (exceptionHandler != null) {
-            getConsumerProperties().put("exceptionHandler", exceptionHandler);
-        }
+        // noop
     }
 
     @Override

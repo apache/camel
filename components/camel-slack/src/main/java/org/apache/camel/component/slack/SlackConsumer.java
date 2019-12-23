@@ -18,6 +18,7 @@ package org.apache.camel.component.slack;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -60,8 +61,8 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
         HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost(slackEndpoint.getServerUrl() + "/api/channels.history");
-        List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
-        params.add(new BasicNameValuePair("channel", channelId));
+        List<BasicNameValuePair> params = new ArrayList<>();
+        params.add(new BasicNameValuePair(SlackConstants.SLACK_CHANNEL_FIELD, channelId));
         if (ObjectHelper.isNotEmpty(timestamp)) {
             params.add(new BasicNameValuePair("oldest", timestamp));
         }
@@ -128,7 +129,7 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
         HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
         HttpPost httpPost = new HttpPost(slackEndpoint.getServerUrl() + "/api/channels.list");
 
-        List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+        List<BasicNameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("token", slackEndpoint.getToken()));
         httpPost.setEntity(new UrlEncodedFormEntity(params));
 
@@ -136,8 +137,8 @@ public class SlackConsumer extends ScheduledBatchPollingConsumer {
 
         String jsonString = readResponse(response);
         JsonObject c = (JsonObject) Jsoner.deserialize(jsonString);
-        JsonArray list = (JsonArray) c.getCollection("channels");
-        for (JsonObject singleChannel : (List<JsonObject>)(List) list) {
+        Collection<JsonObject> channels = c.getCollection("channels");
+        for (JsonObject singleChannel : channels) {
             if (singleChannel.get("name") != null) {
                 if (singleChannel.get("name").equals(channel)) {
                     if (singleChannel.get("id") != null) {

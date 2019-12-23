@@ -70,11 +70,8 @@ public class RoutePoliciesRefTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .routePolicyRef("policy-a, policy-b")
-                    .to("mock:result");
+                from("direct:start").routePolicyRef("policy-a, policy-b").to("mock:result");
             }
         };
     }
 }
-

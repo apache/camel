@@ -64,6 +64,7 @@ public class BindyDoubleQuotesInFieldCsvUnmarshallTest extends AbstractJUnit4Spr
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(Order.class);
 
+        @Override
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
         }

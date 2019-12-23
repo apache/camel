@@ -55,11 +55,16 @@ public class DropboxEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    public DropboxConfiguration getConfiguration() {
+        return configuration;
+    }
+
     /**
      * Create one of the camel producer available based on the configuration
      * @return the camel producer
      * @throws Exception
      */
+    @Override
     public Producer createProducer() throws Exception {
         LOG.trace("Resolve producer dropbox endpoint {{}}", configuration.getOperation());
         LOG.trace("Resolve producer dropbox attached client: {}", configuration.getClient());
@@ -84,6 +89,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
      * @return the camel consumer
      * @throws Exception
      */
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         LOG.trace("Resolve consumer dropbox endpoint {{}}", configuration.getOperation());
         LOG.trace("Resolve consumer dropbox attached client: {}", configuration.getClient());
@@ -91,10 +97,12 @@ public class DropboxEndpoint extends DefaultEndpoint {
         if (this.configuration.getOperation() == DropboxOperation.search) {
             consumer = new DropboxScheduledPollSearchConsumer(this, processor, configuration);
             consumer.setDelay(DropboxConstants.POLL_CONSUMER_DELAY);
+            configureConsumer(consumer);
             return consumer;
         } else if (this.configuration.getOperation() == DropboxOperation.get) {
             consumer = new DropboxScheduledPollGetConsumer(this, processor, configuration);
             consumer.setDelay(DropboxConstants.POLL_CONSUMER_DELAY);
+            configureConsumer(consumer);
             return consumer;
         } else {
             throw new DropboxException("Operation specified is not valid for consumer!");

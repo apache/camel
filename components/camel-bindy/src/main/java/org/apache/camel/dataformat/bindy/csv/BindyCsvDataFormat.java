@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,6 +68,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         return "bindy-csv";
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
@@ -138,6 +138,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         return canReturnEmptyListOfModels;
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         org.apache.camel.util.ObjectHelper.notNull(factory, "not instantiated");
@@ -181,7 +182,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
                 // BigIntegerFormatFactory if models list is empty or not
                 // If this is the case (correspond to an empty stream, ...)
-                if (models.size() == 0) {
+                if (models.isEmpty() && !isAllowEmptyStream()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
                 } else {
                     return extractUnmarshalResult(models);

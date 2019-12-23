@@ -48,7 +48,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder action(MetricsTimerAction action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder decrement(Long decrement) {
-            setProperty("decrement", decrement);
+            doSetProperty("decrement", decrement);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder decrement(String decrement) {
-            setProperty("decrement", decrement);
+            doSetProperty("decrement", decrement);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder increment(Long increment) {
-            setProperty("increment", increment);
+            doSetProperty("increment", increment);
             return this;
         }
         /**
@@ -105,7 +105,47 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder increment(String increment) {
-            setProperty("increment", increment);
+            doSetProperty("increment", increment);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default MetricsEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default MetricsEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -116,7 +156,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder mark(Long mark) {
-            setProperty("mark", mark);
+            doSetProperty("mark", mark);
             return this;
         }
         /**
@@ -127,7 +167,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder mark(String mark) {
-            setProperty("mark", mark);
+            doSetProperty("mark", mark);
             return this;
         }
         /**
@@ -138,7 +178,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder subject(Object subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -149,7 +189,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -160,7 +200,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder value(Long value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -171,7 +211,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: producer
          */
         default MetricsEndpointBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
     }
@@ -195,7 +235,7 @@ public interface MetricsEndpointBuilderFactory {
          */
         default AdvancedMetricsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -208,7 +248,7 @@ public interface MetricsEndpointBuilderFactory {
          */
         default AdvancedMetricsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -220,7 +260,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -232,7 +272,7 @@ public interface MetricsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -251,7 +291,7 @@ public interface MetricsEndpointBuilderFactory {
      * DropWizard metrics library.
      * 
      * Category: monitoring
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-metrics
      * 
      * Syntax: <code>metrics:metricsType:metricsName</code>

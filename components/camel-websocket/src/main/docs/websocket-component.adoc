@@ -1,7 +1,11 @@
 [[websocket-component]]
-== Jetty Websocket Component
+= Jetty Websocket Component
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The WebSocket component provides websocket
 endpoints for communicating with clients using
@@ -10,7 +14,7 @@ http://tools.ietf.org/html/rfc6455[IETF] specification (drafts and RFC
 6455). It supports the protocols ws:// and wss://. To use wss://
 protocol, the SSLContextParameters must be defined.
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------------------
@@ -20,7 +24,7 @@ websocket://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Websocket Options
+== Websocket Options
 
 
 
@@ -28,7 +32,7 @@ You can append query options to the URI in the following format,
 
 
 // component options: START
-The Jetty Websocket component supports 15 options, which are listed below.
+The Jetty Websocket component supports 16 options, which are listed below.
 
 
 
@@ -48,8 +52,9 @@ The Jetty Websocket component supports 15 options, which are listed below.
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *socketFactory* (common) | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation. |  | Map
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -71,7 +76,7 @@ websocket:host:port/resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (20 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,14 +117,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-websocket-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -127,7 +132,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
@@ -135,14 +140,15 @@ The component supports 16 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.websocket.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.websocket.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.websocket.enable-jmx* | If this option is true, Jetty JMX support will be enabled for this endpoint. See Jetty JMX support for more details. | false | Boolean
-| *camel.component.websocket.enabled* | Enable websocket component | true | Boolean
+| *camel.component.websocket.enabled* | Whether to enable auto configuration of the websocket component. This is enabled by default. |  | Boolean
 | *camel.component.websocket.host* | The hostname. The default value is 0.0.0.0 | 0.0.0.0 | String
+| *camel.component.websocket.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.websocket.max-threads* | To set a value for maximum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for maxThreads is 1 2 noCores. |  | Integer
 | *camel.component.websocket.min-threads* | To set a value for minimum number of threads in server thread pool. MaxThreads/minThreads or threadPool fields are required due to switch to Jetty9. The default values for minThreads is 1. |  | Integer
 | *camel.component.websocket.port* | The port number. The default value is 9292 | 9292 | Integer
-| *camel.component.websocket.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.component.websocket.socket-factory* | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation. The option is a java.util.Map<java.lang.String,org.apache.camel.component.websocket.WebSocketFactory> type. |  | String
+| *camel.component.websocket.socket-factory* | To configure a map which contains custom WebSocketFactory for sub protocols. The key in the map is the sub protocol. The default key is reserved for the default implementation. |  | Map
 | *camel.component.websocket.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.websocket.ssl-key-password* | The password for the keystore when using SSL. |  | String
 | *camel.component.websocket.ssl-keystore* | The path to the keystore. |  | String
@@ -156,9 +162,9 @@ The component supports 16 options, which are listed below.
 
 
 
- 
+ 
 
-### Message Headers
+== Message Headers
 
 The WebSocket component uses 2 headers to indicate to either send
 messages back to a single/current client, or to all clients.
@@ -174,7 +180,7 @@ use the `sendToAll` option on the endpoint instead of using this header.
 |`WebsocketConstants.REMOTE_ADDRESS` |Remote address of the websocket session.
 |=======================================================================
 
-### Usage
+== Usage
 
 In this example we let Camel exposes a websocket server which clients
 can communicate with. The websocket server uses the default host and
@@ -201,15 +207,15 @@ from("activemq:topic:newsTopic")
    .to("websocket://localhost:8443/newsTopic?sendToAll=true&staticResources=classpath:webapp");
 -----------------------------------------------------------------------------------------------
 
-### Setting up SSL for WebSocket Component
+== Setting up SSL for WebSocket Component
 
-#### Using the JSSE Configuration Utility
+=== Using the JSSE Configuration Utility
 
 The WebSocket component supports SSL/TLS configuration
-through the xref:camel-configuration-utilities.adoc[Camel JSSE
-Configuration Utility].  This utility greatly decreases the amount of
+through the xref:manual::camel-configuration-utilities.adoc[Camel JSSE
+Configuration Utility].  This utility greatly decreases the amount of
 component specific code you need to write and is configurable at the
-endpoint and component levels.  The following examples demonstrate how
+endpoint and component levels.  The following examples demonstrate how
 to use the utility with the Cometd component.
 
 [[Websocket-Programmaticconfigurationofthecomponent]]
@@ -281,15 +287,3 @@ Java DSL based configuration of endpoint
 ...
 ----------------------------------------------------------------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:ahc-component.adoc[AHC]
-* xref:jetty-component.adoc[Jetty]
-* Twitter Websocket Example
-demonstrates how to poll a constant feed of twitter searches and publish
-results in real time using web socket to a web page.

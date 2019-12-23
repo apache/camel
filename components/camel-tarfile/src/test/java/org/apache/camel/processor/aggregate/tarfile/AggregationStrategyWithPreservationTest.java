@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.aggregate.tarfile;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Arrays;
@@ -87,7 +88,7 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // Untar file and Split it according to FileEntry
-                from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?consumer.delay=1000&noop=true&recursive=true")
+                from("file:src/test/resources/org/apache/camel/aggregate/tarfile/data?delay=1000&noop=true&recursive=true")
                         .aggregate(tar)
                         .constant(true)
                         .completionFromBatchConsumer()

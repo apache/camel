@@ -34,7 +34,7 @@ public class SimpleParserRegexpPredicateTest extends ExchangeTestSupport {
         Predicate pre = parser.parsePredicate();
 
         assertTrue(pre.matches(exchange));
-        
+
         exchange.getIn().setBody("12.2a.22ab");
         assertFalse(pre.matches(exchange));
     }

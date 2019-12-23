@@ -35,6 +35,7 @@ public class AutowireConstructorRouteTwoTest extends SpringTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/bean/AutowireConstructorRouteTwoTest.xml");
     }

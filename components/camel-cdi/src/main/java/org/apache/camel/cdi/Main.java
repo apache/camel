@@ -19,19 +19,18 @@ package org.apache.camel.cdi;
 import java.util.Map;
 import java.util.Set;
 
-import static java.util.function.Function.identity;
-import static java.util.stream.Collectors.toMap;
-
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.main.MainSupport;
+import org.apache.camel.main.MainCommandLineSupport;
 import org.apache.deltaspike.cdise.api.CdiContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.BeanManagerHelper.getReference;
 import static org.apache.deltaspike.cdise.api.CdiContainerLoader.getCdiContainer;
@@ -41,7 +40,7 @@ import static org.apache.deltaspike.cdise.api.CdiContainerLoader.getCdiContainer
  * See http://camel.apache.org/camel-boot.html.
  */
 @Vetoed
-public class Main extends MainSupport {
+public class Main extends MainCommandLineSupport {
 
     static {
         // Since version 2.3.0.Final and WELD-1915, Weld SE registers a shutdown hook that conflicts
@@ -103,6 +102,11 @@ public class Main extends MainSupport {
         super.doStart();
         initCamelContext();
         warnIfNoCamelFound();
+    }
+
+    @Override
+    protected void initCamelContext() throws Exception {
+        // camel-cdi has already initialized and start CamelContext so we should not do this again
     }
 
     private void warnIfNoCamelFound() {

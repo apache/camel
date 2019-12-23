@@ -21,7 +21,6 @@ import java.util.Collection;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.PutAttributesRequest;
 import com.amazonaws.services.simpledb.model.ReplaceableAttribute;
-
 import org.apache.camel.Exchange;
 
 public class PutAttributesCommand extends AbstractSdbCommand {
@@ -30,6 +29,7 @@ public class PutAttributesCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         PutAttributesRequest request = new PutAttributesRequest()
             .withDomainName(determineDomainName())

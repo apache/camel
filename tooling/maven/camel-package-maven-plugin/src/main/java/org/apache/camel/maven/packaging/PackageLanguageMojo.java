@@ -71,6 +71,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
      *                                                        threads it generated failed.
      * @throws org.apache.maven.plugin.MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         prepareLanguage(getLog(), project, projectHelper, buildDir, languageOutDir, schemaOutDir, buildContext);
     }
@@ -193,7 +194,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
                         }
                     }
                 } else {
-                    throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-" + project.getVersion() + ".jar file. Make sure camel-core has been built first.");
+                    throw new MojoExecutionException("Error finding core/camel-core/target/camel-core-engine-" + project.getVersion() + ".jar file. Make sure camel-core has been built first.");
                 }
             }
         } catch (Exception e) {
@@ -265,7 +266,7 @@ public class PackageLanguageMojo extends AbstractGeneratorMojo {
     private static String asDescription(String name, String description) {
         // special for some languages
         if ("file".equals(name)) {
-            return "For expressions and predicates using the file/simple language";
+            return "For expressions and predicates using the file/simple language.";
         }
         return description;
     }

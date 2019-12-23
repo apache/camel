@@ -17,8 +17,8 @@
 package org.apache.camel.component.hystrix.processor;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
-import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -41,11 +41,8 @@ public class HystrixRouteConfigMaximumSizeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:foo")
-                    .hystrix()
-                        .hystrixConfiguration().groupKey("test1").metricsHealthSnapshotIntervalInMilliseconds(99999).end()
-                        .groupKey("test2")
-                        // ^^^ should only override the groupKey from the HystrixConfigurationDefinition; 
-                        // it should not discard the full HystrixConfigurationDefinition.
+                    .circuitBreaker()
+                        .hystrixConfiguration().groupKey("test2").metricsHealthSnapshotIntervalInMilliseconds(99999).end()
                         .to("log:hello")
                     .end();
                 
@@ -55,11 +52,11 @@ public class HystrixRouteConfigMaximumSizeTest extends CamelTestSupport {
         rb.configure();
         
         RouteDefinition route = rb.getRouteCollection().getRoutes().get(0);
-        assertEquals(HystrixDefinition.class, route.getOutputs().get(0).getClass());
+        assertEquals(CircuitBreakerDefinition.class, route.getOutputs().get(0).getClass());
         
-        HystrixConfigurationDefinition config = ((HystrixDefinition) route.getOutputs().get(0)).getHystrixConfiguration();
+        HystrixConfigurationDefinition config = ((CircuitBreakerDefinition) route.getOutputs().get(0)).getHystrixConfiguration();
         assertEquals("test2", config.getGroupKey());
-        assertEquals(99999, config.getMetricsHealthSnapshotIntervalInMilliseconds().intValue());
+        assertEquals(Integer.toString(99999), config.getMetricsHealthSnapshotIntervalInMilliseconds());
     }
     
     @Override
@@ -68,9 +65,10 @@ public class HystrixRouteConfigMaximumSizeTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .hystrix()
+                    .circuitBreaker()
                         .hystrixConfiguration().groupKey("myCamelApp").requestLogEnabled(false).corePoolSize(5)
-                        .maximumSize(15).allowMaximumSizeToDivergeFromCoreSize(true).end()
+                            .maximumSize(15).allowMaximumSizeToDivergeFromCoreSize(true)
+                        .end()
                         .to("direct:foo")
                     .onFallback()
                         .transform().constant("Fallback message")

@@ -71,6 +71,7 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
         template.sendBodyAndHeader(uri, expectedBody, "cheese", 123);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -80,6 +81,7 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -108,6 +110,7 @@ public class AggregratedJmsRouteTest extends CamelTestSupport {
     }
     private static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             LOG.info("get the exchange here " + exchange);
         }

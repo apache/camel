@@ -22,15 +22,13 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Replication Controllers component provides a producer to execute kubernetes replication controller
- * operations and a consumer to consume replication controller events.
+ * The Kubernetes Replication Controllers component provides a producer to
+ * execute kubernetes replication controller operations and a consumer to
+ * consume replication controller events.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-replication-controllers", title = "Kubernetes Replication Controller",
-    syntax = "kubernetes-replication-controllers:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-replication-controllers", title = "Kubernetes Replication Controller", syntax = "kubernetes-replication-controllers:masterUrl", label = "container,cloud,paas")
 public class KubernetesReplicationControllersEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesReplicationControllersEndpoint(String uri, KubernetesReplicationControllersComponent component, KubernetesConfiguration config) {
@@ -44,7 +42,9 @@ public class KubernetesReplicationControllersEndpoint extends AbstractKubernetes
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesReplicationControllersConsumer(this, processor);
+        Consumer consumer = new KubernetesReplicationControllersConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
 }

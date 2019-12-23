@@ -54,6 +54,7 @@ public class BankQuote {
         return rate;
     }
 
+    @Override
     public String toString() {
         return "[ssn:" + ssn + " bank:" + bankName + " rate:" + rate + "]";
     }

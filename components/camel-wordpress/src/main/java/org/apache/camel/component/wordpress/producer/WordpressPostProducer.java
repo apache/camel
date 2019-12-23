@@ -33,16 +33,19 @@ public class WordpressPostProducer extends AbstractWordpressProducer<Post> {
         this.servicePosts = WordpressServiceProvider.getInstance().getService(WordpressServicePosts.class);
     }
 
+    @Override
     protected Post processInsert(Exchange exchange) {
         LOG.debug("Trying to create a new blog post with {}", exchange.getIn().getBody());
         return servicePosts.create(exchange.getIn().getBody(Post.class));
     }
 
+    @Override
     protected Post processUpdate(Exchange exchange) {
         LOG.debug("Trying to update the post {} with id {}", exchange.getIn().getBody(), this.getConfiguration().getId());
         return servicePosts.update(this.getConfiguration().getId(), exchange.getIn().getBody(Post.class));
     }
 
+    @Override
     protected Post processDelete(Exchange exchange) {
         LOG.debug("Trying to delete a post with id {}", this.getConfiguration().getId());
 

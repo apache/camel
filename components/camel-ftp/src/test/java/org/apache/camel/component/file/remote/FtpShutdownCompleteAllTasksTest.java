@@ -20,8 +20,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Unit test to verify shutdown.
@@ -33,7 +35,7 @@ public class FtpShutdownCompleteAllTasksTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -63,7 +65,7 @@ public class FtpShutdownCompleteAllTasksTest extends FtpServerTestSupport {
         context.stop();
 
         // should route all 5
-        assertEquals("Should complete all messages", 5, bar.getReceivedCounter());
+        assertEquals(5, bar.getReceivedCounter(), "Should complete all messages");
     }
 
     @Override

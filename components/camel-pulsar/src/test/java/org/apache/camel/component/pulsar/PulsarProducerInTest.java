@@ -25,7 +25,8 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.pulsar.utils.AutoConfiguration;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.pulsar.client.api.PulsarClient;
 import org.apache.pulsar.client.api.PulsarClientException;
 import org.apache.pulsar.client.impl.ClientBuilderImpl;
@@ -39,12 +40,8 @@ public class PulsarProducerInTest extends PulsarTestSupport {
     @Produce("direct:start")
     private ProducerTemplate producerTemplate;
 
-    @EndpointInject("pulsar:" + TOPIC_URI
-        + "?numberOfConsumers=1&subscriptionType=Exclusive"
-        + "&subscriptionName=camel-subscription&consumerQueueSize=1"
-        + "&consumerName=camel-consumer"
-        + "&producerName=" + PRODUCER
-    )
+    @EndpointInject("pulsar:" + TOPIC_URI + "?numberOfConsumers=1&subscriptionType=Exclusive" + "&subscriptionName=camel-subscription&consumerQueueSize=1"
+                    + "&consumerName=camel-consumer" + "&producerName=" + PRODUCER)
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -63,31 +60,28 @@ public class PulsarProducerInTest extends PulsarTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
 
-        registerPulsarBeans(jndi);
+        registerPulsarBeans(registry);
 
-        return jndi;
+        return registry;
     }
 
-    private void registerPulsarBeans(final JndiRegistry jndi) throws PulsarClientException {
+    private void registerPulsarBeans(SimpleRegistry registry) throws PulsarClientException {
         PulsarClient pulsarClient = givenPulsarClient();
         AutoConfiguration autoConfiguration = new AutoConfiguration(null, null);
 
-        jndi.bind("pulsarClient", pulsarClient);
+        registry.bind("pulsarClient", pulsarClient);
         PulsarComponent comp = new PulsarComponent(context);
         comp.setAutoConfiguration(autoConfiguration);
         comp.setPulsarClient(pulsarClient);
-        jndi.bind("pulsar", comp);
+        registry.bind("pulsar", comp);
+
     }
 
     private PulsarClient givenPulsarClient() throws PulsarClientException {
-        return new ClientBuilderImpl()
-            .serviceUrl(getPulsarBrokerUrl())
-            .ioThreads(1)
-            .listenerThreads(1)
-            .build();
+        return new ClientBuilderImpl().serviceUrl(getPulsarBrokerUrl()).ioThreads(1).listenerThreads(1).build();
     }
 
     @Test

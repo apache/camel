@@ -24,7 +24,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
@@ -53,10 +52,7 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-        pc.setLocation("ref:myProp");
-
+        context.getPropertiesComponent().setLocation("ref:myProp");
         return context;
     }
 

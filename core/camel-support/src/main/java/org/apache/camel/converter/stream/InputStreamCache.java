@@ -37,18 +37,22 @@ public final class InputStreamCache extends ByteArrayInputStream implements Stre
         super.count = count;
     }
     
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         os.write(buf, pos, count - pos);
     }
 
+    @Override
     public StreamCache copy(Exchange exchange) {
         return new InputStreamCache(buf, count);
     }
 
+    @Override
     public boolean inMemory() {
         return true;
     }
 
+    @Override
     public long length() {
         return count;
     }

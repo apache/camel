@@ -87,6 +87,7 @@ public class SpringIntegrationMessage extends DefaultMessage {
         }
     }
 
+    @Override
     public Object getHeader(String name) {
         if (siMessage != null) {
             return siMessage.getHeaders().get(name);

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.twitter;
+
 import org.junit.Before;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

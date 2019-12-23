@@ -1,0 +1,73 @@
+[[validate-eip]]
+= Validate EIP
+
+Validate uses an expression or predicates to validate the contents of a message.
+It is useful for ensuring that messages are valid before attempting to process them.
+You can use the validate DSL with all kind of Predicates and Expressions.
+Validate evaluates the Predicate/Expression and if it is false a `PredicateValidationException` is thrown.
+If it is true message processing continues.
+
+== Options
+
+// eip options: START
+The Validate EIP has no options.
+// eip options: END
+
+== Samples
+
+The route below will read the file contents and validate them against a regular expression.
+
+[source,java]
+----
+from("file://inbox")
+  .validate(body(String.class).regex("^\\w{10}\\,\\d{2}\\,\\w{24}$"))
+  .to("bean:MyServiceBean.processLine");
+----
+
+Validate EIP is not limited to the message body. You can also validate the message header.
+
+[source,java]
+----
+from("file://inbox")
+  .validate(header("bar").isGreaterThan(100))
+  .to("bean:MyServiceBean.processLine");
+----
+
+You can also use validate together with simple.
+
+[source,java]
+----
+from("file://inbox")
+  .validate(simple("${in.header.bar} == 100"))
+  .to("bean:MyServiceBean.processLine");
+----
+
+To use validate in the Spring DSL, the easiest way is to use simple expressions.
+
+[source,xml]
+----
+<route>
+  <from uri="file://inbox"/>
+  <validate>
+    <simple>${body} regex ^\\w{10}\\,\\d{2}\\,\\w{24}$</simple>
+  </validate>
+  <beanRef ref="myServiceBean" method="processLine"/>
+</route>
+
+<bean id="myServiceBean" class="com.mycompany.MyServiceBean"/>
+----
+
+The XML DSL to validate the message header would looks like this:
+
+[source,xml]
+----
+<route>
+  <from uri="file://inbox"/>
+  <validate>
+    <simple>${in.header.bar} == 100</simple>
+  </validate>
+  <beanRef ref="myServiceBean" method="processLine"/>
+</route>
+
+<bean id="myServiceBean" class="com.mycompany.MyServiceBean"/>
+----

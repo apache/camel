@@ -24,6 +24,7 @@ import org.junit.Test;
 
 public class JdbcAggregateRecoverDeadLetterChannelTest extends AbstractJdbcAggregationTestSupport {
 
+    @Override
     void configureJdbcAggregationRepository() {
         // enable recovery
         repo.setUseRecovery(true);

@@ -37,8 +37,7 @@ final class LocalDateTimeDeserializer extends StdDeserializer<LocalDateTime> {
     }
 
     @Override
-    public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt)
-        throws IOException, JsonProcessingException {
+    public LocalDateTime deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException, JsonProcessingException {
         final ZonedDateTime zonedDateTime = ctxt.readValue(p, ZonedDateTime.class);
 
         return zonedDateTime.toLocalDateTime();

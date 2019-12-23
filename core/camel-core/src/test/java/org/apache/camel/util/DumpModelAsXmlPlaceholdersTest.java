@@ -19,7 +19,6 @@ package org.apache.camel.util;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelHelper;
 import org.junit.Test;
 
@@ -42,8 +41,7 @@ public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start-{{cheese.type}}").routeId("{{cheese.type}}")
-                        .to("direct:end-{{cheese.type}}").id("log");
+                from("direct:start-{{cheese.type}}").routeId("{{cheese.type}}").to("direct:end-{{cheese.type}}").id("log");
             }
         };
     }
@@ -51,9 +49,7 @@ public class DumpModelAsXmlPlaceholdersTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        PropertiesComponent component = new PropertiesComponent();
-        component.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
-        context.addComponent("properties", component);
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
         return context;
     }
 

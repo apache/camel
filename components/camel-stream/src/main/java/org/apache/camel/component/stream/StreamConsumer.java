@@ -22,8 +22,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,7 +70,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         // use file watch service if we read from file
         if (endpoint.isFileWatcher()) {
             String dir = new File(endpoint.getFileName()).getParent();
-            fileWatcher = new FileWatcherStrategy(dir, (file) -> {
+            fileWatcher = new FileWatcherStrategy(dir, file -> {
                 String onlyName = file.getName();
                 String target = FileUtil.stripPath(endpoint.getFileName());
                 log.trace("File changed: {}", onlyName);
@@ -112,6 +110,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         super.doStop();
     }
 
+    @Override
     public void run() {
         try {
             readFromStream();
@@ -131,9 +130,6 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
             inputStreamToClose = null;
         } else if ("file".equals(uri)) {
             inputStream = resolveStreamFromFile();
-            inputStreamToClose = inputStream;
-        } else if ("url".equals(uri)) {
-            inputStream = resolveStreamFromUrl();
             inputStreamToClose = inputStream;
         }
 
@@ -284,25 +280,6 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         } else {
             return br.readLine();
         }
-    }
-
-    private InputStream resolveStreamFromUrl() throws IOException {
-        String u = endpoint.getUrl();
-        StringHelper.notEmpty(u, "url");
-        log.debug("About to read from url: {}", u);
-
-        URL url = new URL(u);
-        URLConnection c = url.openConnection();
-        if (endpoint.getConnectTimeout() > 0) {
-            c.setConnectTimeout(endpoint.getConnectTimeout());
-        }
-        if (endpoint.getReadTimeout() > 0) {
-            c.setReadTimeout(endpoint.getReadTimeout());
-        }
-        if (endpoint.getHttpHeaders() != null) {
-            endpoint.getHttpHeaders().forEach((k, v) -> c.addRequestProperty(k, v.toString()));
-        }
-        return c.getInputStream();
     }
 
     private InputStream resolveStreamFromFile() throws IOException {

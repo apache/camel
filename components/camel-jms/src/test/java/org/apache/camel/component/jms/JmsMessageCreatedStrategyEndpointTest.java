@@ -21,11 +21,11 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.Session;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -35,12 +35,8 @@ public class JmsMessageCreatedStrategyEndpointTest extends CamelTestSupport {
 
     protected String componentName = "activemq";
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myStrategy", new MyMessageCreatedStrategy());
-        return jndi;
-    }
+    @BindToRegistry("myStrategy")
+    private MyMessageCreatedStrategy strategy = new MyMessageCreatedStrategy();
 
     @Test
     public void testMessageCreatedStrategy() throws Exception {
@@ -48,12 +44,14 @@ public class JmsMessageCreatedStrategyEndpointTest extends CamelTestSupport {
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("beer", "Carlsberg");
 
-        // must remember to use this on the producer side as its in use when sending
+        // must remember to use this on the producer side as its in use when
+        // sending
         template.sendBody("activemq:queue:foo?messageCreatedStrategy=#myStrategy", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -68,8 +66,7 @@ public class JmsMessageCreatedStrategyEndpointTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:foo")
-                        .to("mock:result");
+                from("activemq:queue:foo").to("mock:result");
             }
         };
     }

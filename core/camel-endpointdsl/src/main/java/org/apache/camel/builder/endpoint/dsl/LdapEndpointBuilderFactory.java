@@ -46,7 +46,45 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder base(String base) {
-            setProperty("base", base);
+            doSetProperty("base", base);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LdapEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LdapEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -61,7 +99,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder pageSize(Integer pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -77,7 +115,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -89,7 +127,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder returnedAttributes(String returnedAttributes) {
-            setProperty("returnedAttributes", returnedAttributes);
+            doSetProperty("returnedAttributes", returnedAttributes);
             return this;
         }
         /**
@@ -101,7 +139,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: producer
          */
         default LdapEndpointBuilder scope(String scope) {
-            setProperty("scope", scope);
+            doSetProperty("scope", scope);
             return this;
         }
     }
@@ -125,7 +163,7 @@ public interface LdapEndpointBuilderFactory {
          */
         default AdvancedLdapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -138,7 +176,7 @@ public interface LdapEndpointBuilderFactory {
          */
         default AdvancedLdapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -150,7 +188,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLdapEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -162,7 +200,7 @@ public interface LdapEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLdapEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -172,7 +210,7 @@ public interface LdapEndpointBuilderFactory {
      * filters as the message payload.
      * 
      * Category: ldap
-     * Available as of version: 1.5
+     * Since: 1.5
      * Maven coordinates: org.apache.camel:camel-ldap
      * 
      * Syntax: <code>ldap:dirContextName</code>

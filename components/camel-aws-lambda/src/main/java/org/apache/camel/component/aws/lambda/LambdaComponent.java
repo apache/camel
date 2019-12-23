@@ -20,13 +20,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.amazonaws.services.lambda.AWSLambda;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 @Component("aws-lambda")
 public class LambdaComponent extends DefaultComponent {
@@ -47,31 +45,23 @@ public class LambdaComponent extends DefaultComponent {
     public LambdaComponent(CamelContext context) {
         super(context);
         
-        this.configuration = new LambdaConfiguration();
         registerExtension(new LambdaComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        LambdaConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
+        LambdaConfiguration configuration = this.configuration != null ? this.configuration.copy() : new LambdaConfiguration();
         configuration.setFunction(remaining);
-
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        LambdaEndpoint endpoint = new LambdaEndpoint(uri, this, configuration);
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
-        if (ObjectHelper.isEmpty(configuration.getAwsLambdaClient()) && (ObjectHelper.isEmpty(configuration.getAccessKey()) || ObjectHelper.isEmpty(configuration.getSecretKey()))) {
+        if (configuration.getAwsLambdaClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("accessKey/secretKey or awsLambdaClient must be specified");
         }
 
-        LambdaEndpoint endpoint = new LambdaEndpoint(uri, this, configuration);
         return endpoint;
     }
     
@@ -87,36 +77,36 @@ public class LambdaComponent extends DefaultComponent {
     }
 
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
 
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     /**
      * Amazon AWS Region
      */
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
     
     private void checkAndSetRegistryClient(LambdaConfiguration configuration) {

@@ -45,12 +45,14 @@ public class QueueReplyManager extends ReplyManagerSupport {
         super(camelContext);
     }
 
+    @Override
     protected ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                               String originalCorrelationId, String correlationId, long requestTimeout) {
         return new QueueReplyHandler(replyManager, exchange, callback,
                 originalCorrelationId, correlationId, requestTimeout);
     }  
 
+    @Override
     public void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout) {
         log.trace("Updated provisional correlationId [{}] to expected correlationId [{}]", correlationId, newCorrelationId);
 
@@ -63,6 +65,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         correlation.put(newCorrelationId, handler, requestTimeout);
     }
 
+    @Override
     protected void handleReplyMessage(String correlationID, Message message, Session session) {
         ReplyHandler handler = correlation.get(correlationID);
         if (handler == null && endpoint.isUseMessageIDAsCorrelationID()) {
@@ -81,6 +84,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         }
     }
 
+    @Override
     public void setReplyToSelectorHeader(org.apache.camel.Message camelMessage, Message jmsMessage) throws JMSException {
         String replyToSelectorName = endpoint.getReplyToDestinationSelectorName();
         if (replyToSelectorName != null && replyToSelectorValue != null) {
@@ -97,6 +101,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             this.delegate = delegate;
         }
 
+        @Override
         public Destination resolveDestinationName(Session session, String destinationName,
                                                   boolean pubSubDomain) throws JMSException {
             synchronized (QueueReplyManager.this) {
@@ -108,8 +113,9 @@ public class QueueReplyManager extends ReplyManagerSupport {
             }
             return destination;
         }
-    };
+    }
 
+    @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
         DefaultMessageListenerContainer answer;
 
@@ -141,7 +147,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             }
             // shared is not as fast as temporary or exclusive, so log this so the end user may be aware of this
             log.warn("{} is using a shared reply queue, which is not as fast as alternatives."
-                    + " See more detail at the section 'Request-reply over JMS' at http://camel.apache.org/jms", endpoint);
+                    + " See more detail at the section 'Request-reply over JMS' in the JMS component documentation", endpoint);
         } else if (ReplyToType.Exclusive == type) {
             answer = new ExclusiveQueueMessageListenerContainer(endpoint);
             // must use cache level consumer for exclusive as there is no message selector

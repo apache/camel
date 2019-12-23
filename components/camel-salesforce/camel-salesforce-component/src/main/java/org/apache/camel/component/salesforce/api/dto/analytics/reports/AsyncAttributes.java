@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce.api.dto.analytics.reports;
 
-
 import java.time.ZonedDateTime;
 
 /**

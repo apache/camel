@@ -84,6 +84,7 @@ public class AtomixMessagingConfiguration extends AtomixClientConfiguration {
     // Copy
     // ****************************************
 
+    @Override
     public AtomixMessagingConfiguration copy() {
         try {
             return (AtomixMessagingConfiguration) super.clone();

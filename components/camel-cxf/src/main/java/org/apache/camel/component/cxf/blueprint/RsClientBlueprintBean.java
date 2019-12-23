@@ -31,18 +31,22 @@ public class RsClientBlueprintBean extends JAXRSClientFactoryBean implements Blu
     private int loggingSizeLimit;
     private LoggingFeature loggingFeature;
     
+    @Override
     public BlueprintContainer getBlueprintContainer() {
         return blueprintContainer;
     }
 
+    @Override
     public void setBlueprintContainer(BlueprintContainer blueprintContainer) {
         this.blueprintContainer = blueprintContainer;
     }
 
+    @Override
     public BundleContext getBundleContext() {
         return bundleContext;
     }
 
+    @Override
     public void setBundleContext(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
     }

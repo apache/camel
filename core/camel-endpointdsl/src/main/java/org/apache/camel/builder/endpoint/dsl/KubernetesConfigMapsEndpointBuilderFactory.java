@@ -48,7 +48,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder dnsDomain(String dnsDomain) {
-            setProperty("dnsDomain", dnsDomain);
+            doSetProperty("dnsDomain", dnsDomain);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder kubernetesClient(
                 Object kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
             return this;
         }
         /**
@@ -85,7 +85,58 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder kubernetesClient(
                 String kubernetesClient) {
-            setProperty("kubernetesClient", kubernetesClient);
+            doSetProperty("kubernetesClient", kubernetesClient);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default KubernetesConfigMapsEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default KubernetesConfigMapsEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Producer operation to do on Kubernetes.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default KubernetesConfigMapsEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -96,7 +147,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder portName(String portName) {
-            setProperty("portName", portName);
+            doSetProperty("portName", portName);
             return this;
         }
         /**
@@ -108,7 +159,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder portProtocol(
                 String portProtocol) {
-            setProperty("portProtocol", portProtocol);
+            doSetProperty("portProtocol", portProtocol);
             return this;
         }
         /**
@@ -119,7 +170,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder caCertData(String caCertData) {
-            setProperty("caCertData", caCertData);
+            doSetProperty("caCertData", caCertData);
             return this;
         }
         /**
@@ -130,7 +181,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder caCertFile(String caCertFile) {
-            setProperty("caCertFile", caCertFile);
+            doSetProperty("caCertFile", caCertFile);
             return this;
         }
         /**
@@ -142,7 +193,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder clientCertData(
                 String clientCertData) {
-            setProperty("clientCertData", clientCertData);
+            doSetProperty("clientCertData", clientCertData);
             return this;
         }
         /**
@@ -154,7 +205,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder clientCertFile(
                 String clientCertFile) {
-            setProperty("clientCertFile", clientCertFile);
+            doSetProperty("clientCertFile", clientCertFile);
             return this;
         }
         /**
@@ -166,7 +217,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyAlgo(
                 String clientKeyAlgo) {
-            setProperty("clientKeyAlgo", clientKeyAlgo);
+            doSetProperty("clientKeyAlgo", clientKeyAlgo);
             return this;
         }
         /**
@@ -178,7 +229,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyData(
                 String clientKeyData) {
-            setProperty("clientKeyData", clientKeyData);
+            doSetProperty("clientKeyData", clientKeyData);
             return this;
         }
         /**
@@ -190,7 +241,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyFile(
                 String clientKeyFile) {
-            setProperty("clientKeyFile", clientKeyFile);
+            doSetProperty("clientKeyFile", clientKeyFile);
             return this;
         }
         /**
@@ -202,7 +253,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder clientKeyPassphrase(
                 String clientKeyPassphrase) {
-            setProperty("clientKeyPassphrase", clientKeyPassphrase);
+            doSetProperty("clientKeyPassphrase", clientKeyPassphrase);
             return this;
         }
         /**
@@ -213,7 +264,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder oauthToken(String oauthToken) {
-            setProperty("oauthToken", oauthToken);
+            doSetProperty("oauthToken", oauthToken);
             return this;
         }
         /**
@@ -224,7 +275,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -236,7 +287,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default KubernetesConfigMapsEndpointBuilder trustCerts(
                 Boolean trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -248,7 +299,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder trustCerts(String trustCerts) {
-            setProperty("trustCerts", trustCerts);
+            doSetProperty("trustCerts", trustCerts);
             return this;
         }
         /**
@@ -259,7 +310,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * Group: security
          */
         default KubernetesConfigMapsEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -283,7 +334,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -296,7 +347,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -309,7 +360,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(
                 Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -323,7 +374,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -336,7 +387,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -349,7 +400,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -359,7 +410,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
      * kubernetes configmap operations.
      * 
      * Category: container,cloud,paas
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-kubernetes
      * 
      * Syntax: <code>kubernetes-config-maps:masterUrl</code>

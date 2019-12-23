@@ -17,12 +17,12 @@
 package org.apache.camel.builder;
 
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.xslt.XsltAggregationStrategy;
+import org.apache.camel.component.xslt.saxon.XsltSaxonAggregationStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Unit test for the {@link XsltAggregationStrategy}.
+ * Unit test for the {@link XsltSaxonAggregationStrategy}.
  * <p>
  * Need to use Saxon to get a predictable result: We cannot rely on the JDK's XSLT processor as it can vary across
  * platforms and JDK versions. Also, Xalan does not handle node-set properties well.
@@ -51,14 +51,14 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")
                         .routeId("route1").noAutoStartup()
-                        .aggregate(new XsltAggregationStrategy("org/apache/camel/util/toolbox/aggregate.xsl")
-                                .withSaxon())
+                        .aggregate(new XsltSaxonAggregationStrategy("org/apache/camel/util/toolbox/aggregate.xsl"))
                         .constant(true)
                         .completionFromBatchConsumer()
                         .log("after aggregate body: ${body}")
@@ -66,8 +66,8 @@ public class XsltAggregationStrategyTest extends CamelTestSupport {
 
                 from("file:src/test/resources/org/apache/camel/util/toolbox?noop=true&sortBy=file:name&antInclude=*.xml")
                         .routeId("route2").noAutoStartup()
-                        .aggregate(new XsltAggregationStrategy("org/apache/camel/util/toolbox/aggregate-user-property.xsl")
-                                .withSaxon().withPropertyName("user-property"))
+                        .aggregate(new XsltSaxonAggregationStrategy("org/apache/camel/util/toolbox/aggregate-user-property.xsl")
+                                .withPropertyName("user-property"))
                         .constant(true)
                         .completionFromBatchConsumer()
                         .log("after aggregate body: ${body}")

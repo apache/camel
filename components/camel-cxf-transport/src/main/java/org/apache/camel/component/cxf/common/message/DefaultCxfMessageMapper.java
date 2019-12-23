@@ -35,8 +35,9 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
     private static final String CXF_HTTP_REQUEST = "HTTP.REQUEST";
     private static final String CXF_HTTP_RESPONSE = "HTTP.RESPONSE";
     
-    public Message createCxfMessageFromCamelExchange(Exchange camelExchange, 
-            HeaderFilterStrategy headerFilterStrategy) {
+    @Override
+    public Message createCxfMessageFromCamelExchange(Exchange camelExchange,
+                                                     HeaderFilterStrategy headerFilterStrategy) {
         
         org.apache.cxf.message.Message answer = 
             CxfMessageHelper.getCxfInMessage(headerFilterStrategy, camelExchange, false);
@@ -96,6 +97,7 @@ public class DefaultCxfMessageMapper implements CxfMessageMapper {
         });
     }
 
+    @Override
     public void propagateResponseHeadersToCamel(Message cxfMessage, Exchange exchange,
                                                 HeaderFilterStrategy strategy) {
 

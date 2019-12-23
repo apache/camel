@@ -29,6 +29,7 @@ public class ExchangeRedeliveryEvent extends AbstractExchangeEvent implements Ca
         this.attempt = attempt;
     }
 
+    @Override
     public int getAttempt() {
         return attempt;
     }

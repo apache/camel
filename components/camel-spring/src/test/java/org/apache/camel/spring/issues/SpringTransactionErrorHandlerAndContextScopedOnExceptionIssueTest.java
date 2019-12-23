@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.issues;
+
 import javax.sql.DataSource;
 
 import org.apache.camel.CamelExecutionException;
@@ -29,6 +30,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest extends SpringTestSupport {
     protected JdbcTemplate jdbc;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

@@ -21,6 +21,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NameClassPair;
@@ -62,6 +63,7 @@ public class JndiBeanRepository implements BeanRepository {
         this.standalone = true;
     }
 
+    @Override
     public <T> T lookupByNameAndType(String name, Class<T> type) {
         Object answer = lookupByName(name);
 
@@ -80,6 +82,7 @@ public class JndiBeanRepository implements BeanRepository {
         }
     }
 
+    @Override
     public Object lookupByName(String name) {
         try {
             return unwrap(getContext().lookup(name));
@@ -90,6 +93,7 @@ public class JndiBeanRepository implements BeanRepository {
         }
     }
 
+    @Override
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         Map<String, T> answer = new LinkedHashMap<>();
         try {
@@ -109,6 +113,7 @@ public class JndiBeanRepository implements BeanRepository {
         return answer;
     }
 
+    @Override
     public <T> Set<T> findByType(Class<T> type) {
         Set<T> answer = new LinkedHashSet<>();
         try {

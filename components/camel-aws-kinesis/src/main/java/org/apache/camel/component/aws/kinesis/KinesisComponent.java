@@ -20,13 +20,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.amazonaws.services.kinesis.AmazonKinesis;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 @Component("aws-kinesis")
 public class KinesisComponent extends DefaultComponent {
@@ -47,31 +45,22 @@ public class KinesisComponent extends DefaultComponent {
     public KinesisComponent(CamelContext context) {
         super(context);
         
-        this.configuration = new KinesisConfiguration();
         registerExtension(new KinesisComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        KinesisConfiguration configuration = this.configuration.copy();
+        KinesisConfiguration configuration = this.configuration != null ? this.configuration.copy() : new KinesisConfiguration();
         configuration.setStreamName(remaining);
-        setProperties(configuration, parameters);
-        
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        KinesisEndpoint endpoint = new KinesisEndpoint(uri, configuration, this);
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonKinesisClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("amazonKinesisClient or accessKey and secretKey must be specified");
         }        
-        KinesisEndpoint endpoint = new KinesisEndpoint(uri, configuration, this);
-        setProperties(endpoint, parameters);
         return endpoint;
     }
     
@@ -87,36 +76,36 @@ public class KinesisComponent extends DefaultComponent {
     }
     
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
     
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     /**
      * Amazon AWS Region
      */
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
     
     private void checkAndSetRegistryClient(KinesisConfiguration configuration) {

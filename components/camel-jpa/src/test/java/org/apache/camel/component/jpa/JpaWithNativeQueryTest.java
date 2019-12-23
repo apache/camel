@@ -49,6 +49,6 @@ public class JpaWithNativeQueryTest extends JpaWithNamedQueryTest {
 
     @Override
     protected String getEndpointUri() {
-        return "jpa://" + MultiSteps.class.getName() + "?consumer.nativeQuery=select * from MultiSteps where step = 1";
+        return "jpa://" + MultiSteps.class.getName() + "?nativeQuery=select * from MultiSteps where step = 1";
     }
 }

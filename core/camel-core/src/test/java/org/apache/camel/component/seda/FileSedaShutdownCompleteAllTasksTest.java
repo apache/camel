@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.seda;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -46,7 +47,7 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "C", Exchange.FILE_NAME, "c.txt");
         template.sendBodyAndHeader(url, "D", Exchange.FILE_NAME, "d.txt");
         template.sendBodyAndHeader(url, "E", Exchange.FILE_NAME, "e.txt");
-        
+
         final CountDownLatch latch = new CountDownLatch(1);
 
         context.addRoutes(new RouteBuilder() {
@@ -54,25 +55,21 @@ public class FileSedaShutdownCompleteAllTasksTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from(url).routeId("route1")
                     // let it complete all tasks during shutdown
-                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks)
-                    .to("log:delay")
-                    .to("seda:foo");
+                    .shutdownRunningTask(ShutdownRunningTask.CompleteAllTasks).to("log:delay").to("seda:foo");
 
-                from("seda:foo").routeId("route2")
-                    .to("log:bar")
-                    .to("mock:bar")
-                    .process(new Processor() {
-                        boolean first = true;
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            latch.countDown();
-                            if (first) {
-                                // only sleep on first
-                                Thread.sleep(100);
-                            }
-                            first = false;
+                from("seda:foo").routeId("route2").to("log:bar").to("mock:bar").process(new Processor() {
+                    boolean first = true;
+
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        latch.countDown();
+                        if (first) {
+                            // only sleep on first
+                            Thread.sleep(100);
                         }
-                    });
+                        first = false;
+                    }
+                });
             }
         });
         context.start();

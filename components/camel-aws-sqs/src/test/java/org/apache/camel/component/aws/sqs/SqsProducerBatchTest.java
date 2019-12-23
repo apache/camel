@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import com.amazonaws.services.sqs.model.SendMessageBatchResult;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -35,13 +34,13 @@ public class SqsProducerBatchTest extends CamelTestSupport {
 
     @BindToRegistry("client")
     AmazonSQSClientMock mock = new AmazonSQSClientMock();
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
+
     @Test
     public void sendBatchMessage() throws Exception {
         result.expectedMessageCount(1);
@@ -69,8 +68,7 @@ public class SqsProducerBatchTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                .to("aws-sqs://camel-1?amazonSQSClient=#client&operation=sendBatchMessage").to("mock:result");
+                from("direct:start").to("aws-sqs://camel-1?amazonSQSClient=#client&operation=sendBatchMessage").to("mock:result");
             }
         };
     }

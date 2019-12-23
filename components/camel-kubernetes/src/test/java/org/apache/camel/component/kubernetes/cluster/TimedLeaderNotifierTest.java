@@ -52,9 +52,9 @@ public class TimedLeaderNotifierTest {
 
         this.notifier = new TimedLeaderNotifier(context, e -> {
             if (e instanceof KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) {
-                currentLeader = ((KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent) e).getData();
+                currentLeader = ((KubernetesClusterEvent.KubernetesClusterLeaderChangedEvent)e).getData();
             } else if (e instanceof KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) {
-                currentMembers = ((KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent) e).getData();
+                currentMembers = ((KubernetesClusterEvent.KubernetesClusterMemberListChangedEvent)e).getData();
             }
         });
         this.notifier.start();

@@ -59,14 +59,17 @@ public class RouteSuspendResumeWarmUpTest extends ContextTestSupport {
 
         private volatile String state;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // noop
         }
 
+        @Override
         protected void doStart() throws Exception {
             state = "start";
         }
 
+        @Override
         protected void doStop() throws Exception {
             state = "stop";
         }

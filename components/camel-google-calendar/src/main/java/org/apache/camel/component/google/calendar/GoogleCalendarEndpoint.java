@@ -19,7 +19,6 @@ package org.apache.camel.component.google.calendar;
 import java.util.Map;
 
 import com.google.api.services.calendar.Calendar;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

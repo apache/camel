@@ -21,21 +21,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        return jndi;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerReaderModelBookOrderTest.class);
+
+    @BindToRegistry("dummy-rest")
+    private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -43,15 +46,11 @@ public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // this user REST service is json only
-                rest("/books").tag("dude").description("Book order service")
-                    .consumes("application/json").produces("application/json")
+                rest("/books").tag("dude").description("Book order service").consumes("application/json").produces("application/json")
 
-                    .get("/{id}").description("Find order by id").outType(BookOrder.class)
-                        .responseMessage().message("The order returned").endResponseMessage()
-                        .param().name("id").type(RestParamType.path).description("The id of the order to get").dataType("integer").endParam()
-                        .to("bean:bookService?method=getOrder(${header.id})")
-                    .get("/books/{id}/line/{lineNum}").outType(LineItem.class)
-                        .to("bean:bookService?method=getOrder(${header.id})");
+                    .get("/{id}").description("Find order by id").outType(BookOrder.class).responseMessage().message("The order returned").endResponseMessage().param().name("id")
+                    .type(RestParamType.path).description("The id of the order to get").dataType("integer").endParam().to("bean:bookService?method=getOrder(${header.id})")
+                    .get("/books/{id}/line/{lineNum}").outType(LineItem.class).to("bean:bookService?method=getOrder(${header.id})");
             }
         };
     }
@@ -60,7 +59,7 @@ public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Camel User store");
         config.setLicense("Apache 2.0");
@@ -75,7 +74,7 @@ public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String json = mapper.writeValueAsString(swagger);
 
-        log.info(json);
+        LOG.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"description\" : \"The order returned\""));

@@ -31,16 +31,20 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.eclipse.jetty.server.Connector;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  *
  */
-public abstract class WsProducerTestBase extends Assert {
+public abstract class WsProducerTestBase {
     
     protected static final String TEST_MESSAGE = "Hello World!";
     protected static final int PORT = AvailablePortFinder.getNextAvailable();
@@ -54,7 +58,7 @@ public abstract class WsProducerTestBase extends Assert {
         server = new Server(PORT);
         Connector connector = getConnector();
         server.addConnector(connector);
-        
+
         ServletContextHandler ctx = new ServletContextHandler();
         ctx.setContextPath("/");
         ctx.addServlet(TestServletFactory.class.getName(), "/*");
@@ -70,7 +74,7 @@ public abstract class WsProducerTestBase extends Assert {
         server.destroy();
     }
     
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         TestMessages.getInstance().getMessages().clear();
 
@@ -83,7 +87,7 @@ public abstract class WsProducerTestBase extends Assert {
         template = camelContext.createProducerTemplate();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         template.stop();
         camelContext.stop();
@@ -113,7 +117,7 @@ public abstract class WsProducerTestBase extends Assert {
         verifyMessage(testMessage, TestMessages.getInstance().getMessages().get(0));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testWriteBytesToWebsocket() throws Exception {
         byte[] testMessageBytes = getByteTestMessage();
@@ -122,7 +126,7 @@ public abstract class WsProducerTestBase extends Assert {
         verifyMessage(testMessageBytes, TestMessages.getInstance().getMessages().get(0));
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testWriteStreamToWebsocket() throws Exception {
         byte[] testMessageBytes = createLongByteTestMessage();

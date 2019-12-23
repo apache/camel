@@ -38,6 +38,7 @@ public class ModelAwareColumnMatchingFilter implements ModelAwareFilter<FilterLi
         fl = new FilterList();
     }
 
+    @Override
     public FilterList getFilteredList() {
         return fl;
     }

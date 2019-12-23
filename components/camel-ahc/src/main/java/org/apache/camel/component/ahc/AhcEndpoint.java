@@ -149,6 +149,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
         this.binding = binding;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -156,6 +157,7 @@ public class AhcEndpoint extends DefaultEndpoint implements AsyncEndpoint, Heade
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }

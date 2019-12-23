@@ -34,11 +34,9 @@ public class TwoSchedulerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("scheduler://foo?delay=100")
-                    .to("mock:a");
+                from("scheduler://foo?delay=100").to("mock:a");
 
-                from("scheduler://foo?delay=200")
-                    .to("mock:b");
+                from("scheduler://foo?delay=200").to("mock:b");
             }
         };
     }

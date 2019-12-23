@@ -79,14 +79,14 @@ public class JmsTestSupport extends CamelTestSupport {
                 host = properties.getProperty("amq.host");
                 externalAmq = true;
             } else {
-                port = AvailablePortFinder.getNextAvailable(33333);
+                port = AvailablePortFinder.getNextAvailable();
                 host = "localhost";
             }
         }
         brokerUri = String.format("tcp://%s:%s", host, port);
         if (!externalAmq) {
             broker = new BrokerService();
-            broker.getManagementContext().setConnectorPort(AvailablePortFinder.getNextAvailable(port + 1));
+            broker.getManagementContext().setConnectorPort(AvailablePortFinder.getNextAvailable());
             configureBroker(broker);
             startBroker();
         }

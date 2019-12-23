@@ -24,6 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringXStreamConfigurationTest extends XStreamConfigurationTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         setUseRouteBuilder(false);
 

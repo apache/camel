@@ -1,9 +1,10 @@
 [[bean-eip]]
-== Bean EIP
+= Bean EIP
+:page-source: core/camel-core-engine/src/main/docs/eips/bean-eip.adoc
 
 The Bean EIP binds beans to Camel message exchanges.
 
-=== URI Format
+== URI Format
 
 [source]
 ----
@@ -11,9 +12,9 @@ bean:beanID[?options]
 ----
 
 Where *beanID* can be any string which is used to look up the bean in
-the xref:Registry-Registry.adoc[Registry]
+the xref:registry.adoc[Registry]
 
-=== EIP options
+== EIP options
 
 // eip options: START
 The Bean EIP supports 4 options which are listed below:
@@ -28,9 +29,9 @@ The Bean EIP supports 4 options which are listed below:
 |===
 // eip options: END
 
-=== Bean as endpoint
+== Bean as endpoint
 
-Camel also supports invoking xref:bean-component.adoc[Bean] as an Endpoint. In the
+Camel also supports invoking xref:components::bean-component.adoc[Bean] as an Endpoint. In the
 route below:
 
 What happens is that when the exchange is routed to the `myBean` Camel
@@ -41,9 +42,9 @@ Camel will use xref:bean-binding.adoc[Bean Binding] to invoke the
 `sayHello` method, by converting the Exchange's In body to the `String`
 type and storing the output of the method on the Exchange Out body.
 
-=== Java DSL bean syntax
+== Java DSL bean syntax
 
-Java DSL comes with syntactic sugar for the xref:bean-component.adoc[Bean]
+Java DSL comes with syntactic sugar for the xref:components::bean-component.adoc[Bean]
 component. Instead of specifying the bean explicitly as the endpoint
 (i.e. `to("bean:beanName")`) you can use the following syntax:
 
@@ -73,7 +74,7 @@ from("direct:start").bean(new ExampleBean(), "methodName");
 from("direct:start").bean(ExampleBean.class);
 ----
 
-=== Bean binding
+== Bean binding
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are
@@ -82,8 +83,3 @@ xref:bean-binding.adoc[Bean Binding] mechanism which is used throughout
 all of the various xref:bean-integration.adoc[Bean Integration]
 mechanisms in Camel.
 
-=== See also
-
-* xref:class-component.adoc[Class] component
-* xref:bean-binding.adoc[Bean Binding]
-* xref:bean-integration.adoc[Bean Integration]

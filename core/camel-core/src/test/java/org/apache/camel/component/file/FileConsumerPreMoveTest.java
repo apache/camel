@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -67,15 +68,14 @@ public class FileConsumerPreMoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10")
-                    .process(new MyPreMoveCheckerProcessor())
-                    .to("mock:result");
+                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10").process(new MyPreMoveCheckerProcessor()).to("mock:result");
             }
         };
     }
 
     public static class MyPreMoveCheckerProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             File pre = new File("target/data/premove/work/work-hello.txt");
             assertTrue("Pre move file should exist", pre.exists());

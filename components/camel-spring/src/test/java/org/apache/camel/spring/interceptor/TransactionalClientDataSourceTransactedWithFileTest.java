@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.interceptor;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
@@ -56,6 +57,7 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
         });
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

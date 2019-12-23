@@ -49,10 +49,10 @@ public class StepEventNotifierTest extends ContextTestSupport {
         assertIsInstanceOf(CamelEvent.StepCompletedEvent.class, notifier.getEvents().get(1));
         assertIsInstanceOf(CamelEvent.StepStartedEvent.class, notifier.getEvents().get(2));
         assertIsInstanceOf(CamelEvent.StepCompletedEvent.class, notifier.getEvents().get(3));
-        assertEquals("foo", ((CamelEvent.StepEvent) notifier.getEvents().get(0)).getStepId());
-        assertEquals("foo", ((CamelEvent.StepEvent) notifier.getEvents().get(1)).getStepId());
-        assertEquals("bar", ((CamelEvent.StepEvent) notifier.getEvents().get(2)).getStepId());
-        assertEquals("bar", ((CamelEvent.StepEvent) notifier.getEvents().get(3)).getStepId());
+        assertEquals("foo", ((CamelEvent.StepEvent)notifier.getEvents().get(0)).getStepId());
+        assertEquals("foo", ((CamelEvent.StepEvent)notifier.getEvents().get(1)).getStepId());
+        assertEquals("bar", ((CamelEvent.StepEvent)notifier.getEvents().get(2)).getStepId());
+        assertEquals("bar", ((CamelEvent.StepEvent)notifier.getEvents().get(3)).getStepId());
     }
 
     @Override
@@ -60,16 +60,7 @@ public class StepEventNotifierTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .step("foo")
-                        .to("log:foo")
-                        .to("mock:foo")
-                    .end()
-                    .step("bar")
-                        .to("log:bar")
-                        .to("mock:bar")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").step("foo").to("log:foo").to("mock:foo").end().step("bar").to("log:bar").to("mock:bar").end().to("mock:result");
             }
         };
     }

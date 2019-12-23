@@ -20,11 +20,11 @@ import java.util.Map;
 
 import javax.jms.ConnectionFactory;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Headers;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -35,6 +35,9 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsRoutingSlipInOutTest extends CamelTestSupport {
 
+    @BindToRegistry("myBean")
+    private MyBean bean = new MyBean();
+
     @Test
     public void testInOutRoutingSlip() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Result-Done-B-A-Hello");
@@ -44,6 +47,7 @@ public class JmsRoutingSlipInOutTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -54,33 +58,18 @@ public class JmsRoutingSlipInOutTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myBean", new MyBean());
-        return jndi;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:start")
-                    .to("direct:start")
-                    .to("bean:myBean?method=doResult")
-                    .to("mock:result");
+                from("activemq:queue:start").to("direct:start").to("bean:myBean?method=doResult").to("mock:result");
 
-                from("direct:start")
-                    .to("bean:myBean?method=createSlip")
-                    .setExchangePattern(ExchangePattern.InOut)
-                    .routingSlip(header("mySlip"))
+                from("direct:start").to("bean:myBean?method=createSlip").setExchangePattern(ExchangePattern.InOut).routingSlip(header("mySlip"))
                     .to("bean:myBean?method=backFromSlip");
 
-                from("activemq:queue:a")
-                    .to("bean:myBean?method=doA");
+                from("activemq:queue:a").to("bean:myBean?method=doA");
 
-                from("activemq:queue:b")
-                    .to("bean:myBean?method=doB");
+                from("activemq:queue:b").to("bean:myBean?method=doB");
             }
         };
     }

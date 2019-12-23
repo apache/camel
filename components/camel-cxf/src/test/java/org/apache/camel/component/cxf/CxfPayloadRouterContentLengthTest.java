@@ -84,6 +84,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         /*
@@ -122,6 +123,7 @@ public class CxfPayloadRouterContentLengthTest extends CamelTestSupport {
         assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         // close the spring context

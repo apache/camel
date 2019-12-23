@@ -47,6 +47,7 @@ public class CxfConsumerWSRMTest extends CamelBlueprintTestSupport {
         return "org/apache/camel/test/cxf/blueprint/CxfConsumerWSRMBeans.xml";
     }
    
+    @Override
     public boolean isCreateCamelContextPerClass() {
         return true;
     }

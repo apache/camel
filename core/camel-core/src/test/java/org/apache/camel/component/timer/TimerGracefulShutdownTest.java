@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.timer;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -56,10 +57,7 @@ public class TimerGracefulShutdownTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?period=10&delay=10&exceptionHandler=#eh")
-                    .delay(10)
-                    .to("log:time")
-                    .to("mock:result");
+                from("timer:foo?period=10&delay=10&exceptionHandler=#eh").delay(10).to("log:time").to("mock:result");
             }
         };
     }

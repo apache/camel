@@ -18,8 +18,8 @@ package org.apache.camel.component.aws.cw;
 
 import java.util.Date;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -45,6 +45,8 @@ public class CwConfiguration implements Cloneable {
     private String unit;
     @UriParam
     private Date timestamp;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
     private String proxyHost;
     @UriParam
@@ -138,6 +140,17 @@ public class CwConfiguration implements Cloneable {
      */
     public void setAmazonCwClient(AmazonCloudWatch amazonCwClient) {
         this.amazonCwClient = amazonCwClient;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the CW client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {

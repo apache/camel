@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.converter.stream.OutputStreamBuilder;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.util.IOHelper;
 import org.apache.commons.codec.binary.Base64OutputStream;
 

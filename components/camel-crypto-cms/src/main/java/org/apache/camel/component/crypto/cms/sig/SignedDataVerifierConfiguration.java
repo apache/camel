@@ -31,7 +31,7 @@ public interface SignedDataVerifierConfiguration extends CryptoCmsUnMarshallerCo
      * {@link CryptoCmsConstants#CAMEL_CRYPTO_CMS_SIGNED_DATA} is base64
      * encoded.
      */
-    Boolean isSignedDataHeaderBase64(Exchange exchange) throws CryptoCmsException;
+    boolean isSignedDataHeaderBase64();
 
     /**
      * If <code>true</code> then the signatures of all signers are checked. If
@@ -39,7 +39,7 @@ public interface SignedDataVerifierConfiguration extends CryptoCmsUnMarshallerCo
      * with one of the specified certificates and verifies only the signature of
      * the first found signer.
      */
-    Boolean isVerifySignaturesOfAllSigners(Exchange exchange) throws CryptoCmsException;
+    boolean isVerifySignaturesOfAllSigners();
 
     /**
      * Returns the collection of certificates whose public keys are used to

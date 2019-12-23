@@ -50,24 +50,15 @@ public class AsyncEndpointFailedAfterDeadLetterChannelTest extends ContextTestSu
 
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).useOriginalMessage());
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("async:bye:camel")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after")
-                        .throwException(new IllegalArgumentException("Damn"))
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).to("async:bye:camel").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).to("log:after").to("mock:after").throwException(new IllegalArgumentException("Damn")).to("mock:result");
             }
         };
     }

@@ -16,11 +16,15 @@
  */
 package org.apache.camel.impl.engine;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.support.PatternHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -32,6 +36,8 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     private static final Logger LOG = LoggerFactory.getLogger(MDCUnitOfWork.class);
 
+    private final String pattern;
+
     private final String originalBreadcrumbId;
     private final String originalExchangeId;
     private final String originalMessageId;
@@ -41,8 +47,9 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
     private final String originalCamelContextId;
     private final String originalTransactionKey;
 
-    public MDCUnitOfWork(Exchange exchange) {
+    public MDCUnitOfWork(Exchange exchange, String pattern) {
         super(exchange, LOG);
+        this.pattern = pattern;
 
         // remember existing values
         this.originalExchangeId = MDC.get(MDC_EXCHANGE_ID);
@@ -56,7 +63,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
         // must add exchange and message id in constructor
         MDC.put(MDC_EXCHANGE_ID, exchange.getExchangeId());
-        String msgId = exchange.hasOut() ? exchange.getOut().getMessageId() : exchange.getIn().getMessageId();
+        String msgId = exchange.getMessage().getMessageId();
         MDC.put(MDC_MESSAGE_ID, msgId);
         // the camel context id is from exchange
         MDC.put(MDC_CAMEL_CONTEXT_ID, exchange.getContext().getName());
@@ -74,7 +81,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
 
     @Override
     public UnitOfWork newInstance(Exchange exchange) {
-        return new MDCUnitOfWork(exchange);
+        return new MDCUnitOfWork(exchange, pattern);
     }
 
     @Override
@@ -126,7 +133,7 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         if (stepId != null) {
             MDC.put(MDC_STEP_ID, stepId);
         }
-        return new MDCCallback(callback);
+        return new MDCCallback(callback, pattern);
     }
 
     @Override
@@ -136,15 +143,6 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         if (stepId == null) {
             MDC.remove(MDC_STEP_ID);
         }
-
-        /*
-        if (!doneSync) {
-            // must clear MDC on current thread as the exchange is being processed asynchronously
-            // by another thread
-            clear();
-        }
-        super.afterProcess(processor, exchange, callback, doneSync);
-        */
     }
 
     /**
@@ -198,6 +196,15 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         return "MDCUnitOfWork";
     }
 
+    private static boolean matchPatterns(String value, String[] patterns) {
+        for (String pattern : patterns) {
+            if (PatternHelper.matchPattern(value, pattern)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     /**
      * {@link AsyncCallback} which preserves {@link org.slf4j.MDC} when
      * the asynchronous routing engine is being used.
@@ -210,10 +217,10 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
         private final String messageId;
         private final String correlationId;
         private final String routeId;
-        private final String stepId;
         private final String camelContextId;
+        private final Map<String, String> custom;
 
-        private MDCCallback(AsyncCallback delegate) {
+        private MDCCallback(AsyncCallback delegate, String pattern) {
             this.delegate = delegate;
             this.exchangeId = MDC.get(MDC_EXCHANGE_ID);
             this.messageId = MDC.get(MDC_MESSAGE_ID);
@@ -221,9 +228,28 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
             this.correlationId = MDC.get(MDC_CORRELATION_ID);
             this.camelContextId = MDC.get(MDC_CAMEL_CONTEXT_ID);
             this.routeId = MDC.get(MDC_ROUTE_ID);
-            this.stepId = MDC.get(MDC_STEP_ID);
+
+            if (pattern != null) {
+                custom = new HashMap<>();
+                Map<String, String> mdc = MDC.getCopyOfContextMap();
+                if (mdc != null) {
+                    if ("*".equals(pattern)) {
+                        custom.putAll(mdc);
+                    } else {
+                        final String[] patterns = pattern.split(",");
+                        mdc.forEach((k, v) -> {
+                            if (matchPatterns(k, patterns)) {
+                                custom.put(k, v);
+                            }
+                        });
+                    }
+                }
+            } else {
+                custom = null;
+            }
         }
 
+        @Override
         public void done(boolean doneSync) {
             try {
                 if (!doneSync) {
@@ -242,6 +268,9 @@ public class MDCUnitOfWork extends DefaultUnitOfWork {
                     }
                     if (camelContextId != null) {
                         MDC.put(MDC_CAMEL_CONTEXT_ID, camelContextId);
+                    }
+                    if (custom != null) {
+                        custom.forEach(MDC::put);
                     }
                 }
                 // need to setup the routeId finally

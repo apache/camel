@@ -1,0 +1,86 @@
+[[Test]]
+= Test Module
+:page-source: components/camel-test-junit5/src/main/docs/test-junit5.adoc
+
+The `camel-test-junit5` module is used for unit testing Camel.
+
+The class `org.apache.camel.test.junit5.CamelTestSupport` provides a base JUnit class which you would extend
+and implement your Camel unit test.
+
+== Simple unit test example
+
+As shown below is a basic junit test which uses `camel-test-junit5`. The `createRouteBuilder` method is used
+for build the routes to be tested. Then the methods with `@Test` annotations are JUnit test methods which
+will be executed. The base class `CamelTestSupport` has a number of helper methods to configure testing,
+see more at the javadoc of this class.
+
+[source,java]
+----
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+public class SimpleMockTest extends CamelTestSupport {
+
+    @Test
+    public void testMock() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Override
+    protected RoutesBuilder createRouteBuilder() {
+        return new RouteBuilder() {
+            @Override
+            public void configure() {
+                from("direct:start").to("mock:result");
+            }
+        };
+    }
+
+}
+----
+
+== Migrating Camel Tests from JUnit 4 to JUnit 5
+Find below some hints to help in migrating camel tests from JUnit 4 to JUnit 5.
+
+=== Referencing the Camel Test JUnit5 library in your project
+Projects using `camel-test` would need to use `camel-test-junit5`. For instance, maven users would update their pom.xml file as below:
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-test-junit5</artifactId>
+  <scope>test</scope>
+</dependency>
+----
+
+Tips: It's possible to run JUnit4 & JUnit5 based camel tests side by side including the following dependencies `camel-test`,
+`camel-test-junit5` and `junit-vintage-engine`. This configuration allows to migrate a camel test at once.
+
+=== Typical migration steps linked to JUnit 5 support in Camel Test
+* Imports of `org.apache.camel.test.junit4.\*` should be replaced with `org.apache.camel.test.junit5.*`
+* `TestSupport` static methods should be imported where needed, for instance `import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf`
+* Usage of the field `CamelTestSupport.log` should be replaced by another logger, for instance `org.slf4j.LoggerFactory.getLogger(MyCamelTest.class);`
+* Usage of the method `CamelTestSupport.createRegistry` should be replaced by `CamelTestSupport.createCamelRegistry()`
+* Overrides of `isCreateCamelContextPerClass()` returning `false` should be removed
+* Overrides of `isCreateCamelContextPerClass()` returning `true` should be replaced by `@TestInstance(Lifecycle.PER_CLASS)`
+
+
+=== Typical migration steps linked to JUnit 5 itself
+Once Camel related steps have been performed, there are still typical JUnit 5 migration steps to remember:
+
+* New JUnit 5 assertions should be imported where needed, for instance `import static org.junit.jupiter.api.Assertions.assertEquals`
+* Assertion messages should be moved to the last parameter where needed, for instance `assertEquals("message", 2, 1)` becomes `assertEquals(2, 1, "message")`
+* `org.junit.Test` should be changed in favor of `org.junit.jupiter.api.Test`
+* `org.junit.Ignore` should be changed in favor of `org.junit.jupiter.api.Disabled`
+* `org.junit.Before` should be changed in favor of `org.junit.jupiter.api.BeforeEach`
+* `org.junit.After` should be changed in favor of `org.junit.jupiter.api.AfterEach`
+* `org.junit.BeforeClass` should be changed in favor of `import org.junit.jupiter.api.BeforeAll`
+* `org.junit.AfterClass` should be changed in favor of `import org.junit.jupiter.api.AfterAll`
+* Built-in `assertThat` from third-party assertion libraries should be used. For instance, use `org.hamcrest.MatcherAssert.assertThat` from `java-hamcrest`
+
+Depending on the context, more involved tips might be needed, please check the https://junit.org/junit5/docs/current/user-guide/[JUnit 5 User Guide] then.

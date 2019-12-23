@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
@@ -44,9 +45,7 @@ public class RouteWithConstantFieldFromExchangeFailTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:bar")
-                    .setHeader("Exchange.XXX", constant("bar"))
-                    .to("mock:bar");
+                from("direct:bar").setHeader("Exchange.XXX", constant("bar")).to("mock:bar");
             }
         };
     }

@@ -31,16 +31,19 @@ public class WordpressUserProducer extends AbstractWordpressProducer<User> {
         this.serviceUsers = WordpressServiceProvider.getInstance().getService(WordpressServiceUsers.class);
     }
 
+    @Override
     protected User processDelete(Exchange exchange) {
         LOG.debug("Trying to delete user {}", getConfiguration().getId());
         return serviceUsers.delete(getConfiguration().getId());
     }
 
+    @Override
     protected User processUpdate(Exchange exchange) {
         LOG.debug("Trying to update the user {} with id {}", exchange.getIn().getBody(), this.getConfiguration().getId());
         return serviceUsers.update(getConfiguration().getId(), exchange.getIn().getBody(User.class));
     }
 
+    @Override
     protected User processInsert(Exchange exchange) {
         LOG.debug("Trying to create a new user{}", exchange.getIn().getBody());
         return serviceUsers.create(exchange.getIn().getBody(User.class));

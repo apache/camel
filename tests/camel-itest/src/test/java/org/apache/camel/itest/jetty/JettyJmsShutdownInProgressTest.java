@@ -32,7 +32,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 @ContextConfiguration
 public class JettyJmsShutdownInProgressTest extends AbstractJUnit4SpringContextTests {
-    private static int port = AvailablePortFinder.getNextAvailable(20034);
+    private static int port = AvailablePortFinder.getNextAvailable();
     private static final String URL = "http://localhost:" + port + "/test";
     static {
         //set them as system properties so Spring can use the property placeholder

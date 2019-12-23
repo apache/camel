@@ -32,7 +32,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.support.DefaultProducer;
-
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.validation.DefaultValidationErrorHandler;
 
@@ -48,6 +47,7 @@ public class JingValidator extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Jaxp11XMLReaderCreator xmlCreator = new Jaxp11XMLReaderCreator();
         DefaultValidationErrorHandler errorHandler = new DefaultValidationErrorHandler();

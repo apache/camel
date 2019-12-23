@@ -18,12 +18,12 @@ package org.apache.camel.component.crypto.cms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringComponentTest extends ComponentTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
 
         return SpringCamelContext.springCamelContext(
@@ -31,10 +31,6 @@ public class SpringComponentTest extends ComponentTest {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        return super.createRegistry();
-    }
-
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

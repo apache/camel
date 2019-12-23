@@ -16,32 +16,28 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPSClient;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the ftps component over SSL (explicit) and without client authentication
  */
 public class FileToFtpsWithFtpClientConfigRefTest extends FtpsServerExplicitSSLWithoutClientAuthTestSupport {
-    
-    private String getFtpUrl(boolean in) {
-        return "ftps://admin@localhost:" + getPort() 
-            + "/tmp2/camel?password=admin&consumer.initialDelay=2000&ftpClient=#ftpsClient"
-            + (in ? "In" : "") + "&disableSecureDataChannelDefaults=true&delete=true";
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
 
-        jndi.bind("ftpsClient", new FTPSClient("SSLv3"));
-        jndi.bind("ftpsClientIn", new FTPSClient("SSLv3"));
-        return jndi;
+    @BindToRegistry("ftpsClient")
+    private FTPSClient client = new FTPSClient("SSLv3");
+
+    @BindToRegistry("ftpsClientIn")
+    private FTPSClient client1 = new FTPSClient("SSLv3");
+
+    private String getFtpUrl(boolean in) {
+        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=2000&ftpClient=#ftpsClient" + (in ? "In" : "")
+               + "&disableSecureDataChannelDefaults=true&delete=true";
     }
-    
+
     @Test
     public void testFromFileToFtp() throws Exception {
         // some platforms cannot test SSL
@@ -55,6 +51,7 @@ public class FileToFtpsWithFtpClientConfigRefTest extends FtpsServerExplicitSSLW
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

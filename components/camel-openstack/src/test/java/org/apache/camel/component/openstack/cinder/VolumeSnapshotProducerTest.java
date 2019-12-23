@@ -33,7 +33,6 @@ import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.storage.block.VolumeSnapshot;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
@@ -108,7 +107,6 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
         assertEquals(id, idCaptor.getValue());
         assertEquals(name, nameCaptor.getValue());
         assertEquals(desc, descCaptor.getValue());
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
     }
 
@@ -133,7 +131,6 @@ public class VolumeSnapshotProducerTest extends CinderProducerTestSupport {
 
         verify(snapshotService).delete(captor.capture());
         assertEquals(id, captor.getValue());
-        assertFalse(msg.isFault());
     }
 
     private void assertEqualsVolumeSnapshots(VolumeSnapshot old, VolumeSnapshot newVolumeSn) {

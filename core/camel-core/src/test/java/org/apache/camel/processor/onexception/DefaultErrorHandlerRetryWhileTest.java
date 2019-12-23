@@ -58,6 +58,7 @@ public class DefaultErrorHandlerRetryWhileTest extends ContextTestSupport {
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if (invoked < 3) {
                 throw new MyFunctionalException("Sorry you cannot do this");

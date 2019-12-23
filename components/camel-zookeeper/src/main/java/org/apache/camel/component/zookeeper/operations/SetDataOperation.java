@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
-import static java.lang.String.format;
-
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+
+import static java.lang.String.format;
 
 /**
  * <code>SetDataOperation</code> sets the content of a ZooKeeper node. An optional version
@@ -37,6 +37,7 @@ public class SetDataOperation extends ZooKeeperOperation<byte[]> {
         this.data = data;
     }
 
+    @Override
     public OperationResult<byte[]> getResult() {
         try {
             Stat statistics = connection.setData(node, data, version);

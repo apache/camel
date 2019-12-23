@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.aws.s3;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.EncryptionMaterials;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -56,6 +56,9 @@ public class S3Configuration implements Cloneable {
     private String storageClass;
     @UriParam(label = "producer")
     private String serverSideEncryption;
+
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
     private String proxyHost;
     @UriParam
@@ -204,8 +207,9 @@ public class S3Configuration implements Cloneable {
     }
 
     /**
-     * The region in which S3 client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1)
-     * You'll need to use the name Regions.EU_WEST_1.name()
+     * The region in which S3 client needs to work. When using this parameter,
+     * the configuration will expect the capitalized name of the region (for
+     * example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name()
      */
     public void setRegion(String region) {
         this.region = region;
@@ -292,6 +296,17 @@ public class S3Configuration implements Cloneable {
      */
     public void setServerSideEncryption(String serverSideEncryption) {
         this.serverSideEncryption = serverSideEncryption;
+    }
+
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the S3 client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
 
     public String getProxyHost() {

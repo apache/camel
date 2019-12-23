@@ -31,10 +31,12 @@ public class StreamResultHandler implements ResultHandler {
     private ByteArrayOutputStream buffer = new ByteArrayOutputStream();
     private StreamResult result = new StreamResult(buffer);
 
+    @Override
     public Result getResult() {
         return result;
     }
 
+    @Override
     public void setBody(Message in) {
         in.setBody(buffer.toByteArray());
     }

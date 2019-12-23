@@ -20,9 +20,10 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class RoutingSlipWithErrorHandlerTest extends RoutingSlipWithExceptionTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() {                
+            public void configure() {
                 onException(Exception.class).handled(true).to("mock:exception");
                 from("direct:start").routingSlip(header(ROUTING_SLIP_HEADER)).to("mock:noexception");
             }

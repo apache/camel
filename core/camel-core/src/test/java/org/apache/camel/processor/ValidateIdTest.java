@@ -49,11 +49,8 @@ public class ValidateIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                        .validate(body().isInstanceOf(String.class)).id("myValidate")
-                        .to("log:foo")
-                        .to("mock:result").id("result")
-                        .to("log:after").id("after");
+                from("direct:start").routeId("myRoute").validate(body().isInstanceOf(String.class)).id("myValidate").to("log:foo").to("mock:result").id("result").to("log:after")
+                    .id("after");
             }
         };
     }

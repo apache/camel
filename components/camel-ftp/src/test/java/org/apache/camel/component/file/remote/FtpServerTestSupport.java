@@ -29,10 +29,14 @@ import org.apache.ftpserver.ftplet.UserManager;
 import org.apache.ftpserver.listener.ListenerFactory;
 import org.apache.ftpserver.usermanager.ClearTextPasswordEncryptor;
 import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.language.simple.SimpleLanguage.simple;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Base class for unit testing using a FTPServer
@@ -43,16 +47,18 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
     protected static final File USERS_FILE = new File("./src/test/resources/users.properties");
     protected static final String DEFAULT_LISTENER = "default";
 
+    private static final Logger LOG = LoggerFactory.getLogger(FtpServerTestSupport.class);
+
     protected FtpServer ftpServer;
     protected boolean canTest;
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR);
 
         canTest = false;
-
+        initPort();
         FtpServerFactory factory = createFtpServerFactory();
         if (factory != null) {
             ftpServer = factory.createServer();
@@ -72,7 +78,7 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
 
                 String name = System.getProperty("os.name");
                 String message = nsae.getMessage();
-                log.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
+                LOG.warn("SunX509 is not avail on this platform [{}] Testing is skipped! Real cause: {}", name, message);
             } else {
                 // some other error then throw it so the test can fail
                 throw e;
@@ -81,7 +87,7 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
     }
 
     @Override
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -103,7 +109,7 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
 
     protected FtpServerFactory createFtpServerFactory() throws Exception {
         assertTrue(USERS_FILE.exists());
-        assertTrue("Port number is not initialized in an expected range: " + BaseServerTestSupport.port, BaseServerTestSupport.port >= 21000);
+        assertTrue(getPort() > 0, "Port number is not initialized in an expected range: " + getPort());
 
         NativeFileSystemFactory fsf = new NativeFileSystemFactory();
         fsf.setCreateHome(true);
@@ -113,10 +119,10 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
         pumf.setPasswordEncryptor(new ClearTextPasswordEncryptor());
         pumf.setFile(USERS_FILE);
         UserManager userMgr = pumf.createUserManager();
-        
+
         ListenerFactory factory = new ListenerFactory();
-        factory.setPort(BaseServerTestSupport.port);
-        
+        factory.setPort(getPort());
+
         FtpServerFactory serverFactory = new FtpServerFactory();
         serverFactory.setUserManager(userMgr);
         serverFactory.setFileSystem(fsf);

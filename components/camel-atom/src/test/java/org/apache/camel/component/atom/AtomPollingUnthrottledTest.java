@@ -32,10 +32,11 @@ public class AtomPollingUnthrottledTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("atom:file:src/test/data/feed.atom?splitEntries=true&throttleEntries=false&consumer.initialDelay=0").to("mock:result");
+                from("atom:file:src/test/data/feed.atom?splitEntries=true&throttleEntries=false&initialDelay=0").to("mock:result");
             }
         };
     }

@@ -31,7 +31,7 @@ import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
 public class CxfToJmsInOutTest extends AbstractJUnit4SpringContextTests {
-    private static int port = AvailablePortFinder.getNextAvailable(20005);
+    private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property place holder
         //things to set them into the URL's in the spring contexts 

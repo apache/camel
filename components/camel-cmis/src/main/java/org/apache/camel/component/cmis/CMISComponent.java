@@ -34,6 +34,7 @@ public class CMISComponent extends DefaultComponent {
     public CMISComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
         CMISEndpoint endpoint = new CMISEndpoint(uri, this, remaining);
 

@@ -26,10 +26,12 @@ public class Bank implements BankWS {
         primeRate = 3.5;
     }
 
+    @Override
     public String getBankName() {
         return bankName;
     }
 
+    @Override
     public BankQuote getQuote(String ssn, double loanAmount, int loanDuration, int creditHistory, int creditScore) {
         Double rate = primeRate + (double) (loanDuration / 12) / 10 + Math.random() * 10 / 10;
         // Wait for a while

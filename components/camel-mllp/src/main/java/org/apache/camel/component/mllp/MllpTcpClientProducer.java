@@ -39,7 +39,6 @@ import org.apache.camel.support.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * The MLLP producer.
  */
@@ -129,7 +128,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
         log.trace("process({}) [{}] - entering", exchange.getExchangeId(), socket);
         getEndpoint().updateLastConnectionActivityTicks();
 
-        Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message message = exchange.getMessage();
 
         getEndpoint().checkBeforeSendProperties(exchange, socket, log);
 
@@ -219,7 +218,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
                         }
 
                         if (exchange.getException() == null) {
-                            log.trace("process({}) [{}] - resend succeeded - reading acknowledgement from {}", exchange.getExchangeId(), socket);
+                            log.trace("process({}) [{}] - resend succeeded - reading acknowledgement from external system", exchange.getExchangeId(), socket);
                             try {
                                 mllpBuffer.reset();
                                 mllpBuffer.readFrom(socket);
@@ -382,7 +381,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
     void checkConnection() throws IOException {
         if (null == socket || socket.isClosed() || !socket.isConnected()) {
             if (socket == null) {
-                log.debug("checkConnection() - Socket is null - attempting to establish connection", socket);
+                log.debug("checkConnection() - Socket is null - attempting to establish connection");
             } else if (socket.isClosed()) {
                 log.info("checkConnection() - Socket {} is closed - attempting to establish new connection", socket);
             } else if (!socket.isConnected()) {
@@ -481,6 +480,7 @@ public class MllpTcpClientProducer extends DefaultProducer implements Runnable {
             this.endpointKey = endpointKey;
         }
 
+        @Override
         public Thread newThread(Runnable r) {
             Thread timeoutThread = Executors.defaultThreadFactory().newThread(r);
 

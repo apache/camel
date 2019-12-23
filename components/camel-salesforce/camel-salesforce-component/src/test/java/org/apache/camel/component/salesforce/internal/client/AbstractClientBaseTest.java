@@ -20,9 +20,6 @@ import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -42,6 +39,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
 import static org.junit.Assert.assertTrue;
@@ -53,7 +52,7 @@ public class AbstractClientBaseTest {
     static class Client extends AbstractClientBase {
         Client(final SalesforceSession session) throws SalesforceException {
             super(null, session, mock(SalesforceHttpClient.class),
-                1 /* 1 second termination timeout */);
+                  1 /* 1 second termination timeout */);
         }
 
         @Override
@@ -91,8 +90,7 @@ public class AbstractClientBaseTest {
         final Exchange exchange = new DefaultExchange(context);
         final Message in = new DefaultMessage(context);
         in.setHeader("sforce-auto-assign", "TRUE");
-        in.setHeader("SFORCE-CALL-OPTIONS",
-            new String[] {"client=SampleCaseSensitiveToken/100", "defaultNamespace=battle"});
+        in.setHeader("SFORCE-CALL-OPTIONS", new String[] {"client=SampleCaseSensitiveToken/100", "defaultNamespace=battle"});
         in.setHeader("Sforce-Limit-Info", singletonList("per-app-api-usage"));
         in.setHeader("x-sfdc-packageversion-clientPackage", "1.0");
         in.setHeader("Sforce-Query-Options", "batchSize=1000");
@@ -102,10 +100,9 @@ public class AbstractClientBaseTest {
         final Map<String, List<String>> headers = AbstractClientBase.determineHeaders(exchange);
 
         assertThat(headers).containsOnly(entry("sforce-auto-assign", singletonList("TRUE")),
-            entry("SFORCE-CALL-OPTIONS", asList("client=SampleCaseSensitiveToken/100", "defaultNamespace=battle")),
-            entry("Sforce-Limit-Info", singletonList("per-app-api-usage")),
-            entry("x-sfdc-packageversion-clientPackage", singletonList("1.0")),
-            entry("Sforce-Query-Options", singletonList("batchSize=1000")));
+                                         entry("SFORCE-CALL-OPTIONS", asList("client=SampleCaseSensitiveToken/100", "defaultNamespace=battle")),
+                                         entry("Sforce-Limit-Info", singletonList("per-app-api-usage")), entry("x-sfdc-packageversion-clientPackage", singletonList("1.0")),
+                                         entry("Sforce-Query-Options", singletonList("batchSize=1000")));
     }
 
     @Test
@@ -145,8 +142,7 @@ public class AbstractClientBaseTest {
         final HttpConversation conversation = mock(HttpConversation.class);
         when(salesforceRequest.getConversation()).thenReturn(conversation);
 
-        when(conversation.getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE))
-            .thenReturn(salesforceRequest);
+        when(conversation.getAttribute(SalesforceSecurityHandler.AUTHENTICATION_REQUEST_ATTRIBUTE)).thenReturn(salesforceRequest);
 
         // completes the request
         listener.getValue().onComplete(result);

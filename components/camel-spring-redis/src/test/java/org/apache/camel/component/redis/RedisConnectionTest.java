@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.redis;
 
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.BindToRegistry;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.ArgumentMatchers;
@@ -32,14 +32,8 @@ import static org.mockito.Mockito.when;
 public class RedisConnectionTest extends RedisTestSupport {
 
     @Mock
+    @BindToRegistry("redisTemplate")
     private RedisTemplate<String, String> redisTemplate;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("redisTemplate", redisTemplate);
-        return registry;
-    }
 
     @Test
     public void shouldExecuteECHO() throws Exception {

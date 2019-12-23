@@ -39,6 +39,7 @@ public class SmppConsumerReconnectIntegrationTest extends CamelTestSupport {
         Thread.sleep(1000000);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

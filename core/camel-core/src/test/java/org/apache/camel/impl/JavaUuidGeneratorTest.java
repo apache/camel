@@ -34,7 +34,7 @@ public class JavaUuidGeneratorTest extends Assert {
 
         String firstUUID = uuidGenerator.generateUuid();
         String secondUUID = uuidGenerator.generateUuid();
-        
+
         assertTrue(firstUUID.matches("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$"));
         assertTrue(secondUUID.matches("^\\w{8}-\\w{4}-\\w{4}-\\w{4}-\\w{12}$"));
         assertFalse(firstUUID.equals(secondUUID));

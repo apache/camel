@@ -25,11 +25,9 @@ public class XMLTokenizeLanguageStreamingTest extends XMLTokenizeLanguageTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             Namespaces ns = new Namespaces("C", "urn:c");
+
             public void configure() {
-                from("direct:start")
-                    .split().xtokenize("//C:child", ns).streaming()
-                        .to("mock:result")
-                    .end();
+                from("direct:start").split().xtokenize("//C:child", ns).streaming().to("mock:result").end();
             }
         };
     }

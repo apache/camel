@@ -43,9 +43,7 @@ public class SimpleIncHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader("myCounter", simple("${header.myCounter}++"))
-                    .to("mock:result");
+                from("direct:start").setHeader("myCounter", simple("${header.myCounter}++")).to("mock:result");
             }
         };
     }

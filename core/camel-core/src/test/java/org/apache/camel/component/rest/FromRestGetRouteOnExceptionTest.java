@@ -26,11 +26,8 @@ public class FromRestGetRouteOnExceptionTest extends FromRestGetOnExceptionTest 
             @Override
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
-                rest("/say/hello")
-                    .get().route()
-                        .onException(IllegalArgumentException.class).handled(true).transform().constant("Handled the error").end()
-                        .to("mock:hello")
-                        .throwException(new IllegalArgumentException("Forced"));
+                rest("/say/hello").get().route().onException(IllegalArgumentException.class).handled(true).transform().constant("Handled the error").end().to("mock:hello")
+                    .throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

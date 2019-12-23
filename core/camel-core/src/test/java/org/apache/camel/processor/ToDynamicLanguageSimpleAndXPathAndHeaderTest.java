@@ -38,8 +38,7 @@ public class ToDynamicLanguageSimpleAndXPathAndHeaderTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .toD("mock:+language:xpath:/order/@uri+language:header:sub");
+                from("direct:start").toD("mock:+language:xpath:/order/@uri+language:header:sub");
             }
         };
     }

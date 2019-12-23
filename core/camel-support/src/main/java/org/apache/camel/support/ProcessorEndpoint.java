@@ -56,6 +56,7 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
         super(endpointUri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
@@ -94,6 +95,7 @@ public class ProcessorEndpoint extends DefaultPollingEndpoint {
         getProcessor().process(exchange);
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

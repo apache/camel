@@ -19,7 +19,7 @@ package org.apache.camel.component.twitter.data;
 import org.apache.camel.component.twitter.TwitterHelper;
 
 public enum ConsumerType {
-    TIMELINE, SEARCH, DIRECTMESSAGE, STREAMING, UNKNOWN;
+    TIMELINE, SEARCH, DIRECTMESSAGE, UNKNOWN;
 
     private static final ConsumerType[] VALUES = values();
 

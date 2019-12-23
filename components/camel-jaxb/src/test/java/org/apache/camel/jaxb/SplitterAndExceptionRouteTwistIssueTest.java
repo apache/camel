@@ -19,6 +19,7 @@ package org.apache.camel.jaxb;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -107,7 +108,6 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
                 );
 
                 from("direct:error")
-                    .handleFault()
                     .convertBodyTo(String.class, "UTF-8")
                     .process(new Processor() {
                         @Override
@@ -127,7 +127,6 @@ public class SplitterAndExceptionRouteTwistIssueTest extends CamelTestSupport {
 
 
                 from("direct:error2")
-                    .handleFault()
                     .convertBodyTo(String.class, "UTF-8")
                     .process(new Processor() {
                         @Override

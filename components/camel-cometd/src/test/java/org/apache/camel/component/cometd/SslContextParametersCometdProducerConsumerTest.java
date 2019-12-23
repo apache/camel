@@ -54,7 +54,7 @@ public class SslContextParametersCometdProducerConsumerTest extends CamelTestSup
     @Override
     @Before
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(23500);
+        port = AvailablePortFinder.getNextAvailable();
         uri = "cometds://127.0.0.1:" + port + "/service/test?baseResource=file:./target/test-classes/webapp&"
                 + "timeout=240000&interval=0&maxInterval=30000&multiFrameInterval=1500&jsonCommented=true&logLevel=2";
 
@@ -67,7 +67,7 @@ public class SslContextParametersCometdProducerConsumerTest extends CamelTestSup
             @Override
             public void configure() throws Exception {
                 KeyStoreParameters ksp = new KeyStoreParameters();
-                ksp.setResource("jsse/localhost.ks");
+                ksp.setResource("jsse/localhost.p12");
                 ksp.setPassword("changeit");
                 
                 KeyManagersParameters kmp = new KeyManagersParameters();

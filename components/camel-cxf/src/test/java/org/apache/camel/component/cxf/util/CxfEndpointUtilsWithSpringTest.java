@@ -55,10 +55,12 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/util/CxfEndpointBeans.xml");
     }
 
+    @Override
     protected String getEndpointURI() {
         return "cxf:bean:testEndpoint";
     }
 
+    @Override
     protected String getNoServiceClassURI() {
         return "cxf:bean:noServiceClassEndpoint";
     }
@@ -70,15 +72,17 @@ public class CxfEndpointUtilsWithSpringTest extends CxfEndpointUtilsTest {
                      endpoint.getServiceClass().getName());
     }
     
+    @Override
     public char sepChar() {
         return '?';
     }
 
 
+    @Override
     @Test
     public void testGetProperties() throws Exception {
         CxfSpringEndpoint endpoint = (CxfSpringEndpoint)createEndpoint(getEndpointURI());
-        QName service = endpoint.getServiceName();
+        QName service = endpoint.getServiceNameAsQName();
         assertEquals("We should get the right service name", SERVICE_NAME, service);
         assertEquals("The cxf endpoint's DataFromat should be RAW", DataFormat.RAW,
                      endpoint.getDataFormat().dealias());

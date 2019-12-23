@@ -25,7 +25,6 @@ import javax.activation.FileDataSource;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.attachment.AttachmentMessage;
@@ -94,12 +93,13 @@ public class MailAttachmentRedeliveryTest extends CamelTestSupport {
         assertEquals("logo.jpeg", names.get(2));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).maximumRedeliveries(3).redeliveryDelay(0);
 
-                from("pop3://james@mymailserver.com?password=secret&consumer.initialDelay=100&consumer.delay=100")
+                from("pop3://james@mymailserver.com?password=secret&initialDelay=100&delay=100")
                         .process(new Processor() {
                             private int counter;
                             @Override

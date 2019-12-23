@@ -36,6 +36,7 @@ public class Web3jProducerMainnetTest extends Web3jIntegrationTestSupport {
     @Produce("direct:start")
     protected ProducerTemplate template;
 
+    @Override
     protected String getUrl() {
         return "https://mainnet.infura.io/YOUR_INFURA_ID?";
     }

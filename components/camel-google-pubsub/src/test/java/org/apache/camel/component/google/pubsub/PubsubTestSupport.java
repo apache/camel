@@ -23,9 +23,8 @@ import com.google.api.client.googleapis.json.GoogleJsonResponseException;
 import com.google.api.services.pubsub.Pubsub;
 import com.google.api.services.pubsub.model.Subscription;
 import com.google.api.services.pubsub.model.Topic;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class PubsubTestSupport extends CamelTestSupport {
@@ -58,23 +57,18 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     protected void addPubsubComponent(CamelContext context) {
 
-        GooglePubsubConnectionFactory cf = new GooglePubsubConnectionFactory()
-            .setServiceAccount(SERVICE_ACCOUNT)
-            .setServiceAccountKey(SERVICE_KEY)
-            .setServiceURL(SERVICE_URL);
+        GooglePubsubConnectionFactory cf = new GooglePubsubConnectionFactory().setServiceAccount(SERVICE_ACCOUNT).setServiceAccountKey(SERVICE_KEY).setServiceURL(SERVICE_URL);
 
         GooglePubsubComponent component = new GooglePubsubComponent();
         component.setConnectionFactory(cf);
 
         context.addComponent("google-pubsub", component);
-        context.addComponent("properties", new PropertiesComponent("ref:prop"));
+        context.getPropertiesComponent().setLocation("ref:prop");
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("prop", loadProperties());
-        return jndi;
+    @BindToRegistry("prop")
+    public Properties loadRegProperties() throws Exception {
+        return loadProperties();
     }
 
     @Override
@@ -90,38 +84,22 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     public static void createTopicSubscriptionPair(String topicName, String subscriptionName, int ackDealineSeconds) throws Exception {
 
-        Pubsub pubsub = new GooglePubsubConnectionFactory()
-            .setServiceAccount(SERVICE_ACCOUNT)
-            .setServiceAccountKey(SERVICE_KEY)
-            .setServiceURL(SERVICE_URL)
-            .getDefaultClient();
+        Pubsub pubsub = new GooglePubsubConnectionFactory().setServiceAccount(SERVICE_ACCOUNT).setServiceAccountKey(SERVICE_KEY).setServiceURL(SERVICE_URL).getDefaultClient();
 
-        String topicFullName = String.format("projects/%s/topics/%s",
-                                         PubsubTestSupport.PROJECT_ID,
-                                         topicName);
+        String topicFullName = String.format("projects/%s/topics/%s", PubsubTestSupport.PROJECT_ID, topicName);
 
-        String subscriptionFullName = String.format("projects/%s/subscriptions/%s",
-                                                PubsubTestSupport.PROJECT_ID,
-                                                subscriptionName);
+        String subscriptionFullName = String.format("projects/%s/subscriptions/%s", PubsubTestSupport.PROJECT_ID, subscriptionName);
 
         try {
-            pubsub.projects()
-                  .topics()
-                  .create(topicFullName, new Topic())
-                  .execute();
+            pubsub.projects().topics().create(topicFullName, new Topic()).execute();
         } catch (Exception e) {
             handleAlreadyExistsException(e);
         }
 
         try {
-            Subscription subscription = new Subscription()
-                    .setTopic(topicFullName)
-                    .setAckDeadlineSeconds(ackDealineSeconds);
+            Subscription subscription = new Subscription().setTopic(topicFullName).setAckDeadlineSeconds(ackDealineSeconds);
 
-            pubsub.projects()
-                  .subscriptions()
-                  .create(subscriptionFullName, subscription)
-                  .execute();
+            pubsub.projects().subscriptions().create(subscriptionFullName, subscription).execute();
         } catch (Exception e) {
             handleAlreadyExistsException(e);
         }
@@ -129,7 +107,7 @@ public class PubsubTestSupport extends CamelTestSupport {
 
     private static void handleAlreadyExistsException(Exception e) throws Exception {
         if (e instanceof GoogleJsonResponseException) {
-            GoogleJsonResponseException exc = (GoogleJsonResponseException) e;
+            GoogleJsonResponseException exc = (GoogleJsonResponseException)e;
             // 409 indicates that the resource is available already
             if (409 == exc.getStatusCode()) {
                 return;

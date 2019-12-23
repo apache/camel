@@ -38,6 +38,7 @@ public class JcloudsComponent extends DefaultComponent {
     public JcloudsComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String[] uriParts = remaining.split(JcloudsConstants.DELIMETER);
         if (uriParts.length != 2) {
@@ -51,7 +52,6 @@ public class JcloudsComponent extends DefaultComponent {
         JcloudsConfiguration configuration = new JcloudsConfiguration();
         configuration.setCommand(command);
         configuration.setProviderId(providerId);
-        setProperties(configuration, parameters);
 
         JcloudsEndpoint endpoint;
         if (JcloudsCommand.blobstore == command) {

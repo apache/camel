@@ -68,21 +68,18 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
     /**
      * The project build directory
-     *
      */
     @Parameter(defaultValue = "${project.build.directory}")
     protected File buildDir;
 
     /**
      * The documentation directory
-     *
      */
     @Parameter(defaultValue = "${basedir}/src/main/docs")
     protected File docDir;
 
     /**
-     * The documentation directory
-     *
+     * The documentation EIP directory
      */
     @Parameter(defaultValue = "${basedir}/src/main/docs/eips")
     protected File eipDocDir;
@@ -149,6 +146,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     updated = updateLink(file, componentName + "-component");
                     updated |= updateTitles(file, docTitle);
                     updated |= updateAvailableFrom(file, model.getFirstVersion());
+                    updated |= updateComponentHeader(file, model);
 
                     // resolvePropertyPlaceholders is an option which only make sense to use if the component has other options
                     boolean hasOptions = model.getComponentOptions().stream().anyMatch(o -> !o.getName().equals("resolvePropertyPlaceholders"));
@@ -435,7 +433,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                 if (i == 1) {
                     // first line is the title to make the text less noisy we use level 2
-                    String newLine = "== " + title;
+                    String newLine = "= " + title;
                     newLines.add(newLine);
                     updated = !line.equals(newLine);
                     continue;
@@ -443,7 +441,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
                 // use single line headers with # as level instead of the cumbersome adoc weird style
                 if (line.startsWith("^^^") || line.startsWith("~~~") || line.startsWith("+++")) {
-                    String level = line.startsWith("+++") ? "====" : "===";
+                    String level = line.startsWith("+++") ? "===" : "==";
 
                     // transform legacy heading into new style
                     int idx = newLines.size() - 1;
@@ -482,17 +480,70 @@ public class UpdateReadmeMojo extends AbstractMojo {
         return updated;
     }
 
+    private boolean updateComponentHeader(final File file, final ComponentModel model) throws MojoExecutionException {
+        if (!file.exists()) {
+            return false;
+        }
+
+        final String markerStart = "// HEADER START";
+        final String markerEnd = "// HEADER END";
+
+        final String headerText = generateHeaderTextData(model);
+
+        try (InputStream fileStream = new FileInputStream(file)) {
+            final String loadedText = loadText(fileStream);
+
+            String existing = StringHelper.between(loadedText, markerStart, markerEnd);
+
+            if (existing != null) {
+                // remove leading line breaks etc
+                existing = existing.trim();
+                if (existing.equals(headerText)) {
+                    return false;
+                }
+
+                final String before = StringHelper.before(loadedText, markerStart);
+                final String after = StringHelper.after(loadedText, markerEnd);
+                final String updatedHeaderText = before + markerStart + "\n" + headerText + "\n" + markerEnd + after;
+
+                writeText(file, updatedHeaderText);
+                return true;
+            } else {
+                // so we don't have the marker, so we add it somewhere after the camel version
+                final String sinceVersion = "*Since Camel " + shortenVersion(model.getFirstVersion()) + "*";
+                final String before = StringHelper.before(loadedText, sinceVersion);
+                final String after = StringHelper.after(loadedText, sinceVersion);
+                final String updatedHeaderText = before + sinceVersion + "\n\n" + markerStart + "\n" + headerText + "\n" + markerEnd + after;
+
+                writeText(file, updatedHeaderText);
+                return true;
+            }
+        } catch (Exception e) {
+            throw new MojoExecutionException("Error reading file " + file + " Reason: " + e, e);
+        }
+    }
+
+    private static String generateHeaderTextData(final ComponentModel model) {
+        final boolean consumerOnly = Boolean.parseBoolean(model.getConsumerOnly());
+        final boolean producerOnly = Boolean.parseBoolean(model.getProducerOnly());
+        // if we have only producer support
+        if (!consumerOnly && producerOnly) {
+            return "*Only producer is supported*";
+        }
+        // if we have only consumer support
+        if (consumerOnly && !producerOnly) {
+            return "*Only consumer is supported*";
+        }
+
+        return "*Both producer and consumer is supported*";
+    }
+
     private static boolean updateAvailableFrom(final File file, final String firstVersion) throws MojoExecutionException {
         if (firstVersion == null || !file.exists()) {
             return false;
         }
 
-        String version = firstVersion;
-        // cut last digit so its not 2.18.0 but 2.18
-        String[] parts = firstVersion.split("\\.");
-        if (parts.length == 3 && parts[2].equals("0")) {
-            version = parts[0] + "." + parts[1];
-        }
+        final String version = shortenVersion(firstVersion);
 
         boolean updated = false;
 
@@ -506,14 +557,19 @@ public class UpdateReadmeMojo extends AbstractMojo {
             // copy over to all new lines
             newLines.addAll(Arrays.asList(lines));
 
-            // check the first four lines
-            boolean title = lines[1].startsWith("##") || lines[1].startsWith("==");
+            // check first if it is a standard documentation file, we expect at least five lines
+            if (lines.length < 5) {
+                return false;
+            }
+
+            // check the first four lines (ignoring the first line)
+            boolean title = lines[1].startsWith("#") || lines[1].startsWith("=");
             boolean empty = lines[2].trim().isEmpty();
-            boolean availableFrom = lines[3].trim().contains("Available as of") || lines[3].trim().contains("Available in");
+            boolean since = lines[3].trim().contains("Since Camel");
             boolean empty2 = lines[4].trim().isEmpty();
 
-            if (title && empty && availableFrom) {
-                String newLine = "*Available as of Camel version " + version + "*";
+            if (title && empty && since) {
+                String newLine = "*Since Camel " + version + "*";
                 if (!newLine.equals(lines[3])) {
                     newLines.set(3, newLine);
                     updated = true;
@@ -522,8 +578,8 @@ public class UpdateReadmeMojo extends AbstractMojo {
                     newLines.add(4, "");
                     updated = true;
                 }
-            } else if (!availableFrom) {
-                String newLine = "*Available as of Camel version " + version + "*";
+            } else if (!since) {
+                String newLine = "*Since Camel " + version + "*";
                 newLines.add(3, newLine);
                 newLines.add(4, "");
                 updated = true;
@@ -531,7 +587,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
 
             if (updated) {
                 // build the new updated text
-                String newText = newLines.stream().collect(Collectors.joining("\n"));
+                String newText = String.join("\n", newLines);
                 writeText(file, newText);
             }
         } catch (Exception e) {
@@ -539,6 +595,16 @@ public class UpdateReadmeMojo extends AbstractMojo {
         }
 
         return updated;
+    }
+
+    private static String shortenVersion(final String firstVersion) {
+        String version = firstVersion;
+        // cut last digit so its not 2.18.0 but 2.18
+        String[] parts = firstVersion.split("\\.");
+        if (parts.length == 3 && parts[2].equals("0")) {
+            version = parts[0] + "." + parts[1];
+        }
+        return version;
     }
 
     private boolean updateOptionsIn(final File file, final String kind, final String changed) throws MojoExecutionException {
@@ -612,7 +678,7 @@ public class UpdateReadmeMojo extends AbstractMojo {
     private static ComponentModel generateComponentModel(String json) {
         List<Map<String, String>> rows = parseJsonSchema("component", json, false);
 
-        ComponentModel component = new ComponentModel(true);
+        ComponentModel component = new ComponentModel();
         component.setScheme(getSafeValue("scheme", rows));
         component.setSyntax(getSafeValue("syntax", rows));
         component.setAlternativeSyntax(getSafeValue("alternativeSyntax", rows));

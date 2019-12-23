@@ -45,13 +45,8 @@ public class StreamCachingXPathRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setStreamCaching(true);
 
-                from("direct:a")
-                    .choice()
-                        .when(xpath("//hello")).to("mock:english")
-                        .when(xpath("//hallo")).to("mock:dutch", "mock:german")
-                        .otherwise().to("mock:french");
+                from("direct:a").choice().when(xpath("//hello")).to("mock:english").when(xpath("//hallo")).to("mock:dutch", "mock:german").otherwise().to("mock:french");
             }
         };
     }
 }
-

@@ -39,6 +39,7 @@ public class StickyLoadBalancer extends QueueLoadBalancer {
         this.loadBalancer = new RoundRobinLoadBalancer();
     }
 
+    @Override
     protected AsyncProcessor chooseProcessor(AsyncProcessor[] processors, Exchange exchange) {
         Object value = correlationExpression.evaluate(exchange, Object.class);
         Object key = getStickyKey(value);

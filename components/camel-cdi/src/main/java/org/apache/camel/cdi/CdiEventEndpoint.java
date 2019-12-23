@@ -26,8 +26,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.util.stream.Collectors.joining;
-
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Event;
 import javax.enterprise.inject.Any;
@@ -41,6 +39,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.support.DefaultEndpoint;
+
+import static java.util.stream.Collectors.joining;
 
 /**
  * A Camel {@link Endpoint} that bridges the CDI events facility with Camel routes so that CDI events
@@ -73,24 +73,6 @@ import org.apache.camel.support.DefaultEndpoint;
  *
  *  void observeCdiEvents({@literal @}Observes {@literal @}FooQualifier List{@literal <}String{@literal >} event) {
  *      logger.info("CDI event: {}", event);
- *  }
- * </code></pre>
- *
- * When multiple Camel contexts exist in the CDI container, the {@code @ContextName} qualifier can be used
- * to qualify the {@code CdiEventEndpoint<T>} injection points, e.g.:
- * <pre><code>
- * {@literal @}Inject
- * {@literal @}ContextName("foo")
- *  CdiEventEndpoint{@literal <}List{@literal <}String{@literal >}{@literal >} cdiEventEndpoint;
- *
- *  // Only observe / consume events having the {@literal @}ContextName("foo") qualifier
- *  from(cdiEventEndpoint).log("Camel context 'foo'{@literal >} CDI event received: ${body}");
- *
- *  // Produce / fire events with the {@literal @}ContextName("foo") qualifier
- *  from("...").to(cdiEventEndpoint);
- *
- *  void observeCdiEvents({@literal @}Observes {@literal @}ContextName("foo") List{@literal <}String{@literal >} event) {
- *      logger.info("Camel context 'foo'{@literal >} CDI event: {}", event);
  *  }
  * </code></pre>
  */

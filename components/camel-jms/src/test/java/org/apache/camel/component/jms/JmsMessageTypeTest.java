@@ -36,6 +36,7 @@ import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
 
 public class JmsMessageTypeTest extends CamelTestSupport {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

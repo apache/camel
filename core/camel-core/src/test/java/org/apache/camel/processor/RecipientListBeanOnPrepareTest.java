@@ -52,8 +52,7 @@ public class RecipientListBeanOnPrepareTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(RecipientListBeanOnPrepareTest.class, "doSomething");
+                from("direct:start").bean(RecipientListBeanOnPrepareTest.class, "doSomething");
 
                 from("direct:a").process(new Processor() {
                     @Override

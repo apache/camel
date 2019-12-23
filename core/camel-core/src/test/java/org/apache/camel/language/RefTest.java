@@ -35,7 +35,7 @@ public class RefTest extends LanguageTestSupport {
     public void testRefExpressions() throws Exception {
         assertExpression("myExp", "Hello World");
     }
- 
+
     @Test
     public void testRefExpressionsNotFound() throws Exception {
         try {
@@ -51,6 +51,7 @@ public class RefTest extends LanguageTestSupport {
         assertPredicate("myExp");
     }
 
+    @Override
     protected String getLanguageName() {
         return "ref";
     }

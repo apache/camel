@@ -36,6 +36,7 @@ public class SpringSetHeaderTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringSetHeaderTest-context.xml");
     }

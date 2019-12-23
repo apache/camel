@@ -20,7 +20,6 @@ import org.apache.xbean.spring.context.ClassPathXmlApplicationContext;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 
-
 /**
  * Test case derived from:
  * http://camel.apache.org/transactional-client.html and Martin
@@ -32,6 +31,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  */
 public class XMLQueueToQueueTransactionTest extends AbstractTransactionTest {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/XMLQueueToQueueTransactionTest.xml");
     }

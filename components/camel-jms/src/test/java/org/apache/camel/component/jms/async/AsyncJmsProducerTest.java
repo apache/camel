@@ -47,6 +47,7 @@ public class AsyncJmsProducerTest extends CamelTestSupport {
         assertFalse("Should use different threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

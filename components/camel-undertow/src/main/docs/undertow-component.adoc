@@ -1,7 +1,11 @@
 [[undertow-component]]
-== Undertow Component
+= Undertow Component
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Undertow component provides HTTP and WebSocket based endpoints for consuming
 and producing HTTP/WebSocket requests.
@@ -27,7 +31,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source,text]
 ----
@@ -40,10 +44,10 @@ undertow:wss://hostname[:port][/resourceUri][?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 // component options: START
-The Undertow component supports 6 options, which are listed below.
+The Undertow component supports 8 options, which are listed below.
 
 
 
@@ -54,8 +58,10 @@ The Undertow component supports 6 options, which are listed below.
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *hostOptions* (advanced) | To configure common options, such as thread pools |  | UndertowHostOptions
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -69,7 +75,7 @@ undertow:httpURI
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +85,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (25 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -90,13 +96,16 @@ with the following path and query parameters:
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
 | *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | Boolean
+| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | Boolean
 | *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *handlers* (consumer) | Specifies a comma-delimited set of io.undertow.server.HttpHandler instances in your Registry (such as your Spring ApplicationContext). These handlers are added to the Undertow handler chain (for example, to add security). Important: You can not use different handlers with different Undertow endpoints using the same port number. The handlers is associated to the port number. If you need different handlers, then use different port numbers. |  | String
 | *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
 | *keepAlive* (producer) | Setting to ensure socket is not closed due to inactivity | true | Boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *options* (producer) | Sets additional channel options. The options that can be used are defined in org.xnio.Options. To configure from endpoint uri, then prefix each option with option., such as option.close-abort=true&option.send-buffer=8192 |  | Map
+| *preserveHostHeader* (producer) | If the option is true, UndertowProducer will set the Host header to the value contained in the current exchange Host header, useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, this allows applications which use the Host header to generate accurate URL's for a proxied service. | true | boolean
 | *reuseAddresses* (producer) | Setting to facilitate socket multiplexing | true | Boolean
 | *tcpNoDelay* (producer) | Setting to improve TCP protocol performance | true | Boolean
 | *throwExceptionOnFailure* (producer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | Boolean
@@ -113,14 +122,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-undertow-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -128,7 +137,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 13 options, which are listed below.
 
 
 
@@ -136,13 +145,15 @@ The component supports 11 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.undertow.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.undertow.enabled* | Enable undertow component | true | Boolean
+| *camel.component.undertow.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.undertow.enabled* | Whether to enable auto configuration of the undertow component. This is enabled by default. |  | Boolean
 | *camel.component.undertow.host-options.buffer-size* | Set if the Undertow host should use http2 protocol. |  | Integer
 | *camel.component.undertow.host-options.direct-buffers* | Set if the Undertow host should use http2 protocol. |  | Boolean
 | *camel.component.undertow.host-options.http2-enabled* | Set if the Undertow host should use http2 protocol. |  | Boolean
 | *camel.component.undertow.host-options.io-threads* | Set if the Undertow host should use http2 protocol. |  | Integer
 | *camel.component.undertow.host-options.worker-threads* | Set if the Undertow host should use http2 protocol. |  | Integer
-| *camel.component.undertow.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.undertow.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+| *camel.component.undertow.mute-exception* | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | Boolean
 | *camel.component.undertow.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.undertow.undertow-http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.component.undertow.UndertowHttpBinding type. |  | String
 | *camel.component.undertow.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
@@ -152,10 +163,10 @@ The component supports 11 options, which are listed below.
 
 
 
-=== Message Headers
+== Message Headers
 
 Camel uses the same message headers as the xref:http-component.adoc[HTTP]
-component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
+component. It also uses `Exchange.HTTP_CHUNKED,CamelHttpChunked` header to turn on or turn off
 the chunked encoding on the camel-undertow consumer.
 
 Camel also populates *all* request.parameter and request.headers. For
@@ -163,7 +174,7 @@ example, given a client request with the URL,
 `\http://myserver/myserver?orderid=123`, the exchange will contain a
 header named `orderid` with the value 123.
 
-=== HTTP Producer Example
+== HTTP Producer Example
 
 The following is a basic example of how to send an HTTP request to an
 existing HTTP endpoint.
@@ -186,7 +197,7 @@ or in XML
 <route>
 ----
 
-=== HTTP Consumer Example
+== HTTP Consumer Example
 
 In this sample we define a route that exposes a HTTP service at
 `\http://localhost:8080/myapp/myservice`:
@@ -199,7 +210,7 @@ In this sample we define a route that exposes a HTTP service at
 </route>
 ----
 
-=== WebSocket Example
+== WebSocket Example
 
 In this sample we define a route that exposes a WebSocket service at
 `\http://localhost:8080/myapp/mysocket` and returns back a response to the same channel:
@@ -213,7 +224,7 @@ In this sample we define a route that exposes a WebSocket service at
 </route>
 ----
 
-=== Using localhost as host
+== Using localhost as host
 
 When you specify `localhost` in a URL, Camel exposes the endpoint only
 on the local TCP/IP network interface, so it cannot be accessed from
@@ -225,10 +236,9 @@ If you need to expose an Undertow endpoint on all network interfaces, the
 `0.0.0.0` address should be used.
 
 To listen across an entire URI prefix, see
-xref:../../../../../docs/user-manual/en/faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
+xref:manual::faq/how-do-i-let-jetty-match-wildcards.adoc[How do I let Jetty match wildcards].
 
 If you actually want to expose routes by HTTP and already have a
 Servlet, you should instead refer to the
-https://cwiki.apache.org/confluence/pages/viewpage.action?pageId=46339[Servlet
-Transport].
+xref:servlet-component.adoc[Servlet Transport].
 

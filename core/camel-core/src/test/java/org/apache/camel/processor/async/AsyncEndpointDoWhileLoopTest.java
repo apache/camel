@@ -40,17 +40,10 @@ public class AsyncEndpointDoWhileLoopTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                    .loopDoWhile(body().isNotEqualTo("done"))
-                        .to("async:bye:camel")
-                        .to("mock:line")
-                        .filter(exchangeProperty(Exchange.LOOP_INDEX).isEqualTo(3))
-                            .setBody().constant("done")
-                        .end()
-                    .end()
-                    .to("mock:result");
+                from("direct:start").loopDoWhile(body().isNotEqualTo("done")).to("async:bye:camel").to("mock:line").filter(exchangeProperty(Exchange.LOOP_INDEX).isEqualTo(3))
+                    .setBody().constant("done").end().end().to("mock:result");
             }
         };
     }
-    
+
 }

@@ -32,7 +32,6 @@ import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The ftps (FTP secure SSL/TLS) component is used for uploading or downloading
@@ -62,7 +61,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder binary(boolean binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -74,7 +73,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder binary(String binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -93,7 +92,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder charset(String charset) {
-            setProperty("charset", charset);
+            doSetProperty("charset", charset);
             return this;
         }
         /**
@@ -107,7 +106,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -121,7 +120,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -142,7 +141,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder doneFileName(String doneFileName) {
-            setProperty("doneFileName", doneFileName);
+            doSetProperty("doneFileName", doneFileName);
             return this;
         }
         /**
@@ -168,7 +167,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -195,7 +194,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -206,7 +205,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder passiveMode(boolean passiveMode) {
-            setProperty("passiveMode", passiveMode);
+            doSetProperty("passiveMode", passiveMode);
             return this;
         }
         /**
@@ -217,7 +216,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder passiveMode(String passiveMode) {
-            setProperty("passiveMode", passiveMode);
+            doSetProperty("passiveMode", passiveMode);
             return this;
         }
         /**
@@ -231,7 +230,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder separator(PathSeparator separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -245,7 +244,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointConsumerBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -259,7 +258,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder transferLoggingIntervalSeconds(
                 int transferLoggingIntervalSeconds) {
-            setProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
+            doSetProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
             return this;
         }
         /**
@@ -273,7 +272,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder transferLoggingIntervalSeconds(
                 String transferLoggingIntervalSeconds) {
-            setProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
+            doSetProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
             return this;
         }
         /**
@@ -286,7 +285,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder transferLoggingLevel(
                 LoggingLevel transferLoggingLevel) {
-            setProperty("transferLoggingLevel", transferLoggingLevel);
+            doSetProperty("transferLoggingLevel", transferLoggingLevel);
             return this;
         }
         /**
@@ -300,7 +299,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder transferLoggingLevel(
                 String transferLoggingLevel) {
-            setProperty("transferLoggingLevel", transferLoggingLevel);
+            doSetProperty("transferLoggingLevel", transferLoggingLevel);
             return this;
         }
         /**
@@ -313,7 +312,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder transferLoggingVerbose(
                 boolean transferLoggingVerbose) {
-            setProperty("transferLoggingVerbose", transferLoggingVerbose);
+            doSetProperty("transferLoggingVerbose", transferLoggingVerbose);
             return this;
         }
         /**
@@ -326,7 +325,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder transferLoggingVerbose(
                 String transferLoggingVerbose) {
-            setProperty("transferLoggingVerbose", transferLoggingVerbose);
+            doSetProperty("transferLoggingVerbose", transferLoggingVerbose);
             return this;
         }
         /**
@@ -344,7 +343,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -362,7 +361,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -373,7 +372,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder delete(boolean delete) {
-            setProperty("delete", delete);
+            doSetProperty("delete", delete);
             return this;
         }
         /**
@@ -384,7 +383,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder delete(String delete) {
-            setProperty("delete", delete);
+            doSetProperty("delete", delete);
             return this;
         }
         /**
@@ -398,7 +397,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder moveFailed(Expression moveFailed) {
-            setProperty("moveFailed", moveFailed);
+            doSetProperty("moveFailed", moveFailed);
             return this;
         }
         /**
@@ -413,7 +412,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder moveFailed(String moveFailed) {
-            setProperty("moveFailed", moveFailed);
+            doSetProperty("moveFailed", moveFailed);
             return this;
         }
         /**
@@ -427,7 +426,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder noop(boolean noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -441,7 +440,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder noop(String noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -454,7 +453,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder preMove(Expression preMove) {
-            setProperty("preMove", preMove);
+            doSetProperty("preMove", preMove);
             return this;
         }
         /**
@@ -468,7 +467,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder preMove(String preMove) {
-            setProperty("preMove", preMove);
+            doSetProperty("preMove", preMove);
             return this;
         }
         /**
@@ -484,7 +483,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder preSort(boolean preSort) {
-            setProperty("preSort", preSort);
+            doSetProperty("preSort", preSort);
             return this;
         }
         /**
@@ -500,7 +499,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder preSort(String preSort) {
-            setProperty("preSort", preSort);
+            doSetProperty("preSort", preSort);
             return this;
         }
         /**
@@ -512,7 +511,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder recursive(boolean recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -524,7 +523,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder recursive(String recursive) {
-            setProperty("recursive", recursive);
+            doSetProperty("recursive", recursive);
             return this;
         }
         /**
@@ -540,7 +539,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder resumeDownload(
                 boolean resumeDownload) {
-            setProperty("resumeDownload", resumeDownload);
+            doSetProperty("resumeDownload", resumeDownload);
             return this;
         }
         /**
@@ -555,7 +554,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder resumeDownload(String resumeDownload) {
-            setProperty("resumeDownload", resumeDownload);
+            doSetProperty("resumeDownload", resumeDownload);
             return this;
         }
         /**
@@ -568,7 +567,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -581,7 +580,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -596,7 +595,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder streamDownload(
                 boolean streamDownload) {
-            setProperty("streamDownload", streamDownload);
+            doSetProperty("streamDownload", streamDownload);
             return this;
         }
         /**
@@ -610,7 +609,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder streamDownload(String streamDownload) {
-            setProperty("streamDownload", streamDownload);
+            doSetProperty("streamDownload", streamDownload);
             return this;
         }
         /**
@@ -623,7 +622,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder antExclude(String antExclude) {
-            setProperty("antExclude", antExclude);
+            doSetProperty("antExclude", antExclude);
             return this;
         }
         /**
@@ -635,7 +634,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder antFilterCaseSensitive(
                 boolean antFilterCaseSensitive) {
-            setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
+            doSetProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
         }
         /**
@@ -647,7 +646,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder antFilterCaseSensitive(
                 String antFilterCaseSensitive) {
-            setProperty("antFilterCaseSensitive", antFilterCaseSensitive);
+            doSetProperty("antFilterCaseSensitive", antFilterCaseSensitive);
             return this;
         }
         /**
@@ -659,7 +658,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder antInclude(String antInclude) {
-            setProperty("antInclude", antInclude);
+            doSetProperty("antInclude", antInclude);
             return this;
         }
         /**
@@ -676,7 +675,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 boolean eagerMaxMessagesPerPoll) {
-            setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
+            doSetProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
         }
         /**
@@ -693,7 +692,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder eagerMaxMessagesPerPoll(
                 String eagerMaxMessagesPerPoll) {
-            setProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
+            doSetProperty("eagerMaxMessagesPerPoll", eagerMaxMessagesPerPoll);
             return this;
         }
         /**
@@ -708,7 +707,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder exclude(String exclude) {
-            setProperty("exclude", exclude);
+            doSetProperty("exclude", exclude);
             return this;
         }
         /**
@@ -722,7 +721,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filter(Object filter) {
-            setProperty("filter", filter);
+            doSetProperty("filter", filter);
             return this;
         }
         /**
@@ -736,7 +735,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filter(String filter) {
-            setProperty("filter", filter);
+            doSetProperty("filter", filter);
             return this;
         }
         /**
@@ -750,7 +749,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder filterDirectory(
                 Predicate filterDirectory) {
-            setProperty("filterDirectory", filterDirectory);
+            doSetProperty("filterDirectory", filterDirectory);
             return this;
         }
         /**
@@ -765,7 +764,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder filterDirectory(
                 String filterDirectory) {
-            setProperty("filterDirectory", filterDirectory);
+            doSetProperty("filterDirectory", filterDirectory);
             return this;
         }
         /**
@@ -777,7 +776,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filterFile(Predicate filterFile) {
-            setProperty("filterFile", filterFile);
+            doSetProperty("filterFile", filterFile);
             return this;
         }
         /**
@@ -790,7 +789,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder filterFile(String filterFile) {
-            setProperty("filterFile", filterFile);
+            doSetProperty("filterFile", filterFile);
             return this;
         }
         /**
@@ -804,7 +803,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder idempotent(Boolean idempotent) {
-            setProperty("idempotent", idempotent);
+            doSetProperty("idempotent", idempotent);
             return this;
         }
         /**
@@ -819,7 +818,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder idempotent(String idempotent) {
-            setProperty("idempotent", idempotent);
+            doSetProperty("idempotent", idempotent);
             return this;
         }
         /**
@@ -834,7 +833,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder idempotentKey(
                 Expression idempotentKey) {
-            setProperty("idempotentKey", idempotentKey);
+            doSetProperty("idempotentKey", idempotentKey);
             return this;
         }
         /**
@@ -849,7 +848,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder idempotentKey(String idempotentKey) {
-            setProperty("idempotentKey", idempotentKey);
+            doSetProperty("idempotentKey", idempotentKey);
             return this;
         }
         /**
@@ -864,7 +863,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
-            setProperty("idempotentRepository", idempotentRepository);
+            doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
         /**
@@ -879,7 +878,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
-            setProperty("idempotentRepository", idempotentRepository);
+            doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
         /**
@@ -894,7 +893,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder include(String include) {
-            setProperty("include", include);
+            doSetProperty("include", include);
             return this;
         }
         /**
@@ -906,7 +905,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder maxDepth(int maxDepth) {
-            setProperty("maxDepth", maxDepth);
+            doSetProperty("maxDepth", maxDepth);
             return this;
         }
         /**
@@ -918,7 +917,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder maxDepth(String maxDepth) {
-            setProperty("maxDepth", maxDepth);
+            doSetProperty("maxDepth", maxDepth);
             return this;
         }
         /**
@@ -938,7 +937,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -958,7 +957,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -971,7 +970,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder minDepth(int minDepth) {
-            setProperty("minDepth", minDepth);
+            doSetProperty("minDepth", minDepth);
             return this;
         }
         /**
@@ -984,7 +983,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder minDepth(String minDepth) {
-            setProperty("minDepth", minDepth);
+            doSetProperty("minDepth", minDepth);
             return this;
         }
         /**
@@ -997,7 +996,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder move(Expression move) {
-            setProperty("move", move);
+            doSetProperty("move", move);
             return this;
         }
         /**
@@ -1011,7 +1010,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder move(String move) {
-            setProperty("move", move);
+            doSetProperty("move", move);
             return this;
         }
         /**
@@ -1026,7 +1025,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder exclusiveReadLockStrategy(
                 Object exclusiveReadLockStrategy) {
-            setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
+            doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
         }
         /**
@@ -1041,36 +1040,36 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder exclusiveReadLockStrategy(
                 String exclusiveReadLockStrategy) {
-            setProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
+            doSetProperty("exclusiveReadLockStrategy", exclusiveReadLockStrategy);
             return this;
         }
         /**
          * Used by consumer, to only poll the files if it has exclusive
          * read-lock on the file (i.e. the file is not in-progress or being
          * written). Camel will wait until the file lock is granted. This option
-         * provides the build in strategies: none - No read lock is in use
+         * provides the build in strategies: - none - No read lock is in use -
          * markerFile - Camel creates a marker file (fileName.camelLock) and
          * then holds a lock on it. This option is not available for the FTP
-         * component changed - Changed is using file length/modification
+         * component - changed - Changed is using file length/modification
          * timestamp to detect whether the file is currently being copied or
          * not. Will at least use 1 sec to determine this, so this option cannot
          * consume files as fast as the others, but can be more reliable as the
          * JDK IO API cannot always determine whether a file is currently being
          * used by another process. The option readLockCheckInterval can be used
-         * to set the check frequency. fileLock - is for using
+         * to set the check frequency. - fileLock - is for using
          * java.nio.channels.FileLock. This option is not avail for Windows OS
          * and the FTP component. This approach should be avoided when accessing
          * a remote file system via a mount/share unless that file system
-         * supports distributed file locks. rename - rename is for using a try
-         * to rename the file as a test if we can get exclusive read-lock.
+         * supports distributed file locks. - rename - rename is for using a try
+         * to rename the file as a test if we can get exclusive read-lock. -
          * idempotent - (only for file component) idempotent is for using a
          * idempotentRepository as the read-lock. This allows to use read locks
          * that supports clustering if the idempotent repository implementation
-         * supports that. idempotent-changed - (only for file component)
+         * supports that. - idempotent-changed - (only for file component)
          * idempotent-changed is for using a idempotentRepository and changed as
          * the combined read-lock. This allows to use read locks that supports
          * clustering if the idempotent repository implementation supports that.
-         * idempotent-rename - (only for file component) idempotent-rename is
+         * - idempotent-rename - (only for file component) idempotent-rename is
          * for using a idempotentRepository and rename as the combined
          * read-lock. This allows to use read locks that supports clustering if
          * the idempotent repository implementation supports that. Notice: The
@@ -1089,7 +1088,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLock(String readLock) {
-            setProperty("readLock", readLock);
+            doSetProperty("readLock", readLock);
             return this;
         }
         /**
@@ -1111,7 +1110,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockCheckInterval(
                 long readLockCheckInterval) {
-            setProperty("readLockCheckInterval", readLockCheckInterval);
+            doSetProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
         }
         /**
@@ -1133,7 +1132,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockCheckInterval(
                 String readLockCheckInterval) {
-            setProperty("readLockCheckInterval", readLockCheckInterval);
+            doSetProperty("readLockCheckInterval", readLockCheckInterval);
             return this;
         }
         /**
@@ -1151,7 +1150,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 boolean readLockDeleteOrphanLockFiles) {
-            setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
+            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
         }
         /**
@@ -1169,139 +1168,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
                 String readLockDeleteOrphanLockFiles) {
-            setProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
-            return this;
-        }
-        /**
-         * Whether the delayed release task should be synchronous or
-         * asynchronous. See more details at the readLockIdempotentReleaseDelay
-         * option.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: lock
-         */
-        default FtpsEndpointConsumerBuilder readLockIdempotentReleaseAsync(
-                boolean readLockIdempotentReleaseAsync) {
-            setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
-            return this;
-        }
-        /**
-         * Whether the delayed release task should be synchronous or
-         * asynchronous. See more details at the readLockIdempotentReleaseDelay
-         * option.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: lock
-         */
-        default FtpsEndpointConsumerBuilder readLockIdempotentReleaseAsync(
-                String readLockIdempotentReleaseAsync) {
-            setProperty("readLockIdempotentReleaseAsync", readLockIdempotentReleaseAsync);
-            return this;
-        }
-        /**
-         * The number of threads in the scheduled thread pool when using
-         * asynchronous release tasks. Using a default of 1 core threads should
-         * be sufficient in almost all use-cases, only set this to a higher
-         * value if either updating the idempotent repository is slow, or there
-         * are a lot of files to process. This option is not in-use if you use a
-         * shared thread pool by configuring the
-         * readLockIdempotentReleaseExecutorService option. See more details at
-         * the readLockIdempotentReleaseDelay option.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: lock
-         */
-        default FtpsEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
-                int readLockIdempotentReleaseAsyncPoolSize) {
-            setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
-            return this;
-        }
-        /**
-         * The number of threads in the scheduled thread pool when using
-         * asynchronous release tasks. Using a default of 1 core threads should
-         * be sufficient in almost all use-cases, only set this to a higher
-         * value if either updating the idempotent repository is slow, or there
-         * are a lot of files to process. This option is not in-use if you use a
-         * shared thread pool by configuring the
-         * readLockIdempotentReleaseExecutorService option. See more details at
-         * the readLockIdempotentReleaseDelay option.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: lock
-         */
-        default FtpsEndpointConsumerBuilder readLockIdempotentReleaseAsyncPoolSize(
-                String readLockIdempotentReleaseAsyncPoolSize) {
-            setProperty("readLockIdempotentReleaseAsyncPoolSize", readLockIdempotentReleaseAsyncPoolSize);
-            return this;
-        }
-        /**
-         * Whether to delay the release task for a period of millis. This can be
-         * used to delay the release tasks to expand the window when a file is
-         * regarded as read-locked, in an active/active cluster scenario with a
-         * shared idempotent repository, to ensure other nodes cannot
-         * potentially scan and acquire the same file, due to race-conditions.
-         * By expanding the time-window of the release tasks helps prevents
-         * these situations. Note delaying is only needed if you have configured
-         * readLockRemoveOnCommit to true.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: lock
-         */
-        default FtpsEndpointConsumerBuilder readLockIdempotentReleaseDelay(
-                int readLockIdempotentReleaseDelay) {
-            setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
-            return this;
-        }
-        /**
-         * Whether to delay the release task for a period of millis. This can be
-         * used to delay the release tasks to expand the window when a file is
-         * regarded as read-locked, in an active/active cluster scenario with a
-         * shared idempotent repository, to ensure other nodes cannot
-         * potentially scan and acquire the same file, due to race-conditions.
-         * By expanding the time-window of the release tasks helps prevents
-         * these situations. Note delaying is only needed if you have configured
-         * readLockRemoveOnCommit to true.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: lock
-         */
-        default FtpsEndpointConsumerBuilder readLockIdempotentReleaseDelay(
-                String readLockIdempotentReleaseDelay) {
-            setProperty("readLockIdempotentReleaseDelay", readLockIdempotentReleaseDelay);
-            return this;
-        }
-        /**
-         * To use a custom and shared thread pool for asynchronous release
-         * tasks. See more details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option is a:
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * 
-         * Group: lock
-         */
-        default FtpsEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
-                ScheduledExecutorService readLockIdempotentReleaseExecutorService) {
-            setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
-            return this;
-        }
-        /**
-         * To use a custom and shared thread pool for asynchronous release
-         * tasks. See more details at the readLockIdempotentReleaseDelay option.
-         * 
-         * The option will be converted to a
-         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
-         * 
-         * Group: lock
-         */
-        default FtpsEndpointConsumerBuilder readLockIdempotentReleaseExecutorService(
-                String readLockIdempotentReleaseExecutorService) {
-            setProperty("readLockIdempotentReleaseExecutorService", readLockIdempotentReleaseExecutorService);
+            doSetProperty("readLockDeleteOrphanLockFiles", readLockDeleteOrphanLockFiles);
             return this;
         }
         /**
@@ -1317,7 +1184,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockLoggingLevel(
                 LoggingLevel readLockLoggingLevel) {
-            setProperty("readLockLoggingLevel", readLockLoggingLevel);
+            doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
         }
         /**
@@ -1334,7 +1201,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockLoggingLevel(
                 String readLockLoggingLevel) {
-            setProperty("readLockLoggingLevel", readLockLoggingLevel);
+            doSetProperty("readLockLoggingLevel", readLockLoggingLevel);
             return this;
         }
         /**
@@ -1351,7 +1218,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockMarkerFile(
                 boolean readLockMarkerFile) {
-            setProperty("readLockMarkerFile", readLockMarkerFile);
+            doSetProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
         }
         /**
@@ -1368,7 +1235,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockMarkerFile(
                 String readLockMarkerFile) {
-            setProperty("readLockMarkerFile", readLockMarkerFile);
+            doSetProperty("readLockMarkerFile", readLockMarkerFile);
             return this;
         }
         /**
@@ -1384,7 +1251,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
-            setProperty("readLockMinAge", readLockMinAge);
+            doSetProperty("readLockMinAge", readLockMinAge);
             return this;
         }
         /**
@@ -1400,7 +1267,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
-            setProperty("readLockMinAge", readLockMinAge);
+            doSetProperty("readLockMinAge", readLockMinAge);
             return this;
         }
         /**
@@ -1415,7 +1282,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockMinLength(
                 long readLockMinLength) {
-            setProperty("readLockMinLength", readLockMinLength);
+            doSetProperty("readLockMinLength", readLockMinLength);
             return this;
         }
         /**
@@ -1430,7 +1297,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockMinLength(
                 String readLockMinLength) {
-            setProperty("readLockMinLength", readLockMinLength);
+            doSetProperty("readLockMinLength", readLockMinLength);
             return this;
         }
         /**
@@ -1450,7 +1317,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnCommit(
                 boolean readLockRemoveOnCommit) {
-            setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
+            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
         }
         /**
@@ -1470,7 +1337,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnCommit(
                 String readLockRemoveOnCommit) {
-            setProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
+            doSetProperty("readLockRemoveOnCommit", readLockRemoveOnCommit);
             return this;
         }
         /**
@@ -1486,7 +1353,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnRollback(
                 boolean readLockRemoveOnRollback) {
-            setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
+            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
         }
         /**
@@ -1502,7 +1369,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnRollback(
                 String readLockRemoveOnRollback) {
-            setProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
+            doSetProperty("readLockRemoveOnRollback", readLockRemoveOnRollback);
             return this;
         }
         /**
@@ -1524,7 +1391,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
-            setProperty("readLockTimeout", readLockTimeout);
+            doSetProperty("readLockTimeout", readLockTimeout);
             return this;
         }
         /**
@@ -1547,7 +1414,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder readLockTimeout(
                 String readLockTimeout) {
-            setProperty("readLockTimeout", readLockTimeout);
+            doSetProperty("readLockTimeout", readLockTimeout);
             return this;
         }
         /**
@@ -1560,7 +1427,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -1573,7 +1440,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -1586,7 +1453,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -1599,7 +1466,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -1616,7 +1483,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -1633,7 +1500,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -1646,7 +1513,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -1659,7 +1526,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -1671,7 +1538,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -1683,7 +1550,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -1696,7 +1563,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -1709,7 +1576,33 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default FtpsEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default FtpsEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -1722,7 +1615,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -1736,7 +1629,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -1751,7 +1644,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -1766,41 +1659,24 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default FtpsEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -1809,12 +1685,12 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -1824,7 +1700,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -1836,7 +1712,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -1847,7 +1723,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -1858,7 +1734,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -1870,7 +1746,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -1882,7 +1758,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -1894,7 +1770,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -1905,7 +1781,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder shuffle(boolean shuffle) {
-            setProperty("shuffle", shuffle);
+            doSetProperty("shuffle", shuffle);
             return this;
         }
         /**
@@ -1916,7 +1792,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder shuffle(String shuffle) {
-            setProperty("shuffle", shuffle);
+            doSetProperty("shuffle", shuffle);
             return this;
         }
         /**
@@ -1931,7 +1807,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder sortBy(Comparator<Exchange> sortBy) {
-            setProperty("sortBy", sortBy);
+            doSetProperty("sortBy", sortBy);
             return this;
         }
         /**
@@ -1946,7 +1822,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder sortBy(String sortBy) {
-            setProperty("sortBy", sortBy);
+            doSetProperty("sortBy", sortBy);
             return this;
         }
         /**
@@ -1958,7 +1834,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder sorter(Comparator<Object> sorter) {
-            setProperty("sorter", sorter);
+            doSetProperty("sorter", sorter);
             return this;
         }
         /**
@@ -1970,7 +1846,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder sorter(String sorter) {
-            setProperty("sorter", sorter);
+            doSetProperty("sorter", sorter);
             return this;
         }
         /**
@@ -1981,7 +1857,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointConsumerBuilder account(String account) {
-            setProperty("account", account);
+            doSetProperty("account", account);
             return this;
         }
         /**
@@ -1995,7 +1871,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder disableSecureDataChannelDefaults(
                 boolean disableSecureDataChannelDefaults) {
-            setProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
+            doSetProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
             return this;
         }
         /**
@@ -2009,7 +1885,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder disableSecureDataChannelDefaults(
                 String disableSecureDataChannelDefaults) {
-            setProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
+            doSetProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
             return this;
         }
         /**
@@ -2021,7 +1897,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointConsumerBuilder execPbsz(Long execPbsz) {
-            setProperty("execPbsz", execPbsz);
+            doSetProperty("execPbsz", execPbsz);
             return this;
         }
         /**
@@ -2033,7 +1909,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointConsumerBuilder execPbsz(String execPbsz) {
-            setProperty("execPbsz", execPbsz);
+            doSetProperty("execPbsz", execPbsz);
             return this;
         }
         /**
@@ -2045,7 +1921,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointConsumerBuilder execProt(String execProt) {
-            setProperty("execProt", execProt);
+            doSetProperty("execProt", execProt);
             return this;
         }
         /**
@@ -2058,7 +1934,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder ftpClientKeyStoreParameters(
                 Map<String, Object> ftpClientKeyStoreParameters) {
-            setProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
+            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
             return this;
         }
         /**
@@ -2072,7 +1948,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder ftpClientKeyStoreParameters(
                 String ftpClientKeyStoreParameters) {
-            setProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
+            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
             return this;
         }
         /**
@@ -2085,7 +1961,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder ftpClientTrustStoreParameters(
                 Map<String, Object> ftpClientTrustStoreParameters) {
-            setProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
+            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
             return this;
         }
         /**
@@ -2099,31 +1975,31 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder ftpClientTrustStoreParameters(
                 String ftpClientTrustStoreParameters) {
-            setProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
+            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
             return this;
         }
         /**
-         * Set the security mode(Implicit/Explicit). true - Implicit Mode /
+         * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Group: security
          */
-        default FtpsEndpointConsumerBuilder isImplicit(boolean isImplicit) {
-            setProperty("isImplicit", isImplicit);
+        default FtpsEndpointConsumerBuilder implicit(boolean implicit) {
+            doSetProperty("implicit", implicit);
             return this;
         }
         /**
-         * Set the security mode(Implicit/Explicit). true - Implicit Mode /
+         * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: security
          */
-        default FtpsEndpointConsumerBuilder isImplicit(String isImplicit) {
-            setProperty("isImplicit", isImplicit);
+        default FtpsEndpointConsumerBuilder implicit(String implicit) {
+            doSetProperty("implicit", implicit);
             return this;
         }
         /**
@@ -2134,7 +2010,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -2146,7 +2022,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder securityProtocol(
                 String securityProtocol) {
-            setProperty("securityProtocol", securityProtocol);
+            doSetProperty("securityProtocol", securityProtocol);
             return this;
         }
         /**
@@ -2162,7 +2038,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2178,7 +2054,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2189,7 +2065,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -2219,7 +2095,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -2238,7 +2114,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder fastExistsCheck(
                 String fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -2253,7 +2129,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder download(boolean download) {
-            setProperty("download", download);
+            doSetProperty("download", download);
             return this;
         }
         /**
@@ -2268,7 +2144,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder download(String download) {
-            setProperty("download", download);
+            doSetProperty("download", download);
             return this;
         }
         /**
@@ -2284,7 +2160,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -2300,7 +2176,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -2312,7 +2188,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -2325,7 +2201,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -2341,7 +2217,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder handleDirectoryParserAbsoluteResult(
                 boolean handleDirectoryParserAbsoluteResult) {
-            setProperty("handleDirectoryParserAbsoluteResult", handleDirectoryParserAbsoluteResult);
+            doSetProperty("handleDirectoryParserAbsoluteResult", handleDirectoryParserAbsoluteResult);
             return this;
         }
         /**
@@ -2357,7 +2233,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder handleDirectoryParserAbsoluteResult(
                 String handleDirectoryParserAbsoluteResult) {
-            setProperty("handleDirectoryParserAbsoluteResult", handleDirectoryParserAbsoluteResult);
+            doSetProperty("handleDirectoryParserAbsoluteResult", handleDirectoryParserAbsoluteResult);
             return this;
         }
         /**
@@ -2373,7 +2249,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 boolean ignoreFileNotFoundOrPermissionError) {
-            setProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
+            doSetProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
             return this;
         }
         /**
@@ -2389,7 +2265,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
                 String ignoreFileNotFoundOrPermissionError) {
-            setProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
+            doSetProperty("ignoreFileNotFoundOrPermissionError", ignoreFileNotFoundOrPermissionError);
             return this;
         }
         /**
@@ -2405,7 +2281,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder inProgressRepository(
                 IdempotentRepository inProgressRepository) {
-            setProperty("inProgressRepository", inProgressRepository);
+            doSetProperty("inProgressRepository", inProgressRepository);
             return this;
         }
         /**
@@ -2421,7 +2297,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder inProgressRepository(
                 String inProgressRepository) {
-            setProperty("inProgressRepository", inProgressRepository);
+            doSetProperty("inProgressRepository", inProgressRepository);
             return this;
         }
         /**
@@ -2436,7 +2312,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder localWorkDirectory(
                 String localWorkDirectory) {
-            setProperty("localWorkDirectory", localWorkDirectory);
+            doSetProperty("localWorkDirectory", localWorkDirectory);
             return this;
         }
         /**
@@ -2452,7 +2328,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder onCompletionExceptionHandler(
                 ExceptionHandler onCompletionExceptionHandler) {
-            setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
         }
         /**
@@ -2468,7 +2344,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder onCompletionExceptionHandler(
                 String onCompletionExceptionHandler) {
-            setProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
+            doSetProperty("onCompletionExceptionHandler", onCompletionExceptionHandler);
             return this;
         }
         /**
@@ -2484,7 +2360,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -2500,7 +2376,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -2518,7 +2394,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder processStrategy(
                 Object processStrategy) {
-            setProperty("processStrategy", processStrategy);
+            doSetProperty("processStrategy", processStrategy);
             return this;
         }
         /**
@@ -2536,31 +2412,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder processStrategy(
                 String processStrategy) {
-            setProperty("processStrategy", processStrategy);
-            return this;
-        }
-        /**
-         * The receive (download) buffer size Used only by FTPClient.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpsEndpointConsumerBuilder receiveBufferSize(
-                int receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
-            return this;
-        }
-        /**
-         * The receive (download) buffer size Used only by FTPClient.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedFtpsEndpointConsumerBuilder receiveBufferSize(
-                String receiveBufferSize) {
-            setProperty("receiveBufferSize", receiveBufferSize);
+            doSetProperty("processStrategy", processStrategy);
             return this;
         }
         /**
@@ -2577,7 +2429,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder useList(boolean useList) {
-            setProperty("useList", useList);
+            doSetProperty("useList", useList);
             return this;
         }
         /**
@@ -2594,7 +2446,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder useList(String useList) {
-            setProperty("useList", useList);
+            doSetProperty("useList", useList);
             return this;
         }
         /**
@@ -2608,7 +2460,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder activePortRange(
                 String activePortRange) {
-            setProperty("activePortRange", activePortRange);
+            doSetProperty("activePortRange", activePortRange);
             return this;
         }
         /**
@@ -2623,7 +2475,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder autoCreate(
                 boolean autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -2637,7 +2489,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder autoCreate(String autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -2650,7 +2502,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2663,29 +2515,31 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -2698,7 +2552,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder connectTimeout(
                 int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -2711,7 +2565,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -2723,7 +2577,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClient(Object ftpClient) {
-            setProperty("ftpClient", ftpClient);
+            doSetProperty("ftpClient", ftpClient);
             return this;
         }
         /**
@@ -2735,7 +2589,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClient(String ftpClient) {
-            setProperty("ftpClient", ftpClient);
+            doSetProperty("ftpClient", ftpClient);
             return this;
         }
         /**
@@ -2749,7 +2603,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientConfig(
                 Object ftpClientConfig) {
-            setProperty("ftpClientConfig", ftpClientConfig);
+            doSetProperty("ftpClientConfig", ftpClientConfig);
             return this;
         }
         /**
@@ -2763,7 +2617,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientConfig(
                 String ftpClientConfig) {
-            setProperty("ftpClientConfig", ftpClientConfig);
+            doSetProperty("ftpClientConfig", ftpClientConfig);
             return this;
         }
         /**
@@ -2777,7 +2631,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientConfigParameters(
                 Map<String, Object> ftpClientConfigParameters) {
-            setProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
             return this;
         }
         /**
@@ -2792,7 +2646,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientConfigParameters(
                 String ftpClientConfigParameters) {
-            setProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
             return this;
         }
         /**
@@ -2806,7 +2660,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientParameters(
                 Map<String, Object> ftpClientParameters) {
-            setProperty("ftpClientParameters", ftpClientParameters);
+            doSetProperty("ftpClientParameters", ftpClientParameters);
             return this;
         }
         /**
@@ -2821,7 +2675,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder ftpClientParameters(
                 String ftpClientParameters) {
-            setProperty("ftpClientParameters", ftpClientParameters);
+            doSetProperty("ftpClientParameters", ftpClientParameters);
             return this;
         }
         /**
@@ -2834,7 +2688,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -2847,7 +2701,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -2860,7 +2714,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder reconnectDelay(
                 long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -2873,7 +2727,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder reconnectDelay(
                 String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -2886,7 +2740,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder siteCommand(
                 String siteCommand) {
-            setProperty("siteCommand", siteCommand);
+            doSetProperty("siteCommand", siteCommand);
             return this;
         }
         /**
@@ -2901,7 +2755,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder soTimeout(int soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -2916,7 +2770,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder soTimeout(String soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -2931,7 +2785,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder stepwise(boolean stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -2946,7 +2800,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder stepwise(String stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -2959,7 +2813,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2972,7 +2826,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2988,7 +2842,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -3004,7 +2858,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointConsumerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -3015,7 +2869,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -3026,7 +2880,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -3049,7 +2903,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder binary(boolean binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -3061,7 +2915,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder binary(String binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -3080,7 +2934,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder charset(String charset) {
-            setProperty("charset", charset);
+            doSetProperty("charset", charset);
             return this;
         }
         /**
@@ -3094,7 +2948,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -3108,7 +2962,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -3129,7 +2983,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder doneFileName(String doneFileName) {
-            setProperty("doneFileName", doneFileName);
+            doSetProperty("doneFileName", doneFileName);
             return this;
         }
         /**
@@ -3155,7 +3009,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -3182,7 +3036,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -3193,7 +3047,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder passiveMode(boolean passiveMode) {
-            setProperty("passiveMode", passiveMode);
+            doSetProperty("passiveMode", passiveMode);
             return this;
         }
         /**
@@ -3204,7 +3058,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder passiveMode(String passiveMode) {
-            setProperty("passiveMode", passiveMode);
+            doSetProperty("passiveMode", passiveMode);
             return this;
         }
         /**
@@ -3218,7 +3072,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder separator(PathSeparator separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -3232,7 +3086,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointProducerBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -3246,7 +3100,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder transferLoggingIntervalSeconds(
                 int transferLoggingIntervalSeconds) {
-            setProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
+            doSetProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
             return this;
         }
         /**
@@ -3260,7 +3114,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder transferLoggingIntervalSeconds(
                 String transferLoggingIntervalSeconds) {
-            setProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
+            doSetProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
             return this;
         }
         /**
@@ -3273,7 +3127,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder transferLoggingLevel(
                 LoggingLevel transferLoggingLevel) {
-            setProperty("transferLoggingLevel", transferLoggingLevel);
+            doSetProperty("transferLoggingLevel", transferLoggingLevel);
             return this;
         }
         /**
@@ -3287,7 +3141,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder transferLoggingLevel(
                 String transferLoggingLevel) {
-            setProperty("transferLoggingLevel", transferLoggingLevel);
+            doSetProperty("transferLoggingLevel", transferLoggingLevel);
             return this;
         }
         /**
@@ -3300,7 +3154,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder transferLoggingVerbose(
                 boolean transferLoggingVerbose) {
-            setProperty("transferLoggingVerbose", transferLoggingVerbose);
+            doSetProperty("transferLoggingVerbose", transferLoggingVerbose);
             return this;
         }
         /**
@@ -3313,25 +3167,25 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder transferLoggingVerbose(
                 String transferLoggingVerbose) {
-            setProperty("transferLoggingVerbose", transferLoggingVerbose);
+            doSetProperty("transferLoggingVerbose", transferLoggingVerbose);
             return this;
         }
         /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. Append - adds
-         * content to the existing file. Fail - throws a
+         * which is the default, replaces the existing file. - Append - adds
+         * content to the existing file. - Fail - throws a
          * GenericFileOperationException, indicating that there is already an
-         * existing file. Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay. Move -
+         * existing file. - Ignore - silently ignores the problem and does not
+         * override the existing file, but assumes everything is okay. - Move -
          * option requires to use the moveExisting option to be configured as
          * well. The option eagerDeleteTargetFile can be used to control what to
          * do if an moving the file, and there exists already an existing file,
          * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file. TryRename is
-         * only applicable if tempFileName option is in use. This allows to try
-         * renaming the file from the temporary name to the actual name, without
-         * doing any exists check. This check may be faster on some file systems
-         * and especially FTP servers.
+         * move any existing files, before writing the target file. - TryRename
+         * is only applicable if tempFileName option is in use. This allows to
+         * try renaming the file from the temporary name to the actual name,
+         * without doing any exists check. This check may be faster on some file
+         * systems and especially FTP servers.
          * 
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
@@ -3339,25 +3193,25 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer
          */
         default FtpsEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
-            setProperty("fileExist", fileExist);
+            doSetProperty("fileExist", fileExist);
             return this;
         }
         /**
          * What to do if a file already exists with the same name. Override,
-         * which is the default, replaces the existing file. Append - adds
-         * content to the existing file. Fail - throws a
+         * which is the default, replaces the existing file. - Append - adds
+         * content to the existing file. - Fail - throws a
          * GenericFileOperationException, indicating that there is already an
-         * existing file. Ignore - silently ignores the problem and does not
-         * override the existing file, but assumes everything is okay. Move -
+         * existing file. - Ignore - silently ignores the problem and does not
+         * override the existing file, but assumes everything is okay. - Move -
          * option requires to use the moveExisting option to be configured as
          * well. The option eagerDeleteTargetFile can be used to control what to
          * do if an moving the file, and there exists already an existing file,
          * otherwise causing the move operation to fail. The Move option will
-         * move any existing files, before writing the target file. TryRename is
-         * only applicable if tempFileName option is in use. This allows to try
-         * renaming the file from the temporary name to the actual name, without
-         * doing any exists check. This check may be faster on some file systems
-         * and especially FTP servers.
+         * move any existing files, before writing the target file. - TryRename
+         * is only applicable if tempFileName option is in use. This allows to
+         * try renaming the file from the temporary name to the actual name,
+         * without doing any exists check. This check may be faster on some file
+         * systems and especially FTP servers.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
@@ -3365,7 +3219,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer
          */
         default FtpsEndpointProducerBuilder fileExist(String fileExist) {
-            setProperty("fileExist", fileExist);
+            doSetProperty("fileExist", fileExist);
             return this;
         }
         /**
@@ -3381,7 +3235,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer
          */
         default FtpsEndpointProducerBuilder flatten(boolean flatten) {
-            setProperty("flatten", flatten);
+            doSetProperty("flatten", flatten);
             return this;
         }
         /**
@@ -3397,7 +3251,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer
          */
         default FtpsEndpointProducerBuilder flatten(String flatten) {
-            setProperty("flatten", flatten);
+            doSetProperty("flatten", flatten);
             return this;
         }
         /**
@@ -3414,7 +3268,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder jailStartingDirectory(
                 boolean jailStartingDirectory) {
-            setProperty("jailStartingDirectory", jailStartingDirectory);
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -3431,7 +3285,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder jailStartingDirectory(
                 String jailStartingDirectory) {
-            setProperty("jailStartingDirectory", jailStartingDirectory);
+            doSetProperty("jailStartingDirectory", jailStartingDirectory);
             return this;
         }
         /**
@@ -3451,7 +3305,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -3471,7 +3325,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -3489,7 +3343,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer
          */
         default FtpsEndpointProducerBuilder moveExisting(Expression moveExisting) {
-            setProperty("moveExisting", moveExisting);
+            doSetProperty("moveExisting", moveExisting);
             return this;
         }
         /**
@@ -3508,7 +3362,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer
          */
         default FtpsEndpointProducerBuilder moveExisting(String moveExisting) {
-            setProperty("moveExisting", moveExisting);
+            doSetProperty("moveExisting", moveExisting);
             return this;
         }
         /**
@@ -3525,7 +3379,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer
          */
         default FtpsEndpointProducerBuilder tempFileName(Expression tempFileName) {
-            setProperty("tempFileName", tempFileName);
+            doSetProperty("tempFileName", tempFileName);
             return this;
         }
         /**
@@ -3543,7 +3397,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer
          */
         default FtpsEndpointProducerBuilder tempFileName(String tempFileName) {
-            setProperty("tempFileName", tempFileName);
+            doSetProperty("tempFileName", tempFileName);
             return this;
         }
         /**
@@ -3558,7 +3412,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer
          */
         default FtpsEndpointProducerBuilder tempPrefix(String tempPrefix) {
-            setProperty("tempPrefix", tempPrefix);
+            doSetProperty("tempPrefix", tempPrefix);
             return this;
         }
         /**
@@ -3569,7 +3423,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointProducerBuilder account(String account) {
-            setProperty("account", account);
+            doSetProperty("account", account);
             return this;
         }
         /**
@@ -3583,7 +3437,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder disableSecureDataChannelDefaults(
                 boolean disableSecureDataChannelDefaults) {
-            setProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
+            doSetProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
             return this;
         }
         /**
@@ -3597,7 +3451,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder disableSecureDataChannelDefaults(
                 String disableSecureDataChannelDefaults) {
-            setProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
+            doSetProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
             return this;
         }
         /**
@@ -3609,7 +3463,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointProducerBuilder execPbsz(Long execPbsz) {
-            setProperty("execPbsz", execPbsz);
+            doSetProperty("execPbsz", execPbsz);
             return this;
         }
         /**
@@ -3621,7 +3475,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointProducerBuilder execPbsz(String execPbsz) {
-            setProperty("execPbsz", execPbsz);
+            doSetProperty("execPbsz", execPbsz);
             return this;
         }
         /**
@@ -3633,7 +3487,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointProducerBuilder execProt(String execProt) {
-            setProperty("execProt", execProt);
+            doSetProperty("execProt", execProt);
             return this;
         }
         /**
@@ -3646,7 +3500,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder ftpClientKeyStoreParameters(
                 Map<String, Object> ftpClientKeyStoreParameters) {
-            setProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
+            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
             return this;
         }
         /**
@@ -3660,7 +3514,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder ftpClientKeyStoreParameters(
                 String ftpClientKeyStoreParameters) {
-            setProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
+            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
             return this;
         }
         /**
@@ -3673,7 +3527,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder ftpClientTrustStoreParameters(
                 Map<String, Object> ftpClientTrustStoreParameters) {
-            setProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
+            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
             return this;
         }
         /**
@@ -3687,31 +3541,31 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder ftpClientTrustStoreParameters(
                 String ftpClientTrustStoreParameters) {
-            setProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
+            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
             return this;
         }
         /**
-         * Set the security mode(Implicit/Explicit). true - Implicit Mode /
+         * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Group: security
          */
-        default FtpsEndpointProducerBuilder isImplicit(boolean isImplicit) {
-            setProperty("isImplicit", isImplicit);
+        default FtpsEndpointProducerBuilder implicit(boolean implicit) {
+            doSetProperty("implicit", implicit);
             return this;
         }
         /**
-         * Set the security mode(Implicit/Explicit). true - Implicit Mode /
+         * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: security
          */
-        default FtpsEndpointProducerBuilder isImplicit(String isImplicit) {
-            setProperty("isImplicit", isImplicit);
+        default FtpsEndpointProducerBuilder implicit(String implicit) {
+            doSetProperty("implicit", implicit);
             return this;
         }
         /**
@@ -3722,7 +3576,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -3734,7 +3588,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder securityProtocol(
                 String securityProtocol) {
-            setProperty("securityProtocol", securityProtocol);
+            doSetProperty("securityProtocol", securityProtocol);
             return this;
         }
         /**
@@ -3750,7 +3604,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -3766,7 +3620,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -3777,7 +3631,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -3807,7 +3661,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -3826,7 +3680,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder fastExistsCheck(
                 String fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -3844,7 +3698,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -3862,7 +3716,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -3873,7 +3727,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder chmod(String chmod) {
-            setProperty("chmod", chmod);
+            doSetProperty("chmod", chmod);
             return this;
         }
         /**
@@ -3887,7 +3741,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder disconnectOnBatchComplete(
                 boolean disconnectOnBatchComplete) {
-            setProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
+            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
             return this;
         }
         /**
@@ -3901,7 +3755,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder disconnectOnBatchComplete(
                 String disconnectOnBatchComplete) {
-            setProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
+            doSetProperty("disconnectOnBatchComplete", disconnectOnBatchComplete);
             return this;
         }
         /**
@@ -3925,7 +3779,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder eagerDeleteTargetFile(
                 boolean eagerDeleteTargetFile) {
-            setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
+            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
         }
         /**
@@ -3949,7 +3803,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder eagerDeleteTargetFile(
                 String eagerDeleteTargetFile) {
-            setProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
+            doSetProperty("eagerDeleteTargetFile", eagerDeleteTargetFile);
             return this;
         }
         /**
@@ -3967,7 +3821,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder keepLastModified(
                 boolean keepLastModified) {
-            setProperty("keepLastModified", keepLastModified);
+            doSetProperty("keepLastModified", keepLastModified);
             return this;
         }
         /**
@@ -3985,7 +3839,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder keepLastModified(
                 String keepLastModified) {
-            setProperty("keepLastModified", keepLastModified);
+            doSetProperty("keepLastModified", keepLastModified);
             return this;
         }
         /**
@@ -4000,7 +3854,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder moveExistingFileStrategy(
                 Object moveExistingFileStrategy) {
-            setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
         }
         /**
@@ -4015,7 +3869,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder moveExistingFileStrategy(
                 String moveExistingFileStrategy) {
-            setProperty("moveExistingFileStrategy", moveExistingFileStrategy);
+            doSetProperty("moveExistingFileStrategy", moveExistingFileStrategy);
             return this;
         }
         /**
@@ -4030,7 +3884,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder sendNoop(boolean sendNoop) {
-            setProperty("sendNoop", sendNoop);
+            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -4045,7 +3899,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder sendNoop(String sendNoop) {
-            setProperty("sendNoop", sendNoop);
+            doSetProperty("sendNoop", sendNoop);
             return this;
         }
         /**
@@ -4059,7 +3913,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder activePortRange(
                 String activePortRange) {
-            setProperty("activePortRange", activePortRange);
+            doSetProperty("activePortRange", activePortRange);
             return this;
         }
         /**
@@ -4074,7 +3928,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder autoCreate(
                 boolean autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -4088,7 +3942,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder autoCreate(String autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -4101,7 +3955,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -4114,29 +3968,31 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -4149,7 +4005,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder connectTimeout(
                 int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -4162,7 +4018,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder connectTimeout(
                 String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -4174,7 +4030,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClient(Object ftpClient) {
-            setProperty("ftpClient", ftpClient);
+            doSetProperty("ftpClient", ftpClient);
             return this;
         }
         /**
@@ -4186,7 +4042,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClient(String ftpClient) {
-            setProperty("ftpClient", ftpClient);
+            doSetProperty("ftpClient", ftpClient);
             return this;
         }
         /**
@@ -4200,7 +4056,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientConfig(
                 Object ftpClientConfig) {
-            setProperty("ftpClientConfig", ftpClientConfig);
+            doSetProperty("ftpClientConfig", ftpClientConfig);
             return this;
         }
         /**
@@ -4214,7 +4070,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientConfig(
                 String ftpClientConfig) {
-            setProperty("ftpClientConfig", ftpClientConfig);
+            doSetProperty("ftpClientConfig", ftpClientConfig);
             return this;
         }
         /**
@@ -4228,7 +4084,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientConfigParameters(
                 Map<String, Object> ftpClientConfigParameters) {
-            setProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
             return this;
         }
         /**
@@ -4243,7 +4099,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientConfigParameters(
                 String ftpClientConfigParameters) {
-            setProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
             return this;
         }
         /**
@@ -4257,7 +4113,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientParameters(
                 Map<String, Object> ftpClientParameters) {
-            setProperty("ftpClientParameters", ftpClientParameters);
+            doSetProperty("ftpClientParameters", ftpClientParameters);
             return this;
         }
         /**
@@ -4272,7 +4128,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder ftpClientParameters(
                 String ftpClientParameters) {
-            setProperty("ftpClientParameters", ftpClientParameters);
+            doSetProperty("ftpClientParameters", ftpClientParameters);
             return this;
         }
         /**
@@ -4285,7 +4141,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -4298,7 +4154,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -4311,7 +4167,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder reconnectDelay(
                 long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -4324,7 +4180,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder reconnectDelay(
                 String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -4337,7 +4193,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder siteCommand(
                 String siteCommand) {
-            setProperty("siteCommand", siteCommand);
+            doSetProperty("siteCommand", siteCommand);
             return this;
         }
         /**
@@ -4352,7 +4208,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder soTimeout(int soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -4367,7 +4223,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder soTimeout(String soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -4382,7 +4238,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder stepwise(boolean stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -4397,7 +4253,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder stepwise(String stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -4410,7 +4266,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -4423,7 +4279,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -4439,7 +4295,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -4455,7 +4311,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointProducerBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -4466,7 +4322,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -4477,7 +4333,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -4500,7 +4356,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder binary(boolean binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -4512,7 +4368,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder binary(String binary) {
-            setProperty("binary", binary);
+            doSetProperty("binary", binary);
             return this;
         }
         /**
@@ -4531,7 +4387,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder charset(String charset) {
-            setProperty("charset", charset);
+            doSetProperty("charset", charset);
             return this;
         }
         /**
@@ -4545,7 +4401,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -4559,7 +4415,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -4580,7 +4436,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder doneFileName(String doneFileName) {
-            setProperty("doneFileName", doneFileName);
+            doSetProperty("doneFileName", doneFileName);
             return this;
         }
         /**
@@ -4606,7 +4462,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder fileName(Expression fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -4633,7 +4489,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder fileName(String fileName) {
-            setProperty("fileName", fileName);
+            doSetProperty("fileName", fileName);
             return this;
         }
         /**
@@ -4644,7 +4500,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder passiveMode(boolean passiveMode) {
-            setProperty("passiveMode", passiveMode);
+            doSetProperty("passiveMode", passiveMode);
             return this;
         }
         /**
@@ -4655,7 +4511,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder passiveMode(String passiveMode) {
-            setProperty("passiveMode", passiveMode);
+            doSetProperty("passiveMode", passiveMode);
             return this;
         }
         /**
@@ -4669,7 +4525,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder separator(PathSeparator separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -4683,7 +4539,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: common
          */
         default FtpsEndpointBuilder separator(String separator) {
-            setProperty("separator", separator);
+            doSetProperty("separator", separator);
             return this;
         }
         /**
@@ -4697,7 +4553,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder transferLoggingIntervalSeconds(
                 int transferLoggingIntervalSeconds) {
-            setProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
+            doSetProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
             return this;
         }
         /**
@@ -4711,7 +4567,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder transferLoggingIntervalSeconds(
                 String transferLoggingIntervalSeconds) {
-            setProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
+            doSetProperty("transferLoggingIntervalSeconds", transferLoggingIntervalSeconds);
             return this;
         }
         /**
@@ -4724,7 +4580,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder transferLoggingLevel(
                 LoggingLevel transferLoggingLevel) {
-            setProperty("transferLoggingLevel", transferLoggingLevel);
+            doSetProperty("transferLoggingLevel", transferLoggingLevel);
             return this;
         }
         /**
@@ -4738,7 +4594,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder transferLoggingLevel(
                 String transferLoggingLevel) {
-            setProperty("transferLoggingLevel", transferLoggingLevel);
+            doSetProperty("transferLoggingLevel", transferLoggingLevel);
             return this;
         }
         /**
@@ -4751,7 +4607,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder transferLoggingVerbose(
                 boolean transferLoggingVerbose) {
-            setProperty("transferLoggingVerbose", transferLoggingVerbose);
+            doSetProperty("transferLoggingVerbose", transferLoggingVerbose);
             return this;
         }
         /**
@@ -4764,7 +4620,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder transferLoggingVerbose(
                 String transferLoggingVerbose) {
-            setProperty("transferLoggingVerbose", transferLoggingVerbose);
+            doSetProperty("transferLoggingVerbose", transferLoggingVerbose);
             return this;
         }
         /**
@@ -4775,7 +4631,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointBuilder account(String account) {
-            setProperty("account", account);
+            doSetProperty("account", account);
             return this;
         }
         /**
@@ -4789,7 +4645,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder disableSecureDataChannelDefaults(
                 boolean disableSecureDataChannelDefaults) {
-            setProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
+            doSetProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
             return this;
         }
         /**
@@ -4803,7 +4659,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder disableSecureDataChannelDefaults(
                 String disableSecureDataChannelDefaults) {
-            setProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
+            doSetProperty("disableSecureDataChannelDefaults", disableSecureDataChannelDefaults);
             return this;
         }
         /**
@@ -4815,7 +4671,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointBuilder execPbsz(Long execPbsz) {
-            setProperty("execPbsz", execPbsz);
+            doSetProperty("execPbsz", execPbsz);
             return this;
         }
         /**
@@ -4827,7 +4683,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointBuilder execPbsz(String execPbsz) {
-            setProperty("execPbsz", execPbsz);
+            doSetProperty("execPbsz", execPbsz);
             return this;
         }
         /**
@@ -4839,7 +4695,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointBuilder execProt(String execProt) {
-            setProperty("execProt", execProt);
+            doSetProperty("execProt", execProt);
             return this;
         }
         /**
@@ -4852,7 +4708,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder ftpClientKeyStoreParameters(
                 Map<String, Object> ftpClientKeyStoreParameters) {
-            setProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
+            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
             return this;
         }
         /**
@@ -4866,7 +4722,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder ftpClientKeyStoreParameters(
                 String ftpClientKeyStoreParameters) {
-            setProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
+            doSetProperty("ftpClientKeyStoreParameters", ftpClientKeyStoreParameters);
             return this;
         }
         /**
@@ -4879,7 +4735,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder ftpClientTrustStoreParameters(
                 Map<String, Object> ftpClientTrustStoreParameters) {
-            setProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
+            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
             return this;
         }
         /**
@@ -4893,31 +4749,31 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder ftpClientTrustStoreParameters(
                 String ftpClientTrustStoreParameters) {
-            setProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
+            doSetProperty("ftpClientTrustStoreParameters", ftpClientTrustStoreParameters);
             return this;
         }
         /**
-         * Set the security mode(Implicit/Explicit). true - Implicit Mode /
+         * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Group: security
          */
-        default FtpsEndpointBuilder isImplicit(boolean isImplicit) {
-            setProperty("isImplicit", isImplicit);
+        default FtpsEndpointBuilder implicit(boolean implicit) {
+            doSetProperty("implicit", implicit);
             return this;
         }
         /**
-         * Set the security mode(Implicit/Explicit). true - Implicit Mode /
+         * Set the security mode (Implicit/Explicit). true - Implicit Mode /
          * False - Explicit Mode.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: security
          */
-        default FtpsEndpointBuilder isImplicit(String isImplicit) {
-            setProperty("isImplicit", isImplicit);
+        default FtpsEndpointBuilder implicit(String implicit) {
+            doSetProperty("implicit", implicit);
             return this;
         }
         /**
@@ -4928,7 +4784,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -4939,7 +4795,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointBuilder securityProtocol(String securityProtocol) {
-            setProperty("securityProtocol", securityProtocol);
+            doSetProperty("securityProtocol", securityProtocol);
             return this;
         }
         /**
@@ -4955,7 +4811,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -4971,7 +4827,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default FtpsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -4982,7 +4838,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: security
          */
         default FtpsEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -5012,7 +4868,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder fastExistsCheck(
                 boolean fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -5031,7 +4887,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder fastExistsCheck(
                 String fastExistsCheck) {
-            setProperty("fastExistsCheck", fastExistsCheck);
+            doSetProperty("fastExistsCheck", fastExistsCheck);
             return this;
         }
         /**
@@ -5045,7 +4901,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder activePortRange(
                 String activePortRange) {
-            setProperty("activePortRange", activePortRange);
+            doSetProperty("activePortRange", activePortRange);
             return this;
         }
         /**
@@ -5059,7 +4915,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder autoCreate(boolean autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -5073,7 +4929,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder autoCreate(String autoCreate) {
-            setProperty("autoCreate", autoCreate);
+            doSetProperty("autoCreate", autoCreate);
             return this;
         }
         /**
@@ -5086,7 +4942,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -5099,29 +4955,31 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option is a: <code>int</code> type.
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
-         * Write buffer sized in bytes.
+         * Buffer size in bytes used for writing files (or in case of FTP for
+         * downloading and uploading files).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -5133,7 +4991,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder connectTimeout(int connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -5145,7 +5003,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder connectTimeout(String connectTimeout) {
-            setProperty("connectTimeout", connectTimeout);
+            doSetProperty("connectTimeout", connectTimeout);
             return this;
         }
         /**
@@ -5157,7 +5015,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder ftpClient(Object ftpClient) {
-            setProperty("ftpClient", ftpClient);
+            doSetProperty("ftpClient", ftpClient);
             return this;
         }
         /**
@@ -5169,7 +5027,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder ftpClient(String ftpClient) {
-            setProperty("ftpClient", ftpClient);
+            doSetProperty("ftpClient", ftpClient);
             return this;
         }
         /**
@@ -5183,7 +5041,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder ftpClientConfig(
                 Object ftpClientConfig) {
-            setProperty("ftpClientConfig", ftpClientConfig);
+            doSetProperty("ftpClientConfig", ftpClientConfig);
             return this;
         }
         /**
@@ -5197,7 +5055,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder ftpClientConfig(
                 String ftpClientConfig) {
-            setProperty("ftpClientConfig", ftpClientConfig);
+            doSetProperty("ftpClientConfig", ftpClientConfig);
             return this;
         }
         /**
@@ -5211,7 +5069,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder ftpClientConfigParameters(
                 Map<String, Object> ftpClientConfigParameters) {
-            setProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
             return this;
         }
         /**
@@ -5226,7 +5084,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder ftpClientConfigParameters(
                 String ftpClientConfigParameters) {
-            setProperty("ftpClientConfigParameters", ftpClientConfigParameters);
+            doSetProperty("ftpClientConfigParameters", ftpClientConfigParameters);
             return this;
         }
         /**
@@ -5240,7 +5098,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder ftpClientParameters(
                 Map<String, Object> ftpClientParameters) {
-            setProperty("ftpClientParameters", ftpClientParameters);
+            doSetProperty("ftpClientParameters", ftpClientParameters);
             return this;
         }
         /**
@@ -5255,7 +5113,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder ftpClientParameters(
                 String ftpClientParameters) {
-            setProperty("ftpClientParameters", ftpClientParameters);
+            doSetProperty("ftpClientParameters", ftpClientParameters);
             return this;
         }
         /**
@@ -5268,7 +5126,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder maximumReconnectAttempts(
                 int maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -5281,7 +5139,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder maximumReconnectAttempts(
                 String maximumReconnectAttempts) {
-            setProperty("maximumReconnectAttempts", maximumReconnectAttempts);
+            doSetProperty("maximumReconnectAttempts", maximumReconnectAttempts);
             return this;
         }
         /**
@@ -5293,7 +5151,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder reconnectDelay(long reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -5305,7 +5163,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder reconnectDelay(String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -5317,7 +5175,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder siteCommand(String siteCommand) {
-            setProperty("siteCommand", siteCommand);
+            doSetProperty("siteCommand", siteCommand);
             return this;
         }
         /**
@@ -5332,7 +5190,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder soTimeout(int soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -5347,7 +5205,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder soTimeout(String soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -5362,7 +5220,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder stepwise(boolean stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -5377,7 +5235,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder stepwise(String stepwise) {
-            setProperty("stepwise", stepwise);
+            doSetProperty("stepwise", stepwise);
             return this;
         }
         /**
@@ -5389,7 +5247,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -5401,7 +5259,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -5417,7 +5275,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder throwExceptionOnConnectFailed(
                 boolean throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -5433,7 +5291,7 @@ public interface FtpsEndpointBuilderFactory {
          */
         default AdvancedFtpsEndpointBuilder throwExceptionOnConnectFailed(
                 String throwExceptionOnConnectFailed) {
-            setProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
+            doSetProperty("throwExceptionOnConnectFailed", throwExceptionOnConnectFailed);
             return this;
         }
         /**
@@ -5444,7 +5302,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -5455,7 +5313,7 @@ public interface FtpsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
     }
@@ -5488,7 +5346,7 @@ public interface FtpsEndpointBuilderFactory {
      * downloading files from FTP servers.
      * 
      * Category: file
-     * Available as of version: 2.2
+     * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-ftp
      * 
      * Syntax: <code>ftps:host:port/directoryName</code>

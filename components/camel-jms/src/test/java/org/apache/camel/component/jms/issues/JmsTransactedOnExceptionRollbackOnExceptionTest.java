@@ -64,6 +64,7 @@ public class JmsTransactedOnExceptionRollbackOnExceptionTest extends CamelTestSu
         assertEquals("Hello World", dlqBody);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

@@ -17,6 +17,7 @@
 package org.apache.camel.component.xmlsecurity;
 
 import java.util.Map;
+
 import javax.xml.crypto.URIDereferencer;
 
 import org.apache.camel.Consumer;
@@ -49,6 +50,14 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
 
     public XmlSignatureEndpoint(String uri, XmlSignatureComponent component) {
         super(uri, component);
+    }
+
+    public XmlSignerConfiguration getSignerConfiguration() {
+        return signerConfiguration;
+    }
+
+    public XmlVerifierConfiguration getVerifierConfiguration() {
+        return verifierConfiguration;
     }
 
     public XmlCommand getCommand() {

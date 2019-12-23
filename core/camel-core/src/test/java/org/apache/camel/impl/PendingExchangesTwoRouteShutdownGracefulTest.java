@@ -53,7 +53,8 @@ public class PendingExchangesTwoRouteShutdownGracefulTest extends ContextTestSup
         assertTrue(latch.await(10, TimeUnit.SECONDS));
         context.stop();
 
-        // it should wait as there were 2 inflight exchanges and 8 pending messages left
+        // it should wait as there were 2 inflight exchanges and 8 pending
+        // messages left
         assertEquals("Should graceful shutdown", "ABCDE", foo);
         assertEquals("Should graceful shutdown", "ABCDE", bar);
     }

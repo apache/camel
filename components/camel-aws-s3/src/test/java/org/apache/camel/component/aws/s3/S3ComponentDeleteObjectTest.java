@@ -31,7 +31,7 @@ public class S3ComponentDeleteObjectTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 

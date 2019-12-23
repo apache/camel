@@ -17,9 +17,11 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * The paxlogging component can be used in an OSGi environment to receive
@@ -40,6 +42,42 @@ public interface PaxLoggingEndpointBuilderFactory {
         default AdvancedPaxLoggingEndpointBuilder advanced() {
             return (AdvancedPaxLoggingEndpointBuilder) this;
         }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default PaxLoggingEndpointBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default PaxLoggingEndpointBuilder bridgeErrorHandler(
+                String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
     }
 
     /**
@@ -52,6 +90,63 @@ public interface PaxLoggingEndpointBuilderFactory {
             return (PaxLoggingEndpointBuilder) this;
         }
         /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedPaxLoggingEndpointBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedPaxLoggingEndpointBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedPaxLoggingEndpointBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedPaxLoggingEndpointBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -61,7 +156,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          */
         default AdvancedPaxLoggingEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -74,7 +169,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          */
         default AdvancedPaxLoggingEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -87,7 +182,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          */
         default AdvancedPaxLoggingEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -99,7 +194,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPaxLoggingEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -109,7 +204,7 @@ public interface PaxLoggingEndpointBuilderFactory {
      * PaxLogging events and process them.
      * 
      * Category: monitoring
-     * Available as of version: 2.6
+     * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-paxlogging
      * 
      * Syntax: <code>paxlogging:appender</code>
@@ -118,7 +213,7 @@ public interface PaxLoggingEndpointBuilderFactory {
      * Appender is the name of the pax appender that need to be configured in
      * the PaxLogging service configuration.
      */
-    default PaxLoggingEndpointBuilder paxLogging(String path) {
+    default PaxLoggingEndpointBuilder paxlogging(String path) {
         class PaxLoggingEndpointBuilderImpl extends AbstractEndpointBuilder implements PaxLoggingEndpointBuilder, AdvancedPaxLoggingEndpointBuilder {
             public PaxLoggingEndpointBuilderImpl(String path) {
                 super("paxlogging", path);

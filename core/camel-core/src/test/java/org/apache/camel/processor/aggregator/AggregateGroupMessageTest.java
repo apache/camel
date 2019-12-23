@@ -54,15 +54,12 @@ public class AggregateGroupMessageTest extends ContextTestSupport {
         assertEquals("200", grouped.get(3).getBody(String.class));
         assertEquals("190", grouped.get(4).getBody(String.class));
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(constant(true), new GroupedMessageAggregationStrategy())
-                    .completionTimeout(500L)
-                    .to("mock:result");
+                from("direct:start").aggregate(constant(true), new GroupedMessageAggregationStrategy()).completionTimeout(500L).to("mock:result");
             }
         };
     }

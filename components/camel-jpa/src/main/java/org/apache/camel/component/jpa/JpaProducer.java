@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -42,6 +43,7 @@ public class JpaProducer extends DefaultProducer {
     private String query;
     private String namedQuery;
     private String nativeQuery;
+    private boolean findEntity;
     private Map<String, Object> parameters;
     private Class<?> resultClass;
     private QueryFactory queryFactory;
@@ -83,7 +85,7 @@ public class JpaProducer extends DefaultProducer {
     public void setParameters(Map<String, Object> params) {
         this.parameters = params;
     }
-    
+
     public Map<String, Object> getParameters() {
         return parameters;
     }
@@ -111,7 +113,15 @@ public class JpaProducer extends DefaultProducer {
     public void setQuery(String query) {
         this.query = query;
     }
-    
+
+    public boolean isFindEntity() {
+        return findEntity;
+    }
+
+    public void setFindEntity(boolean findEntity) {
+        this.findEntity = findEntity;
+    }
+
     public Class<?> getResultClass() {
         return resultClass;
     }
@@ -145,12 +155,15 @@ public class JpaProducer extends DefaultProducer {
         return useExecuteUpdate;
     }
 
+    @Override
     public void process(final Exchange exchange) {
         // resolve the entity manager before evaluating the expression
         final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory,
                 getEndpoint().isUsePassedInEntityManager(), getEndpoint().isSharedEntityManager(), true);
 
-        if (getQueryFactory() != null) {
+        if (findEntity) {
+            processFind(exchange, entityManager);
+        } else if (getQueryFactory() != null) {
             processQuery(exchange, entityManager);
         } else {
             processEntity(exchange, entityManager);
@@ -204,6 +217,32 @@ public class JpaProducer extends DefaultProducer {
         }
     }
 
+    protected void processFind(Exchange exchange, EntityManager entityManager) {
+        final Object key = exchange.getMessage().getBody();
+
+        if (key != null) {
+            transactionTemplate.execute(new TransactionCallback<Object>() {
+                public Object doInTransaction(TransactionStatus status) {
+                    if (getEndpoint().isJoinTransaction()) {
+                        entityManager.joinTransaction();
+                    }
+
+                    Object answer = entityManager.find(getEndpoint().getEntityType(), key);
+                    log.debug("Find: {} -> {}", key, answer);
+
+                    Message target = exchange.getPattern().isOutCapable() ? exchange.getOut() : exchange.getIn();
+                    target.setBody(answer);
+
+                    if (getEndpoint().isFlushOnSend()) {
+                        entityManager.flush();
+                    }
+
+                    return null;
+                }
+            });
+        }
+    }
+
     protected void processEntity(Exchange exchange, EntityManager entityManager) {
         final Object values = expression.evaluate(exchange, Object.class);
 
@@ -216,24 +255,43 @@ public class JpaProducer extends DefaultProducer {
 
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
-                        for (Object element : array) {
+                        // need to create an array to store returned values as they can be updated
+                        // by JPA such as setting auto assigned ids
+                        Object[] managedArray = new Object[array.length];
+                        Object managedEntity;
+                        for (int i = 0; i < array.length; i++) {
+                            Object element = array[i];
                             if (!getEndpoint().isRemove()) {
-                                save(element);
+                                managedEntity = save(element);
                             } else {
-                                remove(element);
+                                managedEntity = remove(element);
                             }
+                            managedArray[i] = managedEntity;
+                        }
+                        if (!getEndpoint().isUsePersist()) {
+                            // and copy back to original array
+                            System.arraycopy(managedArray, 0, array, 0, array.length);
+                            exchange.getIn().setBody(array);
                         }
                     } else if (values instanceof Collection) {
                         Collection<?> collection = (Collection<?>)values;
+                        // need to create a list to store returned values as they can be updated
+                        // by JPA such as setting auto assigned ids
+                        Collection managedCollection = new ArrayList<>(collection.size());
+                        Object managedEntity;
                         for (Object entity : collection) {
                             if (!getEndpoint().isRemove()) {
-                                save(entity);
+                                managedEntity = save(entity);
                             } else {
-                                remove(entity);
+                                managedEntity = remove(entity);
                             }
+                            managedCollection.add(managedEntity);
+                        }
+                        if (!getEndpoint().isUsePersist()) {
+                            exchange.getIn().setBody(managedCollection);
                         }
                     } else {
-                        Object managedEntity = null;
+                        Object managedEntity;
                         if (!getEndpoint().isRemove()) {
                             managedEntity = save(values);
                         } else {
@@ -252,7 +310,7 @@ public class JpaProducer extends DefaultProducer {
                 }
 
                 /**
-                 * Save the given entity end return the managed entity
+                 * Save the given entity and return the managed entity
                  *
                  * @return the managed entity
                  */
@@ -265,9 +323,9 @@ public class JpaProducer extends DefaultProducer {
                         return entityManager.merge(entity);
                     }
                 }
-                
+
                 /**
-                 * Remove the given entity end return the managed entity
+                 * Remove the given entity and return the managed entity
                  *
                  * @return the managed entity
                  */

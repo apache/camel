@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.example;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Before;
@@ -59,6 +60,7 @@ public class ContentBasedRouteTest extends SpringTestSupport {
         notMatchedEndpoint = getMockEndpoint("mock:notMatched");
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/example/contentBasedRoute.xml");
     }

@@ -35,15 +35,15 @@ public class MyDummyBean {
     public String bye(String s) {
         return "Bye " + s;
     }
-    
+
     public String bar(String s) {
         return "String";
     }
-    
+
     public String bar(Reader s) {
         return "Reader";
     }
-    
+
     public String bar(InputStream s) {
         return "InputStream";
     }

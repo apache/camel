@@ -51,7 +51,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder apexMethod(String apexMethod) {
-            setProperty("apexMethod", apexMethod);
+            doSetProperty("apexMethod", apexMethod);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder apexQueryParams(
                 Map<String, Object> apexQueryParams) {
-            setProperty("apexQueryParams", apexQueryParams);
+            doSetProperty("apexQueryParams", apexQueryParams);
             return this;
         }
         /**
@@ -78,7 +78,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder apexQueryParams(
                 String apexQueryParams) {
-            setProperty("apexQueryParams", apexQueryParams);
+            doSetProperty("apexQueryParams", apexQueryParams);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder apexUrl(String apexUrl) {
-            setProperty("apexUrl", apexUrl);
+            doSetProperty("apexUrl", apexUrl);
             return this;
         }
         /**
@@ -101,7 +101,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder backoffIncrement(
                 long backoffIncrement) {
-            setProperty("backoffIncrement", backoffIncrement);
+            doSetProperty("backoffIncrement", backoffIncrement);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder backoffIncrement(
                 String backoffIncrement) {
-            setProperty("backoffIncrement", backoffIncrement);
+            doSetProperty("backoffIncrement", backoffIncrement);
             return this;
         }
         /**
@@ -138,7 +138,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder batchId(String batchId) {
-            setProperty("batchId", batchId);
+            doSetProperty("batchId", batchId);
             return this;
         }
         /**
@@ -151,7 +151,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder contentType(
                 ContentType contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -163,7 +163,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -175,7 +175,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder defaultReplayId(
                 Long defaultReplayId) {
-            setProperty("defaultReplayId", defaultReplayId);
+            doSetProperty("defaultReplayId", defaultReplayId);
             return this;
         }
         /**
@@ -187,7 +187,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder defaultReplayId(
                 String defaultReplayId) {
-            setProperty("defaultReplayId", defaultReplayId);
+            doSetProperty("defaultReplayId", defaultReplayId);
             return this;
         }
         /**
@@ -200,7 +200,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder format(PayloadFormat format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -213,7 +213,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder format(String format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder httpClient(Object httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -237,7 +237,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder httpClient(String httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder includeDetails(
                 Boolean includeDetails) {
-            setProperty("includeDetails", includeDetails);
+            doSetProperty("includeDetails", includeDetails);
             return this;
         }
         /**
@@ -262,7 +262,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder includeDetails(
                 String includeDetails) {
-            setProperty("includeDetails", includeDetails);
+            doSetProperty("includeDetails", includeDetails);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder initialReplayIdMap(
                 Map<String, Long> initialReplayIdMap) {
-            setProperty("initialReplayIdMap", initialReplayIdMap);
+            doSetProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
         }
         /**
@@ -289,7 +289,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder initialReplayIdMap(
                 String initialReplayIdMap) {
-            setProperty("initialReplayIdMap", initialReplayIdMap);
+            doSetProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder instanceId(String instanceId) {
-            setProperty("instanceId", instanceId);
+            doSetProperty("instanceId", instanceId);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder jobId(String jobId) {
-            setProperty("jobId", jobId);
+            doSetProperty("jobId", jobId);
             return this;
         }
         /**
@@ -323,7 +323,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder limit(Integer limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -336,7 +336,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder limit(String limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -348,7 +348,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder maxBackoff(long maxBackoff) {
-            setProperty("maxBackoff", maxBackoff);
+            doSetProperty("maxBackoff", maxBackoff);
             return this;
         }
         /**
@@ -360,7 +360,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder maxBackoff(String maxBackoff) {
-            setProperty("maxBackoff", maxBackoff);
+            doSetProperty("maxBackoff", maxBackoff);
             return this;
         }
         /**
@@ -377,7 +377,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notFoundBehaviour(
                 NotFoundBehaviour notFoundBehaviour) {
-            setProperty("notFoundBehaviour", notFoundBehaviour);
+            doSetProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
         }
         /**
@@ -394,7 +394,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notFoundBehaviour(
                 String notFoundBehaviour) {
-            setProperty("notFoundBehaviour", notFoundBehaviour);
+            doSetProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
         }
         /**
@@ -407,7 +407,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForFields(
                 NotifyForFieldsEnum notifyForFields) {
-            setProperty("notifyForFields", notifyForFields);
+            doSetProperty("notifyForFields", notifyForFields);
             return this;
         }
         /**
@@ -420,7 +420,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForFields(
                 String notifyForFields) {
-            setProperty("notifyForFields", notifyForFields);
+            doSetProperty("notifyForFields", notifyForFields);
             return this;
         }
         /**
@@ -432,7 +432,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperationCreate(
                 Boolean notifyForOperationCreate) {
-            setProperty("notifyForOperationCreate", notifyForOperationCreate);
+            doSetProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
         }
         /**
@@ -445,7 +445,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperationCreate(
                 String notifyForOperationCreate) {
-            setProperty("notifyForOperationCreate", notifyForOperationCreate);
+            doSetProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
         }
         /**
@@ -457,7 +457,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperationDelete(
                 Boolean notifyForOperationDelete) {
-            setProperty("notifyForOperationDelete", notifyForOperationDelete);
+            doSetProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
         }
         /**
@@ -470,7 +470,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperationDelete(
                 String notifyForOperationDelete) {
-            setProperty("notifyForOperationDelete", notifyForOperationDelete);
+            doSetProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
         }
         /**
@@ -484,7 +484,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperations(
                 NotifyForOperationsEnum notifyForOperations) {
-            setProperty("notifyForOperations", notifyForOperations);
+            doSetProperty("notifyForOperations", notifyForOperations);
             return this;
         }
         /**
@@ -498,7 +498,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperations(
                 String notifyForOperations) {
-            setProperty("notifyForOperations", notifyForOperations);
+            doSetProperty("notifyForOperations", notifyForOperations);
             return this;
         }
         /**
@@ -511,7 +511,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperationUndelete(
                 Boolean notifyForOperationUndelete) {
-            setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
+            doSetProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
         }
         /**
@@ -525,7 +525,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperationUndelete(
                 String notifyForOperationUndelete) {
-            setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
+            doSetProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
         }
         /**
@@ -537,7 +537,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperationUpdate(
                 Boolean notifyForOperationUpdate) {
-            setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
+            doSetProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
         }
         /**
@@ -550,7 +550,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder notifyForOperationUpdate(
                 String notifyForOperationUpdate) {
-            setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
+            doSetProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
         }
         /**
@@ -564,7 +564,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder objectMapper(
                 Object objectMapper) {
-            setProperty("objectMapper", objectMapper);
+            doSetProperty("objectMapper", objectMapper);
             return this;
         }
         /**
@@ -578,7 +578,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder objectMapper(
                 String objectMapper) {
-            setProperty("objectMapper", objectMapper);
+            doSetProperty("objectMapper", objectMapper);
             return this;
         }
         /**
@@ -590,7 +590,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder rawPayload(boolean rawPayload) {
-            setProperty("rawPayload", rawPayload);
+            doSetProperty("rawPayload", rawPayload);
             return this;
         }
         /**
@@ -602,7 +602,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder rawPayload(String rawPayload) {
-            setProperty("rawPayload", rawPayload);
+            doSetProperty("rawPayload", rawPayload);
             return this;
         }
         /**
@@ -613,7 +613,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder reportId(String reportId) {
-            setProperty("reportId", reportId);
+            doSetProperty("reportId", reportId);
             return this;
         }
         /**
@@ -626,7 +626,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder reportMetadata(
                 Object reportMetadata) {
-            setProperty("reportMetadata", reportMetadata);
+            doSetProperty("reportMetadata", reportMetadata);
             return this;
         }
         /**
@@ -639,7 +639,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder reportMetadata(
                 String reportMetadata) {
-            setProperty("reportMetadata", reportMetadata);
+            doSetProperty("reportMetadata", reportMetadata);
             return this;
         }
         /**
@@ -650,33 +650,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder resultId(String resultId) {
-            setProperty("resultId", resultId);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointConsumerBuilder serializeNulls(
-                boolean serializeNulls) {
-            setProperty("serializeNulls", serializeNulls);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointConsumerBuilder serializeNulls(
-                String serializeNulls) {
-            setProperty("serializeNulls", serializeNulls);
+            doSetProperty("resultId", resultId);
             return this;
         }
         /**
@@ -688,7 +662,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder sObjectBlobFieldName(
                 String sObjectBlobFieldName) {
-            setProperty("sObjectBlobFieldName", sObjectBlobFieldName);
+            doSetProperty("sObjectBlobFieldName", sObjectBlobFieldName);
             return this;
         }
         /**
@@ -701,7 +675,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder sObjectClass(
                 String sObjectClass) {
-            setProperty("sObjectClass", sObjectClass);
+            doSetProperty("sObjectClass", sObjectClass);
             return this;
         }
         /**
@@ -713,7 +687,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder sObjectFields(
                 String sObjectFields) {
-            setProperty("sObjectFields", sObjectFields);
+            doSetProperty("sObjectFields", sObjectFields);
             return this;
         }
         /**
@@ -724,7 +698,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder sObjectId(String sObjectId) {
-            setProperty("sObjectId", sObjectId);
+            doSetProperty("sObjectId", sObjectId);
             return this;
         }
         /**
@@ -736,7 +710,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder sObjectIdName(
                 String sObjectIdName) {
-            setProperty("sObjectIdName", sObjectIdName);
+            doSetProperty("sObjectIdName", sObjectIdName);
             return this;
         }
         /**
@@ -748,7 +722,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder sObjectIdValue(
                 String sObjectIdValue) {
-            setProperty("sObjectIdValue", sObjectIdValue);
+            doSetProperty("sObjectIdValue", sObjectIdValue);
             return this;
         }
         /**
@@ -759,7 +733,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder sObjectName(String sObjectName) {
-            setProperty("sObjectName", sObjectName);
+            doSetProperty("sObjectName", sObjectName);
             return this;
         }
         /**
@@ -771,7 +745,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder sObjectQuery(
                 String sObjectQuery) {
-            setProperty("sObjectQuery", sObjectQuery);
+            doSetProperty("sObjectQuery", sObjectQuery);
             return this;
         }
         /**
@@ -783,7 +757,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder sObjectSearch(
                 String sObjectSearch) {
-            setProperty("sObjectSearch", sObjectSearch);
+            doSetProperty("sObjectSearch", sObjectSearch);
             return this;
         }
         /**
@@ -796,7 +770,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder updateTopic(
                 boolean updateTopic) {
-            setProperty("updateTopic", updateTopic);
+            doSetProperty("updateTopic", updateTopic);
             return this;
         }
         /**
@@ -808,7 +782,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder updateTopic(String updateTopic) {
-            setProperty("updateTopic", updateTopic);
+            doSetProperty("updateTopic", updateTopic);
             return this;
         }
         /**
@@ -826,7 +800,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -844,7 +818,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -855,7 +829,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: consumer
          */
         default SalesforceEndpointConsumerBuilder replayId(Long replayId) {
-            setProperty("replayId", replayId);
+            doSetProperty("replayId", replayId);
             return this;
         }
         /**
@@ -866,7 +840,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: consumer
          */
         default SalesforceEndpointConsumerBuilder replayId(String replayId) {
-            setProperty("replayId", replayId);
+            doSetProperty("replayId", replayId);
             return this;
         }
     }
@@ -893,7 +867,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -909,7 +883,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -921,7 +895,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -934,7 +908,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -947,7 +921,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -960,7 +934,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -973,7 +947,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -986,7 +960,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1008,7 +982,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder apexMethod(String apexMethod) {
-            setProperty("apexMethod", apexMethod);
+            doSetProperty("apexMethod", apexMethod);
             return this;
         }
         /**
@@ -1021,7 +995,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder apexQueryParams(
                 Map<String, Object> apexQueryParams) {
-            setProperty("apexQueryParams", apexQueryParams);
+            doSetProperty("apexQueryParams", apexQueryParams);
             return this;
         }
         /**
@@ -1035,7 +1009,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder apexQueryParams(
                 String apexQueryParams) {
-            setProperty("apexQueryParams", apexQueryParams);
+            doSetProperty("apexQueryParams", apexQueryParams);
             return this;
         }
         /**
@@ -1046,7 +1020,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder apexUrl(String apexUrl) {
-            setProperty("apexUrl", apexUrl);
+            doSetProperty("apexUrl", apexUrl);
             return this;
         }
         /**
@@ -1058,7 +1032,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -1071,7 +1045,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder backoffIncrement(
                 long backoffIncrement) {
-            setProperty("backoffIncrement", backoffIncrement);
+            doSetProperty("backoffIncrement", backoffIncrement);
             return this;
         }
         /**
@@ -1084,7 +1058,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder backoffIncrement(
                 String backoffIncrement) {
-            setProperty("backoffIncrement", backoffIncrement);
+            doSetProperty("backoffIncrement", backoffIncrement);
             return this;
         }
         /**
@@ -1095,7 +1069,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder batchId(String batchId) {
-            setProperty("batchId", batchId);
+            doSetProperty("batchId", batchId);
             return this;
         }
         /**
@@ -1108,7 +1082,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder contentType(
                 ContentType contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -1120,7 +1094,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -1132,7 +1106,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder defaultReplayId(
                 Long defaultReplayId) {
-            setProperty("defaultReplayId", defaultReplayId);
+            doSetProperty("defaultReplayId", defaultReplayId);
             return this;
         }
         /**
@@ -1144,7 +1118,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder defaultReplayId(
                 String defaultReplayId) {
-            setProperty("defaultReplayId", defaultReplayId);
+            doSetProperty("defaultReplayId", defaultReplayId);
             return this;
         }
         /**
@@ -1157,7 +1131,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder format(PayloadFormat format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -1170,7 +1144,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder format(String format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -1182,7 +1156,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder httpClient(Object httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -1194,7 +1168,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder httpClient(String httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -1206,7 +1180,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder includeDetails(
                 Boolean includeDetails) {
-            setProperty("includeDetails", includeDetails);
+            doSetProperty("includeDetails", includeDetails);
             return this;
         }
         /**
@@ -1219,7 +1193,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder includeDetails(
                 String includeDetails) {
-            setProperty("includeDetails", includeDetails);
+            doSetProperty("includeDetails", includeDetails);
             return this;
         }
         /**
@@ -1232,7 +1206,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder initialReplayIdMap(
                 Map<String, Long> initialReplayIdMap) {
-            setProperty("initialReplayIdMap", initialReplayIdMap);
+            doSetProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
         }
         /**
@@ -1246,7 +1220,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder initialReplayIdMap(
                 String initialReplayIdMap) {
-            setProperty("initialReplayIdMap", initialReplayIdMap);
+            doSetProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
         }
         /**
@@ -1257,7 +1231,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder instanceId(String instanceId) {
-            setProperty("instanceId", instanceId);
+            doSetProperty("instanceId", instanceId);
             return this;
         }
         /**
@@ -1268,7 +1242,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder jobId(String jobId) {
-            setProperty("jobId", jobId);
+            doSetProperty("jobId", jobId);
             return this;
         }
         /**
@@ -1280,7 +1254,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder limit(Integer limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -1293,7 +1267,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder limit(String limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -1305,7 +1279,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder maxBackoff(long maxBackoff) {
-            setProperty("maxBackoff", maxBackoff);
+            doSetProperty("maxBackoff", maxBackoff);
             return this;
         }
         /**
@@ -1317,7 +1291,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder maxBackoff(String maxBackoff) {
-            setProperty("maxBackoff", maxBackoff);
+            doSetProperty("maxBackoff", maxBackoff);
             return this;
         }
         /**
@@ -1334,7 +1308,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notFoundBehaviour(
                 NotFoundBehaviour notFoundBehaviour) {
-            setProperty("notFoundBehaviour", notFoundBehaviour);
+            doSetProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
         }
         /**
@@ -1351,7 +1325,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notFoundBehaviour(
                 String notFoundBehaviour) {
-            setProperty("notFoundBehaviour", notFoundBehaviour);
+            doSetProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
         }
         /**
@@ -1364,7 +1338,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForFields(
                 NotifyForFieldsEnum notifyForFields) {
-            setProperty("notifyForFields", notifyForFields);
+            doSetProperty("notifyForFields", notifyForFields);
             return this;
         }
         /**
@@ -1377,7 +1351,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForFields(
                 String notifyForFields) {
-            setProperty("notifyForFields", notifyForFields);
+            doSetProperty("notifyForFields", notifyForFields);
             return this;
         }
         /**
@@ -1389,7 +1363,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperationCreate(
                 Boolean notifyForOperationCreate) {
-            setProperty("notifyForOperationCreate", notifyForOperationCreate);
+            doSetProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
         }
         /**
@@ -1402,7 +1376,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperationCreate(
                 String notifyForOperationCreate) {
-            setProperty("notifyForOperationCreate", notifyForOperationCreate);
+            doSetProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
         }
         /**
@@ -1414,7 +1388,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperationDelete(
                 Boolean notifyForOperationDelete) {
-            setProperty("notifyForOperationDelete", notifyForOperationDelete);
+            doSetProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
         }
         /**
@@ -1427,7 +1401,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperationDelete(
                 String notifyForOperationDelete) {
-            setProperty("notifyForOperationDelete", notifyForOperationDelete);
+            doSetProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
         }
         /**
@@ -1441,7 +1415,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperations(
                 NotifyForOperationsEnum notifyForOperations) {
-            setProperty("notifyForOperations", notifyForOperations);
+            doSetProperty("notifyForOperations", notifyForOperations);
             return this;
         }
         /**
@@ -1455,7 +1429,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperations(
                 String notifyForOperations) {
-            setProperty("notifyForOperations", notifyForOperations);
+            doSetProperty("notifyForOperations", notifyForOperations);
             return this;
         }
         /**
@@ -1468,7 +1442,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperationUndelete(
                 Boolean notifyForOperationUndelete) {
-            setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
+            doSetProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
         }
         /**
@@ -1482,7 +1456,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperationUndelete(
                 String notifyForOperationUndelete) {
-            setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
+            doSetProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
         }
         /**
@@ -1494,7 +1468,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperationUpdate(
                 Boolean notifyForOperationUpdate) {
-            setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
+            doSetProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
         }
         /**
@@ -1507,7 +1481,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder notifyForOperationUpdate(
                 String notifyForOperationUpdate) {
-            setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
+            doSetProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
         }
         /**
@@ -1521,7 +1495,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder objectMapper(
                 Object objectMapper) {
-            setProperty("objectMapper", objectMapper);
+            doSetProperty("objectMapper", objectMapper);
             return this;
         }
         /**
@@ -1535,7 +1509,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder objectMapper(
                 String objectMapper) {
-            setProperty("objectMapper", objectMapper);
+            doSetProperty("objectMapper", objectMapper);
             return this;
         }
         /**
@@ -1547,7 +1521,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder rawPayload(boolean rawPayload) {
-            setProperty("rawPayload", rawPayload);
+            doSetProperty("rawPayload", rawPayload);
             return this;
         }
         /**
@@ -1559,7 +1533,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder rawPayload(String rawPayload) {
-            setProperty("rawPayload", rawPayload);
+            doSetProperty("rawPayload", rawPayload);
             return this;
         }
         /**
@@ -1570,7 +1544,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder reportId(String reportId) {
-            setProperty("reportId", reportId);
+            doSetProperty("reportId", reportId);
             return this;
         }
         /**
@@ -1583,7 +1557,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder reportMetadata(
                 Object reportMetadata) {
-            setProperty("reportMetadata", reportMetadata);
+            doSetProperty("reportMetadata", reportMetadata);
             return this;
         }
         /**
@@ -1596,7 +1570,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder reportMetadata(
                 String reportMetadata) {
-            setProperty("reportMetadata", reportMetadata);
+            doSetProperty("reportMetadata", reportMetadata);
             return this;
         }
         /**
@@ -1607,33 +1581,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder resultId(String resultId) {
-            setProperty("resultId", resultId);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointProducerBuilder serializeNulls(
-                boolean serializeNulls) {
-            setProperty("serializeNulls", serializeNulls);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointProducerBuilder serializeNulls(
-                String serializeNulls) {
-            setProperty("serializeNulls", serializeNulls);
+            doSetProperty("resultId", resultId);
             return this;
         }
         /**
@@ -1645,7 +1593,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder sObjectBlobFieldName(
                 String sObjectBlobFieldName) {
-            setProperty("sObjectBlobFieldName", sObjectBlobFieldName);
+            doSetProperty("sObjectBlobFieldName", sObjectBlobFieldName);
             return this;
         }
         /**
@@ -1658,7 +1606,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder sObjectClass(
                 String sObjectClass) {
-            setProperty("sObjectClass", sObjectClass);
+            doSetProperty("sObjectClass", sObjectClass);
             return this;
         }
         /**
@@ -1670,7 +1618,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder sObjectFields(
                 String sObjectFields) {
-            setProperty("sObjectFields", sObjectFields);
+            doSetProperty("sObjectFields", sObjectFields);
             return this;
         }
         /**
@@ -1681,7 +1629,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder sObjectId(String sObjectId) {
-            setProperty("sObjectId", sObjectId);
+            doSetProperty("sObjectId", sObjectId);
             return this;
         }
         /**
@@ -1693,7 +1641,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder sObjectIdName(
                 String sObjectIdName) {
-            setProperty("sObjectIdName", sObjectIdName);
+            doSetProperty("sObjectIdName", sObjectIdName);
             return this;
         }
         /**
@@ -1705,7 +1653,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder sObjectIdValue(
                 String sObjectIdValue) {
-            setProperty("sObjectIdValue", sObjectIdValue);
+            doSetProperty("sObjectIdValue", sObjectIdValue);
             return this;
         }
         /**
@@ -1716,7 +1664,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder sObjectName(String sObjectName) {
-            setProperty("sObjectName", sObjectName);
+            doSetProperty("sObjectName", sObjectName);
             return this;
         }
         /**
@@ -1728,7 +1676,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder sObjectQuery(
                 String sObjectQuery) {
-            setProperty("sObjectQuery", sObjectQuery);
+            doSetProperty("sObjectQuery", sObjectQuery);
             return this;
         }
         /**
@@ -1740,7 +1688,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder sObjectSearch(
                 String sObjectSearch) {
-            setProperty("sObjectSearch", sObjectSearch);
+            doSetProperty("sObjectSearch", sObjectSearch);
             return this;
         }
         /**
@@ -1753,7 +1701,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder updateTopic(
                 boolean updateTopic) {
-            setProperty("updateTopic", updateTopic);
+            doSetProperty("updateTopic", updateTopic);
             return this;
         }
         /**
@@ -1765,7 +1713,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointProducerBuilder updateTopic(String updateTopic) {
-            setProperty("updateTopic", updateTopic);
+            doSetProperty("updateTopic", updateTopic);
             return this;
         }
         /**
@@ -1785,7 +1733,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1805,7 +1753,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -1829,7 +1777,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1842,7 +1790,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1855,7 +1803,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1868,7 +1816,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1890,7 +1838,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder apexMethod(String apexMethod) {
-            setProperty("apexMethod", apexMethod);
+            doSetProperty("apexMethod", apexMethod);
             return this;
         }
         /**
@@ -1903,7 +1851,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder apexQueryParams(
                 Map<String, Object> apexQueryParams) {
-            setProperty("apexQueryParams", apexQueryParams);
+            doSetProperty("apexQueryParams", apexQueryParams);
             return this;
         }
         /**
@@ -1916,7 +1864,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder apexQueryParams(String apexQueryParams) {
-            setProperty("apexQueryParams", apexQueryParams);
+            doSetProperty("apexQueryParams", apexQueryParams);
             return this;
         }
         /**
@@ -1927,7 +1875,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder apexUrl(String apexUrl) {
-            setProperty("apexUrl", apexUrl);
+            doSetProperty("apexUrl", apexUrl);
             return this;
         }
         /**
@@ -1939,7 +1887,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -1951,7 +1899,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder backoffIncrement(long backoffIncrement) {
-            setProperty("backoffIncrement", backoffIncrement);
+            doSetProperty("backoffIncrement", backoffIncrement);
             return this;
         }
         /**
@@ -1964,7 +1912,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder backoffIncrement(
                 String backoffIncrement) {
-            setProperty("backoffIncrement", backoffIncrement);
+            doSetProperty("backoffIncrement", backoffIncrement);
             return this;
         }
         /**
@@ -1975,7 +1923,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder batchId(String batchId) {
-            setProperty("batchId", batchId);
+            doSetProperty("batchId", batchId);
             return this;
         }
         /**
@@ -1987,7 +1935,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder contentType(ContentType contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -1999,7 +1947,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -2010,7 +1958,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder defaultReplayId(Long defaultReplayId) {
-            setProperty("defaultReplayId", defaultReplayId);
+            doSetProperty("defaultReplayId", defaultReplayId);
             return this;
         }
         /**
@@ -2021,7 +1969,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder defaultReplayId(String defaultReplayId) {
-            setProperty("defaultReplayId", defaultReplayId);
+            doSetProperty("defaultReplayId", defaultReplayId);
             return this;
         }
         /**
@@ -2034,7 +1982,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder format(PayloadFormat format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -2047,7 +1995,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder format(String format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -2059,7 +2007,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder httpClient(Object httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -2071,7 +2019,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder httpClient(String httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -2082,7 +2030,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder includeDetails(Boolean includeDetails) {
-            setProperty("includeDetails", includeDetails);
+            doSetProperty("includeDetails", includeDetails);
             return this;
         }
         /**
@@ -2094,7 +2042,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder includeDetails(String includeDetails) {
-            setProperty("includeDetails", includeDetails);
+            doSetProperty("includeDetails", includeDetails);
             return this;
         }
         /**
@@ -2107,7 +2055,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder initialReplayIdMap(
                 Map<String, Long> initialReplayIdMap) {
-            setProperty("initialReplayIdMap", initialReplayIdMap);
+            doSetProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
         }
         /**
@@ -2121,7 +2069,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder initialReplayIdMap(
                 String initialReplayIdMap) {
-            setProperty("initialReplayIdMap", initialReplayIdMap);
+            doSetProperty("initialReplayIdMap", initialReplayIdMap);
             return this;
         }
         /**
@@ -2132,7 +2080,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder instanceId(String instanceId) {
-            setProperty("instanceId", instanceId);
+            doSetProperty("instanceId", instanceId);
             return this;
         }
         /**
@@ -2143,7 +2091,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder jobId(String jobId) {
-            setProperty("jobId", jobId);
+            doSetProperty("jobId", jobId);
             return this;
         }
         /**
@@ -2155,7 +2103,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder limit(Integer limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -2168,7 +2116,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder limit(String limit) {
-            setProperty("limit", limit);
+            doSetProperty("limit", limit);
             return this;
         }
         /**
@@ -2180,7 +2128,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder maxBackoff(long maxBackoff) {
-            setProperty("maxBackoff", maxBackoff);
+            doSetProperty("maxBackoff", maxBackoff);
             return this;
         }
         /**
@@ -2192,7 +2140,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder maxBackoff(String maxBackoff) {
-            setProperty("maxBackoff", maxBackoff);
+            doSetProperty("maxBackoff", maxBackoff);
             return this;
         }
         /**
@@ -2209,7 +2157,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notFoundBehaviour(
                 NotFoundBehaviour notFoundBehaviour) {
-            setProperty("notFoundBehaviour", notFoundBehaviour);
+            doSetProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
         }
         /**
@@ -2226,7 +2174,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notFoundBehaviour(
                 String notFoundBehaviour) {
-            setProperty("notFoundBehaviour", notFoundBehaviour);
+            doSetProperty("notFoundBehaviour", notFoundBehaviour);
             return this;
         }
         /**
@@ -2239,7 +2187,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForFields(
                 NotifyForFieldsEnum notifyForFields) {
-            setProperty("notifyForFields", notifyForFields);
+            doSetProperty("notifyForFields", notifyForFields);
             return this;
         }
         /**
@@ -2251,7 +2199,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder notifyForFields(String notifyForFields) {
-            setProperty("notifyForFields", notifyForFields);
+            doSetProperty("notifyForFields", notifyForFields);
             return this;
         }
         /**
@@ -2263,7 +2211,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperationCreate(
                 Boolean notifyForOperationCreate) {
-            setProperty("notifyForOperationCreate", notifyForOperationCreate);
+            doSetProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
         }
         /**
@@ -2276,7 +2224,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperationCreate(
                 String notifyForOperationCreate) {
-            setProperty("notifyForOperationCreate", notifyForOperationCreate);
+            doSetProperty("notifyForOperationCreate", notifyForOperationCreate);
             return this;
         }
         /**
@@ -2288,7 +2236,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperationDelete(
                 Boolean notifyForOperationDelete) {
-            setProperty("notifyForOperationDelete", notifyForOperationDelete);
+            doSetProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
         }
         /**
@@ -2301,7 +2249,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperationDelete(
                 String notifyForOperationDelete) {
-            setProperty("notifyForOperationDelete", notifyForOperationDelete);
+            doSetProperty("notifyForOperationDelete", notifyForOperationDelete);
             return this;
         }
         /**
@@ -2315,7 +2263,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperations(
                 NotifyForOperationsEnum notifyForOperations) {
-            setProperty("notifyForOperations", notifyForOperations);
+            doSetProperty("notifyForOperations", notifyForOperations);
             return this;
         }
         /**
@@ -2329,7 +2277,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperations(
                 String notifyForOperations) {
-            setProperty("notifyForOperations", notifyForOperations);
+            doSetProperty("notifyForOperations", notifyForOperations);
             return this;
         }
         /**
@@ -2342,7 +2290,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperationUndelete(
                 Boolean notifyForOperationUndelete) {
-            setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
+            doSetProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
         }
         /**
@@ -2356,7 +2304,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperationUndelete(
                 String notifyForOperationUndelete) {
-            setProperty("notifyForOperationUndelete", notifyForOperationUndelete);
+            doSetProperty("notifyForOperationUndelete", notifyForOperationUndelete);
             return this;
         }
         /**
@@ -2368,7 +2316,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperationUpdate(
                 Boolean notifyForOperationUpdate) {
-            setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
+            doSetProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
         }
         /**
@@ -2381,7 +2329,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder notifyForOperationUpdate(
                 String notifyForOperationUpdate) {
-            setProperty("notifyForOperationUpdate", notifyForOperationUpdate);
+            doSetProperty("notifyForOperationUpdate", notifyForOperationUpdate);
             return this;
         }
         /**
@@ -2394,7 +2342,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder objectMapper(Object objectMapper) {
-            setProperty("objectMapper", objectMapper);
+            doSetProperty("objectMapper", objectMapper);
             return this;
         }
         /**
@@ -2407,7 +2355,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder objectMapper(String objectMapper) {
-            setProperty("objectMapper", objectMapper);
+            doSetProperty("objectMapper", objectMapper);
             return this;
         }
         /**
@@ -2419,7 +2367,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder rawPayload(boolean rawPayload) {
-            setProperty("rawPayload", rawPayload);
+            doSetProperty("rawPayload", rawPayload);
             return this;
         }
         /**
@@ -2431,7 +2379,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder rawPayload(String rawPayload) {
-            setProperty("rawPayload", rawPayload);
+            doSetProperty("rawPayload", rawPayload);
             return this;
         }
         /**
@@ -2442,7 +2390,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder reportId(String reportId) {
-            setProperty("reportId", reportId);
+            doSetProperty("reportId", reportId);
             return this;
         }
         /**
@@ -2454,7 +2402,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder reportMetadata(Object reportMetadata) {
-            setProperty("reportMetadata", reportMetadata);
+            doSetProperty("reportMetadata", reportMetadata);
             return this;
         }
         /**
@@ -2466,7 +2414,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder reportMetadata(String reportMetadata) {
-            setProperty("reportMetadata", reportMetadata);
+            doSetProperty("reportMetadata", reportMetadata);
             return this;
         }
         /**
@@ -2477,31 +2425,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder resultId(String resultId) {
-            setProperty("resultId", resultId);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointBuilder serializeNulls(boolean serializeNulls) {
-            setProperty("serializeNulls", serializeNulls);
-            return this;
-        }
-        /**
-         * Should the NULL values of given DTO be serialized with empty (NULL)
-         * values. This affects only JSON data format.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default SalesforceEndpointBuilder serializeNulls(String serializeNulls) {
-            setProperty("serializeNulls", serializeNulls);
+            doSetProperty("resultId", resultId);
             return this;
         }
         /**
@@ -2513,7 +2437,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default SalesforceEndpointBuilder sObjectBlobFieldName(
                 String sObjectBlobFieldName) {
-            setProperty("sObjectBlobFieldName", sObjectBlobFieldName);
+            doSetProperty("sObjectBlobFieldName", sObjectBlobFieldName);
             return this;
         }
         /**
@@ -2525,7 +2449,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder sObjectClass(String sObjectClass) {
-            setProperty("sObjectClass", sObjectClass);
+            doSetProperty("sObjectClass", sObjectClass);
             return this;
         }
         /**
@@ -2536,7 +2460,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder sObjectFields(String sObjectFields) {
-            setProperty("sObjectFields", sObjectFields);
+            doSetProperty("sObjectFields", sObjectFields);
             return this;
         }
         /**
@@ -2547,7 +2471,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder sObjectId(String sObjectId) {
-            setProperty("sObjectId", sObjectId);
+            doSetProperty("sObjectId", sObjectId);
             return this;
         }
         /**
@@ -2558,7 +2482,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder sObjectIdName(String sObjectIdName) {
-            setProperty("sObjectIdName", sObjectIdName);
+            doSetProperty("sObjectIdName", sObjectIdName);
             return this;
         }
         /**
@@ -2569,7 +2493,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder sObjectIdValue(String sObjectIdValue) {
-            setProperty("sObjectIdValue", sObjectIdValue);
+            doSetProperty("sObjectIdValue", sObjectIdValue);
             return this;
         }
         /**
@@ -2580,7 +2504,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder sObjectName(String sObjectName) {
-            setProperty("sObjectName", sObjectName);
+            doSetProperty("sObjectName", sObjectName);
             return this;
         }
         /**
@@ -2591,7 +2515,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder sObjectQuery(String sObjectQuery) {
-            setProperty("sObjectQuery", sObjectQuery);
+            doSetProperty("sObjectQuery", sObjectQuery);
             return this;
         }
         /**
@@ -2602,7 +2526,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder sObjectSearch(String sObjectSearch) {
-            setProperty("sObjectSearch", sObjectSearch);
+            doSetProperty("sObjectSearch", sObjectSearch);
             return this;
         }
         /**
@@ -2614,7 +2538,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder updateTopic(boolean updateTopic) {
-            setProperty("updateTopic", updateTopic);
+            doSetProperty("updateTopic", updateTopic);
             return this;
         }
         /**
@@ -2626,7 +2550,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: common
          */
         default SalesforceEndpointBuilder updateTopic(String updateTopic) {
-            setProperty("updateTopic", updateTopic);
+            doSetProperty("updateTopic", updateTopic);
             return this;
         }
     }
@@ -2650,7 +2574,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2663,7 +2587,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2676,7 +2600,7 @@ public interface SalesforceEndpointBuilderFactory {
          */
         default AdvancedSalesforceEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2688,7 +2612,7 @@ public interface SalesforceEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSalesforceEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -2753,7 +2677,7 @@ public interface SalesforceEndpointBuilderFactory {
      * Salesforce API.
      * 
      * Category: api,cloud,crm
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-salesforce
      * 
      * Syntax: <code>salesforce:operationName:topicName</code>

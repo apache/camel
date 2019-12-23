@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jira.JiraConstants.JIRA_REST_CLIENT_FACTORY;
 
-
 /**
  * The jira component interacts with the JIRA issue tracker.
  * <p>
@@ -69,21 +68,22 @@ public class JiraEndpoint extends DefaultEndpoint {
     @UriPath
     @Metadata(required = true)
     private JiraType type;
-
     @UriParam(label = "consumer")
     private String jql;
-
     @UriParam(label = "consumer", defaultValue = "50")
     private Integer maxResults = 50;
-
     @UriParam
     private JiraConfiguration configuration;
 
-    private JiraRestClient client;
+    private transient JiraRestClient client;
 
     public JiraEndpoint(String uri, JiraComponent component, JiraConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+
+    public JiraConfiguration getConfiguration() {
+        return configuration;
     }
 
     @Override
@@ -138,17 +138,18 @@ public class JiraEndpoint extends DefaultEndpoint {
         }
     }
 
-    public Consumer createConsumer(Processor processor) {
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        Consumer consumer;
         if (type == JiraType.NEWCOMMENTS) {
-            return new NewCommentsConsumer(this, processor);
+            consumer = new NewCommentsConsumer(this, processor);
         } else if (type == JiraType.NEWISSUES) {
-            return new NewIssuesConsumer(this, processor);
+            consumer = new NewIssuesConsumer(this, processor);
+        } else {
+            throw new IllegalArgumentException("Consumer does not support type: " + type);
         }
-        throw new IllegalArgumentException("Consumer does not support type: " + type);
-    }
-
-    public boolean isSingleton() {
-        return true;
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public JiraType getType() {

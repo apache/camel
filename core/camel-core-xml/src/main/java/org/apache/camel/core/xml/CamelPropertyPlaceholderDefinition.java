@@ -17,6 +17,7 @@
 package org.apache.camel.core.xml;
 
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -44,10 +45,6 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
     private String propertiesParserRef;
     @XmlAttribute @Metadata(defaultValue = "true")
     private Boolean defaultFallbackEnabled;
-    @XmlAttribute @Metadata(defaultValue = "{{")
-    private String prefixToken;
-    @XmlAttribute @Metadata(defaultValue = "}}")
-    private String suffixToken;
     @XmlElement(name = "propertiesFunction")
     private List<CamelPropertyPlaceholderFunctionDefinition> functions;
     @XmlElement(name = "propertiesLocation")
@@ -110,30 +107,6 @@ public class CamelPropertyPlaceholderDefinition extends IdentifiedType {
      */
     public void setIgnoreMissingLocation(Boolean ignoreMissingLocation) {
         this.ignoreMissingLocation = ignoreMissingLocation;
-    }
-
-    public String getPrefixToken() {
-        return prefixToken;
-    }
-
-    /**
-     * Sets the value of the prefix token used to identify properties to replace.  Setting a value of
-     * {@code null} restores the default token {{
-     */
-    public void setPrefixToken(String prefixToken) {
-        this.prefixToken = prefixToken;
-    }
-
-    public String getSuffixToken() {
-        return suffixToken;
-    }
-
-    /**
-     * Sets the value of the suffix token used to identify properties to replace.  Setting a value of
-     * {@code null} restores the default token }}
-     */
-    public void setSuffixToken(String suffixToken) {
-        this.suffixToken = suffixToken;
     }
 
     public List<CamelPropertyPlaceholderFunctionDefinition> getFunctions() {

@@ -23,7 +23,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
-
 public class HazelcastAggregationRepositoryCamelTestSupport extends CamelTestSupport {
     private static HazelcastInstance hzOne;
     private static HazelcastInstance hzTwo;

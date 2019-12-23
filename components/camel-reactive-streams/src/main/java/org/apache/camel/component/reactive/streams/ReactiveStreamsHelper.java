@@ -114,11 +114,12 @@ public final class ReactiveStreamsHelper {
     public static CamelReactiveStreamsServiceFactory resolveServiceFactory(CamelContext context, String serviceType) {
         try {
             FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(ReactiveStreamsConstants.SERVICE_PATH);
-            Class<?> serviceClass = finder.findClass(serviceType);
-
-            return (CamelReactiveStreamsServiceFactory)context.getInjector().newInstance(serviceClass);
-        } catch (ClassNotFoundException e) {
-            throw new IllegalStateException("Class referenced in '" + ReactiveStreamsConstants.SERVICE_PATH + serviceType + "' not found", e);
+            Class<?> serviceClass = finder.findClass(serviceType).orElse(null);
+            if (serviceClass != null) {
+                return (CamelReactiveStreamsServiceFactory) context.getInjector().newInstance(serviceClass);
+            } else {
+                throw new IllegalStateException("Class referenced in '" + ReactiveStreamsConstants.SERVICE_PATH + serviceType + "' not found");
+            }
         } catch (Exception e) {
             throw new IllegalStateException("Unable to create the reactive stream service defined in '" + ReactiveStreamsConstants.SERVICE_PATH + serviceType + "'", e);
         }

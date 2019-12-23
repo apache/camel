@@ -45,7 +45,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder copies(int copies) {
-            setProperty("copies", copies);
+            doSetProperty("copies", copies);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder copies(String copies) {
-            setProperty("copies", copies);
+            doSetProperty("copies", copies);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder docFlavor(Object docFlavor) {
-            setProperty("docFlavor", docFlavor);
+            doSetProperty("docFlavor", docFlavor);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder docFlavor(String docFlavor) {
-            setProperty("docFlavor", docFlavor);
+            doSetProperty("docFlavor", docFlavor);
             return this;
         }
         /**
@@ -90,7 +90,47 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder flavor(String flavor) {
-            setProperty("flavor", flavor);
+            doSetProperty("flavor", flavor);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PrinterEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PrinterEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -104,7 +144,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder mediaSize(String mediaSize) {
-            setProperty("mediaSize", mediaSize);
+            doSetProperty("mediaSize", mediaSize);
             return this;
         }
         /**
@@ -116,7 +156,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder mediaTray(String mediaTray) {
-            setProperty("mediaTray", mediaTray);
+            doSetProperty("mediaTray", mediaTray);
             return this;
         }
         /**
@@ -127,7 +167,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder mimeType(String mimeType) {
-            setProperty("mimeType", mimeType);
+            doSetProperty("mimeType", mimeType);
             return this;
         }
         /**
@@ -138,7 +178,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder orientation(String orientation) {
-            setProperty("orientation", orientation);
+            doSetProperty("orientation", orientation);
             return this;
         }
         /**
@@ -150,7 +190,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder printerPrefix(String printerPrefix) {
-            setProperty("printerPrefix", printerPrefix);
+            doSetProperty("printerPrefix", printerPrefix);
             return this;
         }
         /**
@@ -162,7 +202,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder sendToPrinter(boolean sendToPrinter) {
-            setProperty("sendToPrinter", sendToPrinter);
+            doSetProperty("sendToPrinter", sendToPrinter);
             return this;
         }
         /**
@@ -174,7 +214,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder sendToPrinter(String sendToPrinter) {
-            setProperty("sendToPrinter", sendToPrinter);
+            doSetProperty("sendToPrinter", sendToPrinter);
             return this;
         }
         /**
@@ -186,7 +226,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: producer
          */
         default PrinterEndpointBuilder sides(String sides) {
-            setProperty("sides", sides);
+            doSetProperty("sides", sides);
             return this;
         }
     }
@@ -210,7 +250,7 @@ public interface PrinterEndpointBuilderFactory {
          */
         default AdvancedPrinterEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -223,7 +263,7 @@ public interface PrinterEndpointBuilderFactory {
          */
         default AdvancedPrinterEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -235,7 +275,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -247,7 +287,7 @@ public interface PrinterEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -257,7 +297,7 @@ public interface PrinterEndpointBuilderFactory {
      * jobs.
      * 
      * Category: printing
-     * Available as of version: 2.1
+     * Since: 2.1
      * Maven coordinates: org.apache.camel:camel-printer
      * 
      * Syntax: <code>lpr:hostname:port/printername</code>
@@ -271,7 +311,7 @@ public interface PrinterEndpointBuilderFactory {
      * Path parameter: printername
      * Name of the printer
      */
-    default PrinterEndpointBuilder printer(String path) {
+    default PrinterEndpointBuilder lpr(String path) {
         class PrinterEndpointBuilderImpl extends AbstractEndpointBuilder implements PrinterEndpointBuilder, AdvancedPrinterEndpointBuilder {
             public PrinterEndpointBuilderImpl(String path) {
                 super("lpr", path);

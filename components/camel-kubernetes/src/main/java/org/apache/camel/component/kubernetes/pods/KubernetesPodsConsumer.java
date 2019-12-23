@@ -26,7 +26,6 @@ import io.fabric8.kubernetes.client.Watch;
 import io.fabric8.kubernetes.client.Watcher;
 import io.fabric8.kubernetes.client.dsl.MixedOperation;
 import io.fabric8.kubernetes.client.dsl.PodResource;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
@@ -48,14 +47,14 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
         executor = getEndpoint().createExecutor();
-        
+
         podsWatcher = new PodsConsumerTask();
         executor.submit(podsWatcher);
     }
@@ -84,14 +83,14 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
     class PodsConsumerTask implements Runnable {
 
         private Watch watch;
-        
+
         @Override
         public void run() {
             MixedOperation<Pod, PodList, DoneablePod, PodResource<Pod, DoneablePod>> w = getEndpoint().getKubernetesClient().pods();
             if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getNamespace())) {
                 w.inNamespace(getEndpoint().getKubernetesConfiguration().getNamespace());
             }
-            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey()) 
+            if (ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelKey())
                 && ObjectHelper.isNotEmpty(getEndpoint().getKubernetesConfiguration().getLabelValue())) {
                 w.withLabel(getEndpoint().getKubernetesConfiguration().getLabelKey(), getEndpoint().getKubernetesConfiguration().getLabelValue());
             }
@@ -101,8 +100,7 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
             watch = w.watch(new Watcher<Pod>() {
 
                 @Override
-                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action,
-                    Pod resource) {
+                public void eventReceived(io.fabric8.kubernetes.client.Watcher.Action action, Pod resource) {
                     PodEvent pe = new PodEvent(action, resource);
                     Exchange exchange = getEndpoint().createExchange();
                     exchange.getIn().setBody(pe.getPod());
@@ -131,6 +129,6 @@ public class KubernetesPodsConsumer extends DefaultConsumer {
 
         public void setWatch(Watch watch) {
             this.watch = watch;
-        } 
+        }
     }
 }

@@ -17,6 +17,7 @@
 package org.apache.camel.blueprint;
 
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -56,14 +57,17 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
     @XmlTransient
     private ExtendedBlueprintContainer blueprintContainer;
 
+    @Override
     public Object getObject() {
         return serviceProxy;
     }
 
+    @Override
     public Class<Object> getObjectType() {
         return Object.class;
     }
 
+    @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
         if (blueprintContainer != null) {
             return (CamelContext) blueprintContainer.getComponentInstance(camelContextId);
@@ -83,6 +87,7 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
         return null;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         if (endpoint == null) {
             getCamelContext();
@@ -121,6 +126,7 @@ public class CamelProxyFactoryBean extends AbstractCamelFactoryBean<Object> {
         }
     }
 
+    @Override
     public void destroy() throws Exception {
         // we let CamelContext manage the lifecycle of the producer and shut it down when Camel stops
     }

@@ -31,6 +31,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchLanguageException;
@@ -44,7 +45,6 @@ import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.GroupIterator;
 import org.apache.camel.support.GroupTokenIterator;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -162,62 +162,6 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "headers";
-            }
-        };
-    }
-
-    /**
-     * Returns an expression for the out header value with the given name
-     * <p/>
-     * Will fallback and look in properties if not found in headers.
-     *
-     * @param headerName the name of the header the expression will return
-     * @return an expression object which will return the header value
-     */
-    public static Expression outHeaderExpression(final String headerName) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                if (!exchange.hasOut()) {
-                    return null;
-                }
-
-                String text = simpleExpression(headerName).evaluate(exchange, String.class);
-                Message out = exchange.getOut();
-                Object header = out.getHeader(text);
-                if (header == null) {
-                    // let's try the exchange header
-                    header = exchange.getProperty(text);
-                }
-                return header;
-            }
-
-            @Override
-            public String toString() {
-                return "outHeader(" + headerName + ")";
-            }
-        };
-    }
-
-    /**
-     * Returns an expression for the outbound message headers
-     *
-     * @return an expression object which will return the headers, will be <tt>null</tt> if the
-     * exchange is not out capable.
-     */
-    public static Expression outHeadersExpression() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                // only get out headers if the MEP is out capable
-                if (ExchangeHelper.isOutCapable(exchange)) {
-                    return exchange.getOut().getHeaders();
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "outHeaders";
             }
         };
     }
@@ -864,82 +808,6 @@ public class ExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the out messages body
-     */
-    public static Expression outBodyExpression() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                if (exchange.hasOut()) {
-                    return exchange.getOut().getBody();
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "outBody";
-            }
-        };
-    }
-
-    /**
-     * Returns the expression for the exchanges outbound message body converted
-     * to the given type
-     */
-    public static <T> Expression outBodyExpression(final Class<T> type) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                if (exchange.hasOut()) {
-                    return exchange.getOut().getBody(type);
-                } else {
-                    return null;
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "outBodyAs[" + type.getName() + "]";
-            }
-        };
-    }
-
-    /**
-     * Returns the expression for the fault messages body
-     */
-    public static Expression faultBodyExpression() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-                return msg.isFault() ? msg.getBody() : null;
-            }
-
-            @Override
-            public String toString() {
-                return "faultBody";
-            }
-        };
-    }
-
-    /**
-     * Returns the expression for the exchanges fault message body converted
-     * to the given type
-     */
-    public static <T> Expression faultBodyExpression(final Class<T> type) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-                return msg.isFault() ? msg.getBody(type) : null;
-            }
-
-            @Override
-            public String toString() {
-                return "faultBodyAs[" + type.getName() + "]";
-            }
-        };
-    }
-
-    /**
      * Returns the expression for the exchange
      */
     public static Expression exchangeExpression() {
@@ -1013,38 +881,6 @@ public class ExpressionBuilder {
             @Override
             public String toString() {
                 return "inMessageExpression";
-            }
-        };
-    }
-
-    /**
-     * Returns the expression for the OUT message
-     */
-    public static Expression outMessageExpression() {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return exchange.getOut();
-            }
-
-            @Override
-            public String toString() {
-                return "outMessage";
-            }
-        };
-    }
-
-    /**
-     * Returns a functional expression for the OUT message
-     */
-    public static Expression outMessageExpression(final Function<Message, Object> function) {
-        return new ExpressionAdapter() {
-            public Object evaluate(Exchange exchange) {
-                return function.apply(exchange.getOut());
-            }
-
-            @Override
-            public String toString() {
-                return "outMessageExpression";
             }
         };
     }
@@ -1479,14 +1315,9 @@ public class ExpressionBuilder {
             public Object evaluate(Exchange exchange) {
                 String text = simpleExpression(key).evaluate(exchange, String.class);
                 try {
-                    // the properties component is mandatory if no locations provided
-                    PropertiesComponent pc = exchange.getContext().getPropertiesComponent(false);
-                    if (pc == null) {
-                        throw new IllegalArgumentException("PropertiesComponent with name properties must be defined"
-                            + " in CamelContext to support property placeholders in expressions");
-                    }
+                    PropertiesComponent pc = exchange.getContext().getPropertiesComponent();
                     // enclose key with {{ }} to force parsing as key can be a nested expression too
-                    return pc.parseUri(pc.getPrefixToken() + text + pc.getSuffixToken());
+                    return pc.parseUri(PropertiesComponent.PREFIX_TOKEN + text + PropertiesComponent.SUFFIX_TOKEN);
                 } catch (Exception e) {
                     // property with key not found, use default value if provided
                     if (defaultValue != null) {
@@ -1581,7 +1412,7 @@ public class ExpressionBuilder {
 
     protected static void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
         try {
-            IntrospectionSupport.setProperty(camelContext, bean, name, value);
+            camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection().setProperty(camelContext, bean, name, value);
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to set property " + name + " on " + bean + ". Reason: " + e, e);
         }

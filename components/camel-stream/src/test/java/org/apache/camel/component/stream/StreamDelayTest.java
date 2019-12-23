@@ -33,6 +33,7 @@ public class StreamDelayTest extends CamelTestSupport {
         assertTrue("Delay should be around 2 sec: " + delta, delta > 1900 && delta < 3000);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

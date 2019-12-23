@@ -45,7 +45,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder connectionTimeout(int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -56,7 +56,46 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder connectionTimeout(String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default NagiosEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default NagiosEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -69,7 +108,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder sendSync(boolean sendSync) {
-            setProperty("sendSync", sendSync);
+            doSetProperty("sendSync", sendSync);
             return this;
         }
         /**
@@ -82,7 +121,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder sendSync(String sendSync) {
-            setProperty("sendSync", sendSync);
+            doSetProperty("sendSync", sendSync);
             return this;
         }
         /**
@@ -93,7 +132,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -104,7 +143,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: producer
          */
         default NagiosEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -116,7 +155,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: security
          */
         default NagiosEndpointBuilder encryption(Encryption encryption) {
-            setProperty("encryption", encryption);
+            doSetProperty("encryption", encryption);
             return this;
         }
         /**
@@ -128,36 +167,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: security
          */
         default NagiosEndpointBuilder encryption(String encryption) {
-            setProperty("encryption", encryption);
-            return this;
-        }
-        /**
-         * To specify an encryption method.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.nagios.NagiosEncryptionMethod</code>
-         * type.
-         * 
-         * Group: security
-         */
-        @Deprecated
-        default NagiosEndpointBuilder encryptionMethod(
-                NagiosEncryptionMethod encryptionMethod) {
-            setProperty("encryptionMethod", encryptionMethod);
-            return this;
-        }
-        /**
-         * To specify an encryption method.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.nagios.NagiosEncryptionMethod</code>
-         * type.
-         * 
-         * Group: security
-         */
-        @Deprecated
-        default NagiosEndpointBuilder encryptionMethod(String encryptionMethod) {
-            setProperty("encryptionMethod", encryptionMethod);
+            doSetProperty("encryption", encryption);
             return this;
         }
         /**
@@ -168,7 +178,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: security
          */
         default NagiosEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
     }
@@ -192,7 +202,7 @@ public interface NagiosEndpointBuilderFactory {
          */
         default AdvancedNagiosEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -205,7 +215,7 @@ public interface NagiosEndpointBuilderFactory {
          */
         default AdvancedNagiosEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -217,7 +227,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -229,7 +239,7 @@ public interface NagiosEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -247,23 +257,12 @@ public interface NagiosEndpointBuilderFactory {
         RIJNDAEL256,
         BLOWFISH;
     }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.nagios.NagiosEncryptionMethod</code>
-     * enum.
-     */
-    enum NagiosEncryptionMethod {
-        No,
-        Xor,
-        TripleDes;
-    }
     /**
      * Nagios (camel-nagios)
      * To send passive checks to Nagios using JSendNSCA.
      * 
      * Category: monitoring
-     * Available as of version: 2.3
+     * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-nagios
      * 
      * Syntax: <code>nagios:host:port</code>

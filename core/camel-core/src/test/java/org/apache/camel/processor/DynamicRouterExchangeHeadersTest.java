@@ -73,7 +73,8 @@ public class DynamicRouterExchangeHeadersTest extends ContextTestSupport {
      * Use this method to compute dynamic where we should route next.
      *
      * @param body the message body
-     * @param headers the message headers where we can store state between invocations
+     * @param headers the message headers where we can store state between
+     *            invocations
      * @return endpoints to go, or <tt>null</tt> to indicate the end
      */
     public String slip(String body, @Headers Map<String, Object> headers) {

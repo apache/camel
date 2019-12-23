@@ -20,16 +20,18 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import io.atomix.AtomixClient;
+import io.atomix.catalyst.transport.Transport;
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.ObjectHelper;
 
 public final class AtomixClientHelper {
+
     private AtomixClientHelper() {
     }
 
     public static AtomixClient createClient(CamelContext camelContext, AtomixClientConfiguration configuration) throws Exception {
-        AtomixClient atomix = configuration.getAtomix();
+        AtomixClient atomix = (AtomixClient) configuration.getAtomix();
 
         if (atomix == null) {
             final AtomixClient.Builder atomixBuilder;
@@ -47,10 +49,9 @@ public final class AtomixClientHelper {
                 atomixBuilder = AtomixClient.builder();
             }
 
-            if (configuration.getTransport() != null) {
-                atomixBuilder.withTransport(
-                    camelContext.getInjector().newInstance(configuration.getTransport())
-                );
+            if (configuration.getTransportClassName() != null) {
+                Class<? extends Transport> clazz = camelContext.getClassResolver().resolveMandatoryClass(configuration.getTransportClassName(), Transport.class);
+                atomixBuilder.withTransport(camelContext.getInjector().newInstance(clazz));
             }
 
             atomix = atomixBuilder.build();

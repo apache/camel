@@ -24,6 +24,8 @@ public final class MvelHelper {
 
     private static final Pattern DOLLAR_ESCAPE = Pattern.compile("\\$");
 
+    private static final Pattern CURLY_BRACKET_ESCAPE = Pattern.compile("(\\{[a-zA-Z0-9]+?)\\}");
+
     private static final Pattern URL_ESCAPE = Pattern.compile("(?<!href=\")(http(:?s)?://|(:?s)?ftp(?:s)?)");
 
     private MvelHelper() {
@@ -36,7 +38,8 @@ public final class MvelHelper {
         }
 
         final String escapedDollars = DOLLAR_ESCAPE.matcher(raw).replaceAll("\\\\\\$");
-        final String escapedUrls = URL_ESCAPE.matcher(escapedDollars).replaceAll("\\\\$1");
+        final String escapedCurlyBrackets = CURLY_BRACKET_ESCAPE.matcher(escapedDollars).replaceAll("\\\\$1\\\\}");
+        final String escapedUrls = URL_ESCAPE.matcher(escapedCurlyBrackets).replaceAll("\\\\$1");
 
         return escapedUrls;
     }

@@ -44,7 +44,7 @@ import org.apache.commons.net.ftp.FTPFile;
 @UriEndpoint(firstVersion = "1.1.0", scheme = "ftp", extendsScheme = "file", title = "FTP",
         syntax = "ftp:host:port/directoryName", alternativeSyntax = "ftp:username:password@host:port/directoryName",
         label = "file",
-        excludeProperties = "readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService")
+        excludeProperties = "appendChars,readLockIdempotentReleaseAsync,readLockIdempotentReleaseAsyncPoolSize,readLockIdempotentReleaseDelay,readLockIdempotentReleaseExecutorService")
 @ManagedResource(description = "Managed FtpEndpoint")
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
     protected int soTimeout;
@@ -102,6 +102,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
     }
 
+    @Override
     protected GenericFileProducer<FTPFile> buildProducer() {
         try {
             if (this.getMoveExistingFileStrategy() == null) {
@@ -121,6 +122,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         return new FtpDefaultMoveExistingFileStrategy();
     }
 
+    @Override
     public RemoteFileOperations<FTPFile> createRemoteFileOperations() throws Exception {
         // configure ftp client
         FTPClient client = ftpClient;
@@ -131,8 +133,8 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
 
         // use configured buffer size which is larger and therefore faster (as the default is no buffer)
-        if (getConfiguration().getReceiveBufferSize() > 0) {
-            client.setBufferSize(getConfiguration().getReceiveBufferSize());
+        if (getBufferSize() > 0) {
+            client.setBufferSize(getBufferSize());
         }
         // set any endpoint configured timeouts
         if (getConfiguration().getConnectTimeout() > -1) {
@@ -185,10 +187,10 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         }
 
         if (log.isDebugEnabled()) {
-            log.debug("Created FTPClient [connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
+            log.debug("Created FTPClient[connectTimeout: {}, soTimeout: {}, dataTimeout: {}, bufferSize: {}"
                             + ", receiveDataSocketBufferSize: {}, sendDataSocketBufferSize: {}]: {}",
-                    new Object[]{client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
-                            client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client});
+                    client.getConnectTimeout(), getSoTimeout(), dataTimeout, client.getBufferSize(),
+                    client.getReceiveDataSocketBufferSize(), client.getSendDataSocketBufferSize(), client);
         }
 
         FtpOperations operations = new FtpOperations(client, getFtpClientConfig());
@@ -253,11 +255,19 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
         this.ftpClientConfig = ftpClientConfig;
     }
 
+    public Map<String, Object> getFtpClientParameters() {
+        return ftpClientParameters;
+    }
+
     /**
      * Used by FtpComponent to provide additional parameters for the FTPClient
      */
     void setFtpClientParameters(Map<String, Object> ftpClientParameters) {
         this.ftpClientParameters = ftpClientParameters;
+    }
+
+    public Map<String, Object> getFtpClientConfigParameters() {
+        return ftpClientConfigParameters;
     }
 
     /**

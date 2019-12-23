@@ -242,6 +242,7 @@ public final class UndertowComponentVerifierExtension extends DefaultComponentVe
             ClientRequest request = new ClientRequest();
             request.setMethod(method);
             request.setPath(URISupport.pathAndQueryOf(uri));
+            request.getRequestHeaders().put(Headers.HOST, String.format("%s:%s", uri.getHost(), uri.getPort()));
 
             IoFuture<ClientConnection> connectFuture = client.connect(uri, worker, pool, OptionMap.EMPTY);
             UndertowClientResponseFuture responseFuture = new UndertowClientResponseFuture();

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -56,14 +57,9 @@ public class RecipientListUseOriginalMessageEndpointExceptionIssueTest extends C
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true).useOriginalMessage()
-                    .to("file://target/data/outbox")
-                    .to("mock:error");
+                onException(Exception.class).handled(true).useOriginalMessage().to("file://target/data/outbox").to("mock:error");
 
-                from("file://target/data/inbox?initialDelay=0&delay=10")
-                    .transform(constant("B"))
-                    .setHeader("path", constant("mock:throwException"))
+                from("file://target/data/inbox?initialDelay=0&delay=10").transform(constant("B")).setHeader("path", constant("mock:throwException"))
                     // must enable share uow to let the onException use
                     // the original message from the route input
                     .recipientList(header("path")).shareUnitOfWork();

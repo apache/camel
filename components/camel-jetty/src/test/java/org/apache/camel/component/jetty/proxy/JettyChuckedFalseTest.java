@@ -26,32 +26,33 @@ import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 public class JettyChuckedFalseTest extends BaseJettyTest {
-    
+
     @Test
     public void runningTest() throws Exception {
         Exchange exchange = template.request("http://localhost:{{port}}/test", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                // we do nothing here, so http producer will send a GET method request
+                // we do nothing here, so http producer will send a GET method
+                // request
             }
-            
+
         });
-        Message out  = exchange.getOut();
+        Message out = exchange.getOut();
         // make sure we have the content-length header
         String len = out.getHeader(Exchange.CONTENT_LENGTH, String.class);
         assertEquals("We should have the content-length header here.", "20", len);
         String response = out.getBody(String.class);
         assertEquals("Get a wrong response", "This is hello world.", response);
     }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-               
-                from("jetty:http://localhost:{{port}}/test?matchOnUriPrefix=true&chunked=false")
-                    .to("http://localhost:{{port2}}/other?bridgeEndpoint=true");
-                
+
+                from("jetty:http://localhost:{{port}}/test?matchOnUriPrefix=true&chunked=false").to("http://localhost:{{port2}}/other?bridgeEndpoint=true");
+
                 from("jetty:http://localhost:{{port2}}/other").process(new Processor() {
 
                     @Override

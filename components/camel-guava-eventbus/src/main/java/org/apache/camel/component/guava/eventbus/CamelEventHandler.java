@@ -48,7 +48,7 @@ public class CamelEventHandler {
      * @param event the event received by Guava EventBus.
      */
     public void doEventReceived(Object event) {
-        log.trace("Received event: {}");
+        log.trace("Received event: {}", event);
         final Exchange exchange = eventBusEndpoint.createExchange(event);
         log.debug("Processing event: {}", event);
         // use async processor to support async routing engine

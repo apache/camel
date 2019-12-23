@@ -374,7 +374,7 @@ public class JmsBinding {
     public void appendJmsProperty(Message jmsMessage, Exchange exchange, org.apache.camel.Message in,
                                   String headerName, Object headerValue) throws JMSException {
         if (isStandardJMSHeader(headerName)) {
-            if (headerName.equals("JMSCorrelationID")) {
+            if (headerName.equals("JMSCorrelationID") && (endpoint == null || !endpoint.isUseMessageIDAsCorrelationID())) {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
                 if (headerValue instanceof String) {
@@ -405,7 +405,7 @@ public class JmsBinding {
             // see message properties: http://java.sun.com/j2ee/1.4/docs/api/javax/jms/Message.html
             Object value = getValidJMSHeaderValue(headerName, headerValue);
             // if the value was null, then it may be allowed as an additional header
-            if (value == null && endpoint.getConfiguration().getAllowAdditionalHeaders() != null) {
+            if (value == null && (endpoint != null && endpoint.getConfiguration().getAllowAdditionalHeaders() != null)) {
                 Iterator it = ObjectHelper.createIterator(endpoint.getConfiguration().getAllowAdditionalHeaders());
                 while (it.hasNext()) {
                     String pattern = (String) it.next();
@@ -510,14 +510,7 @@ public class JmsBinding {
     }
 
     protected Message createJmsMessage(Exchange exchange, org.apache.camel.Message camelMessage, Session session, CamelContext context) throws JMSException {
-        Message answer = createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, context);
-
-        // special for transferFault
-        boolean isFault = camelMessage.isFault();
-        if (answer != null && isFault && endpoint != null && endpoint.isTransferFault()) {
-            answer.setBooleanProperty(JmsConstants.JMS_TRANSFER_FAULT, true);
-        }
-        return answer;
+        return createJmsMessage(exchange, camelMessage.getBody(), camelMessage.getHeaders(), session, context);
     }
 
     protected Message createJmsMessage(Exchange exchange, Object body, Map<String, Object> headers, Session session, CamelContext context) throws JMSException {
@@ -526,7 +519,7 @@ public class JmsBinding {
         // special for transferExchange
         if (endpoint != null && endpoint.isTransferExchange()) {
             LOG.trace("Option transferExchange=true so we use JmsMessageType: Object");
-            Serializable holder = DefaultExchangeHolder.marshal(exchange, true, endpoint.isAllowSerializedHeaders());
+            Serializable holder = DefaultExchangeHolder.marshal(exchange, true, endpoint.isAllowSerializedHeaders(), false);
             Message answer = session.createObjectMessage(holder);
             // ensure default delivery mode is used by default
             answer.setJMSDeliveryMode(Message.DEFAULT_DELIVERY_MODE);

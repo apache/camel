@@ -48,6 +48,7 @@ public class CxfConsumerSoap12Test extends CamelBlueprintTestSupport {
         return "org/apache/camel/test/cxf/blueprint/CxfConsumerSoap12Beans.xml";
     }
    
+    @Override
     public boolean isCreateCamelContextPerClass() {
         return true;
     }

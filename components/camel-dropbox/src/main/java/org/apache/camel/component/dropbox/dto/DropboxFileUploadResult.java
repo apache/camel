@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
 
-
 public class DropboxFileUploadResult {
 
 

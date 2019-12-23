@@ -21,21 +21,24 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestSwaggerReaderDayOfWeekTest extends CamelTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        return jndi;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerReaderDayOfWeekTest.class);
+
+    @BindToRegistry("dummy-rest")
+    private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -43,19 +46,12 @@ public class RestSwaggerReaderDayOfWeekTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // this user REST service is json only
-                rest("/day").tag("dude").description("Day service")
-                    .consumes("application/json").produces("application/json")
+                rest("/day").tag("dude").description("Day service").consumes("application/json").produces("application/json")
 
-                    .get("/week").description("Day of week")
-                        .param().name("day").type(RestParamType.query).description("Day of week")
-                            .defaultValue("friday")
-                            .dataType("string").allowableValues("monday", "tuesday", "wednesday", "thursday", "friday")
-                        .endParam()
-                        .responseMessage()
-                            .code(200).responseModel(DayResponse.class)
-                            .header("X-Rate-Limit-Limit").description("The number of allowed requests in the current period").dataType("integer").endHeader()
-                        .endResponseMessage()
-                        .to("log:week");
+                    .get("/week").description("Day of week").param().name("day").type(RestParamType.query).description("Day of week").defaultValue("friday").dataType("string")
+                    .allowableValues("monday", "tuesday", "wednesday", "thursday", "friday").endParam().responseMessage().code(200).responseModel(DayResponse.class)
+                    .header("X-Rate-Limit-Limit").description("The number of allowed requests in the current period").dataType("integer").endHeader().endResponseMessage()
+                    .to("log:week");
             }
         };
     }
@@ -64,7 +60,7 @@ public class RestSwaggerReaderDayOfWeekTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         config.setTitle("Day");
         config.setLicense("Apache 2.0");
@@ -79,7 +75,7 @@ public class RestSwaggerReaderDayOfWeekTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String json = mapper.writeValueAsString(swagger);
 
-        log.info(json);
+        LOG.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"default\" : \"friday\""));

@@ -29,10 +29,12 @@ public class NodeListWrapper implements NodeList {
         this.elementList = elementList;
     }
 
+    @Override
     public int getLength() {
         return elementList.size();
     }
 
+    @Override
     public Node item(int index) {
         return elementList.get(index);
     }

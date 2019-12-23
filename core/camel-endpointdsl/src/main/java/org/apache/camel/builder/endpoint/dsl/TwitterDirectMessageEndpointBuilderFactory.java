@@ -27,7 +27,6 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The Twitter Direct Message Component consumes/produces user's direct
@@ -63,7 +62,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -81,7 +80,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -94,7 +93,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -107,11 +106,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
-         * Endpoint type to use. Only streaming supports event type.
+         * Endpoint type to use.
          * 
          * The option is a:
          * <code>org.apache.camel.component.twitter.data.EndpointType</code>
@@ -121,11 +120,11 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder type(
                 EndpointType type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
         /**
-         * Endpoint type to use. Only streaming supports event type.
+         * Endpoint type to use.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.component.twitter.data.EndpointType</code>
@@ -134,7 +133,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder type(String type) {
-            setProperty("type", type);
+            doSetProperty("type", type);
             return this;
         }
         /**
@@ -145,7 +144,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder count(Integer count) {
-            setProperty("count", count);
+            doSetProperty("count", count);
             return this;
         }
         /**
@@ -157,7 +156,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder count(String count) {
-            setProperty("count", count);
+            doSetProperty("count", count);
             return this;
         }
         /**
@@ -170,7 +169,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder filterOld(
                 boolean filterOld) {
-            setProperty("filterOld", filterOld);
+            doSetProperty("filterOld", filterOld);
             return this;
         }
         /**
@@ -183,7 +182,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder filterOld(
                 String filterOld) {
-            setProperty("filterOld", filterOld);
+            doSetProperty("filterOld", filterOld);
             return this;
         }
         /**
@@ -194,7 +193,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder lang(String lang) {
-            setProperty("lang", lang);
+            doSetProperty("lang", lang);
             return this;
         }
         /**
@@ -206,7 +205,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder numberOfPages(
                 Integer numberOfPages) {
-            setProperty("numberOfPages", numberOfPages);
+            doSetProperty("numberOfPages", numberOfPages);
             return this;
         }
         /**
@@ -219,7 +218,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder numberOfPages(
                 String numberOfPages) {
-            setProperty("numberOfPages", numberOfPages);
+            doSetProperty("numberOfPages", numberOfPages);
             return this;
         }
         /**
@@ -231,7 +230,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder sinceId(long sinceId) {
-            setProperty("sinceId", sinceId);
+            doSetProperty("sinceId", sinceId);
             return this;
         }
         /**
@@ -244,12 +243,12 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder sinceId(
                 String sinceId) {
-            setProperty("sinceId", sinceId);
+            doSetProperty("sinceId", sinceId);
             return this;
         }
         /**
-         * To filter by user ids for streaming/filter. Multiple values can be
-         * separated by comma.
+         * To filter by user ids for filter. Multiple values can be separated by
+         * comma.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -257,7 +256,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder userIds(
                 String userIds) {
-            setProperty("userIds", userIds);
+            doSetProperty("userIds", userIds);
             return this;
         }
         /**
@@ -270,7 +269,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -283,7 +282,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -296,7 +295,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -309,7 +308,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -326,7 +325,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -343,7 +342,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -354,7 +353,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -365,7 +364,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -378,7 +377,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder greedy(
                 boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -390,7 +389,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -404,7 +403,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder initialDelay(
                 long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -418,7 +417,35 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default TwitterDirectMessageEndpointConsumerBuilder repeatCount(
+                long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default TwitterDirectMessageEndpointConsumerBuilder repeatCount(
+                String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -431,7 +458,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -445,7 +472,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -460,7 +487,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -475,42 +502,25 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default TwitterDirectMessageEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder scheduler(
                 String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -519,12 +529,12 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -534,7 +544,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -546,7 +556,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -558,7 +568,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -570,7 +580,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder timeUnit(
                 TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -583,7 +593,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder timeUnit(
                 String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -596,7 +606,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -609,7 +619,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -621,7 +631,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder sortById(
                 boolean sortById) {
-            setProperty("sortById", sortById);
+            doSetProperty("sortById", sortById);
             return this;
         }
         /**
@@ -633,7 +643,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder sortById(
                 String sortById) {
-            setProperty("sortById", sortById);
+            doSetProperty("sortById", sortById);
             return this;
         }
         /**
@@ -646,7 +656,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyHost(
                 String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -659,7 +669,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -672,7 +682,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
                 Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -686,7 +696,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyPort(
                 String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -699,7 +709,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder httpProxyUser(
                 String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -712,7 +722,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -725,7 +735,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder accessTokenSecret(
                 String accessTokenSecret) {
-            setProperty("accessTokenSecret", accessTokenSecret);
+            doSetProperty("accessTokenSecret", accessTokenSecret);
             return this;
         }
         /**
@@ -738,7 +748,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder consumerKey(
                 String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -751,7 +761,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointConsumerBuilder consumerSecret(
                 String consumerSecret) {
-            setProperty("consumerSecret", consumerSecret);
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -767,9 +777,9 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
             return (TwitterDirectMessageEndpointConsumerBuilder) this;
         }
         /**
-         * Used by the non-stream geography search, to search by radius using
-         * the configured metrics. The unit can either be mi for miles, or km
-         * for kilometers. You need to configure all the following options:
+         * Used by the geography search, to search by radius using the
+         * configured metrics. The unit can either be mi for miles, or km for
+         * kilometers. You need to configure all the following options:
          * longitude, latitude, radius, and distanceMetric.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -778,7 +788,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder distanceMetric(
                 String distanceMetric) {
-            setProperty("distanceMetric", distanceMetric);
+            doSetProperty("distanceMetric", distanceMetric);
             return this;
         }
         /**
@@ -794,7 +804,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -810,7 +820,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -822,7 +832,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -835,7 +845,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -848,7 +858,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder extendedMode(
                 boolean extendedMode) {
-            setProperty("extendedMode", extendedMode);
+            doSetProperty("extendedMode", extendedMode);
             return this;
         }
         /**
@@ -861,13 +871,13 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder extendedMode(
                 String extendedMode) {
-            setProperty("extendedMode", extendedMode);
+            doSetProperty("extendedMode", extendedMode);
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by latitude. You
-         * need to configure all the following options: longitude, latitude,
-         * radius, and distanceMetric.
+         * Used by the geography search to search by latitude. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
@@ -875,13 +885,13 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
                 Double latitude) {
-            setProperty("latitude", latitude);
+            doSetProperty("latitude", latitude);
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by latitude. You
-         * need to configure all the following options: longitude, latitude,
-         * radius, and distanceMetric.
+         * Used by the geography search to search by latitude. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
@@ -889,13 +899,13 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder latitude(
                 String latitude) {
-            setProperty("latitude", latitude);
+            doSetProperty("latitude", latitude);
             return this;
         }
         /**
-         * Bounding boxes, created by pairs of lat/lons. Can be used for
-         * streaming/filter. A pair is defined as lat,lon. And multiple paris
-         * can be separated by semi colon.
+         * Bounding boxes, created by pairs of lat/lons. Can be used for filter.
+         * A pair is defined as lat,lon. And multiple paris can be separated by
+         * semi colon.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -903,13 +913,13 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder locations(
                 String locations) {
-            setProperty("locations", locations);
+            doSetProperty("locations", locations);
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by longitude. You
-         * need to configure all the following options: longitude, latitude,
-         * radius, and distanceMetric.
+         * Used by the geography search to search by longitude. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
@@ -917,13 +927,13 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
                 Double longitude) {
-            setProperty("longitude", longitude);
+            doSetProperty("longitude", longitude);
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by longitude. You
-         * need to configure all the following options: longitude, latitude,
-         * radius, and distanceMetric.
+         * Used by the geography search to search by longitude. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
@@ -931,7 +941,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder longitude(
                 String longitude) {
-            setProperty("longitude", longitude);
+            doSetProperty("longitude", longitude);
             return this;
         }
         /**
@@ -947,7 +957,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -963,13 +973,13 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by radius. You need
-         * to configure all the following options: longitude, latitude, radius,
-         * and distanceMetric.
+         * Used by the geography search to search by radius. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
@@ -977,13 +987,13 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
                 Double radius) {
-            setProperty("radius", radius);
+            doSetProperty("radius", radius);
             return this;
         }
         /**
-         * Used by the non-stream geography search to search by radius. You need
-         * to configure all the following options: longitude, latitude, radius,
-         * and distanceMetric.
+         * Used by the geography search to search by radius. You need to
+         * configure all the following options: longitude, latitude, radius, and
+         * distanceMetric.
          * 
          * The option will be converted to a <code>java.lang.Double</code> type.
          * 
@@ -991,32 +1001,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder radius(
                 String radius) {
-            setProperty("radius", radius);
-            return this;
-        }
-        /**
-         * To use a custom instance of TwitterStream.
-         * 
-         * The option is a: <code>twitter4j.TwitterStream</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedTwitterDirectMessageEndpointConsumerBuilder twitterStream(
-                Object twitterStream) {
-            setProperty("twitterStream", twitterStream);
-            return this;
-        }
-        /**
-         * To use a custom instance of TwitterStream.
-         * 
-         * The option will be converted to a
-         * <code>twitter4j.TwitterStream</code> type.
-         * 
-         * Group: consumer (advanced)
-         */
-        default AdvancedTwitterDirectMessageEndpointConsumerBuilder twitterStream(
-                String twitterStream) {
-            setProperty("twitterStream", twitterStream);
+            doSetProperty("radius", radius);
             return this;
         }
         /**
@@ -1029,7 +1014,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1042,7 +1027,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1055,7 +1040,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1068,7 +1053,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1099,7 +1084,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1119,7 +1104,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1132,7 +1117,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyHost(
                 String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -1145,7 +1130,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -1158,7 +1143,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
                 Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1172,7 +1157,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyPort(
                 String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1185,7 +1170,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder httpProxyUser(
                 String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -1198,7 +1183,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -1211,7 +1196,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder accessTokenSecret(
                 String accessTokenSecret) {
-            setProperty("accessTokenSecret", accessTokenSecret);
+            doSetProperty("accessTokenSecret", accessTokenSecret);
             return this;
         }
         /**
@@ -1224,7 +1209,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder consumerKey(
                 String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -1237,7 +1222,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointProducerBuilder consumerSecret(
                 String consumerSecret) {
-            setProperty("consumerSecret", consumerSecret);
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -1262,7 +1247,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1275,7 +1260,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1288,7 +1273,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1301,7 +1286,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1325,7 +1310,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointBuilder httpProxyHost(
                 String httpProxyHost) {
-            setProperty("httpProxyHost", httpProxyHost);
+            doSetProperty("httpProxyHost", httpProxyHost);
             return this;
         }
         /**
@@ -1338,7 +1323,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointBuilder httpProxyPassword(
                 String httpProxyPassword) {
-            setProperty("httpProxyPassword", httpProxyPassword);
+            doSetProperty("httpProxyPassword", httpProxyPassword);
             return this;
         }
         /**
@@ -1351,7 +1336,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointBuilder httpProxyPort(
                 Integer httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1365,7 +1350,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointBuilder httpProxyPort(
                 String httpProxyPort) {
-            setProperty("httpProxyPort", httpProxyPort);
+            doSetProperty("httpProxyPort", httpProxyPort);
             return this;
         }
         /**
@@ -1378,7 +1363,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointBuilder httpProxyUser(
                 String httpProxyUser) {
-            setProperty("httpProxyUser", httpProxyUser);
+            doSetProperty("httpProxyUser", httpProxyUser);
             return this;
         }
         /**
@@ -1391,7 +1376,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointBuilder accessToken(
                 String accessToken) {
-            setProperty("accessToken", accessToken);
+            doSetProperty("accessToken", accessToken);
             return this;
         }
         /**
@@ -1404,7 +1389,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointBuilder accessTokenSecret(
                 String accessTokenSecret) {
-            setProperty("accessTokenSecret", accessTokenSecret);
+            doSetProperty("accessTokenSecret", accessTokenSecret);
             return this;
         }
         /**
@@ -1417,7 +1402,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointBuilder consumerKey(
                 String consumerKey) {
-            setProperty("consumerKey", consumerKey);
+            doSetProperty("consumerKey", consumerKey);
             return this;
         }
         /**
@@ -1430,7 +1415,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default TwitterDirectMessageEndpointBuilder consumerSecret(
                 String consumerSecret) {
-            setProperty("consumerSecret", consumerSecret);
+            doSetProperty("consumerSecret", consumerSecret);
             return this;
         }
     }
@@ -1454,7 +1439,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1467,7 +1452,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1480,7 +1465,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1493,7 +1478,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          */
         default AdvancedTwitterDirectMessageEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1504,8 +1489,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      */
     enum EndpointType {
         POLLING,
-        DIRECT,
-        EVENT;
+        DIRECT;
     }
     /**
      * Twitter Direct Message (camel-twitter)
@@ -1513,7 +1497,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      * messages.
      * 
      * Category: api,social
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-twitter
      * 
      * Syntax: <code>twitter-directmessage:user</code>
@@ -1522,7 +1506,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      * The user name to send a direct message. This will be ignored for
      * consumer.
      */
-    default TwitterDirectMessageEndpointBuilder twitterDirectMessage(String path) {
+    default TwitterDirectMessageEndpointBuilder twitterDirectmessage(String path) {
         class TwitterDirectMessageEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterDirectMessageEndpointBuilder, AdvancedTwitterDirectMessageEndpointBuilder {
             public TwitterDirectMessageEndpointBuilderImpl(String path) {
                 super("twitter-directmessage", path);

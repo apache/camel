@@ -25,6 +25,7 @@ import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 
 public class ConsumerWSASameChannelParamsActionTests extends AbstractConsumerTests {
 
+    @Override
     public ActionCallback channelIn(String actionUri) throws URISyntaxException {
         // same channel
         return action(actionUri);

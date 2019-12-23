@@ -45,6 +45,7 @@ public class SpelSpringTest extends LanguageTestSupport {
         assertPredicate("@myDummy.bar instanceof T(Integer)");
     }
 
+    @Override
     protected String getLanguageName() {
         return "spel";
     }

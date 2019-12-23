@@ -1,7 +1,8 @@
 [[protobuf-dataformat]]
-== Protobuf DataFormat
+= Protobuf DataFormat
+:page-source: components/camel-protobuf/src/main/docs/protobuf-dataformat.adoc
 [[Protobuf-Protobuf-ProtocolBuffers]]
-*Available as of Camel version 2.2.0*
+*Since Camel 2.2.0*
 
 Protobuf - Protocol Buffers
 ---------------------------
@@ -21,7 +22,7 @@ https://github.com/google/protobuf[Protobuf Implementation] +
 
 https://developers.google.com/protocol-buffers/docs/javatutorial[Protobuf Java Tutorial]
 
-### Protobuf Options
+== Protobuf Options
 
 // dataformat options: START
 The Protobuf dataformat supports 3 options, which are listed below.
@@ -37,14 +38,14 @@ The Protobuf dataformat supports 3 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-protobuf-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -61,13 +62,13 @@ The component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.dataformat.protobuf.content-type-format* | Defines a content type format in which protobuf message will be serialized/deserialized from(to) the Java been. The format can either be native or json for either native protobuf or json fields representation. The default value is native. | native | String
 | *camel.dataformat.protobuf.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.protobuf.enabled* | Enable protobuf dataformat | true | Boolean
+| *camel.dataformat.protobuf.enabled* | Whether to enable auto configuration of the protobuf data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.protobuf.instance-class* | Name of class to use when unarmshalling |  | String
 |===
 // spring-boot-auto-configure options: END
 ND
 
-### Content type format
+== Content type format
 
 It's possible to parse JSON message to convert it to the protobuf format and unparse it back using native util converter.
 To use this option, set contentTypeFormat value to 'json' or call protobuf with second parameter.
@@ -82,12 +83,20 @@ from("direct:marshal")
     .to("mock:reverse");
 --------------------------------------------------------------------------------------------------
 
-### Protobuf overview
+== Input data type
+This dataformat supports marshaling input data either as protobuf `Message` type or `Map` data type. In case of input data as `Map` type, first it will try to retrieve the data as `Map` using built-in type converters, if it fails to
+do so, it will fall back to retrieve it as proto `Message`.
+
+== Output data type
+As mentioned above, you can define the content type format to choose from JSON or native to serialize/deserialize data from/to. In addition, you can also obtain the data as `Map` and let this component to do the heavy lifting to parse the
+data from proto `Message` to `Map`, you will just need to set the `contentTypeFormat` to *native* and explicitly define the data type `Map` when you obtain body of the exchange, e.g: `exchange.getMessage().getBody(Map.class)`.
+
+== Protobuf overview
 
 This quick overview of how to use Protobuf. For more detail see the
 http://code.google.com/apis/protocolbuffers/docs/javatutorial.html[complete tutorial]
 
-### Defining the proto format
+== Defining the proto format
 
 The first step is to define the format for the body of your exchange.
 This is defined in a .proto file as so:
@@ -127,7 +136,7 @@ message AddressBook {
 }
 ------------------------------------------------------------
 
-### Generating Java classes
+== Generating Java classes
 
 The Protobuf SDK provides a compiler which will generate the Java
 classes for the format we defined in our .proto file.
@@ -182,7 +191,7 @@ to use a class that does not implement com.google.protobuf.Message. Use
 the generated builders to translate the data from any of your existing
 domain classes.
 
-### Java DSL
+== Java DSL
 
 You can use create the ProtobufDataFormat instance and pass it to Camel
 DataFormat marshal and unmarshal API like this.
@@ -196,11 +205,11 @@ DataFormat marshal and unmarshal API like this.
 -----------------------------------------------------------------------------------
 
 Or use the DSL protobuf() passing the unmarshal default instance or
-default instance class name like this.
+default instance class name like this. However, if you have input data as `Map` type, you will need to **specify** the ProtobufDataFormat otherwise it will throw an error.
 
 [source,java]
 --------------------------------------------------------------------------------------------------
-   // You don't need to specify the default instance for protobuf marshaling               
+   // You don't need to specify the default instance for protobuf marshaling, but you will need in case your input data is a Map type
    from("direct:marshal").marshal().protobuf();
    from("direct:unmarshalA").unmarshal()
        .protobuf("org.apache.camel.dataformat.protobuf.generated.AddressBookProtos$Person")
@@ -209,7 +218,7 @@ default instance class name like this.
    from("direct:unmarshalB").unmarshal().protobuf(Person.getDefaultInstance()).to("mock:reverse");
 --------------------------------------------------------------------------------------------------
 
-### Spring DSL
+== Spring DSL
 
 The following example shows how to use Protobuf to unmarshal using Spring
 configuring the protobuf data type
@@ -227,7 +236,7 @@ configuring the protobuf data type
 </camelContext>
 ----------------------------------------------------------------------------------------------------------
 
-### Dependencies
+== Dependencies
 
 To use Protobuf in your camel routes you need to add the a dependency on
 *camel-protobuf* which implements this data format.
@@ -241,5 +250,3 @@ To use Protobuf in your camel routes you need to add the a dependency on
   <!-- use the same version as your Camel core version -->
 </dependency>
 -----------------------------------------
-### See Also
-* xref:grpc-component.adoc[Camel gRPC component]

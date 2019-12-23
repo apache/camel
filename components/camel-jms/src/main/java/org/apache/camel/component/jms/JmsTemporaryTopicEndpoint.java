@@ -52,10 +52,12 @@ public class JmsTemporaryTopicEndpoint extends JmsEndpoint implements Destinatio
      *
      * @return true
      */
+    @Override
     public boolean isSingleton() {
         return true;
     }
     
+    @Override
     public synchronized Destination getJmsDestination(Session session) throws JMSException {
         if (jmsDestination == null) {
             jmsDestination = createJmsDestination(session);

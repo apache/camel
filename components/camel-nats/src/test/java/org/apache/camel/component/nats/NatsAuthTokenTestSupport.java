@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.nats;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
 import org.apache.camel.test.testcontainers.Wait;
 import org.testcontainers.containers.GenericContainer;
 
 public class NatsAuthTokenTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.0.0";
+    public static final String CONTAINER_IMAGE = "nats:2.1.2";
     public static final String CONTAINER_NAME = "nats-auth-token";
     public static final String TOKEN = "!admin23456";
     
@@ -42,7 +43,7 @@ public class NatsAuthTokenTestSupport extends ContainerAwareTestSupport {
                      );
     }
     
-    public String getNatsUrl() {
+    public String getNatsBrokerUrl() {
         return String.format(
             "%s@%s:%d",
             TOKEN,
@@ -50,4 +51,13 @@ public class NatsAuthTokenTestSupport extends ContainerAwareTestSupport {
             getContainerPort(CONTAINER_NAME, 4222)
         );
     }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        NatsComponent nats = context.getComponent("nats", NatsComponent.class);
+        nats.setServers(getNatsBrokerUrl());
+        return context;
+    }
+
 }

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.ahc;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsNot.not;
 import static org.hamcrest.core.StringContains.containsString;
-import static org.junit.Assert.assertThat;
 
 public class AhcOperationFailedExceptionTest {
 

@@ -79,7 +79,7 @@
     "runLoggingLevel": { "kind": "parameter", "label": "consumer", "type": "string", "javaType": "org.apache.camel.LoggingLevel", "enum": [ "DEBUG", "ERROR", "INFO", "TRACE", "WARN", "OFF" ], "deprecated": "false", "defaultValue": "TRACE" },
     "sendEmptyMessageWhenIdle": { "kind": "parameter", "label": "consumer", "type": "boolean", "javaType": "boolean", "deprecated": "false" },
     "greedy": { "kind": "parameter", "label": "consumer", "type": "boolean", "javaType": "boolean", "deprecated": "false" },
-    "scheduler": { "kind": "parameter", "label": "consumer", "type": "string", "javaType": "org.apache.camel.spi.ScheduledPollConsumerScheduler", "enum": [ "spring", "quartz2" ], "deprecated": "false" },
+    "scheduler": { "kind": "parameter", "label": "consumer", "type": "string", "javaType": "org.apache.camel.spi.ScheduledPollConsumerScheduler", "enum": [ "spring", "quartz" ], "deprecated": "false" },
     "schedulerProperties": { "kind": "parameter", "label": "consumer", "type": "object", "javaType": "java.util.Map<java.lang.String,java.lang.Object>", "deprecated": "false" },
     "scheduledExecutorService": { "kind": "parameter", "label": "consumer", "type": "object", "javaType": "java.util.concurrent.ScheduledExecutorService", "deprecated": "false" },
     "backoffMultiplier": { "kind": "parameter", "label": "consumer", "type": "integer", "javaType": "int", "deprecated": "false" },

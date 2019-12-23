@@ -1,15 +1,20 @@
 [[digitalocean-component]]
-== DigitalOcean Component
+= DigitalOcean Component
+:page-source: components/camel-digitalocean/src/main/docs/digitalocean-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The DigitalOcean component allows you to manage Droplets and resources within the DigitalOcean cloud with **Camel** by encapsulating https://www.digitalocean.com/community/projects/api-client-in-java[digitalocean-api-java]. All of the functionality that you are familiar with in the DigitalOcean control panel is also available through this Camel component.
 
-=== Prerequisites
+== Prerequisites
 
 You must have a valid DigitalOcean account and a valid OAuth token. You can generate an OAuth token by visiting the [Apps & API] section of the DigitalOcean control panel for your account.
 
-=== URI format
+== URI format
 
 The **DigitalOcean Component** uses the following URI format:
 
@@ -27,19 +32,20 @@ digitalocean://droplets?operation=list&oAuthToken=XXXXXX&page=1&perPage=10
 The DigitalOcean component only supports producer endpoints so you cannot use this component at the beginning of a route to listen to messages in a channel.
 
 
-=== Options
+== Options
 
 
 // component options: START
-The DigitalOcean component supports 2 options, which are listed below.
+The DigitalOcean component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -52,7 +58,7 @@ digitalocean:operation
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -62,7 +68,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -83,14 +89,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-digitalocean-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -98,7 +104,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -106,8 +112,9 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.digitalocean.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.digitalocean.enabled* | Enable digitalocean component | true | Boolean
-| *camel.component.digitalocean.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.digitalocean.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.digitalocean.enabled* | Whether to enable auto configuration of the digitalocean component. This is enabled by default. |  | Boolean
+| *camel.component.digitalocean.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -120,17 +127,17 @@ All **operation** values are defined in `DigitalOceanOperations` enumeration.
 All **header** names used by the component are defined in `DigitalOceanHeaders` enumeration.
 
 
-=== Message body result
+== Message body result
 
 All message bodies returned are using objects provided by the **digitalocean-api-java** library.
 
 
-=== API Rate Limits
+== API Rate Limits
 
 DigitalOcean REST API encapsulated by camel-digitalocean component is subjected to API Rate Limiting. You can find the per method limits in the https://developers.digitalocean.com/documentation/v2/#rate-limit[API Rate Limits documentation].
 
 
-=== Account endpoint
+== Account endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -138,7 +145,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `get` | get account info |  | `com.myjeeva.digitalocean.pojo.Account`
 |===
 
-=== BlockStorages endpoint
+== BlockStorages endpoint
 
 [width="100%",cols="2,5,^5a,1",options="header"]
 |===
@@ -223,7 +230,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `List<com.myjeeva.digitalocean.pojo.Action>`
 |===
 
-=== Droplets endpoint
+== Droplets endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -330,7 +337,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `listAllNeighbors` |  retrieve a list of any droplets that are running on the same physical hardware | | `List<com.myjeeva.digitalocean.pojo.Droplet>`
 |===
 
-=== Images endpoint
+== Images endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -358,7 +365,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `convert` | convert an image, for example, a backup to a snapshot| `CamelDigitalOceanId` _Integer_ | `com.myjeeva.digitalocean.pojo.Action`
 |===
 
-=== Snapshots endpoint
+== Snapshots endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -368,7 +375,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `delete` | delete an snapshot| `CamelDigitalOceanId` _Integer_ | `com.myjeeva.digitalocean.pojo.Delete`
 |===
 
-=== Keys endpoint
+== Keys endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -393,7 +400,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `delete` | delete a key by fingerprint| `CamelDigitalOceanKeyFingerprint` _String_ | `com.myjeeva.digitalocean.pojo.Delete`
 |===
 
-=== Regions endpoint
+== Regions endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -401,7 +408,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `list` |  list all of the regions that are available | | `List<com.myjeeva.digitalocean.pojo.Region>`
 |===
 
-=== Sizes endpoint
+== Sizes endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -409,7 +416,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `list` |  list all of the sizes that are available | | `List<com.myjeeva.digitalocean.pojo.Size>`
 |===
 
-=== Floating IPs endpoint
+== Floating IPs endpoint
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -430,7 +437,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `listActions` |  retrieve all actions that have been executed on a Floating IP | `CamelDigitalOceanFloatingIPAddress` _String_ | `List<com.myjeeva.digitalocean.pojo.Action>`
 |===
 
-=== Tags endpoint
+== Tags endpoint
 
 [width="100%",cols="2,5,^4,2",options="header"]
 |===
@@ -447,7 +454,7 @@ DigitalOcean REST API encapsulated by camel-digitalocean component is subjected 
 | `com.myjeeva.digitalocean.pojo.Tag`
 |===
 
-=== Examples
+== Examples
 
 Get your account info
 

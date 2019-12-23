@@ -69,6 +69,7 @@ public class ElasticsearchComponent extends DefaultComponent {
         registerExtension(new ElasticsearchRestComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ElasticsearchConfiguration config = new ElasticsearchConfiguration();
         config.setHostAddresses(this.getHostAddresses());
@@ -83,10 +84,10 @@ public class ElasticsearchComponent extends DefaultComponent {
         config.setSniffAfterFailureDelay(this.getSniffAfterFailureDelay());
         config.setClusterName(remaining);
 
-        setProperties(config, parameters);
+        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
+        setProperties(endpoint, parameters);
         config.setHostAddressesList(parseHostAddresses(config.getHostAddresses(), config));
 
-        Endpoint endpoint = new ElasticsearchEndpoint(uri, this, config, client);
         return endpoint;
     }
     
@@ -105,7 +106,7 @@ public class ElasticsearchComponent extends DefaultComponent {
                 throw new IllegalArgumentException();
             }
             Integer port = split.length > 1 ? Integer.parseInt(split[1]) : ElasticsearchConstants.DEFAULT_PORT;
-            addressesTrAd.add(new HttpHost(hostname, port, config.getEnableSSL() ? "HTTPS" : "HTTP"));
+            addressesTrAd.add(new HttpHost(hostname, port, config.isEnableSSL() ? "HTTPS" : "HTTP"));
         }
         return addressesTrAd;
     }

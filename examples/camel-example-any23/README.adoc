@@ -1,0 +1,33 @@
+== Apache Any23 Example
+
+This example shows how to extract data from a page with RDF content using Apache Any23. In this example the Dbpedia webpage of a country (Ecuador) is processed with the camel-any23 dataformat as a RDF4J Model. 
+The extracted information is filtered in order to select the URIS of the country's leaders through the Dbpedia property http://dbpedia.org/ontology/leader . 
+Afterwards, the information of each leader is requested and presented in JSON-LD format.
+
+== How to run
+
+You can run this example using
+
+    mvn compile exec:java
+
+== More information about the camel-any23 Dataformat.
+
+You can find more information about camel-any23 at the website: https://github.com/apache/camel/blob/master/components/camel-any23/src/main/docs/any23-dataformat.adoc
+
+== More information about Apache Any23
+
+You can find more information about Apache Any23 at the website: https://any23.apache.org
+
+== More information about Apache Camel
+
+You can find more information about Apache Camel at the website: http://camel.apache.org/
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

@@ -44,6 +44,7 @@ public class MvelTest extends LanguageTestSupport {
         assertTrue(exchange.hasOut());
     }
 
+    @Override
     protected String getLanguageName() {
         return "mvel";
     }

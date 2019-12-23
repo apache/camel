@@ -183,6 +183,7 @@ public final class XmlSignatureHelper {
             this.prefix2Namespace = prefix2Namespace;
         }
 
+        @Override
         public String getNamespaceURI(String prefix) {
             if (prefix == null) {
                 throw new NullPointerException("Null prefix");
@@ -198,11 +199,13 @@ public final class XmlSignatureHelper {
         }
 
         // This method isn't necessary for XPath processing.
+        @Override
         public String getPrefix(String uri) {
             throw new UnsupportedOperationException();
         }
 
         // This method isn't necessary for XPath processing either.
+        @Override
         @SuppressWarnings("rawtypes")
         public Iterator getPrefixes(String uri) {
             throw new UnsupportedOperationException();

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.pulsar.utils.consumers;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.component.pulsar.PulsarConsumer;
 import org.apache.camel.component.pulsar.PulsarEndpoint;
 import org.apache.camel.component.pulsar.PulsarMessageListener;
@@ -23,7 +25,7 @@ import org.apache.camel.component.pulsar.configuration.PulsarConfiguration;
 import org.apache.pulsar.client.api.ConsumerBuilder;
 
 public final class CommonCreationStrategyImpl {
-    
+
     private CommonCreationStrategyImpl() {
     }
 
@@ -31,7 +33,8 @@ public final class CommonCreationStrategyImpl {
         final PulsarConfiguration endpointConfiguration = pulsarEndpoint.getPulsarConfiguration();
 
         return pulsarEndpoint.getPulsarClient().newConsumer().topic(pulsarEndpoint.getUri()).subscriptionName(endpointConfiguration.getSubscriptionName())
-            .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name)
+            .receiverQueueSize(endpointConfiguration.getConsumerQueueSize()).consumerName(name).ackTimeout(endpointConfiguration.getAckTimeoutMillis(), TimeUnit.MILLISECONDS)
+            .acknowledgmentGroupTime(endpointConfiguration.getAckGroupTimeMillis(), TimeUnit.MILLISECONDS)
             .messageListener(new PulsarMessageListener(pulsarEndpoint, pulsarConsumer.getExceptionHandler(), pulsarConsumer.getProcessor()));
     }
 }

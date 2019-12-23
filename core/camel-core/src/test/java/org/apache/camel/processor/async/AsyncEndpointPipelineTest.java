@@ -39,8 +39,7 @@ public class AsyncEndpointPipelineTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                    .pipeline("async:bye:camel", "mock:result");
+                from("direct:start").pipeline("async:bye:camel", "mock:result");
             }
         };
     }

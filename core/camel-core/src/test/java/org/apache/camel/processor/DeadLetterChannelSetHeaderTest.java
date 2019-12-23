@@ -43,14 +43,9 @@ public class DeadLetterChannelSetHeaderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .errorHandler(deadLetterChannel("direct:error"))
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").errorHandler(deadLetterChannel("direct:error")).throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:error")
-                    .setHeader("foo", constant("123"))
-                    .setHeader("bar", constant("456"))
-                    .to("mock:error");
+                from("direct:error").setHeader("foo", constant("123")).setHeader("bar", constant("456")).to("mock:error");
             }
         };
     }

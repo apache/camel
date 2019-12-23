@@ -1,12 +1,13 @@
 [[aggregate-eip]]
-== Aggregate EIP
+= Aggregate EIP
+:page-source: core/camel-core-engine/src/main/docs/eips/aggregate-eip.adoc
 
 The
 http://www.enterpriseintegrationpatterns.com/Aggregator.html[Aggregator]
 from the xref:enterprise-integration-patterns.adoc[EIP patterns] allows
 you to combine a number of messages together into a single message.
 
-image:http://www.enterpriseintegrationpatterns.com/img/Aggregator.gif[image]
+image::eip/Aggregator.gif[image]
 
 A correlation xref:expression.adoc[Expression] is used to determine the
 messages which should be aggregated together. If you want to aggregate
@@ -14,18 +15,18 @@ all messages into a single message, just use a constant expression. An
 AggregationStrategy is used to combine all the message exchanges for a
 single correlation key into a single message exchange.
 
-=== Aggregator options
+== Aggregator options
 
 // eip options: START
-The Aggregate EIP supports 24 options which are listed below:
+The Aggregate EIP supports 27 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *correlationExpression* | *Required* The expression used to calculate the correlation key to use for aggregation. The Exchange which has the same correlation key is aggregated together. If the correlation key could not be evaluated an Exception is thrown. You can disable this by using the ignoreBadCorrelationKeys option. |  | NamespaceAware Expression
 | *completionPredicate* | A Predicate to indicate when an aggregated exchange is complete. If this is not specified and the AggregationStrategy object implements Predicate, the aggregationStrategy object will be used as the completionPredicate. |  | NamespaceAware Expression
-| *completionTimeout* | Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval, only one of the two can be used. By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option to configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals. |  | Long
-| *completionSize* | Number of messages aggregated before the aggregation is complete. This option can be set as either a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. |  | Integer
+| *completionTimeoutExpression* | Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval, only one of the two can be used. By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option to configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals. |  | NamespaceAware Expression
+| *completionSizeExpression* | Number of messages aggregated before the aggregation is complete. This option can be set as either a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. |  | NamespaceAware Expression
 | *optimisticLockRetryPolicy* | Allows to configure retry settings when using optimistic locking. |  | OptimisticLockRetry PolicyDefinition
 | *parallelProcessing* | When aggregated are completed they are being send out of the aggregator. This option indicates whether or not Camel should use a thread pool with multiple threads for concurrency. If no custom thread pool has been specified then Camel creates a default pool with 10 concurrent threads. | false | Boolean
 | *optimisticLocking* | Turns on using optimistic locking, which requires the aggregationRepository being used, is supporting this by implementing org.apache.camel.spi.OptimisticLockingAggregationRepository. | false | Boolean
@@ -35,21 +36,24 @@ The Aggregate EIP supports 24 options which are listed below:
 | *strategyRef* | A reference to lookup the AggregationStrategy in the Registry. Configuring an AggregationStrategy is required, and is used to merge the incoming Exchange with the existing already merged exchanges. At first call the oldExchange parameter is null. On subsequent invocations the oldExchange contains the merged exchanges and newExchange is of course the new incoming Exchange. |  | String
 | *strategyMethodName* | This option can be used to explicit declare the method name to use, when using POJOs as the AggregationStrategy. |  | String
 | *strategyMethodAllowNull* | If this option is false then the aggregate method is not used for the very first aggregation. If this option is true then null values is used as the oldExchange (at the very first aggregation), when using POJOs as the AggregationStrategy. | false | Boolean
+| *completionSize* | Number of messages aggregated before the aggregation is complete. This option can be set as either a fixed value or using an Expression which allows you to evaluate a size dynamically - will use Integer as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. |  | Integer
 | *completionInterval* | A repeating period in millis by which the aggregator will complete all current aggregated exchanges. Camel has a background task which is triggered every period. You cannot use this option together with completionTimeout, only one of them can be used. |  | Long
+| *completionTimeout* | Time in millis that an aggregated exchange should be inactive before its complete (timeout). This option can be set as either a fixed value or using an Expression which allows you to evaluate a timeout dynamically - will use Long as result. If both are set Camel will fallback to use the fixed value if the Expression result was null or 0. You cannot use this option together with completionInterval, only one of the two can be used. By default the timeout checker runs every second, you can use the completionTimeoutCheckerInterval option to configure how frequently to run the checker. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals. |  | Long
 | *completionTimeoutChecker Interval* | Interval in millis that is used by the background task that checks for timeouts (org.apache.camel.TimeoutMap). By default the timeout checker runs every second. The timeout is an approximation and there is no guarantee that the a timeout is triggered exactly after the timeout value. It is not recommended to use very low timeout values or checker intervals. | 1000 | Long
-| *completionFromBatchConsumer* | Enables the batch completion mode where we aggregate from a org.apache.camel.BatchConsumer and aggregate the total number of exchanges the org.apache.camel.BatchConsumer has reported as total by checking the exchange property org.apache.camel.Exchange#BATCH_COMPLETE when its complete. | false | Boolean
+| *completionFromBatchConsumer* | Enables the batch completion mode where we aggregate from a org.apache.camel.BatchConsumer and aggregate the total number of exchanges the org.apache.camel.BatchConsumer has reported as total by checking the exchange property org.apache.camel.Exchange#BATCH_COMPLETE when its complete. This option cannot be used together with discardOnAggregationFailure. | false | Boolean
 | *completionOnNewCorrelation Group* | Enables completion on all previous groups when a new incoming correlation group. This can for example be used to complete groups with same correlation keys when they are in consecutive order. Notice when this is enabled then only 1 correlation group can be in progress as when a new correlation group starts, then the previous groups is forced completed. | false | Boolean
 | *eagerCheckCompletion* | Use eager completion checking which means that the completionPredicate will use the incoming Exchange. As opposed to without eager completion checking the completionPredicate will use the aggregated Exchange. | false | Boolean
 | *ignoreInvalidCorrelation Keys* | If a correlation key cannot be successfully evaluated it will be ignored by logging a DEBUG and then just ignore the incoming Exchange. | false | Boolean
 | *closeCorrelationKeyOn Completion* | Closes a correlation key when its complete. Any late received exchanges which has a correlation key that has been closed, it will be defined and a ClosedCorrelationKeyException is thrown. |  | Integer
 | *discardOnCompletionTimeout* | Discards the aggregated message on completion timeout. This means on timeout the aggregated message is dropped and not sent out of the aggregator. | false | Boolean
+| *discardOnAggregationFailure* | Discards the aggregated message when aggregation failed (an exception was thrown from AggregationStrategy. This means the partly aggregated message is dropped and not sent out of the aggregator. This option cannot be used together with completionFromBatchConsumer. | false | Boolean
 | *forceCompletionOnStop* | Indicates to complete all current aggregated exchanges when the context is stopped | false | Boolean
 | *completeAllOnStop* | Indicates to wait to complete all current and partial (pending) aggregated exchanges when the context is stopped. This also means that we will wait for all pending exchanges which are stored in the aggregation repository to complete so the repository is empty before we can stop. You may want to enable this when using the memory based aggregation repository that is memory based only, and do not store data on disk. When this option is enabled, then the aggregator is waiting to complete all those exchanges before its stopped, when stopping CamelContext or the route using it. | false | Boolean
 | *aggregateControllerRef* | To use a org.apache.camel.processor.aggregate.AggregateController to allow external sources to control this aggregator. |  | String
 |===
 // eip options: END
 
-=== About AggregationStrategy
+== About AggregationStrategy
 
 The `AggregationStrategy` is used for aggregating the old (lookup by its
 correlation id) and the new exchanges together into a single exchange.
@@ -61,6 +65,10 @@ use.
 
 Notice the aggregation strategy is a mandatory option and must be
 provided to the aggregator.
+
+IMPORTANT: In the aggregate method, do not create a new exchange instance to return,
+instead return either the old or new exchange from the input parameters;
+favor returning the old exchange whenever possible.
 
 Here are a few example `AggregationStrategy` implementations that should
 help you create your own custom strategy.
@@ -102,7 +110,7 @@ class ArrayListAggregationStrategy implements AggregationStrategy {
 }
 ----
 
-=== About completion
+== About completion
 
 When aggregation xref:exchange.adoc[Exchange]s at some point you need to
 indicate that the aggregated exchanges is complete, so they can be send
@@ -121,7 +129,7 @@ exchange is aggregated to determine if we are complete or not.
 The configured aggregationStrategy can implement the
 Predicate interface and will be used as the completionPredicate if no
 completionPredicate is configured. The configured aggregationStrategy can
-implement `PreCompletionAwareAggregationStrategy` and will be used as
+implement `PreCompletionAwareAggregationStrategy` and will be used as
 the completionPredicate in pre-complete check mode. See further below
 for more details.
 * completionFromBatchConsumer - Special option for
@@ -129,7 +137,7 @@ xref:batch-consumer.adoc[Batch Consumer] which allows you to complete
 when all the messages from the batch has been aggregated.
 * forceCompletionOnStop - Indicates to complete all current
 aggregated exchanges when the context is stopped
-* Using a `AggregateController` - which allows to use an
+* Using a `AggregateController` - which allows to use an
 external source to complete groups or all groups. This can be done using
 Java or JMX API.
 
@@ -142,17 +150,15 @@ be used at the same time.
 Notice the completion is a mandatory option and must be provided to the
 aggregator. If not provided Camel will thrown an Exception on startup.
 
-=== Pre-completion mode
-
-*available as of Camel 2.16*
+== Pre-completion mode
 
 There can be use-cases where you want the incoming
-xref:exchange.adoc[Exchange] to determine if the correlation group
+xref:exchange.adoc[Exchange] to determine if the correlation group
 should pre-complete, and then the incoming
-xref:exchange.adoc[Exchange] is starting a new group from scratch. To
-determine this the `AggregationStrategy` can
-implement `PreCompletionAwareAggregationStrategy` which has
-a `preComplete` method:
+xref:exchange.adoc[Exchange] is starting a new group from scratch. To
+determine this the `AggregationStrategy` can
+implement `PreCompletionAwareAggregationStrategy` which has
+a `preComplete` method:
 
 [source,java]
 ----
@@ -175,23 +181,21 @@ known as pre-completion mode. And when the aggregation is in
 pre-completion mode, then only the following completions are in use
 
 * aggregationStrategy must
-implement `PreCompletionAwareAggregationStrategy` xxx
+implement `PreCompletionAwareAggregationStrategy` xxx
 * completionTimeout or completionInterval can also be used as fallback
 completions
 * any other completion are not used (such as by size, from batch
 consumer etc)
 * eagerCheckCompletion is implied as true, but the option has no effect
 
-=== Persistent AggregationRepository
+== Persistent AggregationRepository
 
 The aggregator provides a pluggable repository which you can implement
 your own `org.apache.camel.spi.AggregationRepository`. +
  If you need persistent repository then you can use either Camel
-xref:leveldb.adoc[LevelDB], or xref:sql-component.adoc[SQL Component] components.
+xref:components::leveldb.adoc[LevelDB], or xref:components::sql-component.adoc[SQL Component] components.
 
-=== Using TimeoutAwareAggregationStrategy
-
-*Available as of Camel 2.9.2*
+== Using TimeoutAwareAggregationStrategy
 
 If your aggregation strategy implements
 `TimeoutAwareAggregationStrategy`, then Camel will invoke the `timeout`
@@ -200,9 +204,7 @@ total parameters will be -1, and the timeout parameter will be provided
 only if configured as a fixed value. You must *not* throw any exceptions
 from the `timeout` method.
 
-=== Using CompletionAwareAggregationStrategy
-
-*Available as of Camel 2.9.3*
+== Using CompletionAwareAggregationStrategy
 
 If your aggregation strategy implements
 `CompletionAwareAggregationStrategy`, then Camel will invoke the
@@ -211,18 +213,16 @@ allows you to do any last minute custom logic such as to cleanup some
 resources, or additional work on the exchange as it's now completed. +
  You must *not* throw any exceptions from the `onCompletion` method.
 
-=== Completing current group decided from the AggregationStrategy
+== Completing current group decided from the AggregationStrategy
 
-*Available as of Camel 2.15*
-
-The `AggregationStrategy` can now included a property on the
-returned `Exchange` that contains a boolean to indicate if the current
+The `AggregationStrategy` can now included a property on the
+returned `Exchange` that contains a boolean to indicate if the current
 group should be completed. This allows to overrule any existing
 completion predicates / sizes / timeouts etc, and complete the group.
 
 For example the following logic (from an unit test) will complete the
 group if the message body size is larger than 5. This is done by setting
-the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
+the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 
 [source,java]
 ----
@@ -244,12 +244,10 @@ the property `Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP` to `true`.
 ----
 
 
-=== Completing all previous group decided from the AggregationStrategy
+== Completing all previous group decided from the AggregationStrategy
 
-*Available as of Camel 2.21*
-
-The `AggregationStrategy` can now included a property on the
-returned `Exchange` that contains a boolean to indicate if all previous
+The `AggregationStrategy` can now included a property on the
+returned `Exchange` that contains a boolean to indicate if all previous
 groups should be completed. This allows to overrule any existing
 completion predicates / sizes / timeouts etc, and complete all the existing
 previous group.
@@ -278,11 +276,7 @@ setting the property `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS` to `true`.
     }
 ----
 
- 
-
-=== Manually Force the Completion of All Aggregated Exchanges Immediately
-
-*Available as of Camel 2.9*
+== Manually Force the Completion of All Aggregated Exchanges Immediately
 
 You can manually trigger completion of all current aggregated exchanges
 by sending a message containing the header
@@ -290,15 +284,11 @@ by sending a message containing the header
 considered a signal message only, the message headers/contents will not
 be processed otherwise.
 
-*Available as of Camel 2.11*
-
 You can alternatively set the header
 `Exchange.AGGREGATION_COMPLETE_ALL_GROUPS_INCLUSIVE` to `true` to trigger
 completion of all groups after processing the current message.
 
-=== Using a List<V> in AggregationStrategy
-
-*Available as of Camel 2.11*
+== Using a List<V> in AggregationStrategy
 
 If you want to aggregate some value from the messages `<V>` into a `List<V>`
 then we have added a
@@ -310,17 +300,15 @@ the message body.
 For example to aggregate a `List<Integer>` you can extend this class as
 shown below, and implement the `getValue` method:
 
-=== Using AggregateController
+== Using AggregateController
 
-*Available as of Camel 2.16*
-
-The `org.apache.camel.processor.aggregate.AggregateController` allows
+The `org.apache.camel.processor.aggregate.AggregateController` allows
 you to control the aggregate at runtime using Java or JMX API. This can
 be used to force completing groups of exchanges, or query its current
 runtime statistics.
 
 The aggregator provides a default implementation if no custom have been
-configured, which can be accessed using `getAggregateController()` method.
+configured, which can be accessed using `getAggregateController()` method.
 Though it may be easier to configure a controller in the route using
 `aggregateController` as shown below:
 
@@ -359,7 +347,7 @@ To configure this from XML DSL
 [source,xml]
 ----
 <bean id="myController" class="org.apache.camel.processor.aggregate.DefaultAggregateController"/>
- 
+ 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:start"/>
@@ -377,7 +365,7 @@ To configure this from XML DSL
 There is also JMX API on the aggregator which is available under the
 processors node in the Camel JMX tree.
 
-=== Using GroupedExchanges
+== Using GroupedExchanges
 
 In the route below we group all the exchanges together using
 `groupExchanges()`:
@@ -406,9 +394,7 @@ together in a list as shown below:
 List<Exchange> grouped = exchange.getIn().getBody(List.class);
 ----
 
-=== Using POJOs as AggregationStrategy
-
-*Available as of Camel 2.12*
+== Using POJOs as AggregationStrategy
 
 To use the `AggregationStrategy` you had to implement the
 `org.apache.camel.AggregationStrategy` interface,
@@ -563,7 +549,7 @@ to call:
 
 When using XML DSL you must define the POJO as a <bean>.
 
-=== Aggregating when no data
+== Aggregating when no data
 
 By default when using POJOs as AggregationStrategy, then the method is
 *only* invoked when there is data to be aggregated (by default). You can
@@ -660,7 +646,7 @@ set it to true as shown below:
 </camelContext>
 ----
 
-=== Different body types
+== Different body types
 
 When for example using `strategyMethodAllowNull` as true, then the
 parameter types of the message bodies does not have to be the same. For

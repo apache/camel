@@ -24,6 +24,11 @@ public class LogSpanDecorator extends AbstractSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.log.LogComponent";
+    }
+
+    @Override
     public boolean newSpan() {
         return false;
     }

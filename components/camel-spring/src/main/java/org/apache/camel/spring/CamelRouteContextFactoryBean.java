@@ -40,14 +40,17 @@ public class CamelRouteContextFactoryBean extends IdentifiedType implements Fact
     @XmlElement(name = "route", required = true)
     private List<RouteDefinition> routes = new ArrayList<>();
 
+    @Override
     public List<RouteDefinition> getObject() throws Exception {
         return routes;
     }
 
+    @Override
     public Class<?> getObjectType() {
         return routes.getClass();
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

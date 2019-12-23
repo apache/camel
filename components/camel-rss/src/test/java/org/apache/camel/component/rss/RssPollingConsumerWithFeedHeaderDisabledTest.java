@@ -37,10 +37,11 @@ public class RssPollingConsumerWithFeedHeaderDisabledTest extends CamelTestSuppo
         assertNull(in.getHeader(RssConstants.RSS_FEED));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=false&consumer.delay=500&feedHeader=false").to("mock:result");
+                from("rss:file:src/test/data/rss20.xml?splitEntries=false&delay=500&feedHeader=false").to("mock:result");
             }
         };
     }

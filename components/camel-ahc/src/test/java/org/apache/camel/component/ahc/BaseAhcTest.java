@@ -15,11 +15,11 @@
  * limitations under the License.
  */
 package org.apache.camel.component.ahc;
+
 import java.util.Properties;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.jsse.ClientAuthentication;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
@@ -27,8 +27,8 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.support.jsse.SSLContextServerParameters;
 import org.apache.camel.support.jsse.TrustManagersParameters;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeAll;
 
 public abstract class BaseAhcTest extends CamelTestSupport {
 
@@ -36,40 +36,29 @@ public abstract class BaseAhcTest extends CamelTestSupport {
 
     private static volatile int port;
 
-    @BeforeClass
+    @BeforeAll
     public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(24000);
+        port = AvailablePortFinder.getNextAvailable();
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.addComponent("properties", new PropertiesComponent("ref:prop"));
+        context.getPropertiesComponent().setLocation("ref:prop");
         return context;
     }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
+    
+    @BindToRegistry("prop")
+    public Properties addProperties() {
         Properties prop = new Properties();
         prop.setProperty("port", "" + getPort());
-        jndi.bind("prop", prop);
-
-        if (isHttps()) {
-            addSslContextParametersToRegistry(jndi);
-        }
-
-        return jndi;
+        return prop;
     }
 
-    protected void addSslContextParametersToRegistry(JndiRegistry registry) {
-        registry.bind("sslContextParameters", createSSLContextParameters());
-    }
-
-    protected SSLContextParameters createSSLContextParameters() {
+    @BindToRegistry("sslContextParameters") 
+    public SSLContextParameters createSSLContextParameters() {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.ks").toString());
+        ksp.setResource(this.getClass().getClassLoader().getResource("jsse/localhost.p12").toString());
         ksp.setPassword(KEY_STORE_PASSWORD);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -139,7 +128,7 @@ public abstract class BaseAhcTest extends CamelTestSupport {
     }
 
     protected synchronized int getNextPort() {
-        port = AvailablePortFinder.getNextAvailable(port + 1);
+        port = AvailablePortFinder.getNextAvailable();
         return port;
     }
 

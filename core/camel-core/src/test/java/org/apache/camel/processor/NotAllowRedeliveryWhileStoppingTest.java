@@ -48,12 +48,9 @@ public class NotAllowRedeliveryWhileStoppingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(defaultErrorHandler()
-                    .maximumRedeliveries(5).redeliveryDelay(5000).allowRedeliveryWhileStopping(false));
+                errorHandler(defaultErrorHandler().maximumRedeliveries(5).redeliveryDelay(5000).allowRedeliveryWhileStopping(false));
 
-                from("seda:start")
-                    .to("mock:foo")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("seda:start").to("mock:foo").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

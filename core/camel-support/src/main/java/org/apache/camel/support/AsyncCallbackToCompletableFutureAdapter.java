@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 import org.apache.camel.AsyncCallback;
 
 /**
- * AsyncCallback that provides a CompletableFuture completed when async action is done
+ * AsyncCallback that provides a {@link CompletableFuture} completed when async action is done
  */
 public class AsyncCallbackToCompletableFutureAdapter<T> implements AsyncCallback {
     private final CompletableFuture<T> future;

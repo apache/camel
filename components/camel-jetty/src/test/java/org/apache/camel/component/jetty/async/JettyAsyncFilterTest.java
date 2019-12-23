@@ -39,12 +39,7 @@ public class JettyAsyncFilterTest extends BaseJettyTest {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("jetty:http://localhost:{{port}}/myservice")
-                    .convertBodyTo(String.class)
-                    .filter(body().contains("Camel"))
-                        .to("async:bye:world")
-                    .end()
-                    .to("mock:result");
+                from("jetty:http://localhost:{{port}}/myservice").convertBodyTo(String.class).filter(body().contains("Camel")).to("async:bye:world").end().to("mock:result");
             }
         };
     }

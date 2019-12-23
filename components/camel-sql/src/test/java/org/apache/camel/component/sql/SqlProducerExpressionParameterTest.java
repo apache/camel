@@ -18,6 +18,7 @@ package org.apache.camel.component.sql;
 
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -39,6 +40,7 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.DERBY).addScript("sql/createAndPopulateDatabase.sql").build();
@@ -46,6 +48,7 @@ public class SqlProducerExpressionParameterTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

@@ -25,7 +25,7 @@ import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class FileConverter {
 
     private FileConverter() {
@@ -37,7 +37,11 @@ public final class FileConverter {
         File file;
         if (body instanceof byte[]) {
             byte[] bos = (byte[]) body;
-            file = new File(System.getProperty("java.io.tmpdir"), genericFile.getFileName());
+            String destDir = System.getProperty("java.io.tmpdir");
+            file = new File(destDir, genericFile.getFileName());
+            if (!file.getCanonicalPath().startsWith(destDir)) {
+                throw new IOException("File is not jailed to the destination directory");
+            }
             Files.write(file.toPath(), bos, StandardOpenOption.CREATE);
             // delete the temporary file on exit, as other routing may need the file for post processing
             file.deleteOnExit();

@@ -36,6 +36,7 @@ public class RssComponent extends FeedComponent {
     public RssComponent() {
     }
 
+    @Override
     protected FeedEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return new RssEndpoint(uri, this, null);
     }

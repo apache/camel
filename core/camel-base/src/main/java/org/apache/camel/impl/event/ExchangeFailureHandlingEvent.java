@@ -35,14 +35,17 @@ public class ExchangeFailureHandlingEvent extends AbstractExchangeEvent implemen
         this.deadLetterUri = deadLetterUri;
     }
 
+    @Override
     public Processor getFailureHandler() {
         return failureHandler;
     }
 
+    @Override
     public boolean isDeadLetterChannel() {
         return deadLetterChannel;
     }
 
+    @Override
     public String getDeadLetterUri() {
         return deadLetterUri;
     }

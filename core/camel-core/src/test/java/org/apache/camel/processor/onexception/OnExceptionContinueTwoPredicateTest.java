@@ -54,24 +54,19 @@ public class OnExceptionContinueTwoPredicateTest extends OnExceptionContinueTwoT
                     }
                 };
 
-                // tell Camel to handle and continue when this exception is thrown
-                onException(IllegalArgumentException.class)
-                    .continued(predicate)
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            processorInvoked.incrementAndGet();
-                        }
-                    })
-                    .to("mock:me");
+                // tell Camel to handle and continue when this exception is
+                // thrown
+                onException(IllegalArgumentException.class).continued(predicate).process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        processorInvoked.incrementAndGet();
+                    }
+                }).to("mock:me");
 
-                from("direct:start")
-                        .to("mock:start")
-                        .throwException(new IllegalArgumentException("Forced"))
-                        .to("mock:middle")
-                                //throw a second time to validate that the exchange is reset appropriately
-                        .throwException(new IllegalArgumentException("Forced Again"))
-                        .to("mock:result");
+                from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:middle")
+                    // throw a second time to validate that the exchange is
+                    // reset appropriately
+                    .throwException(new IllegalArgumentException("Forced Again")).to("mock:result");
             }
         };
     }

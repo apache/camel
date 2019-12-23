@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ContextTestSupport;
@@ -59,35 +60,35 @@ public class FileConsumePollEnrichFileUsingProcessorTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/enrich?initialDelay=0&delay=10&move=.done")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String name = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
-                            name = FileUtil.stripExt(name) + ".dat";
+                from("file://target/data/enrich?initialDelay=0&delay=10&move=.done").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String name = exchange.getIn().getHeader(Exchange.FILE_NAME_ONLY, String.class);
+                        name = FileUtil.stripExt(name) + ".dat";
 
-                            // use a consumer template to get the data file
-                            Exchange data = null;
-                            ConsumerTemplate con = exchange.getContext().createConsumerTemplate();
-                            try {
-                                // try to get the data file
-                                data = con.receive("file://target/data/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
-                            } finally {
-                                // stop the consumer as it does not need to poll for files anymore
-                                con.stop();
-                            }
-
-                            // if we found the data file then process it by sending it to the direct:data endpoint
-                            if (data != null) {
-                                template.send("direct:data", data);
-                            } else {
-                                // otherwise do a rollback
-                                throw new CamelExchangeException("Cannot find the data file " + name, exchange);
-                            }
+                        // use a consumer template to get the data file
+                        Exchange data = null;
+                        ConsumerTemplate con = exchange.getContext().createConsumerTemplate();
+                        try {
+                            // try to get the data file
+                            data = con.receive("file://target/data/enrichdata?initialDelay=0&delay=10&move=.done&fileName=" + name, 5000);
+                        } finally {
+                            // stop the consumer as it does not need to poll for
+                            // files anymore
+                            con.stop();
                         }
-                    }).to("mock:start");
 
-                from("direct:data")
-                    .to("mock:result");
+                        // if we found the data file then process it by sending
+                        // it to the direct:data endpoint
+                        if (data != null) {
+                            template.send("direct:data", data);
+                        } else {
+                            // otherwise do a rollback
+                            throw new CamelExchangeException("Cannot find the data file " + name, exchange);
+                        }
+                    }
+                }).to("mock:start");
+
+                from("direct:data").to("mock:result");
             }
         };
     }

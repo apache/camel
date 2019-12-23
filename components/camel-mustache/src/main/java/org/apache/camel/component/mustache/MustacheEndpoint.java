@@ -132,9 +132,7 @@ public class MustacheEndpoint extends ResourceEndpoint {
             return newMustache;
         } finally {
             resourceReader.close();
-            if (oldcl != null) {
-                Thread.currentThread().setContextClassLoader(oldcl);
-            }
+            Thread.currentThread().setContextClassLoader(oldcl);
         }
     }
 

@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 
 public class SetResponseProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         // Convert the input stream into a string

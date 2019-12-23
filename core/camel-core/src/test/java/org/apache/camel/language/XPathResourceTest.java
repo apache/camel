@@ -39,9 +39,7 @@ public class XPathResourceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().xpath("resource:classpath:myxpath.txt")
-                    .to("mock:result");
+                from("direct:start").transform().xpath("resource:classpath:myxpath.txt").to("mock:result");
             }
         };
     }

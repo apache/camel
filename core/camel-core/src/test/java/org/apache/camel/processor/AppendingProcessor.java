@@ -35,6 +35,7 @@ public class AppendingProcessor implements Processor {
         suffixString = suffix;
     }
 
+    @Override
     public void process(Exchange exchange) {
         // lets transform the IN message
         Message in = exchange.getIn();

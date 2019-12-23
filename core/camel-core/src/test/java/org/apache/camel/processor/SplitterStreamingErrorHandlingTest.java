@@ -42,9 +42,11 @@ public class SplitterStreamingErrorHandlingTest extends ContextTestSupport {
         getMockEndpoint("mock:b").expectedBodiesReceived("A", "B", "D", "E");
         getMockEndpoint("mock:result").expectedMessageCount(0);
 
-        // we do not stop on exception and thus the splitted message which failed
+        // we do not stop on exception and thus the splitted message which
+        // failed
         // would be silently ignored so we can continue routing
-        // you can always use a custom aggregation strategy to deal with errors your-self
+        // you can always use a custom aggregation strategy to deal with errors
+        // your-self
         try {
             template.sendBody("direct:start", "A,B,Kaboom,D,E");
             fail("Should have thrown an exception");
@@ -61,20 +63,14 @@ public class SplitterStreamingErrorHandlingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(",")).streaming()
-                        .to("mock:a")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if ("Kaboom".equals(body)) {
-                                    throw new IllegalArgumentException("Cannot do this");
-                                }
-                            }
-                        })
-                        .to("mock:b")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").split(body().tokenize(",")).streaming().to("mock:a").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if ("Kaboom".equals(body)) {
+                            throw new IllegalArgumentException("Cannot do this");
+                        }
+                    }
+                }).to("mock:b").end().to("mock:result");
             }
         };
     }

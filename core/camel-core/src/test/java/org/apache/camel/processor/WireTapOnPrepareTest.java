@@ -52,9 +52,7 @@ public class WireTapOnPrepareTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .wireTap("direct:a").copy().newExchange(new AnimalDeepClonePrepare())
-                    .to("direct:b");
+                from("direct:start").wireTap("direct:a").copy().newExchange(new AnimalDeepClonePrepare()).to("direct:b");
                 // END SNIPPET: e1
 
                 from("direct:a").process(new ProcessorA()).to("mock:a");

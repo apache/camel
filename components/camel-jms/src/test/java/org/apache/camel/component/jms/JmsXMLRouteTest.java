@@ -33,7 +33,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-
 /**
  * For unit testing with XML streams that can be troublesome with the StreamCache
  */
@@ -183,6 +182,7 @@ public class JmsXMLRouteTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

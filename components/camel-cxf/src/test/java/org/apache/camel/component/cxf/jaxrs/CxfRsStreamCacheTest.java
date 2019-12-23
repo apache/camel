@@ -32,7 +32,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
-
 public class CxfRsStreamCacheTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String CONTEXT = "/CxfRsStreamCacheTest";
@@ -42,6 +41,7 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
     private String cxfRsEndpointUri = "cxfrs://http://localhost:" + CXT + "/rest?synchronous=" + isSynchronous()
                                       + "&dataFormat=PAYLOAD&resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerService";
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         return new RouteBuilder() {
@@ -75,7 +75,7 @@ public class CxfRsStreamCacheTest extends CamelTestSupport {
                         });
                     });
 
-            };
+            }
         };
     }
 

@@ -33,7 +33,8 @@ public class AdviceWithWeaveToUriAndAddLastTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 weaveByToUri("mock:foo").replace().to("mock:foo2");
-                // insert at the end of the existing route, the given piece of route
+                // insert at the end of the existing route, the given piece of
+                // route
                 weaveAddLast().to("mock:last");
             }
         });
@@ -52,8 +53,7 @@ public class AdviceWithWeaveToUriAndAddLastTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("mock:foo");
+                from("direct:start").to("mock:foo");
             }
         };
     }

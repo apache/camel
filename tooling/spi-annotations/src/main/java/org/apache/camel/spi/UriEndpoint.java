@@ -44,6 +44,8 @@ public @interface UriEndpoint {
      * For example to associate <tt>http</tt> and <tt>https</tt> to the same endpoint implementation.
      * <p/>
      * The order of the scheme names here should be the same order as in {@link #extendsScheme()} so their are paired.
+     * <p/>
+     * The schema name must be lowercase, it may contain dashes as well. For example: robot-framework.
      */
     String scheme();
 
@@ -153,5 +155,12 @@ public @interface UriEndpoint {
      * the parent component. Multiple properties can be separated by comma.
      */
     String excludeProperties() default "";
+
+    /**
+     * Generates source code for fast configuring of the endpoint properties which
+     * uses direct method invocation of getter/setters.
+     * Setting this to false will fallback to use reflection based introspection as Camel does in Camel 2.x.
+     */
+    boolean generateConfigurer() default true;
 
 }

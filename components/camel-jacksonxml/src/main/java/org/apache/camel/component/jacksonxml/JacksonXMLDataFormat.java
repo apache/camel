@@ -34,7 +34,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -150,14 +149,17 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
         return "xml-jackson";
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         this.xmlMapper.writerWithView(jsonView).writeValue(stream, graph);
 
@@ -170,6 +172,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
         }
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
 
         // is there a header with the unmarshal type?

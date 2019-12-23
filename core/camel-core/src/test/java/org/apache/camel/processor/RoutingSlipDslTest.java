@@ -39,12 +39,11 @@ public class RoutingSlipDslTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a").routingSlip()
-                    .message(m -> m.getHeader("recipientListHeader", String.class).split(","))
-                    .end();
+                from("direct:a").routingSlip().message(m -> m.getHeader("recipientListHeader", String.class).split(",")).end();
             }
         };
     }

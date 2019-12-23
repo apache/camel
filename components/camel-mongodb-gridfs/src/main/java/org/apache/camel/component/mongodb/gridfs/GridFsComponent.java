@@ -22,13 +22,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 
-
 @Component("mongodb-gridfs")
 public class GridFsComponent extends DefaultComponent {
 
     public GridFsComponent() {
     }
     
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
         GridFsEndpoint endpoint = new GridFsEndpoint(uri, this);

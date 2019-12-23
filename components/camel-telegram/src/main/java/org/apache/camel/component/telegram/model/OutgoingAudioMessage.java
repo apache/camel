@@ -16,11 +16,15 @@
  */
 package org.apache.camel.component.telegram.model;
 
+import java.util.Arrays;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * An outgoing audio message.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OutgoingAudioMessage extends OutgoingMessage {
 
     private static final long serialVersionUID = 2716544815581270395L;

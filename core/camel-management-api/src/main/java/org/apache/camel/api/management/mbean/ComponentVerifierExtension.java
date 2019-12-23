@@ -33,7 +33,6 @@ import org.apache.camel.api.management.mbean.ComponentVerifierExtension.Verifica
  * interface is {@link ManagedComponentMBean#verify(String, Map)} which takes a scope and a set of parameters which should be verified.
  * <p/>
  * The return value is a {@link ComponentVerifierExtension.Result} of the verification
- *
  */
 public final class ComponentVerifierExtension {
 
@@ -89,6 +88,7 @@ public final class ComponentVerifierExtension {
      * The scope defines how the parameters should be verified.
      */
     public enum Scope {
+
         /**
          * Only validate the parameters for their <em>syntactic</em> soundness. Verifications in this scope should
          * be as fast as possible
@@ -275,7 +275,7 @@ public final class ComponentVerifierExtension {
              */
             StandardCode UNSUPPORTED_SCOPE = new StandardErrorCode("UNSUPPORTED_SCOPE");
             /**
-             * The requested {@link Component} is not supported
+             * The requested Component is not supported
              */
             StandardCode UNSUPPORTED_COMPONENT = new StandardErrorCode("UNSUPPORTED_COMPONENT");
             /**
@@ -288,6 +288,7 @@ public final class ComponentVerifierExtension {
          * Interface defining an attribute which is a key for the detailed error messages.
          */
         interface Attribute extends Serializable {
+
             /**
              * Name of the attribute. All uppercase for standard attributes and all lower case for custom attributes.
              * Separator between words is an underscore.
@@ -311,11 +312,13 @@ public final class ComponentVerifierExtension {
          * Attributes for details about an exception that was raised
          */
         interface ExceptionAttribute extends Attribute {
+
             /**
              * The exception object that has been thrown. Note that this can be a complex
              * object and can cause large content when e.g. serialized as JSON
              */
             ExceptionAttribute EXCEPTION_INSTANCE = new ExceptionErrorAttribute("EXCEPTION_INSTANCE");
+
             /**
              * The exception class
              */
@@ -326,14 +329,17 @@ public final class ComponentVerifierExtension {
          * HTTP related error details
          */
         interface HttpAttribute extends Attribute {
+
             /**
              * The erroneous HTTP code that occurred
              */
             HttpAttribute HTTP_CODE = new HttpErrorAttribute("HTTP_CODE");
+
             /**
              * HTTP response's body
              */
             HttpAttribute HTTP_TEXT = new HttpErrorAttribute("HTTP_TEXT");
+
             /**
              * If given as details, specifies that a redirect happened and the
              * content of this detail is the redirect URL
@@ -345,10 +351,12 @@ public final class ComponentVerifierExtension {
          * Group related details
          */
         interface GroupAttribute extends Attribute {
+
             /**
              * Group name
              */
             GroupAttribute GROUP_NAME = new GroupErrorAttribute("GROUP_NAME");
+
             /**
              * Options for the group
              */

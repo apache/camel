@@ -67,7 +67,9 @@ public class FileConsumer extends GenericFileConsumer<File> {
             return true;
         }
 
-        log.trace("Polling directory: {}", directory.getPath());
+        if (log.isTraceEnabled()) {
+            log.trace("Polling directory: {}, absolute path: {}", directory.getPath(), directory.getAbsolutePath());
+        }
         File[] dirFiles = directory.listFiles();
         if (dirFiles == null || dirFiles.length == 0) {
             // no files in this directory to poll

@@ -70,6 +70,7 @@ public class BindySimpleCsvBooleanTrueMarshallTest extends AbstractJUnit4SpringC
 
     public static class ContextConfig extends RouteBuilder {
 
+        @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(
                 org.apache.camel.dataformat.bindy.model.simple.bool.BooleanExample.class);

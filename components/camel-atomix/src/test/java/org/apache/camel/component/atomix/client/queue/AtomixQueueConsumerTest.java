@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.atomix.client.queue;
+
 import java.util.Collections;
 import java.util.Map;
 import java.util.UUID;

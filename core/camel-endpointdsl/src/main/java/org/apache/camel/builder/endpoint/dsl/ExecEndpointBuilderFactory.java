@@ -17,6 +17,7 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import javax.annotation.Generated;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -45,7 +46,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder args(String args) {
-            setProperty("args", args);
+            doSetProperty("args", args);
             return this;
         }
         /**
@@ -57,7 +58,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -69,7 +70,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -85,7 +86,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder commandExecutor(Object commandExecutor) {
-            setProperty("commandExecutor", commandExecutor);
+            doSetProperty("commandExecutor", commandExecutor);
             return this;
         }
         /**
@@ -101,7 +102,72 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder commandExecutor(String commandExecutor) {
-            setProperty("commandExecutor", commandExecutor);
+            doSetProperty("commandExecutor", commandExecutor);
+            return this;
+        }
+        /**
+         * Logging level to be used for commands during execution. The default
+         * value is DEBUG. Possible values are TRACE, DEBUG, INFO, WARN, ERROR
+         * or OFF. (Values of ExecCommandLogLevelType enum).
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: producer
+         */
+        default ExecEndpointBuilder commandLogLevel(LoggingLevel commandLogLevel) {
+            doSetProperty("commandLogLevel", commandLogLevel);
+            return this;
+        }
+        /**
+         * Logging level to be used for commands during execution. The default
+         * value is DEBUG. Possible values are TRACE, DEBUG, INFO, WARN, ERROR
+         * or OFF. (Values of ExecCommandLogLevelType enum).
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: producer
+         */
+        default ExecEndpointBuilder commandLogLevel(String commandLogLevel) {
+            doSetProperty("commandLogLevel", commandLogLevel);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ExecEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ExecEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -114,7 +180,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder outFile(String outFile) {
-            setProperty("outFile", outFile);
+            doSetProperty("outFile", outFile);
             return this;
         }
         /**
@@ -127,7 +193,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -140,7 +206,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -154,7 +220,7 @@ public interface ExecEndpointBuilderFactory {
          */
         default ExecEndpointBuilder useStderrOnEmptyStdout(
                 boolean useStderrOnEmptyStdout) {
-            setProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
+            doSetProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
             return this;
         }
         /**
@@ -168,7 +234,7 @@ public interface ExecEndpointBuilderFactory {
          */
         default ExecEndpointBuilder useStderrOnEmptyStdout(
                 String useStderrOnEmptyStdout) {
-            setProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
+            doSetProperty("useStderrOnEmptyStdout", useStderrOnEmptyStdout);
             return this;
         }
         /**
@@ -180,7 +246,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: producer
          */
         default ExecEndpointBuilder workingDir(String workingDir) {
-            setProperty("workingDir", workingDir);
+            doSetProperty("workingDir", workingDir);
             return this;
         }
     }
@@ -204,7 +270,7 @@ public interface ExecEndpointBuilderFactory {
          */
         default AdvancedExecEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -217,7 +283,7 @@ public interface ExecEndpointBuilderFactory {
          */
         default AdvancedExecEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -229,7 +295,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedExecEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -241,7 +307,7 @@ public interface ExecEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedExecEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -250,7 +316,7 @@ public interface ExecEndpointBuilderFactory {
      * The exec component can be used to execute OS system commands.
      * 
      * Category: system
-     * Available as of version: 2.3
+     * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-exec
      * 
      * Syntax: <code>exec:executable</code>

@@ -29,9 +29,10 @@ import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
 /**
- * The new Async API version of doing async routing based on the old AsyncProcessor API
- * In the old SedaAsyncProcessorTest a seda endpoint was needed to really turn it into async. This is not
- * needed by the new API so we send it using direct instead.
+ * The new Async API version of doing async routing based on the old
+ * AsyncProcessor API In the old SedaAsyncProcessorTest a seda endpoint was
+ * needed to really turn it into async. This is not needed by the new API so we
+ * send it using direct instead.
  */
 public class SedaAsyncProducerTest extends ContextTestSupport {
 
@@ -76,7 +77,7 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
 
         assertEquals("Send should occur before processor", "processsend", route);
 
-        String response = exchange.getOut().getBody(String.class);
+        String response = exchange.getMessage().getBody(String.class);
         assertEquals("Bye World", response);
     }
 
@@ -87,15 +88,13 @@ public class SedaAsyncProducerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("direct:start").delay(100)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            route = route + "process";
-                            // set the response
-                            exchange.getOut().setBody("Bye World");
-                        }
-                    })
-                    .to("mock:result");
+                from("direct:start").delay(100).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        route = route + "process";
+                        // set the response
+                        exchange.getMessage().setBody("Bye World");
+                    }
+                }).to("mock:result");
 
             }
         };

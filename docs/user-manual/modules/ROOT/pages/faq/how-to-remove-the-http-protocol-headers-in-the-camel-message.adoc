@@ -1,9 +1,9 @@
 [[Howtoremovethehttpprotocolheadersinthecamelmessage-Howtoremovethehttpprotocolheadersinthecamelmessage]]
-=== How to remove the http protocol headers in the camel message?
+= How to remove the http protocol headers in the camel message?
 
 In camel there are a number of components that use the http protocol
 headers to do their business.
-The components include camel-http, camel-jetty, camel-restlet,
+The components include camel-http, camel-jetty, 
 camel-cxf, etc.
 If you are using these component, you may pay attention to the HTTP
 protocol headers:

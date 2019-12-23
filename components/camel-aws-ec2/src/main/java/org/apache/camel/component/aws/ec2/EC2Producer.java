@@ -21,7 +21,6 @@ import java.util.Collection;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.ec2.AmazonEC2;
-import com.amazonaws.services.ec2.AmazonEC2Client;
 import com.amazonaws.services.ec2.model.CreateTagsRequest;
 import com.amazonaws.services.ec2.model.CreateTagsResult;
 import com.amazonaws.services.ec2.model.DeleteTagsRequest;
@@ -45,7 +44,6 @@ import com.amazonaws.services.ec2.model.TerminateInstancesRequest;
 import com.amazonaws.services.ec2.model.TerminateInstancesResult;
 import com.amazonaws.services.ec2.model.UnmonitorInstancesRequest;
 import com.amazonaws.services.ec2.model.UnmonitorInstancesResult;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -65,6 +63,7 @@ public class EC2Producer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
         case createAndRunInstances:

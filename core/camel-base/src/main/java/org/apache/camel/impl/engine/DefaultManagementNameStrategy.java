@@ -109,6 +109,7 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
      * @return the management name
      * @throws IllegalArgumentException if the pattern or name is invalid or empty
      */
+    @Override
     public String resolveManagementName(String pattern, String name, boolean invalidCheck) {
         StringHelper.notEmpty(pattern, "pattern");
         StringHelper.notEmpty(name, "name");

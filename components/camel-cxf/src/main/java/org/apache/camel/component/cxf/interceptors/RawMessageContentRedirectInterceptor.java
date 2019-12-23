@@ -36,6 +36,7 @@ public class RawMessageContentRedirectInterceptor extends AbstractPhaseIntercept
         super(Phase.WRITE);
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         // check the fault from the message
         Throwable ex = message.getContent(Throwable.class);

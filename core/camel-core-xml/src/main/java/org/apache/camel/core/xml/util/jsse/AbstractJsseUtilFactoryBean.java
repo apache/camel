@@ -20,11 +20,14 @@ import org.apache.camel.core.xml.AbstractCamelFactoryBean;
 
 public abstract class AbstractJsseUtilFactoryBean<T> extends AbstractCamelFactoryBean<T> {
     
+    @Override
     public abstract T getObject() throws Exception;
     
+    @Override
     public boolean isSingleton() {
         return true;
     }
 
+    @Override
     public abstract Class<? extends T> getObjectType();
 }

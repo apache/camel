@@ -28,7 +28,6 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
@@ -53,7 +52,6 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
     private String hazelcastMode = HazelcastConstants.HAZELCAST_NODE_MODE;
 
     public HazelcastDefaultComponent() {
-        super();
         this.customHazelcastInstances = new LinkedHashSet<>();
     }
 
@@ -82,6 +80,8 @@ public abstract class HazelcastDefaultComponent extends DefaultComponent {
         if (defaultOperation != null) {
             endpoint.setDefaultOperation(HazelcastOperation.getHazelcastOperation(defaultOperation));
         }
+
+        setProperties(endpoint, parameters);
 
         return endpoint;
     }

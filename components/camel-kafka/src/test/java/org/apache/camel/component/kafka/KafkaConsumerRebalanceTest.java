@@ -19,10 +19,10 @@ package org.apache.camel.component.kafka;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.StateRepository;
 import org.junit.Test;
 
@@ -32,6 +32,7 @@ public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    @BindToRegistry("offset")
     private OffsetStateRepository stateRepository;
     private CountDownLatch messagesLatch;
 
@@ -46,13 +47,6 @@ public class KafkaConsumerRebalanceTest extends BaseEmbeddedKafkaTest {
         boolean offsetGetStateCalled = messagesLatch.await(30000, TimeUnit.MILLISECONDS);
         assertTrue("StateRepository.getState should have been called twice for topic " + TOPIC  
                 + ". Remaining count : " + messagesLatch.getCount(), offsetGetStateCalled);
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("offset", stateRepository);
-        return registry;
     }
 
     @Override

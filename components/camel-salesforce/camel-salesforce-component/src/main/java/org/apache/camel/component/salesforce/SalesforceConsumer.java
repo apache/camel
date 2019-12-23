@@ -21,7 +21,6 @@ import java.io.StringReader;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -96,7 +95,7 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         messageKind = MessageKind.fromTopicName(topicName);
 
-        rawPayload = endpoint.getConfiguration().getRawPayload();
+        rawPayload = endpoint.getConfiguration().isRawPayload();
 
         // get sObjectClass to convert to
         final String sObjectName = endpoint.getConfiguration().getSObjectName();
@@ -157,8 +156,7 @@ public class SalesforceConsumer extends DefaultConsumer {
                 public void done(boolean doneSync) {
                     // noop
                     if (log.isTraceEnabled()) {
-                        log.trace("Done processing event: {} {}", channel.getId(),
-                                doneSync ? "synchronously" : "asynchronously");
+                        log.trace("Done processing event: {} {}", channel.getId(), doneSync ? "synchronously" : "asynchronously");
                     }
                 }
             });
@@ -216,7 +214,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         final Map<String, Object> data = message.getDataAsMap();
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
+        final Map<String, Object> event = (Map<String, Object>)data.get(EVENT_PROPERTY);
 
         final Object replayId = event.get(REPLAY_ID_PROPERTY);
         if (replayId != null) {
@@ -245,7 +243,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         final Map<String, Object> data = message.getDataAsMap();
 
         @SuppressWarnings("unchecked")
-        final Map<String, Object> event = (Map<String, Object>) data.get(EVENT_PROPERTY);
+        final Map<String, Object> event = (Map<String, Object>)data.get(EVENT_PROPERTY);
         final Object eventType = event.get(TYPE_PROPERTY);
         final Object createdDate = event.get(CREATED_DATE_PROPERTY);
         final Object replayId = event.get(REPLAY_ID_PROPERTY);
@@ -259,7 +257,7 @@ public class SalesforceConsumer extends DefaultConsumer {
 
         // get SObject
         @SuppressWarnings("unchecked")
-        final Map<String, Object> sObject = (Map<String, Object>) data.get(SOBJECT_PROPERTY);
+        final Map<String, Object> sObject = (Map<String, Object>)data.get(SOBJECT_PROPERTY);
         try {
 
             final String sObjectString = objectMapper.writeValueAsString(sObject);
@@ -315,6 +313,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         }
 
         // subscribe to topic
+        ServiceHelper.startService(subscriptionHelper);
         subscriptionHelper.subscribe(topicName, this);
         subscribed = true;
     }

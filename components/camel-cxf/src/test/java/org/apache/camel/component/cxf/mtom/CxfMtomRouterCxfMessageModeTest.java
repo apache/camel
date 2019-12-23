@@ -26,7 +26,6 @@ import org.springframework.test.context.ContextConfiguration;
 
 import static org.junit.Assert.assertNotNull;
 
-
 @ContextConfiguration
 public class CxfMtomRouterCxfMessageModeTest extends CxfMtomRouterPayloadModeTest {
     @Override

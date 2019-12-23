@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.facebook;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
@@ -36,21 +35,10 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
     protected void loadProperties(CamelContext context) throws Exception {
         URL url = getClass().getResource("/test-options.properties");
 
-        InputStream inStream;
-        try {
-            inStream = url.openStream();
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalAccessError("test-options.properties could not be found");
-        }
+        InputStream inStream = url.openStream();
 
         properties = new Properties();
-        try {
-            properties.load(inStream);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new IllegalAccessError("test-options.properties could not be found");
-        }
+        properties.load(inStream);
 
         Map<String, Object> options = new HashMap<>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
@@ -77,7 +65,7 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
             + (properties.get("oAuthAccessToken") != null
             ? ("&oAuthAccessToken=" + properties.get("oAuthAccessToken")) : "");
     }
-    
+
     protected String getAppOauthParams() {
         return "oAuthAppId=" + properties.get("oAuthAppId")
              + "&oAuthAppSecret=" + properties.get("oAuthAppSecret");

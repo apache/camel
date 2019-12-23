@@ -53,8 +53,7 @@ public class LogEndpointTest extends ContextTestSupport {
 
         assertNotNull(logged);
     }
-    
-    
+
     @Test
     public void testLogEndpointGroupSize() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:result");
@@ -74,7 +73,7 @@ public class LogEndpointTest extends ContextTestSupport {
                 LogEndpoint end = new LogEndpoint();
                 end.setCamelContext(context);
                 end.setLogger(new MyLogger());
-                
+
                 LogEndpoint endpoint = new LogEndpoint();
                 endpoint.setLoggerName("loggerSetter");
                 endpoint.setGroupSize(10);
@@ -84,7 +83,7 @@ public class LogEndpointTest extends ContextTestSupport {
                 assertEquals("log:myLogger", end.getEndpointUri());
 
                 from("direct:start1").to(end).to("mock:result");
-                
+
                 from("direct:start2").to(endpoint).to("mock:result");
             }
         };

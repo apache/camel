@@ -469,4 +469,27 @@ public class AntPathMatcher {
     private static boolean different(boolean caseSensitive, char ch, char other) {
         return caseSensitive ? ch != other : Character.toUpperCase(ch) != Character.toUpperCase(other);
     }
+
+    /**
+     * Determine the root directory for the given location.
+     * <p>Used for determining the starting point for file matching,
+     * resolving the root directory location
+     * <p>Will return "/WEB-INF/" for the pattern "/WEB-INF/*.xml",
+     * for example.
+     *
+     * @param location the location to check
+     * @return the part of the location that denotes the root directory
+     */
+    public String determineRootDir(String location) {
+        int prefixEnd = location.indexOf(':') + 1;
+        int rootDirEnd = location.length();
+        while (rootDirEnd > prefixEnd && isPattern(location.substring(prefixEnd, rootDirEnd))) {
+            rootDirEnd = location.lastIndexOf('/', rootDirEnd - 2) + 1;
+        }
+        if (rootDirEnd == 0) {
+            rootDirEnd = prefixEnd;
+        }
+        return location.substring(0, rootDirEnd);
+    }
+
 }

@@ -35,7 +35,6 @@ import org.openstack4j.model.compute.Server;
 import org.openstack4j.model.compute.ServerCreate;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -120,15 +119,7 @@ public class ServerProducerTest extends NovaProducerTestSupport {
 
         assertEquals(id, idArgumentCaptor.getValue());
         assertTrue(actionArgumentCaptor.getValue() == Action.PAUSE);
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
-
-        //test fail
-        final String failReason = "fr";
-        when(serverService.action(anyString(), any())).thenReturn(ActionResponse.actionFailed(failReason, 401));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failReason));
     }
 
     @Test

@@ -28,6 +28,7 @@ final class FileReplyProcessor implements Processor {
         this.in = in;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         exchange.getIn().setBody(in);
     }

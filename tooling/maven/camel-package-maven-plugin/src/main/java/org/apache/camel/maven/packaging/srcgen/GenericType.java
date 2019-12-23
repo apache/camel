@@ -198,6 +198,7 @@ public class GenericType {
         return result;
     }
 
+    @Override
     public boolean equals(Object object) {
         if (!(object instanceof GenericType)) {
             return false;

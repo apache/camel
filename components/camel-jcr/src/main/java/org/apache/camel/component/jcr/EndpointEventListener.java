@@ -18,6 +18,7 @@ package org.apache.camel.component.jcr;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import javax.jcr.observation.Event;
 import javax.jcr.observation.EventIterator;
 import javax.jcr.observation.EventListener;
@@ -46,6 +47,7 @@ public class EndpointEventListener implements EventListener {
         this.processor = processor;
     }
 
+    @Override
     public void onEvent(EventIterator events) {
         LOG.trace("onEvent START");
         LOG.debug("{} consumer received JCR events: {}", endpoint, events);

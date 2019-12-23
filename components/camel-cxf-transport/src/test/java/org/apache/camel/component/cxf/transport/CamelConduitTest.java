@@ -37,6 +37,7 @@ import org.junit.Test;
 
 public class CamelConduitTest extends CamelTransportTestSupport {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -54,6 +55,7 @@ public class CamelConduitTest extends CamelTransportTestSupport {
         };
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }

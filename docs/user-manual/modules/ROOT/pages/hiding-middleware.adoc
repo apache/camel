@@ -1,0 +1,45 @@
+= Hiding Middleware
+
+When writing software these days, its important to try and decouple as
+much middleware code from your business logic as possible.
+
+This provides a number of benefits...
+
+* you can choose the right middleware solution for your deployment and
+switch at any time
+* you don't have to spend a large amount of time learning the specifics
+of any particular technology, whether its xref:components::jms-component.adoc[JMS] or
+xref:components::jpa-component.adoc[JPA] or xref:components::mybatis-component.adoc[MyBatis] whatever
+
+For example if you want to implement some kind of message passing,
+remoting, reliable load balancing or asynchronous processing in your
+application we recommend you use Camel annotations to bind your services
+and business logic to Camel xref:components::index.adoc[Components] which means
+you can then easily switch between things like
+
+* in JVM messaging with xref:components::seda-component.adoc[SEDA]
+* using JMS via xref:components::activemq-component.adoc[ActiveMQ] or other xref:components::jms-component.adoc[JMS]
+providers for reliable load balancing, grid or publish and subscribe
+* for low volume, but easier administration since you're probably
+already using a database you could use
+** xref:components::jpa-component.adoc[JPA] to use an entity
+bean / table as a queue
+** xref:components::mybatis-component.adoc[MyBatis] to work with SQL
+** xref:components::jdbc-component.adoc[MyBatis][JDBC] for raw SQL access
+
+[[HidingMiddleware-HowtodecouplefrommiddlewareAPIs]]
+== How to decouple from middleware APIs
+
+The best approach when using remoting is to use
+xref:spring-remoting.adoc[Spring Remoting] which can then use any
+messaging or remoting technology under the covers. When using Camel's
+implementation you can then use any of the Camel
+xref:components::index.adoc[Components] along with any of the
+xref:enterprise-integration-patterns.adoc[Enterprise Integration
+Patterns].
+
+Another approach is to bind Java beans to Camel endpoints via the
+xref:bean-integration.adoc[Bean Integration]. For example using
+xref:pojo-consuming.adoc[POJO Consuming] and
+xref:pojo-producing.adoc[POJO Producing] you can avoid using any Camel
+APIs to decouple your code both from middleware APIs _and_ Camel APIs!

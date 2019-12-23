@@ -35,6 +35,7 @@ public class JmsNoRequestTimeoutTest extends CamelTestSupport {
         assertEquals("Bye World", reply);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -44,6 +45,7 @@ public class JmsNoRequestTimeoutTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

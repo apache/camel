@@ -44,8 +44,7 @@ public class RecipientListOnPrepareTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .recipientList(header("foo")).onPrepare(new AnimalDeepClonePrepare());
+                from("direct:start").recipientList(header("foo")).onPrepare(new AnimalDeepClonePrepare());
 
                 from("direct:a").process(new ProcessorA()).to("mock:a");
                 from("direct:b").process(new ProcessorB()).to("mock:b");

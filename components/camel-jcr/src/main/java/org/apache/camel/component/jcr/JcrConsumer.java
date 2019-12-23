@@ -160,6 +160,7 @@ public class JcrConsumer extends DefaultConsumer {
 
     private class JcrConsumerSessionListenerChecker implements Runnable {
 
+        @Override
         public void run() {
             log.debug("JcrConsumerSessionListenerChecker starts.");
 

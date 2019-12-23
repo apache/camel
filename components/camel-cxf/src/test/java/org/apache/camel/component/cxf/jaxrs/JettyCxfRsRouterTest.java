@@ -33,7 +33,8 @@ public class JettyCxfRsRouterTest extends CxfRsRouterTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/jaxrs/JettyCxfRsSpringRouter.xml");
     }
     
-    @Test 
+    @Override
+    @Test
     public void testEndpointUris() throws Exception {
         // Don't test anything here
     }

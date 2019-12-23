@@ -24,9 +24,9 @@ import org.junit.Test;
  *
  */
 public class MethodClassByTypeIssueTest extends ContextTestSupport {
-    
+
     private Object methodClass = MyTransformBean.class;
-    
+
     @Test
     public void testMethodClassByTypeAIssue() throws Exception {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
@@ -50,13 +50,9 @@ public class MethodClassByTypeIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .transform().method(MyTransformBean.class, "transformMe")
-                    .to("mock:a");
+                from("direct:a").transform().method(MyTransformBean.class, "transformMe").to("mock:a");
 
-                from("direct:b")
-                    .transform().method(methodClass, "transformMe")
-                    .to("mock:b");
+                from("direct:b").transform().method(methodClass, "transformMe").to("mock:b");
             }
         };
     }

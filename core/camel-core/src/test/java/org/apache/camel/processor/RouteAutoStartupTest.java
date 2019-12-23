@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.direct.DirectComponent;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.junit.Test;
 
 public class RouteAutoStartupTest extends ContextTestSupport {
@@ -92,7 +91,7 @@ public class RouteAutoStartupTest extends ContextTestSupport {
     @Test
     public void testRouteNotAutoStartedUsingString() throws Exception {
         context.getComponent("direct", DirectComponent.class).setBlock(false);
-        
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
@@ -126,10 +125,7 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
-                PropertiesComponent properties = new PropertiesComponent();
-                properties.setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
-                context.addComponent("properties", properties);
+                context.getPropertiesComponent().setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
 
                 from("direct:start").autoStartup("{{autoStartupProp}}").to("mock:result");
             }
@@ -149,10 +145,7 @@ public class RouteAutoStartupTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-
-                PropertiesComponent properties = new PropertiesComponent();
-                properties.setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
-                context.addComponent("properties", properties);
+                context.getPropertiesComponent().setLocation("classpath:org/apache/camel/processor/routeAutoStartupTest.properties");
 
                 from("direct:start").id("route1").autoStartup("{{noAutoStartupProp}}").to("mock:result");
             }

@@ -50,66 +50,82 @@ public class JcloudsComputeEndpoint extends JcloudsEndpoint {
         throw new UnsupportedOperationException("Consumer not supported for JcloudsComputeEndpoint!");
     }
 
+    @Override
     public String getImageId() {
         return imageId;
     }
 
+    @Override
     public void setImageId(String imageId) {
         this.imageId = imageId;
     }
 
+    @Override
     public String getLocationId() {
         return locationId;
     }
 
+    @Override
     public void setLocationId(String locationId) {
         this.locationId = locationId;
     }
 
+    @Override
     public String getHardwareId() {
         return hardwareId;
     }
 
+    @Override
     public void setHardwareId(String hardwareId) {
         this.hardwareId = hardwareId;
     }
 
+    @Override
     public String getOperation() {
         return operation;
     }
 
+    @Override
     public void setOperation(String operation) {
         this.operation = operation;
     }
 
+    @Override
     public String getNodeState() {
         return nodeState;
     }
 
+    @Override
     public void setNodeState(String nodeState) {
         this.nodeState = nodeState;
     }
 
+    @Override
     public String getNodeId() {
         return nodeId;
     }
 
+    @Override
     public void setNodeId(String nodeId) {
         this.nodeId = nodeId;
     }
 
+    @Override
     public String getGroup() {
         return group;
     }
 
+    @Override
     public void setGroup(String group) {
         this.group = group;
     }
 
+    @Override
     public String getUser() {
         return user;
     }
 
+    @Override
     public void setUser(String user) {
         this.user = user;
     }

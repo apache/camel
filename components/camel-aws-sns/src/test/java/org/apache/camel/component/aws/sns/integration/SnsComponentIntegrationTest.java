@@ -52,6 +52,7 @@ public class SnsComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(exchange.getOut().getHeader(SnsConstants.MESSAGE_ID));
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

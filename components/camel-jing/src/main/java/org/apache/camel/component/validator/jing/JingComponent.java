@@ -32,6 +32,7 @@ public class JingComponent extends DefaultComponent {
     public JingComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         JingEndpoint answer = new JingEndpoint(uri, this);
         answer.setResourceUri(remaining);

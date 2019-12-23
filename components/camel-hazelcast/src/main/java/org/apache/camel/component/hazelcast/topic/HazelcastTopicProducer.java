@@ -41,6 +41,7 @@ public class HazelcastTopicProducer extends HazelcastDefaultProducer {
         }
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         final HazelcastOperation operation = lookupOperation(exchange);
 

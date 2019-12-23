@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.List;
 
 import org.apache.camel.ContextTestSupport;
@@ -76,6 +77,7 @@ public class RedeliveryPolicyPerExceptionTest extends ContextTestSupport {
         b = resolveMandatoryEndpoint("mock:b", MockEndpoint.class);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
 
         final Processor processor = new Processor() {

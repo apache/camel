@@ -38,9 +38,6 @@ import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.jsse.SSLContextParameters;
 
-/**
- * Represents the component that manages {@link ConsulEndpoint}.
- */
 @Component("consul")
 public class ConsulComponent extends DefaultComponent implements SSLContextParametersAware {
 
@@ -48,7 +45,7 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
     private ConsulConfiguration configuration = new ConsulConfiguration();
     @Metadata(label = "security", defaultValue = "false")
     private boolean useGlobalSslContextParameters;
-    
+
     public ConsulComponent() {
     }
 
@@ -59,7 +56,6 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
     // ************************************
     // Options
     // ************************************
-
 
     public String getUrl() {
         return this.configuration.getUrl();
@@ -78,6 +74,7 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
 
     /**
      * The data center
+     * 
      * @param datacenter
      */
     public void setDatacenter(String datacenter) {
@@ -89,9 +86,8 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
     }
 
     /**
-     * SSL configuration using an org.apache.camel.support.jsse.SSLContextParameters
-     * instance.
-     * @param sslContextParameters
+     * SSL configuration using an
+     * org.apache.camel.support.jsse.SSLContextParameters instance.
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         configuration.setSslContextParameters(sslContextParameters);
@@ -116,7 +112,6 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
 
     /**
      * Sets the ACL token to be used with Consul
-     * @param aclToken
      */
     public void setAclToken(String aclToken) {
         configuration.setAclToken(aclToken);
@@ -128,7 +123,6 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
 
     /**
      * Sets the username to be used for basic authentication
-     * @param userName
      */
     public void setUserName(String userName) {
         configuration.setUserName(userName);
@@ -140,7 +134,6 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
 
     /**
      * Sets the password to be used for basic authentication
-     * @param password
      */
     public void setPassword(String password) {
         configuration.setPassword(password);
@@ -157,57 +150,49 @@ public class ConsulComponent extends DefaultComponent implements SSLContextParam
         this.configuration = configuration;
     }
 
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ConsulConfiguration configuration = Optional.ofNullable(this.configuration).orElseGet(ConsulConfiguration::new).copy();
 
+        ConsulEndpoint endpoint = null;
+        switch (remaining) {
+        case "kv":
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new), Optional.of(ConsulKeyValueConsumer::new));
+            break;
+        case "event":
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulEventProducer::new), Optional.of(ConsulEventConsumer::new));
+            break;
+        case "agent":
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulAgentProducer::new), Optional.empty());
+            break;
+        case "coordinates":
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulCoordinatesProducer::new), Optional.empty());
+            break;
+        case "health":
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulHealthProducer::new), Optional.empty());
+            break;
+        case "status":
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulStatusProducer::new), Optional.empty());
+            break;
+        case "preparedQuery":
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulPreparedQueryProducer::new), Optional.empty());
+            break;
+        case "catalog":
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulCatalogProducer::new), Optional.empty());
+            break;
+        case "session":
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulSessionProducer::new), Optional.empty());
+            break;
+        default:
+            endpoint = new ConsulEndpoint(remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new), Optional.of(ConsulKeyValueConsumer::new));
+        }
+
+        setProperties(endpoint, parameters);
         // using global ssl context parameters if set
         if (configuration.getSslContextParameters() == null) {
             configuration.setSslContextParameters(retrieveGlobalSslContextParameters());
         }
-
-        setProperties(configuration, parameters);
-
-        switch (remaining) {
-        case "kv":
-            return new ConsulEndpoint(
-                remaining, uri, this, configuration, Optional.of(ConsulKeyValueProducer::new), Optional.of(ConsulKeyValueConsumer::new)
-            );
-        case "event":
-            return new ConsulEndpoint(
-                remaining, uri, this, configuration, Optional.of(ConsulEventProducer::new), Optional.of(ConsulEventConsumer::new)
-            );
-        case "agent":
-            return new ConsulEndpoint(
-                remaining, uri, this, configuration, Optional.of(ConsulAgentProducer::new), Optional.empty()
-            );
-        case "coordinates":
-            return new ConsulEndpoint(
-                remaining, uri, this, configuration, Optional.of(ConsulCoordinatesProducer::new), Optional.empty()
-            );
-        case "health":
-            return new ConsulEndpoint(
-                remaining, uri, this, configuration, Optional.of(ConsulHealthProducer::new), Optional.empty()
-            );
-        case "status":
-            return new ConsulEndpoint(
-                remaining, uri, this, configuration, Optional.of(ConsulStatusProducer::new), Optional.empty()
-            );
-        case "preparedQuery":
-            return new ConsulEndpoint(
-                remaining, uri, this, configuration, Optional.of(ConsulPreparedQueryProducer::new), Optional.empty()
-            );
-        case "catalog":
-            return new ConsulEndpoint(
-                remaining, uri, this, configuration, Optional.of(ConsulCatalogProducer::new), Optional.empty()
-            );
-        case "session":
-            return new ConsulEndpoint(
-                remaining, uri, this, configuration, Optional.of(ConsulSessionProducer::new), Optional.empty()
-            );
-        default:
-            throw new IllegalArgumentException("Unknown apiEndpoint: " + remaining);
-        }
+        return endpoint;
     }
+
 }

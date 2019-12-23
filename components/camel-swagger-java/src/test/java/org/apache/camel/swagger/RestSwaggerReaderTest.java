@@ -21,39 +21,36 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import io.swagger.jaxrs.config.BeanConfig;
 import io.swagger.models.Swagger;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.engine.DefaultClassResolver;
 import org.apache.camel.model.rest.RestParamType;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RestSwaggerReaderTest extends CamelTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        return jndi;
-    }
+    private static final Logger LOG = LoggerFactory.getLogger(RestSwaggerReaderTest.class);
+
+    @BindToRegistry("dummy-rest")
+    private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/hello").consumes("application/json").produces("application/json")
-                        .get("/hi/{name}").description("Saying hi")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
-                            .to("log:hi")
-                        .get("/bye/{name}").description("Saying bye")
-                            .param().name("name").type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam()
-                            .responseMessage().code(200).message("A reply number").responseModel(float.class)
-                                .example("success", "123").example("error", "-1").endResponseMessage()
-                            .to("log:bye")
-                        .post("/bye").description("To update the greeting message").consumes("application/xml").produces("application/xml")
-                            .param().name("greeting").type(RestParamType.body).dataType("string").description("Message to use as greeting").example("application/xml", "<hello>Hi</hello>").endParam()
-                            .to("log:bye");
+                rest("/hello").consumes("application/json").produces("application/json").get("/hi/{name}").description("Saying hi").param().name("name").type(RestParamType.path)
+                    .dataType("string").description("Who is it").example("Donald Duck").endParam().to("log:hi").get("/bye/{name}").description("Saying bye").param().name("name")
+                    .type(RestParamType.path).dataType("string").description("Who is it").example("Donald Duck").endParam().responseMessage().code(200).message("A reply number")
+                    .responseModel(float.class).example("success", "123").example("error", "-1").endResponseMessage().to("log:bye").post("/bye")
+                    .description("To update the greeting message").consumes("application/xml").produces("application/xml").param().name("greeting").type(RestParamType.body)
+                    .dataType("string").description("Message to use as greeting").example("application/xml", "<hello>Hi</hello>").endParam().to("log:bye");
             }
         };
     }
@@ -62,7 +59,7 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
     public void testReaderRead() throws Exception {
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
-        config.setSchemes(new String[]{"http"});
+        config.setSchemes(new String[] {"http"});
         config.setBasePath("/api");
         RestSwaggerReader reader = new RestSwaggerReader();
 
@@ -74,7 +71,7 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
         String json = mapper.writeValueAsString(swagger);
 
-        log.info(json);
+        LOG.info(json);
 
         assertTrue(json.contains("\"host\" : \"localhost:8080\""));
         assertTrue(json.contains("\"basePath\" : \"/api\""));

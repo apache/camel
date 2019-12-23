@@ -19,6 +19,7 @@ package org.apache.camel.component.velocity;
 import org.apache.camel.builder.RouteBuilder;
 
 public class VelocityLetterWithParserTest extends VelocityLetterTest {
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {                

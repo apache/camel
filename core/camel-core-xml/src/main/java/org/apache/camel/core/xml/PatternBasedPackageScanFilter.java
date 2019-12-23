@@ -93,6 +93,7 @@ public class PatternBasedPackageScanFilter implements PackageScanFilter {
      * 
      * @return true if candidate class matches according to the above rules
      */
+    @Override
     public boolean matches(Class<?> candidateClass) {
         String candidate = candidateClass.getName();
         if (includePatterns != null || excludePatterns != null) {

@@ -17,10 +17,14 @@
 package org.apache.camel.component.ahc;
 
 import org.apache.camel.Endpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class AhcProduceClientConfigWithClientConfigUriParametersTest extends AhcProduceClientConfigTest {
 
+    @Override
     @Test
     public void testAhcProduceClientConfig() throws Exception {
         super.testAhcProduceClientConfig();

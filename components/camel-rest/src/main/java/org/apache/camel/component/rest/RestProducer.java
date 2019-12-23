@@ -31,14 +31,15 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.BeanIntrospection;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.DefaultAsyncProducer;
-import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.CollectionStringBuffer;
 import org.apache.camel.util.FileUtil;
@@ -155,15 +156,15 @@ public class RestProducer extends DefaultAsyncProducer {
                 String[] arr = resolvedUriTemplate.split("\\/");
                 CollectionStringBuffer csb = new CollectionStringBuffer("/");
                 for (String a : arr) {
-                    if (a.startsWith("{") && a.endsWith("}")) {
-                        String key = a.substring(1, a.length() - 1);
-                        String value = inMessage.getHeader(key, String.class);
-                        if (value != null) {
-                            hasPath = true;
-                            csb.append(value);
-                        } else {
-                            csb.append(a);
-                        }
+                    String resolvedUriParam = resolveHeaderPlaceholders(a, inMessage);
+
+                    // Backward compatibility: if one of the path params is fully resolved,
+                    // then it is assumed that whole uri is resolved.
+                    if (!a.equals(resolvedUriParam)
+                            && !resolvedUriParam.contains("{")
+                            && !resolvedUriParam.contains("}")) {
+                        hasPath = true;
+                        csb.append(resolvedUriParam);
                     } else {
                         csb.append(a);
                     }
@@ -223,6 +224,30 @@ public class RestProducer extends DefaultAsyncProducer {
         }
     }
 
+    /**
+     * Replaces placeholders "{}" with message header values
+     * @param str string with placeholders
+     * @param msg message with headers
+     * @return filled string
+     */
+    private String resolveHeaderPlaceholders(String str, Message msg) {
+        int startIndex = -1;
+        String res = str;
+        while ((startIndex = res.indexOf("{", startIndex + 1)) >= 0) {
+            int endIndex = res.indexOf("}", startIndex);
+            if (endIndex == -1) {
+                continue;
+            }
+            String key = res.substring(startIndex + 1, endIndex);
+            String headerValue = msg.getHeader(key, String.class);
+            if (headerValue != null) {
+                res = res.substring(0, startIndex) + headerValue + res.substring(endIndex + 1);
+            }
+        }
+
+        return res;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -276,6 +301,7 @@ public class RestProducer extends DefaultAsyncProducer {
             throw new IllegalArgumentException("JSon DataFormat " + name + " not found.");
         }
 
+        BeanIntrospection beanIntrospection = camelContext.adapt(ExtendedCamelContext.class).getBeanIntrospection();
         if (json != null) {
             Class<?> clazz = null;
             if (type != null) {
@@ -283,8 +309,8 @@ public class RestProducer extends DefaultAsyncProducer {
                 clazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
             }
             if (clazz != null) {
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), json, "unmarshalType", clazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), json, "useList", type.endsWith("[]"));
+                beanIntrospection.setProperty(camelContext, json, "unmarshalType", clazz);
+                beanIntrospection.setProperty(camelContext, json, "useList", type.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, camelContext, json, "json.in.");
 
@@ -294,8 +320,8 @@ public class RestProducer extends DefaultAsyncProducer {
                 outClazz = camelContext.getClassResolver().resolveMandatoryClass(typeName);
             }
             if (outClazz != null) {
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJson, "unmarshalType", outClazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
+                beanIntrospection.setProperty(camelContext, outJson, "unmarshalType", outClazz);
+                beanIntrospection.setProperty(camelContext, outJson, "useList", outType.endsWith("[]"));
             }
             setAdditionalConfiguration(configuration, camelContext, outJson, "json.out.");
         }
@@ -328,7 +354,7 @@ public class RestProducer extends DefaultAsyncProducer {
             }
             if (clazz != null) {
                 JAXBContext jc = JAXBContext.newInstance(clazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), jaxb, "context", jc);
+                beanIntrospection.setProperty(camelContext, jaxb, "context", jc);
             }
             setAdditionalConfiguration(configuration, camelContext, jaxb, "xml.in.");
 
@@ -339,11 +365,11 @@ public class RestProducer extends DefaultAsyncProducer {
             }
             if (outClazz != null) {
                 JAXBContext jc = JAXBContext.newInstance(outClazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJaxb, "context", jc);
+                beanIntrospection.setProperty(camelContext, outJaxb, "context", jc);
             } else if (clazz != null) {
                 // fallback and use the context from the input
                 JAXBContext jc = JAXBContext.newInstance(clazz);
-                IntrospectionSupport.setProperty(camelContext.getTypeConverter(), outJaxb, "context", jc);
+                beanIntrospection.setProperty(camelContext, outJaxb, "context", jc);
             }
             setAdditionalConfiguration(configuration, camelContext, outJaxb, "xml.out.");
         }
@@ -377,8 +403,7 @@ public class RestProducer extends DefaultAsyncProducer {
             }
 
             // set reference properties first as they use # syntax that fools the regular properties setter
-            EndpointHelper.setReferenceProperties(context, dataFormat, copy);
-            EndpointHelper.setProperties(context, dataFormat, copy);
+            PropertyBindingSupport.bindProperties(context, dataFormat, copy);
         }
     }
 
@@ -403,7 +428,7 @@ public class RestProducer extends DefaultAsyncProducer {
                             key = key.substring(0, key.length() - 1);
                             optional = true;
                         }
-                        String value = inMessage.getHeader(key, String.class);
+                        Object value = inMessage.getHeader(key);
                         if (value != null) {
                             params.put(entry.getKey(), value);
                         } else if (!optional) {
@@ -416,7 +441,12 @@ public class RestProducer extends DefaultAsyncProducer {
                 }
             }
             query = URISupport.createQueryString(params);
+            // remove any dangling & caused by the absence of optional parameters
+            while (query.endsWith("&")) {
+                query = query.substring(0, query.length() - 1);
+            }
         }
+
         return query;
     }
 }

@@ -26,7 +26,7 @@ import org.apache.camel.Converter;
 /**
  * A converter from {@link StreamSource} objects
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class StreamSourceConverter {
 
     /**

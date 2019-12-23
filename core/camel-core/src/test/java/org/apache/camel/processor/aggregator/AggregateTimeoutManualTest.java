@@ -55,8 +55,7 @@ public class AggregateTimeoutManualTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // timeout after 3 seconds
-                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(3000)
-                    .to("mock:result");
+                    .aggregate(header("id"), new UseLatestAggregationStrategy()).completionTimeout(3000).to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -42,12 +42,13 @@ public final class Application {
     }
 
     private Application() {
-
+        // noop
     }
 
     public static void main(String[] args) throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
+
         context.addRoutes(new TelegramRouteBuilder());
         context.addStartupListener(new TelegramExamplesRunner());
     }

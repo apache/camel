@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.language.tokenizer;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -33,18 +34,13 @@ public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
 
     @Test
     public void testFromFile() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\"></c:child>",
-                "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child>",
-                "<c:child some_attr='c' anotherAttr='c' xmlns:c=\"urn:c\"></c:child>",
-                "<c:child some_attr='d' anotherAttr='d' xmlns:c=\"urn:c\"></c:child>");
+        getMockEndpoint("mock:result")
+            .expectedBodiesReceived("<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\"></c:child>", "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\"></c:child>",
+                                    "<c:child some_attr='c' anotherAttr='c' xmlns:c=\"urn:c\"></c:child>", "<c:child some_attr='d' anotherAttr='d' xmlns:c=\"urn:c\"></c:child>");
 
-        String body = "<?xml version='1.0' encoding='UTF-8'?>"
-                + "<c:parent xmlns:c='urn:c'>"
-                +   "<c:child some_attr='a' anotherAttr='a'></c:child>"
-                +   "<c:child some_attr='b' anotherAttr='b'></c:child>"
-                +   "<c:child some_attr='c' anotherAttr='c'></c:child>"
-                +   "<c:child some_attr='d' anotherAttr='d'></c:child>"
-                + "</c:parent>";
+        String body = "<?xml version='1.0' encoding='UTF-8'?>" + "<c:parent xmlns:c='urn:c'>" + "<c:child some_attr='a' anotherAttr='a'></c:child>"
+                      + "<c:child some_attr='b' anotherAttr='b'></c:child>" + "<c:child some_attr='c' anotherAttr='c'></c:child>"
+                      + "<c:child some_attr='d' anotherAttr='d'></c:child>" + "</c:parent>";
 
         deleteDirectory("target/data/xmltokenize");
         template.sendBodyAndHeader("file:target/data/xmltokenize", body, Exchange.FILE_NAME, "myxml.xml");
@@ -56,11 +52,9 @@ public class XMLTokenizeLanguageStreamingFileTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             Namespaces ns = new Namespaces("C", "urn:c");
+
             public void configure() {
-                from("file:target/data/xmltokenize?initialDelay=0&delay=10")
-                    .split().xtokenize("//C:child", ns).streaming()
-                        .to("mock:result")
-                    .end();
+                from("file:target/data/xmltokenize?initialDelay=0&delay=10").split().xtokenize("//C:child", ns).streaming().to("mock:result").end();
             }
         };
     }

@@ -35,7 +35,6 @@ import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.service.model.EndpointInfo;
 
-
 /**
  * Just copy the from WSDLGetInterceptor to provide backward compatible support for 2.7.x
  */
@@ -48,6 +47,7 @@ public class RawMessageWSDLGetInterceptor extends AbstractPhaseInterceptor<Messa
         getAfter().add(EndpointSelectionInterceptor.class.getName());
     }
 
+    @Override
     public void handleMessage(Message message) throws Fault {
         String method = (String)message.get(Message.HTTP_REQUEST_METHOD);
         String query = (String)message.get(Message.QUERY_STRING);

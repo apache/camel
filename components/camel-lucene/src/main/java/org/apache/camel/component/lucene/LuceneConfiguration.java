@@ -39,10 +39,10 @@ public class LuceneConfiguration {
     private String host;
     @UriPath @Metadata(required = true)
     private LuceneOperation operation;
-    @UriParam(name = "srcDir")
-    private File sourceDirectory;
-    @UriParam(name = "indexDir")
-    private File indexDirectory;
+    @UriParam
+    private File srcDir;
+    @UriParam
+    private File indexDir;
     @UriParam
     private Analyzer analyzer;
     @UriParam
@@ -76,9 +76,9 @@ public class LuceneConfiguration {
         }
         setOperation(LuceneOperation.valueOf(op));
 
-        sourceDirectory = component.resolveAndRemoveReferenceParameter(
+        srcDir = component.resolveAndRemoveReferenceParameter(
                 parameters, "srcDir", File.class, null);
-        indexDirectory = component.resolveAndRemoveReferenceParameter(
+        indexDir = component.resolveAndRemoveReferenceParameter(
                 parameters, "indexDir", File.class, new File("file:///./indexDirectory"));
         analyzer = component.resolveAndRemoveReferenceParameter(
                 parameters, "analyzer", Analyzer.class, new StandardAnalyzer());
@@ -145,26 +145,26 @@ public class LuceneConfiguration {
         this.authority = authority;
     }
 
-    public File getSourceDirectory() {
-        return sourceDirectory;
+    public File getSrcDir() {
+        return srcDir;
     }
 
     /**
      * An optional directory containing files to be used to be analyzed and added to the index at producer startup.
      */
-    public void setSourceDirectory(File sourceDirectory) {
-        this.sourceDirectory = sourceDirectory;
+    public void setSrcDir(File srcDir) {
+        this.srcDir = srcDir;
     }
 
-    public File getIndexDirectory() {
-        return indexDirectory;
+    public File getIndexDir() {
+        return indexDir;
     }
 
     /**
      * A file system directory in which index files are created upon analysis of the document by the specified analyzer
      */
-    public void setIndexDirectory(File indexDirectory) {
-        this.indexDirectory = indexDirectory;
+    public void setIndexDir(File indexDir) {
+        this.indexDir = indexDir;
     }
 
     public Analyzer getAnalyzer() {

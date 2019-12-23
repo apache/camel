@@ -92,7 +92,7 @@ public class DomainProducer extends AbstractKeystoneProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(KeystoneConstants.DOMAIN_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Domain ID");
         final ActionResponse response = osV3Client.identity().domains().delete(id);
-        checkFailure(response, msg, "Delete domain" + id);
+        checkFailure(response, exchange, "Delete domain" + id);
     }
 
     private Domain messageToDomain(Message message) {

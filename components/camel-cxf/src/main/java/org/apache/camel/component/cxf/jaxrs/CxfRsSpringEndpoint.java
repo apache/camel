@@ -70,10 +70,12 @@ public class CxfRsSpringEndpoint extends CxfRsEndpoint implements BeanIdAware {
         cfb.setThreadSafe(true);
     }
 
+    @Override
     public String getBeanId() {
         return beanId;
     }
 
+    @Override
     public void setBeanId(String id) {
         this.beanId = id;
     }

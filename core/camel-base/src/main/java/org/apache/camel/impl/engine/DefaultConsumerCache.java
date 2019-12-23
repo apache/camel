@@ -72,6 +72,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      * @param endpoint the endpoint
      * @param pollingConsumer the pollingConsumer to release
      */
+    @Override
     public void releasePollingConsumer(Endpoint endpoint, PollingConsumer pollingConsumer) {
         consumers.release(endpoint, pollingConsumer);
     }
@@ -83,6 +84,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      * @param endpoint the endpoint
      * @return the PollingConsumer
      */
+    @Override
     public PollingConsumer acquirePollingConsumer(Endpoint endpoint) {
         try {
             PollingConsumer consumer = consumers.acquire(endpoint);
@@ -95,6 +97,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         }
     }
  
+    @Override
     public Exchange receive(Endpoint endpoint) {
         if (camelContext.isStopped()) {
             throw new RejectedExecutionException("CamelContext is stopped");
@@ -112,6 +115,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         }
     }
 
+    @Override
     public Exchange receive(Endpoint endpoint, long timeout) {
         if (camelContext.isStopped()) {
             throw new RejectedExecutionException("CamelContext is stopped");
@@ -129,6 +133,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         }
     }
 
+    @Override
     public Exchange receiveNoWait(Endpoint endpoint) {
         if (camelContext.isStopped()) {
             throw new RejectedExecutionException("CamelContext is stopped");
@@ -155,6 +160,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      *
      * @return the source
      */
+    @Override
     public Object getSource() {
         return source;
     }
@@ -164,6 +170,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      *
      * @return the current size
      */
+    @Override
     public int size() {
         int size = consumers.size();
         log.trace("size = {}", size);
@@ -177,6 +184,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      *
      * @return the capacity
      */
+    @Override
     public int getCapacity() {
         return consumers.getMaxCacheSize();
     }
@@ -188,6 +196,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      *
      * @return the hits
      */
+    @Override
     public long getHits() {
         return consumers.getHits();
     }
@@ -199,6 +208,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      *
      * @return the misses
      */
+    @Override
     public long getMisses() {
         return consumers.getMisses();
     }
@@ -210,6 +220,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
      *
      * @return the evicted
      */
+    @Override
     public long getEvicted() {
         return consumers.getEvicted();
     }
@@ -217,6 +228,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     /**
      * Resets the cache statistics
      */
+    @Override
     public void resetCacheStatistics() {
         consumers.resetStatistics();
         if (statistics != null) {
@@ -227,6 +239,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     /**
      * Purges this cache
      */
+    @Override
     public synchronized void purge() {
         try {
             consumers.stop();
@@ -242,10 +255,12 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     /**
      * Cleanup the cache (purging stale entries)
      */
+    @Override
     public void cleanUp() {
         consumers.cleanUp();
     }
 
+    @Override
     public EndpointUtilizationStatistics getEndpointUtilizationStatistics() {
         return statistics;
     }
@@ -255,6 +270,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         return "ConsumerCache for source: " + source + ", capacity: " + getCapacity();
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (extendedStatistics) {
             int max = maxCacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : maxCacheSize;
@@ -263,6 +279,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         ServiceHelper.startService(consumers);
     }
 
+    @Override
     protected void doStop() throws Exception {
         // when stopping we intend to shutdown
         ServiceHelper.stopAndShutdownServices(statistics, consumers);

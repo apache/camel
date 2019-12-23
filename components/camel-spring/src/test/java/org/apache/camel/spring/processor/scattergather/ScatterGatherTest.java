@@ -46,6 +46,7 @@ public class ScatterGatherTest extends ContextTestSupport {
         result.assertIsSatisfied();
     }
     
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/scattergather/scatter-gather.xml");
     }

@@ -86,7 +86,6 @@ public class SagaFailuresTest extends ContextTestSupport {
         end.assertIsSatisfied();
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
@@ -99,35 +98,25 @@ public class SagaFailuresTest extends ContextTestSupport {
                 sagaService.setRetryDelayInMilliseconds(20);
                 context.addService(sagaService);
 
-                from("direct:saga-compensate")
-                        .saga()
-                        .compensation("direct:compensate")
-                        .process(x -> {
-                            throw new RuntimeException("fail");
-                        });
+                from("direct:saga-compensate").saga().compensation("direct:compensate").process(x -> {
+                    throw new RuntimeException("fail");
+                });
 
-                from("direct:saga-complete")
-                        .saga()
-                        .completion("direct:complete")
-                        .to("mock:end");
+                from("direct:saga-complete").saga().completion("direct:complete").to("mock:end");
 
-                from("direct:compensate")
-                        .process(x -> {
-                            int current = maxFailures.decrementAndGet();
-                            if (current >= 0) {
-                                throw new RuntimeException("compensation failure");
-                            }
-                        })
-                        .to("mock:compensate");
+                from("direct:compensate").process(x -> {
+                    int current = maxFailures.decrementAndGet();
+                    if (current >= 0) {
+                        throw new RuntimeException("compensation failure");
+                    }
+                }).to("mock:compensate");
 
-                from("direct:complete")
-                        .process(x -> {
-                            int current = maxFailures.decrementAndGet();
-                            if (current >= 0) {
-                                throw new RuntimeException("completion failure");
-                            }
-                        })
-                        .to("mock:complete");
+                from("direct:complete").process(x -> {
+                    int current = maxFailures.decrementAndGet();
+                    if (current >= 0) {
+                        throw new RuntimeException("completion failure");
+                    }
+                }).to("mock:complete");
 
             }
         };

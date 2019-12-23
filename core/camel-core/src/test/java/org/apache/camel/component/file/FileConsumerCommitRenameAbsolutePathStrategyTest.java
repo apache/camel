@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -52,11 +53,11 @@ public class FileConsumerCommitRenameAbsolutePathStrategyTest extends ContextTes
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/reports?move=" + base + "/done/${file:name}&initialDelay=0&delay=10")
-                        .convertBodyTo(String.class).to("mock:report");
+                from("file://target/data/reports?move=" + base + "/done/${file:name}&initialDelay=0&delay=10").convertBodyTo(String.class).to("mock:report");
             }
         };
     }

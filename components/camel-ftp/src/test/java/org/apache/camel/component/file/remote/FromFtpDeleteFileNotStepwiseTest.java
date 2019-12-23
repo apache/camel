@@ -21,6 +21,7 @@ package org.apache.camel.component.file.remote;
  */
 public class FromFtpDeleteFileNotStepwiseTest extends FromFtpDeleteFileTest {
 
+    @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/deletefile?password=admin&binary=false&delete=true&stepwise=false";
     }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.file;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Before;

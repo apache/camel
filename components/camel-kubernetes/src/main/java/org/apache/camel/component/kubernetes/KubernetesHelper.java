@@ -20,7 +20,6 @@ import io.fabric8.kubernetes.client.Config;
 import io.fabric8.kubernetes.client.ConfigBuilder;
 import io.fabric8.kubernetes.client.DefaultKubernetesClient;
 import io.fabric8.kubernetes.client.KubernetesClient;
-
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,9 +50,7 @@ public final class KubernetesHelper {
 
         ConfigBuilder builder = new ConfigBuilder();
         builder.withMasterUrl(configuration.getMasterUrl());
-        if ((ObjectHelper.isNotEmpty(configuration.getUsername())
-                && ObjectHelper.isNotEmpty(configuration.getPassword()))
-                && ObjectHelper.isEmpty(configuration.getOauthToken())) {
+        if ((ObjectHelper.isNotEmpty(configuration.getUsername()) && ObjectHelper.isNotEmpty(configuration.getPassword())) && ObjectHelper.isEmpty(configuration.getOauthToken())) {
             builder.withUsername(configuration.getUsername());
             builder.withPassword(configuration.getPassword());
         }
@@ -93,7 +90,9 @@ public final class KubernetesHelper {
         if (ObjectHelper.isNotEmpty(configuration.getConnectionTimeout())) {
             builder.withConnectionTimeout(configuration.getConnectionTimeout());
         }
-
+        if (ObjectHelper.isNotEmpty(configuration.getNamespace())) {
+            builder.withNamespace(configuration.getNamespace());
+        }
         Config conf = builder.build();
         return new DefaultKubernetesClient(conf);
     }

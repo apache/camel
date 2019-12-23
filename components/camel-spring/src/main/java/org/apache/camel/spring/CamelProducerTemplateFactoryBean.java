@@ -49,6 +49,7 @@ public class CamelProducerTemplateFactoryBean extends AbstractCamelProducerTempl
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

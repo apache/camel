@@ -32,12 +32,13 @@ import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
- * This is an endpoint when sending to it, is intercepted and is routed in a detour
+ * This is an endpoint when sending to it, is intercepted and is routed in a detour (before and optionally after).
  */
 public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, ShutdownableService {
 
     private final Endpoint delegate;
-    private Processor detour;
+    private Processor before;
+    private Processor after;
     private boolean skip;
 
     /**
@@ -51,13 +52,26 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
         this.skip = skip;
     }
 
-    public void setDetour(Processor detour) {
-        this.detour = detour;
+    public void setBefore(Processor before) {
+        this.before = before;
+    }
+
+    public void setAfter(Processor after) {
+        this.after = after;
+    }
+
+    public void setSkip(boolean skip) {
+        this.skip = skip;
     }
 
     @Override
-    public Processor getDetour() {
-        return detour;
+    public Processor getBefore() {
+        return before;
+    }
+
+    @Override
+    public Processor getAfter() {
+        return after;
     }
 
     @Override
@@ -70,26 +84,32 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
         return skip;
     }
 
+    @Override
     public String getEndpointUri() {
         return delegate.getEndpointUri();
     }
 
+    @Override
     public String getEndpointKey() {
         return delegate.getEndpointKey();
     }
 
+    @Override
     public Exchange createExchange() {
         return delegate.createExchange();
     }
 
+    @Override
     public Exchange createExchange(ExchangePattern pattern) {
         return delegate.createExchange(pattern);
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return delegate.getCamelContext();
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return createAsyncProducer();
     }
@@ -100,41 +120,49 @@ public class DefaultInterceptSendToEndpoint implements InterceptSendToEndpoint, 
         return new InterceptSendToEndpointProcessor(this, delegate, producer, skip);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return delegate.createConsumer(processor);
     }
 
+    @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         return delegate.createPollingConsumer();
     }
 
+    @Override
     public void configureProperties(Map<String, Object> options) {
         delegate.configureProperties(options);
     }
 
+    @Override
     public void setCamelContext(CamelContext context) {
         delegate.setCamelContext(context);
     }
 
+    @Override
     public boolean isLenientProperties() {
         return delegate.isLenientProperties();
     }
 
+    @Override
     public boolean isSingleton() {
         return delegate.isSingleton();
     }
 
+    @Override
     public void start() {
-        ServiceHelper.startService(detour, delegate);
+        ServiceHelper.startService(before, delegate);
     }
 
+    @Override
     public void stop() {
-        ServiceHelper.stopService(delegate, detour);
+        ServiceHelper.stopService(delegate, before);
     }
 
     @Override
     public void shutdown() {
-        ServiceHelper.stopAndShutdownServices(delegate, detour);
+        ServiceHelper.stopAndShutdownServices(delegate, before);
     }
 
     @Override

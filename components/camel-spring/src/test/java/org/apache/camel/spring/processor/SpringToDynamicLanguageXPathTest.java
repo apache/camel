@@ -23,6 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringToDynamicLanguageXPathTest extends ToDynamicLanguageXPathTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringToDynamicLanguageXPathTest.xml");
     }

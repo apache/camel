@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -23,30 +24,32 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class SqsComponentTest extends CamelTestSupport {
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
-    
+
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
+
+    @BindToRegistry("amazonSQSClient")
+    private AmazonSQSClientMock client = new AmazonSQSClientMock();
+
     @Test
     public void sendInOnly() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOnly, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
@@ -54,24 +57,24 @@ public class SqsComponentTest extends CamelTestSupport {
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ATTRIBUTES));
-        
+
         assertEquals("This is my message text.", exchange.getIn().getBody());
         assertNotNull(exchange.getIn().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
     }
-    
+
     @Test
     public void sendInOut() throws Exception {
         result.expectedMessageCount(1);
-        
+
         Exchange exchange = template.send("direct:start", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("This is my message text.");
             }
         });
-        
+
         assertMockEndpointsSatisfied();
-        
+
         Exchange resultExchange = result.getExchanges().get(0);
         assertEquals("This is my message text.", resultExchange.getIn().getBody());
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE));
@@ -79,32 +82,23 @@ public class SqsComponentTest extends CamelTestSupport {
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", resultExchange.getIn().getHeader(SqsConstants.MD5_OF_BODY));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.ATTRIBUTES));
         assertNotNull(resultExchange.getIn().getHeader(SqsConstants.MESSAGE_ATTRIBUTES));
-        
+
         assertEquals("This is my message text.", exchange.getOut().getBody());
         assertNotNull(exchange.getOut().getHeader(SqsConstants.MESSAGE_ID));
         assertEquals("6a1559560f67c5e7a7d5d838bf0272ee", exchange.getOut().getHeader(SqsConstants.MD5_OF_BODY));
-    }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("amazonSQSClient", new AmazonSQSClientMock());
-        
-        return registry;
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            final String sqsURI = String.format("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&messageRetentionPeriod=%s&maximumMessageSize=%s&policy=%s",
-                    "1209600", "65536", "");
+            final String sqsURI = String.format("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient&messageRetentionPeriod=%s&maximumMessageSize=%s&policy=%s", "1209600", "65536",
+                                                "");
+
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to(sqsURI);
-                
-                from(sqsURI)
-                    .to("mock:result");
+                from("direct:start").to(sqsURI);
+
+                from(sqsURI).to("mock:result");
             }
         };
     }

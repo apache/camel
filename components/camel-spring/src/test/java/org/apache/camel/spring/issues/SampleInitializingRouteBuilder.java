@@ -35,6 +35,7 @@ public class SampleInitializingRouteBuilder extends RouteBuilder implements Init
         this.entries = entries;
     }
 
+    @Override
     public void afterPropertiesSet() {
         entries.add(name);
     }

@@ -32,6 +32,7 @@ public class StreamRouteBuilderTest extends CamelTestSupport {
         template.sendBody("direct:start", "This is bytes\n".getBytes());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

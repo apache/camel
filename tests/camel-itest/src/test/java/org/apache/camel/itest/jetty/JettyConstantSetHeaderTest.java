@@ -42,7 +42,7 @@ public class JettyConstantSetHeaderTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(8000);
+        port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override

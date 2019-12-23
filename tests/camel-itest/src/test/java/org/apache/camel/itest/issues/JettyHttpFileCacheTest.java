@@ -21,7 +21,6 @@ import java.io.File;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,6 +29,7 @@ public class JettyHttpFileCacheTest extends CamelTestSupport {
     private static final String TEST_STRING = "This is a test string and it has enough" 
         + " aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa ";
     
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

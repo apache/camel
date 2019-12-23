@@ -94,7 +94,6 @@ public class JmsMessage extends DefaultMessage {
 
         // copy body and fault flag
         setBody(that.getBody());
-        setFault(that.isFault());
 
         // we have already cleared the headers
         if (that.hasHeaders()) {
@@ -156,6 +155,7 @@ public class JmsMessage extends DefaultMessage {
         }
     }
 
+    @Override
     public Object getHeader(String name) {
         ensureInitialHeaders();
         return super.getHeader(name);

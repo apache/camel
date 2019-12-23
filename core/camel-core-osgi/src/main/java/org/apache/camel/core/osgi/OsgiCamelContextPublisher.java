@@ -53,6 +53,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
         this.bundleContext = bundleContext;
     }
 
+    @Override
     public void notify(CamelEvent event) throws Exception {
         if (event.getType() == Type.CamelContextStarted) {
             CamelContext context = ((CamelContextEvent) event).getContext();
@@ -73,6 +74,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
         }
     }
 
+    @Override
     public boolean isEnabled(CamelEvent event) {
         return event.getType() == Type.CamelContextStarted || event.getType() == Type.CamelContextStopping;
     }

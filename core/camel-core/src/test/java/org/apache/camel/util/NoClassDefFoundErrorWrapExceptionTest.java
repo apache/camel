@@ -47,10 +47,7 @@ public class NoClassDefFoundErrorWrapExceptionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:start")
-                    .process(new ProcessorA())
-                    .process(new ProcessorB())
-                    .process(new ProcessorFail());
+                from("seda:start").process(new ProcessorA()).process(new ProcessorB()).process(new ProcessorFail());
             }
         };
     }

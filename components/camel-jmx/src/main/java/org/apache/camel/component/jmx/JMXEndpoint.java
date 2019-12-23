@@ -19,6 +19,7 @@ package org.apache.camel.component.jmx;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+
 import javax.management.MalformedObjectNameException;
 import javax.management.NotificationFilter;
 import javax.management.ObjectName;
@@ -236,6 +237,7 @@ public class JMXEndpoint extends DefaultEndpoint {
         super(aEndpointUri, aComponent);
     }
 
+    @Override
     public Consumer createConsumer(Processor aProcessor) throws Exception {
         // validate that all of the endpoint is configured properly
         if (getMonitorType() != null) {
@@ -276,10 +278,12 @@ public class JMXEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("producing JMX notifications is not supported");
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }
@@ -504,7 +508,7 @@ public class JMXEndpoint extends DefaultEndpoint {
         stringToCompare = aStringToCompare;
     }
     
-    public boolean getTestConnectionOnStartup() {
+    public boolean isTestConnectionOnStartup() {
         return this.testConnectionOnStartup;
     }
     
@@ -512,7 +516,7 @@ public class JMXEndpoint extends DefaultEndpoint {
         this.testConnectionOnStartup = testConnectionOnStartup;
     }
     
-    public boolean getReconnectOnConnectionFailure() {
+    public boolean isReconnectOnConnectionFailure() {
         return this.reconnectOnConnectionFailure;
     }
     

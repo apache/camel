@@ -101,10 +101,7 @@ public final class CassandraUnitUtils {
 
     public static Cluster cassandraCluster() {
         if (canTest()) {
-            return Cluster.builder()
-                    .addContactPoint(HOST)
-                    .withClusterName("camel-cluster")
-                    .build();
+            return Cluster.builder().addContactPoint(HOST).withClusterName("camel-cluster").build();
         } else {
             return null;
         }

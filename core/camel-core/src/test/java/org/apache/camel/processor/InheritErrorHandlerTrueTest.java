@@ -47,15 +47,14 @@ public class InheritErrorHandlerTrueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(2).redeliveryDelay(0));
 
-                from("direct:start")
-                    .process(new MyProcessor()).inheritErrorHandler(true)
-                    .to("mock:result");
+                from("direct:start").process(new MyProcessor()).inheritErrorHandler(true).to("mock:result");
             }
         };
     }
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             counter++;
             exchange.setException(new IllegalArgumentException("Damn"));

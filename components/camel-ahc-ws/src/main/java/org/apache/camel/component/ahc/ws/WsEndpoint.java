@@ -203,6 +203,7 @@ public class WsEndpoint extends AhcEndpoint {
             }
         }
 
+        @Override
         public void onPingFrame(byte[] payload) {
             log.debug("Received ping --> {}", payload);
             websocket.sendPongFrame(payload);

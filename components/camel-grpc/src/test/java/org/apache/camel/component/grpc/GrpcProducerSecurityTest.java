@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.grpc;
+
 import java.io.File;
 import java.io.IOException;
 

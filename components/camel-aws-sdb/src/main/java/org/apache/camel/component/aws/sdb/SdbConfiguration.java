@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.aws.sdb;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -40,6 +40,8 @@ public class SdbConfiguration {
     private boolean consistentRead;
     @UriParam(defaultValue = "PutAttributes")
     private SdbOperations operation = SdbOperations.PutAttributes;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
     private String proxyHost;
     @UriParam
@@ -122,6 +124,18 @@ public class SdbConfiguration {
      */
     public void setConsistentRead(boolean consistentRead) {
         this.consistentRead = consistentRead;
+    }
+    
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the SDB client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
     
     public String getProxyHost() {

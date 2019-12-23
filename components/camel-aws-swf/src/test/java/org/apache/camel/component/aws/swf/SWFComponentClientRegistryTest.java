@@ -26,7 +26,7 @@ public class SWFComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonSWFClientMock awsSWFClient = new AmazonSWFClientMock();
         context.getRegistry().bind("awsSWFClient", awsSWFClient);
-        SWFComponent component = new SWFComponent(context);
+        SWFComponent component = context.getComponent("aws-swf", SWFComponent.class);
         SWFEndpoint endpoint = (SWFEndpoint) component.createEndpoint("aws-swf://workflow");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSWClient());
@@ -35,7 +35,7 @@ public class SWFComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalSWFClientMisconfiguration() throws Exception {
 
-        SWFComponent component = new SWFComponent(context);
+        SWFComponent component = context.getComponent("aws-swf", SWFComponent.class);
         SWFEndpoint endpoint = (SWFEndpoint) component.createEndpoint("aws-swf://workflow");
     }
 }

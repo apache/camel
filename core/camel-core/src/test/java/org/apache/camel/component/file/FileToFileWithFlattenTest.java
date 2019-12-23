@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -50,8 +51,7 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true&flatten=true")
-                    .to("file://target/data/flatten-out", "mock:result");
+                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true&flatten=true").to("file://target/data/flatten-out", "mock:result");
             }
         });
         context.start();
@@ -77,8 +77,7 @@ public class FileToFileWithFlattenTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true")
-                    .to("file://target/data/flatten-out?flatten=true", "mock:result");
+                from("file://target/data/flatten-in?initialDelay=0&delay=10&recursive=true").to("file://target/data/flatten-out?flatten=true", "mock:result");
             }
         });
         context.start();

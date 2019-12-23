@@ -27,9 +27,9 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**
- * Unit test to verify that using DLC with redelivery and delays with blocking threads.
- * As threads comes cheap these days in the modern JVM its no biggie. And for transactions
- * you should use the same thread anyway.
+ * Unit test to verify that using DLC with redelivery and delays with blocking
+ * threads. As threads comes cheap these days in the modern JVM its no biggie.
+ * And for transactions you should use the same thread anyway.
  */
 public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTestSupport {
 
@@ -78,16 +78,15 @@ public class DeadLetterChannelRedeliverWithDelayBlockingTest extends ContextTest
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(250).maximumRedeliveries(3).logStackTrace(false));
 
-                from("direct:start")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String body = exchange.getIn().getBody(String.class);
-                                if ("Message 1".equals(body) && counter++ < 2) {
-                                    throw new IllegalArgumentException("Damn");
-                                }
-                                exchange.getIn().setHeader("foo", "bar");
-                            }
-                        }).to("mock:result");
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        if ("Message 1".equals(body) && counter++ < 2) {
+                            throw new IllegalArgumentException("Damn");
+                        }
+                        exchange.getIn().setHeader("foo", "bar");
+                    }
+                }).to("mock:result");
             }
         };
     }

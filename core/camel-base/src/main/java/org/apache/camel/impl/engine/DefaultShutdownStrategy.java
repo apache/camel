@@ -132,6 +132,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         this.camelContext = camelContext;
     }
 
+    @Override
     public void shutdown(CamelContext context, List<RouteStartupOrder> routes) throws Exception {
         shutdown(context, routes, getTimeout(), getTimeUnit());
     }
@@ -141,19 +142,23 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         doShutdown(context, routes, getTimeout(), getTimeUnit(), false, false, true);
     }
 
+    @Override
     public void suspend(CamelContext context, List<RouteStartupOrder> routes) throws Exception {
         doShutdown(context, routes, getTimeout(), getTimeUnit(), true, false, false);
     }
 
+    @Override
     public void shutdown(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
         doShutdown(context, routes, timeout, timeUnit, false, false, false);
     }
 
+    @Override
     public boolean shutdown(CamelContext context, RouteStartupOrder route, long timeout, TimeUnit timeUnit, boolean abortAfterTimeout) throws Exception {
         List<RouteStartupOrder> routes = Collections.singletonList(route);
         return doShutdown(context, routes, timeout, timeUnit, false, abortAfterTimeout, false);
     }
 
+    @Override
     public void suspend(CamelContext context, List<RouteStartupOrder> routes, long timeout, TimeUnit timeUnit) throws Exception {
         doShutdown(context, routes, timeout, timeUnit, true, false, false);
     }
@@ -263,6 +268,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         return timeoutOccurred.get();
     }
 
+    @Override
     public void setTimeout(long timeout) {
         if (timeout <= 0) {
             throw new IllegalArgumentException("Timeout must be a positive value");
@@ -270,54 +276,67 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         this.timeout = timeout;
     }
 
+    @Override
     public long getTimeout() {
         return timeout;
     }
 
+    @Override
     public void setTimeUnit(TimeUnit timeUnit) {
         this.timeUnit = timeUnit;
     }
 
+    @Override
     public TimeUnit getTimeUnit() {
         return timeUnit;
     }
 
+    @Override
     public void setShutdownNowOnTimeout(boolean shutdownNowOnTimeout) {
         this.shutdownNowOnTimeout = shutdownNowOnTimeout;
     }
 
+    @Override
     public boolean isShutdownNowOnTimeout() {
         return shutdownNowOnTimeout;
     }
 
+    @Override
     public boolean isShutdownRoutesInReverseOrder() {
         return shutdownRoutesInReverseOrder;
     }
 
+    @Override
     public void setShutdownRoutesInReverseOrder(boolean shutdownRoutesInReverseOrder) {
         this.shutdownRoutesInReverseOrder = shutdownRoutesInReverseOrder;
     }
 
+    @Override
     public boolean isSuppressLoggingOnTimeout() {
         return suppressLoggingOnTimeout;
     }
 
+    @Override
     public void setSuppressLoggingOnTimeout(boolean suppressLoggingOnTimeout) {
         this.suppressLoggingOnTimeout = suppressLoggingOnTimeout;
     }
 
+    @Override
     public boolean isLogInflightExchangesOnTimeout() {
         return logInflightExchangesOnTimeout;
     }
 
+    @Override
     public void setLogInflightExchangesOnTimeout(boolean logInflightExchangesOnTimeout) {
         this.logInflightExchangesOnTimeout = logInflightExchangesOnTimeout;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -512,6 +531,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             this.logInflightExchangesOnTimeout = logInflightExchangesOnTimeout;
         }
 
+        @Override
         public void run() {
             // the strategy in this run method is to
             // 1) go over the routes and shutdown those routes which can be shutdown asap

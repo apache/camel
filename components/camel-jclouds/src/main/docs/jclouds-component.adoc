@@ -1,7 +1,11 @@
 [[jclouds-component]]
-== JClouds Component
+= JClouds Component
 
-*Available as of Camel version 2.9*
+*Since Camel 2.9*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 This component allows interaction with cloud provider key-value engines
 (blobstores) and compute services. The component uses
@@ -34,7 +38,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Configuring the component
+== Configuring the component
 
 The camel jclouds component will make use of multiple jclouds blobstores
 and compute services as long as they are passed to the component during
@@ -83,7 +87,7 @@ As you can see the component is capable of handling multiple blobstores
 and compute services. The actual implementation that will be used by
 each endpoint is specified by passing the provider inside the URI.
 
-### Jclouds Options
+== Jclouds Options
 
 [source,java]
 -----------------------------------------
@@ -97,13 +101,13 @@ target service (_e.g. aws-s3 or aws_ec2_).
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Blobstore URI Options
+== Blobstore URI Options
 
 
 
 
 // component options: START
-The JClouds component supports 4 options, which are listed below.
+The JClouds component supports 5 options, which are listed below.
 
 
 
@@ -112,8 +116,9 @@ The JClouds component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *blobStores* (common) | To use the given BlobStore which must be configured when using blobstore. |  | List
 | *computeServices* (common) | To use the given ComputeService which must be configured when use compute. |  | List
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -131,7 +136,7 @@ jclouds:command:providerId
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -142,7 +147,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -182,14 +187,14 @@ passing the appropriate headers to the message.
 
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-jclouds-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -197,7 +202,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 5 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -206,14 +211,15 @@ The component supports 5 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.jclouds.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.jclouds.blob-stores* | To use the given BlobStore which must be configured when using blobstore. |  | List
+| *camel.component.jclouds.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.jclouds.compute-services* | To use the given ComputeService which must be configured when use compute. |  | List
 | *camel.component.jclouds.enabled* | Whether to enable auto configuration of the jclouds component. This is enabled by default. |  | Boolean
-| *camel.component.jclouds.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.jclouds.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-#### Message Headers for blobstore
+=== Message Headers for blobstore
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -228,9 +234,9 @@ The component supports 5 options, which are listed below.
 |`CamelJcloudsBlobName` |The name of the blob.
 |=======================================================================
 
-### Blobstore Usage Samples
+== Blobstore Usage Samples
 
-#### Example 1: Putting to the blob
+=== Example 1: Putting to the blob
 
 This example will show you how you can store any message inside a blob
 using the jclouds component.
@@ -257,7 +263,7 @@ route.
 </route>
 --------------------------------------------------------------------------------------------
 
-#### Example 2: Getting/Reading from a blob
+=== Example 2: Getting/Reading from a blob
 
 This example will show you how you can read the contnet of a blob using
 the jclouds component.
@@ -284,7 +290,7 @@ route.
 </route>
 --------------------------------------------------------------------------------------------
 
-#### Example 3: Consuming a blob
+=== Example 3: Consuming a blob
 
 This example will consume all blob that are under the specified
 container. The generated exchange will contain the payload of the blob
@@ -314,12 +320,12 @@ You can achieve the same goal by using xml, as you can see below.
 jclouds:compute:aws-ec2?operation=CamelJcloudsCreateNode&imageId=AMI_XXXXX&locationId=eu-west-1&group=mygroup
 -------------------------------------------------------------------------------------------------------------
 
-### Compute Usage Samples
+== Compute Usage Samples
 
 Below are some examples that demonstrate the use of jclouds compute
 producer in java dsl and spring/blueprint xml.
 
-#### Example 1: Listing the available images.
+=== Example 1: Listing the available images.
 
 [source,java]
 --------------------------------------------
@@ -339,7 +345,7 @@ its body. You can also do the same using xml.
 </route>
 --------------------------------------------------------------------------
 
-#### Example 2: Create a new node.
+=== Example 2: Create a new node.
 
 [source,java]
 ---------------------------------------------
@@ -364,7 +370,7 @@ spring xml.
 </route>
 -------------------------------------------------------------------------------------------------------------------------
 
-#### Example 3: Run a shell script on running node.
+=== Example 3: Run a shell script on running node.
 
 [source,java]
 --------------------------------------------
@@ -397,13 +403,3 @@ Here is the same using spring xml.
 </route>
 ----------------------------------------------------------------------------------------------
 
-#### See also
-
-If you want to find out more about jclouds here is list of interesting
-resources 
-
-http://jclouds.incubator.apache.org/documentation/userguide/blobstore-guide/[Jclouds
-Blobstore wiki] 
-
-http://jclouds.incubator.apache.org/documentation/userguide/compute/[Jclouds
-Compute wiki]

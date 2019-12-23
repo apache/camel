@@ -1,0 +1,22 @@
+{
+  "type": null,
+  "displayName": "",
+  "lastname": null,
+  "role": null,
+  "base64": "",
+  "company": {
+    "company": "test",
+    "id": "company",
+    "#text": "whoo"
+  },
+  "#text": [
+    "\n   text1\n   ",
+    "\n   text2\n"
+  ],
+  "object": [
+    {
+      "id": "b"
+    },
+    null
+  ]
+}

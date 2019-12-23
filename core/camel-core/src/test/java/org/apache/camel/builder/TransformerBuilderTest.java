@@ -22,7 +22,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.transformer.DataFormatTransformer;
 import org.apache.camel.impl.transformer.ProcessorTransformer;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.DataType;

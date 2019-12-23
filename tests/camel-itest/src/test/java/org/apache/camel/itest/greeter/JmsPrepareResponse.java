@@ -25,6 +25,7 @@ import org.apache.hello_world_soap_http.types.FaultDetail;
 
 public class JmsPrepareResponse implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Message in = exchange.getIn();
         if ("greetMe".equals(in.getHeader(CxfConstants.OPERATION_NAME))) {
@@ -35,9 +36,7 @@ public class JmsPrepareResponse implements Processor {
             FaultDetail faultDetail = new FaultDetail();
             faultDetail.setMajor((short)2);
             faultDetail.setMinor((short)1);
-            exchange.getOut().setBody(new PingMeFault("PingMeFault raised by server", faultDetail));
-            exchange.getOut().setFault(true);
-            
+            exchange.getOut().setBody(new PingMeFault("PingMeFault raised by server", faultDetail));          
         }
     }
 }

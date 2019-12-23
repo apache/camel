@@ -17,7 +17,6 @@
 package org.apache.camel.processor;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.slf4j.Logger;
 
 import static org.apache.camel.support.ExchangeHelper.hasExceptionBeenHandledByErrorHandler;
@@ -43,32 +42,16 @@ public final class PipelineHelper {
         // check for error if so we should break out
         boolean exceptionHandled = hasExceptionBeenHandledByErrorHandler(exchange);
         if (exchange.isFailed() || exchange.isRollbackOnly() || exceptionHandled) {
-            // We need to write a warning message when the exception and fault message be set at the same time
-            Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-            if (msg.isFault() && exchange.getException() != null) {
-                StringBuilder sb = new StringBuilder();
-                sb.append("Message exchange has failed: " + message + " for exchange: ").append(exchange);
-                sb.append(" Warning: Both fault and exception exists on the exchange, its best practice to only set one of them.");
-                sb.append(" Exception: ").append(exchange.getException());
-                sb.append(" Fault: ").append(msg);
-                if (exceptionHandled) {
-                    sb.append(" Handled by the error handler.");
-                }
-                log.warn(sb.toString());
-            }
             // The Exchange.ERRORHANDLED_HANDLED property is only set if satisfactory handling was done
             // by the error handler. It's still an exception, the exchange still failed.
             if (log.isDebugEnabled()) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("Message exchange has failed: " + message + " for exchange: ").append(exchange);
+                sb.append("Message exchange has failed: ").append(message).append(" for exchange: ").append(exchange);
                 if (exchange.isRollbackOnly()) {
                     sb.append(" Marked as rollback only.");
                 }
                 if (exchange.getException() != null) {
                     sb.append(" Exception: ").append(exchange.getException());
-                }
-                if (msg.isFault()) {
-                    sb.append(" Fault: ").append(msg);
                 }
                 if (exceptionHandled) {
                     sb.append(" Handled by the error handler.");
@@ -90,26 +73,6 @@ public final class PipelineHelper {
         }
 
         return true;
-    }
-
-    /**
-     * Strategy method to create the next exchange from the previous exchange.
-     * <p/>
-     * Remember to copy the original exchange id otherwise correlation of ids in the log is a problem
-     *
-     * @param previousExchange the previous exchange
-     * @return a new exchange
-     */
-    public static Exchange createNextExchange(Exchange previousExchange) {
-        Exchange answer = previousExchange;
-
-        // now lets set the input of the next exchange to the output of the
-        // previous message if it is not null
-        if (answer.hasOut()) {
-            answer.setIn(answer.getOut());
-            answer.setOut(null);
-        }
-        return answer;
     }
 
 }

@@ -26,7 +26,6 @@ import java.security.Security;
 import org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI;
 import org.apache.xml.security.utils.XMLUtils;
 
-
 public final class SantuarioUtil {
     private SantuarioUtil() {
         //Helper class
@@ -72,9 +71,10 @@ public final class SantuarioUtil {
             public Boolean run() {
                 String providerName = "ApacheXMLDSig";
                 Provider currentProvider = Security.getProvider(providerName);
-                if (currentProvider == null) {
-                    Security.addProvider(new XMLDSigRI());
+                if (currentProvider != null) {
+                    Security.removeProvider(currentProvider.getName());
                 }
+                Security.addProvider(new XMLDSigRI());
                 return true;
             }
         });

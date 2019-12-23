@@ -53,10 +53,12 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         }
     }
 
+    @Override
     public void onComplete(Exchange exchange) {
         onCompletion(exchange);
     }
 
+    @Override
     public void onFailure(Exchange exchange) {
         onCompletion(exchange);
     }

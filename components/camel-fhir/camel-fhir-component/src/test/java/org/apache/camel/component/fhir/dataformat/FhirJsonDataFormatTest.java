@@ -18,6 +18,7 @@ package org.apache.camel.component.fhir.dataformat;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
+
 import ca.uhn.fhir.context.FhirContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -80,6 +81,7 @@ public class FhirJsonDataFormatTest extends CamelTestSupport {
         return patient;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

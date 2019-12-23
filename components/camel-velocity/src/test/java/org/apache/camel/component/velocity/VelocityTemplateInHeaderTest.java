@@ -72,6 +72,7 @@ public class VelocityTemplateInHeaderTest extends CamelTestSupport {
         assertTrue("Header should been found", keyFound);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

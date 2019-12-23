@@ -18,10 +18,10 @@ package org.apache.camel.commands;
 
 import java.io.PrintStream;
 import java.io.StringReader;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
 
-import org.apache.camel.support.dump.ProcessorStatDump;
 import org.apache.camel.support.dump.RouteStatDump;
 import org.apache.camel.support.dump.StepStatDump;
 
@@ -67,7 +67,7 @@ public class RouteStepCommand extends AbstractRouteCommand {
 
             long count = route.getExchangesCompleted() + route.getExchangesFailed();
             out.println(String.format(OUTPUT_FORMAT, route.getId(), count, route.getLastProcessingTime(), route.getDeltaProcessingTime(),
-                    route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime(), route.getSelfProcessingTime()));
+                    route.getMeanProcessingTime(), route.getMinProcessingTime(), route.getMaxProcessingTime(), route.getTotalProcessingTime()));
 
             for (StepStatDump ss : route.getStepStats()) {
                 count = ss.getExchangesCompleted() + ss.getExchangesFailed();

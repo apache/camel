@@ -30,15 +30,15 @@ public class VmMultipleContextsStartStopTest extends AbstractVmTestSupport {
         template.requestBody("direct:test", "Hello world!");
         mock.assertIsSatisfied();
         mock.reset();
-        
+
         /* Restart the consumer Camel Context */
         context2.stop();
         context2.start();
-        
+
         /* Send a message again and assert that it's received */
         template.requestBody("direct:test", "Hello world!");
         mock.assertIsSatisfied();
-        
+
     }
 
     @Override
@@ -56,10 +56,10 @@ public class VmMultipleContextsStartStopTest extends AbstractVmTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("vm:foo").to("mock:result");            
+                from("vm:foo").to("mock:result");
             }
         };
-       
+
     }
-    
+
 }

@@ -28,9 +28,9 @@ import org.apache.camel.support.DefaultComponent;
 @Component("atmos")
 public class AtmosComponent extends DefaultComponent {
 
-    @Metadata(label = "security")
+    @Metadata(label = "security", secret = true)
     private String fullTokenId;
-    @Metadata(label = "security")
+    @Metadata(label = "security", secret = true)
     private String secretKey;
     @Metadata(label = "advanced")
     private String uri;
@@ -44,6 +44,7 @@ public class AtmosComponent extends DefaultComponent {
         super(context);
     }
 
+    @Override
     protected AtmosEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         AtmosConfiguration configuration = new AtmosConfiguration();
 
@@ -72,15 +73,15 @@ public class AtmosComponent extends DefaultComponent {
         configuration.setFullTokenId(parameters.get("fullTokenId") == null
                 ? this.fullTokenId
                 : (String) parameters.get("fullTokenId"));
-        configuration.setEnableSslValidation(this.sslValidation);
+        configuration.setSslValidation(this.sslValidation);
 
         //pass validation test
         AtmosConfigurationValidator.validate(configuration);
 
         // and then override from parameters
-        setProperties(configuration, parameters);
-
-        return new AtmosEndpoint(uri, this, configuration);
+        AtmosEndpoint endpoint = new AtmosEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     public String getFullTokenId() {
@@ -99,7 +100,7 @@ public class AtmosComponent extends DefaultComponent {
     }
 
     /**
-     * The secret key to pass to the Atmos client
+     * The secret key to pass to the Atmos client (should be base64 encoded)
      */
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;

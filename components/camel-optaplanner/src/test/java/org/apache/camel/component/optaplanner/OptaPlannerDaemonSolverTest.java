@@ -59,6 +59,7 @@ public class OptaPlannerDaemonSolverTest extends CamelTestSupport {
         assertEquals(3, bestSolution.getComputerList().size());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

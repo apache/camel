@@ -39,12 +39,13 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
         registry.bind("service", new ServiceUtil());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI).to("bean://service?method=invoke(${body[0]}, ${body[1]})");
                 from(CXF_RS_ENDPOINT_URI_2).bean(ServiceUtil.class, "invoke(${body[0]}, ${body[1]})");
-            };
+            }
         };
     }
 

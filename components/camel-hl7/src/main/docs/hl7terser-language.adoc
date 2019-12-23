@@ -1,7 +1,7 @@
 [[hl7terser-language]]
-== HL7 Terser Language
+= HL7 Terser Language
 
-*Available as of Camel version 2.11*
+*Since Camel 2.11*
 
 http://hl7api.sourceforge.net[HAPI] provides a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/util/Terser.html[Terser]
@@ -10,7 +10,7 @@ location specification syntax. The Terser language allows to use this
 syntax to extract values from messages and to use them as expressions
 and predicates for filtering, content-based routing etc.
 
-=== HL7 Terser Language options
+== HL7 Terser Language options
 
 // language options: START
 The HL7 Terser language supports 1 options, which are listed below.
@@ -24,6 +24,33 @@ The HL7 Terser language supports 1 options, which are listed below.
 |===
 // language options: END
 
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.springboot</groupId>
+  <artifactId>camel-hl7-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 2 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.language.hl7terser.enabled* | Whether to enable auto configuration of the hl7terser language. This is enabled by default. |  | Boolean
+| *camel.language.hl7terser.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+|===
+// spring-boot-auto-configure options: END
 
 == Samples:
 
@@ -36,13 +63,13 @@ The HL7 Terser language supports 1 options, which are listed below.
       .setHeader("PATIENT_ID", hl7terser("QRD-8(0)-1"))
       .to("mock:test1");
 
-   // continue processing if extracted field equals a message header
+   // continue processing if extracted field equals a message header
    from("direct:test2")
       .filter(hl7terser("QRD-8(0)-1").isEqualTo(header("PATIENT_ID"))
       .to("mock:test2");
 ----
 
-=== HL7 Validation predicate
+== HL7 Validation predicate
 
 Often it is preferable to first parse a HL7v2 message and in a separate
 step validate it against a HAPI
@@ -64,7 +91,7 @@ import ca.uhn.hl7v2.validation.impl.DefaultValidation;
       .to("mock:test1");
 ----
 
-=== HL7 Validation predicate using the HapiContext
+== HL7 Validation predicate using the HapiContext
 
 The HAPI Context is always configured with a
 http://hl7api.sourceforge.net/base/apidocs/ca/uhn/hl7v2/validation/ValidationContext.html[ValidationContext]
@@ -104,7 +131,7 @@ import static org.apache.camel.component.hl7.HL7.messageConforms
      // route continues from here
 ----
 
-=== HL7 Acknowledgement expression
+== HL7 Acknowledgement expression
 
 A common task in HL7v2 processing is to generate an acknowledgement
 message as response to an incoming HL7v2 message, e.g. based on a

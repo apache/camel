@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.jmx;
 
-
 import java.io.File;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -28,13 +27,12 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Test to verify:
@@ -52,17 +50,18 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
     Registry registry;
     int port;
     
-    @Before
+    @BeforeEach
     @Override
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(39000);
+        port = AvailablePortFinder.getNextAvailable();
         url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + port + "/" + DOMAIN);
 
         initContext();
         startContext();
     }
     
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         connector.stop();
@@ -105,7 +104,7 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
         getSimpleMXBean().touch();
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/consumer-test/touched.xml"));
-                
+
         // stop the server; the JMX consumer should lose connectivity and the mock will not receive notifications
         connector.stop();
         Thread.sleep(2000);
@@ -113,11 +112,11 @@ public class JMXRobustRemoteConnectionTest extends SimpleBeanFixture {
         getMockFixture().getMockEndpoint().setExpectedMessageCount(1);
         getSimpleMXBean().touch();
         getMockFixture().getMockEndpoint().assertIsNotSatisfied();
-        
+
         // restart the server;  the JMX consumer should re-connect and the mock should receive a notification
         initServer();
         initBean();
-        Thread.sleep(2000);        
+        Thread.sleep(2000);
         getSimpleMXBean().touch();
         getMockFixture().waitForMessages();
         getMockFixture().assertMessageReceived(new File("src/test/resources/consumer-test/touched.xml"));

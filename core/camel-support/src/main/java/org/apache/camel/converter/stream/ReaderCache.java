@@ -35,6 +35,7 @@ public class ReaderCache extends StringReader implements StreamCache {
         this.data = data;
     }
 
+    @Override
     public void close() {
         // Do not release the string for caching
     }
@@ -48,18 +49,22 @@ public class ReaderCache extends StringReader implements StreamCache {
         }
     }
 
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         os.write(data.getBytes());
     }
 
+    @Override
     public StreamCache copy(Exchange exchange) throws IOException {
         return new ReaderCache(data);
     }
 
+    @Override
     public boolean inMemory() {
         return true;
     }
 
+    @Override
     public long length() {
         return data.length();
     }

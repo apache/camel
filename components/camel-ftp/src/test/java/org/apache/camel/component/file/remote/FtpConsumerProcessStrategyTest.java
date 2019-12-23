@@ -16,25 +16,22 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
 
-    private MyStrategy myStrategy;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        myStrategy = new MyStrategy();
-        jndi.bind("myStrategy", myStrategy);
-        return jndi;
-    }
+    @BindToRegistry("myStrategy")
+    private MyStrategy myStrategy = new MyStrategy();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?password=admin&processStrategy=#myStrategy";
@@ -51,7 +48,7 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
         String out = consumer.receiveBody(getFtpUrl(), 5000, String.class);
         assertNotNull(out);
         assertTrue(out.startsWith("Hello World"));
-        assertEquals("Begin should have been invoked 1 times", 1, myStrategy.getInvoked());
+        assertEquals(1, myStrategy.getInvoked(), "Begin should have been invoked 1 times");
     }
 
     private static class MyStrategy implements GenericFileProcessStrategy {
@@ -60,7 +57,7 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
 
         @Override
         public void prepareOnStartup(GenericFileOperations operations, GenericFileEndpoint endpoint) throws Exception {
-            //noop
+            // noop
         }
 
         @Override
@@ -70,7 +67,7 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
 
         @Override
         public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
-            //noop
+            // noop
         }
 
         @Override
@@ -80,7 +77,7 @@ public class FtpConsumerProcessStrategyTest extends FtpServerTestSupport {
 
         @Override
         public void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
-            //noop
+            // noop
         }
 
         int getInvoked() {

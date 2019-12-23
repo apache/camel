@@ -35,7 +35,7 @@ public class DateTimeConverterTest extends ContextTestSupport {
         assertNotNull(zone);
         assertEquals(id, zone.getID());
     }
-    
+
     @Test
     public void testLongToDate() {
         long value = 0;
@@ -43,7 +43,7 @@ public class DateTimeConverterTest extends ContextTestSupport {
         Date expected = new Date(value);
         assertEquals(expected, date);
     }
-    
+
     @Test
     public void testDateToLong() {
         Date date = new Date(0);

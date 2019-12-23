@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
-import static java.lang.String.format;
-
 import org.apache.zookeeper.ZooKeeper;
 import org.apache.zookeeper.data.Stat;
+
+import static java.lang.String.format;
 
 /**
  * <code>GetDataOperation</code> is a basic operation to immediately retrieve
@@ -28,9 +28,10 @@ import org.apache.zookeeper.data.Stat;
 public class GetDataOperation extends ZooKeeperOperation<byte[]> {
 
     public GetDataOperation(ZooKeeper connection, String node) {
-       super(connection, node);
+        super(connection, node);
     }
 
+    @Override
     public OperationResult<byte[]> getResult() {
         try {
             Stat statistics = new Stat();

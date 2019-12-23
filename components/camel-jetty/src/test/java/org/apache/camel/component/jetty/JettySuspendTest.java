@@ -33,7 +33,7 @@ public class JettySuspendTest extends BaseJettyTest {
         assertEquals("Bye World", reply);
 
         // now suspend jetty
-        HttpConsumer consumer = (HttpConsumer) context.getRoute("route1").getConsumer();
+        HttpConsumer consumer = (HttpConsumer)context.getRoute("route1").getConsumer();
         assertNotNull(consumer);
 
         // suspend
@@ -53,8 +53,7 @@ public class JettySuspendTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://" + serverUri).id("route1")
-                    .transform(body().prepend("Bye "));
+                from("jetty://" + serverUri).id("route1").transform(body().prepend("Bye "));
             }
         };
     }

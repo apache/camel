@@ -74,16 +74,17 @@ public class MailMultipleRecipientsTest extends CamelTestSupport {
         mock.expectedHeaderReceived("cc", "james@localhost");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://claus@localhost?consumer.initialDelay=100&consumer.delay=100").to("mock:claus");
+                from("pop3://claus@localhost?initialDelay=100&delay=100").to("mock:claus");
 
-                from("pop3://willem@localhost?consumer.initialDelay=100&consumer.delay=100").to("mock:willem");
+                from("pop3://willem@localhost?initialDelay=100&delay=100").to("mock:willem");
 
-                from("pop3://hadrian@localhost?consumer.initialDelay=100&consumer.delay=100").to("mock:hadrian");
+                from("pop3://hadrian@localhost?initialDelay=100&delay=100").to("mock:hadrian");
 
-                from("pop3://tracy@localhost?consumer.initialDelay=100&consumer.delay=100").to("mock:tracy");
+                from("pop3://tracy@localhost?initialDelay=100&delay=100").to("mock:tracy");
             }
         };
     }

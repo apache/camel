@@ -34,6 +34,7 @@ public class GangliaProducer extends DefaultProducer {
         this.publisher = publisher;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Message message = exchange.getIn();
 

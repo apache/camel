@@ -112,6 +112,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
         return server;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new CoAPEndpoint(uri, this);
         setProperties(endpoint, parameters);
@@ -186,12 +187,12 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
         }
 
         CoAPEndpoint endpoint = camelContext.getEndpoint(url, CoAPEndpoint.class);
-        setProperties(endpoint, parameters);
+        setProperties(camelContext, endpoint, parameters);
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
         if (config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
-            setProperties(consumer, config.getConsumerProperties());
+            setProperties(camelContext, consumer, config.getConsumerProperties());
         }
         return consumer;
     }

@@ -101,6 +101,7 @@ public class SftpConsumer extends RemoteFileConsumer<SftpRemoteFile> {
         return answer;
     }
 
+    @Override
     protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<SftpRemoteFile>> fileList, int depth) {
         log.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
 

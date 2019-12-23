@@ -21,46 +21,41 @@ import java.util.Set;
 
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.sqs.AmazonSQS;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 @Component("aws-sqs")
 public class SqsComponent extends DefaultComponent {
-    
+
     @Metadata
     private String accessKey;
     @Metadata
     private String secretKey;
     @Metadata
     private String region;
-    @Metadata(label = "advanced")    
+    @Metadata(label = "advanced")
     private SqsConfiguration configuration;
-    
+
     public SqsComponent() {
         this(null);
     }
 
     public SqsComponent(CamelContext context) {
         super(context);
-        
-        this.configuration = new SqsConfiguration();
+
         registerExtension(new SqsComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        final SqsConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
 
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Queue name must be specified.");
         }
-
+        SqsConfiguration configuration = this.configuration != null ? this.configuration.copy() : new SqsConfiguration();
         if (remaining.startsWith("arn:")) {
             String[] parts = remaining.split(":");
             if (parts.length != 6 || !parts[2].equals("sqs")) {
@@ -72,31 +67,24 @@ public class SqsComponent extends DefaultComponent {
         } else {
             configuration.setQueueName(remaining);
         }
-
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        SqsEndpoint sqsEndpoint = new SqsEndpoint(uri, this, configuration);
+        sqsEndpoint.getConfiguration().setAccessKey(accessKey);
+        sqsEndpoint.getConfiguration().setSecretKey(secretKey);
+        sqsEndpoint.getConfiguration().setRegion(region);
+        setProperties(sqsEndpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonSQSClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSQSClient or accessKey and secretKey must be specified.");
         }
-        
-        // Verify that visibilityTimeout is set if extendMessageVisibility is set to true.
+
+        // Verify that visibilityTimeout is set if extendMessageVisibility is
+        // set to true.
         if (configuration.isExtendMessageVisibility() && (configuration.getVisibilityTimeout() == null)) {
             throw new IllegalArgumentException("Extending message visibility (extendMessageVisibility) requires visibilityTimeout to be set on the Endpoint.");
         }
-
-        SqsEndpoint sqsEndpoint = new SqsEndpoint(uri, this, configuration);
-        sqsEndpoint.setConsumerProperties(parameters);
         return sqsEndpoint;
     }
-    
+
     public SqsConfiguration getConfiguration() {
         return configuration;
     }
@@ -107,40 +95,41 @@ public class SqsComponent extends DefaultComponent {
     public void setConfiguration(SqsConfiguration configuration) {
         this.configuration = configuration;
     }
-    
+
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
-    
+
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     /**
-     * Specify the queue region which could be used with queueOwnerAWSAccountId to build the service URL.
+     * Specify the queue region which could be used with queueOwnerAWSAccountId
+     * to build the service URL.
      */
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
-    
+
     private void checkAndSetRegistryClient(SqsConfiguration configuration) {
         Set<AmazonSQS> clients = getCamelContext().getRegistry().findByType(AmazonSQS.class);
         if (clients.size() == 1) {

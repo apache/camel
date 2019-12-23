@@ -157,6 +157,7 @@ public class ZipDeflaterDataFormatTest extends CamelTestSupport {
 
     private static class ZippedMessageProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             byte[] body = exchange.getIn().getBody(byte[].class);
             

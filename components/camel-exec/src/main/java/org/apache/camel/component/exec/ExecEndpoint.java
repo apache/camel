@@ -17,6 +17,7 @@
 package org.apache.camel.component.exec;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.exec.impl.DefaultExecBinding;
@@ -55,6 +56,8 @@ public class ExecEndpoint extends DefaultEndpoint {
     private ExecBinding binding;
     @UriParam
     private boolean useStderrOnEmptyStdout;
+    @UriParam(defaultValue = "DEBUG")
+    private LoggingLevel commandLogLevel = LoggingLevel.DEBUG;
 
     public ExecEndpoint(String uri, ExecComponent component) {
         super(uri, component);
@@ -62,10 +65,12 @@ public class ExecEndpoint extends DefaultEndpoint {
         this.binding = new DefaultExecBinding();
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new ExecProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported for ExecEndpoint!");
     }
@@ -166,5 +171,17 @@ public class ExecEndpoint extends DefaultEndpoint {
      */
     public void setUseStderrOnEmptyStdout(boolean useStderrOnEmptyStdout) {
         this.useStderrOnEmptyStdout = useStderrOnEmptyStdout;
+    }
+
+    public LoggingLevel getCommandLogLevel() {
+        return commandLogLevel;
+    }
+
+    /**
+     * Logging level to be used for commands during execution. The default value is DEBUG.
+     * Possible values are TRACE, DEBUG, INFO, WARN, ERROR or OFF. (Values of ExecCommandLogLevelType enum)
+     */
+    public void setCommandLogLevel(LoggingLevel commandLogLevel) {
+        this.commandLogLevel = commandLogLevel;
     }
 }

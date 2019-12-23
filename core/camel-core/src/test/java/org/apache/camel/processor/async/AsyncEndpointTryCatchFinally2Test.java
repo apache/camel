@@ -52,36 +52,19 @@ public class AsyncEndpointTryCatchFinally2Test extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .doTry()
-                            .process(new Processor() {
-                                public void process(Exchange exchange) throws Exception {
-                                    beforeThreadName = Thread.currentThread().getName();
-                                }
-                            })
-                            .to("async:bye:camel?failFirstAttempts=1")
-                        .doCatch(Exception.class)
-                            .to("log:catch")
-                            .to("mock:catch")
-                            .process(new Processor() {
-                                public void process(Exchange exchange) throws Exception {
-                                    middleThreadName = Thread.currentThread().getName();
-                                }
-                            })
-                            .to("async:bye:world")
-                        .doFinally()
-                            .to("log:finally")
-                            .process(new Processor() {
-                                public void process(Exchange exchange) throws Exception {
-                                    afterThreadName = Thread.currentThread().getName();
-                                }
-                            })
-                            .to("log:after")
-                            .to("mock:after")
-                        .end()
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("log:before").doTry().process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).to("async:bye:camel?failFirstAttempts=1").doCatch(Exception.class).to("log:catch").to("mock:catch").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        middleThreadName = Thread.currentThread().getName();
+                    }
+                }).to("async:bye:world").doFinally().to("log:finally").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).to("log:after").to("mock:after").end().to("mock:result");
             }
         };
     }

@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.function.Consumer;
 
@@ -56,7 +57,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     protected final LongAdder misses = new LongAdder();
     protected final LongAdder evicted = new LongAdder();
 
-    private int maxCacheSize = 10000;
+    private int maxCacheSize;
     private final Cache<K, V> cache;
     private final Map<K, V> map;
     private final Consumer<V> evict;
@@ -133,6 +134,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
                 .initialCapacity(initialCapacity)
                 .maximumSize(maximumCacheSize)
                 .removalListener(this);
+
         if (soft) {
             caffeine.softValues();
         }
@@ -142,6 +144,18 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
         }
         if (syncListener) {
             caffeine.executor(Runnable::run);
+        } else {
+            //
+            // by default, caffeine uses {@link ForkJoinPool#commonPool()} if an executor is not
+            // set which causes troubles in SubstrateVM as the common pool should be created at
+            // runtime.
+            //
+            // https://github.com/quarkusio/quarkus/issues/3300
+            //
+            // As workaround we can wrap it so a reference to the commonPool is not retained by
+            // caffeine's classes.
+            //
+            caffeine.executor(task -> ForkJoinPool.commonPool().execute(task));
         }
 
         this.cache = caffeine.build();
@@ -191,6 +205,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
         return map.remove(o);
     }
 
+    @Override
     public void putAll(Map<? extends K, ? extends V> map) {
         this.cache.putAll(map);
     }
@@ -228,6 +243,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Gets the number of cache hits
      */
+    @Override
     public long getHits() {
         return hits.longValue();
     }
@@ -235,6 +251,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Gets the number of cache misses.
      */
+    @Override
     public long getMisses() {
         return misses.longValue();
     }
@@ -242,6 +259,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Gets the number of evicted entries.
      */
+    @Override
     public long getEvicted() {
         return evicted.longValue();
     }
@@ -249,6 +267,7 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Returns the maxCacheSize.
      */
+    @Override
     public int getMaxCacheSize() {
         return maxCacheSize;
     }
@@ -256,12 +275,14 @@ public class CaffeineLRUCache<K, V> implements LRUCache<K, V>, RemovalListener<K
     /**
      * Rest the cache statistics such as hits and misses.
      */
+    @Override
     public void resetStatistics() {
         hits.reset();
         misses.reset();
         evicted.reset();
     }
 
+    @Override
     public void cleanUp() {
         cache.cleanUp();
     }

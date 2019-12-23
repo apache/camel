@@ -35,13 +35,11 @@ public class DataFormatServiceCustomRefTest extends DataFormatServiceTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:a")
-                    // myCustomDataFormat refers to the data format from the Registry
-                    .marshal().custom("myCustomDataFormat")
-                    .to("mock:a");
+                    // myCustomDataFormat refers to the data format from the
+                    // Registry
+                    .marshal().custom("myCustomDataFormat").to("mock:a");
 
-                from("direct:b")
-                    .unmarshal().custom("myCustomDataFormat")
-                    .to("mock:b");
+                from("direct:b").unmarshal().custom("myCustomDataFormat").to("mock:b");
                 // END SNIPPET: e1
             }
         };

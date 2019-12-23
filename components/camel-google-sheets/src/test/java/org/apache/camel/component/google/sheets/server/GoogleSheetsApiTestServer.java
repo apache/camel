@@ -44,7 +44,6 @@ import com.consol.citrus.http.server.HttpServer;
 import com.consol.citrus.http.server.HttpServerBuilder;
 import com.consol.citrus.http.servlet.GzipHttpServletResponseWrapper;
 import com.consol.citrus.http.servlet.RequestCachingServletFilter;
-
 import org.eclipse.jetty.server.HttpConfiguration;
 import org.eclipse.jetty.server.HttpConnectionFactory;
 import org.eclipse.jetty.server.SecureRequestCustomizer;
@@ -77,7 +76,6 @@ public final class GoogleSheetsApiTestServer {
      * Prevent direct instantiation.
      */
     private GoogleSheetsApiTestServer(HttpServer httpServer) {
-        super();
         this.httpServer = httpServer;
     }
 
@@ -307,7 +305,6 @@ public final class GoogleSheetsApiTestServer {
              * @throws IOException
              */
             public GzipServletInputStream(ServletRequest request) throws IOException {
-                super();
                 gzipStream = new GZIPInputStream(request.getInputStream());
             }
 

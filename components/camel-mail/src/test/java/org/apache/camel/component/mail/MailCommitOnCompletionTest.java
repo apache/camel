@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -78,10 +79,11 @@ public class MailCommitOnCompletionTest extends CamelTestSupport {
         folder.close(true);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&delete=true&consumer.initialDelay=100&consumer.delay=100")
+                from("pop3://jones@localhost?password=secret&delete=true&initialDelay=100&delay=100")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // now f*** up and create a new OUT Message (without propagating the IN message)

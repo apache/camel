@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import java.util.Collections;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -39,6 +40,12 @@ public class CxfProducerSessionTest extends CamelTestSupport {
     private static final String REQUEST_MESSAGE_EXPRESSION = "<ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\"><arg0>${in.body}</arg0></ns1:echo>";
     private static final Map<String, String> NAMESPACES = Collections.singletonMap("ns1", "http://cxf.component.camel.apache.org/");
     private static final String PARAMETER_XPATH = "/ns1:echoResponse/return/text()";
+    
+    @BindToRegistry("instanceCookieHandler")
+    private InstanceCookieHandler ich = new InstanceCookieHandler();
+    
+    @BindToRegistry("exchangeCookieHandler")
+    private ExchangeCookieHandler ech = new ExchangeCookieHandler();
 
     private String url = "cxf://" + SIMPLE_SERVER_ADDRESS + "?serviceClass=org.apache.camel.component.cxf.EchoService&dataFormat=PAYLOAD&synchronous=true";
 
@@ -113,6 +120,7 @@ public class CxfProducerSessionTest extends CamelTestSupport {
         }
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -144,13 +152,5 @@ public class CxfProducerSessionTest extends CamelTestSupport {
                     .to(url + "&cookieHandler=#exchangeCookieHandler");
             }
         };
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("instanceCookieHandler", new InstanceCookieHandler());
-        jndiRegistry.bind("exchangeCookieHandler", new ExchangeCookieHandler());
-        return jndiRegistry;
     }
 }

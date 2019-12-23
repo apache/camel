@@ -18,7 +18,9 @@ package org.apache.camel.component.fhir;
 
 import java.util.List;
 import java.util.Map;
+
 import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.interceptor.api.IInterceptorService;
 import ca.uhn.fhir.model.primitive.IdDt;
 import ca.uhn.fhir.model.primitive.UriDt;
 import ca.uhn.fhir.rest.api.EncodingEnum;
@@ -47,12 +49,12 @@ import ca.uhn.fhir.rest.gclient.ITransaction;
 import ca.uhn.fhir.rest.gclient.IUntypedQuery;
 import ca.uhn.fhir.rest.gclient.IUpdate;
 import ca.uhn.fhir.rest.gclient.IValidate;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.fhir.internal.FhirApiCollection;
 import org.apache.camel.component.fhir.internal.FhirCreateApiMethod;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.junit.Test;
@@ -68,24 +70,11 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
     private static final String TEST_URI_CUSTOM_CLIENT_FACTORY = "fhir://" + PATH_PREFIX + "/resource?inBody=resourceAsString&clientFactory=#customClientFactory&serverUrl=foobar";
 
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        final CamelContext context = new DefaultCamelContext(createRegistry());
-
-        // add FhirComponent to Camel context but don't set up componentConfiguration
-        final FhirComponent component = new FhirComponent(context);
-        context.addComponent("fhir", component);
-
-        return context;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("customClient", new CustomClient());
-        registry.bind("customClientFactory", new CustomClientFactory());
-        return registry;
-    }
+    @BindToRegistry("customClient")
+    private CustomClient client = new CustomClient();
+    
+    @BindToRegistry("customClientFactory")
+    private CustomClientFactory clientFactory = new CustomClientFactory();
 
     @Test
     public void testConfigurationWithCustomClient() throws Exception {
@@ -303,6 +292,16 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
         }
 
         @Override
+        public IInterceptorService getInterceptorService() {
+            return null;
+        }
+
+        @Override
+        public void setInterceptorService(IInterceptorService theInterceptorService) {
+
+        }
+
+        @Override
         public <T extends IBaseResource> T fetchResourceFromUrl(Class<T> theResourceType, String theUrl) {
             return null;
         }
@@ -319,11 +318,6 @@ public class FhirCustomClientConfigurationIT extends AbstractFhirTestSupport {
 
         @Override
         public IHttpClient getHttpClient() {
-            return null;
-        }
-
-        @Override
-        public List<IClientInterceptor> getInterceptors() {
             return null;
         }
 

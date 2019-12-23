@@ -294,20 +294,20 @@ public class StringHelperTest extends Assert {
 
     @Test
     public void testHumanReadableBytes() {
-        assertEquals("0 B",  StringHelper.humanReadableBytes(Locale.ENGLISH, 0));
-        assertEquals("32 B",  StringHelper.humanReadableBytes(Locale.ENGLISH, 32));
-        assertEquals("1.0 KB",  StringHelper.humanReadableBytes(Locale.ENGLISH, 1024));
-        assertEquals("1.7 KB",  StringHelper.humanReadableBytes(Locale.ENGLISH, 1730));
-        assertEquals("108.0 KB",  StringHelper.humanReadableBytes(Locale.ENGLISH, 110592));
-        assertEquals("6.8 MB",  StringHelper.humanReadableBytes(Locale.ENGLISH, 7077888));
-        assertEquals("432.0 MB",  StringHelper.humanReadableBytes(Locale.ENGLISH, 452984832));
-        assertEquals("27.0 GB",  StringHelper.humanReadableBytes(Locale.ENGLISH, 28991029248L));
-        assertEquals("1.7 TB",  StringHelper.humanReadableBytes(Locale.ENGLISH, 1855425871872L));
+        assertEquals("0 B", StringHelper.humanReadableBytes(Locale.ENGLISH, 0));
+        assertEquals("32 B", StringHelper.humanReadableBytes(Locale.ENGLISH, 32));
+        assertEquals("1.0 KB", StringHelper.humanReadableBytes(Locale.ENGLISH, 1024));
+        assertEquals("1.7 KB", StringHelper.humanReadableBytes(Locale.ENGLISH, 1730));
+        assertEquals("108.0 KB", StringHelper.humanReadableBytes(Locale.ENGLISH, 110592));
+        assertEquals("6.8 MB", StringHelper.humanReadableBytes(Locale.ENGLISH, 7077888));
+        assertEquals("432.0 MB", StringHelper.humanReadableBytes(Locale.ENGLISH, 452984832));
+        assertEquals("27.0 GB", StringHelper.humanReadableBytes(Locale.ENGLISH, 28991029248L));
+        assertEquals("1.7 TB", StringHelper.humanReadableBytes(Locale.ENGLISH, 1855425871872L));
     }
 
     @Test
     public void testHumanReadableBytesNullLocale() {
-        assertEquals("1.3 KB",  StringHelper.humanReadableBytes(null, 1280));
+        assertEquals("1.3 KB", StringHelper.humanReadableBytes(null, 1280));
     }
 
     @Test

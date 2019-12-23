@@ -24,15 +24,16 @@ import org.apache.camel.util.ObjectHelper;
 
 public abstract class AbstractKubernetesComponent extends DefaultComponent {
 
-    protected Endpoint createEndpoint(String uri, String remaining,
-            Map<String, Object> parameters) throws Exception {
+    @Override
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         KubernetesConfiguration config = new KubernetesConfiguration();
-        setProperties(config, parameters);
         config.setMasterUrl(remaining);
         if (ObjectHelper.isEmpty(config.getMasterUrl())) {
             throw new IllegalArgumentException("Master URL must be specified");
         }
-        return doCreateEndpoint(uri, remaining, config);
+        Endpoint endpoint = doCreateEndpoint(uri, remaining, config);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     protected abstract AbstractKubernetesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception;

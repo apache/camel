@@ -52,9 +52,7 @@ public class AdviceWithOnExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
-                from("direct:start")
-                    .to("mock:a").id("a")
-                    .to("mock:b").id("b");
+                from("direct:start").to("mock:a").id("a").to("mock:b").id("b");
             }
         };
     }

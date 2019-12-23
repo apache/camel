@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.strategy;
+
 import java.io.File;
 import java.io.FileOutputStream;
 
@@ -86,8 +87,7 @@ public class FileChangedReadLockTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100")
-                    .to("file:target/data/changed/out", "mock:result");
+                from("file:target/data/changed/in?initialDelay=0&delay=10&readLock=changed&readLockCheckInterval=100").to("file:target/data/changed/out", "mock:result");
             }
         };
     }

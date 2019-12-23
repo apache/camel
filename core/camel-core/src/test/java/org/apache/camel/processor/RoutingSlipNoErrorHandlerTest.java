@@ -43,19 +43,14 @@ public class RoutingSlipNoErrorHandlerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .routingSlip().constant("direct:foo")
-                    .to("mock:result");
+                from("direct:start").routingSlip().constant("direct:foo").to("mock:result");
 
-                from("direct:foo")
-                    .errorHandler(noErrorHandler())
-                    .to("mock:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                from("direct:foo").errorHandler(noErrorHandler()).to("mock:foo").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
             }
         };
     }

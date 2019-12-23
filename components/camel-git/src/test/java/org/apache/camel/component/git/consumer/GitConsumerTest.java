@@ -59,8 +59,8 @@ public class GitConsumerTest extends GitTestSupport {
         // Check
         Exchange ex1 = mockResultCommit.getExchanges().get(0);
         Exchange ex2 = mockResultCommit.getExchanges().get(1);
-        assertEquals(commitMessage, ex2.getOut().getBody(RevCommit.class).getShortMessage());
-        assertEquals("Test test Commit", ex1.getOut().getBody(RevCommit.class).getShortMessage());
+        assertEquals(commitMessage, ex2.getMessage().getBody(RevCommit.class).getShortMessage());
+        assertEquals("Test test Commit", ex1.getMessage().getBody(RevCommit.class).getShortMessage());
         git.close();
     }
 
@@ -93,7 +93,7 @@ public class GitConsumerTest extends GitTestSupport {
 
         // Check
         Exchange exchange = mockResultTag.getExchanges().get(0);
-        assertEquals("refs/tags/" + tagTest, exchange.getOut().getBody(ObjectIdRef.Unpeeled.class).getName());
+        assertEquals("refs/tags/" + tagTest, exchange.getMessage().getBody(ObjectIdRef.Unpeeled.class).getName());
         git.close();
     }
 
@@ -127,8 +127,8 @@ public class GitConsumerTest extends GitTestSupport {
 
         // Check
         List<Exchange> exchanges = mockResultBranch.getExchanges();
-        assertEquals("refs/heads/master", exchanges.get(0).getOut().getBody(ObjectIdRef.Unpeeled.class).getName());
-        assertEquals("refs/heads/" + branchTest, exchanges.get(1).getOut().getBody(ObjectIdRef.Unpeeled.class).getName());
+        assertEquals("refs/heads/master", exchanges.get(0).getMessage().getBody(ObjectIdRef.Unpeeled.class).getName());
+        assertEquals("refs/heads/" + branchTest, exchanges.get(1).getMessage().getBody(ObjectIdRef.Unpeeled.class).getName());
 
         git.close();
     }

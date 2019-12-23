@@ -16,9 +16,10 @@
  */
 package org.apache.camel.component.ehcache;
 
+import org.apache.camel.BindToRegistry;
+import org.apache.camel.Component;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.ehcache.Cache;
 import org.ehcache.config.ResourcePools;
@@ -35,11 +36,11 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
     @EndpointInject("ehcache:myCache")
     private EhcacheEndpoint endpoint;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    @BindToRegistry("ehcache")
+    public Component createEhcacheComponent() throws Exception {
         EhcacheComponent component = new EhcacheComponent();
-        component.getConfiguration().setKeyType(String.class);
-        component.getConfiguration().setValueType(String.class);
+        component.getConfiguration().setKeyType("java.lang.String");
+        component.getConfiguration().setValueType("java.lang.String");
         component.getConfiguration().setCacheManager(
             CacheManagerBuilder.newCacheManagerBuilder()
                 .withCache(
@@ -53,10 +54,7 @@ public class EhcacheComponentConfigurationTest extends CamelTestSupport {
                 ).build(true)
         );
 
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("ehcache", component);
-
-        return registry;
+        return component;
     }
 
     // *****************************

@@ -16,11 +16,14 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.IdempotentRepository;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for the idempotentRepository # option.
@@ -28,17 +31,13 @@ import org.junit.Test;
 public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
 
     private static boolean invoked;
+    
+    @BindToRegistry("myRepo")
+    private MyIdempotentRepository myIdempotentRepo = new MyIdempotentRepository();
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort()
                 + "/idempotent?password=admin&binary=false&idempotent=true&idempotentRepository=#myRepo&delete=true";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myRepo", new MyIdempotentRepository());
-        return jndi;
     }
 
     @Test
@@ -65,7 +64,7 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
         Thread.sleep(2000);
         assertMockEndpointsSatisfied();
 
-        assertTrue("MyIdempotentRepository should have been invoked", invoked);
+        assertTrue(invoked, "MyIdempotentRepository should have been invoked");
     }
     
     @Override
@@ -79,6 +78,7 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
 
     public class MyIdempotentRepository implements IdempotentRepository {
 
+        @Override
         public boolean add(String messageId) {
             // will return true 1st time, and false 2nd time
             boolean result = invoked;
@@ -87,25 +87,31 @@ public class FtpConsumerIdempotentRefTest extends FtpServerTestSupport {
             return !result;
         }
 
+        @Override
         public boolean contains(String key) {
             return invoked;
         }
 
+        @Override
         public boolean remove(String key) {
             return true;
         }
 
+        @Override
         public boolean confirm(String key) {
             return true;
         }
         
+        @Override
         public void clear() {
             return;  
         }
 
+        @Override
         public void start() {
         }
 
+        @Override
         public void stop() {
         }
     }

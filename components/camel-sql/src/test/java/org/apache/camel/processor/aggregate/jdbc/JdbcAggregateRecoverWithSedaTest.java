@@ -28,6 +28,7 @@ public class JdbcAggregateRecoverWithSedaTest extends AbstractJdbcAggregationTes
 
     private static AtomicInteger counter = new AtomicInteger(0);
 
+    @Override
     void configureJdbcAggregationRepository() {
         // enable recovery
         repo.setUseRecovery(true);

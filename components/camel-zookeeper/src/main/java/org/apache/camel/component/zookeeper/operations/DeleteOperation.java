@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
-import static java.lang.String.format;
-
 import org.apache.zookeeper.ZooKeeper;
+
+import static java.lang.String.format;
 
 /**
  * <code>setdataOperation</code> sets the content of a ZooKeeper node. An optional version
@@ -34,6 +34,7 @@ public class DeleteOperation extends ZooKeeperOperation<Boolean> {
         super(connection, node);
     }
 
+    @Override
     public OperationResult<Boolean> getResult() {
         try {
             connection.delete(node, version);

@@ -16,21 +16,20 @@
  */
 package org.apache.camel.processor.interceptor;
 
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 public class AdviceWithRouteIdTest extends AdviceWithTest {
 
+    @Override
     @Test
     public void testAdvised() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinition("myRoute"), context, new RouteBuilder() {
+        RouteReifier.adviceWith(context.getRouteDefinition("myRoute"), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock:foo")
-                        .skipSendToOriginalEndpoint()
-                        .to("log:foo")
-                        .to("mock:advised");
+                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
             }
         });
 

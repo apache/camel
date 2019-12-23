@@ -42,17 +42,11 @@ public class VmMultipleConsumersIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:inbox")
-                    .to(ExchangePattern.InOut, "vm:foo?timeout=5000")
-                    .to("mock:done");
+                from("direct:inbox").to(ExchangePattern.InOut, "vm:foo?timeout=5000").to("mock:done");
 
-                from("vm:foo?multipleConsumers=true")
-                    .to("log:a")
-                    .to("mock:a");
+                from("vm:foo?multipleConsumers=true").to("log:a").to("mock:a");
 
-                from("vm:foo?multipleConsumers=true")
-                    .to("log:b")
-                    .to("mock:b");
+                from("vm:foo?multipleConsumers=true").to("log:b").to("mock:b");
             }
         };
     }

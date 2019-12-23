@@ -23,6 +23,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelRouteBuilderTest extends SpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/routebuilder/camelRouteBuilder.xml");
     }

@@ -50,6 +50,7 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         this.sender = sender;
     }
 
+    @Override
     public void notify(CamelEvent eventObject) throws Exception {
         // create message payload to send
         String message = eventObject.toString();
@@ -63,6 +64,7 @@ public class NagiosEventNotifier extends EventNotifierSupport {
         log.trace("Sending notification done");
     }
 
+    @Override
     public boolean isEnabled(CamelEvent eventObject) {
         return true;
     }

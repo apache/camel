@@ -94,6 +94,7 @@ public class HipchatProducerIntegrationTest extends CamelTestSupport {
         assertEquals(204, message.getHeader(HipchatConstants.TO_USER_RESPONSE_STATUS, StatusLine.class).getStatusCode());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

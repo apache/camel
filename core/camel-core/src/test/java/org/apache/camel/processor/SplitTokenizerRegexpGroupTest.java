@@ -41,9 +41,7 @@ public class SplitTokenizerRegexpGroupTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split().tokenize("\r\n|\n", true, 2, "\n", true)
-                        .log("${body}").to("mock:line");
+                from("direct:start").split().tokenize("\r\n|\n", true, 2, "\n", true).log("${body}").to("mock:line");
             }
         };
     }

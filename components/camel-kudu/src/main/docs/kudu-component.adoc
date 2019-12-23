@@ -1,0 +1,128 @@
+[[kudu-component]]
+= Kudu Component
+
+*Since Camel 3.0*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+*Since Camel 3.0*
+
+
+The Kudu component supports storing and retrieving data from/to https://kudu.apache.org/[Apache Kudu], a free and open source column-oriented data store of the Apache Hadoop ecosystem.
+
+== Prerequisites
+
+You must have a valid Kudu instance running. More information are available at https://kudu.apache.org/[Apache Kudu].
+
+
+// component options: START
+The Kudu component supports 3 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+|===
+// component options: END
+
+// endpoint options: START
+The Kudu endpoint is configured using URI syntax:
+
+----
+kudu:host:port/tableName
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (3 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *host* | Kudu master to connect to |  | String
+| *port* | Port where kudu service is listening |  | String
+| *tableName* | The name of the table where the rows are stored |  | String
+|===
+
+
+=== Query Parameters (4 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *operation* (producer) | What kind of operation is to be performed in the table |  | KuduOperations
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+|===
+// endpoint options: END
+
+== Input Body formats
+
+=== Insert
+
+The input body format has to be a java.util.Map<String, Object>. This map will represent a row of the table whose elements are columns, where the key is the column name and the value is the value of the column. 
+
+== Output Body formats
+
+=== Scan
+
+The output body format will be a java.util.List<java.util.Map<String, Object>>. Each element of the list will be a different row of the table. Each row is a Map<String, Object> whose elements will be each pair of column name and column value for that row.
+
+
+== Dependencies
+
+Maven users will need to add the following dependency to their pom.xml.
+
+*pom.xml*
+
+[source,xml]
+---------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kudu</artifactId>
+    <version>${camel-version}</version>
+</dependency>
+---------------------------------------
+
+where `$\{camel-version\}` must be replaced by the actual version of Camel (3.0 or higher).
+
+
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-kudu-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+
+== Camel Kudu Starter
+
+A starter module is available to spring-boot users.
+
+To use this feature, add the following dependencies to your spring boot pom.xml file:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-kudu-starter</artifactId>
+    <version>${camel.version}</version> <!-- use the same version as your Camel core version -->
+</dependency>
+----

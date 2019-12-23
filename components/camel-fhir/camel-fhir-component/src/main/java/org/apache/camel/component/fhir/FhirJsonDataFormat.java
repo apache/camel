@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+
 import ca.uhn.fhir.parser.IParser;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.annotations.Dataformat;

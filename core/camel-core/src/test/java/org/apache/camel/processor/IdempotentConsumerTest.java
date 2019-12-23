@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -41,9 +42,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").idempotentConsumer(
-                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
-                ).to("mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).to("mock:result");
             }
         });
         context.start();
@@ -67,9 +66,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 IdempotentRepository repo = MemoryIdempotentRepository.memoryIdempotentRepository(200);
 
-                from("direct:start")
-                    .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
-                    .to("mock:result");
+                from("direct:start").idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false).to("mock:result");
             }
         });
         context.start();
@@ -101,13 +98,12 @@ public class IdempotentConsumerTest extends ContextTestSupport {
 
                 // START SNIPPET: e1
                 from("direct:start")
-                    // instruct idempotent consumer to not skip duplicates as we will filter then our self
-                    .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false)
-                    .filter(exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
-                        // filter out duplicate messages by sending them to someplace else and then stop
-                        .to("mock:duplicate")
-                        .stop()
-                    .end()
+                    // instruct idempotent consumer to not skip duplicates as we
+                    // will filter then our self
+                    .idempotentConsumer(header("messageId")).messageIdRepository(repo).skipDuplicate(false).filter(exchangeProperty(Exchange.DUPLICATE_MESSAGE).isEqualTo(true))
+                    // filter out duplicate messages by sending them to
+                    // someplace else and then stop
+                    .to("mock:duplicate").stop().end()
                     // and here we process only new messages (no duplicates)
                     .to("mock:result");
                 // END SNIPPET: e1
@@ -137,9 +133,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
-                from("direct:start").idempotentConsumer(
-                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
-                ).process(new Processor() {
+                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("messageId", String.class);
                         if (id.equals("2")) {
@@ -172,9 +166,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false));
 
-                from("direct:start").idempotentConsumer(
-                    header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
-                ).process(new Processor() {
+                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("messageId", String.class);
                         if (id.equals("2")) {
@@ -208,9 +200,7 @@ public class IdempotentConsumerTest extends ContextTestSupport {
                 // use default error handler
                 errorHandler(defaultErrorHandler());
 
-                from("direct:start").idempotentConsumer(
-                        header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)
-                ).process(new Processor() {
+                from("direct:start").idempotentConsumer(header("messageId"), MemoryIdempotentRepository.memoryIdempotentRepository(200)).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("messageId", String.class);
                         if (id.equals("2")) {

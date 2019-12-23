@@ -31,8 +31,7 @@ public class SimpleJettyTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp")
-                    .transform(body().prepend("Hello "));
+                from("jetty:http://localhost:{{port}}/myapp").transform(body().prepend("Hello "));
             }
         };
     }

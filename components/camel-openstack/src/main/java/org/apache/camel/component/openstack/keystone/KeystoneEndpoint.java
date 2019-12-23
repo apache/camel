@@ -167,6 +167,7 @@ public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
         this.host = host;
     }
 
+    @Override
     public Config getConfig() {
         return config;
     }
@@ -179,6 +180,7 @@ public class KeystoneEndpoint extends AbstractOpenstackEndpoint {
     }
 
     // V2 API is not supported (is deprecated)
+    @Override
     public String getApiVersion() {
         return V3;
     }

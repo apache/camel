@@ -1,0 +1,76 @@
+= POJO producing
+
+There are two different ways to send messages to any Camel
+xref:endpoint.adoc[Endpoint] from a POJO.
+
+[[POJOProducing-EndpointInject]]
+== Via `@EndpointInject`
+
+To allow sending of messages from POJOs you can use the `org.apache.camel.EndpointInject` annotation.
+This will inject a `org.apache.camel.ProducerTemplate` so that the bean can participate in message exchanges.
+
+Example: Send a message to the *`foo.bar`* ActiveMQ queue:
+
+[source,java]
+----
+public class Foo {
+  @EndpointInject("activemq:foo.bar")
+  ProducerTemplate producer;
+
+  public void doSomething() {
+    if (whatever) {
+      producer.sendBody("<hello>world!</hello>");
+    }
+  }
+}
+----
+
+The downside of this is that your code is now dependent on a Camel API,
+the *`ProducerTemplate`*. The next section describes how to remove this
+dependency.
+
+[TIP]
+====
+
+See xref:pojo-consuming.adoc[POJO Consuming] for how to use a property
+on the bean as endpoint configuration, e.g., using the *`property`*
+attribute on *`@Produce`*, *`@EndpointInject`*.
+
+====
+
+[[POJOProducing-HidingtheCamelAPIsFromYourCodeUsingProduce]]
+== Hiding the Camel APIs From Your Code Using `@Produce`
+
+We recommend xref:hiding-middleware.adoc[Hiding Middleware] APIs from
+your application code so the next option might be more suitable. You can
+add the *`@Produce`* annotation to an injection point (a field or
+property setter) using a *`ProducerTemplate`* *or* using some interface
+you use in your business logic. Example:
+
+[source,java]
+----
+public interface MyListener {
+    String sayHello(String name);
+}
+
+public class MyBean {
+    @Produce("activemq:foo")
+    protected MyListener producer;
+
+    public void doSomething() {
+        // lets send a message
+        String response = producer.sayHello("James");
+    }
+}
+----
+
+Here Camel will automatically inject a smart client side proxy at
+the *`@Produce`* annotation - an instance of the *`MyListener`*
+instance. When we invoke methods on this interface the method call is
+turned into an object and using the Camel
+xref:spring-remoting.adoc[Spring Remoting] mechanism it is sent to the
+endpoint - in this case the xref:components::activemq-component.adoc[ActiveMQ] endpoint to
+queue *`foo`*; then the caller blocks for a response.
+
+If you want to make asynchronous message sends then use an
+xref:using-exchange-pattern-annotations.adoc[@InOnly] annotation on the injection point.

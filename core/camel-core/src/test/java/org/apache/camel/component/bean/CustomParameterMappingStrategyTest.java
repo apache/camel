@@ -59,6 +59,7 @@ public class CustomParameterMappingStrategyTest extends ContextTestSupport {
 
     public static class MyCustomStrategy implements ParameterMappingStrategy {
 
+        @Override
         public Expression getDefaultParameterTypeExpression(Class<?> parameterType) {
             if (String.class.isAssignableFrom(parameterType)) {
                 return new ExpressionAdapter() {

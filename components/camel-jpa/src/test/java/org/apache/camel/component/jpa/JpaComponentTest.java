@@ -34,7 +34,7 @@ public class JpaComponentTest extends CamelTestSupport {
         assertNull(comp.getEntityManagerFactory());
         assertNull(comp.getTransactionManager());
 
-        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?consumer.lockModeType=PESSIMISTIC_WRITE");
+        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?lockModeType=PESSIMISTIC_WRITE");
         JpaConsumer consumer = (JpaConsumer) jpa.createConsumer(null);
 
         assertEquals(consumer.getLockModeType(), LockModeType.PESSIMISTIC_WRITE);

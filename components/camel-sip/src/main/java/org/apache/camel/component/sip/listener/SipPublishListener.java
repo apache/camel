@@ -35,35 +35,41 @@ public class SipPublishListener implements SipListener {
         this.setSipPublisher(sipPublisher);
     }
 
+    @Override
     public void processRequest(RequestEvent requestEvent) {
         // The SipPublishListener associated with the SipPublisher
         // may not accept incoming requests 
     }
 
-    public void processResponse(ResponseEvent responseReceivedEvent) {  
+    @Override
+    public void processResponse(ResponseEvent responseReceivedEvent) {
         // The SipPublishListener sends InOnly requests to the Presence Agent
         // and only receives ACKs from the Presence Agent to satisfy the 
         // Sip handshakeand. Hence any responses are not further processed.
     }
     
+    @Override
     public void processTimeout(javax.sip.TimeoutEvent timeoutEvent) {
         if (LOG.isWarnEnabled()) {
             LOG.warn("processTimeout received at Sip Publish Listener");
         }
     }
 
+    @Override
     public void processDialogTerminated(DialogTerminatedEvent dialogTerminatedEvent) {
         if (LOG.isWarnEnabled()) {
             LOG.warn("processDialogTerminated received at Sip Publish Listener");
         }
     }
 
+    @Override
     public void processIOException(IOExceptionEvent ioExceptionEvent) {
         if (LOG.isWarnEnabled()) {
             LOG.warn("IOExceptionEvent received at Sip Publish Listener");
         }       
     }
 
+    @Override
     public void processTransactionTerminated(TransactionTerminatedEvent transactionTerminatedEvent) {
         if (LOG.isWarnEnabled()) {
             LOG.warn("processTransactionTerminated received at Sip Publish Listener");

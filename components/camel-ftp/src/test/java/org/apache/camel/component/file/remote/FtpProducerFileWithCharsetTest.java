@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.remote;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -22,10 +23,18 @@ import java.nio.charset.Charset;
 
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class FtpProducerFileWithCharsetTest extends FtpServerTestSupport {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FtpProducerFileWithCharsetTest.class);
+
     private String payload = "\u00e6\u00f8\u00e5 \u00a9";
 
     private String getFtpUrl() {
@@ -33,19 +42,19 @@ public class FtpProducerFileWithCharsetTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         byte[] utf = payload.getBytes("utf-8");
         byte[] iso = payload.getBytes("iso-8859-1");
 
-        log.debug("utf: {}", new String(utf, Charset.forName("utf-8")));
-        log.debug("iso: {}", new String(iso, Charset.forName("iso-8859-1")));
+        LOG.debug("utf: {}", new String(utf, Charset.forName("utf-8")));
+        LOG.debug("iso: {}", new String(iso, Charset.forName("iso-8859-1")));
 
         for (byte b : utf) {
-            log.debug("utf byte: {}", b);
+            LOG.debug("utf byte: {}", b);
         }
         for (byte b : iso) {
-            log.debug("iso byte: {}", b);
+            LOG.debug("iso byte: {}", b);
         }
         super.setUp();
     }
@@ -55,7 +64,7 @@ public class FtpProducerFileWithCharsetTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), payload, "charset/iso.txt");
 
         File file = new File(FTP_ROOT_DIR + "/upload/charset/iso.txt");
-        assertTrue("The uploaded file should exists", file.exists());
+        assertTrue(file.exists(), "The uploaded file should exists");
         String fileContent = new String(IOConverter.toByteArray(file), "iso-8859-1");
         assertEquals(fileContent, payload);
 
@@ -64,7 +73,7 @@ public class FtpProducerFileWithCharsetTest extends FtpServerTestSupport {
         byte[] buffer = new byte[100];
 
         int len = fis.read(buffer);
-        assertTrue("Should read data: " + len, len != -1);
+        assertTrue(len != -1, "Should read data: " + len);
         byte[] data = new byte[len];
         System.arraycopy(buffer, 0, data, 0, len);
         fis.close();

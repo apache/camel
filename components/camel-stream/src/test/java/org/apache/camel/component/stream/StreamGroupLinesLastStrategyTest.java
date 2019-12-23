@@ -22,6 +22,7 @@ import org.junit.Test;
 
 public class StreamGroupLinesLastStrategyTest extends StreamGroupLinesStrategyTest {
     
+    @Override
     @Test
     public void testGroupLines() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

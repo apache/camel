@@ -46,7 +46,6 @@ public class CxfConsumerPayLoadFaultMessageTest extends CxfConsumerPayloadFaultT
                         outElements.add(details);
                         CxfPayload<SoapHeader> responsePayload = new CxfPayload<>(null, outElements);
                         exchange.getOut().setBody(responsePayload);
-                        exchange.getOut().setFault(true);
                     }
                 });
                 

@@ -53,6 +53,7 @@ public class EndpointShutdownOnceTest extends Assert {
 
     private static final class MyComponent extends DefaultComponent {
 
+        @Override
         protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
             return new MyEndpoint(uri, this);
         }
@@ -70,14 +71,17 @@ public class EndpointShutdownOnceTest extends Assert {
             return invoked;
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             return null;
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             return null;
         }
 
+        @Override
         public boolean isSingleton() {
             return true;
         }

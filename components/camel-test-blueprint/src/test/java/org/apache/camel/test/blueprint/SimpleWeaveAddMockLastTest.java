@@ -27,6 +27,7 @@ public class SimpleWeaveAddMockLastTest extends CamelBlueprintTestSupport {
         return "org/apache/camel/test/blueprint/SimpleWeaveAddMockLastTest.xml";
     }
 
+    @Override
     public boolean isUseAdviceWith() {
         return true;
     }

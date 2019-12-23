@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8"?><rests xmlns="http://camel.apache.org/schema/spring">
+    <rest path="/api/v3">
+        <put consumes="application/json,application/xml" id="updatePet" uri="/pet">
+            <param description="Pet object that needs to be added to the store" name="body" required="true" type="body"/>
+            <to uri="direct:updatePet"/>
+        </put>
+        <post consumes="application/json,application/xml" id="addPet" uri="/pet">
+            <param dataType="boolean" defaultValue="false" description="Verbose data" name="verbose" required="false" type="query"/>
+            <param description="Pet object that needs to be added to the store" name="body" required="true" type="body"/>
+            <to uri="direct:addPet"/>
+        </post>
+        <get id="findPetsByStatus" produces="application/xml,application/json" uri="/pet/findByStatus">
+            <description>Multiple status values can be provided with comma separated strings</description>
+            <param arrayType="string" collectionFormat="multi" dataType="array" description="Status values that need to be considered for filter" name="status" required="true" type="query"/>
+            <to uri="direct:findPetsByStatus"/>
+        </get>
+        <get id="findPetsByTags" produces="application/xml,application/json" uri="/pet/findByTags">
+            <description>Muliple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.</description>
+            <param arrayType="string" collectionFormat="multi" dataType="array" description="Tags to filter by" name="tags" required="true" type="query"/>
+            <to uri="direct:findPetsByTags"/>
+        </get>
+        <get id="getPetById" produces="application/xml,application/json" uri="/pet/{petId}">
+            <description>Returns a single pet</description>
+            <param dataType="integer" description="ID of pet to return" name="petId" required="true" type="path"/>
+            <to uri="direct:getPetById"/>
+        </get>
+        <post consumes="application/x-www-form-urlencoded" id="updatePetWithForm" uri="/pet/{petId}">
+            <param dataType="integer" description="ID of pet that needs to be updated" name="petId" required="true" type="path"/>
+            <param dataType="string" description="Updated name of the pet" name="name" required="true" type="formData"/>
+            <param dataType="string" description="Updated status of the pet" name="status" required="true" type="formData"/>
+            <to uri="direct:updatePetWithForm"/>
+        </post>
+        <delete id="deletePet" uri="/pet/{petId}">
+            <param dataType="string" name="api_key" required="false" type="header"/>
+            <param dataType="integer" description="Pet id to delete" name="petId" required="true" type="path"/>
+            <to uri="direct:deletePet"/>
+        </delete>
+        <post consumes="multipart/form-data" id="uploadFile" produces="application/json" uri="/pet/{petId}/uploadImage">
+            <param dataType="integer" description="ID of pet to update" name="petId" required="true" type="path"/>
+            <param dataType="string" description="Additional data to pass to server" name="additionalMetadata" required="true" type="formData"/>
+            <param dataType="string" description="file to upload" name="file" required="true" type="formData"/>
+            <to uri="direct:uploadFile"/>
+        </post>
+        <get id="getInventory" produces="application/json" uri="/store/inventory">
+            <description>Returns a map of status codes to quantities</description>
+            <to uri="direct:getInventory"/>
+        </get>
+        <post consumes="*/*" id="placeOrder" produces="application/xml,application/json" uri="/store/order">
+            <param description="order placed for purchasing the pet" name="body" required="true" type="body"/>
+            <to uri="direct:placeOrder"/>
+        </post>
+        <get id="getOrderById" produces="application/xml,application/json" uri="/store/order/{orderId}">
+            <description>For valid response try integer IDs with value &gt;= 1 and &lt;= 10. Other values will generated exceptions</description>
+            <param dataType="integer" description="ID of pet that needs to be fetched" name="orderId" required="true" type="path"/>
+            <to uri="direct:getOrderById"/>
+        </get>
+        <delete id="deleteOrder" uri="/store/order/{orderId}">
+            <description>For valid response try integer IDs with positive integer value. Negative or non-integer values will generate API errors</description>
+            <param dataType="integer" description="ID of the order that needs to be deleted" name="orderId" required="true" type="path"/>
+            <to uri="direct:deleteOrder"/>
+        </delete>
+        <post consumes="*/*" id="createUser" uri="/user">
+            <description>This can only be done by the logged in user.</description>
+            <param description="Created user object" name="body" required="true" type="body"/>
+            <to uri="direct:createUser"/>
+        </post>
+        <post consumes="*/*" id="createUsersWithArrayInput" uri="/user/createWithArray">
+            <param description="List of user object" name="body" required="true" type="body"/>
+            <to uri="direct:createUsersWithArrayInput"/>
+        </post>
+        <post consumes="*/*" id="createUsersWithListInput" uri="/user/createWithList">
+            <param description="List of user object" name="body" required="true" type="body"/>
+            <to uri="direct:createUsersWithListInput"/>
+        </post>
+        <get id="loginUser" produces="application/xml,application/json" uri="/user/login">
+            <param dataType="string" description="The user name for login" name="username" required="true" type="query"/>
+            <param dataType="string" description="The password for login in clear text" name="password" required="true" type="query"/>
+            <to uri="direct:loginUser"/>
+        </get>
+        <get id="logoutUser" uri="/user/logout">
+            <to uri="direct:logoutUser"/>
+        </get>
+        <get id="getUserByName" produces="application/xml,application/json" uri="/user/{username}">
+            <param dataType="string" description="The name that needs to be fetched. Use user1 for testing. " name="username" required="true" type="path"/>
+            <to uri="direct:getUserByName"/>
+        </get>
+        <put consumes="*/*" id="updateUser" uri="/user/{username}">
+            <description>This can only be done by the logged in user.</description>
+            <param dataType="string" description="name that need to be updated" name="username" required="true" type="path"/>
+            <param description="Updated user object" name="body" required="true" type="body"/>
+            <to uri="direct:updateUser"/>
+        </put>
+        <delete id="deleteUser" uri="/user/{username}">
+            <description>This can only be done by the logged in user.</description>
+            <param dataType="string" description="The name that needs to be deleted" name="username" required="true" type="path"/>
+            <to uri="direct:deleteUser"/>
+        </delete>
+    </rest>
+</rests>

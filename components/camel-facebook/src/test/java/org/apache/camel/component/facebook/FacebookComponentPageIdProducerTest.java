@@ -18,8 +18,6 @@ package org.apache.camel.component.facebook;
 
 import facebook4j.Post;
 import facebook4j.ResponseList;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -28,9 +26,6 @@ public class FacebookComponentPageIdProducerTest extends CamelFacebookTestSuppor
     public static final String APACHE_FOUNDATION_PAGE_ID = "6538157161";
 
     long lastTimestamp = -1;
-    
-    public FacebookComponentPageIdProducerTest() throws Exception {
-    }
 
     @Test
     public void testProducers() throws Exception {
@@ -45,27 +40,21 @@ public class FacebookComponentPageIdProducerTest extends CamelFacebookTestSuppor
             public void configure() {
                 from("timer:period=20000")
                     .setHeader("CamelFacebook.reading.limit", constant("10"))
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            if (lastTimestamp > 0) {
-                                exchange.getIn().setHeader("CamelFacebook.reading.since", lastTimestamp);
-                            }
+                    .process(exchange -> {
+                        if (lastTimestamp > 0) {
+                            exchange.getIn().setHeader("CamelFacebook.reading.since", lastTimestamp);
                         }
                     })
                     .to("facebook://getPosts?" + getOauthParams() + "&userId=" + APACHE_FOUNDATION_PAGE_ID + "&reading.limit=5")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            ResponseList<Post> body = (ResponseList<Post>) exchange.getIn().getBody();
-                            log.info("Number of posts received: {}", body.size());
-                            for (Post post : body) {
-                                log.debug(post.toString());
-                            }
+                    .process(exchange -> {
+                        ResponseList<Post> body = exchange.getIn().getBody(ResponseList.class);
+                        log.info("Number of posts received: {}", body.size());
+                        for (Post post : body) {
+                            log.debug(post.toString());
+                        }
 
-                            if (!body.isEmpty()) {
-                                lastTimestamp = body.get(0).getUpdatedTime().getTime();
-                            }
+                        if (!body.isEmpty()) {
+                            lastTimestamp = body.get(0).getUpdatedTime().getTime();
                         }
                     })
                     .to("mock:page");

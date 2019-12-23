@@ -78,38 +78,35 @@ public class StopRouteFromRouteTest extends Assert {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                    .to("mock:start")
-                    .process(new Processor() {
-                        Thread stop;
+                from("direct:start").routeId("myRoute").to("mock:start").process(new Processor() {
+                    Thread stop;
 
-                        @Override
-                        public void process(final Exchange exchange) throws Exception {
-                            // stop this route using a thread that will stop
-                            // this route gracefully while we are still running
-                            if (stop == null) {
-                                stop = new Thread() {
-                                    @Override
-                                    public void run() {
-                                        try {
-                                            exchange.getContext().getRouteController().stopRoute("myRoute");
-                                        } catch (Exception e) {
-                                            // ignore
-                                        } finally {
-                                            // signal we stopped the route
-                                            latch.countDown();
-                                        }
+                    @Override
+                    public void process(final Exchange exchange) throws Exception {
+                        // stop this route using a thread that will stop
+                        // this route gracefully while we are still running
+                        if (stop == null) {
+                            stop = new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        exchange.getContext().getRouteController().stopRoute("myRoute");
+                                    } catch (Exception e) {
+                                        // ignore
+                                    } finally {
+                                        // signal we stopped the route
+                                        latch.countDown();
                                     }
-                                };
-                            }
-
-                            // start the thread that stops this route
-                            stop.start();
+                                }
+                            };
                         }
-                    }).to("mock:done");
-                
-                from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+
+                        // start the thread that stops this route
+                        stop.start();
+                    }
+                }).to("mock:done");
+
+                from("direct:bar").routeId("bar").to("mock:bar");
             }
         };
     }

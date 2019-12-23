@@ -21,9 +21,9 @@ import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Session;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.jms.support.destination.DestinationResolutionException;
@@ -36,6 +36,9 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsInOnlyInvalidDestinationTest extends CamelTestSupport {
 
+    @BindToRegistry("myResolver")
+    private MyDestinationResolver resolver = new MyDestinationResolver();
+
     @Test
     public void testInvalidDestination() throws Exception {
         getMockEndpoint("mock:dead").expectedMessageCount(1);
@@ -46,12 +49,6 @@ public class JmsInOnlyInvalidDestinationTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myResolver", new MyDestinationResolver());
-        return jndi;
-    }
-
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
@@ -66,8 +63,7 @@ public class JmsInOnlyInvalidDestinationTest extends CamelTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1));
 
-                from("direct:foo")
-                    .recipientList(header("foo"));
+                from("direct:foo").recipientList(header("foo"));
             }
         };
     }

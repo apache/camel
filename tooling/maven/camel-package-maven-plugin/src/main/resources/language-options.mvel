@@ -6,8 +6,8 @@ The @{title} language supports @{languageOptions.size()} options, which are list
 
 @if{!languageOptions.isEmpty()}
 [width="100%",cols="2,1m,1m,6",options="header"]
-|===
+|===@comment{ Render table cells. If description contains newline, prefix cell with `a`, so the content is rendered with formatting. }
 | Name | Default | Java Type | Description
-@foreach{row : languageOptions}| @{row.name} | @{row.defaultValue} | @{row.shortJavaType} | @{util.escape(row.description)}
+@foreach{row : languageOptions}| @{row.name} | @{row.defaultValue} | @{row.shortJavaType} @{row.description.?contains("\n") ? "a" : ""}| @{util.escape(row.description)}
 @end{}|===
 @end{}

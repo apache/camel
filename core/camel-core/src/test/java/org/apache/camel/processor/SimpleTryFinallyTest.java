@@ -38,13 +38,7 @@ public class SimpleTryFinallyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .doTry()
-                        .to("mock:try")
-                    .doFinally()
-                        .to("mock:finally")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").doTry().to("mock:try").doFinally().to("mock:finally").end().to("mock:result");
             }
         };
     }

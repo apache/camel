@@ -1,7 +1,12 @@
 [[zendesk-component]]
-== Zendesk Component
+= Zendesk Component
+:page-source: components/camel-zendesk/src/main/docs/zendesk-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Zendesk component provides access to all of the zendesk.com APIs accessible
 using https://github.com/cloudbees/zendesk-java-client[zendesk-java-client]. It
@@ -19,10 +24,10 @@ for this component:
     </dependency>
 -------------------------------------------
 
-### Zendesk Options
+== Zendesk Options
 
 // component options: START
-The Zendesk component supports 4 options, which are listed below.
+The Zendesk component supports 5 options, which are listed below.
 
 
 
@@ -31,8 +36,9 @@ The Zendesk component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *configuration* (common) | To use the shared configuration |  | ZendeskConfiguration
 | *zendesk* (advanced) | To use a shared Zendesk instance. |  | Zendesk
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -45,7 +51,7 @@ zendesk:methodName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -55,7 +61,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,11 +70,27 @@ with the following path and query parameters:
 | *inBody* (common) | Sets the name of a parameter to be passed in the exchange In Body |  | String
 | *serverUrl* (common) | The server URL to connect. |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
+| *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
+| *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
+| *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
+| *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
+| *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
+| *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
+| *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
+| *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 | *oauthToken* (security) | The OAuth token. |  | String
 | *password* (security) | The password. |  | String
 | *token* (security) | The security token. |  | String
@@ -76,14 +98,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-zendesk-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -91,7 +113,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 11 options, which are listed below.
 
 
 
@@ -99,20 +121,21 @@ The component supports 10 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.zendesk.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.zendesk.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.zendesk.configuration.method-name* | What operation to use |  | String
 | *camel.component.zendesk.configuration.oauth-token* | The OAuth token. |  | String
 | *camel.component.zendesk.configuration.password* | The password. |  | String
 | *camel.component.zendesk.configuration.server-url* | The server URL to connect. |  | String
 | *camel.component.zendesk.configuration.token* | The security token. |  | String
 | *camel.component.zendesk.configuration.username* | The user name. |  | String
-| *camel.component.zendesk.enabled* | Enable zendesk component | true | Boolean
-| *camel.component.zendesk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.zendesk.enabled* | Whether to enable auto configuration of the zendesk component. This is enabled by default. |  | Boolean
+| *camel.component.zendesk.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.zendesk.zendesk* | To use a shared Zendesk instance. The option is a org.zendesk.client.v2.Zendesk type. |  | String
 |===
 // spring-boot-auto-configure options: END
 
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------------------
@@ -120,12 +143,12 @@ The component supports 10 options, which are listed below.
 --------------------------------------------
 
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 Producer endpoints can use endpoint names and associated options described next. 
 
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 Any of the producer endpoints can be used as a consumer endpoint.
 Consumer endpoints can use
@@ -136,16 +159,16 @@ generate one exchange per element, and their routes will be executed
 once for each exchange.
 
 
-### Message header
+== Message header
 
-Any of the options can be provided in a message header for producer
+Any of the options can be provided in a message header for producer
 endpoints with *CamelZendesk.* prefix. In principal, parameter names are same as
 the arugument name of each API methods on the original `org.zendesk.client.v2.Zendesk`
  class. However some of them are renamed to the other name to avoid confliction in the
  camel API component framework. To see actual parameter name, please check `org.apache.camel.component.zendesk.internal.ZendeskApiMethod`.
  
 
-### Message body
+== Message body
 
 All result message bodies utilize objects provided by the Zendesk Java Client.
 Producer endpoints can specify the option name for incoming message body

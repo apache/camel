@@ -47,6 +47,7 @@ public interface KubernetesConstants {
     String KUBERNETES_SERVICE_ACCOUNT = "CamelKubernetesServiceAccount";
     String KUBERNETES_NODES_LABELS = "CamelKubernetesNodesLabels";
     String KUBERNETES_NODE_NAME = "CamelKubernetesNodeName";
+    String KUBERNETES_NODE_SPEC = "CamelKubernetesNodeSpec";
     String KUBERNETES_DEPLOYMENTS_LABELS = "CamelKubernetesDeploymentsLabels";
     String KUBERNETES_DEPLOYMENT_NAME = "CamelKubernetesDeploymentName";
     String KUBERNETES_DEPLOYMENT_SPEC = "CamelKubernetesDeploymentSpec";
@@ -60,6 +61,7 @@ public interface KubernetesConstants {
     String KUBERNETES_DEPLOYMENT_REPLICAS = "CamelKubernetesDeploymentReplicas";
     String KUBERNETES_HPA_NAME = "CamelKubernetesHPAName";
     String KUBERNETES_HPA_SPEC = "CamelKubernetesHPASpec";
+    String KUBERNETES_HPA_LABELS = "CamelKubernetesHPALabels";
     String KUBERNETES_JOB_NAME = "CamelKubernetesJobName";
     String KUBERNETES_JOB_SPEC = "CamelKubernetesJobSpec";
     String KUBERNETES_JOB_LABELS = "CamelKubernetesJobLabels";

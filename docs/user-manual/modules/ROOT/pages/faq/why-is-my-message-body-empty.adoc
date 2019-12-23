@@ -1,5 +1,5 @@
 [[Whyismymessagebodyempty-Whyismymessageempty]]
-=== Why is my message empty?
+= Why is my message empty?
 
 In Camel the message body can be of any types. Some types are safely
 readable multiple times, and therefore do not 'suffer' from becoming

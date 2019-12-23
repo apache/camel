@@ -35,6 +35,9 @@ public interface ManagedErrorHandlerMBean {
     @ManagedAttribute(description = "When a message is moved to dead letter channel is it the original message or recent message")
     boolean isDeadLetterUseOriginalMessage();
 
+    @ManagedAttribute(description = "When a message is moved to dead letter channel is it the original message body or recent message body")
+    boolean isDeadLetterUseOriginalBody();
+
     @ManagedAttribute(description = "Does this error handler handle new exceptions which may occur during error handling")
     boolean isDeadLetterHandleNewException();
 

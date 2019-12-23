@@ -56,15 +56,9 @@ public class HttpFilterNoCamelHeadersTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader(Exchange.FILE_NAME, constant("test.txt"))
-                    .to("http://localhost:{{port}}/test/filter")
-                    .to("mock:result");
+                from("direct:start").setHeader(Exchange.FILE_NAME, constant("test.txt")).to("http://localhost:{{port}}/test/filter").to("mock:result");
 
-                from("jetty:http://localhost:{{port}}/test/filter")
-                    .to("mock:input")
-                    .setHeader("CamelDummy", constant("dummy"))
-                    .transform(simple("Bye ${body}"));
+                from("jetty:http://localhost:{{port}}/test/filter").to("mock:input").setHeader("CamelDummy", constant("dummy")).transform(simple("Bye ${body}"));
             }
         };
     }

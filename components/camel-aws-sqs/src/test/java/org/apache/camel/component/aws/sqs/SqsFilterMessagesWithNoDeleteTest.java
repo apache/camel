@@ -46,9 +46,9 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
     @Test
     public void testDoesNotGetThroughFilter() throws Exception {
         final String sqsURI = String.format("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient"
-                // note we will NOT delete if this message gets filtered out
-                + "&deleteIfFiltered=false"
-                + "&defaultVisibilityTimeout=1");
+                                            // note we will NOT delete if this
+                                            // message gets filtered out
+                                            + "&deleteIfFiltered=false" + "&defaultVisibilityTimeout=1");
 
         AmazonSQSClientMock clientMock = new AmazonSQSClientMock();
         populateMessages(clientMock);
@@ -59,9 +59,9 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
             @Override
             public void configure() throws Exception {
                 from(sqsURI)
-                        // try to filter using a non-existent header... should not go through
-                        .filter(simple("${header.login} == true"))
-                        .to("mock:result");
+                    // try to filter using a non-existent header... should not
+                    // go through
+                    .filter(simple("${header.login} == true")).to("mock:result");
 
             }
         });
@@ -76,7 +76,8 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
         // we shouldn't get
         assertIsSatisfied(2000, TimeUnit.MILLISECONDS);
 
-        // however, the message should not be deleted, that is, it should be left on the queue
+        // however, the message should not be deleted, that is, it should be
+        // left on the queue
         String response = ctx.createConsumerTemplate().receiveBody(sqsURI, 5000, String.class);
 
         assertEquals(response, "Message: hello, world!");
@@ -88,10 +89,12 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
     @Test
     public void testGetThroughFilter() throws Exception {
         final String sqsURI = String.format("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient"
-                // note we will NOT delete if this message gets filtered out, but if it goes
-                // through filter, it should be deleted!
-                + "&deleteIfFiltered=false"
-                + "&defaultVisibilityTimeout=1");
+                                            // note we will NOT delete if this
+                                            // message gets filtered out, but if
+                                            // it goes
+                                            // through filter, it should be
+                                            // deleted!
+                                            + "&deleteIfFiltered=false" + "&defaultVisibilityTimeout=1");
 
         AmazonSQSClientMock clientMock = new AmazonSQSClientMock();
         populateMessages(clientMock);
@@ -101,12 +104,10 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
         ctx.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(sqsURI)
-                        .setHeader("login", constant(true))
+                from(sqsURI).setHeader("login", constant(true))
 
-                        // this filter should allow the message to pass..
-                        .filter(simple("${header.login} == true"))
-                        .to("mock:result");
+                    // this filter should allow the message to pass..
+                    .filter(simple("${header.login} == true")).to("mock:result");
 
             }
         });
@@ -120,7 +121,8 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
         // the message should get through filter and mock should assert this
         assertIsSatisfied(2000, TimeUnit.MILLISECONDS);
 
-        // however, the message should not be deleted, that is, it should be left on the queue
+        // however, the message should not be deleted, that is, it should be
+        // left on the queue
         String response = ctx.createConsumerTemplate().receiveBody(sqsURI, 5000, String.class);
 
         assertNull(response);

@@ -87,12 +87,7 @@ public class CBRContainsIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(body().convertToString().contains("13"))
-                            .to("mock:13")
-                        .otherwise()
-                            .to("mock:other");
+                from("direct:start").choice().when(body().convertToString().contains("13")).to("mock:13").otherwise().to("mock:other");
             }
         };
     }

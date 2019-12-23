@@ -104,8 +104,6 @@ public final class DocumentationHelper {
             return new File("../camel-http/target/classes/org/apache/camel/component/http/https.json");
         } else if ("netty".equals(extendsScheme)) {
             return new File("../camel-netty/target/classes/org/apache/camel/component/netty/netty.json");
-        } else if ("netty4".equals(extendsScheme)) {
-            return new File("../camel-netty4/target/classes/org/apache/camel/component/netty4/netty4.json");
         } else if ("servlet".equals(extendsScheme)) {
             return new File("../camel-servlet/target/classes/org/apache/camel/component/servlet/servlet.json");
         }

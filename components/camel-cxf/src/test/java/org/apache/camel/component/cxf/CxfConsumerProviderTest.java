@@ -26,7 +26,6 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 public class CxfConsumerProviderTest extends CamelTestSupport {
     
     
@@ -51,6 +50,7 @@ public class CxfConsumerProviderTest extends CamelTestSupport {
     public boolean isCreateCamelContextPerClass() {
         return true;
     }
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

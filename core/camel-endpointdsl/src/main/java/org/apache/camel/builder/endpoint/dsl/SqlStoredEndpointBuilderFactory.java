@@ -46,7 +46,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: producer
          */
         default SqlStoredEndpointBuilder batch(boolean batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: producer
          */
         default SqlStoredEndpointBuilder batch(String batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: producer
          */
         default SqlStoredEndpointBuilder dataSource(Object dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: producer
          */
         default SqlStoredEndpointBuilder dataSource(String dataSource) {
-            setProperty("dataSource", dataSource);
+            doSetProperty("dataSource", dataSource);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: producer
          */
         default SqlStoredEndpointBuilder function(boolean function) {
-            setProperty("function", function);
+            doSetProperty("function", function);
             return this;
         }
         /**
@@ -102,7 +102,47 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: producer
          */
         default SqlStoredEndpointBuilder function(String function) {
-            setProperty("function", function);
+            doSetProperty("function", function);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SqlStoredEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SqlStoredEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -114,7 +154,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: producer
          */
         default SqlStoredEndpointBuilder noop(boolean noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -126,7 +166,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: producer
          */
         default SqlStoredEndpointBuilder noop(String noop) {
-            setProperty("noop", noop);
+            doSetProperty("noop", noop);
             return this;
         }
         /**
@@ -142,7 +182,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: producer
          */
         default SqlStoredEndpointBuilder outputHeader(String outputHeader) {
-            setProperty("outputHeader", outputHeader);
+            doSetProperty("outputHeader", outputHeader);
             return this;
         }
         /**
@@ -156,7 +196,7 @@ public interface SqlStoredEndpointBuilderFactory {
          */
         default SqlStoredEndpointBuilder useMessageBodyForTemplate(
                 boolean useMessageBodyForTemplate) {
-            setProperty("useMessageBodyForTemplate", useMessageBodyForTemplate);
+            doSetProperty("useMessageBodyForTemplate", useMessageBodyForTemplate);
             return this;
         }
         /**
@@ -170,7 +210,7 @@ public interface SqlStoredEndpointBuilderFactory {
          */
         default SqlStoredEndpointBuilder useMessageBodyForTemplate(
                 String useMessageBodyForTemplate) {
-            setProperty("useMessageBodyForTemplate", useMessageBodyForTemplate);
+            doSetProperty("useMessageBodyForTemplate", useMessageBodyForTemplate);
             return this;
         }
     }
@@ -194,7 +234,7 @@ public interface SqlStoredEndpointBuilderFactory {
          */
         default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -207,7 +247,7 @@ public interface SqlStoredEndpointBuilderFactory {
          */
         default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -219,7 +259,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -231,7 +271,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -241,7 +281,7 @@ public interface SqlStoredEndpointBuilderFactory {
      * Procedure queries.
      * 
      * Category: database,sql
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-sql
      * 
      * Syntax: <code>sql-stored:template</code>

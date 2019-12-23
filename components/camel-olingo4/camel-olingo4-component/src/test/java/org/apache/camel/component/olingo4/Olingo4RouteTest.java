@@ -29,7 +29,7 @@ public class Olingo4RouteTest extends CamelTestSupport {
     protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
         return (T)template().requestBody(endpoint, body);
     }
-    
+
     @Test
     public void testRead() throws Exception {
         // Read entity set of the People object
@@ -37,7 +37,7 @@ public class Olingo4RouteTest extends CamelTestSupport {
         assertNotNull(entities);
         assertEquals(20, entities.getEntities().size());
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

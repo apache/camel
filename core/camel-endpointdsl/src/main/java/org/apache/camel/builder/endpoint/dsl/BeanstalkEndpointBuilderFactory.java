@@ -27,7 +27,6 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The beanstalk component is used for job retrieval and post-processing of
@@ -65,7 +64,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder command(
                 BeanstalkCommand command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -84,7 +83,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder command(String command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -95,7 +94,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder jobDelay(int jobDelay) {
-            setProperty("jobDelay", jobDelay);
+            doSetProperty("jobDelay", jobDelay);
             return this;
         }
         /**
@@ -106,7 +105,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder jobDelay(String jobDelay) {
-            setProperty("jobDelay", jobDelay);
+            doSetProperty("jobDelay", jobDelay);
             return this;
         }
         /**
@@ -117,7 +116,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder jobPriority(long jobPriority) {
-            setProperty("jobPriority", jobPriority);
+            doSetProperty("jobPriority", jobPriority);
             return this;
         }
         /**
@@ -128,7 +127,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder jobPriority(String jobPriority) {
-            setProperty("jobPriority", jobPriority);
+            doSetProperty("jobPriority", jobPriority);
             return this;
         }
         /**
@@ -140,7 +139,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder jobTimeToRun(int jobTimeToRun) {
-            setProperty("jobTimeToRun", jobTimeToRun);
+            doSetProperty("jobTimeToRun", jobTimeToRun);
             return this;
         }
         /**
@@ -153,7 +152,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder jobTimeToRun(
                 String jobTimeToRun) {
-            setProperty("jobTimeToRun", jobTimeToRun);
+            doSetProperty("jobTimeToRun", jobTimeToRun);
             return this;
         }
         /**
@@ -165,7 +164,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder awaitJob(boolean awaitJob) {
-            setProperty("awaitJob", awaitJob);
+            doSetProperty("awaitJob", awaitJob);
             return this;
         }
         /**
@@ -177,7 +176,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder awaitJob(String awaitJob) {
-            setProperty("awaitJob", awaitJob);
+            doSetProperty("awaitJob", awaitJob);
             return this;
         }
         /**
@@ -195,7 +194,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -213,7 +212,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -227,7 +226,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder onFailure(
                 BeanstalkCommand onFailure) {
-            setProperty("onFailure", onFailure);
+            doSetProperty("onFailure", onFailure);
             return this;
         }
         /**
@@ -240,7 +239,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder onFailure(String onFailure) {
-            setProperty("onFailure", onFailure);
+            doSetProperty("onFailure", onFailure);
             return this;
         }
         /**
@@ -253,7 +252,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -266,7 +265,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -277,7 +276,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder useBlockIO(boolean useBlockIO) {
-            setProperty("useBlockIO", useBlockIO);
+            doSetProperty("useBlockIO", useBlockIO);
             return this;
         }
         /**
@@ -288,7 +287,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder useBlockIO(String useBlockIO) {
-            setProperty("useBlockIO", useBlockIO);
+            doSetProperty("useBlockIO", useBlockIO);
             return this;
         }
         /**
@@ -301,7 +300,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -314,7 +313,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -327,7 +326,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -340,7 +339,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -357,7 +356,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -374,7 +373,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -387,7 +386,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -400,7 +399,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -412,7 +411,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -424,7 +423,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -437,7 +436,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -451,7 +450,33 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder initialDelay(
                 String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BeanstalkEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BeanstalkEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -464,7 +489,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -478,7 +503,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -493,7 +518,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -508,41 +533,24 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default BeanstalkEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -551,12 +559,12 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -566,7 +574,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -578,7 +586,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -590,7 +598,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -601,7 +609,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -613,7 +621,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -626,7 +634,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -639,7 +647,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -666,7 +674,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -682,7 +690,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -694,7 +702,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -707,7 +715,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -723,7 +731,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -739,7 +747,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -752,7 +760,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -765,7 +773,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -778,7 +786,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -791,7 +799,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -822,7 +830,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointProducerBuilder command(
                 BeanstalkCommand command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -841,7 +849,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder command(String command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -852,7 +860,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder jobDelay(int jobDelay) {
-            setProperty("jobDelay", jobDelay);
+            doSetProperty("jobDelay", jobDelay);
             return this;
         }
         /**
@@ -863,7 +871,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder jobDelay(String jobDelay) {
-            setProperty("jobDelay", jobDelay);
+            doSetProperty("jobDelay", jobDelay);
             return this;
         }
         /**
@@ -874,7 +882,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder jobPriority(long jobPriority) {
-            setProperty("jobPriority", jobPriority);
+            doSetProperty("jobPriority", jobPriority);
             return this;
         }
         /**
@@ -885,7 +893,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder jobPriority(String jobPriority) {
-            setProperty("jobPriority", jobPriority);
+            doSetProperty("jobPriority", jobPriority);
             return this;
         }
         /**
@@ -897,7 +905,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder jobTimeToRun(int jobTimeToRun) {
-            setProperty("jobTimeToRun", jobTimeToRun);
+            doSetProperty("jobTimeToRun", jobTimeToRun);
             return this;
         }
         /**
@@ -910,7 +918,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointProducerBuilder jobTimeToRun(
                 String jobTimeToRun) {
-            setProperty("jobTimeToRun", jobTimeToRun);
+            doSetProperty("jobTimeToRun", jobTimeToRun);
             return this;
         }
         /**
@@ -930,7 +938,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -950,7 +958,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default BeanstalkEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -974,7 +982,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -987,7 +995,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1000,7 +1008,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1013,7 +1021,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1043,7 +1051,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointBuilder command(BeanstalkCommand command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -1062,7 +1070,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointBuilder command(String command) {
-            setProperty("command", command);
+            doSetProperty("command", command);
             return this;
         }
         /**
@@ -1073,7 +1081,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointBuilder jobDelay(int jobDelay) {
-            setProperty("jobDelay", jobDelay);
+            doSetProperty("jobDelay", jobDelay);
             return this;
         }
         /**
@@ -1084,7 +1092,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointBuilder jobDelay(String jobDelay) {
-            setProperty("jobDelay", jobDelay);
+            doSetProperty("jobDelay", jobDelay);
             return this;
         }
         /**
@@ -1095,7 +1103,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointBuilder jobPriority(long jobPriority) {
-            setProperty("jobPriority", jobPriority);
+            doSetProperty("jobPriority", jobPriority);
             return this;
         }
         /**
@@ -1106,7 +1114,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointBuilder jobPriority(String jobPriority) {
-            setProperty("jobPriority", jobPriority);
+            doSetProperty("jobPriority", jobPriority);
             return this;
         }
         /**
@@ -1118,7 +1126,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointBuilder jobTimeToRun(int jobTimeToRun) {
-            setProperty("jobTimeToRun", jobTimeToRun);
+            doSetProperty("jobTimeToRun", jobTimeToRun);
             return this;
         }
         /**
@@ -1130,7 +1138,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: common
          */
         default BeanstalkEndpointBuilder jobTimeToRun(String jobTimeToRun) {
-            setProperty("jobTimeToRun", jobTimeToRun);
+            doSetProperty("jobTimeToRun", jobTimeToRun);
             return this;
         }
     }
@@ -1154,7 +1162,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1167,7 +1175,7 @@ public interface BeanstalkEndpointBuilderFactory {
          */
         default AdvancedBeanstalkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1179,7 +1187,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBeanstalkEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1191,7 +1199,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBeanstalkEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1214,7 +1222,7 @@ public interface BeanstalkEndpointBuilderFactory {
      * Beanstalk jobs.
      * 
      * Category: messaging
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-beanstalk
      * 
      * Syntax: <code>beanstalk:connectionSettings</code>

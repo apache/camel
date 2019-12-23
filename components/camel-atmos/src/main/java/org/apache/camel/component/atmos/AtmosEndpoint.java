@@ -62,8 +62,8 @@ public class AtmosEndpoint extends DefaultEndpoint {
      * Create one of the camel producer available based on the configuration
      *
      * @return the camel producer
-     * @throws Exception
      */
+    @Override
     public Producer createProducer() throws Exception {
         log.debug("resolve producer atmos endpoint {{}}", configuration.getOperation());
         log.debug("resolve producer atmos attached client: {}", configuration.getClient());
@@ -85,8 +85,8 @@ public class AtmosEndpoint extends DefaultEndpoint {
      *
      * @param processor the given processor
      * @return the camel consumer
-     * @throws Exception
      */
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         log.debug("resolve consumer atmos endpoint {{}}", configuration.getOperation());
         log.debug("resolve consumer atmos attached client:{}", configuration.getClient());
@@ -95,6 +95,7 @@ public class AtmosEndpoint extends DefaultEndpoint {
         if (this.configuration.getOperation() == AtmosOperation.get) {
             consumer = new AtmosScheduledPollGetConsumer(this, processor, configuration);
             consumer.setDelay(POLL_CONSUMER_DELAY);
+            configureConsumer(consumer);
             return consumer;
         } else {
             throw new AtmosException("operation specified is not valid for consumer!");

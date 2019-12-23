@@ -27,6 +27,7 @@ import org.junit.Test;
 public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
     static final String PROCESSED_FILES_HEADER_NAME = "processedFiles";
     
+    @Override
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");
@@ -44,7 +45,7 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
                 // Unzip file and Split it according to FileEntry
                 ZipFileDataFormat zipFile = new ZipFileDataFormat();
                 zipFile.setUsingIterator(true);
-                from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data/?consumer.delay=1000&noop=true")
+                from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data/?delay=1000&noop=true")
                         .unmarshal(zipFile)
                         .split(bodyAs(Iterator.class))
                         .streaming()

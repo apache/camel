@@ -1,14 +1,19 @@
 [[controlbus-component]]
-== Control Bus Component
+= Control Bus Component
+:page-source: components/camel-controlbus/src/main/docs/controlbus-component.adoc
 
-*Available as of Camel version 2.11*
+*Since Camel 2.11*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The http://www.eaipatterns.com/ControlBus.html[Control Bus] from the
 EIP patterns allows for the
 integration system to be monitored and managed from within the
 framework.
 
-image:ControlBus.gif[image]
+image::control_bus.png[image]
 
 Use a Control Bus to manage an enterprise integration system. The
 Control Bus uses the same messaging mechanism used by the application
@@ -36,7 +41,7 @@ controlbus:command[?options]
 Where *command* can be any string to identify which type of command to
 use.
 
-=== Commands
+== Commands
 
 [width="100%",cols="10%,90%",options="header",]
 |===
@@ -49,19 +54,20 @@ evaluating the message body. If there is any result from the evaluation,
 then the result is put in the message body.
 |===
 
-=== Options
+== Options
 
 
 // component options: START
-The Control Bus component supports 2 options, which are listed below.
+The Control Bus component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -76,7 +82,7 @@ controlbus:command:language
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -87,7 +93,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -109,14 +115,14 @@ You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-controlbus-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -124,7 +130,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -132,13 +138,14 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.controlbus.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.controlbus.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.controlbus.enabled* | Whether to enable auto configuration of the controlbus component. This is enabled by default. |  | Boolean
-| *camel.component.controlbus.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.controlbus.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-=== Using route command
+== Using route command
 
 The route command allows you to do common tasks on a given route very
 easily, for example to start a route, you can send an empty message to
@@ -157,9 +164,9 @@ String status = template.requestBody("controlbus:route?routeId=foo&action=status
 ----
 
 [[ControlBus-Gettingperformancestatistics]]
-=== Getting performance statistics
+== Getting performance statistics
 
-*Available as of Camel 2.11.1*
+*Since Camel 2.11.1*
 
 This requires JMX to be enabled (is by default) then you can get the
 performance statics per route, or for the
@@ -183,9 +190,9 @@ just omit the routeId parameter as shown below:
 String xml = template.requestBody("controlbus:route?action=stats", null, String.class);
 ----
 
-=== Using Simple language
+== Using Simple language
 
-You can use the xref:simple-language.adoc[Simple] language with the control bus,
+You can use the xref:manual::simple-language.adoc[Simple] language with the control bus,
 for example to stop a specific route, you can send a message to the
 `"controlbus:language:simple"` endpoint containing the following
 message:
@@ -206,7 +213,7 @@ String status = template.requestBody("controlbus:language:simple", "${camelConte
 It's easier to use the `route` command to control lifecycle of
 routes. The `language` command allows you to execute a language script
 that has stronger powers such as xref:groovy-language.adoc[Groovy] or to some
-extend the xref:simple-language.adoc[Simple] language.
+extend the xref:manual::simple-language.adoc[Simple] language.
 
 For example to shutdown Camel itself you can do:
 

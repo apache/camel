@@ -69,7 +69,9 @@ public class JBPMEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         LOGGER.debug("JBPM Consumer created and configured for deployment {}", configuration.getDeploymentId());
-        return new JBPMConsumer(this, processor);
+        JBPMConsumer consumer = new JBPMConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public void setConfiguration(JBPMConfiguration configuration) {

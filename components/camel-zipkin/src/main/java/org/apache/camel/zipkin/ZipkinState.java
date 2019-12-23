@@ -19,7 +19,6 @@ package org.apache.camel.zipkin;
 import java.util.Stack;
 
 import brave.Span;
-
 import org.apache.camel.Exchange;
 
 /**

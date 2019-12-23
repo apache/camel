@@ -55,22 +55,14 @@ public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // will use original
-                ErrorHandlerFactory a = deadLetterChannel("mock:a")
-                    .maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).useOriginalMessage();
+                ErrorHandlerFactory a = deadLetterChannel("mock:a").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false).useOriginalMessage();
 
                 // will NOT use original
-                ErrorHandlerFactory b = deadLetterChannel("mock:b")
-                    .maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false);
+                ErrorHandlerFactory b = deadLetterChannel("mock:b").maximumRedeliveries(2).redeliveryDelay(0).logStackTrace(false);
 
-                from("direct:a")
-                    .errorHandler(a)
-                    .setBody(body().append(" World"))
-                    .process(new MyThrowProcessor());
+                from("direct:a").errorHandler(a).setBody(body().append(" World")).process(new MyThrowProcessor());
 
-                from("direct:b")
-                    .errorHandler(b)
-                    .setBody(body().append(" World"))
-                    .process(new MyThrowProcessor());
+                from("direct:b").errorHandler(b).setBody(body().append(" World")).process(new MyThrowProcessor());
             }
         };
     }
@@ -80,6 +72,7 @@ public class DeadLetterChannelUseOriginalInBodyTest extends ContextTestSupport {
         public MyThrowProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("Hello World", exchange.getIn().getBody(String.class));
             throw new IllegalArgumentException("Forced");

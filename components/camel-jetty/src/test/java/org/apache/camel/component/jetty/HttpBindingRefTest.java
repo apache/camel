@@ -20,17 +20,23 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.DefaultHttpBinding;
-import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
 /**
  * Unit test for http binding ref option.
  */
 public class HttpBindingRefTest extends BaseJettyTest {
+
+    @BindToRegistry("default")
+    private DefaultHttpBinding binding = new DefaultHttpBinding();
+
+    @BindToRegistry("myownbinder")
+    private MyHttpBinding bindingHttp = new MyHttpBinding();
 
     @Test
     public void testDefaultHttpBinding() throws Exception {
@@ -42,14 +48,6 @@ public class HttpBindingRefTest extends BaseJettyTest {
     public void testCustomHttpBinding() throws Exception {
         Object out = template.requestBody("http://localhost:{{port}}/myapp/myotherservice", "Hello World");
         assertEquals("Something went wrong but we dont care", context.getTypeConverter().convertTo(String.class, out));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("default", new DefaultHttpBinding());
-        jndi.bind("myownbinder", new MyHttpBinding());
-        return jndi;
     }
 
     @Override
@@ -75,8 +73,9 @@ public class HttpBindingRefTest extends BaseJettyTest {
 
         @Override
         public void doWriteExceptionResponse(Throwable exception, HttpServletResponse response) throws IOException {
-            // we override the doWriteExceptionResponse as we only want to alter the binding how exceptions is
-            // written back to the client. 
+            // we override the doWriteExceptionResponse as we only want to alter
+            // the binding how exceptions is
+            // written back to the client.
 
             // we just return HTTP 200 so the client thinks its okay
             response.setStatus(200);
@@ -87,4 +86,3 @@ public class HttpBindingRefTest extends BaseJettyTest {
     // END SNIPPET: e1
 
 }
-

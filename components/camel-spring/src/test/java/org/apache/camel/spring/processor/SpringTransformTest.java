@@ -35,6 +35,7 @@ public class SpringTransformTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/transform.xml");
     }

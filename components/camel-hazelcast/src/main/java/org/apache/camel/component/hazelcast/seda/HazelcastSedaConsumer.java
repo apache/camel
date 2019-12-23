@@ -21,7 +21,6 @@ import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.BaseQueue;
 import com.hazelcast.transaction.TransactionContext;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
@@ -67,6 +66,7 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
         super.doStop();
     }
 
+    @Override
     public void run() {
         BaseQueue<?> queue = endpoint.getHazelcastInstance().getQueue(endpoint.getConfiguration().getQueueName());
 

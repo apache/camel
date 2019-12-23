@@ -24,6 +24,7 @@ import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * A Camel meta-component for exposing other components through webhooks.
@@ -32,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
 public class WebhookComponent extends DefaultComponent {
 
     @Metadata(label = "advanced")
-    private WebhookConfiguration configuration;
+    private WebhookConfiguration configuration = new WebhookConfiguration();
 
     public WebhookComponent() {
     }
@@ -44,31 +45,23 @@ public class WebhookComponent extends DefaultComponent {
             throw new IllegalArgumentException("Wrong uri syntax : webhook:uri, got " + remaining);
         }
 
-        WebhookConfiguration configuration = getConfiguration().copy();
-        setProperties(configuration, parameters);
-
-        RestConfiguration restConfig = getCamelContext().getRestConfiguration(configuration.getWebhookComponentName(), true);
-        configuration.setRestConfiguration(restConfig);
-
+        WebhookConfiguration config =  configuration != null ? configuration.copy() : new WebhookConfiguration();
+        WebhookEndpoint endpoint = new WebhookEndpoint(uri, this, config);
+        setProperties(endpoint, parameters);
         // we need to apply the params here
-        if (parameters != null && parameters.size() > 0) {
-            delegateUri = delegateUri + "?" + uri.substring(uri.indexOf('?') + 1);
+        if (parameters != null && !parameters.isEmpty()) {
+            delegateUri = delegateUri + "?" + URISupport.createQueryString(parameters);
         }
-        configuration.setEndpointUri(delegateUri);
+        endpoint.getConfiguration().setEndpointUri(delegateUri);
 
-        return new WebhookEndpoint(
-                uri,
-                this,
-                configuration,
-                delegateUri
-        );
+        RestConfiguration restConfig = getCamelContext().getRestConfiguration(config.getWebhookComponentName(), true);
+        config.setRestConfiguration(restConfig);
+
+        return endpoint;
     }
 
 
     public WebhookConfiguration getConfiguration() {
-        if (this.configuration == null) {
-            this.configuration = new WebhookConfiguration();
-        }
         return this.configuration;
     }
 

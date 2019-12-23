@@ -17,7 +17,7 @@
 package org.apache.camel.example.netty;
 
 import io.netty.channel.ChannelHandler;
-import org.apache.camel.component.netty4.DefaultChannelHandlerFactory;
+import org.apache.camel.component.netty.DefaultChannelHandlerFactory;
 
 public class MyCodecDecoderFactory extends DefaultChannelHandlerFactory {
 

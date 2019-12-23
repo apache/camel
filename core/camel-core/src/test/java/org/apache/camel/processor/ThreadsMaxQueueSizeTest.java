@@ -46,15 +46,14 @@ public class ThreadsMaxQueueSizeTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    // will use a a custom thread pool with 5 in core and 10 as max
+                    // will use a a custom thread pool with 5 in core and 10 as
+                    // max
                     // and a max task queue with 2000
-                    .threads(5, 10).maxQueueSize(2000)
-                    .to("mock:result");
+                    .threads(5, 10).maxQueueSize(2000).to("mock:result");
 
                 from("direct:foo")
                     // using the builder style
-                    .threads().poolSize(5).maxPoolSize(10).maxQueueSize(2000).threadName("myPool")
-                    .to("mock:result");
+                    .threads().poolSize(5).maxPoolSize(10).maxQueueSize(2000).threadName("myPool").to("mock:result");
             }
         };
     }

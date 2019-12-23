@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -39,10 +40,8 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
         mock.allMessages().header(Exchange.FILE_NAME).isNotNull();
 
         // the file name is also starting with target/data/filename-consumer
-        template.sendBodyAndHeader("file:target/data/filename-consumer", "Hello World",
-            Exchange.FILE_NAME, "target/data/filename-consumer-hello.txt");
-        template.sendBodyAndHeader("file:target/data/filename-consumer", "Bye World",
-            Exchange.FILE_NAME, "target/data/filename-consumer-bye.txt");
+        template.sendBodyAndHeader("file:target/data/filename-consumer", "Hello World", Exchange.FILE_NAME, "target/data/filename-consumer-hello.txt");
+        template.sendBodyAndHeader("file:target/data/filename-consumer", "Bye World", Exchange.FILE_NAME, "target/data/filename-consumer-bye.txt");
 
         context.getRouteController().startAllRoutes();
 
@@ -58,9 +57,7 @@ public class FileConsumerRelativeFileNameTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/filename-consumer?initialDelay=0&delay=10&recursive=true&sortBy=file:name")
-                    .noAutoStartup()
-                    .to("mock:result");
+                from("file:target/data/filename-consumer?initialDelay=0&delay=10&recursive=true&sortBy=file:name").noAutoStartup().to("mock:result");
             }
         };
     }

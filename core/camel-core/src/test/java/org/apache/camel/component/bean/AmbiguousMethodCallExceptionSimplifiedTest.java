@@ -33,6 +33,7 @@ public class AmbiguousMethodCallExceptionSimplifiedTest extends ContextTestSuppo
     }
 
     public static class SuperClazz extends AbstractClassSize implements InterfaceSize {
+        @Override
         public int size() {
             return 1;
         }

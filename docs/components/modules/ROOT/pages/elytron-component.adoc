@@ -1,0 +1,167 @@
+[[elytron-component]]
+= Elytron Component
+:page-source: components/camel-elytron/src/main/docs/elytron-component.adoc
+
+*Since Camel 3.1*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
+*OSGi is not supported*
+
+The Elytron component provides Elytron security over camel-undertow component.
+It extends camel-undertow component and adds several parameters.
+In componont it is securityDomainBuilder and mechanismName, in endpoint it is allowedRoles.
+
+User has to define its SecurityDomain.Builder, which will be used for creation of security domain.
+MechanismName then allows to define mechanism, which will take care of authentication from security context.
+(MechanismName should be selected with regard to default securityRealm. For example: to use bearer_token security, mechanism name has to be "BEARER_TOKEN"
+and realm has to be TokenSecurityRealm.)
+ElytronProvider has to be defined with respect of mechnismName.
+
+Each exchange created by Elytron endpoint contains header 'securityIdentity' with current Elytron's secrity identity as value.
+('org.wildfly.security.auth.server.SecurityIdentity')
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-elytron</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source,text]
+----
+elytron:http://hostname[:port][/resourceUri][?options]
+elytron:https://hostname[:port][/resourceUri][?options]
+----
+
+You can append query options to the URI in the following format,
+`?option=value&option=value&...`
+
+== Options
+
+// component options: START
+The Elytron component supports 11 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *securityDomainBuilder* (advanced) | *Required* Definition of Builder, which will be used for creation of security domain. |  | Builder
+| *mechanismName* (advanced) | Name of the mechanism, which will be used for selection of authentication mechanism. | BEARER_TOKEN | String
+| *elytronProvider* (advanced) | Elytron security provider, has to support mechanism from parameter mechanismName. | instance of WildFlyElytronHttpBearerProvider | WildFlyElytronBaseProvider
+| *undertowHttpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | UndertowHttpBinding
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *hostOptions* (advanced) | To configure common options, such as thread pools |  | UndertowHostOptions
+| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | boolean
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Elytron endpoint is configured using URI syntax:
+
+----
+elytron:httpURI
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *httpURI* | *Required* The url of the HTTP endpoint to use. |  | URI
+|===
+
+
+=== Query Parameters (29 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *allowedRoles* (common) | Comma separated list of allowed roles. |  | String
+| *useStreaming* (common) | For HTTP endpoint: if true, text and binary messages will be wrapped as java.io.InputStream before they are passed to an Exchange; otherwise they will be passed as byte. For WebSocket endpoint: if true, text and binary messages will be wrapped as java.io.Reader and java.io.InputStream respectively before they are passed to an Exchange; otherwise they will be passed as String and byte respectively. | false | boolean
+| *accessLog* (consumer) | Whether or not the consumer should write access log | false | Boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *httpMethodRestrict* (consumer) | Used to only allow consuming if the HttpMethod matches, such as GET/POST/PUT etc. Multiple methods can be specified separated by comma. |  | String
+| *matchOnUriPrefix* (consumer) | Whether or not the consumer should try to find a target consumer by matching the URI prefix if no exact match is found. | false | Boolean
+| *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | Boolean
+| *optionsEnabled* (consumer) | Specifies whether to enable HTTP OPTIONS for this Servlet consumer. By default OPTIONS is turned off. | false | boolean
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *handlers* (consumer) | Specifies a comma-delimited set of io.undertow.server.HttpHandler instances in your Registry (such as your Spring ApplicationContext). These handlers are added to the Undertow handler chain (for example, to add security). Important: You can not use different handlers with different Undertow endpoints using the same port number. The handlers is associated to the port number. If you need different handlers, then use different port numbers. |  | String
+| *cookieHandler* (producer) | Configure a cookie handler to maintain a HTTP session |  | CookieHandler
+| *keepAlive* (producer) | Setting to ensure socket is not closed due to inactivity | true | Boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *options* (producer) | Sets additional channel options. The options that can be used are defined in org.xnio.Options. To configure from endpoint uri, then prefix each option with option., such as option.close-abort=true&option.send-buffer=8192 |  | Map
+| *preserveHostHeader* (producer) | If the option is true, UndertowProducer will set the Host header to the value contained in the current exchange Host header, useful in reverse proxy applications where you want the Host header received by the downstream server to reflect the URL called by the upstream client, this allows applications which use the Host header to generate accurate URL's for a proxied service. | true | boolean
+| *reuseAddresses* (producer) | Setting to facilitate socket multiplexing | true | Boolean
+| *tcpNoDelay* (producer) | Setting to improve TCP protocol performance | true | Boolean
+| *throwExceptionOnFailure* (producer) | Option to disable throwing the HttpOperationFailedException in case of failed responses from the remote server. This allows you to get all responses regardless of the HTTP status code. | true | Boolean
+| *transferException* (producer) | If enabled and an Exchange failed processing on the consumer side and if the caused Exception was send back serialized in the response as a application/x-java-serialized-object content type. On the producer side the exception will be deserialized and thrown as is instead of the HttpOperationFailedException. The caused exception is required to be serialized. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
+| *accessLogReceiver* (advanced) | Which Undertow AccessLogReciever should be used Will use JBossLoggingAccessLogReceiver if not specifid |  | AccessLogReceiver
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *headerFilterStrategy* (advanced) | To use a custom HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *undertowHttpBinding* (advanced) | To use a custom UndertowHttpBinding to control the mapping between Camel message and undertow. |  | UndertowHttpBinding
+| *fireWebSocketChannelEvents* (websocket) | if true, the consumer will post notifications to the route when a new WebSocket peer connects, disconnects, etc. See UndertowConstants.EVENT_TYPE and EventType. | false | boolean
+| *sendTimeout* (websocket) | Timeout in milliseconds when sending to a websocket channel. The default timeout is 30000 (30 seconds). | 30000 | Integer
+| *sendToAll* (websocket) | To send to all websocket subscribers. Can be used to configure on endpoint level, instead of having to use the UndertowConstants.SEND_TO_ALL header on the message. |  | Boolean
+| *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.springboot</groupId>
+  <artifactId>camel-elytron-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 12 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.elytron.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.elytron.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.elytron.elytron-provider* | Elytron security provider, has to support mechanism from parameter mechanismName. The option is a org.wildfly.security.WildFlyElytronBaseProvider type. |  | String
+| *camel.component.elytron.enabled* | Whether to enable auto configuration of the elytron component. This is enabled by default. |  | Boolean
+| *camel.component.elytron.host-options* | To configure common options, such as thread pools. The option is a org.apache.camel.component.undertow.UndertowHostOptions type. |  | String
+| *camel.component.elytron.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+| *camel.component.elytron.mechanism-name* | Name of the mechanism, which will be used for selection of authentication mechanism. | BEARER_TOKEN | String
+| *camel.component.elytron.mute-exception* | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | Boolean
+| *camel.component.elytron.security-domain-builder* | Definition of Builder, which will be used for creation of security domain. The option is a org.wildfly.security.auth.server.SecurityDomain.Builder type. |  | String
+| *camel.component.elytron.ssl-context-parameters* | To configure security using SSLContextParameters. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
+| *camel.component.elytron.undertow-http-binding* | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. The option is a org.apache.camel.component.undertow.UndertowHttpBinding type. |  | String
+| *camel.component.elytron.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
+|===
+// spring-boot-auto-configure options: END

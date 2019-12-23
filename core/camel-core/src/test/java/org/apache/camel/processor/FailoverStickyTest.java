@@ -56,26 +56,21 @@ public class FailoverStickyTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // Use failover load balancer in stateful sticky mode
-                    // which mean it will failover immediately in case of an exception
-                    // as it does NOT inherit error handler. It will also keep retrying as
+                    // which mean it will failover immediately in case of an
+                    // exception
+                    // as it does NOT inherit error handler. It will also keep
+                    // retrying as
                     // its configured to newer exhaust.
-                    .loadBalance().failover(-1, false, false, true).
-                        to("direct:bad", "direct:bad2", "direct:good", "direct:good2");
+                    .loadBalance().failover(-1, false, false, true).to("direct:bad", "direct:bad2", "direct:good", "direct:good2");
                 // END SNIPPET: e1
 
-                from("direct:bad")
-                    .to("mock:bad")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:bad").to("mock:bad").throwException(new IllegalArgumentException("Damn"));
 
-                from("direct:bad2")
-                    .to("mock:bad2")
-                    .throwException(new IllegalArgumentException("Damn Again"));
+                from("direct:bad2").to("mock:bad2").throwException(new IllegalArgumentException("Damn Again"));
 
-                from("direct:good")
-                    .to("mock:good");
+                from("direct:good").to("mock:good");
 
-                from("direct:good2")
-                    .to("mock:good2");
+                from("direct:good2").to("mock:good2");
             }
         };
     }

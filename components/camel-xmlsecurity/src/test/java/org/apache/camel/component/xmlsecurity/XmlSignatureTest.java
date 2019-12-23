@@ -97,7 +97,8 @@ import org.apache.camel.component.xmlsecurity.util.TimestampProperty;
 import org.apache.camel.component.xmlsecurity.util.ValidationFailedHandlerIgnoreManifestFailures;
 import org.apache.camel.component.xmlsecurity.util.XmlSignature2Message2MessageWithTimestampProperty;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.processor.validation.SchemaValidationException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.test.junit4.TestSupport;
@@ -120,8 +121,8 @@ public class XmlSignatureTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        Registry registry = new SimpleRegistry();
 
         registry.bind("accessor", getKeyAccessor(keyPair.getPrivate()));
         registry.bind("canonicalizationMethod1", getCanonicalizationMethod());
@@ -1387,6 +1388,7 @@ public class XmlSignatureTest extends CamelTestSupport {
         }
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         setUpKeys("RSA", 1024);
@@ -1503,6 +1505,7 @@ public class XmlSignatureTest extends CamelTestSupport {
      * then the public key will be ignored.
      */
     static class KeyValueKeySelector extends KeySelector {
+        @Override
         public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
             throws KeySelectorException {
             if (keyInfo == null) {
@@ -1544,6 +1547,7 @@ public class XmlSignatureTest extends CamelTestSupport {
             this.pk = pk;
         }
 
+        @Override
         public Key getKey() {
             return pk;
         }

@@ -24,9 +24,11 @@ public class ServiceSupportTest extends TestSupport {
 
     private static class MyService extends ServiceSupport {
 
+        @Override
         protected void doStart() throws Exception {
         }
 
+        @Override
         protected void doStop() throws Exception {
         }
     }
@@ -87,6 +89,7 @@ public class ServiceSupportTest extends TestSupport {
             shutdown = true;
         }
 
+        @Override
         public boolean isShutdown() {
             return shutdown;
         }
@@ -127,6 +130,28 @@ public class ServiceSupportTest extends TestSupport {
             assertEquals(false, service.isStarted());
             assertEquals(false, service.isStarting());
         }
+    }
+
+    @Test
+    public void testServiceBuild() throws Exception {
+        MyService service = new MyService();
+        assertTrue(service.isNew());
+        service.build();
+        assertTrue(service.isBuild());
+        assertFalse(service.isInit());
+        service.start();
+
+        assertEquals(true, service.isStarted());
+        assertEquals(false, service.isStarting());
+        assertEquals(false, service.isStopped());
+        assertEquals(false, service.isStopping());
+
+        service.stop();
+
+        assertEquals(true, service.isStopped());
+        assertEquals(false, service.isStopping());
+        assertEquals(false, service.isStarted());
+        assertEquals(false, service.isStarting());
     }
 
     public static class ServiceSupportTestExOnStart extends ServiceSupport {

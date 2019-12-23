@@ -40,6 +40,7 @@ public class MyInjectionRouteBuilder extends RouteBuilder {
         return myProcessor;
     }
    
+    @Override
     public void configure() throws Exception {
         from(getStartEndpointUri()).process(getMyProcessor()).to("mock:result");
     }

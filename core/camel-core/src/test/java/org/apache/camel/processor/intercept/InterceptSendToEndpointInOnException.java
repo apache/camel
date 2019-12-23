@@ -32,17 +32,11 @@ public class InterceptSendToEndpointInOnException extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IOException.class)
-                    .handled(true)
-                    .to("mock:io");
+                onException(IOException.class).handled(true).to("mock:io");
 
-                interceptSendToEndpoint("mock:io")
-                    .skipSendToOriginalEndpoint()
-                    .to("mock:intercepted");
+                interceptSendToEndpoint("mock:io").skipSendToOriginalEndpoint().to("mock:intercepted");
 
-                from("direct:start")
-                    .to("mock:foo")
-                    .to("mock:result");
+                from("direct:start").to("mock:foo").to("mock:result");
             }
         };
     }

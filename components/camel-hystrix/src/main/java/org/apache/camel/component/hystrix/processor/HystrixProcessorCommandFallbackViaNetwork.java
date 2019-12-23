@@ -63,6 +63,6 @@ public class HystrixProcessorCommandFallbackViaNetwork extends HystrixCommand<Me
 
         LOG.debug("Running fallback processor: {} with exchange: {} done", processor, exchange);
         // no fallback then we are done
-        return exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        return exchange.getMessage();
     }
 }

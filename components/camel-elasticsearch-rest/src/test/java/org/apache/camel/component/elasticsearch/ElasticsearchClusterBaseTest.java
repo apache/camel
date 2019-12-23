@@ -41,7 +41,7 @@ public class ElasticsearchClusterBaseTest extends CamelTestSupport {
     public static RestHighLevelClient client;
 
     protected static final int ES_BASE_HTTP_PORT = AvailablePortFinder.getNextAvailable();
-    protected static final int ES_FIRST_NODE_TRANSPORT_PORT = AvailablePortFinder.getNextAvailable(ES_BASE_HTTP_PORT + 1);
+    protected static final int ES_FIRST_NODE_TRANSPORT_PORT = AvailablePortFinder.getNextAvailable();
 
     @SuppressWarnings("resource")
     @BeforeClass
@@ -51,21 +51,23 @@ public class ElasticsearchClusterBaseTest extends CamelTestSupport {
         // create runner instance
 
         runner = new ElasticsearchClusterRunner();
+        runner.setMaxHttpPort(-1);
+        runner.setMaxTransportPort(-1);
+
         // create ES nodes
         runner.onBuild((number, settingsBuilder) -> {
             settingsBuilder.put("http.cors.enabled", true);
             settingsBuilder.put("http.cors.allow-origin", "*");
-            settingsBuilder.put("discovery.zen.ping.unicast.hosts", "127.0.0.1:9301,127.0.0.1:9302,127.0.0.1:9303");
         }).build(newConfigs()
                  .clusterName(clusterName)
-                 .numOfNode(3)
-                 .baseHttpPort(ES_BASE_HTTP_PORT)
-                 .basePath("target/testcluster/")
-                 .disableESLogger());
+                 .numOfNode(1)
+                 .baseHttpPort(ES_BASE_HTTP_PORT - 1) // ElasticsearchClusterRunner add node id to port, so set it to ES_BASE_HTTP_PORT-1 to start node 1 exactly on ES_BASE_HTTP_PORT
+                 .baseTransportPort(ES_FIRST_NODE_TRANSPORT_PORT - 1) // ElasticsearchClusterRunner add node id to port, so set it to ES_FIRST_NODE_TRANSPORT_PORT-1 to start node 1 exactly on ES_FIRST_NODE_TRANSPORT_PORT
+                 .basePath("target/testcluster/"));
 
         // wait for green status
         runner.ensureGreen();
-        restclientbuilder = RestClient.builder(new HttpHost(InetAddress.getByName("localhost"), ES_FIRST_NODE_TRANSPORT_PORT));
+        restclientbuilder = RestClient.builder(new HttpHost(InetAddress.getByName("127.0.0.1"), ES_BASE_HTTP_PORT));
         client = new RestHighLevelClient(restclientbuilder);
         restClient = client.getLowLevelClient();
     }

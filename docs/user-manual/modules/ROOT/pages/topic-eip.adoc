@@ -1,15 +1,16 @@
 [[topic-eip]]
-== Topic EIP
+= Topic EIP
+:page-source: core/camel-core-engine/src/main/docs/eips/topic-eip.adoc
 
 Topic Load Balancer, with this policy you'll get a Topic behavior by sending to all destinations.
 
-=== Options
+== Options
 
 // eip options: START
 The Topic EIP has no options.
 // eip options: END
 
-=== Examples
+== Examples
 
 In this case we are using the header test as correlation expression:
 

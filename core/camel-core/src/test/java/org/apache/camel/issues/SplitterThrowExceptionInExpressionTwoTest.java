@@ -43,24 +43,18 @@ public class SplitterThrowExceptionInExpressionTwoTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:error").disableRedelivery())
-                    .multicast().stopOnException().streaming()
-                        .to("mock:cast1")
-                        .split(new MyExpression()).stopOnException().streaming()
-                            .to("mock:cast2")
-                        .end()
-                        .to("mock:cast3")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").errorHandler(deadLetterChannel("mock:error").disableRedelivery()).multicast().stopOnException().streaming().to("mock:cast1")
+                    .split(new MyExpression()).stopOnException().streaming().to("mock:cast2").end().to("mock:cast3").end().to("mock:result");
             }
         };
     }
 
     private static class MyExpression implements Expression {
 
+        @Override
         public <T> T evaluate(Exchange exchange, Class<T> type) {
-            // force an exception early, to test that the onException error handlers
+            // force an exception early, to test that the onException error
+            // handlers
             // can kick in anyway
             throw new ExpressionEvaluationException(null, exchange, null);
         }

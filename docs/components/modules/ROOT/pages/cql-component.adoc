@@ -1,7 +1,12 @@
 [[cql-component]]
-== Cassandra CQL Component
+= Cassandra CQL Component
+:page-source: components/camel-cassandraql/src/main/docs/cql-component.adoc
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 http://cassandra.apache.org[Apache Cassandra] is an open source NoSQL
 database designed to handle large amounts on commodity hardware. Like
@@ -31,7 +36,7 @@ Maven users will need to add the following dependency to their
 </dependency>
 ------------------------------------------------------------
 
-=== URI format
+== URI format
 
 The endpoint can initiate the Cassandra connection or use an existing
 one.
@@ -51,19 +56,20 @@ To fine tune the Cassandra connection (SSL options, pooling options,
 load balancing policy, retry policy, reconnection policy...), create
 your own Cluster instance and give it to the Camel endpoint.
 
-=== Cassandra Options
+== Cassandra Options
 
 
 // component options: START
-The Cassandra CQL component supports 2 options, which are listed below.
+The Cassandra CQL component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -78,7 +84,7 @@ cql:beanRef:hosts:port/keyspace
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,7 +97,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (31 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -104,14 +110,14 @@ with the following path and query parameters:
 | *loadBalancingPolicy* (common) | To use a specific LoadBalancingPolicy |  | String
 | *password* (common) | Password for session authentication |  | String
 | *prepareStatements* (common) | Whether to use PreparedStatements or regular Statements | true | boolean
-| *resultSetConversionStrategy* (common) | To use a custom class that implements logic for converting ResultSet into message body ALL, ONE, LIMIT_10, LIMIT_100... |  | String
+| *resultSetConversionStrategy* (common) | To use a custom class that implements logic for converting ResultSet into message body ALL, ONE, LIMIT_10, LIMIT_100... |  | ResultSetConversionStrategy
 | *session* (common) | To use the Session instance (you would normally not use this option) |  | Session
 | *username* (common) | Username for session authentication |  | String
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -121,24 +127,25 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-cassandraql-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -146,7 +153,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -154,18 +161,19 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.cql.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.cql.enabled* | Enable cql component | true | Boolean
-| *camel.component.cql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.cql.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.cql.enabled* | Whether to enable auto configuration of the cql component. This is enabled by default. |  | Boolean
+| *camel.component.cql.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
-=== Messages
+== Messages
 
-==== Incoming Message
+=== Incoming Message
 
 The Camel Cassandra endpoint expects a bunch of simple objects (`Object`
 or `Object[]` or `Collection<Object>`) which will be bound to the CQL
-statement as query parameters. If message body is null or empty, then 
+statement as query parameters. If message body is null or empty, then 
 CQL query will be executed without binding parameters.
 
 Headers:
@@ -173,12 +181,12 @@ Headers:
 * `CamelCqlQuery` (optional, `String` or `RegularStatement`): CQL query
 either as a plain String or built using the `QueryBuilder`.
 
-==== Outgoing Message
+=== Outgoing Message
 
 The Camel Cassandra endpoint produces one or many a Cassandra Row
-objects depending on the `resultSetConversionStrategy`:
+objects depending on the `resultSetConversionStrategy`:
 
- 
+ 
 
 * `List<Row>` if `resultSetConversionStrategy` is `ALL` or
 `LIMIT_[0-9]+`
@@ -186,7 +194,7 @@ objects depending on the `resultSetConversionStrategy`:
 * Anything else, if `resultSetConversionStrategy` is a custom
 implementation of the `ResultSetConversionStrategy`
 
-=== Repositories
+== Repositories
 
 Cassandra can be used to store message keys or messages for the
 idempotent and aggregation EIP.
@@ -197,7 +205,7 @@ anti-patterns queues and queue like datasets]. It's advised to use
 LeveledCompaction and a small GC grace setting for these tables to allow
 tombstoned rows to be removed quickly.
 
-=== Idempotent repository
+== Idempotent repository
 
 The `NamedCassandraIdempotentRepository` stores messages keys in a
 Cassandra table like this:
@@ -239,7 +247,7 @@ Alternatively, the `CassandraIdempotentRepository` does not have a
 `LOCAL_QUORUM`…
 |=======================================================================
 
-=== Aggregation repository
+== Aggregation repository
 
 The `NamedCassandraAggregationRepository` stores exchanges by
 correlation key in a Cassandra table like this:
@@ -284,7 +292,7 @@ Alternatively, the `CassandraAggregationRepository` does not have a
 `LOCAL_QUORUM`…
 |=======================================================================
 
-=== Examples
+== Examples
 
 To insert something on a table you can use the following code:
 

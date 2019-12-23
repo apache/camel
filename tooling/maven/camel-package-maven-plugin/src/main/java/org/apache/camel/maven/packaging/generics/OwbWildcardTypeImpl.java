@@ -39,6 +39,7 @@ public class OwbWildcardTypeImpl implements WildcardType {
         return lowerBounds.clone();
     }
 
+    @Override
     public String toString() {
         StringBuilder buffer = new StringBuilder("?");
         if (upperBounds.length > 0) {

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.spring.contextscan.reverseorder;
 
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ZBarRoute extends SpringRouteBuilder {
+public class ZBarRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {

@@ -43,6 +43,7 @@ public class MyOtherFooBean {
     }
 
     public static class SuperClazz extends AbstractClassSize implements InterfaceSize {
+        @Override
         public int size() {
             return 1;
         }

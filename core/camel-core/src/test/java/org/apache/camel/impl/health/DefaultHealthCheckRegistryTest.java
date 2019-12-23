@@ -33,10 +33,7 @@ public class DefaultHealthCheckRegistryTest {
     public void testDefaultHealthCheckRegistryRepositorySetter() {
         HealthCheckRegistry registry1 = new DefaultHealthCheckRegistry();
         HealthCheckRegistry registry2 = new DefaultHealthCheckRegistry();
-        registry1.addRepository(() -> Stream.of(
-                new MyHealthCheck("G1", "1")
-                )
-        );
+        registry1.addRepository(() -> Stream.of(new MyHealthCheck("G1", "1")));
         registry2.setRepositories(registry1.getRepositories());
         Assert.assertArrayEquals(registry1.getRepositories().toArray(), registry2.getRepositories().toArray());
     }
@@ -48,7 +45,6 @@ public class DefaultHealthCheckRegistryTest {
         registry.register(new MyHealthCheck("G1", "1"));
         registry.register(new MyHealthCheck("G1", "2"));
         registry.register(new MyHealthCheck("G2", "3"));
-
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
         Assert.assertEquals(3, checks.size());
@@ -70,11 +66,7 @@ public class DefaultHealthCheckRegistryTest {
         registry.register(new MyHealthCheck("G1", "2"));
         registry.register(new MyHealthCheck("G2", "3"));
 
-        registry.addRepository(() -> Stream.of(
-                new MyHealthCheck("G1", "1"),
-                new MyHealthCheck("G1", "4")
-            )
-        );
+        registry.addRepository(() -> Stream.of(new MyHealthCheck("G1", "1"), new MyHealthCheck("G1", "4")));
 
         List<HealthCheck> checks = registry.stream().collect(Collectors.toList());
         Assert.assertEquals(4, checks.size());

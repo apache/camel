@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.util.Map;
 
 import com.amazonaws.services.s3.model.PutObjectRequest;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -43,7 +42,7 @@ public class S3ComponentContentLengthFileTest extends CamelTestSupport {
 
     @BindToRegistry("amazonS3Client")
     AmazonS3ClientMock client = new AmazonS3ClientMock();
-    
+
     @EndpointInject("direct:startKeep")
     ProducerTemplate templateKeep;
 
@@ -70,6 +69,7 @@ public class S3ComponentContentLengthFileTest extends CamelTestSupport {
         writer.close();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -99,7 +99,7 @@ public class S3ComponentContentLengthFileTest extends CamelTestSupport {
 
         assertFileExists(testFile.getAbsolutePath());
     }
-    
+
     @Test
     public void sendFileWithContentLength() throws Exception {
         result.expectedMessageCount(1);

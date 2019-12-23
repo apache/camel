@@ -24,25 +24,28 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The ehcache component enables you to perform caching operations using <a href="http://www.ehcache.org">Ehcache</a> as cache implementation.
  */
 @UriEndpoint(firstVersion = "2.18.0", scheme = "ehcache", title = "Ehcache", syntax = "ehcache:cacheName", label = "cache,datagrid,clustering")
 public class EhcacheEndpoint extends DefaultEndpoint {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheComponent.class);
+
     @UriPath(description = "the cache name")
     @Metadata(required = true)
     private final String cacheName;
     @UriParam
     private final EhcacheConfiguration configuration;
-    private final EhcacheManager cacheManager;
+    private EhcacheManager cacheManager;
 
-    EhcacheEndpoint(String uri, EhcacheComponent component,  String cacheName, EhcacheManager cacheManager, EhcacheConfiguration configuration) throws Exception {
+    EhcacheEndpoint(String uri, EhcacheComponent component,  String cacheName, EhcacheConfiguration configuration) throws Exception {
         super(uri, component);
-
         this.cacheName = cacheName;
         this.configuration = configuration;
-        this.cacheManager = cacheManager;
     }
 
     @Override
@@ -52,11 +55,21 @@ public class EhcacheEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new EhcacheConsumer(this, this.cacheName, configuration, processor);
+        EhcacheConsumer consumer = new EhcacheConsumer(this, this.cacheName, configuration, processor);
+        configureConsumer(consumer);
+        return consumer;
+    }
+
+    @Override
+    public EhcacheComponent getComponent() {
+        return (EhcacheComponent) super.getComponent();
     }
 
     @Override
     protected void doStart() throws Exception {
+        if (cacheManager == null) {
+            cacheManager = getComponent().createCacheManager(configuration);
+        }
         cacheManager.start();
         super.doStart();
     }
@@ -64,7 +77,9 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        cacheManager.stop();
+        if (cacheManager != null) {
+            cacheManager.stop();
+        }
     }
 
     EhcacheManager getManager() {
@@ -74,4 +89,5 @@ public class EhcacheEndpoint extends DefaultEndpoint {
     EhcacheConfiguration getConfiguration() {
         return configuration;
     }
+
 }

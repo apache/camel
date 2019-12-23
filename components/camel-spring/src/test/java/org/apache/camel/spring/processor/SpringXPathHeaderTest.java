@@ -22,6 +22,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
 /**
  * Spring basesd XPathHeaderTest.
  */
@@ -58,6 +59,7 @@ public class SpringXPathHeaderTest extends ContextTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringXPathHeaderTest-context.xml");
     }

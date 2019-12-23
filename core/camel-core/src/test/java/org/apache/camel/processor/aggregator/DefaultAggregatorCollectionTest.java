@@ -57,15 +57,16 @@ public class DefaultAggregatorCollectionTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // our route is aggregating from the direct queue and sending the response to the mock
+                // our route is aggregating from the direct queue and sending
+                // the response to the mock
                 from("direct:start")
                     // aggregated by header id
-                    // as we have not configured more on the aggregator it will default to aggregate the
+                    // as we have not configured more on the aggregator it will
+                    // default to aggregate the
                     // latest exchange only
                     .aggregate(header("id")).aggregationStrategy(new UseLatestAggregationStrategy())
                     // wait for 0.5 seconds to aggregate
-                    .completionTimeout(500L)
-                    .to("mock:result");
+                    .completionTimeout(500L).to("mock:result");
                 // END SNIPPET: e1
             }
         };

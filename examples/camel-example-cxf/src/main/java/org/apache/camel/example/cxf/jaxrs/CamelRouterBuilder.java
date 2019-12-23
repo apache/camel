@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStoreImpl;
@@ -44,8 +43,6 @@ public class CamelRouterBuilder extends RouteBuilder {
         System.setProperty("restEndpointPort", "9002");
                 
         CamelContext context = new DefaultCamelContext();
-        PropertiesComponent pc = new PropertiesComponent();
-        context.addComponent("properties", pc);
         context.start();
         context.addRoutes(new CamelRouterBuilder());
         Thread.sleep(1000);
@@ -85,6 +82,7 @@ public class CamelRouterBuilder extends RouteBuilder {
         System.exit(0);
     }
 
+    @Override
     public void configure() {
         errorHandler(noErrorHandler());
         
@@ -108,6 +106,7 @@ public class CamelRouterBuilder extends RouteBuilder {
             instance = obj;
         }
          
+        @Override
         public void process(Exchange exchange) throws Exception {
             String operationName = exchange.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
             Method method = findMethod(operationName, exchange.getIn().getBody(Object[].class));

@@ -86,6 +86,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
         return ReactiveStreamsConstants.DEFAULT_SERVICE_NAME;
     }
 
+    @Override
     protected void doInit() {
         if (this.workerPool == null) {
             this.workerPool = context.getExecutorServiceManager().newThreadPool(
@@ -116,6 +117,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
         return new UnwrappingPublisher(getPayloadPublisher(name));
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> Publisher<T> fromStream(String name, Class<T> cls) {
         if (Exchange.class.equals(cls)) {
@@ -130,13 +132,14 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
         return subscribers.computeIfAbsent(name, n -> new ReactiveStreamsCamelSubscriber(name));
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> Subscriber<T> streamSubscriber(String name, Class<T> type) {
         if (Exchange.class.equals(type)) {
             return (Subscriber<T>) streamSubscriber(name);
         }
 
-        return new ConvertingSubscriber<>(streamSubscriber(name), context);
+        return new ConvertingSubscriber<>(streamSubscriber(name), context, type);
     }
 
     @Override
@@ -246,7 +249,7 @@ public class DefaultCamelReactiveStreamsService extends ServiceSupport implement
 
     @Override
     public <T> Subscriber<T> subscriber(String uri, Class<T> type) {
-        return new ConvertingSubscriber<>(subscriber(uri), context);
+        return new ConvertingSubscriber<>(subscriber(uri), context, type);
     }
 
     @Override

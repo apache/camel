@@ -32,7 +32,12 @@ import org.apache.hadoop.hbase.client.ConnectionFactory;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.client.Table;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HBaseProducerTest extends CamelHBaseTestSupport {
 
@@ -254,7 +259,7 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             Object result2 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(2));
             // as we use maxResults=2 we only get 2 results back
             Object result3 = resp.getOut().getHeader(HBaseAttribute.HBASE_VALUE.asHeader(3));
-            assertNull("Should only get 2 results back", result3);
+            assertNull(result3, "Should only get 2 results back");
 
             List<?> bodies = Arrays.asList(body[0][0][0], body[1][0][0]);
             assertTrue(bodies.contains(result1) && bodies.contains(result2));

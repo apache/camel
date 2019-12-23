@@ -28,6 +28,7 @@ public class SpringLoggingEventNotifierTest extends LoggingEventNotifierTest {
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringLoggingEventNotifierTest.xml");
     }

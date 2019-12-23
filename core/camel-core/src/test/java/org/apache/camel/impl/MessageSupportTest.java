@@ -60,14 +60,14 @@ public class MessageSupportTest extends ContextTestSupport {
         context.setUuidGenerator(new SimpleUuidGenerator());
         Exchange exchange = new DefaultExchange(context);
         Message in = exchange.getIn();
-        
+
         assertEquals("1", in.getMessageId());
     }
-    
+
     @Test
     public void testGetMessageIdWithoutAnExchange() {
         Message in = new DefaultMessage(context);
-        
+
         assertNotNull(in.getMessageId());
     }
 

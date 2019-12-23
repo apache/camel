@@ -21,18 +21,16 @@ import org.apache.camel.support.builder.Namespaces;
 
 public class XPathWithNamespaceBuilderFilterAndResultTypeTest extends XPathWithNamespaceBuilderFilterTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
                 // lets define the namespaces we'll need in our filters
-                Namespaces ns = new Namespaces("c", "http://acme.com/cheese")
-                        .add("xsd", "http://www.w3.org/2001/XMLSchema");
+                Namespaces ns = new Namespaces("c", "http://acme.com/cheese").add("xsd", "http://www.w3.org/2001/XMLSchema");
 
                 // now lets create an xpath based Message Filter
-                from("direct:start").
-                        filter(xpath("/c:person[@name='James']", String.class, ns)).
-                        to("mock:result");
+                from("direct:start").filter(xpath("/c:person[@name='James']", String.class, ns)).to("mock:result");
                 // END SNIPPET: example
             }
         };

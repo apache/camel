@@ -21,7 +21,6 @@ import java.util.Map;
 import io.opentracing.mock.MockSpan;
 import io.opentracing.mock.MockTracer;
 import io.opentracing.tag.Tags;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.opentracing.SpanDecorator;
 import org.junit.Test;

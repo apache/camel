@@ -20,6 +20,7 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 
 public class ValidationWithExceptionTest extends ValidationTest {
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -27,9 +28,7 @@ public class ValidationWithExceptionTest extends ValidationTest {
 
                 onException(ValidationException.class).to("mock:invalid");
 
-                from("direct:start").
-                        process(validator).
-                        to("mock:valid");
+                from("direct:start").process(validator).to("mock:valid");
             }
         };
     }

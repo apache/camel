@@ -19,7 +19,6 @@ package org.apache.camel.component.kubernetes.cluster.utils;
 import io.fabric8.kubernetes.api.model.ConfigMap;
 import io.fabric8.kubernetes.api.model.ConfigMapBuilder;
 import io.fabric8.kubernetes.client.KubernetesClient;
-
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -39,52 +38,28 @@ public class LockTestServerTest {
 
         assertNull(client.configMaps().withName("xxx").get());
 
-        client.configMaps().withName("xxx").createNew()
-                .withNewMetadata()
-                .withName("xxx")
-                .and().done();
+        client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done();
 
         try {
-            client.configMaps().withName("xxx").createNew()
-                    .withNewMetadata()
-                    .withName("xxx")
-                    .and().done();
+            client.configMaps().withName("xxx").createNew().withNewMetadata().withName("xxx").and().done();
             Assert.fail("Should have failed for duplicate insert");
         } catch (Exception e) {
         }
 
-        client.configMaps().withName("xxx")
-                .createOrReplaceWithNew()
-                .editOrNewMetadata()
-                .withName("xxx")
-                .addToLabels("a", "b")
-                .and().done();
+        client.configMaps().withName("xxx").createOrReplaceWithNew().editOrNewMetadata().withName("xxx").addToLabels("a", "b").and().done();
 
         ConfigMap map = client.configMaps().withName("xxx").get();
         assertEquals("b", map.getMetadata().getLabels().get("a"));
 
-
-        client.configMaps().withName("xxx")
-                .lockResourceVersion(map.getMetadata().getResourceVersion())
-                .replace(new ConfigMapBuilder(map)
-                        .editOrNewMetadata()
-                        .withName("xxx")
-                        .addToLabels("c", "d")
-                        .and()
-                        .build());
+        client.configMaps().withName("xxx").lockResourceVersion(map.getMetadata().getResourceVersion())
+            .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("c", "d").and().build());
 
         ConfigMap newMap = client.configMaps().withName("xxx").get();
         assertEquals("d", newMap.getMetadata().getLabels().get("c"));
 
         try {
-            client.configMaps().withName("xxx")
-                    .lockResourceVersion(map.getMetadata().getResourceVersion())
-                    .replace(new ConfigMapBuilder(map)
-                            .editOrNewMetadata()
-                            .withName("xxx")
-                            .addToLabels("e", "f")
-                            .and()
-                            .build());
+            client.configMaps().withName("xxx").lockResourceVersion(map.getMetadata().getResourceVersion())
+                .replace(new ConfigMapBuilder(map).editOrNewMetadata().withName("xxx").addToLabels("e", "f").and().build());
             Assert.fail("Should have failed for wrong version");
         } catch (Exception ex) {
         }

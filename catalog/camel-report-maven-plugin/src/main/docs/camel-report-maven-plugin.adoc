@@ -12,6 +12,8 @@ For validating the source code for mis configured Camel:
 - endpoint uris
 - simple expressions or predicates
 - duplicate route ids
+- seda/direct endpoint pairs
+- configuration in properties files
 
 Then you can run the validate goal from the command line or from within your Java editor such as IDEA or Eclipse.
 
@@ -145,10 +147,11 @@ The maven plugin *validate* goal supports the following options which can be con
 | ignoreDeprecated | true |Whether to ignore deprecated options being used in the endpoint uri.
 | duplicateRouteId | true |Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates then Camel will fail to startup.
 | directOrSedaPairCheck | true |Whether to validate direct/seda endpoints sending to non existing consumers.
+| configurationFiles | application.properties | Location of configuration files to validate. The default is application.properties. Multiple values can be separated by comma and use wildcard pattern matching.
 | showAll | false | Whether to show all endpoints and simple expressions (both invalid and valid).
 |===
 
-For example to turn off ignorning usage of deprecated options from the command line, you can run:
+For example to turn off ignoring usage of deprecated options from the command line, you can run:
 
 ----
 $mvn camel-report:validate -Dcamel.ignoreDeprecated=true

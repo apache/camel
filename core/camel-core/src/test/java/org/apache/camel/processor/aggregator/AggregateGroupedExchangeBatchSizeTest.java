@@ -35,7 +35,8 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
     public void testGrouped() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
 
-        // we expect 1 or 2 messages since we group all we get in using the same correlation key
+        // we expect 1 or 2 messages since we group all we get in using the same
+        // correlation key
         result.expectedMinimumMessageCount(1);
 
         // then we sent all the message at once
@@ -75,14 +76,15 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // our route is aggregating from the direct queue and sending the response to the mock
-                from("direct:start")
-                    .log("Aggregator received ${body}")
-                    // aggregated all use same expression and group the exchanges so we get one single exchange containing all the others
+                // our route is aggregating from the direct queue and sending
+                // the response to the mock
+                from("direct:start").log("Aggregator received ${body}")
+                    // aggregated all use same expression and group the
+                    // exchanges so we get one single exchange containing all
+                    // the others
                     .aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(2)
                     // wait for 0.5 seconds to aggregate
-                    .completionTimeout(500L)
-                    .to("mock:result");
+                    .completionTimeout(500L).to("mock:result");
                 // END SNIPPET: e1
             }
         };

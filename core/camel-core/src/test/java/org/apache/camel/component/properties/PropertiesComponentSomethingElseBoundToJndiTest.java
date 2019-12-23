@@ -51,7 +51,8 @@ public class PropertiesComponentSomethingElseBoundToJndiTest extends ContextTest
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        // bind something else as properties, but this should not cause Camel to fail start
+        // bind something else as properties, but this should not cause Camel to
+        // fail start
         jndi.bind("properties", this);
         return jndi;
     }

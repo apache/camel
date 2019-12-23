@@ -28,7 +28,8 @@ import static org.apache.camel.component.bean.issues.PrivateClasses.newPackagePr
 import static org.apache.camel.component.bean.issues.PrivateClasses.newPrivateHelloCamel;
 
 /**
- * Tests Bean binding for private & package-private classes where the target method is accessible through an interface.
+ * Tests Bean binding for private & package-private classes where the target
+ * method is accessible through an interface.
  */
 public final class BeanPrivateClassWithInterfaceMethodTest extends ContextTestSupport {
 
@@ -63,13 +64,9 @@ public final class BeanPrivateClassWithInterfaceMethodTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:testPackagePrivateClass")
-                        .bean(packagePrivateImpl, METHOD_NAME)
-                        .to("mock:packagePrivateClassResult");
+                from("direct:testPackagePrivateClass").bean(packagePrivateImpl, METHOD_NAME).to("mock:packagePrivateClassResult");
 
-                from("direct:testPrivateClass")
-                        .bean(privateImpl, METHOD_NAME)
-                        .to("mock:privateClassResult");
+                from("direct:testPrivateClass").bean(privateImpl, METHOD_NAME).to("mock:privateClassResult");
             }
         };
     }

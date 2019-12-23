@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.hl7;
+
 import ca.uhn.hl7v2.AcknowledgmentCode;
 import ca.uhn.hl7v2.ErrorCode;
 import ca.uhn.hl7v2.HL7Exception;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
@@ -46,19 +47,6 @@ public class UnitOfWorkTest extends ContextTestSupport {
         assertNull("The Synchronization.onFailure() callback should have not been invoked", baz);
 
         log.info("Received completed: " + completed);
-    }
-
-    @Test
-    public void testFail() throws Exception {
-        sendMessage();
-
-        assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
-        assertNull("Should not have completed", completed);
-        assertNotNull("Should have received failed notification", failed);
-        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "bat", baz);
-        assertNull("The Synchronization.onComplete() callback should have not been invoked", foo);
-
-        log.info("Received fail: " + failed);
     }
 
     @Test
@@ -95,7 +83,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
     }
 
     protected void sendMessage() throws InterruptedException {
-        
+
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader("foo", "bar");
@@ -105,6 +93,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
         });
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -115,11 +104,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
                         exchange.getUnitOfWork().addSynchronization(synchronization);
 
                         String name = getName();
-                        if (name.equals("testFail")) {
-                            log.info("Failing test!");
-                            exchange.getOut().setFault(true);
-                            exchange.getOut().setBody("testFail() should always fail with a fault!");
-                        } else if (name.equals("testException")) {
+                        if (name.equals("testException")) {
                             log.info("Throwing exception!");
                             throw new Exception("Failing test!");
                         }

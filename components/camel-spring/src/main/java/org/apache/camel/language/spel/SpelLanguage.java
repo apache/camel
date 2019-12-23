@@ -36,11 +36,13 @@ public class SpelLanguage extends LanguageSupport implements Service {
 
     private BeanResolver beanResolver;
 
+    @Override
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
         return new SpelExpression(expression, Boolean.class, beanResolver);
     }
 
+    @Override
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
         return new SpelExpression(expression, Object.class, beanResolver);

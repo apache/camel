@@ -50,6 +50,7 @@ public class StaticMethodFallbackTypeConverter extends TypeConverterSupport {
         return "StaticMethodFallbackTypeConverter: " + method;
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
         return useExchange ? (T)ObjectHelper.invokeMethod(method, null, type, exchange, value, registry)

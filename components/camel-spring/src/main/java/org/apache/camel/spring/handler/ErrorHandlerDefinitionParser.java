@@ -42,6 +42,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         super(null, false);
     }
 
+    @Override
     protected Class<?> getBeanClass(Element element) {
         ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;
 
@@ -51,6 +52,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
         return type.getTypeAsClass();
     }
     
+    @Override
     protected boolean isEligibleAttribute(String attributeName) {
         if (attributeName == null || ID_ATTRIBUTE.equals(attributeName)) {
             return false;
@@ -145,6 +147,11 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             throw new IllegalArgumentException("Attribute useOriginalMessage is not supported by error handler type: "
                     + type.name() + ", in error handler with id: " + id);
         }
+        String useOriginalBody = element.getAttribute("useOriginalBody");
+        if (ObjectHelper.isNotEmpty(useOriginalBody) && type.equals(ErrorHandlerType.NoErrorHandler)) {
+            throw new IllegalArgumentException("Attribute useOriginalBody is not supported by error handler type: "
+                    + type.name() + ", in error handler with id: " + id);
+        }
         String onRedeliveryRef = element.getAttribute("onRedeliveryRef");
         if (ObjectHelper.isNotEmpty(onRedeliveryRef) && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw new IllegalArgumentException("Attribute onRedeliveryRef is not supported by error handler type: "
@@ -197,6 +204,7 @@ public class ErrorHandlerDefinitionParser extends BeanDefinitionParser {
             super(type, false);
         }
 
+        @Override
         protected boolean shouldGenerateId() {
             return true;
         }

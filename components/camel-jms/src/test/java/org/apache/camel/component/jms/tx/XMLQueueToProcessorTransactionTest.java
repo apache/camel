@@ -31,6 +31,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  */
 public class XMLQueueToProcessorTransactionTest extends AbstractTransactionTest {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/jms/tx/XMLQueueToProcessorTransactionTest.xml");
     }

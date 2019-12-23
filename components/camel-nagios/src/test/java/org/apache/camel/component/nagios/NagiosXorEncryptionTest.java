@@ -20,6 +20,7 @@ import com.googlecode.jsendnsca.Level;
 import com.googlecode.jsendnsca.MessagePayload;
 import com.googlecode.jsendnsca.NagiosPassiveCheckSender;
 import com.googlecode.jsendnsca.PassiveCheckSender;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -34,7 +35,7 @@ import static org.mockito.Mockito.verify;
 public class NagiosXorEncryptionTest extends CamelTestSupport {
     protected boolean canRun;
 
-    @Mock
+    @Mock @BindToRegistry("mySender")
     private PassiveCheckSender nagiosPassiveCheckSender = Mockito.mock(NagiosPassiveCheckSender.class);
 
     @Before
@@ -67,16 +68,8 @@ public class NagiosXorEncryptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                String uri = "nagios:127.0.0.1:25664?password=secret&encryption=Xor";
-
-                NagiosComponent nagiosComponent = new NagiosComponent();
-                nagiosComponent.setCamelContext(context);
-                NagiosEndpoint nagiosEndpoint = (NagiosEndpoint) nagiosComponent.createEndpoint(uri);
-                nagiosEndpoint.setSender(nagiosPassiveCheckSender);
-                nagiosEndpoint.createProducer();
-
                 from("direct:start")
-                        .to(nagiosEndpoint)
+                        .to("nagios:127.0.0.1:25664?password=secret&encryption=Xor&sender=#mySender")
                         .to("mock:result");
             }
         };

@@ -60,6 +60,7 @@ public class DelegateAsyncProcessor extends AsyncProcessorSupport implements Del
         return "DelegateAsync[" + processor + "]";
     }
 
+    @Override
     public AsyncProcessor getProcessor() {
         return processor;
     }
@@ -72,26 +73,32 @@ public class DelegateAsyncProcessor extends AsyncProcessorSupport implements Del
         this.processor = AsyncProcessorConverterHelper.convert(processor);
     }
 
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(processor);
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(processor);
     }
 
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         return processor.process(exchange, callback);
     }
 
+    @Override
     public boolean hasNext() {
         return processor != null;
     }
 
+    @Override
     public List<Processor> next() {
         if (!hasNext()) {
             return null;

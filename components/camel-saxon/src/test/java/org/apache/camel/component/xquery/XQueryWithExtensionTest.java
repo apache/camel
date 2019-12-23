@@ -26,9 +26,9 @@ import net.sf.saxon.om.StructuredQName;
 import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -36,15 +36,13 @@ public class XQueryWithExtensionTest extends CamelTestSupport {
 
     private Configuration conf;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("saxonConf")
+    public Configuration loadConf() throws Exception {
 
         conf = new Configuration();
         conf.registerExtensionFunction(new SimpleExtension());
 
-        jndi.bind("saxonConf", conf);
-        return jndi;
+        return conf;
     }
 
     @Test

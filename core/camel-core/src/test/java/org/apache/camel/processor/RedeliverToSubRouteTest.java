@@ -49,20 +49,16 @@ public class RedeliverToSubRouteTest extends ContextTestSupport {
 
                 // in case of io exception then try to redeliver up till 2 times
                 // (do not use any delay due faster unit testing)
-                onException(IOException.class)
-                    .maximumRedeliveries(2).redeliveryDelay(0);
+                onException(IOException.class).maximumRedeliveries(2).redeliveryDelay(0);
 
-                from("direct:start")
-                    .to("mock:a")
+                from("direct:start").to("mock:a")
                     // call sub route (using direct)
-                    .to("direct:sub")
-                    .to("mock:c");
+                    .to("direct:sub").to("mock:c");
 
                 from("direct:sub")
-                    // disable error handler, so the entire route can be retried in case of redelivery
-                    .errorHandler(noErrorHandler())
-                    .to("mock:b")
-                    .process(new MyProcessor());
+                    // disable error handler, so the entire route can be retried
+                    // in case of redelivery
+                    .errorHandler(noErrorHandler()).to("mock:b").process(new MyProcessor());
                 // END SNIPPET: e1
             }
         };

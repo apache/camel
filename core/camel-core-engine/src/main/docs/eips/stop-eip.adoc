@@ -1,0 +1,22 @@
+[[stop-eip]]
+= Stop EIP
+The Stop EIP stops the processing of the current message
+
+== Options
+
+// eip options: START
+The Stop EIP has no options.
+// eip options: END
+
+== Examples
+
+[source,java]
+----
+from("direct:start")
+    .choice()
+        .when(body().contains("Hello")).to("mock:hello")
+        .when(body().contains("Bye")).to("mock:bye").stop()
+        .otherwise().to("mock:other")
+    .end()
+.to("mock:result");
+----

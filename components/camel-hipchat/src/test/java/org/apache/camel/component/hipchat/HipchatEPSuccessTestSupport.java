@@ -42,6 +42,7 @@ public class HipchatEPSuccessTestSupport extends HipchatEndpoint {
         this.closeableHttpResponse = consumerResponse;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new HipchatProducer(this) {
             @Override

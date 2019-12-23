@@ -19,7 +19,6 @@ package org.apache.camel.component.azure.blob;
 import java.util.Map;
 
 import com.microsoft.azure.storage.blob.CloudBlob;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.azure.common.AbstractConfiguration;
 import org.apache.camel.spi.UriParam;

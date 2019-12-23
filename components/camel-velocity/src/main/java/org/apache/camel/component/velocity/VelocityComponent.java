@@ -45,6 +45,7 @@ public class VelocityComponent extends DefaultComponent {
         this.velocityEngine = velocityEngine;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, Boolean.TRUE);
 

@@ -87,6 +87,7 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
 
     public static class Y extends X {
 
+        @Override
         public int process(Request request) {
             return 1;
         }
@@ -119,5 +120,3 @@ public class BeanInfoInheritanceTest extends ContextTestSupport {
     }
 
 }
-
-

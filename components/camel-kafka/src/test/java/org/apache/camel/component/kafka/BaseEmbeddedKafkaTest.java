@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.kafka;
+
 import java.util.Properties;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.kafka.embedded.EmbeddedKafkaBroker;
 import org.apache.camel.component.kafka.embedded.EmbeddedZookeeper;
-import org.apache.camel.component.properties.PropertiesComponent;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -30,17 +30,16 @@ import org.junit.ClassRule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
     @ClassRule
     public static EmbeddedZookeeper zookeeper = new EmbeddedZookeeper(
-            AvailablePortFinder.getNextAvailable(23000));
+            AvailablePortFinder.getNextAvailable());
 
     @ClassRule
     public static EmbeddedKafkaBroker kafkaBroker =
             new EmbeddedKafkaBroker(0,
-                    AvailablePortFinder.getNextAvailable(24000),
+                    AvailablePortFinder.getNextAvailable(),
                     zookeeper.getConnection(),
                     new Properties());
 
@@ -63,21 +62,18 @@ public class BaseEmbeddedKafkaTest extends CamelTestSupport {
         return props;
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-
+    @BindToRegistry("prop")
+    public Properties loadProperties() throws Exception {
         Properties prop = new Properties();
         prop.setProperty("zookeeperPort", "" + getZookeeperPort());
         prop.setProperty("kafkaPort", "" + getKafkaPort());
-        jndi.bind("prop", prop);
-        return jndi;
+        return prop;
     }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.addComponent("properties", new PropertiesComponent("ref:prop"));
+        context.getPropertiesComponent().setLocation("ref:prop");
 
         KafkaComponent kafka = new KafkaComponent(context);
         kafka.setBrokers("localhost:" + getKafkaPort());

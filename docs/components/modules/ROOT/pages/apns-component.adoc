@@ -1,7 +1,12 @@
 [[apns-component]]
-== APNS Component
+= APNS Component
+:page-source: components/camel-apns/src/main/docs/apns-component.adoc
 
-*Available as of Camel version 2.8*
+*Since Camel 2.8*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The APNS component is used for sending notifications to iOS devices.
 The APNS components use https://github.com/notnoop/java-apns[javapns]
@@ -31,7 +36,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 To send notifications:
 
@@ -47,12 +52,12 @@ To consume feedback:
 apns:consumer[?options]
 -----------------------
 
-### Options
+== Options
 
 
 
 // component options: START
-The APNS component supports 3 options, which are listed below.
+The APNS component supports 4 options, which are listed below.
 
 
 
@@ -60,8 +65,9 @@ The APNS component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *apnsService* (common) | *Required* The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService |  | ApnsService
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -77,7 +83,7 @@ apns:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -87,7 +93,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+=== Query Parameters (23 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,7 +104,7 @@ with the following path and query parameters:
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -108,24 +114,25 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-apns-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -133,7 +140,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -142,8 +149,9 @@ The component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.apns.apns-service* | The ApnsService to use. The org.apache.camel.component.apns.factory.ApnsServiceFactory can be used to build a ApnsService. The option is a com.notnoop.apns.ApnsService type. |  | String
 | *camel.component.apns.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.apns.enabled* | Enable apns component | true | Boolean
-| *camel.component.apns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.apns.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.apns.enabled* | Whether to enable auto configuration of the apns component. This is enabled by default. |  | Boolean
+| *camel.component.apns.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -152,7 +160,7 @@ The component supports 4 options, which are listed below.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-#### Component
+=== Component
 
 The `ApnsComponent` must be configured with a
 `com.notnoop.apns.ApnsService`. The service can be created and
@@ -162,20 +170,20 @@ further below for an example. And as well in the
 https://github.com/apache/camel/tree/master/components/camel-apns[test
 source code].
 
-##### SSL Setting
+==== SSL Setting
 In order to use secure connection, an instance of `org.apache.camel.support.jsse.SSLContextParameters`
  should be injected to `org.apache.camel.component.apns.factory.ApnsServiceFactory` which is
  used to configure the component. See the test resources for an example.
  https://github.com/apache/camel/blob/master/components/camel-apns/src/test/resources/org/apache/camel/component/apns/spring/SpringApnsConsumerTest-context.xml[ssl example]
 
-### Exchange data format
+== Exchange data format
 
 When Camel will fetch feedback data corresponding to inactive devices,
 it will retrieve a List of InactiveDevice objects. Each InactiveDevice
 object of the retrieved list will be setted as the In body, and then
 processed by the consumer endpoint.
 
-### Message Headers
+== Message Headers
 
 Camel Apns uses these headers.
 
@@ -183,14 +191,14 @@ Camel Apns uses these headers.
 |=======================================================================
 |Property |Default |Description
 |`CamelApnsTokens` | |Empty by default.
-|`CamelApnsMessageType` |`STRING, PAYLOAD, APNS_NOTIFICATION`  |In case you choose PAYLOAD for the message type, then the message will
+|`CamelApnsMessageType` |`STRING, PAYLOAD, APNS_NOTIFICATION`  |In case you choose PAYLOAD for the message type, then the message will
 be considered as a APNS payload and sent as is. In case you choose
 STRING, message will be converted as a APNS payload. From *Camel 2.16*
 onwards APNS_NOTIFICATION is used for sending message body as
 com.notnoop.apns.ApnsNotification types.
 |=======================================================================
 
-### ApnsServiceFactory builder callback
+== ApnsServiceFactory builder callback
 
 `ApnsServiceFactory` comes with the empty callback method that could be
 used to configure (or even replace) the default `ApnsServiceBuilder`
@@ -206,7 +214,7 @@ And could be used like as follows:
 [source,java]
 -------------------------------------------------------------------------------------------
 ApnsServiceFactory proxiedApnsServiceFactory = new ApnsServiceFactory(){
-  
+  
   @Override
   protected ApnsServiceBuilder configureServiceBuilder(ApnsServiceBuilder serviceBuilder) {
     return serviceBuilder.withSocksProxy("my.proxy.com", 6666);
@@ -215,9 +223,9 @@ ApnsServiceFactory proxiedApnsServiceFactory = new ApnsServiceFactory(){
 };
 -------------------------------------------------------------------------------------------
 
-### Samples
+== Samples
 
-#### Camel Xml route
+=== Camel Xml route
 
 [source,xml]
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -273,7 +281,7 @@ ApnsServiceFactory proxiedApnsServiceFactory = new ApnsServiceFactory(){
 </beans>
 --------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#### Camel Java route
+=== Camel Java route
 
 [[APNS-Createcamelcontextanddeclareapnscomponentprogrammatically]]
 Create camel context and declare apns component programmatically
@@ -338,10 +346,3 @@ from("apns:consumer?initialDelay=10&delay=3600&timeUnit=SECONDS")
     .to("mock:result");
 --------------------------------------------------------------------------
 
-### See Also
-
-* http://camel.apache.org/component.html[Component]
-* http://camel.apache.org/endpoint.html[Endpoint]
-*
-http://blog.xebia.fr/2010/09/30/creer-un-composant-apache-camel-de-connexion-a-lapns-1-sur-3/[Blog
-about using APNS (in french)]

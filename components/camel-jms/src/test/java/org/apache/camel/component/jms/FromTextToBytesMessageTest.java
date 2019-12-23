@@ -73,6 +73,7 @@ public class FromTextToBytesMessageTest extends CamelTestSupport {
         assertIsInstanceOf(javax.jms.TextMessage.class, msg);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

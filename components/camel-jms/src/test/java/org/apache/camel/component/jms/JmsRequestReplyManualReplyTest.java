@@ -80,6 +80,7 @@ public class JmsRequestReplyManualReplyTest extends CamelTestSupport {
         assertEquals("Bye World", reply);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

@@ -16,21 +16,18 @@
  */
 package org.apache.camel.component.jetty.rest;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.component.jetty.JettyRestHttpBinding;
 import org.junit.Test;
 
 public class RestJettyGetCustomHttpBindingTest extends BaseJettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mybinding", new MyCustomHttpBinding("I was here;"));
-        return jndi;
-    }
+    @BindToRegistry("mybinding")
+    private JettyRestHttpBinding binding = new MyCustomHttpBinding("I was here;");
 
     @Test
     public void testJettyProducerGet() throws Exception {
@@ -47,16 +44,12 @@ public class RestJettyGetCustomHttpBindingTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort()).endpointProperty("httpBindingRef", "#mybinding");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic")
-                        .route()
-                        .to("mock:input")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String id = exchange.getIn().getHeader("id", String.class);
-                                exchange.getOut().setBody(id + ";Donald Duck");
-                            }
-                        });
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String id = exchange.getIn().getHeader("id", String.class);
+                        exchange.getOut().setBody(id + ";Donald Duck");
+                    }
+                });
             }
         };
     }

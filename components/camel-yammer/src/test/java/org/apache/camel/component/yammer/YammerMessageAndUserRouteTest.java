@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.yammer;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -31,6 +30,7 @@ public class YammerMessageAndUserRouteTest extends CamelTestSupport {
     private static final String YAMMER_CURRENT_USER_CONSUMER = "yammer:current?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken";
     private static final String YAMMER_MESSAGES_CONSUMER = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken";
 
+    @Override
     @Before
     public void setUp() throws Exception { 
         super.setUp();

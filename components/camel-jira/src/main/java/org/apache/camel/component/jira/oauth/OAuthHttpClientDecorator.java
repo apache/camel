@@ -41,14 +41,17 @@ public abstract class OAuthHttpClientDecorator implements DisposableHttpClient {
         this.authenticationHandler = authenticationHandler;
     }
 
+    @Override
     public void flushCacheByUriPattern(Pattern urlPattern) {
         httpClient.flushCacheByUriPattern(urlPattern);
     }
 
+    @Override
     public Request.Builder newRequest() {
         return new OAuthAuthenticatedRequestBuilder();
     }
 
+    @Override
     public Request.Builder newRequest(URI uri) {
         final Request.Builder builder = new OAuthAuthenticatedRequestBuilder();
         builder.setUri(uri);
@@ -56,6 +59,7 @@ public abstract class OAuthHttpClientDecorator implements DisposableHttpClient {
         return builder;
     }
 
+    @Override
     public Request.Builder newRequest(URI uri, String contentType, String entity) {
         final Request.Builder builder = new OAuthAuthenticatedRequestBuilder();
         this.uri = uri;
@@ -65,6 +69,7 @@ public abstract class OAuthHttpClientDecorator implements DisposableHttpClient {
         return builder;
     }
 
+    @Override
     public Request.Builder newRequest(String uri) {
         final Request.Builder builder = new OAuthAuthenticatedRequestBuilder();
         this.uri = URI.create(uri);
@@ -72,6 +77,7 @@ public abstract class OAuthHttpClientDecorator implements DisposableHttpClient {
         return builder;
     }
 
+    @Override
     public Request.Builder newRequest(String uri, String contentType, String entity) {
         final Request.Builder builder = new OAuthAuthenticatedRequestBuilder();
         this.uri = URI.create(uri);

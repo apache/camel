@@ -57,8 +57,6 @@ public class StompComponent extends HeaderFilterStrategyComponent implements SSL
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // must copy config so we do not have side effects
         StompConfiguration config = getConfiguration().copy();
-        // allow to configure configuration from uri parameters
-        setProperties(config, parameters);
 
         StompEndpoint endpoint = new StompEndpoint(uri, this, config, remaining);
         

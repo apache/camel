@@ -48,6 +48,7 @@ public class CsvMarshalCharsetTest extends CamelTestSupport {
         assertThat(body, startsWith("L\u00fccky Luke"));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

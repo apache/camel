@@ -28,6 +28,7 @@ import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -53,7 +54,7 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public class FallbackTypeConverter {
 
     public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint";

@@ -17,10 +17,12 @@
 package org.apache.camel.component.dataset;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.Scanner;
 
 /**
@@ -30,7 +32,7 @@ import org.apache.camel.util.Scanner;
  */
 public class FileDataSet extends ListDataSet {
     private File sourceFile;
-    private String delimiter = "\\z";
+    private String delimiter;
 
     private List<Object> defaultBodies;
 
@@ -39,7 +41,7 @@ public class FileDataSet extends ListDataSet {
     }
 
     public FileDataSet(File sourceFile) throws IOException {
-        this(sourceFile, "\\z");
+        this(sourceFile, null);
     }
 
     public FileDataSet(String sourceFileName, String delimiter) throws IOException {
@@ -77,14 +79,20 @@ public class FileDataSet extends ListDataSet {
 
     private void readSourceFile() throws IOException {
         List<Object> bodies = new LinkedList<>();
-        try (Scanner scanner = new Scanner(sourceFile, null, delimiter)) {
-            while (scanner.hasNext()) {
-                String nextPayload = scanner.next();
-                if ((nextPayload != null)  &&  (nextPayload.length() > 0)) {
-                    bodies.add(nextPayload);
+        if (delimiter != null) {
+            try (Scanner scanner = new Scanner(sourceFile, null, delimiter)) {
+                while (scanner.hasNext()) {
+                    String nextPayload = scanner.next();
+                    if ((nextPayload != null) && (nextPayload.length() > 0)) {
+                        bodies.add(nextPayload);
+                    }
                 }
             }
-            setDefaultBodies(bodies);
+        } else {
+            Object data = IOHelper.loadText(new FileInputStream(sourceFile));
+            bodies.add(data);
         }
+
+        setDefaultBodies(bodies);
     }
 }

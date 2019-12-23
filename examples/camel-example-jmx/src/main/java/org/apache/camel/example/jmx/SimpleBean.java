@@ -18,6 +18,7 @@ package org.apache.camel.example.jmx;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
 import javax.management.AttributeChangeNotification;
 import javax.management.NotificationBroadcasterSupport;
 
@@ -31,6 +32,7 @@ public class SimpleBean extends NotificationBroadcasterSupport implements ISimpl
     private int sequence;
     private int tick;
 
+    @Override
     public void tick() throws Exception {
         tick++;
 

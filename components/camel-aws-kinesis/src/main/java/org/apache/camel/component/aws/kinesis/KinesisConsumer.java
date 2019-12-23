@@ -31,7 +31,6 @@ import com.amazonaws.services.kinesis.model.GetShardIteratorResult;
 import com.amazonaws.services.kinesis.model.Record;
 import com.amazonaws.services.kinesis.model.Shard;
 import com.amazonaws.services.kinesis.model.ShardIteratorType;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -65,12 +64,12 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
         if (isShardClosed) {
             switch (getEndpoint().getConfiguration().getShardClosed()) {
             case ignore:
-                log.warn("The shard {} is in closed state");
+                log.warn("The shard {} is in closed state", currentShardIterator);
                 break;
             case silent:
                 break;
             case fail:
-                log.info("Shard Iterator reaches CLOSE status:", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
+                log.info("Shard Iterator reaches CLOSE status:{} {}", getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
                 throw new ReachedClosedStatusException(getEndpoint().getConfiguration().getStreamName(), getEndpoint().getConfiguration().getShardId());
             default:
                 throw new IllegalArgumentException("Unsupported shard closed strategy");
@@ -118,15 +117,9 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
                 shardId = getEndpoint().getConfiguration().getShardId();
                 DescribeStreamRequest req1 = new DescribeStreamRequest().withStreamName(getEndpoint().getConfiguration().getStreamName());
                 DescribeStreamResult res1 = getClient().describeStream(req1);
-                Iterator it = res1.getStreamDescription().getShards().iterator();
-                while (it.hasNext()) {
-                    Shard shard = (Shard)it.next();
+                for (Shard shard : res1.getStreamDescription().getShards()) {
                     if (shard.getShardId().equalsIgnoreCase(getEndpoint().getConfiguration().getShardId())) {
-                        if (shard.getSequenceNumberRange().getEndingSequenceNumber() == null) {
-                            isShardClosed = false;
-                        } else {
-                            isShardClosed = true;
-                        }
+                        isShardClosed = shard.getSequenceNumberRange().getEndingSequenceNumber() != null;
                     }
                 }
 
@@ -134,11 +127,7 @@ public class KinesisConsumer extends ScheduledBatchPollingConsumer {
                 DescribeStreamRequest req1 = new DescribeStreamRequest().withStreamName(getEndpoint().getConfiguration().getStreamName());
                 DescribeStreamResult res1 = getClient().describeStream(req1);
                 shardId = res1.getStreamDescription().getShards().get(0).getShardId();
-                if (res1.getStreamDescription().getShards().get(0).getSequenceNumberRange().getEndingSequenceNumber() == null) {
-                    isShardClosed = false;
-                } else {
-                    isShardClosed = true;
-                }
+                isShardClosed = res1.getStreamDescription().getShards().get(0).getSequenceNumberRange().getEndingSequenceNumber() != null;
             }
             log.debug("ShardId is: {}", shardId);
 

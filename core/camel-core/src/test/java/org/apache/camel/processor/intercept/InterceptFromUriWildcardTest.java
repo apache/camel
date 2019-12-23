@@ -57,11 +57,13 @@ public class InterceptFromUriWildcardTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // only trigger when incoming from any seda endpoint as we use the * wildcard
+                // only trigger when incoming from any seda endpoint as we use
+                // the * wildcard
                 interceptFrom("seda*").to("mock:intercept");
 
                 from("direct:start").to("mock:result");

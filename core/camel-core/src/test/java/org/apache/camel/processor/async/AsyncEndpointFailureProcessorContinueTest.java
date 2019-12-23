@@ -48,28 +48,19 @@ public class AsyncEndpointFailureProcessorContinueTest extends ContextTestSuppor
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                // the onException can be asynchronous as well so we have to test for that
-                onException(IllegalArgumentException.class).continued(true)
-                        .to("mock:before")
-                        .to("log:before")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                beforeThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("async:MyFailureHandler")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                afterThreadName = Thread.currentThread().getName();
-                            }
-                        })
-                        .to("log:after")
-                        .to("mock:after");
+                // the onException can be asynchronous as well so we have to
+                // test for that
+                onException(IllegalArgumentException.class).continued(true).to("mock:before").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).to("async:MyFailureHandler").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).to("log:after").to("mock:after");
 
-                from("direct:start")
-                        .throwException(new IllegalArgumentException("Damn"))
-                        .to("mock:result")
-                        .transform(constant("Bye Camel"));
+                from("direct:start").throwException(new IllegalArgumentException("Damn")).to("mock:result").transform(constant("Bye Camel"));
             }
         };
     }

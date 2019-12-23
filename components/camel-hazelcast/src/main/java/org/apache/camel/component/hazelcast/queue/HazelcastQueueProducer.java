@@ -22,7 +22,6 @@ import java.util.function.Predicate;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
@@ -42,6 +41,7 @@ public class HazelcastQueueProducer extends HazelcastDefaultProducer {
         this.queue = hazelcastInstance.getQueue(queueName);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         
         Map<String, Object> headers = exchange.getIn().getHeaders();

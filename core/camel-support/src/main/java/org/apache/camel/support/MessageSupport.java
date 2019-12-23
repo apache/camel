@@ -213,7 +213,6 @@ public abstract class MessageSupport implements Message, CamelContextAware, Data
 
         setMessageId(that.getMessageId());
         setBody(newBody);
-        setFault(that.isFault());
 
         // the headers may be the same instance if the end user has made some mistake
         // and set the OUT message with the same header instance of the IN message etc

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.wsdl_first.PersonImpl;
@@ -27,6 +28,7 @@ public class CxfWsdlFirstTest extends AbstractCxfWsdlFirstTest {
         return true;
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/WsdlFirstBeans.xml");
     }

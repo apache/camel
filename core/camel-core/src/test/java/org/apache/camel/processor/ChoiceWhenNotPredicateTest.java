@@ -45,15 +45,12 @@ public class ChoiceWhenNotPredicateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .choice()
-                        .when(not(header("username").regex("goofy|pluto"))).to("mock:people")
-                        .otherwise().to("mock:animals")
-                    .end();
+                from("direct:start").choice().when(not(header("username").regex("goofy|pluto"))).to("mock:people").otherwise().to("mock:animals").end();
                 // END SNIPPET: e1
             }
         };

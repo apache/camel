@@ -31,6 +31,5 @@ public final class GoogleMailConstants {
      * Prevent instantiation.
      */
     private GoogleMailConstants() {
-        super();
     }
 }

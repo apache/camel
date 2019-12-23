@@ -1,7 +1,11 @@
 [[web3j-component]]
-== Web3j Ethereum Blockchain Component
+= Web3j Ethereum Blockchain Component
 
-*Available as of Camel version 2.22*
+*Since Camel 2.22*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Ethereum blockchain component uses the
 https://github.com/web3j/web3j[web3j] client
@@ -20,18 +24,18 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-=== URI Format
+== URI Format
 
 [source,text]
 ----
 web3j://<local/remote host:port or local IPC path>[?options]
 ----
 
-=== Web3j Options
+== Web3j Options
 
 
 // component options: START
-The Web3j Ethereum Blockchain component supports 3 options, which are listed below.
+The Web3j Ethereum Blockchain component supports 4 options, which are listed below.
 
 
 
@@ -39,8 +43,9 @@ The Web3j Ethereum Blockchain component supports 3 options, which are listed bel
 |===
 | Name | Description | Default | Type
 | *configuration* (common) | Default configuration |  | Web3jConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -54,7 +59,7 @@ web3j:nodeAddress
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +69,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (40 parameters):
+=== Query Parameters (40 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,20 +77,20 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *addresses* (common) | Contract address or a list of addresses. |  | List
 | *fromAddress* (common) | The address the transaction is send from |  | String
-| *fromBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | DefaultBlockParameter
+| *fromBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | String
 | *fullTransactionObjects* (common) | If true it returns the full transaction objects, if false only the hashes of the transactions. | false | boolean
 | *gasLimit* (common) | The maximum gas allowed in this block. |  | BigInteger
 | *privateFor* (common) | A transaction privateFor nodes with public keys in a Quorum network |  | List
 | *quorumAPI* (common) | If true, this will support Quorum API. | false | boolean
 | *toAddress* (common) | The address the transaction is directed to. |  | String
-| *toBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | DefaultBlockParameter
+| *toBlock* (common) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | String
 | *topics* (common) | Topics are order-dependent. Each topic can also be a list of topics. Specify multiple topics separated by comma. |  | String
 | *web3j* (common) | The preconfigured Web3j object. |  | Web3j
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *address* (producer) | Contract address. |  | String
-| *atBlock* (producer) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | DefaultBlockParameter
+| *atBlock* (producer) | The block number, or the string latest for the last mined block or pending, earliest for not yet mined transactions. | latest | String
 | *blockHash* (producer) | Hash of the block where this transaction was in. |  | String
 | *clientId* (producer) | A random hexadecimal(32 bytes) ID identifying the client. |  | String
 | *data* (producer) | The compiled code of a contract OR the hash of the invoked method signature and encoded parameters. |  | String
@@ -113,14 +118,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-web3j-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -128,7 +133,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 37 options, which are listed below.
+The component supports 38 options, which are listed below.
 
 
 
@@ -136,6 +141,7 @@ The component supports 37 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.web3j.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.web3j.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.web3j.configuration.address* | Contract address. |  | String
 | *camel.component.web3j.configuration.addresses* | Contract address or a list of addresses. |  | List
 | *camel.component.web3j.configuration.at-block* | The block number, or the string "latest" for the last mined block or "pending", "earliest" for not yet mined transactions. | latest | String
@@ -170,8 +176,8 @@ The component supports 37 options, which are listed below.
 | *camel.component.web3j.configuration.ttl* | The time to live in seconds of a whisper message. |  | BigInteger
 | *camel.component.web3j.configuration.value* | The value sent within a transaction. |  | BigInteger
 | *camel.component.web3j.configuration.web3j* | The preconfigured Web3j object. |  | Web3j
-| *camel.component.web3j.enabled* | Enable web3j component | true | Boolean
-| *camel.component.web3j.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.web3j.enabled* | Whether to enable auto configuration of the web3j component. This is enabled by default. |  | Boolean
+| *camel.component.web3j.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -181,7 +187,7 @@ You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
 
-### Message Headers
+== Message Headers
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -193,7 +199,7 @@ You can append query options to the URI in the following format,
 
 
 
-### Samples
+== Samples
 
 Listen for new mined blocks and send the block hash to a jms queue:
 

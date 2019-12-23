@@ -38,6 +38,7 @@ public class CassandraIdempotentRepositoryTest extends BaseCassandraTest {
     private Session session;
     private CassandraIdempotentRepository idempotentRepository;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         if (canTest()) {
@@ -48,6 +49,7 @@ public class CassandraIdempotentRepositoryTest extends BaseCassandraTest {
         }
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         if (canTest()) {
@@ -58,9 +60,7 @@ public class CassandraIdempotentRepositoryTest extends BaseCassandraTest {
     }
 
     private boolean exists(String key) {
-        return session.execute(
-                "select KEY from CAMEL_IDEMPOTENT where KEY=?", key)
-                .one() != null;
+        return session.execute("select KEY from CAMEL_IDEMPOTENT where KEY=?", key).one() != null;
     }
 
     @Test
@@ -154,7 +154,7 @@ public class CassandraIdempotentRepositoryTest extends BaseCassandraTest {
         // Then
         assertTrue(result);
     }
-    
+
     @Test
     public void testClear() {
         if (!canTest()) {

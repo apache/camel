@@ -65,7 +65,7 @@ public class DirectVmProducer extends DefaultAsyncProducer {
         }
         
         return consumer.getAsyncProcessor().process(submitted, done -> {
-            Message msg = submitted.hasOut() ? submitted.getOut() : submitted.getIn();
+            Message msg = submitted.getMessage();
 
             if (headerFilterStrategy != null) {
                 msg.getHeaders().entrySet().removeIf(e -> headerFilterStrategy.applyFilterToExternalHeaders(e.getKey(), e.getValue(), submitted));

@@ -48,10 +48,12 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint {
         this.defaultChannel = channel;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SpringIntegrationProducer((SpringCamelContext) getCamelContext(), this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         SpringIntegrationConsumer answer = new SpringIntegrationConsumer(this, processor);
         configureConsumer(answer);
@@ -97,6 +99,7 @@ public class SpringIntegrationEndpoint extends DefaultEndpoint {
         return messageChannel;
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

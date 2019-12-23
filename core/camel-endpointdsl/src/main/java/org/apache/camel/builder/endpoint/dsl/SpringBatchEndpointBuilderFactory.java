@@ -49,7 +49,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobFromHeader(boolean jobFromHeader) {
-            setProperty("jobFromHeader", jobFromHeader);
+            doSetProperty("jobFromHeader", jobFromHeader);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobFromHeader(String jobFromHeader) {
-            setProperty("jobFromHeader", jobFromHeader);
+            doSetProperty("jobFromHeader", jobFromHeader);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobLauncher(Object jobLauncher) {
-            setProperty("jobLauncher", jobLauncher);
+            doSetProperty("jobLauncher", jobLauncher);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobLauncher(String jobLauncher) {
-            setProperty("jobLauncher", jobLauncher);
+            doSetProperty("jobLauncher", jobLauncher);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobRegistry(Object jobRegistry) {
-            setProperty("jobRegistry", jobRegistry);
+            doSetProperty("jobRegistry", jobRegistry);
             return this;
         }
         /**
@@ -111,7 +111,47 @@ public interface SpringBatchEndpointBuilderFactory {
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobRegistry(String jobRegistry) {
-            setProperty("jobRegistry", jobRegistry);
+            doSetProperty("jobRegistry", jobRegistry);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SpringBatchEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SpringBatchEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -135,7 +175,7 @@ public interface SpringBatchEndpointBuilderFactory {
          */
         default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -148,7 +188,7 @@ public interface SpringBatchEndpointBuilderFactory {
          */
         default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -161,7 +201,7 @@ public interface SpringBatchEndpointBuilderFactory {
          */
         default AdvancedSpringBatchEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -174,7 +214,7 @@ public interface SpringBatchEndpointBuilderFactory {
          */
         default AdvancedSpringBatchEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -184,7 +224,7 @@ public interface SpringBatchEndpointBuilderFactory {
      * further processing.
      * 
      * Category: spring,batch,scheduling
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-spring-batch
      * 
      * Syntax: <code>spring-batch:jobName</code>

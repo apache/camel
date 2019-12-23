@@ -40,14 +40,14 @@ public class LanguageServiceTest extends ContextTestSupport {
 
     @Test
     public void testLanguageService() throws Exception {
-        MyLanguage myl = (MyLanguage) context.resolveLanguage("my");
+        MyLanguage myl = (MyLanguage)context.resolveLanguage("my");
         assertNotNull(myl);
         assertEquals("Started", myl.getState());
         // simple language is resolved by default hence why there is 2
         assertEquals(2, context.getLanguageNames().size());
 
         // resolve again, should find same instance
-        MyLanguage myl2 = (MyLanguage) context.resolveLanguage("my");
+        MyLanguage myl2 = (MyLanguage)context.resolveLanguage("my");
         assertNotNull(myl2);
         assertSame(myl, myl2);
         assertEquals("Started", myl2.getState());

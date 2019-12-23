@@ -32,6 +32,7 @@ public class RefComponent extends DefaultComponent {
     public RefComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // first remove the scheme from the URI
         int index = uri.indexOf(':');

@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -68,6 +69,7 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
      *                 threads it generated failed.
      * @throws org.apache.maven.plugin.MojoFailureException something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         // only generate this for the root pom
         if ("pom".equals(project.getModel().getPackaging())) {
@@ -108,7 +110,7 @@ public class PackageArchetypeCatalogMojo extends AbstractMojo {
             ArchetypeModel model = new ArchetypeModel();
 
             // just use a simple line by line text parser (no need for DOM) just to grab 4 lines of data
-            for (Object o : FileUtils.readLines(pom)) {
+            for (Object o : FileUtils.readLines(pom, StandardCharsets.UTF_8)) {
 
                 String line = o.toString();
 

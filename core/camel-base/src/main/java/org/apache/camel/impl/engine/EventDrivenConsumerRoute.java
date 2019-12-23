@@ -53,6 +53,7 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
         return "EventDrivenConsumerRoute[" + getEndpoint() + " -> " + processor + "]";
     }
 
+    @Override
     public Processor getProcessor() {
         return processor;
     }
@@ -77,6 +78,7 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
         }
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public Navigate<Processor> navigate() {
         Processor answer = getProcessor();
@@ -96,6 +98,7 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
         return null;
     }
 
+    @Override
     public List<Processor> filter(String pattern) {
         List<Processor> match = new ArrayList<>();
         doFilter(pattern, navigate(), match);
@@ -122,10 +125,12 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
         }
     }
 
+    @Override
     public Consumer getConsumer() {
         return consumer;
     }
 
+    @Override
     public boolean supportsSuspension() {
         return consumer instanceof Suspendable && consumer instanceof SuspendableService;
     }

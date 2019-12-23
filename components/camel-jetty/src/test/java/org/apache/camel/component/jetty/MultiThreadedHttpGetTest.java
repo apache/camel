@@ -22,10 +22,9 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http4.HttpComponent;
+import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-
 import org.junit.Test;
 
 public class MultiThreadedHttpGetTest extends BaseJettyTest {
@@ -47,11 +46,10 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
         // This is needed as by default there are 2 parallel
         // connections to some host and there is nothing that
         // closes the http connection here.
-        // Need to set the httpConnectionManager 
+        // Need to set the httpConnectionManager
         PoolingHttpClientConnectionManager httpConnectionManager = new PoolingHttpClientConnectionManager();
         httpConnectionManager.setDefaultMaxPerRoute(5);
         context.getComponent("http", HttpComponent.class).setClientConnectionManager(httpConnectionManager);
-       
 
         String endpointName = "seda:withoutConversion?concurrentConsumers=5";
         sendMessagesTo(endpointName, 5);
@@ -99,11 +97,9 @@ public class MultiThreadedHttpGetTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("seda:withConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search")
-                        .convertBodyTo(String.class).to("mock:results");
+                from("seda:withConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search").convertBodyTo(String.class).to("mock:results");
 
-                from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search")
-                        .to("mock:results");
+                from("seda:withoutConversion?concurrentConsumers=5").to("http://localhost:{{port}}/search").to("mock:results");
 
                 from("jetty:http://localhost:{{port}}/search").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {

@@ -37,9 +37,7 @@ public class PollEnrichNullBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .pollEnrich("seda:foo", 1000)
-                    .to("mock:result");
+                from("direct:start").pollEnrich("seda:foo", 1000).to("mock:result");
             }
         };
     }

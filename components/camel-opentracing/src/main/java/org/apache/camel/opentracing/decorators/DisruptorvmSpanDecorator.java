@@ -23,4 +23,9 @@ public class DisruptorvmSpanDecorator extends AbstractInternalSpanDecorator {
         return "disruptor-vm";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.disruptor.vm.DisruptorVmComponent";
+    }
+
 }

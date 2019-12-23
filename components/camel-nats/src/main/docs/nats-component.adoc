@@ -1,12 +1,16 @@
 [[nats-component]]
-== Nats Component
+= Nats Component
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
 
-http://nats.io/[NATS] is a fast and reliable messaging platform.
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
+http://nats.io/[NATS] is a fast and reliable messaging platform.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component.
+their `pom.xml` for this component.
 
 [source,xml]
 ------------------------------------------------------------
@@ -18,29 +22,31 @@ their `pom.xml` for this component.
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ----------------------
-nats:servers[?options]
+nats:topic[?options]
 ----------------------
 
-Where *servers* represents the list of NATS servers.
+Where *topic* is the topic name
 
-### Options
+== Options
 
 
 // component options: START
-The Nats component supports 3 options, which are listed below.
+The Nats component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
+| *servers* (common) | URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -52,30 +58,29 @@ The Nats component supports 3 options, which are listed below.
 The Nats endpoint is configured using URI syntax:
 
 ----
-nats:servers
+nats:topic
 ----
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *servers* | *Required* URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
+| *topic* | *Required* The name of topic we want to use |  | String
 |===
 
 
-==== Query Parameters (27 parameters):
+=== Query Parameters (28 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *connection* (common) | Reference an already instantiated connection to Nats server |  | Connection
 | *connectionTimeout* (common) | Timeout for connection attempts. (in milliseconds) | 2000 | int
-| *flushConnection* (common) | Define if we want to flush connection or not | false | boolean
+| *flushConnection* (common) | Define if we want to flush connection when stopping or not | false | boolean
 | *flushTimeout* (common) | Set the flush timeout (in milliseconds) | 1000 | int
 | *maxPingsOut* (common) | maximum number of pings have not received a response allowed by the client | 2 | int
 | *maxReconnectAttempts* (common) | Max reconnection attempts | 60 | int
@@ -86,31 +91,33 @@ with the following path and query parameters:
 | *reconnect* (common) | Whether or not using reconnection feature | true | boolean
 | *reconnectTimeWait* (common) | Waiting time before attempts reconnection (in milliseconds) | 2000 | int
 | *requestCleanupInterval* (common) | Interval to clean up cancelled/timed out requests. | 5000 | int
-| *topic* (common) | *Required* The name of topic we want to use |  | String
+| *servers* (common) | URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
 | *verbose* (common) | Whether or not running in verbose mode | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *maxMessages* (consumer) | Stop receiving messages from a topic we are subscribing to after maxMessages |  | String
-| *poolSize* (consumer) | Consumer pool size | 10 | int
+| *poolSize* (consumer) | Consumer thread pool size (default is 10) | 10 | int
 | *queueName* (consumer) | The Queue name if we are using nats for a queue configuration |  | String
+| *replyToDisabled* (consumer) | Can be used to turn off sending back reply message in the consumer. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *replySubject* (producer) | the subject to which subscribers should send response |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *connection* (advanced) | Reference an already instantiated connection to Nats server |  | Connection
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *secure* (security) | Set secure option indicating TLS is required | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-nats-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -118,7 +125,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -126,49 +133,103 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.nats.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.nats.enabled* | Enable nats component | true | Boolean
-| *camel.component.nats.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.nats.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.nats.enabled* | Whether to enable auto configuration of the nats component. This is enabled by default. |  | Boolean
+| *camel.component.nats.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+| *camel.component.nats.servers* | URLs to one or more NAT servers. Use comma to separate URLs when specifying multiple servers. |  | String
 | *camel.component.nats.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
+== Configuring servers
 
+You configure the NATS servers on either the component or the endpoint.
 
+For example to configure this once on the component you can do:
 
-### Headers
+[source,java]
+----
+NatsComponent nats = context.getComponent("nats", NatsComponent.class);
+nats.setServers("someserver:4222,someotherserver:42222");
+----
+
+Notice how you can specify multiple servers separated by comma.
+
+Or you can specify the servers in the endpoint URI
+
+[source,java]
+----
+from("direct:send").to("nats:test?servers=localhost:4222");
+----
+
+The endpoint configuration will override any server configuration on the component level.
+
+=== Configuring username and password or token
+
+You can specify username and password for the servers in the server URLs,
+where its `username:password@url`, or `token@url` etc:
+
+[source,java]
+----
+NatsComponent nats = context.getComponent("nats", NatsComponent.class);
+nats.setServers("scott:tiger@someserver:4222,superman:123@someotherserver:42222");
+----
+
+If you are using Camel Main or Spring Boot you can configure the server urls in the `application.properties` file
+[source,properties]
+----
+camel.component.nats.servers=scott:tiger@someserver:4222,superman:123@someotherserver:42222
+----
+
+== Headers
 
 [width="100%",options="header"]
 |=======================================================================
 |Name |Type |Description
-
-|CamelNatsMessageTimestamp |long |The timestamp of a consumed message.
+| CamelNatsSID | String | The SID of a consumed message.
+| CamelNatsReplyTo | String | The ReplyTo of a consumed message (may be null).
+| CamelNatsSubject | String | The Subject of a consumed message.
+| CamelNatsQueueName | String | The Queue name of a consumed message (may be null).
+| CamelNatsMessageTimestamp | long | The timestamp of a consumed message.
 |=======================================================================
- 
+
+== Request/Reply support
+The producer only supports publishing (sending) messages.
+The producer does not support request/reply where it can wait for an expected reply message.
+
+The consumer will when routing the message is complete, send back the message as reply-message if required.
+
+== Examples
+
 *Producer example:*
 
 [source,java]
------------------------------------------------------------
-from("direct:send").to("nats://localhost:4222?topic=test");
------------------------------------------------------------
+----
+from("direct:send")
+  .to("nats:mytopic");
+----
 
 In case of using Authorization you can directly specify your credentials in the server URL
 
 [source,java]
------------------------------------------------------------
-from("direct:send").to("nats://username:password@localhost:4222?topic=test");
------------------------------------------------------------
+----
+from("direct:send")
+  .to("nats:mytopic?servers=username:password@localhost:4222");
+----
 
 or your token
 
 [source,java]
------------------------------------------------------------
-from("direct:send").to("nats://token@localhost:4222?topic=test");
------------------------------------------------------------
+----
+from("direct:send")
+  .to("nats:mytopic?servers=token@localhost:4222);
+----
 
 *Consumer example:*
 
 [source,java]
-----------------------------------------------------------------------------------------
-from("nats://localhost:4222?topic=test&maxMessages=5&queueName=test").to("mock:result");
-----------------------------------------------------------------------------------------
+----
+from("nats:mytopic?maxMessages=5&queueName=myqueue")
+  .to("mock:result");
+----

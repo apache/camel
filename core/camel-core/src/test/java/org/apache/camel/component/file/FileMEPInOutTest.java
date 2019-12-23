@@ -35,18 +35,16 @@ public class FileMEPInOutTest extends ContextTestSupport {
         mock.expectedFileExists("target/data/FileMEPInOutTest.txt", "Hello World");
 
         // request is InOut
-        template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME,
-            "FileMEPInOutTest.txt");
+        template.requestBodyAndHeader("direct:in", "Hello World", Exchange.FILE_NAME, "FileMEPInOutTest.txt");
 
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                    .to("file://target/data/?fileExist=Override")
-                    .to("mock:result");
+                from("direct:in").to("file://target/data/?fileExist=Override").to("mock:result");
             }
         };
     }

@@ -56,6 +56,7 @@ import static org.mockito.Mockito.mock;
 public class CamelDestinationTest extends CamelTransportTestSupport {
     private Message destMessage;
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -65,6 +66,7 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         };
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return new DefaultCamelContext();
     }

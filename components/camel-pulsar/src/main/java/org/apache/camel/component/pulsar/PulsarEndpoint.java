@@ -28,19 +28,23 @@ import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.pulsar.client.api.PulsarClient;
 
-@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Apache Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", label = "messaging")
+@UriEndpoint(scheme = "pulsar", firstVersion = "2.24.0", title = "Pulsar", syntax = "pulsar:persistence://tenant/namespace/topic", label = "messaging")
 public class PulsarEndpoint extends DefaultEndpoint {
 
     private PulsarClient pulsarClient;
     private String uri;
 
-    @UriPath(enums = "persistent,non-persistent") @Metadata(required = true)
+    @UriPath(enums = "persistent,non-persistent")
+    @Metadata(required = true)
     private String persistence;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String tenant;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String namespace;
-    @UriPath @Metadata(required = true)
+    @UriPath
+    @Metadata(required = true)
     private String topic;
     @UriParam
     private PulsarConfiguration pulsarConfiguration;
@@ -136,5 +140,10 @@ public class PulsarEndpoint extends DefaultEndpoint {
         ObjectHelper.notNull(topic, "topic", this);
 
         uri = persistence + "://" + tenant + "/" + namespace + "/" + topic;
+    }
+
+    @Override
+    public PulsarComponent getComponent() {
+        return (PulsarComponent)super.getComponent();
     }
 }

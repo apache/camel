@@ -78,21 +78,13 @@ public class LogInputStreamTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .to("log:a")
-                    .to("mock:a");
+                from("direct:a").to("log:a").to("mock:a");
 
-                from("direct:b")
-                    .to("log:b?showStreams=true")
-                    .to("mock:b");
+                from("direct:b").to("log:b?showStreams=true").to("mock:b");
 
-                from("direct:c").streamCaching()
-                    .to("log:c")
-                    .to("mock:c");
+                from("direct:c").streamCaching().to("log:c").to("mock:c");
 
-                from("direct:d").streamCaching()
-                    .to("log:d?showStreams=true")
-                    .to("mock:d");
+                from("direct:d").streamCaching().to("log:d?showStreams=true").to("mock:d");
             }
         };
     }

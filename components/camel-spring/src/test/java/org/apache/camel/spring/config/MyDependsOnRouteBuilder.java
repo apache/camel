@@ -16,9 +16,9 @@
  */
 package org.apache.camel.spring.config;
 
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 
-public class MyDependsOnRouteBuilder extends SpringRouteBuilder {
+public class MyDependsOnRouteBuilder extends RouteBuilder {
 
     private long time;
 
@@ -27,7 +27,7 @@ public class MyDependsOnRouteBuilder extends SpringRouteBuilder {
         // time when we was invoked by Spring
         this.time = System.nanoTime();
 
-        MyDependsOnBean bean = lookup("myDependsOnBean", MyDependsOnBean.class);
+        MyDependsOnBean bean = getContext().getRegistry().lookupByNameAndType("myDependsOnBean", MyDependsOnBean.class);
 
         from("direct:start").to(bean.getEndpointName());
     }

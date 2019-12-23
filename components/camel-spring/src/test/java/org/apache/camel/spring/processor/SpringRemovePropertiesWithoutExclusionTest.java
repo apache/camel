@@ -22,6 +22,7 @@ import org.apache.camel.processor.RemovePropertiesWithoutExclusionTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringRemovePropertiesWithoutExclusionTest extends RemovePropertiesWithoutExclusionTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/removePropertiesWithoutExclusion.xml");

@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.camel.main.parser.ConfigurationModel;
 import org.apache.camel.main.parser.MainConfigurationParser;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.json.Jsoner;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -74,6 +75,8 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 String prefix;
                 if (file.getName().contains("Hystrix")) {
                     prefix = "camel.hystrix.";
+                } else if (file.getName().contains("Resilience")) {
+                    prefix = "camel.resilience4j.";
                 } else if (file.getName().contains("Rest")) {
                     prefix = "camel.rest.";
                 } else {
@@ -124,7 +127,7 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 p.put("sourceType", sourceType);
                 p.put("description", desc);
                 if (defaultValue != null) {
-                    p.put("defaultValue", defaultValue);
+                    p.put("defaultValue", asDefaultValue(javaType, defaultValue));
                 }
                 if (row.isDeprecated()) {
                     p.put("deprecated", true);
@@ -143,12 +146,17 @@ public class PrepareCamelMainMojo extends AbstractMojo {
             group2.put("description", "camel-hystrix configurations.");
             group2.put("sourceType", "org.apache.camel.main.HystrixConfigurationProperties");
             Map group3 = new LinkedHashMap();
-            group3.put("name", "camel.rest");
-            group3.put("description", "camel-rest configurations.");
-            group3.put("sourceType", "org.apache.camel.spi.RestConfiguration");
+            group3.put("name", "camel.resilience4j");
+            group3.put("description", "camel-resilience4j configurations.");
+            group3.put("sourceType", "org.apache.camel.main.Resilience4jConfigurationProperties");
+            Map group4 = new LinkedHashMap();
+            group4.put("name", "camel.rest");
+            group4.put("description", "camel-rest configurations.");
+            group4.put("sourceType", "org.apache.camel.spi.RestConfiguration");
             groups.add(group1);
             groups.add(group2);
             groups.add(group3);
+            groups.add(group4);
 
             Map map = new LinkedHashMap();
             map.put("groups", groups);
@@ -168,6 +176,17 @@ public class PrepareCamelMainMojo extends AbstractMojo {
                 throw new MojoFailureException("Cannot write to file " + file + " due " + e.getMessage(), e);
             }
         }
+    }
+
+    private static Object asDefaultValue(String javaType, String defaultValue) {
+        if ("java.lang.Boolean".equals(javaType) || "boolean".equals(javaType)) {
+            return Boolean.parseBoolean(defaultValue);
+        } else if ("java.lang.Integer".equals(javaType) || "int".equals(javaType)) {
+            return Integer.parseInt(defaultValue);
+        } else if ("java.lang.Long".equals(javaType) || "long".equals(javaType)) {
+            return Long.parseLong(defaultValue);
+        }
+        return defaultValue;
     }
 
 }

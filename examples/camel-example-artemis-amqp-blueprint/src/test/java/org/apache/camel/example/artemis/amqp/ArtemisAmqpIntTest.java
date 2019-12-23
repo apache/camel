@@ -36,7 +36,7 @@ public class ArtemisAmqpIntTest extends CamelBlueprintTestSupport {
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected String useOverridePropertiesWithConfigAdmin(Dictionary props) { 
         //obtain an available port
-        int port = AvailablePortFinder.getNextAvailable(9090);
+        int port = AvailablePortFinder.getNextAvailable();
 
         if (port != 9090) {
             //override the Netty port to use
@@ -53,7 +53,7 @@ public class ArtemisAmqpIntTest extends CamelBlueprintTestSupport {
     @Test
     public void testEmbeddedBroker() throws Exception {
         //trigger
-        String response = template.requestBody("netty4-http:http://localhost:{{netty.port}}/message", null, String.class);
+        String response = template.requestBody("netty-http:http://localhost:{{netty.port}}/message", null, String.class);
 
         //response validation
         assertEquals("not expected", "Hello from Camel's AMQP example", response);

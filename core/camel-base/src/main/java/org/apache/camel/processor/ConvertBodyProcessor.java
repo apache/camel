@@ -57,17 +57,19 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
         return "convertBodyTo[" + type.getCanonicalName() + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
-        boolean out = exchange.hasOut();
-        Message old = out ? exchange.getOut() : exchange.getIn();
+        Message old = exchange.getMessage();
 
         if (old.getBody() == null) {
             // only convert if there is a body

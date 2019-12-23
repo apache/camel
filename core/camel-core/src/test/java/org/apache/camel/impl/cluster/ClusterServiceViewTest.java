@@ -131,21 +131,17 @@ public class ClusterServiceViewTest {
         final Set<Integer> results = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(events);
 
-        IntStream.range(0, events).forEach(
-            i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
-                results.add(i);
-                latch.countDown();
-            })
-        );
+        IntStream.range(0, events).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership)(v, l) -> {
+            results.add(i);
+            latch.countDown();
+        }));
 
         service.start();
         view.setLeader(true);
 
         latch.await(10, TimeUnit.SECONDS);
 
-        IntStream.range(0, events).forEach(
-            i -> Assert.assertTrue(results.contains(i))
-        );
+        IntStream.range(0, events).forEach(i -> Assert.assertTrue(results.contains(i)));
     }
 
     @Test
@@ -156,28 +152,22 @@ public class ClusterServiceViewTest {
         final Set<Integer> results = new HashSet<>();
         final CountDownLatch latch = new CountDownLatch(events * 2);
 
-        IntStream.range(0, events).forEach(
-            i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
-                results.add(i);
-                latch.countDown();
-            })
-        );
+        IntStream.range(0, events).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership)(v, l) -> {
+            results.add(i);
+            latch.countDown();
+        }));
 
         service.start();
         view.setLeader(true);
 
-        IntStream.range(events, events * 2).forEach(
-            i -> view.addEventListener((CamelClusterEventListener.Leadership) (v, l) -> {
-                results.add(i);
-                latch.countDown();
-            })
-        );
+        IntStream.range(events, events * 2).forEach(i -> view.addEventListener((CamelClusterEventListener.Leadership)(v, l) -> {
+            results.add(i);
+            latch.countDown();
+        }));
 
         latch.await(10, TimeUnit.SECONDS);
 
-        IntStream.range(0, events * 2).forEach(
-            i -> Assert.assertTrue(results.contains(i))
-        );
+        IntStream.range(0, events * 2).forEach(i -> Assert.assertTrue(results.contains(i)));
     }
 
     // *********************************
@@ -193,9 +183,7 @@ public class ClusterServiceViewTest {
 
         @Override
         public Optional<CamelClusterMember> getLeader() {
-            return leader
-                ? Optional.of(getLocalMember())
-                : Optional.empty();
+            return leader ? Optional.of(getLocalMember()) : Optional.empty();
         }
 
         @Override

@@ -17,6 +17,7 @@
 package org.apache.camel.component.fhir;
 
 import java.util.List;
+
 import ca.uhn.fhir.rest.api.EncodingEnum;
 import ca.uhn.fhir.rest.api.SummaryEnum;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
@@ -73,7 +74,7 @@ public class FhirConfigurationIT extends AbstractFhirTestSupport {
         assertEquals("http://localhost:8080/hapi-fhir-jpaserver-example/baseDstu3", client.getUrlBase());
         assertEquals(EncodingEnum.JSON, client.getEncoding());
         assertEquals(SummaryEnum.TEXT, client.getSummary());
-        List<IClientInterceptor> interceptors = client.getInterceptors();
+        List<Object> interceptors = client.getInterceptorService().getAllRegisteredInterceptors();
         assertEquals(5, interceptors.size());
     }
 

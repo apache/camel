@@ -22,11 +22,9 @@ import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
-
 public class IsUseAdviceWithJUnit4Test extends CamelTestSupport {
 
-    private String providerEndPointURI = "http4://fakeeeeWebsite.com:80";
+    private String providerEndPointURI = "http://fakeeeeWebsite.com:80";
     private String timerEndPointURI = "timer://myTimer";
     private String mockEndPointURI = "mock:myMock";
     private String directEndPointURI = "direct:myDirect";

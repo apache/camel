@@ -28,6 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("chatscript")
 public class ChatScriptComponent extends DefaultComponent {
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new ChatScriptEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);

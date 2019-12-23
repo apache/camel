@@ -28,6 +28,7 @@ import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceHttpClient;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.utils.SecurityUtils;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
@@ -210,7 +211,7 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
 
             restClient = new DefaultRestClient(httpClient, version, PayloadFormat.JSON, session);
             // remember to start the active client object
-            ((DefaultRestClient) restClient).start();
+            ((DefaultRestClient)restClient).start();
 
             return restClient;
         } catch (final Exception e) {
@@ -229,6 +230,8 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
         try {
             final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setSslContext(sslContextParameters.createSSLContext(camelContext));
+
+            SecurityUtils.adaptToIBMCipherNames(sslContextFactory);
 
             httpClient = new SalesforceHttpClient(sslContextFactory);
         } catch (final GeneralSecurityException e) {
@@ -280,19 +283,16 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
 
             final Authentication authentication;
             if (httpProxyUseDigestAuth) {
-                authentication = new DigestAuthentication(URI.create(httpProxyAuthUri), httpProxyRealm,
-                    httpProxyUsername, httpProxyPassword);
+                authentication = new DigestAuthentication(URI.create(httpProxyAuthUri), httpProxyRealm, httpProxyUsername, httpProxyPassword);
             } else {
-                authentication = new BasicAuthentication(URI.create(httpProxyAuthUri), httpProxyRealm,
-                    httpProxyUsername, httpProxyPassword);
+                authentication = new BasicAuthentication(URI.create(httpProxyAuthUri), httpProxyRealm, httpProxyUsername, httpProxyPassword);
             }
             httpClient.getAuthenticationStore().addAuthentication(authentication);
         }
 
         // set session before calling start()
-        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), httpClient,
-            httpClient.getTimeout(),
-            new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
+        final SalesforceSession session = new SalesforceSession(new DefaultCamelContext(), httpClient, httpClient.getTimeout(),
+                                                                new SalesforceLoginConfig(loginUrl, clientId, clientSecret, userName, password, false));
         httpClient.setSession(session);
 
         try {
@@ -310,8 +310,7 @@ abstract class AbstractSalesforceMojo extends AbstractMojo {
         }
 
         try {
-            final SalesforceHttpClient httpClient = (SalesforceHttpClient) ((DefaultRestClient) restClient)
-                .getHttpClient();
+            final SalesforceHttpClient httpClient = (SalesforceHttpClient)((DefaultRestClient)restClient).getHttpClient();
             ServiceHelper.stopAndShutdownServices(restClient, httpClient.getSession(), httpClient);
         } catch (final Exception e) {
             getLog().error("Error stopping Salesforce HTTP client", e);

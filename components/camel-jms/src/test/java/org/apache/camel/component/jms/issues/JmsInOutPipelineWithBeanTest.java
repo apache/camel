@@ -18,12 +18,12 @@ package org.apache.camel.component.jms.issues;
 
 import javax.jms.ConnectionFactory;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -33,6 +33,9 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * Unit test from an user request on the forum.
  */
 public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
+
+    @BindToRegistry("dummyBean")
+    private MyDummyBean bean = new MyDummyBean();
 
     @Test
     public void testA() throws Exception {
@@ -52,17 +55,12 @@ public class JmsInOutPipelineWithBeanTest extends CamelTestSupport {
         assertEquals("Reply", "Hello World,From A,From B,From Bean", response);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
         return camelContext;
-    }
-
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-        reg.bind("dummyBean", new MyDummyBean());
-        return reg;
     }
 
     @Override

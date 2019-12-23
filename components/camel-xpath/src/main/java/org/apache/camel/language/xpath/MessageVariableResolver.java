@@ -50,6 +50,7 @@ public class MessageVariableResolver implements XPathVariableResolver {
         this.exchange = exchange;
     }
 
+    @Override
     public Object resolveVariable(QName name) {
         String uri = name.getNamespaceURI();
         String localPart = name.getLocalPart();

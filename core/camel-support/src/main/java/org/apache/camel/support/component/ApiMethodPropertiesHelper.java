@@ -23,8 +23,9 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.ExtendedCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
                 nProperties++;
             } else if (camelCasePrefix != null && key.startsWith(camelCasePrefix)) {
                 // assuming all property names start with a lowercase character
-                final String propertyName = String.valueOf(Character.toLowerCase(key.charAt(prefixLength - 1)))
+                final String propertyName = Character.toLowerCase(key.charAt(prefixLength - 1))
                     + key.substring(prefixLength);
                 properties.put(propertyName, entry.getValue());
                 nProperties++;
@@ -88,10 +89,9 @@ public abstract class ApiMethodPropertiesHelper<C> {
         return properties;
     }
 
-    public void getEndpointProperties(Object endpointConfiguration, Map<String, Object> properties) {
-
+    public void getEndpointProperties(CamelContext context, Object endpointConfiguration, Map<String, Object> properties) {
         Set<String> names = null;
-        if (IntrospectionSupport.getProperties(endpointConfiguration, properties, null, false)) {
+        if (context.adapt(ExtendedCamelContext.class).getBeanIntrospection().getProperties(endpointConfiguration, properties, null, false)) {
             names = properties.keySet();
             // remove component config properties so we only have endpoint properties
             names.removeAll(componentConfigFields);
@@ -99,9 +99,9 @@ public abstract class ApiMethodPropertiesHelper<C> {
         LOG.debug("Found endpoint properties {}", names);
     }
 
-    public Set<String> getEndpointPropertyNames(Object endpointConfiguration) {
+    public Set<String> getEndpointPropertyNames(CamelContext context, Object endpointConfiguration) {
         Map<String, Object> properties = new HashMap<>();
-        getEndpointProperties(endpointConfiguration, properties);
+        getEndpointProperties(context, endpointConfiguration, properties);
         return Collections.unmodifiableSet(properties.keySet());
     }
 

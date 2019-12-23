@@ -117,7 +117,7 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
     }
 
     private SearchRequest getScrollSearchRequest(String indexName) {
-        SearchRequest req = new SearchRequest().indices(indexName).types("tweet");
+        SearchRequest req = new SearchRequest().indices(indexName);
 
         SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
         searchSourceBuilder.query(QueryBuilders.matchAllQuery()).size(1);
@@ -131,15 +131,15 @@ public class ElasticsearchScrollSearchTest extends ElasticsearchBaseTest {
             @Override
             public void configure() {
                 from("direct:scroll-index")
-                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + TWITTER_ES_INDEX_NAME + "&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:scroll-search")
-                        .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=" + TWITTER_ES_INDEX_NAME + "&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://elasticsearch?operation=Search&indexName=" + TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
 
                 from("direct:scroll-n-split-index")
-                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME + "&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
+                        .to("elasticsearch-rest://elasticsearch?operation=Index&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT);
                 from("direct:scroll-n-split-search")
                         .to("elasticsearch-rest://elasticsearch?"
-                                + "useScroll=true&scrollKeepAliveMs=50000&operation=Search&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME + "&indexType=tweet&hostAddresses=localhost:" + ES_BASE_HTTP_PORT)
+                                + "useScroll=true&scrollKeepAliveMs=50000&operation=Search&indexName=" + SPLIT_TWITTER_ES_INDEX_NAME + "&hostAddresses=localhost:" + ES_BASE_HTTP_PORT)
                         .split()
                         .body()
                         .streaming()

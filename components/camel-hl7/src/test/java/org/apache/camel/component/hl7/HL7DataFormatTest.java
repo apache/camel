@@ -177,6 +177,7 @@ public class HL7DataFormatTest extends CamelTestSupport {
         assertEquals("0101701234", qrd.getWhoSubjectFilter(0).getIDNumber().getValue());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
 
         return new RouteBuilder() {

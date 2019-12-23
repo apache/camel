@@ -16,27 +16,21 @@
  */
 package org.apache.camel.component.file.remote.sftp;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
 import org.apache.sshd.server.auth.pubkey.PublickeyAuthenticator;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
 
     private static KeyPair keyPair;
 
-    @BeforeClass
+    @BeforeAll
     public static void createKeys() throws Exception {
         KeyPairGenerator keyGen = KeyPairGenerator.getInstance("DSA");
         keyGen.initialize(1024);
@@ -64,14 +58,6 @@ public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private byte[] getBytesFromFile(String filename) throws IOException {
-        InputStream input;
-        input = new FileInputStream(new File(filename));
-        ByteArrayOutputStream output = new ByteArrayOutputStream();
-        IOHelper.copyAndCloseInput(input, output);
-        return output.toByteArray();
-    }
-
     @Override
     protected PublickeyAuthenticator getPublickeyAuthenticator() {
         return (username, key, session) -> key.equals(keyPair.getPublic());
@@ -80,7 +66,7 @@ public class SftpKeyPairDSAConsumeTest extends SftpServerTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         context.getRegistry().bind("keyPair", keyPair);
-        context.getRegistry().bind("knownHosts", getBytesFromFile("./src/test/resources/known_hosts"));
+        context.getRegistry().bind("knownHosts", buildKnownHosts());
 
         return new RouteBuilder() {
             @Override

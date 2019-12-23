@@ -21,7 +21,6 @@ import java.util.Collection;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.BatchPutAttributesRequest;
 import com.amazonaws.services.simpledb.model.ReplaceableItem;
-
 import org.apache.camel.Exchange;
 
 public class BatchPutAttributesCommand extends AbstractSdbCommand {
@@ -30,6 +29,7 @@ public class BatchPutAttributesCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         BatchPutAttributesRequest request = new BatchPutAttributesRequest()
             .withDomainName(determineDomainName())

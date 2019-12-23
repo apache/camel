@@ -1,7 +1,12 @@
 [[freemarker-component]]
-== Freemarker Component
+= Freemarker Component
+:page-source: components/camel-freemarker/src/main/docs/freemarker-component.adoc
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The *freemarker:* component allows for processing a message using a
 http://freemarker.org/[FreeMarker] template. This can be ideal when
@@ -20,7 +25,7 @@ for this component:
 </dependency>
 -------------------------------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------
@@ -34,13 +39,13 @@ invoke; or the complete URL of the remote template (eg:
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
 
 // component options: START
-The Freemarker component supports 3 options, which are listed below.
+The Freemarker component supports 4 options, which are listed below.
 
 
 
@@ -48,8 +53,9 @@ The Freemarker component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use an existing freemarker.template.Configuration instance as the configuration. |  | Configuration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -66,7 +72,7 @@ freemarker:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +82,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -92,14 +98,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-freemarker-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -107,7 +113,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -115,16 +121,17 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.freemarker.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.freemarker.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.freemarker.configuration* | To use an existing freemarker.template.Configuration instance as the configuration. The option is a freemarker.template.Configuration type. |  | String
-| *camel.component.freemarker.enabled* | Enable freemarker component | true | Boolean
-| *camel.component.freemarker.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.freemarker.enabled* | Whether to enable auto configuration of the freemarker component. This is enabled by default. |  | Boolean
+| *camel.component.freemarker.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
 
-### Headers
+== Headers
 
 Headers set during the FreeMarker evaluation are returned to the message
 and added as headers. This provides a mechanism for the FreeMarker
@@ -139,7 +146,7 @@ ${request.setHeader('fruit', 'Apple')}
 
 The header, `fruit`, is now accessible from the `message.out.headers`.
 
-### FreeMarker Context
+== FreeMarker Context
 
 Camel will provide exchange information in the FreeMarker context (just
 a `Map`). The `Exchange` is transferred as:
@@ -175,14 +182,14 @@ variableMap.put("exchange", exchange);
 exchange.getIn().setHeader("CamelFreemarkerDataModel", variableMap);
 --------------------------------------------------------------------
 
-### Hot reloading
+== Hot reloading
 
 The FreeMarker template resource is by default *not* hot reloadable for
 both file and classpath resources (expanded jar). If you set
 `contentCache=false`, then Camel will not cache the resource and hot
 reloading is thus enabled. This scenario can be used in development.
 
-### Dynamic templates
+== Dynamic templates
 
 Camel provides two headers by which you can define a different resource
 location for a template or the template content itself. If any of these
@@ -201,7 +208,7 @@ configured.
 |FreemarkerConstants.FREEMARKER_TEMPLATE |String |The template to use instead of the endpoint configured.
 |=======================================================================
 
-### Samples
+== Samples
 
 For example you could use something like:
 
@@ -253,7 +260,7 @@ from("direct:in").
   to("freemarker:dummy");
 ---------------------------------------------------------------------------------------------
 
-### The Email Sample
+== The Email Sample
 
 In this sample we want to use FreeMarker templating for an order
 confirmation email. The email template is laid out in FreeMarker as:
@@ -270,9 +277,3 @@ ${body}
 
 And the java code:
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -47,7 +47,7 @@ public class DefaultErrorHandler extends RedeliveryErrorHandler {
                                RedeliveryPolicy redeliveryPolicy, ExceptionPolicyStrategy exceptionPolicyStrategy, Predicate retryWhile,
                                ScheduledExecutorService executorService, Processor onPrepareProcessor, Processor onExceptionOccurredProcessor) {
 
-        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, true, false, retryWhile, executorService, onPrepareProcessor, onExceptionOccurredProcessor);
+        super(camelContext, output, logger, redeliveryProcessor, redeliveryPolicy, null, null, true, false, false, retryWhile, executorService, onPrepareProcessor, onExceptionOccurredProcessor);
         setExceptionPolicy(exceptionPolicyStrategy);
     }
 

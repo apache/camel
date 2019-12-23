@@ -17,6 +17,7 @@
 package org.apache.camel.component.hystrix.processor;
 
 import java.util.stream.Stream;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -102,10 +103,10 @@ public class HystrixManagementTest extends CamelTestSupport {
                 context.addService(stream);
 
                 from("direct:start").routeId("start")
-                        .hystrix().id("myHystrix")
-                        .to("direct:foo")
+                        .circuitBreaker().id("myHystrix")
+                            .to("direct:foo")
                         .onFallback()
-                        .transform().constant("Fallback message")
+                            .transform().constant("Fallback message")
                         .end()
                         .to("mock:result");
 

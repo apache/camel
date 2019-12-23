@@ -50,11 +50,7 @@ public class MulticastParallelWithAggregationStrategyThrowingExceptionTest exten
                 // must use share UoW if we want the error handler to react on
                 // exceptions
                 // from the aggregation strategy also.
-                from("direct:start").
-                multicast(new MyAggregateBean()).parallelProcessing().stopOnAggregateException().shareUnitOfWork()
-                    .to("mock:a")
-                    .to("mock:b")
-               .end()
+                from("direct:start").multicast(new MyAggregateBean()).parallelProcessing().stopOnAggregateException().shareUnitOfWork().to("mock:a").to("mock:b").end()
                     .to("mock:end");
             }
         };
@@ -62,6 +58,7 @@ public class MulticastParallelWithAggregationStrategyThrowingExceptionTest exten
 
     public static class MyAggregateBean implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             throw new RuntimeException("Simulating a runtime exception thrown from the aggregation strategy");
         }

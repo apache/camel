@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.util;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

@@ -85,6 +85,7 @@ public class SmppNLSTSplitter extends SmppSplitter {
         this.languageIdentifier = languageIdentifier;
     }
 
+    @Override
     public byte[][] split(byte[] message) {
         if (!isSplitRequired()) {
             byte[] nliMessage = new byte[UDHIE_NLI_SINGLE_MSG_HEADER_REAL_LENGTH + message.length];

@@ -43,12 +43,8 @@ public class DumpModelAsXmlAggregateRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                    .to("log:input")
-                    .aggregate(header("userId"), new GroupedExchangeAggregationStrategy()).completionSize(3)
-                    .to("mock:aggregate")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").routeId("myRoute").to("log:input").aggregate(header("userId"), new GroupedExchangeAggregationStrategy()).completionSize(3).to("mock:aggregate")
+                    .end().to("mock:result");
             }
         };
     }

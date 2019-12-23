@@ -45,6 +45,7 @@ public class WikipediaEndpointTest extends CamelTestSupport {
     @Produce("direct:start")
     protected ProducerTemplate template;
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

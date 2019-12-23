@@ -43,15 +43,11 @@ public class InflightRepositoryWithFailedValidationTest extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                validator()
-                    .type("simple").withExpression(bodyAs(String.class).contains("valid"));
+                validator().type("simple").withExpression(bodyAs(String.class).contains("valid"));
 
-                from("direct:start").routeId("first")
-                    .to("direct:validation");
+                from("direct:start").routeId("first").to("direct:validation");
 
-                from("direct:validation").routeId("second")
-                    .inputTypeWithValidate("simple")
-                    .to("mock:result");
+                from("direct:validation").routeId("second").inputTypeWithValidate("simple").to("mock:result");
             }
         };
     }

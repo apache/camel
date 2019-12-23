@@ -24,7 +24,6 @@ import javax.jms.TextMessage;
 import org.apache.activemq.spring.ConsumerBean;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -34,7 +33,6 @@ import static org.apache.camel.component.activemq.ActiveMQComponent.activeMQComp
  * 
  */
 public class InvokeMessageListenerTest extends CamelTestSupport {
-    protected MockEndpoint resultEndpoint;
     protected String startEndpointUri = "activemq:queue:test.a";
     protected ConsumerBean listener = new ConsumerBean();
 
@@ -44,7 +42,7 @@ public class InvokeMessageListenerTest extends CamelTestSupport {
 
         template.sendBodyAndHeader(startEndpointUri, expectedBody, "cheese", 123);
 
-        listener.assertMessagesArrived(1);
+        listener.assertMessagesArrived(1, 5000);
 
         List<Message> list = listener.flushMessages();
         assertTrue("Should have received some messages!", !list.isEmpty());
@@ -56,12 +54,14 @@ public class InvokeMessageListenerTest extends CamelTestSupport {
         assertEquals("Text mesage body: " + textMessage, expectedBody, textMessage.getText());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.addComponent("activemq", activeMQComponent("vm://localhost?broker.persistent=false"));
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

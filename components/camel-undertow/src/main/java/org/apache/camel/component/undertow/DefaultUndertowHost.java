@@ -120,6 +120,7 @@ public class DefaultUndertowHost implements UndertowHost {
         }
     }
 
+    @Override
     public String toString() {
         if (hostString == null) {
             hostString = String.format("DefaultUndertowHost[%s://%s:%s]", key.getSslContext() != null ? "https" : "http", key.getHost(), key.getPort());

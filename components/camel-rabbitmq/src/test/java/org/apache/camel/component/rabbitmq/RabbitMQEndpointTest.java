@@ -34,7 +34,8 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -44,8 +45,9 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     private Envelope envelope = Mockito.mock(Envelope.class);
     private AMQP.BasicProperties properties = Mockito.mock(AMQP.BasicProperties.class);
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    @Override
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
 
         HashMap<String, Object> args = new HashMap<>();
         args.put("foo", "bar");
@@ -176,9 +178,9 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     @Test
     public void brokerEndpointAddressesSettings() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?addresses=server1:12345,server2:12345", RabbitMQEndpoint.class);
-        assertEquals("Wrong size of endpoint addresses.", 2, endpoint.getAddresses().length);
-        assertEquals("Get a wrong endpoint address.", new Address("server1", 12345), endpoint.getAddresses()[0]);
-        assertEquals("Get a wrong endpoint address.", new Address("server2", 12345), endpoint.getAddresses()[1]);
+        assertEquals("Wrong size of endpoint addresses.", 2, endpoint.parseAddresses().length);
+        assertEquals("Get a wrong endpoint address.", new Address("server1", 12345), endpoint.parseAddresses()[0]);
+        assertEquals("Get a wrong endpoint address.", new Address("server2", 12345), endpoint.parseAddresses()[1]);
     }
 
     private ConnectionFactory createConnectionFactory(String uri) throws TimeoutException {

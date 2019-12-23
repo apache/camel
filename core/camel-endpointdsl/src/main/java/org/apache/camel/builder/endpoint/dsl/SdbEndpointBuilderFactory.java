@@ -46,7 +46,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder amazonSDBClient(Object amazonSDBClient) {
-            setProperty("amazonSDBClient", amazonSDBClient);
+            doSetProperty("amazonSDBClient", amazonSDBClient);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder amazonSDBClient(String amazonSDBClient) {
-            setProperty("amazonSDBClient", amazonSDBClient);
+            doSetProperty("amazonSDBClient", amazonSDBClient);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder consistentRead(boolean consistentRead) {
-            setProperty("consistentRead", consistentRead);
+            doSetProperty("consistentRead", consistentRead);
             return this;
         }
         /**
@@ -94,7 +94,45 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder consistentRead(String consistentRead) {
-            setProperty("consistentRead", consistentRead);
+            doSetProperty("consistentRead", consistentRead);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SdbEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SdbEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -106,7 +144,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder maxNumberOfDomains(Integer maxNumberOfDomains) {
-            setProperty("maxNumberOfDomains", maxNumberOfDomains);
+            doSetProperty("maxNumberOfDomains", maxNumberOfDomains);
             return this;
         }
         /**
@@ -119,7 +157,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder maxNumberOfDomains(String maxNumberOfDomains) {
-            setProperty("maxNumberOfDomains", maxNumberOfDomains);
+            doSetProperty("maxNumberOfDomains", maxNumberOfDomains);
             return this;
         }
         /**
@@ -131,7 +169,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder operation(SdbOperations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -143,7 +181,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -154,7 +192,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -165,7 +203,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -177,7 +215,30 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SDB client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: producer
+         */
+        default SdbEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SDB client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default SdbEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -191,7 +252,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -202,7 +263,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: producer
          */
         default SdbEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -226,7 +287,7 @@ public interface SdbEndpointBuilderFactory {
          */
         default AdvancedSdbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -239,7 +300,7 @@ public interface SdbEndpointBuilderFactory {
          */
         default AdvancedSdbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -251,7 +312,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSdbEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -263,7 +324,7 @@ public interface SdbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSdbEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -283,13 +344,21 @@ public interface SdbEndpointBuilderFactory {
         PutAttributes,
         Select;
     }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
+    }
     /**
      * AWS SimpleDB (camel-aws-sdb)
      * The aws-sdb component is for storing and retrieving data from/to Amazon's
      * SDB service.
      * 
      * Category: cloud,database,nosql
-     * Available as of version: 2.9
+     * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-aws-sdb
      * 
      * Syntax: <code>aws-sdb:domainName</code>
@@ -297,7 +366,7 @@ public interface SdbEndpointBuilderFactory {
      * Path parameter: domainName (required)
      * The name of the domain currently worked with.
      */
-    default SdbEndpointBuilder sdb(String path) {
+    default SdbEndpointBuilder awsSdb(String path) {
         class SdbEndpointBuilderImpl extends AbstractEndpointBuilder implements SdbEndpointBuilder, AdvancedSdbEndpointBuilder {
             public SdbEndpointBuilderImpl(String path) {
                 super("aws-sdb", path);

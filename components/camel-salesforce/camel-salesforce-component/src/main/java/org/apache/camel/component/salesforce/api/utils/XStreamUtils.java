@@ -31,7 +31,6 @@ import com.thoughtworks.xstream.security.AnyTypePermission;
 import com.thoughtworks.xstream.security.ExplicitTypePermission;
 import com.thoughtworks.xstream.security.TypePermission;
 import com.thoughtworks.xstream.security.WildcardTypePermission;
-
 import org.apache.camel.component.salesforce.api.dto.AnnotationFieldKeySorter;
 import org.apache.camel.component.salesforce.internal.dto.RestChoices;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
@@ -82,8 +81,7 @@ public final class XStreamUtils {
     }
 
     public static XStream createXStream(final Class<?>... additionalTypes) {
-        final PureJavaReflectionProvider reflectionProvider = new PureJavaReflectionProvider(
-            new FieldDictionary(new AnnotationFieldKeySorter()));
+        final PureJavaReflectionProvider reflectionProvider = new PureJavaReflectionProvider(new FieldDictionary(new AnnotationFieldKeySorter()));
 
         // use NoNameCoder to avoid escaping __ in custom field names
         // and CompactWriter to avoid pretty printing

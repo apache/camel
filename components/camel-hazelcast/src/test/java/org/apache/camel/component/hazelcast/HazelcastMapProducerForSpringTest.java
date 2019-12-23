@@ -27,7 +27,6 @@ import java.util.concurrent.TimeUnit;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.query.SqlPredicate;
-
 import org.apache.camel.component.hazelcast.testutil.Dummy;
 import org.junit.After;
 import org.junit.Test;

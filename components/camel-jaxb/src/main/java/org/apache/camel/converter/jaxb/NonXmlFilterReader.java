@@ -37,6 +37,7 @@ public class NonXmlFilterReader extends FilterReader {
      * @exception IOException
      *                If an I/O error occurs
      */
+    @Override
     public int read(char cbuf[], int off, int len) throws IOException {
         int read = in.read(cbuf, off, len);
         if (read > 0) {

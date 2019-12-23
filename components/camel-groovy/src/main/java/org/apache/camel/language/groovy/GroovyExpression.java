@@ -40,10 +40,12 @@ public class GroovyExpression extends ExpressionSupport {
         return "groovy: " + text;
     }
 
+    @Override
     protected String assertionFailureMessage(Exchange exchange) {
         return "groovy: " + text;
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> type) {
         Script script = instantiateScript(exchange);
         script.setBinding(createBinding(exchange));

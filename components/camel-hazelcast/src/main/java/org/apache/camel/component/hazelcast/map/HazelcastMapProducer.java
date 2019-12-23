@@ -24,7 +24,6 @@ import java.util.concurrent.TimeUnit;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.query.SqlPredicate;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
@@ -41,6 +40,7 @@ public class HazelcastMapProducer extends HazelcastDefaultProducer {
         this.cache = hazelcastInstance.getMap(cacheName);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         Map<String, Object> headers = exchange.getIn().getHeaders();

@@ -1,0 +1,74 @@
+[[OsgiActivator]]
+= OSGi Camel Routes Activator
+:page-source: components/camel-osgi-activator/src/main/docs/osgi-activator.adoc
+
+*Since Camel 3.1*
+
+A small OSGi activator for starting an OSGi Apache Camel Project.
+
+The bundle starts a shared CamelContext and registers any RouteBuilder instances
+(discovered via the OSGi Service Registry), from any other bundles that gets installed.
+And when the bundles gets uninstalled then the routes are stopped and removed from the shared CamelContext.
+
+== Important
+
+This OSGi activator is a based prototype for quickly starting up an OSGi container with a single shared
+CamelContext and then being able to use OSGi dynamism to deploy and undeploy bundlers with Camel routes.
+
+Beware that this OSGi activator is a basic implementation and has limited support for dealing with errors
+when new routes are added which may clash with existing routes (route ids).
+
+Configuration of the CamelContext is also very limited.
+
+Therefore only use this for prototyping and experiments. This is NOT recommended for production usage.
+
+== Install bundle
+
+Register an Apache Camel RouteBuilder as an OSGi service.
+
+Using OSGi annotations:
+
+[source,java]
+----
+@Component(service = RouteBuilder.class)
+public class MyRouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        from("timer:test?fixedRate=true&period=1000")
+            .log("Hello");
+    }
+}
+----
+
+Or Manually:
+
+[source,java]
+----
+public void start(BundleContext context) throws Exception {
+  context.registerService(RouteBuilder.class, new MyRouteBuilder(), null);
+}
+----
+
+And it's automatically added or removed to the context from any bundle!
+
+[source,text]
+----
+Route: route1 started and consuming from: timer://test?fixedRate=true&period=1000
+----
+
+For routes that need to be started before the CamelContext the "camel.osgi.activator.pre-startup" service property may be added.  
+
+[source,java]
+----
+@Component(service = RouteBuilder.class, property = {CamelRoutesActivatorConstants.PRE_START_UP_PROP_NAME + "=true"})
+public class MyStartupRouteBuilder extends RouteBuilder {
+    @Override
+    public void configure() throws Exception {
+        getContext().setStreamCaching(true);
+
+        restConfiguration().component("netty-http").port(8080);
+    }
+}
+----
+
+If this RouteBuilder is added after other non pre startup RouteBuilders then CamelContext will automatically restart.  This allows pre start up RouteBuilder to run their configure methods before other RouteBuilders.

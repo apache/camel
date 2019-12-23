@@ -90,14 +90,17 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         return camelContext;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (processor != null) {
             // register callback
@@ -209,6 +212,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
     private final class OnCompletionSynchronizationAfterConsumer extends SynchronizationAdapter implements Ordered {
 
+        @Override
         public int getOrder() {
             // we want to be last
             return Ordered.LOWEST;
@@ -243,6 +247,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             }
         }
 
+        @Override
         public void onFailure(final Exchange exchange) {
             if (onCompleteOnly) {
                 return;
@@ -257,16 +262,9 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
             // must use a copy as we dont want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
             final Exception original = copy.getException();
-            final boolean originalFault = copy.hasOut() ? copy.getOut().isFault() : copy.getIn().isFault();
             // must remove exception otherwise onFailure routing will fail as well
             // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
             copy.setException(null);
-            // must clear fault otherwise onFailure routing will fail as well
-            if (copy.hasOut()) {
-                copy.getOut().setFault(false);
-            } else {
-                copy.getIn().setFault(false);
-            }
 
             if (executorService != null) {
                 executorService.submit(new Callable<Exchange>() {
@@ -284,12 +282,6 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
                 doProcess(processor, copy);
                 // restore exception after processing
                 copy.setException(original);
-                // restore fault after processing
-                if (copy.hasOut()) {
-                    copy.getOut().setFault(originalFault);
-                } else {
-                    copy.getIn().setFault(originalFault);
-                }
             }
         }
 
@@ -307,6 +299,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
     private final class OnCompletionSynchronizationBeforeConsumer extends SynchronizationAdapter implements Ordered {
 
+        @Override
         public int getOrder() {
             // we want to be last
             return Ordered.LOWEST;
@@ -356,6 +349,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
         return "OnCompletionProcessor[" + processor + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "onCompletion";
     }

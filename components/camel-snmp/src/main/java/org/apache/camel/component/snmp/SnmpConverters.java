@@ -26,7 +26,7 @@ import org.snmp4j.PDUv1;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.VariableBinding;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class SnmpConverters {
     public static final String SNMP_TAG = "snmp";
     public static final String ENTRY_TAG = "entry";

@@ -24,67 +24,51 @@ import com.orbitz.consul.model.session.SessionCreatedResponse;
 import com.orbitz.consul.model.session.SessionInfo;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.endpoint.ConsulSessionActions;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class ConsulSessionTest extends ConsulTestSupport {
 
     @Test
-    public void testServiceInstance() throws Exception {
+    public void testServiceInstance() {
         final String name = UUID.randomUUID().toString();
         final int sessions = getConsul().sessionClient().listSessions().size();
 
         {
-            List<SessionInfo> list = fluentTemplate()
-                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
-                .to("direct:consul")
-                .request(List.class);
+            List<SessionInfo> list = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST).to("direct:consul").request(List.class);
 
-            Assert.assertEquals(sessions, list.size());
-            Assert.assertFalse(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
+            Assertions.assertEquals(sessions, list.size());
+            Assertions.assertFalse(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
         }
 
-        SessionCreatedResponse res = fluentTemplate()
-            .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.CREATE)
-            .withBody(ImmutableSession.builder().name(name).build())
-            .to("direct:consul")
-            .request(SessionCreatedResponse.class);
+        SessionCreatedResponse res = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.CREATE).withBody(ImmutableSession.builder().name(name).build())
+            .to("direct:consul").request(SessionCreatedResponse.class);
 
-        Assert.assertNotNull(res.getId());
+        Assertions.assertNotNull(res.getId());
 
         {
-            List<SessionInfo> list = fluentTemplate()
-                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
-                .to("direct:consul")
-                .request(List.class);
+            List<SessionInfo> list = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST).to("direct:consul").request(List.class);
 
-            Assert.assertEquals(sessions + 1, list.size());
-            Assert.assertTrue(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
+            Assertions.assertEquals(sessions + 1, list.size());
+            Assertions.assertTrue(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
         }
 
         {
-            fluentTemplate()
-                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.DESTROY)
-                .withHeader(ConsulConstants.CONSUL_SESSION, res.getId())
-                .to("direct:consul")
+            fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.DESTROY).withHeader(ConsulConstants.CONSUL_SESSION, res.getId()).to("direct:consul")
                 .send();
 
-            List<SessionInfo> list = fluentTemplate()
-                .withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST)
-                .to("direct:consul")
-                .request(List.class);
+            List<SessionInfo> list = fluentTemplate().withHeader(ConsulConstants.CONSUL_ACTION, ConsulSessionActions.LIST).to("direct:consul").request(List.class);
 
-            Assert.assertEquals(sessions, list.size());
-            Assert.assertFalse(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
+            Assertions.assertEquals(sessions, list.size());
+            Assertions.assertFalse(list.stream().anyMatch(s -> s.getName().isPresent() && s.getName().get().equals(name)));
         }
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:consul")
-                    .to("consul:session");
+                from("direct:consul").to("consul:session");
             }
         };
     }

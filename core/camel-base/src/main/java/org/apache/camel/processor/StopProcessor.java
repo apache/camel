@@ -28,6 +28,7 @@ public class StopProcessor extends AsyncProcessorSupport implements IdAware {
 
     private String id;
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         // mark the exchange to stop continue routing
         exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
@@ -41,10 +42,12 @@ public class StopProcessor extends AsyncProcessorSupport implements IdAware {
         return "Stop";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

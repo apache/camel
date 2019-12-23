@@ -27,6 +27,6 @@ public class JpaWithQueryTest extends JpaWithNamedQueryTest {
 
     @Override
     protected String getEndpointUri() {
-        return "jpa://" + MultiSteps.class.getName() + "?consumer.query=select o from " + entityName + " o where o.step = 1";
+        return "jpa://" + MultiSteps.class.getName() + "?query=select o from " + entityName + " o where o.step = 1";
     }
 }

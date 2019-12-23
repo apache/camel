@@ -76,14 +76,7 @@ public class RollbackTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(body().isNotEqualTo("ok"))
-                        .to("mock:rollback")
-                        .rollback("That do not work")
-                    .otherwise()
-                        .to("mock:result")
-                    .end();
+                from("direct:start").choice().when(body().isNotEqualTo("ok")).to("mock:rollback").rollback("That do not work").otherwise().to("mock:result").end();
             }
         };
     }

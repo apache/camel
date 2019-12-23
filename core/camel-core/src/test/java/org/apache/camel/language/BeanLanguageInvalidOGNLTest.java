@@ -33,8 +33,7 @@ public class BeanLanguageInvalidOGNLTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().method(MyReallyCoolBean.class, "getOther[xx");
+                from("direct:start").transform().method(MyReallyCoolBean.class, "getOther[xx");
             }
         });
         try {

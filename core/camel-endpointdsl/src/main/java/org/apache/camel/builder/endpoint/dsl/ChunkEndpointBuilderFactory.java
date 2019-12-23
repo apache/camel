@@ -45,7 +45,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder contentCache(boolean contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder contentCache(String contentCache) {
-            setProperty("contentCache", contentCache);
+            doSetProperty("contentCache", contentCache);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder encoding(String encoding) {
-            setProperty("encoding", encoding);
+            doSetProperty("encoding", encoding);
             return this;
         }
         /**
@@ -78,7 +78,45 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder extension(String extension) {
-            setProperty("extension", extension);
+            doSetProperty("extension", extension);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ChunkEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ChunkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -89,7 +127,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder themeFolder(String themeFolder) {
-            setProperty("themeFolder", themeFolder);
+            doSetProperty("themeFolder", themeFolder);
             return this;
         }
         /**
@@ -100,7 +138,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder themeLayer(String themeLayer) {
-            setProperty("themeLayer", themeLayer);
+            doSetProperty("themeLayer", themeLayer);
             return this;
         }
         /**
@@ -111,7 +149,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: producer
          */
         default ChunkEndpointBuilder themeSubfolder(String themeSubfolder) {
-            setProperty("themeSubfolder", themeSubfolder);
+            doSetProperty("themeSubfolder", themeSubfolder);
             return this;
         }
     }
@@ -135,7 +173,7 @@ public interface ChunkEndpointBuilderFactory {
          */
         default AdvancedChunkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -148,7 +186,7 @@ public interface ChunkEndpointBuilderFactory {
          */
         default AdvancedChunkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -160,7 +198,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedChunkEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -172,7 +210,7 @@ public interface ChunkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedChunkEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -181,7 +219,7 @@ public interface ChunkEndpointBuilderFactory {
      * Transforms the message using a Chunk template.
      * 
      * Category: transformation
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-chunk
      * 
      * Syntax: <code>chunk:resourceUri</code>

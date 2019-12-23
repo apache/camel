@@ -102,11 +102,7 @@ public class ThrottlingExceptionRoutePolicyKeepOpenOnInitTest extends ContextTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(url)
-                    .routePolicy(policy)
-                    .log("${body}")
-                    .to("log:foo?groupSize=10")
-                    .to("mock:result");
+                from(url).routePolicy(policy).log("${body}").to("log:foo?groupSize=10").to("mock:result");
             }
         };
     }

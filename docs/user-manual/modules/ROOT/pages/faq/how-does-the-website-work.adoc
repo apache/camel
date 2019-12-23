@@ -1,5 +1,5 @@
 [[Howdoesthewebsitework-Howdoesthewebsitework]]
-=== How does the website work?
+= How does the website work?
 
 This entire website is hosted in
 https://github.com/apache/camel/[the GitHub repository],

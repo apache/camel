@@ -46,6 +46,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         return jndi;
     }
 
+    @Override
     protected String getLanguageName() {
         return "file";
     }
@@ -194,6 +195,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         assertExpression(answer, "${file:ext}", "tar.gz");
     }
 
+    @Override
     public Exchange createExchange() {
         // create the file
         String uri = "file://target/data/filelanguage?fileExist=Override";

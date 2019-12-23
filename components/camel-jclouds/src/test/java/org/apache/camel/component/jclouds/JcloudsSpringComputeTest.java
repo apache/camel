@@ -42,6 +42,7 @@ public class JcloudsSpringComputeTest extends CamelSpringTestSupport {
     @EndpointInject("mock:resultlist")
     protected MockEndpoint resultlist;
 
+    @Override
     @After
     public void tearDown() throws Exception {
         template.sendBodyAndHeaders("direct:start", null, destroyHeaders(null, null));

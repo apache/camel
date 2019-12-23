@@ -33,6 +33,7 @@ public class SpringSetExchangePatternWithCustomIdTest extends SetExchangePattern
         assertEquals("q", context.getRouteDefinitions().get(6).getOutputs().get(0).getId());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/setExchangePatternWithCustomId.xml");
     }

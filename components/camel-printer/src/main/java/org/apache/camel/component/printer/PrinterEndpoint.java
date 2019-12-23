@@ -49,14 +49,17 @@ public class PrinterEndpoint extends DefaultEndpoint {
         this.config = config;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot create a consumer for a Printer endpoint");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new PrinterProducer(this, config);
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

@@ -33,7 +33,7 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
     }
 
     private class SecondException extends Exception {
-       
+
         private static final long serialVersionUID = 1L;
     }
 
@@ -41,8 +41,7 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            String camelRedeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER,
-                                                                       String.class);
+            String camelRedeliveryCounter = exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER, String.class);
             int redeliveries = camelRedeliveryCounter == null ? 0 : Integer.valueOf(camelRedeliveryCounter);
             switch (redeliveries) {
             case 0:
@@ -54,6 +53,7 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
             }
         }
     }
+
     @Test
     public void testMessageShouldGoToError() throws Exception {
         String msg = "payload";
@@ -72,18 +72,8 @@ public class RedeliveryPolicyOnExceptionWhileRedeliveringIssueTest extends Conte
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:source")
-                    .onException(FirstException.class)
-                        .redeliveryDelay(0)
-                        .maximumRedeliveries(-1)
-                        .handled(true)
-                    .end()
-                    .onException(SecondException.class)
-                        .handled(true)
-                        .to("mock:error")
-                    .end()
-                    .process(new ExceptionThrowingProcessor())
-                    .to("mock:destination");
+                from("direct:source").onException(FirstException.class).redeliveryDelay(0).maximumRedeliveries(-1).handled(true).end().onException(SecondException.class)
+                    .handled(true).to("mock:error").end().process(new ExceptionThrowingProcessor()).to("mock:destination");
             }
         };
     }

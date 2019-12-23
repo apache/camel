@@ -62,6 +62,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     public DefaultCxfRsBinding() {
     }
 
+    @Override
     public Object populateCxfRsResponseFromExchange(Exchange camelExchange,
                                                     org.apache.cxf.message.Exchange cxfExchange) throws Exception {
         // Need to check if the exchange has the exception
@@ -130,6 +131,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         return o;
     }
 
+    @Override
     public void populateExchangeFromCxfRsRequest(org.apache.cxf.message.Exchange cxfExchange,
                                                  Exchange camelExchange, Method method, Object[] paramArray) {
         Message camelMessage = camelExchange.getIn();        
@@ -183,6 +185,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     }
 
     
+    @Override
     public MultivaluedMap<String, String> bindCamelHeadersToRequestHeaders(Map<String, Object> camelHeaders,
                                                                            Exchange camelExchange)
         throws Exception {
@@ -199,6 +202,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
      * the body to see if it is a List or an array and then return the first 
      * element.  If that fails, we will simply return the object.
      */
+    @Override
     public Object bindCamelMessageBodyToRequestBody(Message camelMessage, Exchange camelExchange)
         throws Exception {
 
@@ -220,6 +224,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     /**
      * We will return an empty Map unless the response parameter is a {@link Response} object. 
      */
+    @Override
     public Map<String, Object> bindResponseHeadersToCamelHeaders(Object response, Exchange camelExchange)
         throws Exception {
         
@@ -232,6 +237,7 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         return answer;
     }
 
+    @Override
     public Entity<Object> bindCamelMessageToRequestEntity(Object body, Message camelMessage, Exchange camelExchange) throws Exception  {
         if (body == null) {
             return null;
@@ -247,14 +253,17 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     /**
      *  By default, we just return the response object. 
      */
+    @Override
     public Object bindResponseToCamelBody(Object response, Exchange camelExchange) throws Exception {
         return response;
     }
     
-    public HeaderFilterStrategy getHeaderFilterStrategy() {        
+    @Override
+    public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy strategy) {
         headerFilterStrategy = strategy;        
     }

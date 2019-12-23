@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.reifier.RouteReifier;
 import org.apache.camel.spi.InterceptStrategy;
@@ -37,15 +38,12 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
 
     @Test
     public void testAdvised() throws Exception {
-        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context,
-                new RouteBuilder() {
-                    @Override
-                    public void configure() throws Exception {
-                        interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint()
-                                .to("log:foo")
-                                .to("mock:advised");
-                    }
-                });
+        RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                interceptSendToEndpoint("mock:foo").skipSendToOriginalEndpoint().to("log:foo").to("mock:advised");
+            }
+        });
 
         getMockEndpoint("mock:foo").expectedMessageCount(0);
         getMockEndpoint("mock:advised").expectedMessageCount(1);
@@ -73,8 +71,8 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
         private static final Logger LOG = LoggerFactory.getLogger(ContainerWideInterceptor.class);
         private static int count;
 
-        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition,
-                                                     final Processor target, final Processor nextTarget) throws Exception {
+        @Override
+        public Processor wrapProcessorInInterceptors(final CamelContext context, final NamedNode definition, final Processor target, final Processor nextTarget) throws Exception {
 
             return new DelegateAsyncProcessor(new Processor() {
 

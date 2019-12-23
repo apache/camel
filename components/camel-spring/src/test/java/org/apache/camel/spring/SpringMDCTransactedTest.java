@@ -16,19 +16,21 @@
  */
 package org.apache.camel.spring;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.slf4j.MDC;
 
-public class SpringMDCTransactedTest extends ContextTestSupport {
+public class SpringMDCTransactedTest extends CamelTestSupport {
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry result = super.createRegistry();
+    @Override
+    protected Registry createCamelRegistry() throws Exception {
+        Registry result = new SimpleRegistry();
         result.bind("NOOP-TX", new NoopPlatformTransactionManager());
         return result;
     }
@@ -51,39 +53,29 @@ public class SpringMDCTransactedTest extends ContextTestSupport {
                 // enable MDC
                 context.setUseMDCLogging(true);
 
-                from("direct:a").routeId("route-a")
-                    .transacted()
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            assertEquals("route-a", MDC.get("camel.routeId"));
-                            assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                            assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
-                        }
-                    })
-                    .to("log:foo-before")
-                    .to("direct:b")
-                    .to("log:foo-after")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            assertEquals("route-a", MDC.get("camel.routeId"));
-                            assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                            assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
-                        }
-                    });
+                from("direct:a").routeId("route-a").transacted().process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-a", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                        assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                    }
+                }).to("log:foo-before").to("direct:b").to("log:foo-after").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-a", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                        assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                    }
+                });
 
-                from("direct:b").routeId("route-b")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            assertEquals("route-b", MDC.get("camel.routeId"));
-                            assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
-                            assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
-                        }
-                    })
-                    .to("log:bar")
-                    .to("mock:result");
+                from("direct:b").routeId("route-b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertEquals("route-b", MDC.get("camel.routeId"));
+                        assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                        assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                    }
+                }).to("log:bar").to("mock:result");
             }
         };
     }
-
 
 }

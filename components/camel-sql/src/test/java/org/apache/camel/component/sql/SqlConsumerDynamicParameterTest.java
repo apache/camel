@@ -19,10 +19,10 @@ package org.apache.camel.component.sql;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -34,8 +34,11 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
 
     EmbeddedDatabase db;
+    
+    @BindToRegistry("myIdGenerator")
     MyIdGenerator idGenerator = new MyIdGenerator();
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -44,18 +47,12 @@ public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
 
         db.shutdown();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myIdGenerator", idGenerator);
-        return jndi;
     }
 
     @Test
@@ -87,7 +84,7 @@ public class SqlConsumerDynamicParameterTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects where id = :#${bean:myIdGenerator.nextId}?consumer.initialDelay=0&consumer.delay=50")
+                from("sql:select * from projects where id = :#${bean:myIdGenerator.nextId}?initialDelay=0&delay=50")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }

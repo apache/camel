@@ -181,6 +181,7 @@ public class GrpcConsumerConcurrentTest extends CamelTestSupport {
 
     public class HeaderExchangeProcessor implements Processor {
 
+        @Override
         @SuppressWarnings("unchecked")
         public void process(Exchange exchange) throws Exception {
             List<PingRequest> pingRequests = (List<PingRequest>)exchange.getIn().getBody();

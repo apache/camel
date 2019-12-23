@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.aws.sdb;
 
+import com.amazonaws.Protocol;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -27,7 +28,7 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
         
         context.getRegistry().bind("amazonSDBClient", mock);
         
-        SdbComponent component = new SdbComponent(context);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
         SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint(
                 "aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&accessKey=xxx&secretKey=yyy");
         
@@ -42,7 +43,7 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
 
     @Test
     public void createEndpointWithOnlyAccessKeyAndSecretKey() throws Exception {
-        SdbComponent component = new SdbComponent(context);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
         SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint(
             "aws-sdb://TestDomain?accessKey=xxx&secretKey=yyy");
 
@@ -61,7 +62,7 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
 
         context.getRegistry().bind("amazonSDBClient", mock);
         
-        SdbComponent component = new SdbComponent(context);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
         SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint("aws-sdb://TestDomain?"
                 + "amazonSDBClient=#amazonSDBClient");
         
@@ -80,7 +81,7 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
 
         context.getRegistry().bind("amazonSDBClient", mock);
 
-        SdbComponent component = new SdbComponent(context);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
         SdbEndpoint endpoint = (SdbEndpoint) component.createEndpoint(
                 "aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&accessKey=xxx&secretKey=yyy&operation=DeleteAttributes&consistentRead=true"
                 + "&maxNumberOfDomains=5");
@@ -96,25 +97,25 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
     
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutDomainName() throws Exception {
-        SdbComponent component = new SdbComponent(context);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
         component.createEndpoint("aws-sdb:// ");
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAmazonSDBClientConfiguration() throws Exception {
-        SdbComponent component = new SdbComponent(context);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
         component.createEndpoint("aws-sdb://TestDomain");
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutAccessKeyConfiguration() throws Exception {
-        SdbComponent component = new SdbComponent(context);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
         component.createEndpoint("aws-sdb://TestDomain?secretKey=yyy");
     }
     
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithoutSecretKeyConfiguration() throws Exception {
-        SdbComponent component = new SdbComponent(context);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
         component.createEndpoint("aws-sdb://TestDomain?accessKey=xxx");
     }
     
@@ -124,7 +125,24 @@ public class SdbComponentConfigurationTest extends CamelTestSupport {
 
         context.getRegistry().bind("amazonSDBClient", mock);
         
-        SdbComponent component = new SdbComponent(context);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
         component.createEndpoint("aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient");
+    }
+    
+    @Test
+    public void createEndpointWithComponentEndpointElementsAndProxy() throws Exception {
+        AmazonSDBClientMock mock = new AmazonSDBClientMock();
+
+        context.getRegistry().bind("amazonSDBClient", mock);
+        SdbComponent component = context.getComponent("aws-sdb", SdbComponent.class);
+        SdbEndpoint endpoint = (SdbEndpoint)component.createEndpoint("aws-sdb://TestDomain?amazonSDBClient=#amazonSDBClient&accessKey=xxx&secretKey=yyy&region=US_EAST_1&operation=DeleteAttributes&consistentRead=true"  
+            + "&maxNumberOfDomains=5&proxyHost=localhost&proxyPort=9000&proxyProtocol=HTTP");
+
+        assertEquals("xxx", endpoint.getConfiguration().getAccessKey());
+        assertEquals("yyy", endpoint.getConfiguration().getSecretKey());
+        assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
+        assertEquals(Protocol.HTTP, endpoint.getConfiguration().getProxyProtocol());
+        assertEquals("localhost", endpoint.getConfiguration().getProxyHost());
+        assertEquals(Integer.valueOf(9000), endpoint.getConfiguration().getProxyPort());
     }
 }

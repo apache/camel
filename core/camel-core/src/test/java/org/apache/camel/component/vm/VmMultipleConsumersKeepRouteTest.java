@@ -49,8 +49,8 @@ public class VmMultipleConsumersKeepRouteTest extends Assert {
 
         camelContext.start();
 
-        MockEndpoint mock1 = (MockEndpoint) camelContext.getEndpoint("mock:route1");
-        MockEndpoint mock2 = (MockEndpoint) camelContext.getEndpoint("mock:route2");
+        MockEndpoint mock1 = (MockEndpoint)camelContext.getEndpoint("mock:route1");
+        MockEndpoint mock2 = (MockEndpoint)camelContext.getEndpoint("mock:route2");
         mock1.expectedMessageCount(100);
         mock2.expectedMessageCount(100);
 

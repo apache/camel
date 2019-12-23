@@ -43,7 +43,8 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // interceptors should be invoked in the default order they are added
+                // interceptors should be invoked in the default order they are
+                // added
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new FooInterceptStrategy());
                 context.adapt(ExtendedCamelContext.class).addInterceptStrategy(new BarInterceptStrategy());
 
@@ -54,6 +55,7 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
 
     private static class FooInterceptStrategy implements InterceptStrategy {
 
+        @Override
         public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) throws Exception {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {
@@ -71,6 +73,7 @@ public class InterceptorStrategyNotOrderedTest extends ContextTestSupport {
 
     private static class BarInterceptStrategy implements InterceptStrategy {
 
+        @Override
         public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, final Processor target, Processor nextTarget) throws Exception {
             Processor answer = new Processor() {
                 public void process(Exchange exchange) throws Exception {

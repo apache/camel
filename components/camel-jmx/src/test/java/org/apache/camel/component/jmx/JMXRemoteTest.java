@@ -27,8 +27,8 @@ import javax.management.remote.JMXConnectorServerFactory;
 import javax.management.remote.JMXServiceURL;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests against a "remote" JMX server. Creates an RMI Registry on or near port 39000
@@ -44,7 +44,8 @@ public class JMXRemoteTest extends SimpleBeanFixture {
     JMXConnectorServer connector;
     Registry registry;
 
-    @After
+    @Override
+    @AfterEach
     public void tearDown() throws Exception {
         super.tearDown();
         connector.stop();
@@ -52,7 +53,7 @@ public class JMXRemoteTest extends SimpleBeanFixture {
 
     @Override
     protected void initServer() throws Exception {
-        int port = AvailablePortFinder.getNextAvailable(39000);
+        int port = AvailablePortFinder.getNextAvailable();
         registry = LocateRegistry.createRegistry(port);
 
         url = new JMXServiceURL("service:jmx:rmi:///jndi/rmi://localhost:" + port + "/" + DOMAIN);

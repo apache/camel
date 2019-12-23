@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -44,9 +45,7 @@ public class FileConvertBodyToUTF8Test extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/utf8?initialDelay=0&delay=10")
-                    .convertBodyTo(String.class, "UTF-8")
-                    .to("mock:result");
+                from("file://target/data/utf8?initialDelay=0&delay=10").convertBodyTo(String.class, "UTF-8").to("mock:result");
             }
         });
 

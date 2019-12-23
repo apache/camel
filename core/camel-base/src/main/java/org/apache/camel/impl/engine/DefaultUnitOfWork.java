@@ -23,21 +23,17 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Set;
 import java.util.function.Predicate;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelUnitOfWorkException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.spi.RouteContext;
-import org.apache.camel.spi.SubUnitOfWork;
-import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.SynchronizationVetoable;
 import org.apache.camel.spi.UnitOfWork;
@@ -61,14 +57,12 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   SubUnitOfWork into a general parent/child unit of work concept. However this
     //   requires API changes and thus is best kept for Camel 3.0
 
-    private UnitOfWork parent;
     private String id;
     private CamelContext context;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
     private final Deque<RouteContext> routeContextStack = new ArrayDeque<>();
-    private Deque<DefaultSubUnitOfWork> subUnitOfWorks;
     private final transient Logger log;
     
     public DefaultUnitOfWork(Exchange exchange) {
@@ -145,9 +139,9 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public void setParentUnitOfWork(UnitOfWork parentUnitOfWork) {
-        this.parent = parentUnitOfWork;
     }
 
+    @Override
     public UnitOfWork createChildUnitOfWork(Exchange childExchange) {
         // create a new child unit of work, and mark me as its parent
         UnitOfWork answer = newInstance(childExchange);
@@ -155,10 +149,12 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         return answer;
     }
 
+    @Override
     public void start() {
         id = null;
     }
 
+    @Override
     public void stop() {
         // need to clean up when we are stopping to not leak memory
         if (synchronizations != null) {
@@ -168,14 +164,11 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             transactedBy.clear();
         }
         routeContextStack.clear();
-        if (subUnitOfWorks != null) {
-            subUnitOfWorks.clear();
-        }
         originalInMessage = null;
-        parent = null;
         id = null;
     }
 
+    @Override
     public synchronized void addSynchronization(Synchronization synchronization) {
         if (synchronizations == null) {
             synchronizations = new ArrayList<>();
@@ -184,16 +177,19 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         synchronizations.add(synchronization);
     }
 
+    @Override
     public synchronized void removeSynchronization(Synchronization synchronization) {
         if (synchronizations != null) {
             synchronizations.remove(synchronization);
         }
     }
 
+    @Override
     public synchronized boolean containsSynchronization(Synchronization synchronization) {
         return synchronizations != null && synchronizations.contains(synchronization);
     }
 
+    @Override
     public void handoverSynchronization(Exchange target) {
         handoverSynchronization(target, null);
     }
@@ -225,6 +221,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
     }
 
+    @Override
     public void done(Exchange exchange) {
         log.trace("UnitOfWork done for ExchangeId: {} with {}", exchange.getExchangeId(), exchange);
 
@@ -232,17 +229,6 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
         // at first done the synchronizations
         UnitOfWorkHelper.doneSynchronizations(exchange, synchronizations, log);
-
-        // notify uow callback if in use
-        try {
-            SubUnitOfWorkCallback uowCallback = getSubUnitOfWorkCallback();
-            if (uowCallback != null) {
-                uowCallback.onDone(exchange);
-            }
-        } catch (Throwable e) {
-            // must catch exceptions to ensure synchronizations is also invoked
-            log.warn("Exception occurred during savepoint onDone. This exception will be ignored.", e);
-        }
 
         // unregister from inflight registry, before signalling we are done
         if (exchange.getContext() != null) {
@@ -278,6 +264,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, synchronizations, log);
     }
 
+    @Override
     public String getId() {
         if (id == null) {
             id = context.getUuidGenerator().generateUuid();
@@ -285,6 +272,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         return id;
     }
 
+    @Override
     public Message getOriginalInMessage() {
         if (originalInMessage == null && !context.isAllowUseOriginalMessage()) {
             throw new IllegalStateException("AllowUseOriginalMessage is disabled. Cannot access the original message.");
@@ -292,109 +280,49 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         return originalInMessage;
     }
 
+    @Override
     public boolean isTransacted() {
         return transactedBy != null && !transactedBy.isEmpty();
     }
 
+    @Override
     public boolean isTransactedBy(Object key) {
         return getTransactedBy().contains(key);
     }
 
+    @Override
     public void beginTransactedBy(Object key) {
         getTransactedBy().add(key);
     }
 
+    @Override
     public void endTransactedBy(Object key) {
         getTransactedBy().remove(key);
     }
 
+    @Override
     public RouteContext getRouteContext() {
         return routeContextStack.peek();
     }
 
+    @Override
     public void pushRouteContext(RouteContext routeContext) {
         routeContextStack.push(routeContext);
     }
 
+    @Override
     public RouteContext popRouteContext() {
         return routeContextStack.pollFirst();
     }
 
+    @Override
     public AsyncCallback beforeProcess(Processor processor, Exchange exchange, AsyncCallback callback) {
         // no wrapping needed
         return callback;
     }
 
+    @Override
     public void afterProcess(Processor processor, Exchange exchange, AsyncCallback callback, boolean doneSync) {
-    }
-
-    @Override
-    public void beginSubUnitOfWork(Exchange exchange) {
-        if (log.isTraceEnabled()) {
-            log.trace("beginSubUnitOfWork exchangeId: {}", exchange.getExchangeId());
-        }
-
-        if (subUnitOfWorks == null) {
-            subUnitOfWorks = new ArrayDeque<>();
-        }
-        subUnitOfWorks.push(new DefaultSubUnitOfWork());
-    }
-
-    @Override
-    public void endSubUnitOfWork(Exchange exchange) {
-        if (log.isTraceEnabled()) {
-            log.trace("endSubUnitOfWork exchangeId: {}", exchange.getExchangeId());
-        }
-
-        if (subUnitOfWorks == null || subUnitOfWorks.isEmpty()) {
-            return;
-        }
-
-        // pop last sub unit of work as its now ended
-        SubUnitOfWork subUoW = null;
-        try {
-            subUoW = subUnitOfWorks.pop();
-        } catch (NoSuchElementException e) {
-            // ignore
-        }
-        if (subUoW != null && subUoW.isFailed()) {
-            // the sub unit of work failed so set an exception containing all the caused exceptions
-            // and mark the exchange for rollback only
-
-            // if there are multiple exceptions then wrap those into another exception with them all
-            Exception cause;
-            List<Exception> list = subUoW.getExceptions();
-            if (list != null) {
-                if (list.size() == 1) {
-                    cause = list.get(0);
-                } else {
-                    cause = new CamelUnitOfWorkException(exchange, list);
-                }
-                exchange.setException(cause);
-            }
-            // mark it as rollback and that the unit of work is exhausted. This ensures that we do not try
-            // to redeliver this exception (again)
-            exchange.setProperty(Exchange.ROLLBACK_ONLY, true);
-            exchange.setProperty(Exchange.UNIT_OF_WORK_EXHAUSTED, true);
-            // and remove any indications of error handled which will prevent this exception to be noticed
-            // by the error handler which we want to react with the result of the sub unit of work
-            exchange.setProperty(Exchange.ERRORHANDLER_HANDLED, null);
-            exchange.setProperty(Exchange.FAILURE_HANDLED, null);
-            if (log.isTraceEnabled()) {
-                log.trace("endSubUnitOfWork exchangeId: {} with {} caused exceptions.", exchange.getExchangeId(), list != null ? list.size() : 0);
-            }
-        }
-    }
-
-    @Override
-    public SubUnitOfWorkCallback getSubUnitOfWorkCallback() {
-        // if there is a parent-child relationship between unit of works
-        // then we should use the callback strategies from the parent
-        if (parent != null) {
-            return parent.getSubUnitOfWorkCallback();
-        }
-
-        return subUnitOfWorks != null ? subUnitOfWorks.peek() : null;
     }
 
     private Set<Object> getTransactedBy() {

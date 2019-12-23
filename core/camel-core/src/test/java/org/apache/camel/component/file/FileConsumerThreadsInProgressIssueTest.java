@@ -39,11 +39,8 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/manyfiles?sortBy=file:name&delay=10&synchronous=false").routeId("myRoute").noAutoStartup()
-                    .threads(1, 10).maxQueueSize(0)
-                    .convertBodyTo(String.class)
-                    .process(processor)
-                    .to("log:done", "mock:done");
+                from("file:target/data/manyfiles?sortBy=file:name&delay=10&synchronous=false").routeId("myRoute").noAutoStartup().threads(1, 10).maxQueueSize(0)
+                    .convertBodyTo(String.class).process(processor).to("log:done", "mock:done");
             }
         };
     }
@@ -98,6 +95,7 @@ public class FileConsumerThreadsInProgressIssueTest extends ContextTestSupport {
             this.duplicate = duplicate;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             Integer integer = duplicate.get(exchange.toString());
             if (integer == null) {

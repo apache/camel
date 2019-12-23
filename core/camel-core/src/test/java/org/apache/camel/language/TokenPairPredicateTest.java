@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.language;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -57,12 +58,11 @@ public class TokenPairPredicateTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/pair?initialDelay=0&delay=10&move=ok")
-                    .choice()
-                        // does not make so much sense to use a tokenPair in a predicate
-                        // but you can do it nevertheless
-                        .when().tokenizePair("<hello>", "</hello>").to("mock:result")
-                    .end();
+                from("file:target/data/pair?initialDelay=0&delay=10&move=ok").choice()
+                    // does not make so much sense to use a tokenPair in a
+                    // predicate
+                    // but you can do it nevertheless
+                    .when().tokenizePair("<hello>", "</hello>").to("mock:result").end();
             }
         };
     }

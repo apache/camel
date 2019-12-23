@@ -57,7 +57,7 @@ public class JpaTXRollbackTest extends AbstractJpaTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jpa://" + SendEmail.class.getName() + "?consumer.transacted=true&delay=1000").routeId("foo").noAutoStartup()
+                from("jpa://" + SendEmail.class.getName() + "?transacted=true&delay=1000").routeId("foo").noAutoStartup()
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {

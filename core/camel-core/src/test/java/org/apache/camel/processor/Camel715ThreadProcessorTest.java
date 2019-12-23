@@ -32,8 +32,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * An old unit test from CAMEL-715 which reproduced a problem which we don't have anymore
- * in Camel threads EIP and the routing engine.
+ * An old unit test from CAMEL-715 which reproduced a problem which we don't
+ * have anymore in Camel threads EIP and the routing engine.
  */
 public class Camel715ThreadProcessorTest extends Assert {
     private static final int ITERS = 50000;
@@ -45,6 +45,7 @@ public class Camel715ThreadProcessorTest extends Assert {
             iterationNumber = iter;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             in.setBody("a");
@@ -63,14 +64,11 @@ public class Camel715ThreadProcessorTest extends Assert {
 
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .threads(4)
-                    .to("mock:input")
-                    .process(new Processor() {
-                        public void process(Exchange ex) throws Exception {
-                            latch.countDown();
-                        }
-                    });
+                from("direct:a").threads(4).to("mock:input").process(new Processor() {
+                    public void process(Exchange ex) throws Exception {
+                        latch.countDown();
+                    }
+                });
             }
         });
 

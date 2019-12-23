@@ -23,27 +23,56 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
+import org.eclipse.paho.client.mqttv3.MqttClient;
+import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class PahoConsumer extends DefaultConsumer {
 
+    private volatile MqttClient client;
+    private volatile String clientId;
+    private volatile boolean stopClient;
+    private volatile MqttConnectOptions connectOptions;
+
     public PahoConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
+    }
+
+    public MqttClient getClient() {
+        return client;
+    }
+
+    public void setClient(MqttClient client) {
+        this.client = client;
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        String topic = getEndpoint().getTopic();
-        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
-        getEndpoint().getClient().setCallback(new MqttCallbackExtended() {
+
+        connectOptions = PahoEndpoint.createMqttConnectOptions(getEndpoint().getConfiguration());
+
+        if (client == null) {
+            clientId = getEndpoint().getConfiguration().getClientId();
+            if (clientId == null) {
+                clientId = "camel-" + MqttClient.generateClientId();
+            }
+            stopClient = true;
+            client = new MqttClient(getEndpoint().getConfiguration().getBrokerUrl(),
+                    clientId,
+                    PahoEndpoint.createMqttClientPersistence(getEndpoint().getConfiguration()));
+            log.debug("Connecting client: {} to broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            client.connect(connectOptions);
+        }
+
+        client.setCallback(new MqttCallbackExtended() {
 
             @Override
             public void connectComplete(boolean reconnect, String serverURI) {
                 if (reconnect) {
                     try {
-                        getEndpoint().getClient().subscribe(topic, getEndpoint().getQos());
+                        client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
                     } catch (MqttException e) {
                         log.error("MQTT resubscribe failed {}", e.getMessage(), e);
                     }
@@ -73,15 +102,27 @@ public class PahoConsumer extends DefaultConsumer {
                 log.debug("Delivery complete. Token: {}", token);
             }
         });
+
+        log.debug("Subscribing client: {} to topic: {}", clientId, getEndpoint().getTopic());
+        client.subscribe(getEndpoint().getTopic(), getEndpoint().getConfiguration().getQos());
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
 
-        if (getEndpoint().getClient().isConnected()) {
+        if (stopClient && client != null && client.isConnected()) {
             String topic = getEndpoint().getTopic();
-            getEndpoint().getClient().unsubscribe(topic);
+            // only unsubscribe if we are not durable
+            if (getEndpoint().getConfiguration().isCleanSession()) {
+                log.debug("Unsubscribing client: {} from topic: {}", clientId, topic);
+                client.unsubscribe(topic);
+            } else {
+                log.debug("Client: {} is durable so will not unsubscribe from topic: {}", clientId, topic);
+            }
+            log.debug("Disconnecting client: {} from broker: {}", clientId, getEndpoint().getConfiguration().getBrokerUrl());
+            client.disconnect();
+            client = null;
         }
     }
 

@@ -17,14 +17,15 @@
 package org.apache.camel.component.guava.eventbus;
 
 import com.google.common.eventbus.EventBus;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class GuavaEventBusComponentTest extends CamelTestSupport {
 
+    @BindToRegistry("eventBus")
     EventBus eventBus = new EventBus();
 
     @Override
@@ -44,13 +45,6 @@ public class GuavaEventBusComponentTest extends CamelTestSupport {
         busComponent.setEventBus(eventBus);
         camelContext.addComponent("myGuavaEventBus", busComponent);
         return camelContext;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("eventBus", eventBus);
-        return registry;
     }
 
     @Test

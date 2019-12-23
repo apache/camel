@@ -47,7 +47,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder amazonDDBClient(Object amazonDDBClient) {
-            setProperty("amazonDDBClient", amazonDDBClient);
+            doSetProperty("amazonDDBClient", amazonDDBClient);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder amazonDDBClient(String amazonDDBClient) {
-            setProperty("amazonDDBClient", amazonDDBClient);
+            doSetProperty("amazonDDBClient", amazonDDBClient);
             return this;
         }
         /**
@@ -71,7 +71,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder consistentRead(boolean consistentRead) {
-            setProperty("consistentRead", consistentRead);
+            doSetProperty("consistentRead", consistentRead);
             return this;
         }
         /**
@@ -83,7 +83,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder consistentRead(String consistentRead) {
-            setProperty("consistentRead", consistentRead);
+            doSetProperty("consistentRead", consistentRead);
             return this;
         }
         /**
@@ -94,7 +94,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder keyAttributeName(String keyAttributeName) {
-            setProperty("keyAttributeName", keyAttributeName);
+            doSetProperty("keyAttributeName", keyAttributeName);
             return this;
         }
         /**
@@ -105,7 +105,45 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder keyAttributeType(String keyAttributeType) {
-            setProperty("keyAttributeType", keyAttributeType);
+            doSetProperty("keyAttributeType", keyAttributeType);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DdbEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DdbEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -117,7 +155,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder operation(DdbOperations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -129,7 +167,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -140,7 +178,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -154,7 +192,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -169,7 +207,30 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the DDB client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: producer
+         */
+        default DdbEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the DDB client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default DdbEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -181,7 +242,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder readCapacity(Long readCapacity) {
-            setProperty("readCapacity", readCapacity);
+            doSetProperty("readCapacity", readCapacity);
             return this;
         }
         /**
@@ -193,7 +254,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder readCapacity(String readCapacity) {
-            setProperty("readCapacity", readCapacity);
+            doSetProperty("readCapacity", readCapacity);
             return this;
         }
         /**
@@ -204,7 +265,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -216,7 +277,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder writeCapacity(Long writeCapacity) {
-            setProperty("writeCapacity", writeCapacity);
+            doSetProperty("writeCapacity", writeCapacity);
             return this;
         }
         /**
@@ -228,7 +289,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: producer
          */
         default DdbEndpointBuilder writeCapacity(String writeCapacity) {
-            setProperty("writeCapacity", writeCapacity);
+            doSetProperty("writeCapacity", writeCapacity);
             return this;
         }
         /**
@@ -239,7 +300,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: security
          */
         default DdbEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -250,7 +311,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: security
          */
         default DdbEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -274,7 +335,7 @@ public interface DdbEndpointBuilderFactory {
          */
         default AdvancedDdbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -287,7 +348,7 @@ public interface DdbEndpointBuilderFactory {
          */
         default AdvancedDdbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -299,7 +360,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDdbEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -311,7 +372,7 @@ public interface DdbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDdbEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -332,13 +393,21 @@ public interface DdbEndpointBuilderFactory {
         UpdateItem,
         UpdateTable;
     }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
+    }
     /**
      * AWS DynamoDB (camel-aws-ddb)
      * The aws-ddb component is used for storing and retrieving data from
      * Amazon's DynamoDB service.
      * 
      * Category: cloud,database,nosql
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-aws-ddb
      * 
      * Syntax: <code>aws-ddb:tableName</code>
@@ -346,7 +415,7 @@ public interface DdbEndpointBuilderFactory {
      * Path parameter: tableName (required)
      * The name of the table currently worked with.
      */
-    default DdbEndpointBuilder ddb(String path) {
+    default DdbEndpointBuilder awsDdb(String path) {
         class DdbEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbEndpointBuilder, AdvancedDdbEndpointBuilder {
             public DdbEndpointBuilderImpl(String path) {
                 super("aws-ddb", path);

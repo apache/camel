@@ -28,13 +28,9 @@ public class ProcessDefinitionSetBodyTest extends ContextTestSupport {
 
     @Test
     public void testProcessDefinitionSetBody() throws InterruptedException {
-
-        MockEndpoint functionMock1 = getMockEndpoint("mock:supplierOutput");
-        functionMock1.expectedMessageCount(1);
-        functionMock1.expectedBodyReceived().constant(SUPPLIER_MESSAGE);
-        MockEndpoint functionMock2 = getMockEndpoint("mock:functionOutput");
-        functionMock2.expectedMessageCount(1);
-        functionMock2.expectedBodyReceived().constant(FUNCTION_MESSAGE);
+        MockEndpoint mock = getMockEndpoint("mock:functionOutput");
+        mock.expectedMessageCount(1);
+        mock.expectedBodyReceived().constant(FUNCTION_MESSAGE);
 
         template.sendBody("direct:start", "are you there?");
 
@@ -47,11 +43,7 @@ public class ProcessDefinitionSetBodyTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .setBody(() -> SUPPLIER_MESSAGE)
-                    .to("mock:supplierOutput")
-                    .setBody(exchange -> FUNCTION_MESSAGE)
-                    .to("mock:functionOutput")
-                    .to("mock:output");
+                    .setBody(exchange -> FUNCTION_MESSAGE).to("mock:functionOutput").to("mock:output");
             }
         };
     }

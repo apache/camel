@@ -17,6 +17,7 @@
 package org.apache.camel.component.olingo2;
 
 import java.util.Map;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
@@ -27,10 +28,11 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App} APIs.
+ * Test class for {@link org.apache.camel.component.olingo2.api.Olingo2App}
+ * APIs.
  * <p>
- * The integration test runs against Apache Olingo 2.0 sample server
- * which is dynamically installed and started during the test.
+ * The integration test runs against Apache Olingo 2.0 sample server which is
+ * dynamically installed and started during the test.
  * </p>
  */
 public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
@@ -69,16 +71,14 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     }
 
     /**
-     * Read entity set of the People object
-     * and filter already seen items on subsequent exchanges
-     * Use a delay since the mock endpoint does not always get
-     * the correct number of exchanges before being satisfied.
-     *
-     * Note:
-     * - consumer.splitResults is set to false since this ensures the first returned message
-     *   contains all the results. This is preferred for the purposes of this test. The default
-     *   will mean the first n messages contain the results (where n is the result total) then
-     *   subsequent messages will be empty
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges Use a delay since the mock endpoint does not always
+     * get the correct number of exchanges before being satisfied. Note: -
+     * splitResults is set to false since this ensures the first
+     * returned message contains all the results. This is preferred for the
+     * purposes of this test. The default will mean the first n messages contain
+     * the results (where n is the result total) then subsequent messages will
+     * be empty
      */
     @Test
     public void testConsumerReadFilterAlreadySeen() throws Exception {
@@ -89,11 +89,9 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers?filterAlreadySeen=true&"
-                        + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&"
-                        + "consumer.splitResult=false")
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=true&" + "splitResult=false")
                     .to("mock:consumer-alreadyseen");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -107,7 +105,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
                 // First polled messages contained all the manufacturers
                 //
                 assertTrue(body instanceof ODataFeed);
-                ODataFeed set = (ODataFeed) body;
+                ODataFeed set = (ODataFeed)body;
                 assertTrue(set.getEntries().size() > 0);
             } else {
                 //
@@ -119,19 +117,69 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
         }
     }
 
+    /**
+     * Read entity set of the People object and filter already seen items on
+     * subsequent exchanges Use a delay since the mock endpoint does not always
+     * get the correct number of exchanges before being satisfied. Note: -
+     * splitResults is set to false since this ensures the first
+     * returned message contains all the results. -
+     * sendEmptyMessageWhenIdle is set to false so only 1 message
+     * should even be returned.
+     */
     @Test
-    public void testConsumerReadFilterAlreadySeenWithPredicateAndSplitResults() throws Exception {
+    public void testConsumerReadFilterAlreadySeenNoEmptyMsgs() throws Exception {
+        int expectedMsgCount = 1;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-alreadyseen");
+        //
+        // Add 1 to count since we want to wait for full result time
+        // before asserting that only 1 message has been delivered
+        //
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount + 1);
+        mockEndpoint.setResultWaitTime(6000L);
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("olingo2://read/Manufacturers?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=false&" + "splitResult=false")
+                    .to("mock:consumer-alreadyseen");
+            }
+        };
+        addRouteAndStartContext(builder);
+
+        //
+        // Want to wait for entire result time & there should
+        // be exactly 1 exchange transmitted to the endpoint
+        //
+        mockEndpoint.assertIsNotSatisfied();
+
+        // Only 1 exchange so this is good!
+        assertEquals(1, mockEndpoint.getExchanges().size());
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+
+        //
+        // Only polled message contains all the entities
+        //
+        assertTrue(body instanceof ODataFeed);
+        ODataFeed set = (ODataFeed)body;
+        assertTrue(set.getEntries().size() > 0);
+    }
+
+    /**
+     * WithPredicate in address FilterAlreadySeen: true SplitResults: true
+     * sendEmptyMessageWhenIdle: true
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testConsumerReadFilterAlreadySeenWithPredicate1() throws Exception {
         int expectedMsgCount = 3;
         MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-kp-manufacturer");
         mockEndpoint.expectedMinimumMessageCount(expectedMsgCount);
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&"
-                        + "consumer.delay=2&consumer.sendEmptyMessageWhenIdle=true&"
-                        + "consumer.splitResult=true")
+                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=true&" + "splitResult=true")
                     .to("mock:consumer-splitresult-kp-manufacturer");
-            };
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -145,7 +193,7 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
                 // First polled messages contained all the entities
                 //
                 assertTrue(body instanceof ODataEntry);
-                ODataEntry entry = (ODataEntry) body;
+                ODataEntry entry = (ODataEntry)body;
                 Object nameValue = entry.getProperties().get("Name");
                 assertNotNull(nameValue);
                 assertEquals("Star Powered Racing", nameValue.toString());
@@ -160,8 +208,54 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     }
 
     /**
-     * Read value of the People object and split the results
-     * into individual messages
+     * WithPredicate in address FilterAlreadySeen: true SplitResults: true
+     * sendEmptyMessageWhenIdle: false
+     *
+     * @throws Exception
+     */
+    @Test
+    public void testConsumerReadFilterAlreadySeenWithPredicate2() throws Exception {
+        int expectedMsgCount = 1;
+        MockEndpoint mockEndpoint = getMockEndpoint("mock:consumer-splitresult-kp-manufacturer");
+
+        //
+        // Add 1 to count since we want to wait for full result time
+        // before asserting that only 1 message has been delivered
+        //
+        mockEndpoint.expectedMinimumMessageCount(expectedMsgCount + 1);
+        mockEndpoint.setResultWaitTime(6000L);
+
+        RouteBuilder builder = new RouteBuilder() {
+            public void configure() {
+                from("olingo2://read/Manufacturers('1')?filterAlreadySeen=true&" + "delay=2&sendEmptyMessageWhenIdle=false&" + "splitResult=true")
+                    .to("mock:consumer-splitresult-kp-manufacturer");
+            }
+        };
+        addRouteAndStartContext(builder);
+
+        //
+        // Want to wait for entire result time & there should
+        // be exactly 1 exchange transmitted to the endpoint
+        //
+        mockEndpoint.assertIsNotSatisfied();
+
+        // Only 1 exchange so this is good!
+        assertEquals(1, mockEndpoint.getExchanges().size());
+
+        Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
+        //
+        // Only polled message contains the entity
+        //
+        assertTrue(body instanceof ODataEntry);
+        ODataEntry entry = (ODataEntry)body;
+        Object nameValue = entry.getProperties().get("Name");
+        assertNotNull(nameValue);
+        assertEquals("Star Powered Racing", nameValue.toString());
+    }
+
+    /**
+     * Read value of the People object and split the results into individual
+     * messages
      */
     @SuppressWarnings("unchecked")
     @Test
@@ -172,9 +266,8 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers('1')/Address?consumer.splitResult=true")
-                    .to("mock:consumer-value");
-            };
+                from("olingo2://read/Manufacturers('1')/Address?splitResult=true").to("mock:consumer-value");
+            }
         };
         addRouteAndStartContext(builder);
 
@@ -184,10 +277,10 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
         //
         Object body = mockEndpoint.getExchanges().get(0).getIn().getBody();
         assertIsInstanceOf(Map.class, body);
-        Map<String, Object> value = (Map<String, Object>) body;
+        Map<String, Object> value = (Map<String, Object>)body;
         Object addrObj = value.get("Address");
         assertIsInstanceOf(Map.class, addrObj);
-        Map<String, Object> addrMap = (Map<String, Object>) addrObj;
+        Map<String, Object> addrMap = (Map<String, Object>)addrObj;
         assertEquals("70173", addrMap.get("ZipCode"));
         assertEquals("Star Street 137", addrMap.get("Street"));
         assertEquals("Germany", addrMap.get("Country"));
@@ -195,8 +288,8 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
     }
 
     /**
-     * Read entity set of the Manufacturers object and split the results
-     * into individual messages
+     * Read entity set of the Manufacturers object and split the results into
+     * individual messages
      */
     @Test
     public void testConsumerReadSplitResults() throws Exception {
@@ -206,9 +299,8 @@ public class Olingo2ComponentConsumerTest extends AbstractOlingo2TestSupport {
 
         RouteBuilder builder = new RouteBuilder() {
             public void configure() {
-                from("olingo2://read/Manufacturers?consumer.splitResult=true")
-                    .to("mock:consumer-splitresult");
-            };
+                from("olingo2://read/Manufacturers?splitResult=true").to("mock:consumer-splitresult");
+            }
         };
 
         addRouteAndStartContext(builder);

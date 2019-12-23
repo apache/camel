@@ -1,0 +1,22 @@
+= Attachments Component
+
+The attachments component provides the `javax.attachments` API support for Apache Camel.
+A few Camel component uses attachments such as mail and web-service components.
+The attachments component is include automatic when using these components.
+
+The attachments support is on Camel `Message` level, for example to get
+the `javax.activation.DataHandler` instance of the attachment, you can do as shown below:
+
+[source,java]
+----
+AttachmentMessage attMsg = exchange.getIn(AttachmentMessage.class);
+Attachment attachment = attMsg.getAttachmentObject("myAttachment");
+DataHandler dh = attachment.getDataHandler();
+----
+
+And if you want to add an attachment, to a Camel `Message` you can do as shown:
+[source,java]
+----
+AttachmentMessage attMsg = exchange.getIn(AttachmentMessage.class);
+attMsg.addAttachment("message1.xml", new DataHandler(new FileDataSource(new File("myMessage1.xml"))));
+----

@@ -33,6 +33,7 @@ import org.junit.Test;
 
 public class ContextErrorHandlerTest extends ContextTestSupport {
 
+    @Override
     @Before
     public void setUp() throws Exception {
         setUseRouteBuilder(false);
@@ -45,10 +46,12 @@ public class ContextErrorHandlerTest extends ContextTestSupport {
         context.adapt(ExtendedCamelContext.class).setErrorHandlerFactory(deadLetterChannelBuilder);
     }
 
+    @Override
     protected void startCamelContext() throws Exception {
         // do nothing here
     }
 
+    @Override
     protected void stopCamelContext() throws Exception {
         // do nothing here
     }

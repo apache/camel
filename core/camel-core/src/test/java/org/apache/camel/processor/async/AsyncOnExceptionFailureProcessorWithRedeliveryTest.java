@@ -57,25 +57,20 @@ public class AsyncOnExceptionFailureProcessorWithRedeliveryTest extends ContextT
                 // use redelivery up till 5 times
                 errorHandler(defaultErrorHandler().maximumRedeliveries(5));
 
-                onException(IllegalArgumentException.class).handled(true)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
+                onException(IllegalArgumentException.class).handled(true).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                })
                     // invoking the async endpoint could also cause a failure so
                     // test that we can do redelivery
-                    .to("async:bye:camel?failFirstAttempts=2")
-                    .process(new Processor() {
+                    .to("async:bye:camel?failFirstAttempts=2").process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             afterThreadName = Thread.currentThread().getName();
                         }
-                    })
-                    .to("mock:error");
+                    }).to("mock:error");
 
-                from("direct:start")
-                    .throwException(new IllegalArgumentException("Damn"))
-                    .to("mock:result");
+                from("direct:start").throwException(new IllegalArgumentException("Damn")).to("mock:result");
             }
         };
     }

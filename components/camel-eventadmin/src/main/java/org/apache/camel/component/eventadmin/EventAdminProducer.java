@@ -57,6 +57,7 @@ public class EventAdminProducer extends DefaultProducer {
         super.doStop();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         EventAdmin admin = (EventAdmin) this.tracker.getService();
         if (admin != null) {

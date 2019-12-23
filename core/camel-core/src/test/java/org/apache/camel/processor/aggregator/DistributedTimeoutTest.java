@@ -83,28 +83,26 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
-                        .aggregationRepository(sharedAggregationRepository)
-                        .optimisticLocking()
-                        .discardOnCompletionTimeout()
-                        .completionSize(3)
-                        .completionTimeout(200)
-                        .completionTimeoutCheckerInterval(10)
-                        .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).aggregationRepository(sharedAggregationRepository).optimisticLocking()
+                    .discardOnCompletionTimeout().completionSize(3).completionTimeout(200).completionTimeoutCheckerInterval(10).to("mock:aggregated");
             }
         };
     }
 
     private class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
             invoked.incrementAndGet();
 
-            // we can't assert on the expected values here as the contract of this method doesn't
-            // allow to throw any Throwable (including AssertionError) so that we assert
-            // about the expected values directly inside the test method itself. other than that
-            // asserting inside a thread other than the main thread dosen't make much sense as
+            // we can't assert on the expected values here as the contract of
+            // this method doesn't
+            // allow to throw any Throwable (including AssertionError) so that
+            // we assert
+            // about the expected values directly inside the test method itself.
+            // other than that
+            // asserting inside a thread other than the main thread dosen't make
+            // much sense as
             // junit would not realize the failed assertion!
             receivedExchange = oldExchange;
             receivedIndex = index;
@@ -112,6 +110,7 @@ public class DistributedTimeoutTest extends AbstractDistributedTest {
             receivedTimeout = timeout;
         }
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

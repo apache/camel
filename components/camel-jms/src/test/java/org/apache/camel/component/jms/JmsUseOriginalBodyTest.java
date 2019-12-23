@@ -86,12 +86,14 @@ public class JmsUseOriginalBodyTest extends CamelTestSupport {
         public MyThrowProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertEquals("Hello World", exchange.getIn().getBody(String.class));
             throw new IllegalArgumentException("Forced");
         }
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

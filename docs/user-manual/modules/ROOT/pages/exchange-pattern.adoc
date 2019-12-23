@@ -1,5 +1,5 @@
 [[ExchangePattern-ExchangePattern]]
-=== Exchange Pattern
+= Exchange Pattern
 
 There are many different _Message Exchange Patterns_ you can use in
 messaging. This concept is also demonstrated in WSDL and JBI's MEPs.
@@ -11,13 +11,13 @@ Integration Patterns] the common examples are
 * Event Message (or one way)
 
 In Camel we have an
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/ExchangePattern.html[ExchangePattern]
+`org.apache.camel.ExchangePattern`
 enumeration which can be configured on the *exchangePattern* property on
 the Message Exchange indicating if a message
 exchange is a one way Event Message (InOnly) or
 a Request Reply message exchange (InOut).
 
-For example to override the default pattern on a xref:jms-component.adoc[JMS]
+For example to override the default pattern on a xref:components::jms-component.adoc[JMS]
 endpoint you could use this URI
 
 [source,java]

@@ -31,6 +31,7 @@ public class RecordProcessor implements Processor {
 
     static Logger log = LoggerFactory.getLogger(RecordProcessor.class);
 
+    @Override
     public void process(Exchange msg) {
         log.trace("Processing msg {}", msg);
         Map<String, Object> record = msg.getIn().getBody(Map.class);

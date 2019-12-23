@@ -48,6 +48,7 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void doAppend(final PaxLoggingEvent paxLoggingEvent) {
         // in order to "force" the copy of properties (especially the MDC ones) in the local thread
         paxLoggingEvent.getProperties();

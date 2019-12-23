@@ -34,13 +34,6 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
-import static java.security.AccessController.doPrivileged;
-import static java.util.Comparator.comparing;
-import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.collectingAndThen;
-import static java.util.stream.Collectors.joining;
-import static java.util.stream.Collectors.toSet;
-
 import javax.enterprise.inject.spi.Annotated;
 import javax.enterprise.inject.spi.AnnotatedConstructor;
 import javax.enterprise.inject.spi.AnnotatedField;
@@ -52,6 +45,13 @@ import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.util.Nonbinding;
 
 import org.apache.camel.CamelContext;
+
+import static java.security.AccessController.doPrivileged;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.joining;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.DefaultLiteral.DEFAULT;
 

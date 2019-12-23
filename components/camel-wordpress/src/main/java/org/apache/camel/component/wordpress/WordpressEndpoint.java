@@ -37,15 +37,14 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.EndpointHelper;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.PropertyBindingSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 
 /**
  * Integrates Camel with Wordpress.
  */
-@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operationDetail", label = "cms")
+@UriEndpoint(firstVersion = "2.21.0", scheme = "wordpress", title = "Wordpress", syntax = "wordpress:operation", label = "cms")
 public class WordpressEndpoint extends DefaultEndpoint {
 
     public static final String ENDPOINT_SERVICE_POST = "post, user";
@@ -58,15 +57,15 @@ public class WordpressEndpoint extends DefaultEndpoint {
     private String operationDetail;
 
     @UriParam
-    private WordpressComponentConfiguration config;
+    private WordpressComponentConfiguration configuration;
 
     public WordpressEndpoint(String uri, WordpressComponent component, WordpressComponentConfiguration configuration) {
         super(uri, component);
-        this.config = configuration;
+        this.configuration = configuration;
     }
 
-    public WordpressComponentConfiguration getConfig() {
-        return config;
+    public WordpressComponentConfiguration getConfiguration() {
+        return configuration;
     }
 
     public String getOperation() {
@@ -85,6 +84,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
         this.operationDetail = operationDetail;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         switch (WordpressOperationType.valueOf(operation)) {
         case post:
@@ -97,6 +97,7 @@ public class WordpressEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException(String.format("Operation '%s' not supported.", operation));
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         switch (WordpressOperationType.valueOf(operation)) {
         case post:
@@ -115,15 +116,14 @@ public class WordpressEndpoint extends DefaultEndpoint {
 
         // set configuration properties first
         try {
-            if (config == null) {
-                config = new WordpressComponentConfiguration();
+            if (configuration == null) {
+                configuration = new WordpressComponentConfiguration();
             }
-            EndpointHelper.setReferenceProperties(getCamelContext(), config, options);
-            EndpointHelper.setProperties(getCamelContext(), config, options);
+            PropertyBindingSupport.bindProperties(getCamelContext(), configuration, options);
 
-            if (config.getSearchCriteria() == null) {
+            if (configuration.getSearchCriteria() == null) {
                 final SearchCriteria searchCriteria = WordpressOperationType.valueOf(operation).getCriteriaType().newInstance();
-                Map<String, Object> criteriaOptions = IntrospectionSupport.extractProperties(options, "criteria.");
+                Map<String, Object> criteriaOptions = PropertiesHelper.extractProperties(options, "criteria.");
                 // any property that has a "," should be a List
                 criteriaOptions = criteriaOptions.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> {
                     if (e.toString().contains(",")) {
@@ -132,21 +132,21 @@ public class WordpressEndpoint extends DefaultEndpoint {
                     return e.getValue();
                 }));
                 PropertyBindingSupport.bindProperties(getCamelContext(), searchCriteria, criteriaOptions);
-                config.setSearchCriteria(searchCriteria);
+                configuration.setSearchCriteria(searchCriteria);
             }
         } catch (Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
         // validate configuration
-        config.validate();
+        configuration.validate();
         this.initServiceProvider();
     }
 
     private void initServiceProvider() {
-        final WordpressAPIConfiguration apiConfiguration = new WordpressAPIConfiguration(config.getUrl(), config.getApiVersion());
+        final WordpressAPIConfiguration apiConfiguration = new WordpressAPIConfiguration(configuration.getUrl(), configuration.getApiVersion());
         // basic auth
-        if (ObjectHelper.isNotEmpty(config.getUser())) {
-            apiConfiguration.setAuthentication(new WordpressBasicAuthentication(config.getUser(), config.getPassword()));
+        if (ObjectHelper.isNotEmpty(configuration.getUser())) {
+            apiConfiguration.setAuthentication(new WordpressBasicAuthentication(configuration.getUser(), configuration.getPassword()));
         }
 
         WordpressServiceProvider.getInstance().init(apiConfiguration);

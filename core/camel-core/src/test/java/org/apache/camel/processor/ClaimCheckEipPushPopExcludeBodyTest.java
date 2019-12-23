@@ -45,17 +45,10 @@ public class ClaimCheckEipPushPopExcludeBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader("bar", constant("Moes"))
-                    .to("mock:a")
-                    .claimCheck(ClaimCheckOperation.Push)
-                    .transform().constant("Bye World")
-                    .setHeader("foo", constant(456))
-                    .setHeader("bar", constant("Jacks"))
-                    .to("mock:b")
+                from("direct:start").setHeader("bar", constant("Moes")).to("mock:a").claimCheck(ClaimCheckOperation.Push).transform().constant("Bye World")
+                    .setHeader("foo", constant(456)).setHeader("bar", constant("Jacks")).to("mock:b")
                     // skip the body and bar header
-                    .claimCheck(ClaimCheckOperation.Pop, null, "-body,-header:bar")
-                    .to("mock:c");
+                    .claimCheck(ClaimCheckOperation.Pop, null, "-body,-header:bar").to("mock:c");
             }
         };
     }

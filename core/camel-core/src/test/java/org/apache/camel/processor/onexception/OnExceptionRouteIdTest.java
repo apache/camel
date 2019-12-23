@@ -42,16 +42,9 @@ public class OnExceptionRouteIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).id("myError")
-                    .maximumRedeliveries(0)
-                    .handled(true)
-                    .setHeader("error", constant("true"))
-                    .end()
-                    .stop();
+                onException(Exception.class).id("myError").maximumRedeliveries(0).handled(true).setHeader("error", constant("true")).end().stop();
 
-                from("direct:foo").routeId("foo")
-                    .to("mock:foo")
-                    .end();
+                from("direct:foo").routeId("foo").to("mock:foo").end();
             }
         };
     }

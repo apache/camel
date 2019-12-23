@@ -92,6 +92,7 @@ public class CamelMethodHandler implements HttpHandler {
         return result;
     }
 
+    @Override
     public String toString() {
         if (handlerString == null) {
             handlerString = "CamelMethodHandler[" + methodMap + "]";

@@ -48,7 +48,8 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         assertEquals("Size should be 0", 0, cache.size());
 
-        // test that we cache at most 1000 producers to avoid it eating to much memory
+        // test that we cache at most 1000 producers to avoid it eating to much
+        // memory
         for (int i = 0; i < 1003; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
             AsyncProducer p = cache.acquireProducer(e);
@@ -164,6 +165,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             throw new UnsupportedOperationException();
         }
     }
+
     private final class MyEndpoint extends DefaultEndpoint {
 
         private final boolean isSingleton;
@@ -189,7 +191,6 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         public boolean isSingleton() {
             return isSingleton;
         }
-
     }
 
     private final class MyProducer extends DefaultProducer {
@@ -213,5 +214,4 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             shutdownCounter.incrementAndGet();
         }
     }
-
 }

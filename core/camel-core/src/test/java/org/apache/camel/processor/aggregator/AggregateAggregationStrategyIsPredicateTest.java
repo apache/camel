@@ -47,9 +47,7 @@ public class AggregateAggregationStrategyIsPredicateTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new MyCompletionStrategy())
-                    .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).to("mock:aggregated");
             }
         };
     }

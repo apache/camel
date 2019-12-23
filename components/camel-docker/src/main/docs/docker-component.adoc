@@ -1,17 +1,21 @@
 [[docker-component]]
-== Docker Component
+= Docker Component
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 Camel component for communicating with Docker.
 
 The Docker Camel component leverages the
-https://github.com/docker-java/docker-java[docker-java] via the
+https://github.com/docker-java/docker-java[docker-java] via the
 https://docs.docker.com/reference/api/docker_remote_api[Docker Remote
 API].
 
 
-### URI format
+== URI format
 
 [source,java]
 ------------------------------
@@ -20,10 +24,10 @@ docker://[operation]?[options]
 
 Where *operation* is the specific action to perform on Docker.
 
-### General Options
+== General Options
 
 // component options: START
-The Docker component supports 3 options, which are listed below.
+The Docker component supports 4 options, which are listed below.
 
 
 
@@ -31,8 +35,9 @@ The Docker component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared docker configuration |  | DockerConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -46,7 +51,7 @@ docker:operation
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -56,7 +61,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -87,14 +92,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-docker-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -102,7 +107,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 21 options, which are listed below.
+The component supports 22 options, which are listed below.
 
 
 
@@ -110,6 +115,7 @@ The component supports 21 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.docker.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.docker.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.docker.configuration.cert-path* | Location containing the SSL certificate chain |  | String
 | *camel.component.docker.configuration.cmd-exec-factory* | The fully qualified class name of the DockerCmdExecFactory implementation to use | com.github.dockerjava.netty.NettyDockerCmdExecFactory | String
 | *camel.component.docker.configuration.email* | Email address associated with the user |  | String
@@ -128,13 +134,13 @@ The component supports 21 options, which are listed below.
 | *camel.component.docker.configuration.socket* | Socket connection mode | true | Boolean
 | *camel.component.docker.configuration.tls-verify* | Check TLS | false | Boolean
 | *camel.component.docker.configuration.username* | User name to authenticate with |  | String
-| *camel.component.docker.enabled* | Enable docker component | true | Boolean
-| *camel.component.docker.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.docker.enabled* | Whether to enable auto configuration of the docker component. This is enabled by default. |  | Boolean
+| *camel.component.docker.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-### Header Strategy
+== Header Strategy
 
 All URI option can be passed as Header properties. Values found in a
 message header take precedence over URI parameters. A header property
@@ -149,7 +155,7 @@ below
 |=======================================================================
 
 
-### Examples
+== Examples
 
 The following example consumes events from Docker:
 
@@ -166,7 +172,7 @@ from("docker://info?host=192.168.59.103&port=2375").to("log:info");
 -------------------------------------------------------------------
 
 
-### Dependencies
+== Dependencies
 
 To use Docker in your Camel routes you need to add a dependency on
 *camel-docker*, which implements the component.

@@ -33,7 +33,7 @@ public final class ValidatorFactories {
     private ValidatorFactories() {
     }
 
-    public static ValidatorFactory buildValidatorFactory(boolean osgi,
+    public static ValidatorFactory buildValidatorFactory(boolean osgi, boolean ignoreXml,
                                                          ValidationProviderResolver validationProviderResolver,
                                                          MessageInterpolator messageInterpolator,
                                                          TraversableResolver traversableResolver,
@@ -58,6 +58,10 @@ public final class ValidatorFactories {
 
         if (constraintValidatorFactory != null) {
             configuration.constraintValidatorFactory(constraintValidatorFactory);
+        }
+
+        if (ignoreXml) {
+            configuration.ignoreXmlConfiguration();
         }
 
         return configuration.buildValidatorFactory();

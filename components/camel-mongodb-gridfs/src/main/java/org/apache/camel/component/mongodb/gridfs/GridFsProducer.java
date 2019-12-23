@@ -30,7 +30,6 @@ import com.mongodb.util.JSON;
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 
-
 public class GridFsProducer extends DefaultProducer {    
     private GridFsEndpoint endpoint;
 
@@ -39,6 +38,7 @@ public class GridFsProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String operation = endpoint.getOperation();
         if (operation == null) {

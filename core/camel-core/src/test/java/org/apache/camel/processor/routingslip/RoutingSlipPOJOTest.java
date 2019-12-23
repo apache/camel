@@ -25,38 +25,39 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class RoutingSlipPOJOTest extends ContextTestSupport {
-    
+
     @Test
     public void testRoutingSlipPOJO() throws Exception {
         MockEndpoint foo = getMockEndpoint("mock:foo");
         MockEndpoint result = getMockEndpoint("mock:result");
-        
+
         foo.expectedBodiesReceived("Message");
-        result.expectedBodiesReceived("Message is processed!");       
+        result.expectedBodiesReceived("Message is processed!");
 
         template.sendBody("direct:a", "Message");
 
         assertMockEndpointsSatisfied();
     }
-    
+
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:a").bean(new MyRoutingSlipPOJO());
-                
+
                 from("direct:b").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setBody(exchange.getIn().getBody() + " is processed!");                        
+                        exchange.getMessage().setBody(exchange.getIn().getBody() + " is processed!");
                     }
                 });
             }
         };
     }
-    
+
     public class MyRoutingSlipPOJO {
-        @RoutingSlip(context = "camel-1")
+        @RoutingSlip
         public String[] doSomething(String body) {
-            return new String[]{"mock:foo", "direct:b", "mock:result"};
+            return new String[] {"mock:foo", "direct:b", "mock:result"};
         }
     }
 

@@ -46,7 +46,9 @@ public class SmppComponentTest {
     @Before
     public void setUp() {
         context = new DefaultCamelContext();
+        context.start();
         component = new SmppComponent(context);
+        component.start();
     }
 
     @Test
@@ -68,12 +70,15 @@ public class SmppComponentTest {
     @Test
     public void createEndpointStringStringMapShouldReturnASmppEndpoint() throws Exception {
         CamelContext context = new DefaultCamelContext();
+        context.start();
         component = new SmppComponent(context);
+        component.start();
+
         Map<String, String> parameters = new HashMap<>();
         parameters.put("password", "secret");
         Endpoint endpoint = component.createEndpoint("smpp://smppclient@localhost:2775", "?password=secret", parameters);
         SmppEndpoint smppEndpoint = (SmppEndpoint) endpoint;
-        
+
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getEndpointUri());
         assertEquals("smpp://smppclient@localhost:2775", smppEndpoint.getEndpointKey());
         assertSame(component, smppEndpoint.getComponent());
@@ -87,8 +92,6 @@ public class SmppComponentTest {
 
     @Test
     public void createEndpointStringStringMapShouldReturnASmppsEndpoint() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        component = new SmppComponent(context);
         Map<String, String> parameters = new HashMap<>();
         parameters.put("password", "secret");
         Endpoint endpoint = component.createEndpoint("smpps://smppclient@localhost:2775", "?password=secret", parameters);
@@ -174,19 +177,5 @@ public class SmppComponentTest {
         
         assertSame(configuration, component.getConfiguration());
     }
-    
-    @Test
-    public void createEndpointWithSessionStateListener() throws Exception {
-        SimpleRegistry registry = new SimpleRegistry();
-        registry.bind("sessionStateListener", new SessionStateListener() {
-            @Override
-            public void onStateChange(SessionState arg0, SessionState arg1, Session arg2) {
-            }
-        });
-        context.setRegistry(registry);
-        component = new SmppComponent(context);
-        SmppEndpoint endpoint = (SmppEndpoint) component.createEndpoint("smpp://smppclient@localhost:2775?password=password&sessionStateListener=#sessionStateListener");
-        
-        assertNotNull(endpoint.getConfiguration().getSessionStateListener());
-    }
+
 }

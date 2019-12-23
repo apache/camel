@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jpa;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -46,6 +47,7 @@ public class JpaTest extends Assert {
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;
     protected JpaEndpoint endpoint;
+    protected JpaEndpoint listEndpoint;
     protected EntityManager entityManager;
     protected TransactionTemplate transactionTemplate;
     protected Consumer consumer;
@@ -56,18 +58,6 @@ public class JpaTest extends Assert {
 
     @Test
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
-                // lets delete any exiting records before the test
-                entityManager.createQuery("delete from " + entityName).executeUpdate();
-                return null;
-            }
-        });
-
-        List<?> results = entityManager.createQuery(queryText).getResultList();
-        assertEquals("Should have no results: " + results, 0, results.size());
-
         // lets produce some objects
         template.send(endpoint, new Processor() {
             public void process(Exchange exchange) {
@@ -76,7 +66,7 @@ public class JpaTest extends Assert {
         });
 
         // now lets assert that there is a result
-        results = entityManager.createQuery(queryText).getResultList();
+        List<?> results = entityManager.createQuery(queryText).getResultList();
         assertEquals("Should have results: " + results, 1, results.size());
         SendEmail mail = (SendEmail) results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
@@ -102,6 +92,31 @@ public class JpaTest extends Assert {
         assertEquals("address property", "foo@bar.com", result.getAddress());
     }
 
+    @Test
+    public void testProducerInsertsList() throws Exception {
+        // lets produce some objects
+        template.send(listEndpoint, new Processor() {
+            public void process(Exchange exchange) {
+                // use a list
+                List list = new ArrayList();
+                list.add(new SendEmail("foo@bar.com"));
+                list.add(new SendEmail("foo2@bar.com"));
+                exchange.getIn().setBody(list);
+            }
+        });
+
+        // now lets assert that there is a result
+        List<?> results = entityManager.createQuery(queryText).getResultList();
+        assertEquals("Should have results: " + results, 2, results.size());
+        SendEmail mail = (SendEmail) results.get(0);
+        assertEquals("address property", "foo@bar.com", mail.getAddress());
+        assertNotNull("id", mail.getId());
+
+        SendEmail mail2 = (SendEmail) results.get(1);
+        assertEquals("address property", "foo2@bar.com", mail2.getAddress());
+        assertNotNull("id", mail2.getId());
+    }
+
     @Before
     public void setUp() throws Exception {
         template = camelContext.createProducerTemplate();
@@ -112,8 +127,22 @@ public class JpaTest extends Assert {
         assertTrue("Should be a JPA endpoint but was: " + value, value instanceof JpaEndpoint);
         endpoint = (JpaEndpoint) value;
 
+        listEndpoint = camelContext.getEndpoint(getEndpointUri() + "&entityType=java.util.List", JpaEndpoint.class);
+
         transactionTemplate = endpoint.createTransactionTemplate();
         entityManager = endpoint.createEntityManager();
+
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+                entityManager.joinTransaction();
+                // lets delete any exiting records before the test
+                entityManager.createQuery("delete from " + entityName).executeUpdate();
+                return null;
+            }
+        });
+
+        List<?> results = entityManager.createQuery(queryText).getResultList();
+        assertEquals("Should have no results: " + results, 0, results.size());
     }
 
     protected String getEndpointUri() {

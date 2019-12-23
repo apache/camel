@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Folder;
 import javax.mail.Store;
 
@@ -68,11 +69,12 @@ public class MailPollEnrichNoMailTest extends CamelTestSupport {
         folder.expunge();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:start")
-                    .pollEnrich("pop3://bill@localhost?password=secret&consumer.initialDelay=100&consumer.delay=100", 0)
+                    .pollEnrich("pop3://bill@localhost?password=secret&initialDelay=100&delay=100", 0)
                     .to("log:mail", "mock:result");
             }
         };

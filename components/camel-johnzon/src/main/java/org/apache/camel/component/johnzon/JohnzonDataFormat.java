@@ -50,7 +50,7 @@ public class JohnzonDataFormat extends ServiceSupport implements DataFormat, Dat
     private boolean skipNull;
 
     public JohnzonDataFormat() {
-       this(Object.class);
+        this(Object.class);
     }
     
     /**

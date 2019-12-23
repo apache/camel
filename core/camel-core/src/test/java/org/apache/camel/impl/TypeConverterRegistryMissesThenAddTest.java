@@ -53,12 +53,13 @@ public class TypeConverterRegistryMissesThenAddTest extends Assert {
 
     private static class MyOrderTypeConverter extends TypeConverterSupport {
 
+        @Override
         @SuppressWarnings("unchecked")
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
             // converter from value to the MyOrder bean
             MyOrder order = new MyOrder();
             order.setId(Integer.parseInt(value.toString()));
-            return (T) order;
+            return (T)order;
         }
 
     }

@@ -18,6 +18,7 @@ package org.apache.camel.component.printer;
 
 import java.io.InputStream;
 import java.util.Locale;
+
 import javax.print.DocFlavor;
 import javax.print.PrintException;
 import javax.print.PrintService;
@@ -44,6 +45,7 @@ public class PrinterProducer extends DefaultProducer {
         this.config = config;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, body);

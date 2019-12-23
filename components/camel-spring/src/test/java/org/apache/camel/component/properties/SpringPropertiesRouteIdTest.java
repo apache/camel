@@ -25,6 +25,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
  */
 public class SpringPropertiesRouteIdTest extends PropertiesRouteIdTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/component/properties/SpringPropertiesRouteIdTest.xml");
     }

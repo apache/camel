@@ -46,7 +46,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -58,7 +58,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder config(Object config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder config(String config) {
-            setProperty("config", config);
+            doSetProperty("config", config);
             return this;
         }
         /**
@@ -81,7 +81,45 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder domain(String domain) {
-            setProperty("domain", domain);
+            doSetProperty("domain", domain);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SwiftEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SwiftEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -92,7 +130,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -104,7 +142,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -116,7 +154,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder project(String project) {
-            setProperty("project", project);
+            doSetProperty("project", project);
             return this;
         }
         /**
@@ -128,7 +166,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder subsystem(String subsystem) {
-            setProperty("subsystem", subsystem);
+            doSetProperty("subsystem", subsystem);
             return this;
         }
         /**
@@ -140,7 +178,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: producer
          */
         default SwiftEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -164,7 +202,7 @@ public interface SwiftEndpointBuilderFactory {
          */
         default AdvancedSwiftEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -177,7 +215,7 @@ public interface SwiftEndpointBuilderFactory {
          */
         default AdvancedSwiftEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -189,7 +227,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSwiftEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -201,7 +239,7 @@ public interface SwiftEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSwiftEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -211,7 +249,7 @@ public interface SwiftEndpointBuilderFactory {
      * object storage services.
      * 
      * Category: cloud,paas
-     * Available as of version: 2.19
+     * Since: 2.19
      * Maven coordinates: org.apache.camel:camel-openstack
      * 
      * Syntax: <code>openstack-swift:host</code>
@@ -219,7 +257,7 @@ public interface SwiftEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default SwiftEndpointBuilder swift(String path) {
+    default SwiftEndpointBuilder openstackSwift(String path) {
         class SwiftEndpointBuilderImpl extends AbstractEndpointBuilder implements SwiftEndpointBuilder, AdvancedSwiftEndpointBuilder {
             public SwiftEndpointBuilderImpl(String path) {
                 super("openstack-swift", path);

@@ -20,6 +20,7 @@ import javax.annotation.Generated;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExchangeFormatter;
 
 /**
  * The log component logs message exchanges to the underlying logging mechanism.
@@ -46,7 +47,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupActiveOnly(Boolean groupActiveOnly) {
-            setProperty("groupActiveOnly", groupActiveOnly);
+            doSetProperty("groupActiveOnly", groupActiveOnly);
             return this;
         }
         /**
@@ -59,7 +60,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupActiveOnly(String groupActiveOnly) {
-            setProperty("groupActiveOnly", groupActiveOnly);
+            doSetProperty("groupActiveOnly", groupActiveOnly);
             return this;
         }
         /**
@@ -70,7 +71,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupDelay(Long groupDelay) {
-            setProperty("groupDelay", groupDelay);
+            doSetProperty("groupDelay", groupDelay);
             return this;
         }
         /**
@@ -81,7 +82,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupDelay(String groupDelay) {
-            setProperty("groupDelay", groupDelay);
+            doSetProperty("groupDelay", groupDelay);
             return this;
         }
         /**
@@ -93,7 +94,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupInterval(Long groupInterval) {
-            setProperty("groupInterval", groupInterval);
+            doSetProperty("groupInterval", groupInterval);
             return this;
         }
         /**
@@ -105,7 +106,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupInterval(String groupInterval) {
-            setProperty("groupInterval", groupInterval);
+            doSetProperty("groupInterval", groupInterval);
             return this;
         }
         /**
@@ -116,7 +117,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupSize(Integer groupSize) {
-            setProperty("groupSize", groupSize);
+            doSetProperty("groupSize", groupSize);
             return this;
         }
         /**
@@ -128,7 +129,45 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder groupSize(String groupSize) {
-            setProperty("groupSize", groupSize);
+            doSetProperty("groupSize", groupSize);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LogEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LogEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -139,7 +178,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder level(String level) {
-            setProperty("level", level);
+            doSetProperty("level", level);
             return this;
         }
         /**
@@ -151,7 +190,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder logMask(Boolean logMask) {
-            setProperty("logMask", logMask);
+            doSetProperty("logMask", logMask);
             return this;
         }
         /**
@@ -164,7 +203,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder logMask(String logMask) {
-            setProperty("logMask", logMask);
+            doSetProperty("logMask", logMask);
             return this;
         }
         /**
@@ -175,7 +214,7 @@ public interface LogEndpointBuilderFactory {
          * Group: producer
          */
         default LogEndpointBuilder marker(String marker) {
-            setProperty("marker", marker);
+            doSetProperty("marker", marker);
             return this;
         }
         /**
@@ -186,7 +225,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder maxChars(int maxChars) {
-            setProperty("maxChars", maxChars);
+            doSetProperty("maxChars", maxChars);
             return this;
         }
         /**
@@ -197,7 +236,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder maxChars(String maxChars) {
-            setProperty("maxChars", maxChars);
+            doSetProperty("maxChars", maxChars);
             return this;
         }
         /**
@@ -208,7 +247,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder multiline(boolean multiline) {
-            setProperty("multiline", multiline);
+            doSetProperty("multiline", multiline);
             return this;
         }
         /**
@@ -219,7 +258,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder multiline(String multiline) {
-            setProperty("multiline", multiline);
+            doSetProperty("multiline", multiline);
             return this;
         }
         /**
@@ -231,7 +270,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showAll(boolean showAll) {
-            setProperty("showAll", showAll);
+            doSetProperty("showAll", showAll);
             return this;
         }
         /**
@@ -243,7 +282,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showAll(String showAll) {
-            setProperty("showAll", showAll);
+            doSetProperty("showAll", showAll);
             return this;
         }
         /**
@@ -254,7 +293,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showBody(boolean showBody) {
-            setProperty("showBody", showBody);
+            doSetProperty("showBody", showBody);
             return this;
         }
         /**
@@ -265,7 +304,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showBody(String showBody) {
-            setProperty("showBody", showBody);
+            doSetProperty("showBody", showBody);
             return this;
         }
         /**
@@ -276,7 +315,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showBodyType(boolean showBodyType) {
-            setProperty("showBodyType", showBodyType);
+            doSetProperty("showBodyType", showBodyType);
             return this;
         }
         /**
@@ -287,13 +326,13 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showBodyType(String showBodyType) {
-            setProperty("showBodyType", showBodyType);
+            doSetProperty("showBodyType", showBodyType);
             return this;
         }
         /**
-         * f the exchange has a caught exception, show the exception message (no
-         * stack trace).A caught exception is stored as a property on the
-         * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT
+         * If the exchange has a caught exception, show the exception message
+         * (no stack trace). A caught exception is stored as a property on the
+         * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT)
          * and for instance a doCatch can catch exceptions.
          * 
          * The option is a: <code>boolean</code> type.
@@ -302,13 +341,13 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder showCaughtException(
                 boolean showCaughtException) {
-            setProperty("showCaughtException", showCaughtException);
+            doSetProperty("showCaughtException", showCaughtException);
             return this;
         }
         /**
-         * f the exchange has a caught exception, show the exception message (no
-         * stack trace).A caught exception is stored as a property on the
-         * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT
+         * If the exchange has a caught exception, show the exception message
+         * (no stack trace). A caught exception is stored as a property on the
+         * exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT)
          * and for instance a doCatch can catch exceptions.
          * 
          * The option will be converted to a <code>boolean</code> type.
@@ -317,7 +356,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder showCaughtException(
                 String showCaughtException) {
-            setProperty("showCaughtException", showCaughtException);
+            doSetProperty("showCaughtException", showCaughtException);
             return this;
         }
         /**
@@ -329,7 +368,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showException(boolean showException) {
-            setProperty("showException", showException);
+            doSetProperty("showException", showException);
             return this;
         }
         /**
@@ -341,7 +380,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showException(String showException) {
-            setProperty("showException", showException);
+            doSetProperty("showException", showException);
             return this;
         }
         /**
@@ -352,7 +391,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showExchangeId(boolean showExchangeId) {
-            setProperty("showExchangeId", showExchangeId);
+            doSetProperty("showExchangeId", showExchangeId);
             return this;
         }
         /**
@@ -363,7 +402,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showExchangeId(String showExchangeId) {
-            setProperty("showExchangeId", showExchangeId);
+            doSetProperty("showExchangeId", showExchangeId);
             return this;
         }
         /**
@@ -375,7 +414,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder showExchangePattern(
                 boolean showExchangePattern) {
-            setProperty("showExchangePattern", showExchangePattern);
+            doSetProperty("showExchangePattern", showExchangePattern);
             return this;
         }
         /**
@@ -387,7 +426,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder showExchangePattern(
                 String showExchangePattern) {
-            setProperty("showExchangePattern", showExchangePattern);
+            doSetProperty("showExchangePattern", showExchangePattern);
             return this;
         }
         /**
@@ -398,7 +437,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showFiles(boolean showFiles) {
-            setProperty("showFiles", showFiles);
+            doSetProperty("showFiles", showFiles);
             return this;
         }
         /**
@@ -409,7 +448,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showFiles(String showFiles) {
-            setProperty("showFiles", showFiles);
+            doSetProperty("showFiles", showFiles);
             return this;
         }
         /**
@@ -421,7 +460,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showFuture(boolean showFuture) {
-            setProperty("showFuture", showFuture);
+            doSetProperty("showFuture", showFuture);
             return this;
         }
         /**
@@ -433,7 +472,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showFuture(String showFuture) {
-            setProperty("showFuture", showFuture);
+            doSetProperty("showFuture", showFuture);
             return this;
         }
         /**
@@ -444,7 +483,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showHeaders(boolean showHeaders) {
-            setProperty("showHeaders", showHeaders);
+            doSetProperty("showHeaders", showHeaders);
             return this;
         }
         /**
@@ -455,29 +494,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showHeaders(String showHeaders) {
-            setProperty("showHeaders", showHeaders);
-            return this;
-        }
-        /**
-         * If the exchange has an out message, show the out message.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: formatting
-         */
-        default LogEndpointBuilder showOut(boolean showOut) {
-            setProperty("showOut", showOut);
-            return this;
-        }
-        /**
-         * If the exchange has an out message, show the out message.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: formatting
-         */
-        default LogEndpointBuilder showOut(String showOut) {
-            setProperty("showOut", showOut);
+            doSetProperty("showHeaders", showHeaders);
             return this;
         }
         /**
@@ -488,7 +505,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showProperties(boolean showProperties) {
-            setProperty("showProperties", showProperties);
+            doSetProperty("showProperties", showProperties);
             return this;
         }
         /**
@@ -499,7 +516,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showProperties(String showProperties) {
-            setProperty("showProperties", showProperties);
+            doSetProperty("showProperties", showProperties);
             return this;
         }
         /**
@@ -511,7 +528,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showStackTrace(boolean showStackTrace) {
-            setProperty("showStackTrace", showStackTrace);
+            doSetProperty("showStackTrace", showStackTrace);
             return this;
         }
         /**
@@ -523,7 +540,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showStackTrace(String showStackTrace) {
-            setProperty("showStackTrace", showStackTrace);
+            doSetProperty("showStackTrace", showStackTrace);
             return this;
         }
         /**
@@ -538,7 +555,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showStreams(boolean showStreams) {
-            setProperty("showStreams", showStreams);
+            doSetProperty("showStreams", showStreams);
             return this;
         }
         /**
@@ -553,11 +570,11 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder showStreams(String showStreams) {
-            setProperty("showStreams", showStreams);
+            doSetProperty("showStreams", showStreams);
             return this;
         }
         /**
-         * Whether to skip line separators when logging the message body.This
+         * Whether to skip line separators when logging the message body. This
          * allows to log the message body in one line, setting this option to
          * false will preserve any line separators from the body, which then
          * will log the body as is.
@@ -568,11 +585,11 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder skipBodyLineSeparator(
                 boolean skipBodyLineSeparator) {
-            setProperty("skipBodyLineSeparator", skipBodyLineSeparator);
+            doSetProperty("skipBodyLineSeparator", skipBodyLineSeparator);
             return this;
         }
         /**
-         * Whether to skip line separators when logging the message body.This
+         * Whether to skip line separators when logging the message body. This
          * allows to log the message body in one line, setting this option to
          * false will preserve any line separators from the body, which then
          * will log the body as is.
@@ -583,7 +600,7 @@ public interface LogEndpointBuilderFactory {
          */
         default LogEndpointBuilder skipBodyLineSeparator(
                 String skipBodyLineSeparator) {
-            setProperty("skipBodyLineSeparator", skipBodyLineSeparator);
+            doSetProperty("skipBodyLineSeparator", skipBodyLineSeparator);
             return this;
         }
         /**
@@ -595,7 +612,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder style(OutputStyle style) {
-            setProperty("style", style);
+            doSetProperty("style", style);
             return this;
         }
         /**
@@ -607,7 +624,7 @@ public interface LogEndpointBuilderFactory {
          * Group: formatting
          */
         default LogEndpointBuilder style(String style) {
-            setProperty("style", style);
+            doSetProperty("style", style);
             return this;
         }
     }
@@ -631,7 +648,7 @@ public interface LogEndpointBuilderFactory {
          */
         default AdvancedLogEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -644,7 +661,33 @@ public interface LogEndpointBuilderFactory {
          */
         default AdvancedLogEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * To use a custom exchange formatter.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExchangeFormatter</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedLogEndpointBuilder exchangeFormatter(
+                ExchangeFormatter exchangeFormatter) {
+            doSetProperty("exchangeFormatter", exchangeFormatter);
+            return this;
+        }
+        /**
+         * To use a custom exchange formatter.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExchangeFormatter</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedLogEndpointBuilder exchangeFormatter(
+                String exchangeFormatter) {
+            doSetProperty("exchangeFormatter", exchangeFormatter);
             return this;
         }
         /**
@@ -656,7 +699,7 @@ public interface LogEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLogEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -668,7 +711,7 @@ public interface LogEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLogEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -688,7 +731,7 @@ public interface LogEndpointBuilderFactory {
      * mechanism.
      * 
      * Category: core,monitoring
-     * Available as of version: 1.1
+     * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-log
      * 
      * Syntax: <code>log:loggerName</code>

@@ -19,11 +19,11 @@ package org.apache.camel.component.consul.endpoint;
 import com.orbitz.consul.Consul;
 import com.orbitz.consul.PreparedQueryClient;
 import com.orbitz.consul.model.query.PreparedQuery;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulConstants;
 import org.apache.camel.component.consul.ConsulEndpoint;
+import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.util.ObjectHelper;
 
 public final class ConsulPreparedQueryProducer extends AbstractConsulProducer<PreparedQueryClient> {
@@ -34,12 +34,7 @@ public final class ConsulPreparedQueryProducer extends AbstractConsulProducer<Pr
 
     @InvokeOnHeader(ConsulPreparedQueryActions.CREATE)
     protected void create(Message message) throws Exception {
-        setBodyAndResult(
-            message,
-            getClient().createPreparedQuery(
-                message.getMandatoryBody(PreparedQuery.class)
-            )
-        );
+        setBodyAndResult(message, getClient().createPreparedQuery(message.getMandatoryBody(PreparedQuery.class)));
     }
 
     @InvokeOnHeader(ConsulPreparedQueryActions.GET)
@@ -47,17 +42,9 @@ public final class ConsulPreparedQueryProducer extends AbstractConsulProducer<Pr
         String id = message.getHeader(ConsulConstants.CONSUL_PREPARED_QUERY_ID, String.class);
 
         if (ObjectHelper.isEmpty(id)) {
-            setBodyAndResult(
-                message,
-                getClient().getPreparedQuery(
-                    message.getMandatoryBody(String.class)
-                )
-            );
+            setBodyAndResult(message, getClient().getPreparedQuery(message.getMandatoryBody(String.class)));
         } else {
-            setBodyAndResult(
-                message,
-                getClient().getPreparedQuery(id)
-            );
+            setBodyAndResult(message, getClient().getPreparedQuery(id));
         }
     }
 
@@ -66,17 +53,9 @@ public final class ConsulPreparedQueryProducer extends AbstractConsulProducer<Pr
         String id = message.getHeader(ConsulConstants.CONSUL_PREPARED_QUERY_ID, String.class);
 
         if (ObjectHelper.isEmpty(id)) {
-            setBodyAndResult(
-                message,
-                getClient().execute(
-                    message.getMandatoryBody(String.class)
-                )
-            );
+            setBodyAndResult(message, getClient().execute(message.getMandatoryBody(String.class)));
         } else {
-            setBodyAndResult(
-                message,
-                getClient().execute(id)
-            );
+            setBodyAndResult(message, getClient().execute(id));
         }
     }
 }

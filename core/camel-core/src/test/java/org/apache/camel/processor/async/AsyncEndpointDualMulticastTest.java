@@ -41,18 +41,13 @@ public class AsyncEndpointDualMulticastTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                        .to("mock:before")
-                        .to("log:before")
-                        .multicast()
-                            .to("async:hi:camel").to("async:bye:camel")
-                        .end()
-                        // fully asynchronous support for multicasting is too complex
-                        // so the main thread will block and wait for both to complete
-                        // before it routes to the end
-                        .to("log:after")
-                        .to("mock:after")
-                        .to("mock:result");
+                from("direct:start").to("mock:before").to("log:before").multicast().to("async:hi:camel").to("async:bye:camel").end()
+                    // fully asynchronous support for multicasting is too
+                    // complex
+                    // so the main thread will block and wait for both to
+                    // complete
+                    // before it routes to the end
+                    .to("log:after").to("mock:after").to("mock:result");
             }
         };
     }

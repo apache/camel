@@ -48,7 +48,7 @@ public class Olingo2AppWrapper {
     }
 
     // double checked locking based singleton Edm reader
-    public Edm getEdm() throws RuntimeCamelException {
+    public Edm getEdm(Map<String, String> endpointHttpHeaders) throws RuntimeCamelException {
         Edm localEdm = edm;
         if (localEdm == null) {
 
@@ -59,7 +59,7 @@ public class Olingo2AppWrapper {
 
                     final CountDownLatch latch = new CountDownLatch(1);
                     final Exception[] error = new Exception[1];
-                    olingo2App.read(null, "$metadata", null, null, new Olingo2ResponseHandler<Edm>() {
+                    olingo2App.read(null, "$metadata", null, endpointHttpHeaders, new Olingo2ResponseHandler<Edm>() {
 
                         @Override
                         public void onResponse(Edm response, Map<String, String> responseHeaders) {
@@ -87,10 +87,9 @@ public class Olingo2AppWrapper {
                         final Exception ex = error[0];
                         if (ex != null) {
                             if (ex instanceof RuntimeCamelException) {
-                                throw (RuntimeCamelException) ex;
+                                throw (RuntimeCamelException)ex;
                             } else {
-                                final String message = ex.getMessage() != null
-                                    ? ex.getMessage() : ex.getClass().getName();
+                                final String message = ex.getMessage() != null ? ex.getMessage() : ex.getClass().getName();
                                 throw new RuntimeCamelException("Error reading EDM: " + message, ex);
                             }
                         }

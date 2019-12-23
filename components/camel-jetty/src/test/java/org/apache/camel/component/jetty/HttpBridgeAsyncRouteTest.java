@@ -22,6 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class HttpBridgeAsyncRouteTest extends HttpBridgeRouteTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
@@ -39,10 +40,10 @@ public class HttpBridgeAsyncRouteTest extends HttpBridgeRouteTest {
                 };
                 from("jetty:http://localhost:" + port2 + "/test/hello?async=true&useContinuation=false")
                     .to("http://localhost:" + port1 + "?throwExceptionOnFailure=false&bridgeEndpoint=true");
-                
+
                 from("jetty://http://localhost:" + port1 + "?matchOnUriPrefix=true&async=true&useContinuation=false").process(serviceProc);
             }
         };
-    }    
+    }
 
 }

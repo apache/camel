@@ -18,14 +18,18 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.LanguageValidationResult;
@@ -37,6 +41,8 @@ import org.apache.camel.parser.model.CamelEndpointDetails;
 import org.apache.camel.parser.model.CamelRouteDetails;
 import org.apache.camel.parser.model.CamelSimpleExpressionDetails;
 import org.apache.camel.support.PatternHelper;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.OrderedProperties;
 import org.apache.camel.util.StringHelper;
 import org.apache.maven.model.Dependency;
 import org.apache.maven.model.Resource;
@@ -51,7 +57,8 @@ import org.jboss.forge.roaster.model.JavaType;
 import org.jboss.forge.roaster.model.source.JavaClassSource;
 
 /**
- * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions.
+ * Parses the source code and validates the Camel routes has valid endpoint uris and simple expressions,
+ * and validates configuration files such as application.properties.
  */
 @Mojo(name = "validate", threadSafe = true)
 public class ValidateMojo extends AbstractExecMojo {
@@ -64,35 +71,30 @@ public class ValidateMojo extends AbstractExecMojo {
 
     /**
      * Whether to fail if invalid Camel endpoints was found. By default the plugin logs the errors at WARN level
-     *
      */
     @Parameter(property = "camel.failOnError", defaultValue = "false")
     private boolean failOnError;
 
     /**
      * Whether to log endpoint URIs which was un-parsable and therefore not possible to validate
-     *
      */
     @Parameter(property = "camel.logUnparseable", defaultValue = "false")
     private boolean logUnparseable;
 
     /**
      * Whether to include Java files to be validated for invalid Camel endpoints
-     *
      */
     @Parameter(property = "camel.includeJava", defaultValue = "true")
     private boolean includeJava;
 
     /**
      * Whether to include XML files to be validated for invalid Camel endpoints
-     *
      */
     @Parameter(property = "camel.includeXml", defaultValue = "true")
     private boolean includeXml;
 
     /**
      * Whether to include test source code
-     *
      */
     @Parameter(property = "camel.includeTest", defaultValue = "false")
     private boolean includeTest;
@@ -113,21 +115,18 @@ public class ValidateMojo extends AbstractExecMojo {
 
     /**
      * Whether to ignore unknown components
-     *
      */
     @Parameter(property = "camel.ignoreUnknownComponent", defaultValue = "true")
     private boolean ignoreUnknownComponent;
 
     /**
      * Whether to ignore incapable of parsing the endpoint uri
-     *
      */
     @Parameter(property = "camel.ignoreIncapable", defaultValue = "true")
     private boolean ignoreIncapable;
 
     /**
      * Whether to ignore deprecated options being used in the endpoint uri
-     *
      */
     @Parameter(property = "camel.ignoreDeprecated", defaultValue = "true")
     private boolean ignoreDeprecated;
@@ -136,14 +135,12 @@ public class ValidateMojo extends AbstractExecMojo {
      * Whether to ignore components that uses lenient properties. When this is true, then the uri validation is stricter
      * but would fail on properties that are not part of the component but in the uri because of using lenient properties.
      * For example using the HTTP components to provide query parameters in the endpoint uri.
-     *
      */
     @Parameter(property = "camel.ignoreLenientProperties", defaultValue = "true")
     private boolean ignoreLenientProperties;
 
     /**
      * Whether to show all endpoints and simple expressions (both invalid and valid).
-     *
      */
     @Parameter(property = "camel.showAll", defaultValue = "false")
     private boolean showAll;
@@ -151,7 +148,6 @@ public class ValidateMojo extends AbstractExecMojo {
     /**
      * Whether to allow downloading Camel catalog version from the internet. This is needed if the project
      * uses a different Camel version than this plugin is using by default.
-     *
      */
     @Parameter(property = "camel.downloadVersion", defaultValue = "true")
     private boolean downloadVersion;
@@ -159,17 +155,22 @@ public class ValidateMojo extends AbstractExecMojo {
     /**
      * Whether to validate for duplicate route ids. Route ids should be unique and if there are duplicates
      * then Camel will fail to startup.
-     *
      */
     @Parameter(property = "camel.duplicateRouteId", defaultValue = "true")
     private boolean duplicateRouteId;
 
     /**
      * Whether to validate direct/seda endpoints sending to non existing consumers.
-     *
      */
     @Parameter(property = "camel.directOrSedaPairCheck", defaultValue = "true")
     private boolean directOrSedaPairCheck;
+
+    /**
+     * Location of configuration files to validate. The default is application.properties
+     * Multiple values can be separated by comma and use wildcard pattern matching.
+     */
+    @Parameter(property = "camel.configurationFiles")
+    private String configurationFiles = "application.properties";
 
     // CHECKSTYLE:OFF
     @Override
@@ -181,6 +182,8 @@ public class ValidateMojo extends AbstractExecMojo {
         catalog.setSuggestionStrategy(new LuceneSuggestionStrategy());
         // enable loading other catalog versions dynamically
         catalog.setVersionManager(new MavenVersionManager());
+        // use custom class loading
+        catalog.getJSonSchemaResolver().setClassLoader(ValidateMojo.class.getClassLoader());
         // enable caching
         catalog.enableCache();
 
@@ -208,6 +211,168 @@ public class ValidateMojo extends AbstractExecMojo {
             getLog().info("Validating using Camel version: " + catalog.getCatalogVersion());
         }
 
+        doExecuteRoutes(catalog);
+        doExecuteConfigurationFiles(catalog);
+    }
+
+    protected void doExecuteConfigurationFiles(CamelCatalog catalog) throws MojoExecutionException {
+        // TODO: implement me
+
+        Set<File> propertiesFiles = new LinkedHashSet<>();
+        List list = project.getResources();
+        for (Object obj : list) {
+            Resource dir = (Resource) obj;
+            findPropertiesFiles(new File(dir.getDirectory()), propertiesFiles);
+        }
+        if (includeTest) {
+            list = project.getTestResources();
+            for (Object obj : list) {
+                Resource dir = (Resource) obj;
+                findPropertiesFiles(new File(dir.getDirectory()), propertiesFiles);
+            }
+        }
+
+        List<ConfigurationPropertiesValidationResult> results = new ArrayList<>();
+
+        for (File file : propertiesFiles) {
+            if (matchPropertiesFile(file)) {
+                InputStream is = null;
+                try {
+                    is = new FileInputStream(file);
+                    Properties prop = new OrderedProperties();
+                    prop.load(is);
+
+                    // validate each line
+                    for (String name : prop.stringPropertyNames()) {
+                        String value = prop.getProperty(name);
+                        if (value != null) {
+                            String text = name + "=" + value;
+                            ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+                            // only include lines that camel can accept (as there may be non camel properties too)
+                            if (result.isAccepted()) {
+                                // try to find line number
+                                int lineNumber = findLineNumberInPropertiesFile(file, name);
+                                if (lineNumber != -1) {
+                                    result.setLineNumber(lineNumber);
+                                }
+                                results.add(result);
+                                result.setText(text);
+                                result.setFileName(file.getName());
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    getLog().warn("Error parsing file " + file + " code due " + e.getMessage(), e);
+                } finally {
+                    IOHelper.close(is);
+                }
+            }
+        }
+
+        int configurationErrors = 0;
+        int unknownComponents = 0;
+        int incapableErrors = 0;
+        int deprecatedOptions = 0;
+        for (ConfigurationPropertiesValidationResult result : results) {
+            int deprecated = result.getDeprecated() != null ? result.getDeprecated().size() : 0;
+            deprecatedOptions += deprecated;
+
+            boolean ok = result.isSuccess() && !result.hasWarnings();
+            if (!ok && ignoreUnknownComponent && result.getUnknownComponent() != null) {
+                // if we failed due unknown component then be okay if we should ignore that
+                unknownComponents++;
+                ok = true;
+            }
+            if (!ok && ignoreIncapable && result.getIncapable() != null) {
+                // if we failed due incapable then be okay if we should ignore that
+                incapableErrors++;
+                ok = true;
+            }
+            if (ok && !ignoreDeprecated && deprecated > 0) {
+                ok = false;
+            }
+
+            if (!ok) {
+                if (result.getUnknownComponent() != null) {
+                    unknownComponents++;
+                } else if (result.getIncapable() != null) {
+                    incapableErrors++;
+                } else {
+                    configurationErrors++;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("Configuration validation error at: ");
+                sb.append("(").append(result.getFileName());
+                if (result.getLineNumber() > 0) {
+                    sb.append(":").append(result.getLineNumber());
+                }
+                sb.append(")");
+                sb.append("\n\n");
+                String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
+                sb.append(out);
+                sb.append("\n\n");
+
+                getLog().warn(sb.toString());
+            } else if (showAll) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Configuration validation passed at: ");
+                sb.append(result.getFileName());
+                if (result.getLineNumber() > 0) {
+                    sb.append(":").append(result.getLineNumber());
+                }
+                sb.append("\n");
+                sb.append("\n\t").append(result.getText());
+                sb.append("\n\n");
+
+                getLog().info(sb.toString());
+            }
+        }
+        String configurationSummary;
+        if (configurationErrors == 0) {
+            int ok = results.size() - configurationErrors - incapableErrors - unknownComponents;
+            configurationSummary = String.format("Configuration validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, configurationErrors, incapableErrors, unknownComponents, deprecatedOptions);
+        } else {
+            int ok = results.size() - configurationErrors - incapableErrors - unknownComponents;
+            configurationSummary = String.format("Configuration validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, configurationErrors, incapableErrors, unknownComponents, deprecatedOptions);
+        }
+        if (configurationErrors > 0) {
+            getLog().warn(configurationSummary);
+        } else {
+            getLog().info(configurationSummary);
+        }
+
+        if (failOnError && (configurationErrors > 0)) {
+            throw new MojoExecutionException(configurationSummary + "\n");
+        }
+    }
+
+    private int findLineNumberInPropertiesFile(File file, String name) {
+        name = name.trim();
+        // try to find the line number
+        try (LineNumberReader r = new LineNumberReader(new FileReader(file))) {
+            String line = r.readLine();
+            while (line != null) {
+                int pos = line.indexOf('=');
+                if (pos > 0) {
+                    line = line.substring(0, pos);
+                }
+                line = line.trim();
+                if (line.equals(name)) {
+                    return r.getLineNumber();
+                }
+                line = r.readLine();
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return -1;
+    }
+
+    protected void doExecuteRoutes(CamelCatalog catalog) throws MojoExecutionException, MojoFailureException {
         List<CamelEndpointDetails> endpoints = new ArrayList<>();
         List<CamelSimpleExpressionDetails> simpleExpressions = new ArrayList<>();
         List<CamelRouteDetails> routeIds = new ArrayList<>();
@@ -246,7 +411,7 @@ public class ValidateMojo extends AbstractExecMojo {
         }
 
         for (File file : javaFiles) {
-            if (matchFile(file)) {
+            if (matchRouteFile(file)) {
                 try {
                     List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
                     List<CamelRouteDetails> fileRouteIds = new ArrayList<>();
@@ -284,7 +449,7 @@ public class ValidateMojo extends AbstractExecMojo {
             }
         }
         for (File file : xmlFiles) {
-            if (matchFile(file)) {
+            if (matchRouteFile(file)) {
                 try {
                     List<CamelEndpointDetails> fileEndpoints = new ArrayList<>();
                     List<CamelSimpleExpressionDetails> fileSimpleExpressions = new ArrayList<>();
@@ -330,7 +495,7 @@ public class ValidateMojo extends AbstractExecMojo {
             int deprecated = result.getDeprecated() != null ? result.getDeprecated().size() : 0;
             deprecatedOptions += deprecated;
 
-            boolean ok = result.isSuccess();
+            boolean ok = result.isSuccess() && !result.hasWarnings();
             if (!ok && ignoreUnknownComponent && result.getUnknownComponent() != null) {
                 // if we failed due unknown component then be okay if we should ignore that
                 unknownComponents++;
@@ -378,14 +543,14 @@ public class ValidateMojo extends AbstractExecMojo {
                     sb.append(detail.getFileName());
                 }
                 sb.append("\n\n");
-                String out = result.summaryErrorMessage(false, ignoreDeprecated);
+                String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
                 sb.append(out);
                 sb.append("\n\n");
 
                 getLog().warn(sb.toString());
             } else if (showAll) {
                 StringBuilder sb = new StringBuilder();
-                sb.append("Endpoint validation passsed at: ");
+                sb.append("Endpoint validation passed at: ");
                 if (detail.getClassName() != null && detail.getLineNumber() != null) {
                     // this is from java code
                     sb.append(detail.getClassName());
@@ -453,7 +618,7 @@ public class ValidateMojo extends AbstractExecMojo {
             long sedaDirectEndpoints = countEndpointPairs(endpoints, "direct") + countEndpointPairs(endpoints, "seda");
             sedaDirectErrors += validateEndpointPairs(endpoints, "direct") + validateEndpointPairs(endpoints, "seda");
             if (sedaDirectErrors == 0) {
-                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation success (%s = pairs)", sedaDirectEndpoints);
+                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation success: (%s = pairs)", sedaDirectEndpoints);
             } else {
                 sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)", sedaDirectEndpoints, sedaDirectErrors);
             }
@@ -469,7 +634,7 @@ public class ValidateMojo extends AbstractExecMojo {
         String routeIdSummary = "";
         if (duplicateRouteId) {
             if (duplicateRouteIdErrors == 0) {
-                routeIdSummary = String.format("Duplicate route id validation success (%s = ids)", routeIds.size());
+                routeIdSummary = String.format("Duplicate route id validation success: (%s = ids)", routeIds.size());
             } else {
                 routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)", routeIds.size(), duplicateRouteIdErrors);
             }
@@ -786,6 +951,19 @@ public class ValidateMojo extends AbstractExecMojo {
         return null;
     }
 
+    private void findPropertiesFiles(File dir, Set<File> propertiesFiles) {
+        File[] files = dir.isDirectory() ? dir.listFiles() : null;
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().endsWith(".properties")) {
+                    propertiesFiles.add(file);
+                } else if (file.isDirectory()) {
+                    findJavaFiles(file, propertiesFiles);
+                }
+            }
+        }
+    }
+
     private void findJavaFiles(File dir, Set<File> javaFiles) {
         File[] files = dir.isDirectory() ? dir.listFiles() : null;
         if (files != null) {
@@ -812,7 +990,19 @@ public class ValidateMojo extends AbstractExecMojo {
         }
     }
 
-    private boolean matchFile(File file) {
+    private boolean matchPropertiesFile(File file) {
+        for (String part : configurationFiles.split(",")) {
+            part = part.trim();
+            String fqn = stripRootPath(asRelativeFile(file.getAbsolutePath()));
+            boolean match = PatternHelper.matchPattern(fqn, part);
+            if (match) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean matchRouteFile(File file) {
         if (excludes == null && includes == null) {
             return true;
         }

@@ -96,13 +96,9 @@ public class AggregateShutdownThreadPoolTest extends ContextTestSupport {
             public void configure() throws Exception {
                 myPool = context.getExecutorServiceManager().newDefaultThreadPool(this, "myPool");
 
-                from("direct:foo").routeId("foo")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3)
-                        .to("mock:aggregated");
+                from("direct:foo").routeId("foo").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(3).to("mock:aggregated");
 
-                from("direct:bar").routeId("bar")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).executorService(myPool).completionSize(3)
-                        .to("mock:aggregated");
+                from("direct:bar").routeId("bar").aggregate(header("id"), new BodyInAggregatingStrategy()).executorService(myPool).completionSize(3).to("mock:aggregated");
             }
         };
     }

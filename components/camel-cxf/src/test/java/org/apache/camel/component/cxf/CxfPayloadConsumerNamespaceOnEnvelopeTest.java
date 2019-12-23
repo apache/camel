@@ -61,6 +61,7 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelTestSupport 
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GetTokenBeans.xml");
@@ -68,6 +69,7 @@ public class CxfPayloadConsumerNamespaceOnEnvelopeTest extends CamelTestSupport 
         assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);

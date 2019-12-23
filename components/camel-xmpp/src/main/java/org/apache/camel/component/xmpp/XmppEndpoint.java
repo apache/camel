@@ -80,6 +80,8 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private boolean createAccount;
     @UriParam(label = "common")
     private String room;
+    @UriParam(label = "security", secret = true)
+    private String roomPassword;
     @UriParam(label = "common")
     private String nickname;
     @UriParam(label = "common")
@@ -104,6 +106,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         super(uri, component);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (room != null) {
             return createGroupChatProducer();
@@ -137,6 +140,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return new XmppPubSubProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         XmppConsumer answer = new XmppConsumer(this, processor);
         configureConsumer(answer);
@@ -368,6 +372,17 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         this.room = room;
     }
 
+    /**
+     * Password for room
+     */
+    public void setRoomPassword(String roomPassword) {
+        this.roomPassword = roomPassword;
+    }
+
+    protected String getRoomPassword() {
+        return roomPassword;
+    }
+
     public String getParticipant() {
         // participant is optional so use user if not provided
         return participant != null ? participant : user;
@@ -402,6 +417,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return serviceName;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -409,6 +425,7 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     /**
      * To use a custom HeaderFilterStrategy to filter header to and from Camel message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }

@@ -55,7 +55,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -86,7 +86,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder disableReplyTo(
                 boolean disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -123,7 +123,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointConsumerBuilder disableReplyTo(String disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -136,7 +136,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
-            setProperty("durableSubscriptionName", durableSubscriptionName);
+            doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
         }
         /**
@@ -153,7 +153,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder jmsMessageType(
                 JmsMessageType jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointConsumerBuilder jmsMessageType(String jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -185,7 +185,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -201,7 +201,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -214,7 +214,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder acknowledgementModeName(
                 String acknowledgementModeName) {
-            setProperty("acknowledgementModeName", acknowledgementModeName);
+            doSetProperty("acknowledgementModeName", acknowledgementModeName);
             return this;
         }
         /**
@@ -234,7 +234,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder asyncConsumer(boolean asyncConsumer) {
-            setProperty("asyncConsumer", asyncConsumer);
+            doSetProperty("asyncConsumer", asyncConsumer);
             return this;
         }
         /**
@@ -254,7 +254,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder asyncConsumer(String asyncConsumer) {
-            setProperty("asyncConsumer", asyncConsumer);
+            doSetProperty("asyncConsumer", asyncConsumer);
             return this;
         }
         /**
@@ -265,7 +265,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder autoStartup(boolean autoStartup) {
-            setProperty("autoStartup", autoStartup);
+            doSetProperty("autoStartup", autoStartup);
             return this;
         }
         /**
@@ -276,43 +276,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder autoStartup(String autoStartup) {
-            setProperty("autoStartup", autoStartup);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: consumer
-         */
-        default AMQPEndpointConsumerBuilder bridgeErrorHandler(
-                boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Allows for bridging the consumer to the Camel routing Error Handler,
-         * which mean any exceptions occurred while the consumer is trying to
-         * pickup incoming messages, or the likes, will now be processed as a
-         * message and handled by the routing Error Handler. By default the
-         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
-         * with exceptions, that will be logged at WARN or ERROR level and
-         * ignored.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: consumer
-         */
-        default AMQPEndpointConsumerBuilder bridgeErrorHandler(
-                String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("autoStartup", autoStartup);
             return this;
         }
         /**
@@ -324,7 +288,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder cacheLevel(int cacheLevel) {
-            setProperty("cacheLevel", cacheLevel);
+            doSetProperty("cacheLevel", cacheLevel);
             return this;
         }
         /**
@@ -336,7 +300,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder cacheLevel(String cacheLevel) {
-            setProperty("cacheLevel", cacheLevel);
+            doSetProperty("cacheLevel", cacheLevel);
             return this;
         }
         /**
@@ -351,7 +315,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder cacheLevelName(String cacheLevelName) {
-            setProperty("cacheLevelName", cacheLevelName);
+            doSetProperty("cacheLevelName", cacheLevelName);
             return this;
         }
         /**
@@ -368,7 +332,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -385,7 +349,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -402,7 +366,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder maxConcurrentConsumers(
                 int maxConcurrentConsumers) {
-            setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
         }
         /**
@@ -419,7 +383,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder maxConcurrentConsumers(
                 String maxConcurrentConsumers) {
-            setProperty("maxConcurrentConsumers", maxConcurrentConsumers);
+            doSetProperty("maxConcurrentConsumers", maxConcurrentConsumers);
             return this;
         }
         /**
@@ -431,7 +395,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder replyTo(String replyTo) {
-            setProperty("replyTo", replyTo);
+            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -443,7 +407,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder replyToDeliveryPersistent(
                 boolean replyToDeliveryPersistent) {
-            setProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
+            doSetProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
             return this;
         }
         /**
@@ -455,7 +419,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder replyToDeliveryPersistent(
                 String replyToDeliveryPersistent) {
-            setProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
+            doSetProperty("replyToDeliveryPersistent", replyToDeliveryPersistent);
             return this;
         }
         /**
@@ -466,7 +430,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder selector(String selector) {
-            setProperty("selector", selector);
+            doSetProperty("selector", selector);
             return this;
         }
         /**
@@ -485,7 +449,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder subscriptionDurable(
                 boolean subscriptionDurable) {
-            setProperty("subscriptionDurable", subscriptionDurable);
+            doSetProperty("subscriptionDurable", subscriptionDurable);
             return this;
         }
         /**
@@ -504,7 +468,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder subscriptionDurable(
                 String subscriptionDurable) {
-            setProperty("subscriptionDurable", subscriptionDurable);
+            doSetProperty("subscriptionDurable", subscriptionDurable);
             return this;
         }
         /**
@@ -522,7 +486,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder subscriptionName(
                 String subscriptionName) {
-            setProperty("subscriptionName", subscriptionName);
+            doSetProperty("subscriptionName", subscriptionName);
             return this;
         }
         /**
@@ -544,7 +508,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder subscriptionShared(
                 boolean subscriptionShared) {
-            setProperty("subscriptionShared", subscriptionShared);
+            doSetProperty("subscriptionShared", subscriptionShared);
             return this;
         }
         /**
@@ -566,7 +530,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder subscriptionShared(
                 String subscriptionShared) {
-            setProperty("subscriptionShared", subscriptionShared);
+            doSetProperty("subscriptionShared", subscriptionShared);
             return this;
         }
         /**
@@ -579,7 +543,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder errorHandlerLoggingLevel(
                 LoggingLevel errorHandlerLoggingLevel) {
-            setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
+            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
         }
         /**
@@ -593,7 +557,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder errorHandlerLoggingLevel(
                 String errorHandlerLoggingLevel) {
-            setProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
+            doSetProperty("errorHandlerLoggingLevel", errorHandlerLoggingLevel);
             return this;
         }
         /**
@@ -606,7 +570,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder errorHandlerLogStackTrace(
                 boolean errorHandlerLogStackTrace) {
-            setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
+            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
         }
         /**
@@ -619,7 +583,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointConsumerBuilder errorHandlerLogStackTrace(
                 String errorHandlerLogStackTrace) {
-            setProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
+            doSetProperty("errorHandlerLogStackTrace", errorHandlerLogStackTrace);
             return this;
         }
         /**
@@ -631,7 +595,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: security
          */
         default AMQPEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -643,7 +607,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: security
          */
         default AMQPEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -654,7 +618,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: transaction
          */
         default AMQPEndpointConsumerBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -665,7 +629,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: transaction
          */
         default AMQPEndpointConsumerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
     }
@@ -695,7 +659,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder acceptMessagesWhileStopping(
                 boolean acceptMessagesWhileStopping) {
-            setProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
+            doSetProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
         }
         /**
@@ -714,7 +678,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder acceptMessagesWhileStopping(
                 String acceptMessagesWhileStopping) {
-            setProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
+            doSetProperty("acceptMessagesWhileStopping", acceptMessagesWhileStopping);
             return this;
         }
         /**
@@ -732,7 +696,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder allowReplyManagerQuickStop(
                 boolean allowReplyManagerQuickStop) {
-            setProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
+            doSetProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
         }
         /**
@@ -750,7 +714,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder allowReplyManagerQuickStop(
                 String allowReplyManagerQuickStop) {
-            setProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
+            doSetProperty("allowReplyManagerQuickStop", allowReplyManagerQuickStop);
             return this;
         }
         /**
@@ -772,7 +736,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder consumerType(
                 ConsumerType consumerType) {
-            setProperty("consumerType", consumerType);
+            doSetProperty("consumerType", consumerType);
             return this;
         }
         /**
@@ -794,7 +758,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder consumerType(
                 String consumerType) {
-            setProperty("consumerType", consumerType);
+            doSetProperty("consumerType", consumerType);
             return this;
         }
         /**
@@ -817,7 +781,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder defaultTaskExecutorType(
                 DefaultTaskExecutorType defaultTaskExecutorType) {
-            setProperty("defaultTaskExecutorType", defaultTaskExecutorType);
+            doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
         }
         /**
@@ -840,7 +804,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder defaultTaskExecutorType(
                 String defaultTaskExecutorType) {
-            setProperty("defaultTaskExecutorType", defaultTaskExecutorType);
+            doSetProperty("defaultTaskExecutorType", defaultTaskExecutorType);
             return this;
         }
         /**
@@ -848,7 +812,7 @@ public interface AMQPEndpointBuilderFactory {
          * message is loaded which generally is inefficient as the JMS
          * properties may not be required but sometimes can catch early any
          * issues with the underlying JMS provider and the use of JMS
-         * properties.
+         * properties. See also the option eagerPoisonBody.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -856,7 +820,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder eagerLoadingOfProperties(
                 boolean eagerLoadingOfProperties) {
-            setProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
+            doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
             return this;
         }
         /**
@@ -864,7 +828,7 @@ public interface AMQPEndpointBuilderFactory {
          * message is loaded which generally is inefficient as the JMS
          * properties may not be required but sometimes can catch early any
          * issues with the underlying JMS provider and the use of JMS
-         * properties.
+         * properties. See also the option eagerPoisonBody.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -872,7 +836,24 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder eagerLoadingOfProperties(
                 String eagerLoadingOfProperties) {
-            setProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
+            doSetProperty("eagerLoadingOfProperties", eagerLoadingOfProperties);
+            return this;
+        }
+        /**
+         * If eagerLoadingOfProperties is enabled and the JMS message payload
+         * (JMS body or JMS properties) (cannot be read/mapped), then set this
+         * text as the message body instead so the message can be processed (the
+         * cause of the poison are already stored as exception on the Exchange).
+         * This can be turned off by setting eagerPoisonBody=false. See also the
+         * option eagerLoadingOfProperties.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedAMQPEndpointConsumerBuilder eagerPoisonBody(
+                String eagerPoisonBody) {
+            doSetProperty("eagerPoisonBody", eagerPoisonBody);
             return this;
         }
         /**
@@ -888,7 +869,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -904,7 +885,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -916,7 +897,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -929,7 +910,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -942,7 +923,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder exposeListenerSession(
                 boolean exposeListenerSession) {
-            setProperty("exposeListenerSession", exposeListenerSession);
+            doSetProperty("exposeListenerSession", exposeListenerSession);
             return this;
         }
         /**
@@ -955,7 +936,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder exposeListenerSession(
                 String exposeListenerSession) {
-            setProperty("exposeListenerSession", exposeListenerSession);
+            doSetProperty("exposeListenerSession", exposeListenerSession);
             return this;
         }
         /**
@@ -970,7 +951,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder replyToSameDestinationAllowed(
                 boolean replyToSameDestinationAllowed) {
-            setProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
+            doSetProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
             return this;
         }
         /**
@@ -985,7 +966,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder replyToSameDestinationAllowed(
                 String replyToSameDestinationAllowed) {
-            setProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
+            doSetProperty("replyToSameDestinationAllowed", replyToSameDestinationAllowed);
             return this;
         }
         /**
@@ -998,7 +979,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder taskExecutor(
                 Object taskExecutor) {
-            setProperty("taskExecutor", taskExecutor);
+            doSetProperty("taskExecutor", taskExecutor);
             return this;
         }
         /**
@@ -1011,7 +992,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder taskExecutor(
                 String taskExecutor) {
-            setProperty("taskExecutor", taskExecutor);
+            doSetProperty("taskExecutor", taskExecutor);
             return this;
         }
         /**
@@ -1026,7 +1007,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -1041,7 +1022,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -1062,7 +1043,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -1083,7 +1064,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -1096,7 +1077,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder asyncStopListener(
                 boolean asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -1109,7 +1090,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder asyncStopListener(
                 String asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -1122,7 +1103,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1135,7 +1116,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1151,7 +1132,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder destinationResolver(
                 Object destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -1167,7 +1148,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder destinationResolver(
                 String destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -1186,7 +1167,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder errorHandler(
                 Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -1205,7 +1186,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder errorHandler(
                 String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -1218,7 +1199,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder exceptionListener(
                 Object exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -1232,7 +1213,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder exceptionListener(
                 String exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -1246,7 +1227,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1260,7 +1241,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1273,7 +1254,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -1286,7 +1267,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -1302,7 +1283,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -1318,7 +1299,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -1333,7 +1314,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -1348,7 +1329,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -1370,7 +1351,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -1392,7 +1373,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -1405,7 +1386,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -1418,7 +1399,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder mapJmsMessage(
                 String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -1433,7 +1414,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -1448,7 +1429,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -1463,7 +1444,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageConverter(
                 Object messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -1478,7 +1459,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageConverter(
                 String messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -1494,7 +1475,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -1510,7 +1491,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -1526,7 +1507,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -1542,7 +1523,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageIdEnabled(
                 String messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -1559,7 +1540,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -1576,7 +1557,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -1592,7 +1573,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -1608,7 +1589,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -1621,7 +1602,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder pubSubNoLocal(
                 boolean pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -1634,7 +1615,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder pubSubNoLocal(
                 String pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -1646,7 +1627,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder receiveTimeout(
                 long receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -1658,7 +1639,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder receiveTimeout(
                 String receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -1672,7 +1653,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder recoveryInterval(
                 long recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -1686,7 +1667,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder recoveryInterval(
                 String recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -1702,7 +1683,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -1718,7 +1699,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -1731,7 +1712,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1744,7 +1725,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1758,6 +1739,10 @@ public interface AMQPEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1765,7 +1750,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1779,6 +1764,10 @@ public interface AMQPEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1786,7 +1775,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1797,7 +1786,11 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1805,7 +1798,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1816,7 +1809,11 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1824,47 +1821,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedAMQPEndpointConsumerBuilder transferFault(
-                boolean transferFault) {
-            setProperty("transferFault", transferFault);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedAMQPEndpointConsumerBuilder transferFault(
-                String transferFault) {
-            setProperty("transferFault", transferFault);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1877,7 +1834,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -1890,7 +1847,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -1904,7 +1861,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -1918,7 +1875,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -1931,7 +1888,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -1944,7 +1901,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -1957,7 +1914,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -1970,7 +1927,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -1983,7 +1940,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder transactionManager(
                 Object transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -1996,7 +1953,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder transactionManager(
                 String transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -2008,7 +1965,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder transactionName(
                 String transactionName) {
-            setProperty("transactionName", transactionName);
+            doSetProperty("transactionName", transactionName);
             return this;
         }
         /**
@@ -2021,7 +1978,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder transactionTimeout(
                 int transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
         /**
@@ -2034,7 +1991,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointConsumerBuilder transactionTimeout(
                 String transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
     }
@@ -2060,7 +2017,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -2075,7 +2032,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -2091,7 +2048,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -2110,7 +2067,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder disableReplyTo(
                 boolean disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -2128,7 +2085,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointProducerBuilder disableReplyTo(String disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -2141,7 +2098,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
-            setProperty("durableSubscriptionName", durableSubscriptionName);
+            doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
         }
         /**
@@ -2158,7 +2115,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder jmsMessageType(
                 JmsMessageType jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -2174,7 +2131,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointProducerBuilder jmsMessageType(String jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -2190,7 +2147,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -2206,7 +2163,31 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS. This option
+         * requires JMS 2.0 compliant broker.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default AMQPEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
+            doSetProperty("deliveryDelay", deliveryDelay);
+            return this;
+        }
+        /**
+         * Sets delivery delay to use for send calls for JMS. This option
+         * requires JMS 2.0 compliant broker.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default AMQPEndpointProducerBuilder deliveryDelay(String deliveryDelay) {
+            doSetProperty("deliveryDelay", deliveryDelay);
             return this;
         }
         /**
@@ -2219,7 +2200,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder deliveryMode(Integer deliveryMode) {
-            setProperty("deliveryMode", deliveryMode);
+            doSetProperty("deliveryMode", deliveryMode);
             return this;
         }
         /**
@@ -2233,7 +2214,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder deliveryMode(String deliveryMode) {
-            setProperty("deliveryMode", deliveryMode);
+            doSetProperty("deliveryMode", deliveryMode);
             return this;
         }
         /**
@@ -2245,7 +2226,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder deliveryPersistent(
                 boolean deliveryPersistent) {
-            setProperty("deliveryPersistent", deliveryPersistent);
+            doSetProperty("deliveryPersistent", deliveryPersistent);
             return this;
         }
         /**
@@ -2257,7 +2238,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder deliveryPersistent(
                 String deliveryPersistent) {
-            setProperty("deliveryPersistent", deliveryPersistent);
+            doSetProperty("deliveryPersistent", deliveryPersistent);
             return this;
         }
         /**
@@ -2274,7 +2255,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder explicitQosEnabled(
                 Boolean explicitQosEnabled) {
-            setProperty("explicitQosEnabled", explicitQosEnabled);
+            doSetProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
         }
         /**
@@ -2292,7 +2273,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder explicitQosEnabled(
                 String explicitQosEnabled) {
-            setProperty("explicitQosEnabled", explicitQosEnabled);
+            doSetProperty("explicitQosEnabled", explicitQosEnabled);
             return this;
         }
         /**
@@ -2305,7 +2286,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder formatDateHeadersToIso8601(
                 boolean formatDateHeadersToIso8601) {
-            setProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
+            doSetProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
         }
         /**
@@ -2318,7 +2299,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder formatDateHeadersToIso8601(
                 String formatDateHeadersToIso8601) {
-            setProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
+            doSetProperty("formatDateHeadersToIso8601", formatDateHeadersToIso8601);
             return this;
         }
         /**
@@ -2338,7 +2319,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -2358,7 +2339,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -2378,7 +2359,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder preserveMessageQos(
                 boolean preserveMessageQos) {
-            setProperty("preserveMessageQos", preserveMessageQos);
+            doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
         }
         /**
@@ -2398,7 +2379,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder preserveMessageQos(
                 String preserveMessageQos) {
-            setProperty("preserveMessageQos", preserveMessageQos);
+            doSetProperty("preserveMessageQos", preserveMessageQos);
             return this;
         }
         /**
@@ -2412,7 +2393,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder priority(int priority) {
-            setProperty("priority", priority);
+            doSetProperty("priority", priority);
             return this;
         }
         /**
@@ -2426,7 +2407,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder priority(String priority) {
-            setProperty("priority", priority);
+            doSetProperty("priority", priority);
             return this;
         }
         /**
@@ -2440,7 +2421,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder replyToConcurrentConsumers(
                 int replyToConcurrentConsumers) {
-            setProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
+            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
         }
         /**
@@ -2454,7 +2435,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder replyToConcurrentConsumers(
                 String replyToConcurrentConsumers) {
-            setProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
+            doSetProperty("replyToConcurrentConsumers", replyToConcurrentConsumers);
             return this;
         }
         /**
@@ -2468,7 +2449,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder replyToMaxConcurrentConsumers(
                 int replyToMaxConcurrentConsumers) {
-            setProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
+            doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
         }
         /**
@@ -2482,7 +2463,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder replyToMaxConcurrentConsumers(
                 String replyToMaxConcurrentConsumers) {
-            setProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
+            doSetProperty("replyToMaxConcurrentConsumers", replyToMaxConcurrentConsumers);
             return this;
         }
         /**
@@ -2495,7 +2476,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
                 int replyToOnTimeoutMaxConcurrentConsumers) {
-            setProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
+            doSetProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
             return this;
         }
         /**
@@ -2508,7 +2489,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
                 String replyToOnTimeoutMaxConcurrentConsumers) {
-            setProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
+            doSetProperty("replyToOnTimeoutMaxConcurrentConsumers", replyToOnTimeoutMaxConcurrentConsumers);
             return this;
         }
         /**
@@ -2523,7 +2504,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointProducerBuilder replyToOverride(
                 String replyToOverride) {
-            setProperty("replyToOverride", replyToOverride);
+            doSetProperty("replyToOverride", replyToOverride);
             return this;
         }
         /**
@@ -2543,7 +2524,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder replyToType(ReplyToType replyToType) {
-            setProperty("replyToType", replyToType);
+            doSetProperty("replyToType", replyToType);
             return this;
         }
         /**
@@ -2563,7 +2544,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder replyToType(String replyToType) {
-            setProperty("replyToType", replyToType);
+            doSetProperty("replyToType", replyToType);
             return this;
         }
         /**
@@ -2578,7 +2559,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder requestTimeout(long requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2593,7 +2574,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder requestTimeout(String requestTimeout) {
-            setProperty("requestTimeout", requestTimeout);
+            doSetProperty("requestTimeout", requestTimeout);
             return this;
         }
         /**
@@ -2605,7 +2586,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder timeToLive(long timeToLive) {
-            setProperty("timeToLive", timeToLive);
+            doSetProperty("timeToLive", timeToLive);
             return this;
         }
         /**
@@ -2617,7 +2598,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: producer
          */
         default AMQPEndpointProducerBuilder timeToLive(String timeToLive) {
-            setProperty("timeToLive", timeToLive);
+            doSetProperty("timeToLive", timeToLive);
             return this;
         }
         /**
@@ -2629,7 +2610,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: security
          */
         default AMQPEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -2641,7 +2622,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: security
          */
         default AMQPEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -2652,7 +2633,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: transaction
          */
         default AMQPEndpointProducerBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -2663,7 +2644,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: transaction
          */
         default AMQPEndpointProducerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
     }
@@ -2691,7 +2672,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder allowAdditionalHeaders(
                 String allowAdditionalHeaders) {
-            setProperty("allowAdditionalHeaders", allowAdditionalHeaders);
+            doSetProperty("allowAdditionalHeaders", allowAdditionalHeaders);
             return this;
         }
         /**
@@ -2704,7 +2685,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder allowNullBody(
                 boolean allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -2717,7 +2698,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder allowNullBody(
                 String allowNullBody) {
-            setProperty("allowNullBody", allowNullBody);
+            doSetProperty("allowNullBody", allowNullBody);
             return this;
         }
         /**
@@ -2734,7 +2715,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder alwaysCopyMessage(
                 boolean alwaysCopyMessage) {
-            setProperty("alwaysCopyMessage", alwaysCopyMessage);
+            doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
         }
         /**
@@ -2751,7 +2732,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder alwaysCopyMessage(
                 String alwaysCopyMessage) {
-            setProperty("alwaysCopyMessage", alwaysCopyMessage);
+            doSetProperty("alwaysCopyMessage", alwaysCopyMessage);
             return this;
         }
         /**
@@ -2769,7 +2750,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder correlationProperty(
                 String correlationProperty) {
-            setProperty("correlationProperty", correlationProperty);
+            doSetProperty("correlationProperty", correlationProperty);
             return this;
         }
         /**
@@ -2789,7 +2770,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder disableTimeToLive(
                 boolean disableTimeToLive) {
-            setProperty("disableTimeToLive", disableTimeToLive);
+            doSetProperty("disableTimeToLive", disableTimeToLive);
             return this;
         }
         /**
@@ -2809,7 +2790,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder disableTimeToLive(
                 String disableTimeToLive) {
-            setProperty("disableTimeToLive", disableTimeToLive);
+            doSetProperty("disableTimeToLive", disableTimeToLive);
             return this;
         }
         /**
@@ -2824,7 +2805,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder forceSendOriginalMessage(
                 boolean forceSendOriginalMessage) {
-            setProperty("forceSendOriginalMessage", forceSendOriginalMessage);
+            doSetProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
         }
         /**
@@ -2839,7 +2820,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder forceSendOriginalMessage(
                 String forceSendOriginalMessage) {
-            setProperty("forceSendOriginalMessage", forceSendOriginalMessage);
+            doSetProperty("forceSendOriginalMessage", forceSendOriginalMessage);
             return this;
         }
         /**
@@ -2854,7 +2835,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder includeSentJMSMessageID(
                 boolean includeSentJMSMessageID) {
-            setProperty("includeSentJMSMessageID", includeSentJMSMessageID);
+            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
         }
         /**
@@ -2869,7 +2850,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder includeSentJMSMessageID(
                 String includeSentJMSMessageID) {
-            setProperty("includeSentJMSMessageID", includeSentJMSMessageID);
+            doSetProperty("includeSentJMSMessageID", includeSentJMSMessageID);
             return this;
         }
         /**
@@ -2889,7 +2870,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder replyToCacheLevelName(
                 String replyToCacheLevelName) {
-            setProperty("replyToCacheLevelName", replyToCacheLevelName);
+            doSetProperty("replyToCacheLevelName", replyToCacheLevelName);
             return this;
         }
         /**
@@ -2903,7 +2884,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder replyToDestinationSelectorName(
                 String replyToDestinationSelectorName) {
-            setProperty("replyToDestinationSelectorName", replyToDestinationSelectorName);
+            doSetProperty("replyToDestinationSelectorName", replyToDestinationSelectorName);
             return this;
         }
         /**
@@ -2921,7 +2902,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder streamMessageTypeEnabled(
                 boolean streamMessageTypeEnabled) {
-            setProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
+            doSetProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
         }
         /**
@@ -2939,7 +2920,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder streamMessageTypeEnabled(
                 String streamMessageTypeEnabled) {
-            setProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
+            doSetProperty("streamMessageTypeEnabled", streamMessageTypeEnabled);
             return this;
         }
         /**
@@ -2954,7 +2935,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -2969,7 +2950,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -2990,7 +2971,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -3011,7 +2992,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -3024,7 +3005,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder asyncStopListener(
                 boolean asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -3037,7 +3018,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder asyncStopListener(
                 String asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -3050,7 +3031,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3063,7 +3044,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -3079,7 +3060,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder destinationResolver(
                 Object destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -3095,7 +3076,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder destinationResolver(
                 String destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -3114,7 +3095,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder errorHandler(
                 Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -3133,7 +3114,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder errorHandler(
                 String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -3146,7 +3127,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder exceptionListener(
                 Object exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -3160,7 +3141,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder exceptionListener(
                 String exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -3174,7 +3155,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -3188,7 +3169,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -3201,7 +3182,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -3214,7 +3195,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -3230,7 +3211,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -3246,7 +3227,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -3261,7 +3242,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -3276,7 +3257,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -3298,7 +3279,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -3320,7 +3301,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -3333,7 +3314,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder mapJmsMessage(
                 boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -3346,7 +3327,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder mapJmsMessage(
                 String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -3361,7 +3342,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -3376,7 +3357,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -3391,7 +3372,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageConverter(
                 Object messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -3406,7 +3387,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageConverter(
                 String messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -3422,7 +3403,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -3438,7 +3419,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -3454,7 +3435,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -3470,7 +3451,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageIdEnabled(
                 String messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -3487,7 +3468,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -3504,7 +3485,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -3520,7 +3501,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -3536,7 +3517,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -3549,7 +3530,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder pubSubNoLocal(
                 boolean pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -3562,7 +3543,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder pubSubNoLocal(
                 String pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -3574,7 +3555,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder receiveTimeout(
                 long receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -3586,7 +3567,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder receiveTimeout(
                 String receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -3600,7 +3581,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder recoveryInterval(
                 long recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -3614,7 +3595,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder recoveryInterval(
                 String recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -3630,7 +3611,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -3646,7 +3627,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -3659,7 +3640,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3672,7 +3653,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -3686,6 +3667,10 @@ public interface AMQPEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3693,7 +3678,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -3707,6 +3692,10 @@ public interface AMQPEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3714,7 +3703,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -3725,7 +3714,11 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -3733,7 +3726,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -3744,7 +3737,11 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -3752,47 +3749,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedAMQPEndpointProducerBuilder transferFault(
-                boolean transferFault) {
-            setProperty("transferFault", transferFault);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedAMQPEndpointProducerBuilder transferFault(
-                String transferFault) {
-            setProperty("transferFault", transferFault);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -3805,7 +3762,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -3818,7 +3775,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -3832,7 +3789,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -3846,7 +3803,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -3859,7 +3816,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -3872,7 +3829,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -3885,7 +3842,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -3898,7 +3855,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -3911,7 +3868,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder transactionManager(
                 Object transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -3924,7 +3881,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder transactionManager(
                 String transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -3936,7 +3893,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder transactionName(
                 String transactionName) {
-            setProperty("transactionName", transactionName);
+            doSetProperty("transactionName", transactionName);
             return this;
         }
         /**
@@ -3949,7 +3906,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder transactionTimeout(
                 int transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
         /**
@@ -3962,7 +3919,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointProducerBuilder transactionTimeout(
                 String transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
     }
@@ -3988,7 +3945,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -4002,7 +3959,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointBuilder connectionFactory(Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -4017,7 +3974,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointBuilder connectionFactory(String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -4035,7 +3992,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointBuilder disableReplyTo(boolean disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -4053,7 +4010,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointBuilder disableReplyTo(String disableReplyTo) {
-            setProperty("disableReplyTo", disableReplyTo);
+            doSetProperty("disableReplyTo", disableReplyTo);
             return this;
         }
         /**
@@ -4066,7 +4023,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointBuilder durableSubscriptionName(
                 String durableSubscriptionName) {
-            setProperty("durableSubscriptionName", durableSubscriptionName);
+            doSetProperty("durableSubscriptionName", durableSubscriptionName);
             return this;
         }
         /**
@@ -4082,7 +4039,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointBuilder jmsMessageType(JmsMessageType jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -4098,7 +4055,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: common
          */
         default AMQPEndpointBuilder jmsMessageType(String jmsMessageType) {
-            setProperty("jmsMessageType", jmsMessageType);
+            doSetProperty("jmsMessageType", jmsMessageType);
             return this;
         }
         /**
@@ -4114,7 +4071,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -4130,7 +4087,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AMQPEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -4142,7 +4099,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: security
          */
         default AMQPEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -4154,7 +4111,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: security
          */
         default AMQPEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -4165,7 +4122,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: transaction
          */
         default AMQPEndpointBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -4176,7 +4133,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: transaction
          */
         default AMQPEndpointBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
     }
@@ -4202,7 +4159,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder allowSerializedHeaders(
                 boolean allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -4217,7 +4174,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder allowSerializedHeaders(
                 String allowSerializedHeaders) {
-            setProperty("allowSerializedHeaders", allowSerializedHeaders);
+            doSetProperty("allowSerializedHeaders", allowSerializedHeaders);
             return this;
         }
         /**
@@ -4238,7 +4195,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder asyncStartListener(
                 boolean asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -4259,7 +4216,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder asyncStartListener(
                 String asyncStartListener) {
-            setProperty("asyncStartListener", asyncStartListener);
+            doSetProperty("asyncStartListener", asyncStartListener);
             return this;
         }
         /**
@@ -4272,7 +4229,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder asyncStopListener(
                 boolean asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -4285,7 +4242,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder asyncStopListener(
                 String asyncStopListener) {
-            setProperty("asyncStopListener", asyncStopListener);
+            doSetProperty("asyncStopListener", asyncStopListener);
             return this;
         }
         /**
@@ -4298,7 +4255,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -4311,7 +4268,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -4327,7 +4284,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder destinationResolver(
                 Object destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -4343,7 +4300,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder destinationResolver(
                 String destinationResolver) {
-            setProperty("destinationResolver", destinationResolver);
+            doSetProperty("destinationResolver", destinationResolver);
             return this;
         }
         /**
@@ -4361,7 +4318,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder errorHandler(Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -4379,7 +4336,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder errorHandler(String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -4392,7 +4349,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder exceptionListener(
                 Object exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -4406,7 +4363,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder exceptionListener(
                 String exceptionListener) {
-            setProperty("exceptionListener", exceptionListener);
+            doSetProperty("exceptionListener", exceptionListener);
             return this;
         }
         /**
@@ -4420,7 +4377,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -4434,7 +4391,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -4447,7 +4404,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder idleConsumerLimit(
                 int idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -4460,7 +4417,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder idleConsumerLimit(
                 String idleConsumerLimit) {
-            setProperty("idleConsumerLimit", idleConsumerLimit);
+            doSetProperty("idleConsumerLimit", idleConsumerLimit);
             return this;
         }
         /**
@@ -4476,7 +4433,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder idleTaskExecutionLimit(
                 int idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -4492,7 +4449,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder idleTaskExecutionLimit(
                 String idleTaskExecutionLimit) {
-            setProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
+            doSetProperty("idleTaskExecutionLimit", idleTaskExecutionLimit);
             return this;
         }
         /**
@@ -4507,7 +4464,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder includeAllJMSXProperties(
                 boolean includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -4522,7 +4479,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder includeAllJMSXProperties(
                 String includeAllJMSXProperties) {
-            setProperty("includeAllJMSXProperties", includeAllJMSXProperties);
+            doSetProperty("includeAllJMSXProperties", includeAllJMSXProperties);
             return this;
         }
         /**
@@ -4544,7 +4501,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder jmsKeyFormatStrategy(
                 Object jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -4566,7 +4523,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder jmsKeyFormatStrategy(
                 String jmsKeyFormatStrategy) {
-            setProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
+            doSetProperty("jmsKeyFormatStrategy", jmsKeyFormatStrategy);
             return this;
         }
         /**
@@ -4578,7 +4535,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -4590,7 +4547,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder mapJmsMessage(String mapJmsMessage) {
-            setProperty("mapJmsMessage", mapJmsMessage);
+            doSetProperty("mapJmsMessage", mapJmsMessage);
             return this;
         }
         /**
@@ -4605,7 +4562,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder maxMessagesPerTask(
                 int maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -4620,7 +4577,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder maxMessagesPerTask(
                 String maxMessagesPerTask) {
-            setProperty("maxMessagesPerTask", maxMessagesPerTask);
+            doSetProperty("maxMessagesPerTask", maxMessagesPerTask);
             return this;
         }
         /**
@@ -4635,7 +4592,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageConverter(
                 Object messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -4650,7 +4607,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageConverter(
                 String messageConverter) {
-            setProperty("messageConverter", messageConverter);
+            doSetProperty("messageConverter", messageConverter);
             return this;
         }
         /**
@@ -4666,7 +4623,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageCreatedStrategy(
                 Object messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -4682,7 +4639,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageCreatedStrategy(
                 String messageCreatedStrategy) {
-            setProperty("messageCreatedStrategy", messageCreatedStrategy);
+            doSetProperty("messageCreatedStrategy", messageCreatedStrategy);
             return this;
         }
         /**
@@ -4698,7 +4655,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageIdEnabled(
                 boolean messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -4714,7 +4671,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageIdEnabled(
                 String messageIdEnabled) {
-            setProperty("messageIdEnabled", messageIdEnabled);
+            doSetProperty("messageIdEnabled", messageIdEnabled);
             return this;
         }
         /**
@@ -4731,7 +4688,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageListenerContainerFactory(
                 Object messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -4748,7 +4705,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageListenerContainerFactory(
                 String messageListenerContainerFactory) {
-            setProperty("messageListenerContainerFactory", messageListenerContainerFactory);
+            doSetProperty("messageListenerContainerFactory", messageListenerContainerFactory);
             return this;
         }
         /**
@@ -4764,7 +4721,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageTimestampEnabled(
                 boolean messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -4780,7 +4737,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder messageTimestampEnabled(
                 String messageTimestampEnabled) {
-            setProperty("messageTimestampEnabled", messageTimestampEnabled);
+            doSetProperty("messageTimestampEnabled", messageTimestampEnabled);
             return this;
         }
         /**
@@ -4792,7 +4749,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder pubSubNoLocal(boolean pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -4804,7 +4761,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder pubSubNoLocal(String pubSubNoLocal) {
-            setProperty("pubSubNoLocal", pubSubNoLocal);
+            doSetProperty("pubSubNoLocal", pubSubNoLocal);
             return this;
         }
         /**
@@ -4815,7 +4772,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder receiveTimeout(long receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -4826,7 +4783,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder receiveTimeout(String receiveTimeout) {
-            setProperty("receiveTimeout", receiveTimeout);
+            doSetProperty("receiveTimeout", receiveTimeout);
             return this;
         }
         /**
@@ -4840,7 +4797,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder recoveryInterval(
                 long recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -4854,7 +4811,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder recoveryInterval(
                 String recoveryInterval) {
-            setProperty("recoveryInterval", recoveryInterval);
+            doSetProperty("recoveryInterval", recoveryInterval);
             return this;
         }
         /**
@@ -4870,7 +4827,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder requestTimeoutCheckerInterval(
                 long requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -4886,7 +4843,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder requestTimeoutCheckerInterval(
                 String requestTimeoutCheckerInterval) {
-            setProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
+            doSetProperty("requestTimeoutCheckerInterval", requestTimeoutCheckerInterval);
             return this;
         }
         /**
@@ -4898,7 +4855,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -4910,7 +4867,7 @@ public interface AMQPEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -4924,6 +4881,10 @@ public interface AMQPEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4931,7 +4892,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -4945,6 +4906,10 @@ public interface AMQPEndpointBuilderFactory {
          * exception is required to be serializable. The original Exception on
          * the consumer side can be wrapped in an outer exception such as
          * org.apache.camel.RuntimeCamelException when returned to the producer.
+         * Use this with caution as the data is using Java Object serialization
+         * and requires the received to be able to deserialize the data at Class
+         * level, which forces a strong coupling between the producers and
+         * consumer!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4952,7 +4917,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -4963,7 +4928,11 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -4971,7 +4940,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -4982,7 +4951,11 @@ public interface AMQPEndpointBuilderFactory {
          * serializable. Camel will exclude any non-serializable objects and log
          * it at WARN level. You must enable this option on both the producer
          * and consumer side, so Camel knows the payloads is an Exchange and not
-         * a regular payload.
+         * a regular payload. Use this with caution as the data is using Java
+         * Object serialization and requires the received to be able to
+         * deserialize the data at Class level, which forces a strong coupling
+         * between the producers and consumer having to use compatible Camel
+         * versions!.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -4990,45 +4963,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedAMQPEndpointBuilder transferFault(boolean transferFault) {
-            setProperty("transferFault", transferFault);
-            return this;
-        }
-        /**
-         * If enabled and you are using Request Reply messaging (InOut) and an
-         * Exchange failed with a SOAP fault (not exception) on the consumer
-         * side, then the fault flag on org.apache.camel.Message#isFault() will
-         * be send back in the response as a JMS header with the key
-         * JmsConstants#JMS_TRANSFER_FAULT. If the client is Camel, the returned
-         * fault flag will be set on the
-         * org.apache.camel.Message#setFault(boolean). You may want to enable
-         * this when using Camel components that support faults such as SOAP
-         * based such as cxf or spring-ws.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: advanced
-         */
-        default AdvancedAMQPEndpointBuilder transferFault(String transferFault) {
-            setProperty("transferFault", transferFault);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -5041,7 +4976,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder useMessageIDAsCorrelationID(
                 boolean useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -5054,7 +4989,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder useMessageIDAsCorrelationID(
                 String useMessageIDAsCorrelationID) {
-            setProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
+            doSetProperty("useMessageIDAsCorrelationID", useMessageIDAsCorrelationID);
             return this;
         }
         /**
@@ -5068,7 +5003,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 int waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -5082,7 +5017,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
                 String waitForProvisionCorrelationToBeUpdatedCounter) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedCounter", waitForProvisionCorrelationToBeUpdatedCounter);
             return this;
         }
         /**
@@ -5095,7 +5030,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 long waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -5108,7 +5043,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
                 String waitForProvisionCorrelationToBeUpdatedThreadSleepingTime) {
-            setProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
+            doSetProperty("waitForProvisionCorrelationToBeUpdatedThreadSleepingTime", waitForProvisionCorrelationToBeUpdatedThreadSleepingTime);
             return this;
         }
         /**
@@ -5121,7 +5056,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder lazyCreateTransactionManager(
                 boolean lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -5134,7 +5069,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder lazyCreateTransactionManager(
                 String lazyCreateTransactionManager) {
-            setProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
+            doSetProperty("lazyCreateTransactionManager", lazyCreateTransactionManager);
             return this;
         }
         /**
@@ -5147,7 +5082,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder transactionManager(
                 Object transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -5160,7 +5095,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder transactionManager(
                 String transactionManager) {
-            setProperty("transactionManager", transactionManager);
+            doSetProperty("transactionManager", transactionManager);
             return this;
         }
         /**
@@ -5172,7 +5107,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder transactionName(
                 String transactionName) {
-            setProperty("transactionName", transactionName);
+            doSetProperty("transactionName", transactionName);
             return this;
         }
         /**
@@ -5185,7 +5120,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder transactionTimeout(
                 int transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
         /**
@@ -5198,7 +5133,7 @@ public interface AMQPEndpointBuilderFactory {
          */
         default AdvancedAMQPEndpointBuilder transactionTimeout(
                 String transactionTimeout) {
-            setProperty("transactionTimeout", transactionTimeout);
+            doSetProperty("transactionTimeout", transactionTimeout);
             return this;
         }
     }
@@ -5249,7 +5184,7 @@ public interface AMQPEndpointBuilderFactory {
      * Messaging with AMQP protocol using Apache QPid Client.
      * 
      * Category: messaging
-     * Available as of version: 1.2
+     * Since: 1.2
      * Maven coordinates: org.apache.camel:camel-amqp
      * 
      * Syntax: <code>amqp:destinationType:destinationName</code>
@@ -5262,7 +5197,7 @@ public interface AMQPEndpointBuilderFactory {
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
      */
-    default AMQPEndpointBuilder aMQP(String path) {
+    default AMQPEndpointBuilder amqp(String path) {
         class AMQPEndpointBuilderImpl extends AbstractEndpointBuilder implements AMQPEndpointBuilder, AdvancedAMQPEndpointBuilder {
             public AMQPEndpointBuilderImpl(String path) {
                 super("amqp", path);

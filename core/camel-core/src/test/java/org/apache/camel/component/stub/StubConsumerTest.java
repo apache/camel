@@ -28,24 +28,17 @@ public class StubConsumerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:InOnly")
-                    .setExchangePattern(ExchangePattern.InOnly)
-                    .to("stub:foo")
-                    .to("mock:result");
+                from("direct:InOnly").setExchangePattern(ExchangePattern.InOnly).to("stub:foo").to("mock:result");
 
-                from("direct:InOut")
-                    .setExchangePattern(ExchangePattern.InOut)
-                    .to("stub:foo")
-                    .to("mock:result");
+                from("direct:InOut").setExchangePattern(ExchangePattern.InOut).to("stub:foo").to("mock:result");
 
-                from("stub:foo")
-                    .transform().constant("Bye World");
+                from("stub:foo").transform().constant("Bye World");
             }
         };
     }
 
     final void test(ExchangePattern mep) throws InterruptedException {
-        if (mep ==  ExchangePattern.InOut) {
+        if (mep == ExchangePattern.InOut) {
             getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
         } else {
             getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");

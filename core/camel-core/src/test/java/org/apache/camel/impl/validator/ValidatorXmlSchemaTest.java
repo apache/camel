@@ -61,8 +61,7 @@ public class ValidatorXmlSchemaTest extends ContextTestSupport {
             public void configure() throws Exception {
                 validator().type("xml").withUri("validator:org/apache/camel/impl/validate.xsd");
 
-                from("direct:in").inputTypeWithValidate("xml")
-                    .to("mock:result");
+                from("direct:in").inputTypeWithValidate("xml").to("mock:result");
             }
         };
     }

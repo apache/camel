@@ -60,7 +60,7 @@ public class JpaNonTXRollbackTest extends AbstractJpaTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jpa://" + SendEmail.class.getName() + "?consumer.transacted=false&delay=100").routeId("foo").noAutoStartup()
+                from("jpa://" + SendEmail.class.getName() + "?transacted=false&delay=100").routeId("foo").noAutoStartup()
                         .to("mock:start")
                         .process(new Processor() {
                             @Override

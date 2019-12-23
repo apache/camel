@@ -87,6 +87,7 @@ public enum HazelcastOperation {
         throw new IllegalArgumentException(String.format("Operation '%s' is not supported by this component.", name));
     }
 
+    @Override
     public String toString() {
         return operation;
     }

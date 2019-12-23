@@ -48,14 +48,17 @@ public class Delayer extends DelayProcessorSupport implements Traceable, IdAware
         return "Delayer[" + delay + " to: " + getProcessor() + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getTraceLabel() {
         return "delay[" + delay + "]";
     }
@@ -75,6 +78,7 @@ public class Delayer extends DelayProcessorSupport implements Traceable, IdAware
     // Implementation methods
     // -------------------------------------------------------------------------
 
+    @Override
     protected long calculateDelay(Exchange exchange) {
         long time = 0;
         if (delay != null) {

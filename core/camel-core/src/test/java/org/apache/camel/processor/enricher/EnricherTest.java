@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.enricher;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -38,7 +39,7 @@ public class EnricherTest extends ContextTestSupport {
     }
 
     // -------------------------------------------------------------
-    //  InOnly routes
+    // InOnly routes
     // -------------------------------------------------------------
 
     @Test
@@ -47,22 +48,6 @@ public class EnricherTest extends ContextTestSupport {
         mock.message(0).exchangeProperty(Exchange.TO_ENDPOINT).isEqualTo("mock://mock");
         template.sendBody("direct:enricher-test-1", "test");
         mock.assertIsSatisfied();
-    }
-
-    @Test
-    public void testEnrichFaultInOnly() throws InterruptedException {
-        mock.expectedMessageCount(0);
-        Exchange exchange = template.send("direct:enricher-test-3", new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("test");
-            }
-        });
-        mock.assertIsSatisfied();
-        assertEquals("test", exchange.getIn().getBody());
-        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
-        assertEquals("failed", exchange.getOut().getBody());
-        assertEquals("direct://enricher-fault-resource", exchange.getProperty(Exchange.TO_ENDPOINT));
-        assertNull(exchange.getException());
     }
 
     @Test
@@ -80,12 +65,12 @@ public class EnricherTest extends ContextTestSupport {
     }
 
     // -------------------------------------------------------------
-    //  InOut routes
+    // InOut routes
     // -------------------------------------------------------------
 
     @Test
     public void testEnrichInOut() throws InterruptedException {
-        String result = (String) template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
+        String result = (String)template.sendBody("direct:enricher-test-5", ExchangePattern.InOut, "test");
         assertEquals("test:blah", result);
     }
 
@@ -104,19 +89,6 @@ public class EnricherTest extends ContextTestSupport {
     }
 
     @Test
-    public void testEnrichFaultInOut() throws InterruptedException {
-        Exchange exchange = template.send("direct:enricher-test-7", ExchangePattern.InOut, new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("test");
-            }
-        });
-        assertEquals("test", exchange.getIn().getBody());
-        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
-        assertEquals("failed", exchange.getOut().getBody());
-        assertNull(exchange.getException());
-    }
-
-    @Test
     public void testEnrichErrorInOut() throws InterruptedException {
         Exchange exchange = template.send("direct:enricher-test-8", ExchangePattern.InOut, new Processor() {
             public void process(Exchange exchange) {
@@ -128,45 +100,41 @@ public class EnricherTest extends ContextTestSupport {
         assertFalse(exchange.hasOut());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // -------------------------------------------------------------
-                //  InOnly routes
+                // InOnly routes
                 // -------------------------------------------------------------
 
-                from("direct:enricher-test-1")
-                    .enrich("direct:enricher-constant-resource", aggregationStrategy)
-                    .to("mock:mock");
+                from("direct:enricher-test-1").enrich("direct:enricher-constant-resource", aggregationStrategy).to("mock:mock");
 
-                from("direct:enricher-test-3")
-                    .enrich("direct:enricher-fault-resource", aggregationStrategy)
-                    .to("mock:mock");
+                from("direct:enricher-test-3").enrich("direct:enricher-fault-resource", aggregationStrategy).to("mock:mock");
 
-                from("direct:enricher-test-4").errorHandler(noErrorHandler()) // avoid re-deliveries
+                from("direct:enricher-test-4").errorHandler(noErrorHandler()) // avoid
+                                                                              // re-deliveries
                     .enrich("direct:enricher-error-resource", aggregationStrategy).to("mock:mock");
 
                 // -------------------------------------------------------------
-                //  InOut routes
+                // InOut routes
                 // -------------------------------------------------------------
 
-                from("direct:enricher-test-5")
-                    .enrich("direct:enricher-constant-resource", aggregationStrategy);
+                from("direct:enricher-test-5").enrich("direct:enricher-constant-resource", aggregationStrategy);
 
-                from("direct:enricher-test-7")
-                    .enrich("direct:enricher-fault-resource", aggregationStrategy);
+                from("direct:enricher-test-7").enrich("direct:enricher-fault-resource", aggregationStrategy);
 
-                from("direct:enricher-test-8").errorHandler(noErrorHandler()) // avoid re-deliveries
+                from("direct:enricher-test-8").errorHandler(noErrorHandler()) // avoid
+                                                                              // re-deliveries
                     .enrich("direct:enricher-error-resource", aggregationStrategy);
 
                 // -------------------------------------------------------------
-                //  Enricher resources
+                // Enricher resources
                 // -------------------------------------------------------------
 
                 from("direct:enricher-constant-resource").transform().constant("blah");
-                
-                from("direct:enricher-fault-resource").errorHandler(noErrorHandler()).process(new FailureProcessor(false));
-                from("direct:enricher-error-resource").errorHandler(noErrorHandler()).process(new FailureProcessor(true));
+
+                from("direct:enricher-error-resource").errorHandler(noErrorHandler()).process(new FailureProcessor());
             }
         };
     }

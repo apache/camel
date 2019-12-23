@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.hystrix.processor;
 
+import org.apache.camel.model.CircuitBreakerDefinition;
 import org.apache.camel.model.HystrixConfigurationDefinition;
-import org.apache.camel.model.HystrixDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Assert;
@@ -36,7 +36,7 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
     @Test
     public void testHystrix() throws Exception {
         RouteDefinition routeDefinition = context.getRouteDefinition("hystrix-route");
-        HystrixDefinition hystrixDefinition = findHystrixDefinition(routeDefinition);
+        CircuitBreakerDefinition hystrixDefinition = findCircuitBreakerDefinition(routeDefinition);
 
         Assert.assertNotNull(hystrixDefinition);
 
@@ -45,7 +45,7 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
 
         Assert.assertEquals("local-conf-group-key", config.getGroupKey());
         Assert.assertEquals("global-thread-key", config.getThreadPoolKey());
-        Assert.assertEquals(new Integer(5), config.getCorePoolSize());
+        Assert.assertEquals(Integer.toString(5), config.getCorePoolSize());
 
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
@@ -58,11 +58,11 @@ public class SpringHystrixRouteHierarchicalConfigTest extends CamelSpringTestSup
     // Helper
     // **********************************************
 
-    private HystrixDefinition findHystrixDefinition(RouteDefinition routeDefinition) throws Exception {
+    private CircuitBreakerDefinition findCircuitBreakerDefinition(RouteDefinition routeDefinition) throws Exception {
         return routeDefinition.getOutputs().stream()
-            .filter(HystrixDefinition.class::isInstance)
-            .map(HystrixDefinition.class::cast)
+            .filter(CircuitBreakerDefinition.class::isInstance)
+            .map(CircuitBreakerDefinition.class::cast)
             .findFirst()
-            .orElseThrow(() -> new IllegalStateException("Unable to find a HystrixDefinition"));
+            .orElseThrow(() -> new IllegalStateException("Unable to find a CircuitBreakerDefinition"));
     }
 }

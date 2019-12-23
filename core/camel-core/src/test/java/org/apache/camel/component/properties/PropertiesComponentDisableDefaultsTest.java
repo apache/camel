@@ -35,9 +35,7 @@ public class PropertiesComponentDisableDefaultsTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .transform().simple("{{p:message}}")
-                    .to("mock:{{p:mockend}}");
+                from("direct:start").transform().simple("{{p:message}}").to("mock:{{p:mockend}}");
             }
         });
 
@@ -59,10 +57,9 @@ public class PropertiesComponentDisableDefaultsTest extends ContextTestSupport {
         props.put("p:mockend", "end");
         props.put("p:message", "my message");
 
-        PropertiesComponent component = new PropertiesComponent();
-        component.setDefaultFallbackEnabled(false);
-        component.setInitialProperties(props);
-        context.addComponent("properties", component);
+        PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
+        pc.setDefaultFallbackEnabled(false);
+        pc.setInitialProperties(props);
 
         return context;
     }

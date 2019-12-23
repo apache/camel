@@ -62,6 +62,7 @@ public class BindyInlinedQuotesCsvUnmarshallTest extends AbstractJUnit4SpringCon
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclasssinglequote.Order.class);
 
+        @Override
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);
         }

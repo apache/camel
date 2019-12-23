@@ -20,7 +20,6 @@ import java.sql.CallableStatement;
 import java.sql.PreparedStatement;
 
 import com.impossibl.postgres.api.jdbc.PGConnection;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.DefaultProducer;
 

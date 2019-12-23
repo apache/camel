@@ -41,6 +41,46 @@ public interface SpringLdapEndpointBuilderFactory {
             return (AdvancedSpringLdapEndpointBuilder) this;
         }
         /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SpringLdapEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SpringLdapEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * The LDAP operation to be performed.
          * 
          * The option is a:
@@ -51,7 +91,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * Group: producer
          */
         default SpringLdapEndpointBuilder operation(LdapOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -65,7 +105,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * Group: producer
          */
         default SpringLdapEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -76,7 +116,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * Group: producer
          */
         default SpringLdapEndpointBuilder scope(String scope) {
-            setProperty("scope", scope);
+            doSetProperty("scope", scope);
             return this;
         }
     }
@@ -100,7 +140,7 @@ public interface SpringLdapEndpointBuilderFactory {
          */
         default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -113,7 +153,7 @@ public interface SpringLdapEndpointBuilderFactory {
          */
         default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -126,7 +166,7 @@ public interface SpringLdapEndpointBuilderFactory {
          */
         default AdvancedSpringLdapEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -138,7 +178,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSpringLdapEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -161,7 +201,7 @@ public interface SpringLdapEndpointBuilderFactory {
      * using filters as the message payload.
      * 
      * Category: spring,ldap
-     * Available as of version: 2.11
+     * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-spring-ldap
      * 
      * Syntax: <code>spring-ldap:templateName</code>

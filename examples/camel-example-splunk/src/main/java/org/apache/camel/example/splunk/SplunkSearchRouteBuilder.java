@@ -17,7 +17,6 @@
 package org.apache.camel.example.splunk;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 
 public class SplunkSearchRouteBuilder extends RouteBuilder {
 
@@ -27,8 +26,7 @@ public class SplunkSearchRouteBuilder extends RouteBuilder {
         log.info("About to setup Splunk search route: Splunk Server --> log{results}");
 
         // configure properties component
-        PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
-        pc.setLocation("classpath:application.properties");
+        getContext().getPropertiesComponent().setLocation("classpath:application.properties");
 
         from("splunk://normal?host={{splunk.host}}&port={{splunk.port}}&delay=10s"
                 + "&username={{splunk.username}}&password={{splunk.password}}&initEarliestTime=08/17/13 08:35:46:456"

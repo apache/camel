@@ -199,6 +199,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
      * @return matching QName throws RuntimeException if no matching QName was
      *         found
      */
+    @Override
     public QName findQNameForSoapActionOrType(String soapAction, Class<?> type) {
         MethodInfo info = soapActionToMethodInfo.get(soapAction);
         if (info != null) {
@@ -233,6 +234,7 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
         return qName;
     }
 
+    @Override
     public Class<? extends Exception> findExceptionForFaultName(QName faultName) {
         return faultNameToException.get(faultName);
     }

@@ -22,11 +22,10 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * The Openshift Builds component provides a producer to execute openshift build operations.
+ * The Openshift Builds component provides a producer to execute openshift build
+ * operations.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "openshift-builds", title = "Openshift Builds", syntax = "openshift-builds:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class OpenshiftBuildsEndpoint extends AbstractKubernetesEndpoint {

@@ -87,6 +87,11 @@ public @interface UriPath {
     String label() default "";
 
     /**
+     * Whether the option is secret/sensitive information such as a password.
+     */
+    boolean secret() default false;
+
+    /**
      * To re-associate the preferred Java type of this parameter.
      * <p/>
      * This is used for parameters which are of a specialized type but can be configured by another Java type, such as from a String.

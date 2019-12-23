@@ -36,11 +36,6 @@ import org.slf4j.LoggerFactory;
 
 public class ShiroSecurityPolicy implements AuthorizationPolicy {
     private static final Logger LOG = LoggerFactory.getLogger(ShiroSecurityPolicy.class);
-    private final byte[] bits128 = {
-        (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
-        (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
-        (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
-        (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};
     private CipherService cipherService;
     private byte[] passPhrase;
     private SecurityManager securityManager;
@@ -50,64 +45,65 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     private boolean base64;
     private boolean allPermissionsRequired;
     private boolean allRolesRequired;
-    
+
     public ShiroSecurityPolicy() {
-        this.passPhrase = bits128;
-        // Set up AES encryption based cipher service, by default 
+        // Set up AES encryption based cipher service, by default
         cipherService = new AesCipherService();
         permissionsList = new ArrayList<>();
         rolesList = new ArrayList<>();
         alwaysReauthenticate = true;
-    }   
-    
+    }
+
     public ShiroSecurityPolicy(String iniResourcePath) {
         this();
         Factory<SecurityManager> factory = new IniSecurityManagerFactory(iniResourcePath);
         securityManager = factory.getInstance();
         SecurityUtils.setSecurityManager(securityManager);
     }
-    
+
     public ShiroSecurityPolicy(Ini ini) {
         this();
         Factory<SecurityManager> factory = new IniSecurityManagerFactory(ini);
         securityManager = factory.getInstance();
         SecurityUtils.setSecurityManager(securityManager);
     }
-    
+
     public ShiroSecurityPolicy(String iniResourcePath, byte[] passPhrase) {
-        this(iniResourcePath);        
+        this(iniResourcePath);
         this.setPassPhrase(passPhrase);
     }
 
     public ShiroSecurityPolicy(Ini ini, byte[] passPhrase) {
-        this(ini);        
+        this(ini);
         this.setPassPhrase(passPhrase);
     }
-    
+
     public ShiroSecurityPolicy(String iniResourcePath, byte[] passPhrase, boolean alwaysReauthenticate) {
-        this(iniResourcePath, passPhrase); 
+        this(iniResourcePath, passPhrase);
         this.setAlwaysReauthenticate(alwaysReauthenticate);
     }
 
     public ShiroSecurityPolicy(Ini ini, byte[] passPhrase, boolean alwaysReauthenticate) {
-        this(ini, passPhrase); 
+        this(ini, passPhrase);
         this.setAlwaysReauthenticate(alwaysReauthenticate);
     }
-    
+
     public ShiroSecurityPolicy(String iniResourcePath, byte[] passPhrase, boolean alwaysReauthenticate, List<Permission> permissionsList) {
-        this(iniResourcePath, passPhrase, alwaysReauthenticate); 
-        this.setPermissionsList(permissionsList);
-    }
-    
-    public ShiroSecurityPolicy(Ini ini, byte[] passPhrase, boolean alwaysReauthenticate, List<Permission> permissionsList) {
-        this(ini, passPhrase, alwaysReauthenticate); 
+        this(iniResourcePath, passPhrase, alwaysReauthenticate);
         this.setPermissionsList(permissionsList);
     }
 
+    public ShiroSecurityPolicy(Ini ini, byte[] passPhrase, boolean alwaysReauthenticate, List<Permission> permissionsList) {
+        this(ini, passPhrase, alwaysReauthenticate);
+        this.setPermissionsList(permissionsList);
+    }
+
+    @Override
     public void beforeWrap(RouteContext routeContext, NamedNode definition) {
         // noop
     }
-    
+
+    @Override
     public Processor wrap(RouteContext routeContext, final Processor processor) {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Securing route {} using Shiro policy {}", routeContext.getRouteId(), this);

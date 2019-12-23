@@ -1,7 +1,12 @@
 [[scp-component]]
-== SCP Component
+= SCP Component
+:page-source: components/camel-jsch/src/main/docs/scp-component.adoc
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The Camel-Jsch component supports the
 http://en.wikipedia.org/wiki/Secure_copy[SCP protocol] using the Client
@@ -22,7 +27,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 ---------------------------------------
@@ -36,13 +41,13 @@ The file name can be specified either in the <path> part of the URI or
 as a "CamelFileName" header on the message (`Exchange.FILE_NAME` if used
 in code).
 
-### Options
+== Options
 
 
 
 
 // component options: START
-The SCP component supports 3 options, which are listed below.
+The SCP component supports 4 options, which are listed below.
 
 
 
@@ -50,8 +55,9 @@ The SCP component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *verboseLogging* (producer) | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -72,7 +78,7 @@ scp:host:port/directoryName
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,7 +90,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (24 parameters):
+=== Query Parameters (24 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -99,7 +105,7 @@ with the following path and query parameters:
 | *strictHostKeyChecking* (producer) | Sets whether to use strict host key checking. Possible values are: no, yes | no | String
 | *allowNullBody* (producer) | Used to specify if a null body is allowed during file writing. If set to true then an empty file will be created, when set to false, and attempting to send a null body to the file component, a GenericFileWriteException of 'Cannot write null body to file.' will be thrown. If the fileExist option is set to 'Override', then the file will be truncated, and if set to append the file will remain unchanged. | false | boolean
 | *disconnectOnBatchComplete* (producer) | Whether or not to disconnect from remote FTP server right after a Batch upload is complete. disconnectOnBatchComplete will only disconnect the current connection to the FTP server. | false | boolean
-| *moveExistingFileStrategy* (producer) | Strategy (Custom Strategy) used to move file with special naming token to use when fileExist=Move is configured. By default, there is an implementation used if no custom strategy is provided |  | FileMoveExisting Strategy
+| *moveExistingFileStrategy* (producer) | Strategy (Custom Strategy) used to move file with special naming token to use when fileExist=Move is configured. By default, there is an implementation used if no custom strategy is provided |  | FileMoveExistingStrategy
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *connectTimeout* (advanced) | Sets the connect timeout for waiting for a connection to be established Used by both FTPClient and JSCH | 10000 | int
 | *soTimeout* (advanced) | Sets the so timeout FTP and FTPS Only for Camel 2.4. SFTP for Camel 2.14.3/2.15.3/2.16 onwards. Is the SocketOptions.SO_TIMEOUT value in millis. Recommended option is to set this to 300000 so as not have a hanged connection. On SFTP this option is set as timeout on the JSCH Session instance. | 300000 | int
@@ -117,14 +123,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-jsch-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -132,7 +138,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -140,8 +146,9 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.scp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.scp.enabled* | Enable scp component | true | Boolean
-| *camel.component.scp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.scp.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.scp.enabled* | Whether to enable auto configuration of the scp component. This is enabled by default. |  | Boolean
+| *camel.component.scp.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.scp.verbose-logging* | JSCH is verbose logging out of the box. Therefore we turn the logging down to DEBUG logging by default. But setting this option to true turns on the verbose logging again. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
@@ -150,15 +157,9 @@ The component supports 4 options, which are listed below.
 
 
 
-### Limitations
+== Limitations
 
 Currently camel-jsch only supports a
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Producer.html[Producer]
-(i.e. copy files to another host). 
+(i.e. copy files to another host). 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -52,7 +52,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder display(String display) {
-            setProperty("display", display);
+            doSetProperty("display", display);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder displayValue(String displayValue) {
-            setProperty("displayValue", displayValue);
+            doSetProperty("displayValue", displayValue);
             return this;
         }
         /**
@@ -77,7 +77,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder excludeReferenceLink(
                 Boolean excludeReferenceLink) {
-            setProperty("excludeReferenceLink", excludeReferenceLink);
+            doSetProperty("excludeReferenceLink", excludeReferenceLink);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder excludeReferenceLink(
                 String excludeReferenceLink) {
-            setProperty("excludeReferenceLink", excludeReferenceLink);
+            doSetProperty("excludeReferenceLink", excludeReferenceLink);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder favorites(Boolean favorites) {
-            setProperty("favorites", favorites);
+            doSetProperty("favorites", favorites);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder favorites(String favorites) {
-            setProperty("favorites", favorites);
+            doSetProperty("favorites", favorites);
             return this;
         }
         /**
@@ -131,7 +131,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder includeAggregates(
                 Boolean includeAggregates) {
-            setProperty("includeAggregates", includeAggregates);
+            doSetProperty("includeAggregates", includeAggregates);
             return this;
         }
         /**
@@ -147,7 +147,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder includeAggregates(
                 String includeAggregates) {
-            setProperty("includeAggregates", includeAggregates);
+            doSetProperty("includeAggregates", includeAggregates);
             return this;
         }
         /**
@@ -162,7 +162,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder includeAvailableAggregates(
                 Boolean includeAvailableAggregates) {
-            setProperty("includeAvailableAggregates", includeAvailableAggregates);
+            doSetProperty("includeAvailableAggregates", includeAvailableAggregates);
             return this;
         }
         /**
@@ -178,7 +178,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder includeAvailableAggregates(
                 String includeAvailableAggregates) {
-            setProperty("includeAvailableAggregates", includeAvailableAggregates);
+            doSetProperty("includeAvailableAggregates", includeAvailableAggregates);
             return this;
         }
         /**
@@ -192,7 +192,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder includeAvailableBreakdowns(
                 Boolean includeAvailableBreakdowns) {
-            setProperty("includeAvailableBreakdowns", includeAvailableBreakdowns);
+            doSetProperty("includeAvailableBreakdowns", includeAvailableBreakdowns);
             return this;
         }
         /**
@@ -207,7 +207,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder includeAvailableBreakdowns(
                 String includeAvailableBreakdowns) {
-            setProperty("includeAvailableBreakdowns", includeAvailableBreakdowns);
+            doSetProperty("includeAvailableBreakdowns", includeAvailableBreakdowns);
             return this;
         }
         /**
@@ -221,7 +221,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder includeScoreNotes(
                 Boolean includeScoreNotes) {
-            setProperty("includeScoreNotes", includeScoreNotes);
+            doSetProperty("includeScoreNotes", includeScoreNotes);
             return this;
         }
         /**
@@ -236,7 +236,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder includeScoreNotes(
                 String includeScoreNotes) {
-            setProperty("includeScoreNotes", includeScoreNotes);
+            doSetProperty("includeScoreNotes", includeScoreNotes);
             return this;
         }
         /**
@@ -249,7 +249,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeScores(Boolean includeScores) {
-            setProperty("includeScores", includeScores);
+            doSetProperty("includeScores", includeScores);
             return this;
         }
         /**
@@ -263,7 +263,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder includeScores(String includeScores) {
-            setProperty("includeScores", includeScores);
+            doSetProperty("includeScores", includeScores);
             return this;
         }
         /**
@@ -275,7 +275,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder inputDisplayValue(
                 Boolean inputDisplayValue) {
-            setProperty("inputDisplayValue", inputDisplayValue);
+            doSetProperty("inputDisplayValue", inputDisplayValue);
             return this;
         }
         /**
@@ -288,7 +288,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder inputDisplayValue(
                 String inputDisplayValue) {
-            setProperty("inputDisplayValue", inputDisplayValue);
+            doSetProperty("inputDisplayValue", inputDisplayValue);
             return this;
         }
         /**
@@ -300,7 +300,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder key(Boolean key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
             return this;
         }
         /**
@@ -313,7 +313,47 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder key(String key) {
-            setProperty("key", key);
+            doSetProperty("key", key);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ServiceNowEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ServiceNowEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -326,7 +366,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder models(
                 Map<String, Class<Object>> models) {
-            setProperty("models", models);
+            doSetProperty("models", models);
             return this;
         }
         /**
@@ -339,7 +379,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder models(String models) {
-            setProperty("models", models);
+            doSetProperty("models", models);
             return this;
         }
         /**
@@ -351,7 +391,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder perPage(Integer perPage) {
-            setProperty("perPage", perPage);
+            doSetProperty("perPage", perPage);
             return this;
         }
         /**
@@ -364,7 +404,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder perPage(String perPage) {
-            setProperty("perPage", perPage);
+            doSetProperty("perPage", perPage);
             return this;
         }
         /**
@@ -378,7 +418,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder release(ServiceNowRelease release) {
-            setProperty("release", release);
+            doSetProperty("release", release);
             return this;
         }
         /**
@@ -392,7 +432,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder release(String release) {
-            setProperty("release", release);
+            doSetProperty("release", release);
             return this;
         }
         /**
@@ -405,7 +445,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder requestModels(
                 Map<String, Class<Object>> requestModels) {
-            setProperty("requestModels", requestModels);
+            doSetProperty("requestModels", requestModels);
             return this;
         }
         /**
@@ -418,7 +458,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder requestModels(String requestModels) {
-            setProperty("requestModels", requestModels);
+            doSetProperty("requestModels", requestModels);
             return this;
         }
         /**
@@ -430,7 +470,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder resource(String resource) {
-            setProperty("resource", resource);
+            doSetProperty("resource", resource);
             return this;
         }
         /**
@@ -443,7 +483,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder responseModels(
                 Map<String, Class<Object>> responseModels) {
-            setProperty("responseModels", responseModels);
+            doSetProperty("responseModels", responseModels);
             return this;
         }
         /**
@@ -456,7 +496,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder responseModels(String responseModels) {
-            setProperty("responseModels", responseModels);
+            doSetProperty("responseModels", responseModels);
             return this;
         }
         /**
@@ -468,7 +508,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder sortBy(String sortBy) {
-            setProperty("sortBy", sortBy);
+            doSetProperty("sortBy", sortBy);
             return this;
         }
         /**
@@ -481,7 +521,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder sortDir(String sortDir) {
-            setProperty("sortDir", sortDir);
+            doSetProperty("sortDir", sortDir);
             return this;
         }
         /**
@@ -493,7 +533,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder suppressAutoSysField(
                 Boolean suppressAutoSysField) {
-            setProperty("suppressAutoSysField", suppressAutoSysField);
+            doSetProperty("suppressAutoSysField", suppressAutoSysField);
             return this;
         }
         /**
@@ -506,7 +546,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder suppressAutoSysField(
                 String suppressAutoSysField) {
-            setProperty("suppressAutoSysField", suppressAutoSysField);
+            doSetProperty("suppressAutoSysField", suppressAutoSysField);
             return this;
         }
         /**
@@ -520,7 +560,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder suppressPaginationHeader(
                 Boolean suppressPaginationHeader) {
-            setProperty("suppressPaginationHeader", suppressPaginationHeader);
+            doSetProperty("suppressPaginationHeader", suppressPaginationHeader);
             return this;
         }
         /**
@@ -535,7 +575,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder suppressPaginationHeader(
                 String suppressPaginationHeader) {
-            setProperty("suppressPaginationHeader", suppressPaginationHeader);
+            doSetProperty("suppressPaginationHeader", suppressPaginationHeader);
             return this;
         }
         /**
@@ -546,7 +586,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder table(String table) {
-            setProperty("table", table);
+            doSetProperty("table", table);
             return this;
         }
         /**
@@ -558,7 +598,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder target(Boolean target) {
-            setProperty("target", target);
+            doSetProperty("target", target);
             return this;
         }
         /**
@@ -571,7 +611,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder target(String target) {
-            setProperty("target", target);
+            doSetProperty("target", target);
             return this;
         }
         /**
@@ -582,7 +622,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder topLevelOnly(Boolean topLevelOnly) {
-            setProperty("topLevelOnly", topLevelOnly);
+            doSetProperty("topLevelOnly", topLevelOnly);
             return this;
         }
         /**
@@ -594,7 +634,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: producer
          */
         default ServiceNowEndpointBuilder topLevelOnly(String topLevelOnly) {
-            setProperty("topLevelOnly", topLevelOnly);
+            doSetProperty("topLevelOnly", topLevelOnly);
             return this;
         }
         /**
@@ -605,7 +645,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: proxy
          */
         default ServiceNowEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -616,7 +656,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: proxy
          */
         default ServiceNowEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -628,7 +668,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: proxy
          */
         default ServiceNowEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -639,7 +679,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: security
          */
         default ServiceNowEndpointBuilder apiUrl(String apiUrl) {
-            setProperty("apiUrl", apiUrl);
+            doSetProperty("apiUrl", apiUrl);
             return this;
         }
         /**
@@ -650,7 +690,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: security
          */
         default ServiceNowEndpointBuilder oauthClientId(String oauthClientId) {
-            setProperty("oauthClientId", oauthClientId);
+            doSetProperty("oauthClientId", oauthClientId);
             return this;
         }
         /**
@@ -662,7 +702,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder oauthClientSecret(
                 String oauthClientSecret) {
-            setProperty("oauthClientSecret", oauthClientSecret);
+            doSetProperty("oauthClientSecret", oauthClientSecret);
             return this;
         }
         /**
@@ -673,7 +713,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: security
          */
         default ServiceNowEndpointBuilder oauthTokenUrl(String oauthTokenUrl) {
-            setProperty("oauthTokenUrl", oauthTokenUrl);
+            doSetProperty("oauthTokenUrl", oauthTokenUrl);
             return this;
         }
         /**
@@ -685,7 +725,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: security
          */
         default ServiceNowEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -696,7 +736,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: security
          */
         default ServiceNowEndpointBuilder proxyPassword(String proxyPassword) {
-            setProperty("proxyPassword", proxyPassword);
+            doSetProperty("proxyPassword", proxyPassword);
             return this;
         }
         /**
@@ -707,7 +747,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: security
          */
         default ServiceNowEndpointBuilder proxyUserName(String proxyUserName) {
-            setProperty("proxyUserName", proxyUserName);
+            doSetProperty("proxyUserName", proxyUserName);
             return this;
         }
         /**
@@ -721,7 +761,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -735,7 +775,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default ServiceNowEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -747,7 +787,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: security
          */
         default ServiceNowEndpointBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
     }
@@ -769,7 +809,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder apiVersion(String apiVersion) {
-            setProperty("apiVersion", apiVersion);
+            doSetProperty("apiVersion", apiVersion);
             return this;
         }
         /**
@@ -782,7 +822,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -795,7 +835,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -806,7 +846,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder dateFormat(String dateFormat) {
-            setProperty("dateFormat", dateFormat);
+            doSetProperty("dateFormat", dateFormat);
             return this;
         }
         /**
@@ -818,7 +858,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder dateTimeFormat(
                 String dateTimeFormat) {
-            setProperty("dateTimeFormat", dateTimeFormat);
+            doSetProperty("dateTimeFormat", dateTimeFormat);
             return this;
         }
         /**
@@ -831,7 +871,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder httpClientPolicy(
                 Object httpClientPolicy) {
-            setProperty("httpClientPolicy", httpClientPolicy);
+            doSetProperty("httpClientPolicy", httpClientPolicy);
             return this;
         }
         /**
@@ -844,7 +884,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder httpClientPolicy(
                 String httpClientPolicy) {
-            setProperty("httpClientPolicy", httpClientPolicy);
+            doSetProperty("httpClientPolicy", httpClientPolicy);
             return this;
         }
         /**
@@ -856,7 +896,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder mapper(Object mapper) {
-            setProperty("mapper", mapper);
+            doSetProperty("mapper", mapper);
             return this;
         }
         /**
@@ -868,7 +908,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder mapper(String mapper) {
-            setProperty("mapper", mapper);
+            doSetProperty("mapper", mapper);
             return this;
         }
         /**
@@ -881,7 +921,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
                 Object proxyAuthorizationPolicy) {
-            setProperty("proxyAuthorizationPolicy", proxyAuthorizationPolicy);
+            doSetProperty("proxyAuthorizationPolicy", proxyAuthorizationPolicy);
             return this;
         }
         /**
@@ -894,7 +934,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder proxyAuthorizationPolicy(
                 String proxyAuthorizationPolicy) {
-            setProperty("proxyAuthorizationPolicy", proxyAuthorizationPolicy);
+            doSetProperty("proxyAuthorizationPolicy", proxyAuthorizationPolicy);
             return this;
         }
         /**
@@ -908,7 +948,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
                 Boolean retrieveTargetRecordOnImport) {
-            setProperty("retrieveTargetRecordOnImport", retrieveTargetRecordOnImport);
+            doSetProperty("retrieveTargetRecordOnImport", retrieveTargetRecordOnImport);
             return this;
         }
         /**
@@ -923,7 +963,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
                 String retrieveTargetRecordOnImport) {
-            setProperty("retrieveTargetRecordOnImport", retrieveTargetRecordOnImport);
+            doSetProperty("retrieveTargetRecordOnImport", retrieveTargetRecordOnImport);
             return this;
         }
         /**
@@ -936,7 +976,7 @@ public interface ServiceNowEndpointBuilderFactory {
          */
         default AdvancedServiceNowEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -948,7 +988,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -959,7 +999,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder timeFormat(String timeFormat) {
-            setProperty("timeFormat", timeFormat);
+            doSetProperty("timeFormat", timeFormat);
             return this;
         }
     }
@@ -980,7 +1020,7 @@ public interface ServiceNowEndpointBuilderFactory {
      * services.
      * 
      * Category: api,cloud,management
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-servicenow
      * 
      * Syntax: <code>servicenow:instanceName</code>
@@ -988,7 +1028,7 @@ public interface ServiceNowEndpointBuilderFactory {
      * Path parameter: instanceName (required)
      * The ServiceNow instance name
      */
-    default ServiceNowEndpointBuilder serviceNow(String path) {
+    default ServiceNowEndpointBuilder servicenow(String path) {
         class ServiceNowEndpointBuilderImpl extends AbstractEndpointBuilder implements ServiceNowEndpointBuilder, AdvancedServiceNowEndpointBuilder {
             public ServiceNowEndpointBuilderImpl(String path) {
                 super("servicenow", path);

@@ -137,12 +137,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     @UriParam(label = "consumer")
     private StateRepository<String, String> offsetRepository;
 
-    // Producer Camel specific configuration properties
-    @UriParam(label = "producer")
-    private boolean bridgeEndpoint;
-    @UriParam(label = "producer", defaultValue = "true")
-    private boolean circularTopicDetection = true;
-
     // Producer configuration properties
     @UriParam(label = "producer", defaultValue = KafkaConstants.KAFKA_DEFAULT_PARTITIONER)
     private String partitioner = KafkaConstants.KAFKA_DEFAULT_PARTITIONER;
@@ -343,7 +337,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ProducerConfig.COMPRESSION_TYPE_CONFIG, getCompressionCodec());
         addPropertyIfNotNull(props, ProducerConfig.RETRIES_CONFIG, getRetries());
         addPropertyIfNotNull(props, ProducerConfig.INTERCEPTOR_CLASSES_CONFIG, getInterceptorClasses());
-        addPropertyIfNotNull(props, ProducerConfig.SEND_BUFFER_CONFIG, getRetries());
         addPropertyIfNotNull(props, ProducerConfig.BATCH_SIZE_CONFIG, getProducerBatchSize());
         addPropertyIfNotNull(props, ProducerConfig.CLIENT_ID_CONFIG, getClientId());
         addPropertyIfNotNull(props, ProducerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, getConnectionMaxIdleMs());
@@ -409,7 +402,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         addPropertyIfNotNull(props, ConsumerConfig.INTERCEPTOR_CLASSES_CONFIG, getInterceptorClasses());
         addPropertyIfNotNull(props, ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, getAutoOffsetReset());
         addPropertyIfNotNull(props, ConsumerConfig.CONNECTIONS_MAX_IDLE_MS_CONFIG, getConnectionMaxIdleMs());
-        addPropertyIfNotNull(props, ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, isAutoCommitEnable());
+        addPropertyIfNotNull(props, ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, getAutoCommitEnable());
         addPropertyIfNotNull(props, ConsumerConfig.PARTITION_ASSIGNMENT_STRATEGY_CONFIG, getPartitionAssignor());
         addPropertyIfNotNull(props, ConsumerConfig.RECEIVE_BUFFER_CONFIG, getReceiveBufferBytes());
         addPropertyIfNotNull(props, ConsumerConfig.REQUEST_TIMEOUT_MS_CONFIG, getConsumerRequestTimeoutMs());
@@ -556,36 +549,6 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.groupId = groupId;
     }
 
-    public boolean isBridgeEndpoint() {
-        return bridgeEndpoint;
-    }
-
-    /**
-     * If the option is true, then KafkaProducer will ignore the
-     * KafkaConstants.TOPIC header setting of the inbound message.
-     */
-    public void setBridgeEndpoint(boolean bridgeEndpoint) {
-        this.bridgeEndpoint = bridgeEndpoint;
-    }
-
-    public boolean isCircularTopicDetection() {
-        return circularTopicDetection;
-    }
-
-    /**
-     * If the option is true, then KafkaProducer will detect if the message is
-     * attempted to be sent back to the same topic it may come from, if the
-     * message was original from a kafka consumer. If the KafkaConstants.TOPIC
-     * header is the same as the original kafka consumer topic, then the header
-     * setting is ignored, and the topic of the producer endpoint is used. In
-     * other words this avoids sending the same message back to where it came
-     * from. This option is not in use if the option bridgeEndpoint is set to
-     * true.
-     */
-    public void setCircularTopicDetection(boolean circularTopicDetection) {
-        this.circularTopicDetection = circularTopicDetection;
-    }
-
     public String getPartitioner() {
         return partitioner;
     }
@@ -645,8 +608,12 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.clientId = clientId;
     }
 
-    public Boolean isAutoCommitEnable() {
+    public boolean isAutoCommitEnable() {
         return offsetRepository == null ? autoCommitEnable : false;
+    }
+
+    public Boolean getAutoCommitEnable() {
+        return autoCommitEnable;
     }
 
     /**
@@ -1739,6 +1706,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
         this.reconnectBackoffMaxMs = reconnectBackoffMaxMs;
     }
 
+    @Override
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
@@ -1747,6 +1715,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * To use a custom HeaderFilterStrategy to filter header to and from Camel
      * message.
      */
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }

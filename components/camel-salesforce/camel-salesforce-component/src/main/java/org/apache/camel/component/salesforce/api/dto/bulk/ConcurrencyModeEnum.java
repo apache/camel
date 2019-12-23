@@ -20,12 +20,15 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlType;
 
-
 /**
- * <p>Java class for ConcurrencyModeEnum.
+ * <p>
+ * Java class for ConcurrencyModeEnum.
  * <p/>
- * <p>The following schema fragment specifies the expected content contained within this class.
+ * <p>
+ * The following schema fragment specifies the expected content contained within
+ * this class.
  * <p/>
+ * 
  * <pre>
  * &lt;simpleType name="ConcurrencyModeEnum">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -40,8 +43,7 @@ import javax.xml.bind.annotation.XmlType;
 public enum ConcurrencyModeEnum {
 
     @XmlEnumValue("Parallel")
-    PARALLEL("Parallel"),
-    @XmlEnumValue("Serial")
+    PARALLEL("Parallel"), @XmlEnumValue("Serial")
     SERIAL("Serial");
     private final String value;
 

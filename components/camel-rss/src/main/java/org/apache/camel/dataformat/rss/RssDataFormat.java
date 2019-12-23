@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.rometools.rome.feed.synd.SyndFeed;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
@@ -48,12 +47,14 @@ public class RssDataFormat extends ServiceSupport implements DataFormat, DataFor
         return "rss";
     }
 
+    @Override
     public void marshal(Exchange exchange, Object body, OutputStream out) throws Exception {
         SyndFeed feed = ExchangeHelper.convertToMandatoryType(exchange, SyndFeed.class, body);
         String xml = RssConverter.feedToXml(feed);
         out.write(xml.getBytes());
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream in) throws Exception {
         String xml = ExchangeHelper.convertToMandatoryType(exchange, String.class, in);
         return RssConverter.xmlToFeed(xml);

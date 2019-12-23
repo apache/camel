@@ -34,7 +34,6 @@ public class SqsConfigurationTest {
         }
     }
 
-    
     @Test
     public void itReturnsAnInformativeErrorForBadMessageDeduplicationIdStrategy() throws Exception {
         SqsConfiguration sqsConfiguration = new SqsConfiguration();

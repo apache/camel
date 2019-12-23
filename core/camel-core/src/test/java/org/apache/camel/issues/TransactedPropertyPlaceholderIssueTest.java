@@ -21,7 +21,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.junit.Test;
@@ -44,10 +43,7 @@ public class TransactedPropertyPlaceholderIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo")
-                    .policy(new MyDummyPolicy())
-                    .setBody().constant("{{cool.name}}")
-                    .to("mock:result");
+                from("seda:foo").policy(new MyDummyPolicy()).setBody().constant("{{cool.name}}").to("mock:result");
             }
         };
     }
@@ -55,11 +51,7 @@ public class TransactedPropertyPlaceholderIssueTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
-        context.addComponent("properties", pc);
-
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
 

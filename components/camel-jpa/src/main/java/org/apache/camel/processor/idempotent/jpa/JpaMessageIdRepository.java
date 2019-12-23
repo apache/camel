@@ -76,6 +76,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         return transactionTemplate;
     }
 
+    @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String messageId) {
         return add(null, messageId);
@@ -124,6 +125,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         return rc;
     }
 
+    @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(String messageId) {
         return contains(null, messageId);
@@ -153,6 +155,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         return rc;
     }
 
+    @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String messageId) {
         return remove(null, messageId);
@@ -208,6 +211,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         return true;
     }
 
+    @Override
     @ManagedOperation(description = "Clear the store")
     public void clear() {
         final EntityManager entityManager = getTargetEntityManager(null, entityManagerFactory, true, sharedEntityManager, true);

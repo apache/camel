@@ -18,7 +18,6 @@ package org.apache.camel.component.rss;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
-
 import org.apache.camel.Body;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -40,6 +39,7 @@ public class RssFilterTest extends CamelTestSupport {
         registry.bind("myFilterBean", new FilterBean());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -47,7 +47,7 @@ public class RssFilterTest extends CamelTestSupport {
 
                 // START SNIPPET: ex1
                 // only entries with Camel in the title will get through the filter
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100").
                         filter().method("myFilterBean", "titleContainsCamel").to("mock:result");
                 // END SNIPPET: ex1
             }

@@ -17,8 +17,8 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test used for FTP wiki documentation
@@ -31,6 +31,7 @@ public class FromFtpToBinarySampleTest extends CamelTestSupport {
     }
 
     // START SNIPPET: e1
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -44,7 +45,7 @@ public class FromFtpToBinarySampleTest extends CamelTestSupport {
                 // notice that the FTPConsumer properties must be prefixed with "consumer." in the URL
                 // the delay parameter is from the FileConsumer component so we should use consumer.delay as
                 // the URI parameter name. The FTP Component is an extension of the File Component.
-                from("ftp://tiger:scott@localhost/public/reports?binary=true&consumer.delay=" + delay).
+                from("ftp://tiger:scott@localhost/public/reports?binary=true&delay=" + delay).
                         to("file://target/test-reports");
             }
         };

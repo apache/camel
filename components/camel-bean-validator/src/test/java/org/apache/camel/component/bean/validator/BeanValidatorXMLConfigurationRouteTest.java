@@ -18,6 +18,7 @@ package org.apache.camel.component.bean.validator;
 
 public class BeanValidatorXMLConfigurationRouteTest extends BeanValidatorRouteTest {
     
+    @Override
     Car createCar(String manufacturer, String licencePlate) {
         return new CarWithoutAnnotations(manufacturer, licencePlate);
     }

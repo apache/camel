@@ -48,7 +48,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder cache(Boolean cache) {
-            setProperty("cache", cache);
+            doSetProperty("cache", cache);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder cache(String cache) {
-            setProperty("cache", cache);
+            doSetProperty("cache", cache);
             return this;
         }
         /**
@@ -73,7 +73,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder method(String method) {
-            setProperty("method", method);
+            doSetProperty("method", method);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder parameters(Map<String, Object> parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**
@@ -98,7 +98,45 @@ public interface BeanEndpointBuilderFactory {
          * Group: common
          */
         default BeanEndpointBuilder parameters(String parameters) {
-            setProperty("parameters", parameters);
+            doSetProperty("parameters", parameters);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default BeanEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default BeanEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -122,7 +160,7 @@ public interface BeanEndpointBuilderFactory {
          */
         default AdvancedBeanEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -135,7 +173,7 @@ public interface BeanEndpointBuilderFactory {
          */
         default AdvancedBeanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -147,7 +185,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBeanEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -159,7 +197,7 @@ public interface BeanEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBeanEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -168,7 +206,7 @@ public interface BeanEndpointBuilderFactory {
      * The bean component is for invoking Java beans from Camel.
      * 
      * Category: core,java
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-bean
      * 
      * Syntax: <code>bean:beanName</code>

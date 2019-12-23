@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;

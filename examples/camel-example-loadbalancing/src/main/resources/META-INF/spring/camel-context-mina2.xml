@@ -30,7 +30,7 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <route id="mina2">
-      <from uri="mina2:tcp://localhost:9992"/>
+      <from uri="mina:tcp://localhost:9992"/>
       <setHeader name="minaServer">
         <constant>localhost:9992</constant>
       </setHeader>

@@ -61,18 +61,14 @@ public class EvaluateExpressionProcessorTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .process(new EvaluateExpressionProcessor(body().prepend("Hello ")))
-                    .to("mock:result");
+                from("direct:start").process(new EvaluateExpressionProcessor(body().prepend("Hello "))).to("mock:result");
 
-                from("direct:fail")
-                    .process(new EvaluateExpressionProcessor(new Expression() {
-                        @Override
-                        public <T> T evaluate(Exchange exchange, Class<T> type) {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    }))
-                    .to("mock:result");
+                from("direct:fail").process(new EvaluateExpressionProcessor(new Expression() {
+                    @Override
+                    public <T> T evaluate(Exchange exchange, Class<T> type) {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                })).to("mock:result");
             }
         };
     }

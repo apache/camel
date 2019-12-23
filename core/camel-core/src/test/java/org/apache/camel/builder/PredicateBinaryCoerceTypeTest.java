@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;

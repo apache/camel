@@ -47,7 +47,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder font(Object font) {
-            setProperty("font", font);
+            doSetProperty("font", font);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder font(String font) {
-            setProperty("font", font);
+            doSetProperty("font", font);
             return this;
         }
         /**
@@ -70,7 +70,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder fontSize(float fontSize) {
-            setProperty("fontSize", fontSize);
+            doSetProperty("fontSize", fontSize);
             return this;
         }
         /**
@@ -81,7 +81,45 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder fontSize(String fontSize) {
-            setProperty("fontSize", fontSize);
+            doSetProperty("fontSize", fontSize);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PdfEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PdfEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -92,7 +130,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginBottom(int marginBottom) {
-            setProperty("marginBottom", marginBottom);
+            doSetProperty("marginBottom", marginBottom);
             return this;
         }
         /**
@@ -103,7 +141,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginBottom(String marginBottom) {
-            setProperty("marginBottom", marginBottom);
+            doSetProperty("marginBottom", marginBottom);
             return this;
         }
         /**
@@ -114,7 +152,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginLeft(int marginLeft) {
-            setProperty("marginLeft", marginLeft);
+            doSetProperty("marginLeft", marginLeft);
             return this;
         }
         /**
@@ -125,7 +163,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginLeft(String marginLeft) {
-            setProperty("marginLeft", marginLeft);
+            doSetProperty("marginLeft", marginLeft);
             return this;
         }
         /**
@@ -136,7 +174,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginRight(int marginRight) {
-            setProperty("marginRight", marginRight);
+            doSetProperty("marginRight", marginRight);
             return this;
         }
         /**
@@ -147,7 +185,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginRight(String marginRight) {
-            setProperty("marginRight", marginRight);
+            doSetProperty("marginRight", marginRight);
             return this;
         }
         /**
@@ -158,7 +196,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginTop(int marginTop) {
-            setProperty("marginTop", marginTop);
+            doSetProperty("marginTop", marginTop);
             return this;
         }
         /**
@@ -169,7 +207,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder marginTop(String marginTop) {
-            setProperty("marginTop", marginTop);
+            doSetProperty("marginTop", marginTop);
             return this;
         }
         /**
@@ -181,7 +219,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder pageSize(Object pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -193,7 +231,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: producer
          */
         default PdfEndpointBuilder pageSize(String pageSize) {
-            setProperty("pageSize", pageSize);
+            doSetProperty("pageSize", pageSize);
             return this;
         }
         /**
@@ -213,7 +251,7 @@ public interface PdfEndpointBuilderFactory {
          */
         default PdfEndpointBuilder textProcessingFactory(
                 TextProcessingFactory textProcessingFactory) {
-            setProperty("textProcessingFactory", textProcessingFactory);
+            doSetProperty("textProcessingFactory", textProcessingFactory);
             return this;
         }
         /**
@@ -233,7 +271,7 @@ public interface PdfEndpointBuilderFactory {
          */
         default PdfEndpointBuilder textProcessingFactory(
                 String textProcessingFactory) {
-            setProperty("textProcessingFactory", textProcessingFactory);
+            doSetProperty("textProcessingFactory", textProcessingFactory);
             return this;
         }
     }
@@ -257,7 +295,7 @@ public interface PdfEndpointBuilderFactory {
          */
         default AdvancedPdfEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -270,7 +308,7 @@ public interface PdfEndpointBuilderFactory {
          */
         default AdvancedPdfEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -282,7 +320,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPdfEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -294,7 +332,7 @@ public interface PdfEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPdfEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -313,7 +351,7 @@ public interface PdfEndpointBuilderFactory {
      * content from PDF documents.
      * 
      * Category: document,transformation,printing
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-pdf
      * 
      * Syntax: <code>pdf:operation</code>

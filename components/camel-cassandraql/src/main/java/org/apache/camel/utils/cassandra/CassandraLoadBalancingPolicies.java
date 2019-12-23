@@ -30,7 +30,7 @@ public class CassandraLoadBalancingPolicies {
     public final String dcAwareRoundRobinPolicy = "DcAwareRoundRobinPolicy";
     public final String latencyAwarePolicy = "LatencyAwarePolicy";
     public final String errorAwarePolicy = "ErrorAwarePolicy";
-    
+
     public LoadBalancingPolicy getLoadBalancingPolicy(String policy) {
         LoadBalancingPolicy loadBalancingPolicy = new RoundRobinPolicy();
         switch (policy) {
@@ -50,8 +50,7 @@ public class CassandraLoadBalancingPolicies {
             loadBalancingPolicy = ErrorAwarePolicy.builder(new RoundRobinPolicy()).build();
             break;
         default:
-            throw new IllegalArgumentException("Cassandra load balancing policy can be " + roundRobinPolicy + " ," + tokenAwarePolicy 
-                   + " ," + dcAwareRoundRobinPolicy);
+            throw new IllegalArgumentException("Cassandra load balancing policy can be " + roundRobinPolicy + " ," + tokenAwarePolicy + " ," + dcAwareRoundRobinPolicy);
         }
         return loadBalancingPolicy;
     }

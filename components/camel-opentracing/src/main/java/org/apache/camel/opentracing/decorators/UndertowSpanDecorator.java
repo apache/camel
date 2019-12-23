@@ -23,4 +23,9 @@ public class UndertowSpanDecorator extends AbstractHttpSpanDecorator {
         return "undertow";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.undertow.UndertowComponent";
+    }
+
 }

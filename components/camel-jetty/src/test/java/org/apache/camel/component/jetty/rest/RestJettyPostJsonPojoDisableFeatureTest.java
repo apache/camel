@@ -48,13 +48,11 @@ public class RestJettyPostJsonPojoDisableFeatureTest extends BaseJettyTest {
             @Override
             public void configure() throws Exception {
                 // configure json to not fail on unknown properties
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json)
-                        .dataFormatProperty("json.in.disableFeatures", "FAIL_ON_UNKNOWN_PROPERTIES");
+                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.json).dataFormatProperty("json.in.disableFeatures",
+                                                                                                                                              "FAIL_ON_UNKNOWN_PROPERTIES");
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                    .post("new").type(UserPojo.class)
-                        .to("mock:input");
+                rest("/users/").post("new").type(UserPojo.class).to("mock:input");
             }
         };
     }

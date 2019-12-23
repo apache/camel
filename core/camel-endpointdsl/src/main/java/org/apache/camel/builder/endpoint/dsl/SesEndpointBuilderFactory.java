@@ -47,7 +47,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder amazonSESClient(Object amazonSESClient) {
-            setProperty("amazonSESClient", amazonSESClient);
+            doSetProperty("amazonSESClient", amazonSESClient);
             return this;
         }
         /**
@@ -59,7 +59,45 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder amazonSESClient(String amazonSESClient) {
-            setProperty("amazonSESClient", amazonSESClient);
+            doSetProperty("amazonSESClient", amazonSESClient);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SesEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SesEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -70,7 +108,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -81,7 +119,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -93,7 +131,30 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SES client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: producer
+         */
+        default SesEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the SES client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default SesEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -107,7 +168,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -121,7 +182,7 @@ public interface SesEndpointBuilderFactory {
          */
         default SesEndpointBuilder replyToAddresses(
                 List<String> replyToAddresses) {
-            setProperty("replyToAddresses", replyToAddresses);
+            doSetProperty("replyToAddresses", replyToAddresses);
             return this;
         }
         /**
@@ -134,7 +195,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder replyToAddresses(String replyToAddresses) {
-            setProperty("replyToAddresses", replyToAddresses);
+            doSetProperty("replyToAddresses", replyToAddresses);
             return this;
         }
         /**
@@ -146,7 +207,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder returnPath(String returnPath) {
-            setProperty("returnPath", returnPath);
+            doSetProperty("returnPath", returnPath);
             return this;
         }
         /**
@@ -158,7 +219,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -171,7 +232,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder to(List<String> to) {
-            setProperty("to", to);
+            doSetProperty("to", to);
             return this;
         }
         /**
@@ -184,7 +245,7 @@ public interface SesEndpointBuilderFactory {
          * Group: producer
          */
         default SesEndpointBuilder to(String to) {
-            setProperty("to", to);
+            doSetProperty("to", to);
             return this;
         }
         /**
@@ -195,7 +256,7 @@ public interface SesEndpointBuilderFactory {
          * Group: security
          */
         default SesEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -206,7 +267,7 @@ public interface SesEndpointBuilderFactory {
          * Group: security
          */
         default SesEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -230,7 +291,7 @@ public interface SesEndpointBuilderFactory {
          */
         default AdvancedSesEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -243,7 +304,7 @@ public interface SesEndpointBuilderFactory {
          */
         default AdvancedSesEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -255,7 +316,7 @@ public interface SesEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSesEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -267,9 +328,17 @@ public interface SesEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSesEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
     /**
      * AWS Simple Email Service (camel-aws-ses)
@@ -277,7 +346,7 @@ public interface SesEndpointBuilderFactory {
      * service.
      * 
      * Category: cloud,mail
-     * Available as of version: 2.9
+     * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-aws-ses
      * 
      * Syntax: <code>aws-ses:from</code>
@@ -285,7 +354,7 @@ public interface SesEndpointBuilderFactory {
      * Path parameter: from (required)
      * The sender's email address.
      */
-    default SesEndpointBuilder ses(String path) {
+    default SesEndpointBuilder awsSes(String path) {
         class SesEndpointBuilderImpl extends AbstractEndpointBuilder implements SesEndpointBuilder, AdvancedSesEndpointBuilder {
             public SesEndpointBuilderImpl(String path) {
                 super("aws-ses", path);

@@ -31,6 +31,7 @@ import io.opentracing.propagation.Format;
 import io.opentracing.tag.Tags;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
@@ -46,6 +47,7 @@ import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
+import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventNotifierSupport;
 import org.apache.camel.support.RoutePolicySupport;
@@ -68,7 +70,7 @@ import org.apache.camel.util.StringHelper;
 @ManagedResource(description = "OpenTracingTracer")
 public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFactory, StaticService, CamelContextAware {
 
-    private static Map<String, SpanDecorator> decorators = new HashMap<>();
+    private static final Map<String, SpanDecorator> DECORATORS = new HashMap<>();
 
     private final OpenTracingEventNotifier eventNotifier = new OpenTracingEventNotifier();
     private final OpenTracingLogListener logListener = new OpenTracingLogListener();
@@ -79,18 +81,25 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
 
     static {
         ServiceLoader.load(SpanDecorator.class).forEach(d -> {
-            SpanDecorator existing = decorators.get(d.getComponent());
+            SpanDecorator existing = DECORATORS.get(d.getComponent());
             // Add span decorator if no existing decorator for the component,
             // or if derived from the existing decorator's class, allowing
             // custom decorators to be added if they extend the standard
             // decorators
             if (existing == null || existing.getClass().isInstance(d)) {
-                decorators.put(d.getComponent(), d);
+                DECORATORS.put(d.getComponent(), d);
             }
         });
     }
 
     public OpenTracingTracer() {
+    }
+
+    /**
+     * To add a custom decorator that does not come out of the box with camel-opentracing.
+     */
+    public void addDecorator(SpanDecorator decorator) {
+        DECORATORS.put(decorator.getComponent(), decorator);
     }
 
     @Override
@@ -107,10 +116,8 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     public void init(CamelContext camelContext) {
         if (!camelContext.hasService(this)) {
             try {
-                // start this service eager so we init before Camel is starting
-                // up
+                // start this service eager so we init before Camel is starting up
                 camelContext.addService(this, true, true);
-
             } catch (Exception e) {
                 throw RuntimeCamelException.wrapRuntimeCamelException(e);
             }
@@ -201,13 +208,25 @@ public class OpenTracingTracer extends ServiceSupport implements RoutePolicyFact
     }
 
     protected SpanDecorator getSpanDecorator(Endpoint endpoint) {
-        SpanDecorator sd = SpanDecorator.DEFAULT;
+        SpanDecorator sd = null;
 
         String uri = endpoint.getEndpointUri();
         String splitURI[] = StringHelper.splitOnCharacter(uri, ":", 2);
         if (splitURI[1] != null) {
             String scheme = splitURI[0];
-            sd = decorators.getOrDefault(scheme, sd);
+            sd = DECORATORS.get(scheme);
+        }
+        if (sd == null) {
+            // okay there was no decorator found via component name (scheme), then try FQN
+            if (endpoint instanceof DefaultEndpoint) {
+                Component comp = ((DefaultEndpoint) endpoint).getComponent();
+                String fqn = comp.getClass().getName();
+                // lookup via FQN
+                sd = DECORATORS.values().stream().filter(d -> fqn.equals(d.getComponentClassName())).findFirst().orElse(null);
+            }
+        }
+        if (sd == null) {
+            sd = SpanDecorator.DEFAULT;
         }
 
         return sd;

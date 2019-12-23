@@ -37,10 +37,8 @@ public class BeanCachedProcessorTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:noCache")
-                        .to("bean:something?cache=false");
-                from("direct:cached")
-                        .to("bean:something?cache=true");
+                from("direct:noCache").to("bean:something?cache=false");
+                from("direct:cached").to("bean:something?cache=true");
 
             }
         };
@@ -85,10 +83,10 @@ public class BeanCachedProcessorTest extends ContextTestSupport {
         }
     }
 
-
     public static class MyBean implements Processor {
         private boolean invoked;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if (invoked) {
                 throw new IllegalStateException("This bean is not supported to be invoked again!");

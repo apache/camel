@@ -84,9 +84,20 @@ public final class ShareUnitOfWorkAggregationStrategy extends ServiceSupport imp
         strategy.onOptimisticLockFailure(oldExchange, newExchange);
     }
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // aggregate using the actual strategy first
         Exchange answer = strategy.aggregate(oldExchange, newExchange);
+        // ensure any errors is propagated from the new exchange to the answer
+        propagateFailure(answer, newExchange);
+
+        return answer;
+    }
+
+    @Override
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange, Exchange inputExchange) {
+        // aggregate using the actual strategy first
+        Exchange answer = strategy.aggregate(oldExchange, newExchange, inputExchange);
         // ensure any errors is propagated from the new exchange to the answer
         propagateFailure(answer, newExchange);
 

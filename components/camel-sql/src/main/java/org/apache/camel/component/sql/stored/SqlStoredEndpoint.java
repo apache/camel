@@ -63,6 +63,7 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
         setJdbcTemplate(jdbcTemplate);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SqlStoredProducer(this);
     }
@@ -76,6 +77,10 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
     protected String createEndpointUri() {
         // Make sure it's properly encoded
         return "sql-stored:" + UnsafeUriCharactersEncoder.encode(this.template);
+    }
+
+    protected CallableStatementWrapperFactory getWrapperFactory() {
+        return wrapperFactory;
     }
 
     @Override
@@ -156,12 +161,4 @@ public class SqlStoredEndpoint extends DefaultEndpoint {
         this.function = function;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
-    public CallableStatementWrapperFactory getWrapperFactory() {
-        return wrapperFactory;
-    }
 }

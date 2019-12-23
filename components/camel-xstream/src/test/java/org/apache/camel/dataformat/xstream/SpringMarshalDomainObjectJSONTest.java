@@ -24,6 +24,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringMarshalDomainObjectJSONTest extends MarshalDomainObjectJSONTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         setUseRouteBuilder(false);
 

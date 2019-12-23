@@ -19,7 +19,11 @@ package org.apache.camel.component.file.remote.sftp;
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnJre;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SftpChmodTest extends SftpServerTestSupport {
 
@@ -29,15 +33,10 @@ public class SftpChmodTest extends SftpServerTestSupport {
             return;
         }
 
-        // see https://issues.apache.org/jira/browse/SSHD-267
-        if (isJava16()) {
-            return;
-        }
-
         template.sendBodyAndHeader("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR + "?username=admin&password=admin&chmod=777", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         File file = new File(FTP_ROOT_DIR + "/hello.txt");
-        assertTrue("File should exist: " + file, file.exists());
+        assertTrue(file.exists(), "File should exist: " + file);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, file));
     }
 

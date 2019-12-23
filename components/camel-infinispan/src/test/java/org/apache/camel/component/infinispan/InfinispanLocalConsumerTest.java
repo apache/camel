@@ -35,15 +35,15 @@ public class InfinispanLocalConsumerTest extends InfinispanTestSupport {
     public void consumerReceivedPreAndPostEntryCreatedEventNotifications() throws Exception {
         mockResult.expectedMessageCount(2);
 
-        mockResult.message(0).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
-        mockResult.message(0).outHeader(InfinispanConstants.IS_PRE).isEqualTo(true);
-        mockResult.message(0).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
-        mockResult.message(0).outHeader(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
+        mockResult.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
+        mockResult.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(true);
+        mockResult.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResult.message(0).header(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
 
-        mockResult.message(1).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
-        mockResult.message(1).outHeader(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mockResult.message(1).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
-        mockResult.message(1).outHeader(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
+        mockResult.message(1).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_CREATED");
+        mockResult.message(1).header(InfinispanConstants.IS_PRE).isEqualTo(false);
+        mockResult.message(1).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResult.message(1).header(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
 
         currentCache().put(KEY_ONE, VALUE_ONE);
         mockResult.assertIsSatisfied();
@@ -53,10 +53,10 @@ public class InfinispanLocalConsumerTest extends InfinispanTestSupport {
     public void consumerReceivedExpirationEventNotification() throws Exception {
         mockResult2.expectedMessageCount(1);
 
-        mockResult2.message(0).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_EXPIRED");
-        mockResult2.message(0).outHeader(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mockResult2.message(0).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
-        mockResult2.message(0).outHeader(InfinispanConstants.KEY).isEqualTo("keyTwo");
+        mockResult2.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_EXPIRED");
+        mockResult2.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(false);
+        mockResult2.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResult2.message(0).header(InfinispanConstants.KEY).isEqualTo("keyTwo");
 
         injectTimeService();
         currentCache().put("keyTwo", "valueTwo", 1000, TimeUnit.MILLISECONDS);

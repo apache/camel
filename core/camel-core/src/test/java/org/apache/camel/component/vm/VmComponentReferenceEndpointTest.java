@@ -27,7 +27,7 @@ import org.junit.Test;
  *
  */
 public class VmComponentReferenceEndpointTest extends ContextTestSupport {
-    
+
     @Test
     public void testVmComponentReference() throws Exception {
         VmComponent vm = context.getComponent("vm", VmComponent.class);
@@ -78,7 +78,7 @@ public class VmComponentReferenceEndpointTest extends ContextTestSupport {
             }
         };
     }
-    
+
     private int numberOfReferences(VmComponent vm) {
         int num = 0;
         Iterator<QueueReference> it = vm.getQueues().values().iterator();

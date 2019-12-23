@@ -27,14 +27,13 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import static java.util.Comparator.comparing;
-
 import org.apache.camel.TimeoutMap;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.Comparator.comparing;
 import static org.apache.camel.TimeoutMap.Listener.Type.Evict;
 import static org.apache.camel.TimeoutMap.Listener.Type.Put;
 import static org.apache.camel.TimeoutMap.Listener.Type.Remove;
@@ -82,6 +81,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         this.lock = lock;
     }
 
+    @Override
     public V get(K key) {
         TimeoutMapEntry<K, V> entry;
         lock.lock();
@@ -97,6 +97,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         return entry.getValue();
     }
 
+    @Override
     public V put(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
         lock.lock();
@@ -110,6 +111,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
     }
 
+    @Override
     public V putIfAbsent(K key, V value, long timeoutMillis) {
         TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<>(key, value, timeoutMillis);
         TimeoutMapEntry<K, V> result = null;
@@ -127,6 +129,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
     }
 
+    @Override
     public V remove(K key) {
         V value = null;
         lock.lock();
@@ -141,6 +144,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
     }
 
+    @Override
     public int size() {
         return map.size();
     }

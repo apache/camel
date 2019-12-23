@@ -18,12 +18,12 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FromFilePercentSignInPasswordTest extends FtpServerTestSupport {
 
     protected String getFtpUrl() {
-        return "ftp://localhost:" + getPort() + "/tmp3/camel?username=us@r&password=t%25st&consumer.initialDelay=3000";
+        return "ftp://localhost:" + getPort() + "/tmp3/camel?username=us@r&password=t%25st&initialDelay=3000";
     }
 
     @Test
@@ -34,12 +34,13 @@ public class FromFilePercentSignInPasswordTest extends FtpServerTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from(getFtpUrl()).to("mock:result");
 
-                from("file:src/main/data?noop=true&consumer.delay=3000").to(getFtpUrl());
+                from("file:src/main/data?noop=true&delay=3000").to(getFtpUrl());
             }
         };
     }

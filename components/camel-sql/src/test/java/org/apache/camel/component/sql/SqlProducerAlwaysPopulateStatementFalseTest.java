@@ -22,9 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
@@ -36,9 +36,12 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
+    
+    @BindToRegistry("myStrategy")
     private SqlPrepareStatementStrategy strategy;
     private volatile boolean invoked;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -56,12 +59,6 @@ public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSuppor
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myStrategy", strategy);
-        return jndi;
-    }
-
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -96,7 +93,7 @@ public class SqlProducerAlwaysPopulateStatementFalseTest extends CamelTestSuppor
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
                 from("direct:start")
-                    .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=false&prepareStatementStrategy=#myStrategy&consumer.initialDelay=0&consumer.delay=50")
+                    .to("sql:select * from projects where license = 'ASF' order by id?alwaysPopulateStatement=false&prepareStatementStrategy=#myStrategy&initialDelay=0&delay=50")
                     .to("mock:result");
             }
         };

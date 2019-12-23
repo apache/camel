@@ -44,6 +44,7 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
         this.query = query;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
         SqlProcessingStrategy proStrategy = getProcessingStrategy() != null ? getProcessingStrategy() : new DefaultSqlProcessingStrategy(prepareStrategy);
@@ -62,6 +63,7 @@ public class SqlEndpoint extends DefaultSqlEndpoint {
         return consumer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = getPrepareStatementStrategy() != null ? getPrepareStatementStrategy() : new DefaultSqlPrepareStatementStrategy(getSeparator());
         SqlProducer result = new SqlProducer(this, query, getJdbcTemplate(), prepareStrategy, isBatch(),

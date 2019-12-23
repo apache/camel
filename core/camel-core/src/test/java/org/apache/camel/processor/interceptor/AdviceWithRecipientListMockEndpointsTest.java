@@ -36,7 +36,8 @@ public class AdviceWithRecipientListMockEndpointsTest extends ContextTestSupport
             }
         });
 
-        // log:bar is a dynamic endpoint created on-the-fly (eg not in the route)
+        // log:bar is a dynamic endpoint created on-the-fly (eg not in the
+        // route)
         getMockEndpoint("mock:log:bar").expectedMessageCount(1);
         // log:foo is in the route
         getMockEndpoint("mock:log:foo").expectedMessageCount(1);

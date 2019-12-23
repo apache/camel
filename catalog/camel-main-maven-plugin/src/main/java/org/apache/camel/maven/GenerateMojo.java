@@ -38,7 +38,6 @@ import org.apache.camel.maven.model.AutowireData;
 import org.apache.camel.maven.model.SpringBootGroupData;
 import org.apache.camel.maven.model.SpringBootPropertyData;
 import org.apache.camel.support.IntrospectionSupport;
-import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.support.PatternHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.OrderedProperties;
@@ -50,7 +49,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-
 import org.jboss.forge.roaster.Roaster;
 import org.jboss.forge.roaster.model.Extendable;
 import org.jboss.forge.roaster.model.JavaType;

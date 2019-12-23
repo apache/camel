@@ -47,6 +47,7 @@ public class SimpleDataSet extends DataSetSupport {
     /**
      * Creates the message body for a given message
      */
+    @Override
     protected Object createMessageBody(long messageIndex) {
         return getDefaultBody();
     }

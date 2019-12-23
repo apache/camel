@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.Exchange;

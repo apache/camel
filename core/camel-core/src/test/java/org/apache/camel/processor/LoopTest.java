@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
@@ -83,6 +84,7 @@ public class LoopTest extends ContextTestSupport {
         resultEndpoint.reset();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         final Processor loopTest = new LoopTestProcessor(10);
 

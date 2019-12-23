@@ -17,6 +17,7 @@
 package org.apache.camel.example.jmx;
 
 import java.lang.management.ManagementFactory;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -38,6 +39,7 @@ public class MyRouteBuilder extends RouteBuilder {
         // END SNIPPET: e2
     }
 
+    @Override
     public void configure() {
 
         // START SNIPPET: e1

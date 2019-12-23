@@ -21,11 +21,11 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.twitter.AbstractTwitterEndpoint;
-import org.apache.camel.component.twitter.streaming.AbstractStreamingConsumerHandler;
+import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.support.ScheduledPollConsumer;
 
 /**
- * Provides a scheduled polling consumer as well as event based consumer for streaming.
+ * Provides a scheduled polling consumer.
  */
 public class DefaultTwitterConsumer extends ScheduledPollConsumer implements TwitterEventListener {
 
@@ -48,19 +48,7 @@ public class DefaultTwitterConsumer extends ScheduledPollConsumer implements Twi
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        switch (endpoint.getEndpointType()) {
-        case POLLING:
-            if (handler instanceof AbstractStreamingConsumerHandler) {
-                ((AbstractStreamingConsumerHandler) handler).start();
-            }
-            break;
-        case EVENT:
-            if (handler instanceof AbstractStreamingConsumerHandler) {
-                ((AbstractStreamingConsumerHandler) handler).setEventListener(this);
-                ((AbstractStreamingConsumerHandler) handler).start();
-            }
-            break;
-        default:
+        if (endpoint.getEndpointType().equals(EndpointType.DIRECT)) {
             List<Exchange> exchanges = handler.directConsume();
             for (int i = 0; i < exchanges.size(); i++) {
                 getProcessor().process(exchanges.get(i));
@@ -70,22 +58,6 @@ public class DefaultTwitterConsumer extends ScheduledPollConsumer implements Twi
 
     @Override
     protected void doStop() throws Exception {
-        switch (endpoint.getEndpointType()) {
-        case POLLING:
-            if (handler instanceof AbstractStreamingConsumerHandler) {
-                ((AbstractStreamingConsumerHandler) handler).stop();
-            }
-            break;
-        case EVENT:
-            if (handler instanceof AbstractStreamingConsumerHandler) {
-                ((AbstractStreamingConsumerHandler) handler).removeEventListener(this);
-                ((AbstractStreamingConsumerHandler) handler).stop();
-            }
-            break;
-        default:
-            break;
-        }
-
         super.doStop();
     }
 

@@ -58,11 +58,13 @@ public class SWFEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return isWorkflow()
                 ? new SWFWorkflowProducer(this, new CamelSWFWorkflowClient(this, configuration)) : new SWFActivityProducer(this, new CamelSWFActivityClient(configuration));
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         Consumer consumer = isWorkflow()
                 ? new SWFWorkflowConsumer(this, processor, configuration) : new SWFActivityConsumer(this, processor, configuration);

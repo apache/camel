@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.Enumeration;
+
 import javax.cache.Cache;
 
 import org.apache.camel.component.jcache.JCacheConfiguration;
@@ -56,9 +57,7 @@ public final class OSGiCacheManager<K, V> extends JCacheManager {
 
             return cache;
         } finally {
-            if (jcl != null) {
-                Thread.currentThread().setContextClassLoader(tccl);
-            }
+            Thread.currentThread().setContextClassLoader(tccl);
         }
     }
 

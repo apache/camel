@@ -25,6 +25,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 
+import java.util.concurrent.ExecutorService;
+
 /**
  * Represents a ${name} endpoint.
  */
@@ -75,5 +77,10 @@ public class ${name}Endpoint extends DefaultEndpoint {
 
     public int getOption() {
         return option;
+    }
+
+    public ExecutorService createExecutor() {
+        // TODO: Delete me when you implementy your custom component
+        return getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "${name}Consumer");
     }
 }

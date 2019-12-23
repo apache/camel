@@ -60,6 +60,7 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
     }
 
     protected class ConsumerProcessor implements Processor {
+        @Override
         public void process(final Exchange exchange) throws Exception {
             org.springframework.messaging.Message<?> request = SpringIntegrationBinding.createSpringIntegrationMessage(exchange);
 
@@ -84,12 +85,14 @@ public class CamelSourceAdapter extends AbstractCamelAdapter implements Initiali
         }
     }
 
+    @Override
     public final void afterPropertiesSet() throws Exception {
         if (initialized.compareAndSet(false, true)) {
             initialize();
         }
     }
 
+    @Override
     public void destroy() throws Exception {
         if (consumer != null) {
             ServiceHelper.stopAndShutdownService(consumer);

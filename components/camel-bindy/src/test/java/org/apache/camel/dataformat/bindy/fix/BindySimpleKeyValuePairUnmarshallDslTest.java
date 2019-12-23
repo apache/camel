@@ -43,6 +43,7 @@ public class BindySimpleKeyValuePairUnmarshallDslTest extends CommonBindyTest {
 
     public static class ContextConfig extends RouteBuilder {
 
+        @Override
         public void configure() {
             from(URI_FILE_FIX).unmarshal()
                 .bindy(BindyType.KeyValue, Order.class)

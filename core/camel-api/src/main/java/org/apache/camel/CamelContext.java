@@ -16,10 +16,7 @@
  */
 package org.apache.camel;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
@@ -46,6 +43,7 @@ import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TransformerRegistry;
 import org.apache.camel.spi.TypeConverterRegistry;
@@ -121,6 +119,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @throws RuntimeCamelException is thrown if starting failed
      */
+    @Override
     void start();
 
     /**
@@ -130,6 +129,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @throws RuntimeCamelException is thrown if stopping failed
      */
+    @Override
     void stop();
 
     /**
@@ -195,6 +195,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @return the status
      */
+    @Override
     ServiceStatus getStatus();
 
     /**
@@ -210,6 +211,11 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @return the uptime in millis seconds
      */
     long getUptimeMillis();
+
+    /**
+     * Gets the date and time Camel was started up.
+     */
+    Date getStartDate();
 
     // Service Methods
     //-----------------------------------------------------------------------
@@ -500,6 +506,11 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      */
     Collection<Endpoint> removeEndpoints(String pattern) throws Exception;
 
+    /**
+     * Gets the global endpoint configuration, where you can configure common endpoint options.
+     */
+    GlobalEndpointConfiguration getGlobalEndpointConfiguration();
+
     // Route Management Methods
     //-----------------------------------------------------------------------
 
@@ -626,6 +637,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      *
      * @param restConfiguration the REST configuration
      */
+    @Deprecated
     void addRestConfiguration(RestConfiguration restConfiguration);
 
     /**
@@ -641,6 +653,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     /**
      * Gets all the RestConfiguration's
      */
+    @Deprecated
     Collection<RestConfiguration> getRestConfigurations();
 
     /**
@@ -738,22 +751,6 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     String resolvePropertyPlaceholders(String text);
     
     /**
-     * Returns the configured property placeholder prefix token if and only if the CamelContext has
-     * property placeholder abilities, otherwise returns {@code null}.
-     * 
-     * @return the prefix token or {@code null}
-     */
-    String getPropertyPrefixToken();
-    
-    /**
-     * Returns the configured property placeholder suffix token if and only if the CamelContext has
-     * property placeholder abilities, otherwise returns {@code null}.
-     * 
-     * @return the suffix token or {@code null}
-     */
-    String getPropertySuffixToken();
-
-    /**
      * Returns the configured properties component or create one if none has been configured.
      *
      * @return the properties component
@@ -761,12 +758,9 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     PropertiesComponent getPropertiesComponent();
 
     /**
-     * Returns the configured properties component or create one if none has been configured.
-     *
-     * @param autoCreate whether the component should be created if none is configured
-     * @return the properties component
+     * Sets a custom properties component to be used.
      */
-    PropertiesComponent getPropertiesComponent(boolean autoCreate);
+    void setPropertiesComponent(PropertiesComponent propertiesComponent);
 
     /**
      * Gets a readonly list with the names of the languages currently registered.
@@ -1090,6 +1084,18 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
     void setDebugger(Debugger debugger);
 
     /**
+     * Gets the current {@link Tracer}
+     *
+     * @return the tracer
+     */
+    Tracer getTracer();
+
+    /**
+     * Sets a custom {@link Tracer}
+     */
+    void setTracer(Tracer tracer);
+
+    /**
      * Gets the current {@link UuidGenerator}
      *
      * @return the uuidGenerator
@@ -1160,6 +1166,42 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * @param useMDCLogging <tt>true</tt> to enable MDC logging, <tt>false</tt> to disable
      */
     void setUseMDCLogging(Boolean useMDCLogging);
+
+    /**
+     * Gets the pattern used for determine which custom MDC keys to propagate during message routing when
+     * the routing engine continues routing asynchronously for the given message. Setting this pattern to <tt>*</tt> will
+     * propagate all custom keys. Or setting the pattern to <tt>foo*,bar*</tt> will propagate any keys starting with
+     * either foo or bar.
+     * Notice that a set of standard Camel MDC keys are always propagated which starts with <tt>camel.</tt> as key name.
+     * <p/>
+     * The match rules are applied in this order (case insensitive):
+     * <ul>
+     *   <li>exact match, returns true</li>
+     *   <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     *   <li>regular expression match, returns true</li>
+     *   <li>otherwise returns false</li>
+     * </ul>
+     */
+    String getMDCLoggingKeysPattern();
+
+    /**
+     * Sets the pattern used for determine which custom MDC keys to propagate during message routing when
+     * the routing engine continues routing asynchronously for the given message. Setting this pattern to <tt>*</tt> will
+     * propagate all custom keys. Or setting the pattern to <tt>foo*,bar*</tt> will propagate any keys starting with
+     * either foo or bar.
+     * Notice that a set of standard Camel MDC keys are always propagated which starts with <tt>camel.</tt> as key name.
+     * <p/>
+     * The match rules are applied in this order (case insensitive):
+     * <ul>
+     *   <li>exact match, returns true</li>
+     *   <li>wildcard match (pattern ends with a * and the name starts with the pattern), returns true</li>
+     *   <li>regular expression match, returns true</li>
+     *   <li>otherwise returns false</li>
+     * </ul>
+     *
+     * @param pattern  the pattern
+     */
+    void setMDCLoggingKeysPattern(String pattern);
 
     /**
      * Whether to enable using data type on Camel messages.

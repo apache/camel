@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jms;
+
 import java.io.File;
 
 import javax.jms.ConnectionFactory;

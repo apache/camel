@@ -42,6 +42,7 @@ public class UseMessageIdAsCorrelationIdMessageSentCallback implements MessageSe
         this.requestTimeout = requestTimeout;
     }
 
+    @Override
     public void sent(Session session, Message message, Destination destination) {
         String newCorrelationID = getJMSMessageID(message);
         if (newCorrelationID != null) {

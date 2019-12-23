@@ -23,8 +23,11 @@ import io.smallrye.config.SmallRyeConfigBuilder;
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.spi.PropertiesComponent;
+import org.apache.camel.spi.PropertiesSource;
+import org.apache.camel.spi.Registry;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.assertj.core.api.Assertions;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.spi.ConfigProviderResolver;
 import org.junit.Test;
@@ -40,23 +43,57 @@ public class CamelMicroProfilePropertiesSourceTest extends CamelTestSupport {
         prop.put("my-mock", "result");
 
         // create PMC config source and register it so we can use it for testing
-        PropertiesConfigSource pcs = new PropertiesConfigSource(prop, "my-smallrye-config");
+        final PropertiesConfigSource pcs = new PropertiesConfigSource(prop, "my-smallrye-config");
         final Config config = new SmallRyeConfigBuilder().withSources(pcs).build();
+
         ConfigProviderResolver.instance().registerConfig(config, CamelMicroProfilePropertiesSourceTest.class.getClassLoader());
 
-        // should auto-detect this JAR on the classpath and use it (but this can only be tested outside this component)
-        CamelContext context = super.createCamelContext();
-        // ... so we add the source manually
-        PropertiesComponent pc = (PropertiesComponent) context.getPropertiesComponent();
-        pc.addPropertiesSource(new CamelMicroProfilePropertiesSource());
-        return context;
+        return super.createCamelContext();
+    }
+
+    @Override
+    protected void bindToRegistry(Registry registry) throws Exception {
+        Properties prop = new Properties();
+        prop.put("who", "Camel");
+
+        registry.bind("ps", new PropertiesSource() {
+            @Override
+            public String getName() {
+                return "ps";
+            }
+
+            @Override
+            public String getProperty(String name) {
+                return prop.getProperty(name);
+            }
+        });
+    }
+
+    @Test
+    public void testLoadAll() throws Exception {
+        PropertiesComponent pc = context.getPropertiesComponent();
+        Properties properties = pc.loadProperties();
+
+        Assertions.assertThat(properties.get("start")).isEqualTo("direct:start");
+        Assertions.assertThat(properties.get("hi")).isEqualTo("World");
+        Assertions.assertThat(properties.get("my-mock")).isEqualTo("result");
+    }
+
+    @Test
+    public void testLoadFiltered() throws Exception {
+        PropertiesComponent pc = context.getPropertiesComponent();
+        Properties properties = pc.loadProperties(k -> k.length() > 2);
+
+        Assertions.assertThat(properties).hasSize(2);
+        Assertions.assertThat(properties.get("start")).isEqualTo("direct:start");
+        Assertions.assertThat(properties.get("my-mock")).isEqualTo("result");
     }
 
     @Test
     public void testMicroProfileConfig() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World from Camel");
 
-        template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hello {{hi}}"));
+        template.sendBody("direct:start", context.resolvePropertyPlaceholders("Hello {{hi}} from {{who}}"));
 
         assertMockEndpointsSatisfied();
     }

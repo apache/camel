@@ -40,11 +40,13 @@ public class MockSession extends ActiveMQSession {
         super(connection,  sessionId,  acknowledgeMode,  asyncDispatch,  sessionAsyncDispatch);
         this.isBadSession = isBadSession;
     }
+    @Override
     public Queue createQueue(String queueName) throws JMSException {
         this.checkClosed();
         return queueName.startsWith("ID:") ? new ActiveMQTempQueue(queueName) : new ActiveMQQueue(queueName);
     }
 
+    @Override
     public MessageConsumer createConsumer(Destination destination, String messageSelector, boolean noLocal, MessageListener messageListener) throws JMSException {
         this.checkClosed();
         if (destination instanceof CustomDestination) {

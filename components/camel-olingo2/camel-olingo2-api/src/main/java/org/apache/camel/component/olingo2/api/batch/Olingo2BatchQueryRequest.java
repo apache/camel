@@ -38,11 +38,7 @@ public class Olingo2BatchQueryRequest extends Olingo2BatchRequest {
 
     @Override
     public String toString() {
-        return new StringBuilder("Batch Query Request{ ")
-            .append(resourcePath)
-            .append(", headers=").append(headers)
-            .append(", queryParams=").append(queryParams)
-            .append('}')
+        return new StringBuilder("Batch Query Request{ ").append(resourcePath).append(", headers=").append(headers).append(", queryParams=").append(queryParams).append('}')
             .toString();
     }
 

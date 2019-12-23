@@ -30,7 +30,6 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.ParserContext;
 
-
 public abstract class AbstractCxfBeanDefinitionParser extends AbstractBeanDefinitionParser {
     
     /**

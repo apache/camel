@@ -58,32 +58,21 @@ public class ContextScopedOnExceptionMultipleRouteBuildersTest extends ContextTe
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
-        return new RouteBuilder[]{
-            new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    onException(Exception.class)
-                            .handled(true)
-                            .to("mock:handle-foo");
+        return new RouteBuilder[] {new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(Exception.class).handled(true).to("mock:handle-foo");
 
-                    from("direct:foo")
-                            .to("mock:foo")
-                            .throwException(new IllegalArgumentException("Damn"));
-                }
-            },
-            new RouteBuilder() {
-                @Override
-                public void configure() throws Exception {
-                    onException(IllegalArgumentException.class)
-                            .handled(true)
-                            .to("mock:handle-bar");
-
-                    from("direct:bar")
-                            .to("mock:bar")
-                            .throwException(new IllegalArgumentException("Damn"));
-                }
+                from("direct:foo").to("mock:foo").throwException(new IllegalArgumentException("Damn"));
             }
-        };
+        }, new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                onException(IllegalArgumentException.class).handled(true).to("mock:handle-bar");
+
+                from("direct:bar").to("mock:bar").throwException(new IllegalArgumentException("Damn"));
+            }
+        }};
     }
 
 }

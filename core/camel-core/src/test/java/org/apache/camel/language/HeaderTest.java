@@ -38,6 +38,7 @@ public class HeaderTest extends LanguageTestSupport {
         assertTrue(prop.isSingleton());
     }
 
+    @Override
     protected String getLanguageName() {
         return "header";
     }

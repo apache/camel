@@ -51,10 +51,10 @@ public class DefaultExchangeFormatterTest {
 
     @Test
     /*
-     * The formatted exchange without limitation is 
-     * Exchange[ExchangePattern: InOnly, BodyType: String, Body: This is the message body]
-     * The "Exchange[", the "...", and the "]" do not count here, but the 
-     * leading ", " that is removed later does count...
+     * The formatted exchange without limitation is Exchange[ExchangePattern:
+     * InOnly, BodyType: String, Body: This is the message body] The
+     * "Exchange[", the "...", and the "]" do not count here, but the leading
+     * ", " that is removed later does count...
      */
     public void testFormatWithMaxCharsParameter() {
         exchangeFormatter.setMaxChars(60);

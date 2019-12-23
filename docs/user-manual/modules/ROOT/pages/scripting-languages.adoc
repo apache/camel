@@ -1,5 +1,5 @@
 [[ScriptingLanguages-ScriptingLanguages]]
-=== Scripting Languages
+= Scripting Languages
 
 Camel supports a number of scripting languages which can be used to
 create an Expression or
@@ -42,7 +42,7 @@ However any http://jcp.org/en/jsr/detail?id=223[JSR 223] scripting
 language can be used using the generic DSL methods.
 
 [[ScriptingLanguages-ScriptContext]]
-==== ScriptContext
+== ScriptContext
 
 The JSR-223 scripting languages ScriptContext is pre configured with the
 following attributes all set at `ENGINE_SCOPE`:
@@ -63,7 +63,7 @@ following attributes all set at `ENGINE_SCOPE`:
 IN message instead.
 
 |properties |`org.apache.camel.builder.script.PropertiesFunction` |*Camel 2.9:* Function with a `resolve` method to make it easier to use
-Camels xref:properties-component.adoc[Properties] component from scripts. See
+Camels xref:components::properties-component.adoc[Properties] component from scripts. See
 further below for example.
 |=======================================================================
 
@@ -71,20 +71,20 @@ See Scripting Languages for the list of
 languages with explicit DSL support.
 
 [[ScriptingLanguages-AdditionalargumentstoScriptingEngine]]
-==== Additional arguments to ScriptingEngine
+== Additional arguments to ScriptingEngine
 
-*Available as of Camel 2.8*
+*Since Camel 2.8*
 
 You can provide additional arguments to the `ScriptingEngine` using a
 header on the Camel message with the key `CamelScriptArguments`. 
 See this example:
 
 [[ScriptingLanguages-Usingpropertiesfunction]]
-==== Using properties function
+== Using properties function
 
-*Available as of Camel 2.9*
+*Since Camel 2.9*
 
-If you need to use the xref:properties-component.adoc[Properties] component from a
+If you need to use the xref:components::properties-component.adoc[Properties] component from a
 script to lookup property placeholders, then its a bit cumbersome to do
 so. For example to set a header name myHeader with a value from a property
 placeholder, which key is provided in a header named "foo".
@@ -103,9 +103,9 @@ same example is simpler:
 -------------------------------------------------------------------------------
 
 [[ScriptingLanguages-Loadingscriptfromexternalresource]]
-==== Loading script from external resource
+== Loading script from external resource
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 You can externalize the script and have Camel load it from a resource
 such as `"classpath:"`, `"file:"`, or `"http:"`. +
@@ -118,9 +118,9 @@ eg to refer to a file on the classpath you can do:
 -------------------------------------------------------------------
 
 [[ScriptingLanguages-Howtogettheresultfrommultiplestatementsscript]]
-==== How to get the result from multiple statements script
+== How to get the result from multiple statements script
 
-*Available as of Camel 2.14*
+*Since Camel 2.14*
 
 As the scripteengine evale method just return a Null if it runs a
 multiple statments script. Camel now look up the value of script result
@@ -136,10 +136,10 @@ bar = "baz";
 result = body * 2 + 1
 -------------------------------------------------------------
 
- 
+ 
 
 [[ScriptingLanguages-Dependencies]]
-==== Dependencies
+== Dependencies
 
 To use scripting languages in your camel routes you need to add the a
 dependency on *camel-script* which integrates the JSR-223 scripting
@@ -157,11 +157,4 @@ the download page for the latest versions).
   <version>x.x.x</version>
 </dependency>
 ---------------------------------------
-
-[[ScriptingLanguages-SeeAlso]]
-=== See Also
-
-* Languages
-* xref:dsl.adoc[DSL]
-* XML Configuration
 

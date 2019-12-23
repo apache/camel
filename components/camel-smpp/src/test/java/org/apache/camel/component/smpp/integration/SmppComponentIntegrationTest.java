@@ -175,6 +175,7 @@ public class SmppComponentIntegrationTest extends CamelTestSupport {
         assertEquals(2, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

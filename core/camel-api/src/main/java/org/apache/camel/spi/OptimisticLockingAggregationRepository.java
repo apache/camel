@@ -83,5 +83,6 @@ public interface OptimisticLockingAggregationRepository extends AggregationRepos
      * @param exchange       the exchange to remove
      * @throws OptimisticLockingException This should be thrown when the exchange has already been deleted, or otherwise modified.
      */
+    @Override
     void remove(CamelContext camelContext, String key, Exchange exchange) throws OptimisticLockingException;
 }

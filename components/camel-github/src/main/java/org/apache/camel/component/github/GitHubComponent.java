@@ -28,6 +28,7 @@ import org.apache.camel.support.DefaultComponent;
 @Component("github")
 public class GitHubComponent extends DefaultComponent {
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         GitHubEndpoint endpoint = new GitHubEndpoint(uri, this);
         setProperties(endpoint, parameters);

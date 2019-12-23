@@ -78,14 +78,17 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         return "sendTo(" + destination + ")";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public String getTraceLabel() {
         if (traceLabelToString == null) {
             traceLabelToString = URISupport.sanitizeUri(destination.getEndpointUri());
@@ -98,6 +101,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         return destination;
     }
 
+    @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             exchange.setException(new IllegalStateException("SendProcessor has not been started: " + this));
@@ -191,6 +195,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         counter = 0;
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (producerCache == null) {
             // use a single producer cache as we need to only hold reference for one destination
@@ -222,10 +227,12 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache, producer);
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownServices(producerCache, producer);
     }

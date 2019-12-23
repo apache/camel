@@ -29,14 +29,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import static org.w3c.dom.Node.ELEMENT_NODE;
 
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -48,6 +47,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 
 import static org.apache.camel.maven.packaging.PackageHelper.loadText;
+import static org.w3c.dom.Node.ELEMENT_NODE;
 
 /**
  * Prepares the Karaf provider camel catalog to include component it supports
@@ -102,7 +102,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
     /**
      * The camel-core directory
      */
-    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core")
+    @Parameter(defaultValue = "${project.build.directory}/../../../core/camel-core-engine")
     protected File coreDir;
 
     /**
@@ -124,6 +124,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         Set<String> features = findKarafFeatures();
         executeComponents(features);
@@ -159,8 +160,6 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                             target = new File(dir, "camel-box-component/target/classes");
                         } else if ("camel-salesforce".equals(dir.getName())) {
                             target = new File(dir, "camel-salesforce-component/target/classes");
-                        } else if ("camel-linkedin".equals(dir.getName())) {
-                            target = new File(dir, "camel-linkedin-component/target/classes");
                         } else if ("camel-servicenow".equals(dir.getName())) {
                             target = new File(dir, "camel-servicenow-component/target/classes");
                         } else {
@@ -412,12 +411,12 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                         || "camel-jetty-common".equals(dir.getName());
                     boolean special2 = "camel-as2".equals(dir.getName())
                         || "camel-box".equals(dir.getName())
-                        || "camel-linkedin".equals(dir.getName())
                         || "camel-olingo2".equals(dir.getName())
                         || "camel-olingo4".equals(dir.getName())
                         || "camel-servicenow".equals(dir.getName())
                         || "camel-salesforce".equals(dir.getName());
-                    if (special || special2) {
+                    boolean special3 = "camel-debezium-common".equals(dir.getName());
+                    if (special || special2 || special3) {
                         continue;
                     }
 
@@ -667,6 +666,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
             InputStream is = new FileInputStream(file);
 
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             dbf.setIgnoringComments(true);
             dbf.setIgnoringElementContentWhitespace(true);
             dbf.setNamespaceAware(false);

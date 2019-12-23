@@ -25,13 +25,9 @@ public class RoutingSlipOnExceptionTest extends DynamicRouterOnExceptionTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .redeliveryDelay(0)
-                    .maximumRedeliveries(5);
+                onException(IllegalArgumentException.class).redeliveryDelay(0).maximumRedeliveries(5);
 
-                from("direct:start")
-                    .routingSlip(method(RoutingSlipOnExceptionTest.class, "whereTo"))
-                    .to("mock:end");
+                from("direct:start").routingSlip(method(RoutingSlipOnExceptionTest.class, "whereTo")).to("mock:end");
             }
         };
     }

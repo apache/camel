@@ -1,7 +1,11 @@
 [[avro-component]]
-== Avro Component
+= Avro Component
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 This component provides a dataformat for avro, which allows
 serialization and deserialization of messages using Apache Avro's binary
@@ -22,7 +26,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Apache Avro Overview
+== Apache Avro Overview
 
 Avro allows you to define message types and a protocol using a json like
 format and then generate java code for the specified types and messages.
@@ -89,7 +93,7 @@ class Value {
 _Note: Existing classes can be used only for RPC (see below), not in
 data format._
 
-### Using the Avro data format
+== Using the Avro data format
 
 Using the avro data format is as easy as specifying that the class that
 you want to marshal or unmarshal in your route.
@@ -126,7 +130,7 @@ reference it from your route.
 
 In the same manner you can umarshal using the avro data format.
 
-### Using Avro RPC in Camel
+== Using Avro RPC in Camel
 
 As mentioned above Avro also provides RPC support over multiple
 transports such as http and netty. Camel provides consumers and
@@ -165,14 +169,14 @@ got only one parameter, *since 2.12* you can use `singleParameter` URI
 option to receive it direcly in the "in" message body without array
 wrapping.
 
-### Avro RPC URI Options
+== Avro RPC URI Options
 
 
 
 
 
 // component options: START
-The Avro component supports 3 options, which are listed below.
+The Avro component supports 4 options, which are listed below.
 
 
 
@@ -180,8 +184,9 @@ The Avro component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use a shared AvroConfiguration to configure options once |  | AvroConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -199,7 +204,7 @@ avro:transport:host:port/messageName
 
 with the following path and query parameters:
 
-==== Path Parameters (4 parameters):
+=== Path Parameters (4 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -212,7 +217,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -233,14 +238,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-avro-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -248,7 +253,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 16 options, which are listed below.
+The component supports 17 options, which are listed below.
 
 
 
@@ -256,6 +261,7 @@ The component supports 16 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.avro.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.avro.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.avro.configuration.host* | Hostname to use |  | String
 | *camel.component.avro.configuration.message-name* | The name of the message to send. |  | String
 | *camel.component.avro.configuration.port* | Port number to use |  | Integer
@@ -266,17 +272,17 @@ The component supports 16 options, which are listed below.
 | *camel.component.avro.configuration.single-parameter* | If true, consumer parameter won't be wrapped into array. Will fail if protocol specifies more then 1 parameter for the message | false | Boolean
 | *camel.component.avro.configuration.transport* | Transport to use, can be either http or netty |  | AvroTransport
 | *camel.component.avro.configuration.uri-authority* | Authority to use (username and password) |  | String
-| *camel.component.avro.enabled* | Enable avro component | true | Boolean
-| *camel.component.avro.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.avro.enabled* | Whether to enable auto configuration of the avro component. This is enabled by default. |  | Boolean
+| *camel.component.avro.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.dataformat.avro.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.avro.enabled* | Enable avro dataformat | true | Boolean
+| *camel.dataformat.avro.enabled* | Whether to enable auto configuration of the avro data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.avro.instance-class-name* | Class name to use for marshal and unmarshalling |  | String
 |===
 // spring-boot-auto-configure options: END
 
 
 
-### Avro RPC Headers
+== Avro RPC Headers
 
 [width="100%",cols="20%,80%",options="header",]
 |=======================================================================
@@ -286,7 +292,7 @@ The component supports 16 options, which are listed below.
 URI (if any)
 |=======================================================================
 
-### Examples
+== Examples
 
 An example of using camel avro producers via http:
 
@@ -304,11 +310,11 @@ In the example above you need to fill `CamelAvroMessageName` header.
 
 [source,xml]
 -------------------------------------------------------------------------------------------------------------------------------
-        <route>
-            <from uri="direct:start"/>
-            <to uri="avro:http:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
-            <to uri="log:avro"/>
-        </route>
+        <route>
+            <from uri="direct:start"/>
+            <to uri="avro:http:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <to uri="log:avro"/>
+        </route>
 -------------------------------------------------------------------------------------------------------------------------------
 
 An example of consuming messages using camel avro consumers via netty:

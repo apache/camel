@@ -29,6 +29,7 @@ public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulSer
     @BindToRegistry("service")
     ServiceComponent comp = new ServiceComponent();
 
+    @Override
     protected Map<String, String> getMetadata() {
         return new HashMap<String, String>() {
             {
@@ -39,15 +40,12 @@ public class ConsulServiceRegistrationWithServiceComponentTest extends ConsulSer
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=consul&service.zone=US", SERVICE_NAME, SERVICE_PORT)
-                    .routeId(SERVICE_ID)
-                    .routeGroup(SERVICE_NAME)
-                    .noAutoStartup()
-                    .to("log:service-registry?level=INFO");
+            public void configure() {
+                fromF("service:%s:jetty:http://0.0.0.0:%d/service/endpoint?service.type=consul&service.zone=US", SERVICE_NAME, SERVICE_PORT).routeId(SERVICE_ID)
+                    .routeGroup(SERVICE_NAME).noAutoStartup().to("log:service-registry?level=INFO");
             }
         };
     }

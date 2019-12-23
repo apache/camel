@@ -24,6 +24,7 @@ import org.apache.camel.spi.annotations.Component;
 @Component("openshift-builds")
 public class OpenshiftBuildsComponent extends AbstractKubernetesComponent {
 
+    @Override
     protected AbstractKubernetesEndpoint doCreateEndpoint(String uri, String remaining, KubernetesConfiguration config) throws Exception {
         OpenshiftBuildsEndpoint endpoint = new OpenshiftBuildsEndpoint(uri, this, config);
         return endpoint;

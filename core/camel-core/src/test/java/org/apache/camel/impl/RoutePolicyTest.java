@@ -48,7 +48,6 @@ public class RoutePolicyTest extends ContextTestSupport {
         assertEquals(1, routePolicy.getStopCount());
     }
 
-
     @Test
     public void testStopCalledWhenRouteStops() throws Exception {
         assertEquals(0, routePolicy.getStopCount());
@@ -95,10 +94,7 @@ public class RoutePolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .routeId("foo")
-                    .routePolicy(routePolicy)
-                    .to("mock:result");
+                from("direct:start").routeId("foo").routePolicy(routePolicy).to("mock:result");
             }
         };
     }

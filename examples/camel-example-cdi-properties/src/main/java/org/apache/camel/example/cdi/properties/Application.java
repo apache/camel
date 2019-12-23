@@ -23,7 +23,6 @@ import javax.inject.Named;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -35,7 +34,7 @@ import org.apache.deltaspike.core.api.config.ConfigResolver;
 
 public class Application {
 
-    @ContextName("hello")
+    @ApplicationScoped
     static class HelloRoute extends RouteBuilder {
 
         @Override

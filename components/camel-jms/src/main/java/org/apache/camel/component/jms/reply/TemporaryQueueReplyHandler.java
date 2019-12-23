@@ -46,6 +46,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
         this.timeout = timeout;
     }
 
+    @Override
     public void onReply(String correlationId, Message reply, Session session) {
         // create holder object with the reply
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, reply, session);
@@ -53,6 +54,7 @@ public class TemporaryQueueReplyHandler implements ReplyHandler {
         replyManager.processReply(holder);
     }
 
+    @Override
     public void onTimeout(String correlationId) {
         // create holder object without the reply which means a timeout occurred
         ReplyHolder holder = new ReplyHolder(exchange, callback, originalCorrelationId, correlationId, timeout);

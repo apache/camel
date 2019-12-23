@@ -49,9 +49,7 @@ public class IdempotentConsumerRepoExceptionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                        .idempotentConsumer(header("messageId"), myRepo)
-                    .to("mock:result");
+                from("direct:start").idempotentConsumer(header("messageId"), myRepo).to("mock:result");
 
             }
         };

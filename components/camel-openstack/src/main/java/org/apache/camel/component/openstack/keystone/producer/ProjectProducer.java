@@ -92,7 +92,7 @@ public class ProjectProducer extends AbstractKeystoneProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, String.class);
         StringHelper.notEmpty(id, "Project ID");
         final ActionResponse response = osV3Client.identity().projects().delete(id);
-        checkFailure(response, msg, "Delete project with ID " + id);
+        checkFailure(response, exchange, "Delete project with ID " + id);
     }
 
     private Project messageToProject(Message message) {

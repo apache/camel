@@ -40,20 +40,13 @@ public class MulticastKeepOriginalMessageUnchangedTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                    .setHeader("bar", constant("no"))
-                        .to("mock:a")
-                    .multicast(AggregationStrategies.useOriginal()).to("direct:foo").end()
-                    .to("mock:result");
+                from("direct:a").setHeader("bar", constant("no")).to("mock:a").multicast(AggregationStrategies.useOriginal()).to("direct:foo").end().to("mock:result");
 
-                from("direct:foo")
-                    .setHeader("foo", constant("yes"))
-                    .removeHeader("bar")
-                    .transform().simple("Foo was here ${body}")
-                    .to("mock:foo");
+                from("direct:foo").setHeader("foo", constant("yes")).removeHeader("bar").transform().simple("Foo was here ${body}").to("mock:foo");
             }
         };
     }

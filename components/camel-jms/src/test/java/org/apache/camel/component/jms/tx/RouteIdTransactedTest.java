@@ -23,6 +23,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class RouteIdTransactedTest extends CamelSpringTestSupport {
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/component/jms/tx/RouteIdTransactedTest.xml");

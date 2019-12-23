@@ -100,7 +100,7 @@ public class VolumeProducer extends AbstractOpenstackProducer {
         StringHelper.notEmpty(vol.getDescription(), "Cinder Volume Description");
         StringHelper.notEmpty(vol.getName(), "Cinder Volume Name");
         final ActionResponse out = os.blockStorage().volumes().update(id, vol.getName(), vol.getDescription());
-        checkFailure(out, msg, "Update volume " + id);
+        checkFailure(out, exchange, "Update volume " + id);
     }
 
     private void doDelete(Exchange exchange) {
@@ -108,7 +108,7 @@ public class VolumeProducer extends AbstractOpenstackProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(CinderConstants.VOLUME_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Cinder Volume ID");
         final ActionResponse out = os.blockStorage().volumes().delete(id);
-        checkFailure(out, msg, "Delete volume " + id);
+        checkFailure(out, exchange, "Delete volume " + id);
     }
 
     private Volume messageToVolume(Message message) {

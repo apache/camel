@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
@@ -38,8 +39,6 @@ public class CamelContextFactoryBeanTest extends Assert {
 
     @Before
     public void setUp() throws Exception {
-
-        
         factory = new CamelContextFactoryBean();
         factory.setId("camelContext");
     }

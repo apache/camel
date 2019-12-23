@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -58,6 +59,7 @@ public class MulticastTest extends ContextTestSupport {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         final Processor processor = new AppendingProcessor();
 

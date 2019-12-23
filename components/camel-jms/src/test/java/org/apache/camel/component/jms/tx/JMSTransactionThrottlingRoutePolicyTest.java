@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.jms.tx;
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
@@ -25,6 +26,7 @@ public class JMSTransactionThrottlingRoutePolicyTest extends CamelSpringTestSupp
 
     private int size = 200;
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/component/jms/tx/JMSTransactionThrottlingRoutePolicyTest.xml");

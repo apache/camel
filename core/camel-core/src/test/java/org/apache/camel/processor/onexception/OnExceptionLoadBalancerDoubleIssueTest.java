@@ -45,15 +45,11 @@ public class OnExceptionLoadBalancerDoubleIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true)
-                    .loadBalance().roundRobin().id("round").to("mock:error", "mock:error2", "mock:error3").end();
+                onException(Exception.class).handled(true).loadBalance().roundRobin().id("round").to("mock:error", "mock:error2", "mock:error3").end();
 
-                from("direct:foo")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:foo").throwException(new IllegalArgumentException("Forced"));
 
-                from("direct:bar")
-                    .throwException(new IllegalArgumentException("Also Forced"));
+                from("direct:bar").throwException(new IllegalArgumentException("Also Forced"));
             }
         };
     }

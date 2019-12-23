@@ -24,7 +24,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.pubsub.GooglePubsubComponent;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +47,7 @@ public final class MessagePublisherClient {
 
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
-                PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
-                pc.setLocation("classpath:example.properties");
+                camelContext.getPropertiesComponent().setLocation("classpath:example.properties");
 
                 // setup google pubsub component
                 GooglePubsubComponent googlePubsub = PubsubUtil.createComponent();

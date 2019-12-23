@@ -27,7 +27,6 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The aws-kinesis component is for consuming and producing records from Amazon
@@ -58,7 +57,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
-            setProperty("amazonKinesisClient", amazonKinesisClient);
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
         }
         /**
@@ -71,33 +70,33 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
-            setProperty("amazonKinesisClient", amazonKinesisClient);
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -105,7 +104,32 @@ public interface KinesisEndpointBuilderFactory {
          * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointConsumerBuilder proxyProtocol(
+                Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointConsumerBuilder proxyProtocol(
+                String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -119,7 +143,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: common
          */
         default KinesisEndpointConsumerBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -137,7 +161,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -155,7 +179,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -169,7 +193,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder iteratorType(
                 ShardIteratorType iteratorType) {
-            setProperty("iteratorType", iteratorType);
+            doSetProperty("iteratorType", iteratorType);
             return this;
         }
         /**
@@ -182,7 +206,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder iteratorType(String iteratorType) {
-            setProperty("iteratorType", iteratorType);
+            doSetProperty("iteratorType", iteratorType);
             return this;
         }
         /**
@@ -194,7 +218,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder maxResultsPerRequest(
                 int maxResultsPerRequest) {
-            setProperty("maxResultsPerRequest", maxResultsPerRequest);
+            doSetProperty("maxResultsPerRequest", maxResultsPerRequest);
             return this;
         }
         /**
@@ -206,7 +230,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder maxResultsPerRequest(
                 String maxResultsPerRequest) {
-            setProperty("maxResultsPerRequest", maxResultsPerRequest);
+            doSetProperty("maxResultsPerRequest", maxResultsPerRequest);
             return this;
         }
         /**
@@ -219,7 +243,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -232,7 +256,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -245,7 +269,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder sequenceNumber(
                 String sequenceNumber) {
-            setProperty("sequenceNumber", sequenceNumber);
+            doSetProperty("sequenceNumber", sequenceNumber);
             return this;
         }
         /**
@@ -263,7 +287,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder shardClosed(
                 KinesisShardClosedStrategyEnum shardClosed) {
-            setProperty("shardClosed", shardClosed);
+            doSetProperty("shardClosed", shardClosed);
             return this;
         }
         /**
@@ -280,7 +304,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder shardClosed(String shardClosed) {
-            setProperty("shardClosed", shardClosed);
+            doSetProperty("shardClosed", shardClosed);
             return this;
         }
         /**
@@ -291,7 +315,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder shardId(String shardId) {
-            setProperty("shardId", shardId);
+            doSetProperty("shardId", shardId);
             return this;
         }
         /**
@@ -304,7 +328,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -317,7 +341,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -330,7 +354,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -343,7 +367,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -360,7 +384,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -377,7 +401,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -390,7 +414,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -403,7 +427,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -415,7 +439,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -427,7 +451,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -440,7 +464,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -453,7 +477,33 @@ public interface KinesisEndpointBuilderFactory {
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default KinesisEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default KinesisEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -466,7 +516,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -480,7 +530,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -495,7 +545,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -510,41 +560,24 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default KinesisEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -553,12 +586,12 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -568,7 +601,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -580,7 +613,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -592,7 +625,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -603,7 +636,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -615,7 +648,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -628,7 +661,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -641,7 +674,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -652,7 +685,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: security
          */
         default KinesisEndpointConsumerBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -663,7 +696,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: security
          */
         default KinesisEndpointConsumerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -690,7 +723,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -706,7 +739,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -718,7 +751,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -731,7 +764,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -747,7 +780,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -763,7 +796,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -776,7 +809,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -789,7 +822,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -802,7 +835,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -815,7 +848,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -839,7 +872,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointProducerBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
-            setProperty("amazonKinesisClient", amazonKinesisClient);
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
         }
         /**
@@ -852,33 +885,33 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointProducerBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
-            setProperty("amazonKinesisClient", amazonKinesisClient);
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default KinesisEndpointProducerBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          */
         default KinesisEndpointProducerBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -886,7 +919,32 @@ public interface KinesisEndpointBuilderFactory {
          * Group: common
          */
         default KinesisEndpointProducerBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointProducerBuilder proxyProtocol(
+                Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointProducerBuilder proxyProtocol(
+                String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -900,7 +958,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: common
          */
         default KinesisEndpointProducerBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -920,7 +978,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -940,7 +998,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -951,7 +1009,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: security
          */
         default KinesisEndpointProducerBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -962,7 +1020,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: security
          */
         default KinesisEndpointProducerBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -986,7 +1044,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -999,7 +1057,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1012,7 +1070,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1025,7 +1083,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1049,7 +1107,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointBuilder amazonKinesisClient(
                 Object amazonKinesisClient) {
-            setProperty("amazonKinesisClient", amazonKinesisClient);
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
         }
         /**
@@ -1062,33 +1120,33 @@ public interface KinesisEndpointBuilderFactory {
          */
         default KinesisEndpointBuilder amazonKinesisClient(
                 String amazonKinesisClient) {
-            setProperty("amazonKinesisClient", amazonKinesisClient);
+            doSetProperty("amazonKinesisClient", amazonKinesisClient);
             return this;
         }
         /**
-         * To define a proxy host when instantiating the DDBStreams client.
+         * To define a proxy host when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default KinesisEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
          * Group: common
          */
         default KinesisEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
-         * To define a proxy port when instantiating the DDBStreams client.
+         * To define a proxy port when instantiating the Kinesis client.
          * 
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
@@ -1096,7 +1154,30 @@ public interface KinesisEndpointBuilderFactory {
          * Group: common
          */
         default KinesisEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Kinesis client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default KinesisEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -1110,7 +1191,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: common
          */
         default KinesisEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -1121,7 +1202,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: security
          */
         default KinesisEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -1132,7 +1213,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: security
          */
         default KinesisEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -1156,7 +1237,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1169,7 +1250,7 @@ public interface KinesisEndpointBuilderFactory {
          */
         default AdvancedKinesisEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1181,7 +1262,7 @@ public interface KinesisEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedKinesisEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1193,9 +1274,17 @@ public interface KinesisEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedKinesisEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
 
     /**
@@ -1225,7 +1314,7 @@ public interface KinesisEndpointBuilderFactory {
      * Amazon Kinesis Streams.
      * 
      * Category: cloud,messaging
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-aws-kinesis
      * 
      * Syntax: <code>aws-kinesis:streamName</code>
@@ -1233,7 +1322,7 @@ public interface KinesisEndpointBuilderFactory {
      * Path parameter: streamName (required)
      * Name of the stream
      */
-    default KinesisEndpointBuilder kinesis(String path) {
+    default KinesisEndpointBuilder awsKinesis(String path) {
         class KinesisEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisEndpointBuilder, AdvancedKinesisEndpointBuilder {
             public KinesisEndpointBuilderImpl(String path) {
                 super("aws-kinesis", path);

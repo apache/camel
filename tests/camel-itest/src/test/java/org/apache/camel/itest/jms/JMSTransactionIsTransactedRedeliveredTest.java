@@ -33,13 +33,14 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSupport {
 
-    private static int port = AvailablePortFinder.getNextAvailable(20039);
+    private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts
         System.setProperty("Jetty.port", Integer.toString(port));
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
                 "/org/apache/camel/itest/jms/JMSTransactionIsTransactedRedeliveredTest.xml");
@@ -83,6 +84,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     public static class MyBeforeProcessor implements Processor {
         private int count;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             ++count;
 
@@ -101,6 +103,7 @@ public class JMSTransactionIsTransactedRedeliveredTest extends CamelSpringTestSu
     }
 
     public static class MyAfterProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             // origin message should be a external redelivered
             assertTrue("Should be external redelivered", exchange.isExternalRedelivered());

@@ -20,6 +20,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringDataFormatWithMarshalAndUnmarshalUsingSpringBeanTest extends SpringDataFormatTest {
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/example/marshalAndUnmarshalWithSpringBean.xml");
     }

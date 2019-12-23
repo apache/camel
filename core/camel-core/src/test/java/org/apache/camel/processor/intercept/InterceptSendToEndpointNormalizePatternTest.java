@@ -42,9 +42,7 @@ public class InterceptSendToEndpointNormalizePatternTest extends ContextTestSupp
             public void configure() throws Exception {
                 interceptSendToEndpoint("stub:foo?privateKeyFile=/user/.ssh.id_rsa").to("mock:intercept");
 
-                from("direct:start")
-                    .to("stub:foo?privateKeyFile=/user/.ssh.id_rsa")
-                    .to("mock:result");
+                from("direct:start").to("stub:foo?privateKeyFile=/user/.ssh.id_rsa").to("mock:result");
             }
         };
     }

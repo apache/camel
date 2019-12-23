@@ -18,6 +18,7 @@ package org.apache.camel.component.eventadmin;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
@@ -36,6 +37,7 @@ public class EventAdminConsumer extends DefaultConsumer implements EventHandler 
         this.endpoint = endpoint;
     }
 
+    @Override
     public void handleEvent(Event event) {
         Exchange exchange = endpoint.createExchange();
         // TODO: populate exchange headers

@@ -44,6 +44,7 @@ public class CustomExchangeFormatterTest extends SpringTestSupport {
         assertEquals("bbb", bbb.getTestProperty());
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/log/custom-exchange-formatter-context.xml");
     }

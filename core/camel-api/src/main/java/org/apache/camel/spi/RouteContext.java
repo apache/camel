@@ -28,7 +28,6 @@ import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeConfiguration;
-import org.apache.camel.meta.Experimental;
 
 /**
  * The context used to activate new routing rules
@@ -187,6 +186,7 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      *
      * @param autoStartup whether to start up automatically.
      */
+    @Override
     void setAutoStartup(Boolean autoStartup);
 
     /**
@@ -196,6 +196,7 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      *
      * @return <tt>true</tt> if route should automatically start
      */
+    @Override
     Boolean isAutoStartup();
 
     void setStartupOrder(Integer startupOrder);
@@ -232,19 +233,14 @@ public interface RouteContext extends RuntimeConfiguration, EndpointAware {
      *
      * @return the route controller,
      */
-    @Experimental
-    default RouteController getRouteController() {
-        return null;
-    }
+    RouteController getRouteController();
 
     /**
      * Sets the {@link RouteController} for this route.
      *
      * @param controller the RouteController
      */
-    @Experimental
-    default void setRouteController(RouteController controller) {
-    }
+    void setRouteController(RouteController controller);
 
     Processor getOnCompletion(String onCompletionId);
 

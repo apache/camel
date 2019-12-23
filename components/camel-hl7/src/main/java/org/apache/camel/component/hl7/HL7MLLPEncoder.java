@@ -41,6 +41,7 @@ class HL7MLLPEncoder implements ProtocolEncoder {
     public void dispose(IoSession session) throws Exception {
     }
 
+    @Override
     public void encode(IoSession session, Object message, ProtocolEncoderOutput out) throws Exception {
         if (message == null) {
             throw new IllegalArgumentException("Message to be encoded is null");

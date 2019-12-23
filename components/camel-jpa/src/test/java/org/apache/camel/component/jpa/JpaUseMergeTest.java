@@ -26,6 +26,7 @@ import org.springframework.transaction.support.TransactionCallback;
 
 public class JpaUseMergeTest extends AbstractJpaMethodTest {
     
+    @Override
     public boolean usePersist() {
         return false;
     }

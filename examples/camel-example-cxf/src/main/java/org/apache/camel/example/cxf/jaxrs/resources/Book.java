@@ -18,7 +18,6 @@ package org.apache.camel.example.cxf.jaxrs.resources;
 
 import javax.xml.bind.annotation.XmlRootElement;
 
-
 @XmlRootElement(name = "Book")
 public class Book {
     private String name;
@@ -47,6 +46,7 @@ public class Book {
         return id;
     }
     
+    @Override
     public String toString() {
         return "[Book id=" + id + ", name=" + name + "]";
     }

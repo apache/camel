@@ -16,8 +16,11 @@
  */
 package sample.camel;
 
+import javax.enterprise.context.ApplicationScoped;
+
 import org.apache.camel.builder.RouteBuilder;
 
+@ApplicationScoped
 public class ClientRoute extends RouteBuilder {
 
     @Override

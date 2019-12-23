@@ -47,5 +47,5 @@ public class MultipleFromTest extends ContextTestSupport {
             }
         };
     }
-    
+
 }

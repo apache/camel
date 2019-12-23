@@ -35,13 +35,14 @@ public class InterceptFromSimplePredicateWithStopTest extends ContextTestSupport
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                interceptFrom()
-                    .when(header("usertype").isEqualTo("test"))
-                    // here we use stop() to tell Camel to NOT continue routing the message.
+                interceptFrom().when(header("usertype").isEqualTo("test"))
+                    // here we use stop() to tell Camel to NOT continue routing
+                    // the message.
                     // this let us act as a filter, to drop certain messages.
                     .stop();
 

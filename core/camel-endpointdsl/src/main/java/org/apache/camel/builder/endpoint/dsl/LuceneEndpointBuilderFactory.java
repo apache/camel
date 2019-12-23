@@ -51,7 +51,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder analyzer(Object analyzer) {
-            setProperty("analyzer", analyzer);
+            doSetProperty("analyzer", analyzer);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder analyzer(String analyzer) {
-            setProperty("analyzer", analyzer);
+            doSetProperty("analyzer", analyzer);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder indexDir(File indexDir) {
-            setProperty("indexDir", indexDir);
+            doSetProperty("indexDir", indexDir);
             return this;
         }
         /**
@@ -91,7 +91,46 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder indexDir(String indexDir) {
-            setProperty("indexDir", indexDir);
+            doSetProperty("indexDir", indexDir);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LuceneEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LuceneEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -102,7 +141,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder maxHits(int maxHits) {
-            setProperty("maxHits", maxHits);
+            doSetProperty("maxHits", maxHits);
             return this;
         }
         /**
@@ -113,7 +152,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder maxHits(String maxHits) {
-            setProperty("maxHits", maxHits);
+            doSetProperty("maxHits", maxHits);
             return this;
         }
         /**
@@ -125,7 +164,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder srcDir(File srcDir) {
-            setProperty("srcDir", srcDir);
+            doSetProperty("srcDir", srcDir);
             return this;
         }
         /**
@@ -137,7 +176,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: producer
          */
         default LuceneEndpointBuilder srcDir(String srcDir) {
-            setProperty("srcDir", srcDir);
+            doSetProperty("srcDir", srcDir);
             return this;
         }
     }
@@ -161,7 +200,7 @@ public interface LuceneEndpointBuilderFactory {
          */
         default AdvancedLuceneEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -174,7 +213,7 @@ public interface LuceneEndpointBuilderFactory {
          */
         default AdvancedLuceneEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -186,7 +225,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -198,7 +237,7 @@ public interface LuceneEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -207,7 +246,7 @@ public interface LuceneEndpointBuilderFactory {
      * To insert or query from Apache Lucene databases.
      * 
      * Category: database,search
-     * Available as of version: 2.2
+     * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-lucene
      * 
      * Syntax: <code>lucene:host:operation</code>

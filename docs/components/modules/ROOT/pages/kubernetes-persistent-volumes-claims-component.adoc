@@ -1,30 +1,36 @@
 [[kubernetes-persistent-volumes-claims-component]]
-== Kubernetes Persistent Volume Claim Component
+= Kubernetes Persistent Volume Claim Component
+:page-source: components/camel-kubernetes/src/main/docs/kubernetes-persistent-volumes-claims-component.adoc
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
 
-The Kubernetes Persistent Volume Claim component is one of xref:kubernetes-component.adoc[Kubernetes Components] which
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The Kubernetes Persistent Volume Claim component is one of xref:kubernetes.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes persistent volume claim operations.
  
 
 
-### Component Options
+== Component Options
 
 // component options: START
-The Kubernetes Persistent Volume Claim component supports 2 options, which are listed below.
+The Kubernetes Persistent Volume Claim component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
 
-### Endpoint Options
+== Endpoint Options
 
 // endpoint options: START
 The Kubernetes Persistent Volume Claim endpoint is configured using URI syntax:
@@ -35,7 +41,7 @@ kubernetes-persistent-volumes-claims:masterUrl
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -45,7 +51,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,14 +82,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-kubernetes-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -91,7 +97,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -99,8 +105,50 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.kubernetes-persistent-volumes-claims.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.kubernetes-persistent-volumes-claims.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.kubernetes-persistent-volumes-claims.enabled* | Whether to enable auto configuration of the kubernetes-persistent-volumes-claims component. This is enabled by default. |  | Boolean
-| *camel.component.kubernetes-persistent-volumes-claims.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.kubernetes-persistent-volumes-claims.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
+
+== Supported producer operation
+
+- listPersistentVolumesClaims
+- listPersistentVolumesClaimsByLabels
+- getPersistentVolumeClaim
+- createPersistentVolumeClaim
+- deletePersistentVolumeClaim
+
+== Kubernetes Persistent Volume Claims Producer Examples
+
+- listPersistentVolumesClaims: this operation list the pvc on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:list").
+    toF("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaims").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of pvc from your cluster
+
+- listPersistentVolumesClaimsByLabels:  this operation list the pvc by labels on a kubernetes cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listByLabels").process(new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_PERSISTENT_VOLUMES_CLAIMS_LABELS, labels);
+            }
+        });
+    toF("kubernetes-persistent-volumes-claims:///?kubernetesClient=#kubernetesClient&operation=listPersistentVolumesClaimsByLabels").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of pvc from your cluster, using a label selector (with key1 and key2, with value value1 and value2)
 

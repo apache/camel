@@ -37,8 +37,7 @@ public class NotifyBuilderOnFailureShutdownCamelIssueTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("timer:foo?delay=0&period=10")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("timer:foo?delay=0&period=10").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

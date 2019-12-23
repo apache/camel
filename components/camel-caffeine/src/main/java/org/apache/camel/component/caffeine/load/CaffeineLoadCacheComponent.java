@@ -51,9 +51,10 @@ public class CaffeineLoadCacheComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         CaffeineConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
 
-        return new CaffeineLoadCacheEndpoint(uri, this, remaining, configuration);
+        CaffeineLoadCacheEndpoint endpoint = new CaffeineLoadCacheEndpoint(uri, this, remaining, configuration);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     // ****************************

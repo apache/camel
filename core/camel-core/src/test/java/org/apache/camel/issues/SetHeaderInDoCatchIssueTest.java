@@ -45,7 +45,7 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
             }
         });
 
-        assertEquals("TimeOut", exchange.getOut().getHeader("Status"));
+        assertEquals("TimeOut", exchange.getMessage().getHeader("Status"));
     }
 
     @Test
@@ -56,9 +56,10 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
             }
         });
 
-        assertEquals("ExceptionGeneral", exchange.getOut().getHeader("Status"));
+        assertEquals("ExceptionGeneral", exchange.getMessage().getHeader("Status"));
     }
 
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = new JndiRegistry(createJndiContext());
 
@@ -96,19 +97,9 @@ public class SetHeaderInDoCatchIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setTracing(true);
 
-                from("direct:start")
-                    .doTry()
-                        .to("A")
-                        .setHeader("CamelJmsDestinationName", constant("queue:outQueue"))
-                        .inOut("B")
-                        .setHeader("Status", constant("CamsResponse"))
-                    .doCatch(ExchangeTimedOutException.class)
-                        .setHeader("Status", constant("TimeOut"))
-                    .doCatch(Exception.class)
-                        .setHeader("Status", constant("ExceptionGeneral"))
-                    .end()
-                    .to("C")
-                    .transform(body());
+                from("direct:start").doTry().to("A").setHeader("CamelJmsDestinationName", constant("queue:outQueue")).inOut("B").setHeader("Status", constant("CamsResponse"))
+                    .doCatch(ExchangeTimedOutException.class).setHeader("Status", constant("TimeOut")).doCatch(Exception.class).setHeader("Status", constant("ExceptionGeneral"))
+                    .end().to("C").transform(body());
             }
         };
     }

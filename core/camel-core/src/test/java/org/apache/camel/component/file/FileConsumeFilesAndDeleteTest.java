@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -57,8 +58,7 @@ public class FileConsumeFilesAndDeleteTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/files/?initialDelay=0&delay=10&fileName=report.txt&delete=true")
-                    .convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/files/?initialDelay=0&delay=10&fileName=report.txt&delete=true").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

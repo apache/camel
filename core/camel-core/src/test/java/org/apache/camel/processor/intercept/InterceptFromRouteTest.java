@@ -23,8 +23,7 @@ public class InterceptFromRouteTest extends InterceptFromRouteTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                interceptFrom().choice().
-                        when(header("foo").isEqualTo("bar")).to("mock:b").stop().end();
+                interceptFrom().choice().when(header("foo").isEqualTo("bar")).to("mock:b").stop().end();
 
                 from("direct:start").to("mock:a");
             }

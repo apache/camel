@@ -21,11 +21,11 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.services.sqs.model.Message;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -37,7 +37,8 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
 
     @Test
     public void consumeMessagesFromQueue() throws Exception {
-        // simple test to make sure that concurrent consumers were used in the test
+        // simple test to make sure that concurrent consumers were used in the
+        // test
 
         NotifyBuilder notifier = new NotifyBuilder(context).whenCompleted(NUM_MESSAGES).create();
         assertTrue("We didn't process " + NUM_MESSAGES + " messages as we expected!", notifier.matches(5, TimeUnit.SECONDS));
@@ -45,21 +46,19 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
         if (isPlatform("windows")) {
             // threading is different on windows
         } else {
-            // usually we use all threads evenly but sometimes threads are reused so just test that 50%+ was used
+            // usually we use all threads evenly but sometimes threads are
+            // reused so just test that 50%+ was used
             if (threadNumbers.size() < (NUM_CONCURRENT / 2)) {
-                fail(String.format("We were expecting to have about half of %d numbers of concurrent consumers, but only found %d",
-                        NUM_CONCURRENT, threadNumbers.size()));
+                fail(String.format("We were expecting to have about half of %d numbers of concurrent consumers, but only found %d", NUM_CONCURRENT, threadNumbers.size()));
             }
         }
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
+    @BindToRegistry("client")
+    public AmazonSQSClientMock addClient() throws Exception {
         AmazonSQSClientMock client = new AmazonSQSClientMock();
         createDummyMessages(client, NUM_MESSAGES);
-        reg.bind("client", client);
-        return reg;
+        return client;
     }
 
     private void createDummyMessages(AmazonSQSClientMock client, int numMessages) {
@@ -78,13 +77,12 @@ public class SqsConcurrentConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-sqs://demo?concurrentConsumers=" + NUM_CONCURRENT + "&maxMessagesPerPoll=10&amazonSQSClient=#client")
-                        .process(new Processor() {
-                            @Override
-                            public void process(Exchange exchange) throws Exception {
-                                threadNumbers.add(Thread.currentThread().getId());
-                            }
-                        }).log("processed a new message!");
+                from("aws-sqs://demo?concurrentConsumers=" + NUM_CONCURRENT + "&maxMessagesPerPoll=10&amazonSQSClient=#client").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        threadNumbers.add(Thread.currentThread().getId());
+                    }
+                }).log("processed a new message!");
             }
         };
     }

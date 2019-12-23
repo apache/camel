@@ -61,16 +61,19 @@ class CamelOutputStream extends CachedOutputStream {
         outMessage = m;
     }
 
+    @Override
     protected void doFlush() throws IOException {
         // do nothing here
     }
 
+    @Override
     protected void doClose() throws IOException {
         isOneWay = outMessage.getExchange().isOneWay();
         
         commitOutputMessage();
     }
 
+    @Override
     protected void onWrite() throws IOException {
         // do nothing here
     }
@@ -93,7 +96,7 @@ class CamelOutputStream extends CachedOutputStream {
 
         // TODO support different encoding
         exchange.getIn().setBody(outputStream.getInputStream());
-        LOG.debug("template sending request: ", exchange.getIn());
+        LOG.debug("template sending request: {}", exchange.getIn());
         
         if (outMessage.getExchange().isSynchronous()) {
             syncInvoke(exchange);

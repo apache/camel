@@ -52,26 +52,30 @@ public class MDCAsyncTest extends ContextTestSupport {
                 // enable MDC and breadcrumb
                 context.setUseMDCLogging(true);
                 context.setUseBreadcrumb(true);
+                context.setMDCLoggingKeysPattern("custom*,my*");
 
                 MdcCheckerProcessor checker = new MdcCheckerProcessor();
-                
-                from("direct:a").routeId("route-async")
-                    .process(checker)
-                    .to("log:foo")
-                    .process(new MyAsyncProcessor())
-                    .process(checker)
-                    .to("mock:end");                    
+
+                from("direct:a").routeId("route-async").process(e -> {
+                    // custom is propagated
+                    MDC.put("custom.hello", "World");
+                    // foo is not propagated
+                    MDC.put("foo", "Bar");
+                    // myKey is propagated
+                    MDC.put("myKey", "Baz");
+                }).process(checker).to("log:foo").process(new MyAsyncProcessor()).process(checker).to("mock:end");
 
             }
         };
     }
-    
+
     private static class MyAsyncProcessor implements AsyncProcessor {
-        
+
         private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1);
 
         MyAsyncProcessor() {
-            // submit a Runnable that does nothing just to initialise the threads
+            // submit a Runnable that does nothing just to initialise the
+            // threads
             EXECUTOR.submit(new Runnable() {
                 @Override
                 public void run() {
@@ -79,7 +83,7 @@ public class MDCAsyncTest extends ContextTestSupport {
                 }
             });
         }
-        
+
         @Override
         public void process(Exchange exchange) throws Exception {
             throw new RuntimeCamelException("This processor does not support the sync pattern.");
@@ -100,57 +104,71 @@ public class MDCAsyncTest extends ContextTestSupport {
     }
 
     /**
-     * Stores values from the first invocation to compare them with the second invocation later.
+     * Stores values from the first invocation to compare them with the second
+     * invocation later.
      */
     private static class MdcCheckerProcessor implements Processor {
-        
+
         private String routeId = "route-async";
         private String exchangeId;
         private String messageId;
         private String breadcrumbId;
         private String contextId;
         private Long threadId;
+        private String foo;
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            if (threadId != null) {
-                assertNotEquals(threadId, Long.valueOf(Thread.currentThread().getId()));
+            // custom is propagated as its pattern matches
+            assertEquals("World", MDC.get("custom.hello"));
+            assertEquals("Baz", MDC.get("myKey"));
+
+            if (foo != null) {
+                // foo is not propagated
+                assertNotEquals(foo, MDC.get("foo"));
             } else {
-                threadId = Long.valueOf(Thread.currentThread().getId());
+                foo = MDC.get("foo");
             }
-            
+
+            if (threadId != null) {
+                Long currId = Thread.currentThread().getId();
+                assertNotEquals(threadId, currId);
+            } else {
+                threadId = Thread.currentThread().getId();
+            }
+
             if (routeId != null) {
                 assertEquals(routeId, MDC.get("camel.routeId"));
             }
-            
+
             if (exchangeId != null) {
                 assertEquals(exchangeId, MDC.get("camel.exchangeId"));
             } else {
                 exchangeId = MDC.get("camel.exchangeId");
                 assertTrue(exchangeId != null && exchangeId.length() > 0);
             }
-            
+
             if (messageId != null) {
                 assertEquals(messageId, MDC.get("camel.messageId"));
             } else {
                 messageId = MDC.get("camel.messageId");
                 assertTrue(messageId != null && messageId.length() > 0);
             }
-            
+
             if (breadcrumbId != null) {
                 assertEquals(breadcrumbId, MDC.get("camel.breadcrumbId"));
             } else {
                 breadcrumbId = MDC.get("camel.breadcrumbId");
                 assertTrue(breadcrumbId != null && breadcrumbId.length() > 0);
             }
-            
+
             if (contextId != null) {
                 assertEquals(contextId, MDC.get("camel.contextId"));
             } else {
                 contextId = MDC.get("camel.contextId");
                 assertTrue(contextId != null && contextId.length() > 0);
             }
-            
+
         }
     }
 

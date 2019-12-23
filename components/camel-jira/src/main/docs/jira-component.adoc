@@ -1,12 +1,16 @@
 [[jira-component]]
-== Jira Component
+= Jira Component
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
 
-The JIRA component interacts with the JIRA API by encapsulating
-Atlassian's https://bitbucket.org/atlassian/jira-rest-java-client/src/master/[REST
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
+The JIRA component interacts with the JIRA API by encapsulating
+Atlassian's https://bitbucket.org/atlassian/jira-rest-java-client/src/master/[REST
 Java Client for JIRA]. It currently provides polling for new issues and
-new comments.  It is also able to create new issues, add comments, change issues, add/remove watchers, add attachment
+new comments.  It is also able to create new issues, add comments, change issues, add/remove watchers, add attachment
 and transition the state of an issue.
 
 Rather than webhooks, this endpoint relies on simple polling. Reasons
@@ -16,7 +20,7 @@ include:
 * The types of payloads we're polling aren't typically large (plus, paging is available in the API)
 * The need to support apps running somewhere not publicly accessible where a webhook would fail
 
-Note that the JIRA API is fairly expansive.  Therefore, this component could be easily expanded to provide additional
+Note that the JIRA API is fairly expansive.  Therefore, this component could be easily expanded to provide additional
 interactions.
 
 Maven users will need to add the following dependency to their pom.xml
@@ -31,27 +35,28 @@ for this component:
 </dependency>
 ---------------------------------------
 
-### URI format
+== URI format
 
 [source,text]
 -------------------------
 jira://type[?options]
 -------------------------
 
-### JIRA Options
+== JIRA Options
 
 
 // component options: START
-The Jira component supports 3 options, which are listed below.
+The Jira component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | The JiraConfiguration parameters |  | JiraConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *configuration* (advanced) | To use a shared base jira configuration. |  | JiraConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -83,7 +88,7 @@ jira:type
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,7 +98,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -119,14 +124,14 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-jira-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -134,7 +139,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 11 options, which are listed below.
+The component supports 12 options, which are listed below.
 
 
 
@@ -142,6 +147,7 @@ The component supports 11 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.jira.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.jira.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.jira.configuration.access-token* | (OAuth only) The access token generated by the Jira server. |  | String
 | *camel.component.jira.configuration.consumer-key* | (OAuth only) The consumer key from Jira settings. |  | String
 | *camel.component.jira.configuration.delay* | Time in milliseconds to elapse for the next poll. | 6000 | Integer
@@ -151,26 +157,26 @@ The component supports 11 options, which are listed below.
 | *camel.component.jira.configuration.username* | (Basic authentication only) The username to authenticate to the Jira server. Use only if OAuth is not enabled on the Jira server. Do not set the username and OAuth token parameter, if they are both set, the username basic authentication takes precedence. |  | String
 | *camel.component.jira.configuration.verification-code* | (OAuth only) The verification code from Jira generated in the first step of the authorization proccess. |  | String
 | *camel.component.jira.enabled* | Whether to enable auto configuration of the jira component. This is enabled by default. |  | Boolean
-| *camel.component.jira.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.jira.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-### Client Factory
+== Client Factory
 
 You can bind the `JiraRestClientFactory` with name *JiraRestClientFactory* in the registry to have it automatically set in the Jira endpoint.
 
-### Authentication
+== Authentication
 
 Camel-jira supports *https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-basic-authentication/[Basic Authentication]* and *https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/[OAuth 3 legged authentication]*.
 
 We recommend to use OAuth whenever possible, as it provides the best security for your users and system.
 
-#### Basic authentication requirements:
+=== Basic authentication requirements:
 
 * An username and password
 
-#### OAuth authentication requirements:
+=== OAuth authentication requirements:
 
 Follow the tutorial in https://developer.atlassian.com/cloud/jira/platform/jira-rest-api-oauth-authentication/[Jira OAuth documentation]
 to generate the client private key, consumer key, verification code and access token.
@@ -180,11 +186,11 @@ to generate the client private key, consumer key, verification code and access t
 * The consumer key, set in the Jira server settings.
 * An access token, generated by Jira server.
 
-### JQL:
+== JQL:
 
-The JQL URI option is used by both consumer endpoints.  Theoretically,
+The JQL URI option is used by both consumer endpoints.  Theoretically,
 items like "project key", etc. could be URI options themselves.
- However, by requiring the use of JQL, the consumers become much more
+ However, by requiring the use of JQL, the consumers become much more
 flexible and powerful.
 
 At the bare minimum, the consumers will require the following:
@@ -216,7 +222,7 @@ delay, etc. Example:
 jira://[type]?[required options]&jql=RAW(project=[project key] AND status in (Open, \"Coding In Progress\") AND \"Number of comments\">0)"
 ----------------------------------------------------------------------------------------------------------------------------------------------
 
-## Operations
+== Operations
 
 See a list of required headers to set when using the Jira operations. The author field for the producers is automatically set to the authenticated user in the Jira side.
 
@@ -224,7 +230,7 @@ If any required field is not set, then an IllegalArgumentException is throw.
 
 There are operations that requires `id` for fields suchs as: issue type, priority, transition. Check the valid `id` on your jira project as they may differ on a jira installation and project workflow.
 
-### AddIssue
+== AddIssue
 
 Required:
 
@@ -240,14 +246,14 @@ Optional:
 * `IssueWatchersAdd`: A list of strings with the usernames to add to the watcher list.
 * `IssueDescription`: The description of the issue.
 
-### AddComment
+== AddComment
 
 Required:
 
 * `IssueKey`: The issue key identifier.
 * body of the exchange is the description.
 
-### AttachFile
+== AttachFile
 
 Only one file should attach per invocation.
 
@@ -256,13 +262,13 @@ Required:
 * `IssueKey`: The issue key identifier.
 * body of the exchange should be of type `GenericFile`
 
-### DeleteIssue
+== DeleteIssue
 
 Required:
 
 * `IssueKey`: The issue key identifier.
 
-### TransitionIssue
+== TransitionIssue
 
 Required:
 
@@ -270,7 +276,7 @@ Required:
 * `IssueTransitionId`: The issue transition `id`.
 * body of the exchange is the description.
 
-### UpdateIssue
+== UpdateIssue
 
 * `IssueKey`: The issue key identifier.
 * `IssueTypeId` or `IssueTypeName`: The `id` of the issue type or the name of the issue type, you can see the valid list in `\http://jira_server/rest/api/2/issue/createmeta?projectKeys=SAMPLE_KEY`.
@@ -280,7 +286,7 @@ Required:
 * `IssueComponents`: A list of string with the valid component names.
 * `IssueDescription`: The description of the issue.
 
-### Watcher
+== Watcher
 
 * `IssueKey`: The issue key identifier.
 * `IssueWatchersAdd`: A list of strings with the usernames to add to the watcher list.

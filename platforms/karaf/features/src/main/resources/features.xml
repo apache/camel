@@ -23,7 +23,10 @@
   <repository>mvn:org.ops4j.pax.cdi/pax-cdi-features/${pax-cdi-version}/xml/features</repository>
   <repository>mvn:org.apache.karaf.features/spring-legacy/${karaf4-version}/xml/features</repository>
   <repository>mvn:org.hibernate.validator/hibernate-validator-osgi-karaf-features/${hibernate-validator-version}/xml/features</repository>
-  <repository>mvn:ca.uhn.hapi.fhir.karaf/hapi-fhir/${hapi-fhir-version}/xml/features</repository>
+  <repository>mvn:org.infinispan/infinispan-commons/${infinispan-version}/xml/features</repository>
+  <repository>mvn:org.infinispan/infinispan-core/${infinispan-version}/xml/features</repository>
+  <repository>mvn:org.infinispan/infinispan-jboss-marshalling/${infinispan-version}/xml/features</repository>
+  <repository>mvn:org.infinispan/infinispan-client-hotrod/${infinispan-version}/xml/features</repository>
 
   <feature name='xml-specs-api' version='${servicemix-specs-version}' start-level='10'>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.activation-api-1.1/${servicemix-specs-version}</bundle>
@@ -44,19 +47,21 @@
   <feature name='camel-core' version='${project.version}' start-level='50'>
     <feature version='${servicemix-specs-version}'>xml-specs-api</feature>
     <bundle dependency='true'>mvn:com.github.ben-manes.caffeine/caffeine/${caffeine-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.camel/camel-util-json/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/spi-annotations/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-management-api/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-util/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-util-json/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-support/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-base/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-management-impl/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-management/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-core-engine/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-core-osgi/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cloud/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jaxp/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-main/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-caffeine-lrucache/${project.version}</bundle>
     <!-- core components -->
     <bundle>mvn:org.apache.camel/camel-bean/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-browse/${project.version}</bundle>
@@ -69,7 +74,6 @@
     <bundle>mvn:org.apache.camel/camel-language/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-log/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mock/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-properties/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ref/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rest/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-saga/${project.version}</bundle>
@@ -114,18 +118,17 @@
   <feature name='camel-activemq' version='${project.version}' start-level='50'>
     <feature prerequisite='true'>wrap</feature>
     <feature version='${project.version}'>camel-jms</feature>
-    <feature version="[4,6)">spring</feature>
-    <feature version="[4,5)">shell-compat</feature>
+    <feature version="[5,6)">spring</feature>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/1.1.1</bundle>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/1.1.1</bundle>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-jms_1.1_spec/1.1.1</bundle>
     <bundle dependency="true">mvn:org.apache.geronimo.specs/geronimo-j2ee-management_1.1_spec/1.0.1</bundle>
-    <bundle dependency="true">mvn:org.jvnet.jaxb2_commons/jaxb2-basics-runtime/0.6.4</bundle>
+    <bundle dependency="true">mvn:org.jvnet.jaxb2_commons/jaxb2-basics-runtime/0.12.0</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-impl/2.2.11_1</bundle>
-    <bundle dependency='true'>mvn:org.apache.commons/commons-pool2/2.4.2</bundle>
-    <bundle dependency='true'>mvn:commons-net/commons-net/3.6</bundle>
-    <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/3.4.6</bundle>
-    <bundle>wrap:mvn:org.apache.activemq/activemq-osgi/${activemq-version}$overwrite=merge&amp;Import-Package=org.springframework.*;resolution:=optional;version="[4,6)",*;resolution:=optional</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
+    <bundle dependency='true'>mvn:commons-net/commons-net/${commons-net-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
+    <bundle>wrap:mvn:org.apache.activemq/activemq-osgi/${activemq-version}$overwrite=merge&amp;Import-Package=org.springframework.*;resolution:=optional;version="[5,6)",*;resolution:=optional</bundle>
     <bundle>mvn:org.apache.camel/camel-activemq/${project.version}</bundle>
   </feature>
   <feature name='camel-ahc' version='${project.version}' start-level='50'>
@@ -139,13 +142,14 @@
     <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-kqueue/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec-socks/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-handler-proxy/${netty-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.typesafe.netty/netty-reactive-streams/${netty-reactive-streams-version}</bundle>
     <bundle dependency='true'>mvn:org.reactivestreams/reactive-streams/${reactive-streams-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ahc/${project.version}</bundle>
@@ -170,9 +174,17 @@
     <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-amqp/${project.version}</bundle>
   </feature>
+  <feature name='camel-any23' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.any23/${apache-any23-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.eclipse.rdf4j/rdf4j-model/${rdf4j-model-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.eclipse.rdf4j/rdf4j-rio-api/${rdf4j-rio-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-any23/${project.version}</bundle>
+  </feature>
   <feature name='camel-apns' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
@@ -210,7 +222,7 @@
   </feature>
   <feature name='camel-atom' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.abdera/abdera-core/${abdera-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.abdera/abdera-extensions-main/${abdera-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.abdera/abdera-i18n/${abdera-version}</bundle>
@@ -240,7 +252,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-compress/${commons-compress-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-avro/${project.version}</bundle>
@@ -263,13 +275,14 @@
      <feature version='${project.version}'>camel-aws-sns</feature>
      <feature version='${project.version}'>camel-aws-sqs</feature>
      <feature version='${project.version}'>camel-aws-swf</feature>
+     <feature version='${project.version}'>camel-aws-translate</feature>
   </feature>
   <feature name='camel-aws-s3' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -284,7 +297,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -299,7 +312,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -314,7 +327,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -329,7 +342,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -344,7 +357,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -359,7 +372,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -374,7 +387,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -389,7 +402,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -404,7 +417,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -419,7 +432,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -434,7 +447,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -449,7 +462,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -464,7 +477,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -479,7 +492,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -494,7 +507,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -509,7 +522,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -518,6 +531,21 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aws-java-sdk/${aws-java-sdk-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-aws-swf/${project.version}</bundle>
+  </feature>
+  <feature name='camel-aws-translate' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.aws-java-sdk/${aws-java-sdk-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-aws-translate/${project.version}</bundle>
   </feature>
   <feature name='camel-aws-xray' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -566,11 +594,6 @@
   <feature name='camel-bindy' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-bindy/${project.version}</bundle>
-  </feature>
-  <feature name='camel-boon' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:io.fastjson/boon/${boon-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-boon/${project.version}</bundle>
   </feature>
   <feature name='camel-box' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -643,13 +666,6 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-cbor/${jackson2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cbor/${project.version}</bundle>
   </feature>
-  <feature name='camel-cdi' version='${project.version}' start-level='50'>
-    <details>camel-cdi in OSGi is deprecated. Use blueprint instead. camel-cdi requires that either pax-cdi-weld or pax-cdi-openwebbeans has been installed</details>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${pax-cdi-version}'>pax-cdi</feature>
-    <feature>eventadmin</feature>
-    <bundle>mvn:org.apache.camel/camel-cdi/${project.version}</bundle>
-  </feature>
   <feature name='camel-chatscript' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -673,7 +689,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.libphonenumber/${libphonenumber-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cm-sms/${project.version}</bundle>
   </feature>
   <feature name='camel-cmis' version='${project.version}' start-level='50'>
@@ -700,7 +716,7 @@
     <details>camel-cometd currently requires jetty 9</details>
     <feature version="[9,10)">jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:org.cometd.java/cometd-java-server/${cometd-java-server}</bundle>
     <bundle dependency='true'>mvn:org.cometd.java/bayeux-api/${cometd-java-server}</bundle>
     <bundle dependency='true'>mvn:org.cometd.java/cometd-java-common/${cometd-java-server}</bundle>
@@ -727,7 +743,7 @@
   <feature name='camel-corda' version='${project.version}' start-level='50'>
     <feature prerequisite='true'>wrap</feature>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:io.reactivex/rxjava/1.2.4</bundle>
+    <bundle dependency='true'>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.corda/corda-core/${corda-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.corda/corda-node-api/${corda-version}</bundle>
     <bundle dependency='true'>wrap:mvn:net.corda/corda-rpc/${corda-version}</bundle>
@@ -740,7 +756,7 @@
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-couchdb/${project.version}</bundle>
   </feature>
   <feature name='camel-couchbase' version='${project.version}' start-level='50'>
@@ -854,8 +870,8 @@
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
     <bundle dependency='true'>mvn:commons-beanutils/commons-beanutils/${commons-beanutils-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
-    <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el3-version}</bundle>
-    <bundle dependency='true'>mvn:org.glassfish/javax.el/${javax.el3-version}</bundle>
+    <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax-el3-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish/javax.el/${javax-el3-version}</bundle>
     <bundle dependency='true'>mvn:org.objenesis/objenesis/${objenesis-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-dozer/${project.version}</bundle>
   </feature>
@@ -863,7 +879,7 @@
     <feature version="${project.version}">camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:com.dropbox.core/dropbox-core-sdk/${dropbox-version}</bundle>
     <!-- sadly dropbox-core-sdk include test scoped dependencies in its MANIFEST.MF OSGi import
          so we need a bunch of other bundles here -->
@@ -875,6 +891,7 @@
     <bundle>mvn:org.apache.camel/camel-dropbox/${project.version}</bundle>
   </feature>
   <feature name='camel-ehcache' version='${project.version}' start-level='50'>
+    <feature>scr</feature>
     <feature version="${project.version}">camel-core</feature>
     <bundle dependency="true">mvn:org.ehcache/ehcache/${ehcache3-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ehcache/${project.version}</bundle>
@@ -885,7 +902,6 @@
     <bundle>mvn:org.apache.camel/camel-elsql/${project.version}</bundle>
   </feature>
   <feature name='camel-elasticsearch-rest' version='${project.version}' start-level='50'>
-    <details>camel-elasticsearch-rest currently does not work in OSGi</details>
     <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -911,6 +927,8 @@
     <bundle dependency='true'>mvn:io.netty/netty-codec-dns/${netty-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch/${elasticsearch-rest-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.elasticsearch-client/${elasticsearch-rest-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.logging.log4j/log4j-core/${log4j2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.logging.log4j/log4j-api/${log4j2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-elasticsearch-rest/${project.version}</bundle>
   </feature>
   <feature name='camel-etcd' version='${project.version}' start-level='50'>
@@ -955,15 +973,10 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.fastjson/${fastjson-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-fastjson/${project.version}</bundle>
   </feature>
-  <feature name='camel-fhir' version='${project.version}' start-level='50'>
+  <feature name='camel-file-watch' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${hapi-fhir-version}'>hapi-fhir</feature>
-    <feature version='${hapi-fhir-version}'>hapi-fhir-client</feature>
-    <feature version='${hapi-fhir-version}'>hapi-fhir-dstu2</feature>
-    <feature version='${hapi-fhir-version}'>hapi-fhir-dstu3</feature>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.camel/camel-fhir-api/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-fhir/${project.version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.methvin/directory-watcher/${directory-watcher-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-file-watch/${project.version}</bundle>
   </feature>
   <feature name='camel-flatpack' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1025,7 +1038,7 @@
     <bundle dependency='true'>mvn:org.eclipse.jgit/org.eclipse.jgit/${jgit-version}</bundle>
     <bundle dependency='true'>mvn:com.googlecode.javaewah/JavaEWAH/${java-ewah-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsch/${jsch-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcprov-jdk15on/${bouncycastle-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcpg-jdk15on/${bouncycastle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
@@ -1053,7 +1066,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-bigquery/${project.version}</bundle>
   </feature>
@@ -1105,7 +1118,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.api-client/google-api-client/${google-api-client-version}</bundle>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.apis/google-api-services-gmail/${google-api-services-mail-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client/${google-api-client-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.http-client/google-http-client-jackson2/${google-api-client-version}</bundle>
@@ -1128,8 +1141,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-google-pubsub/${project.version}</bundle>
   </feature>
   <feature name='camel-grape' version='${project.version}' start-level='50'>
@@ -1138,6 +1150,12 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-grape/${project.version}</bundle>
+  </feature>
+  <feature name='camel-graphql' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-graphql/${project.version}</bundle>
   </feature>
   <feature name='camel-groovy' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1167,9 +1185,11 @@
     <bundle dependency='true'>mvn:io.netty/netty-tcnative-boringssl-static/${grpc-netty-tcnative-boringssl-static-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${grpc-guava-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.errorprone/error_prone_annotations/${grpc-errorprone-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <!-- Third party dependencies -->
     <bundle dependency='true'>mvn:org.javassist/javassist/${javassist-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:com.auth0/java-jwt/${grpc-java-jwt-version}</bundle>  
+    <bundle dependency='true'>wrap:mvn:io.perfmark/perfmark-api/${perfmark-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.auth0/java-jwt/${grpc-java-jwt-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.auth/google-auth-library-credentials/${grpc-google-auth-library-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.google.auth/google-auth-library-oauth2-http/${grpc-google-auth-library-version}</bundle>
     <bundle dependency='true'>mvn:com.google.code.findbugs/jsr305/${google-findbugs-jsr305-version}</bundle>
@@ -1202,8 +1222,8 @@
     <bundle dependency='true'>mvn:com.hazelcast/hazelcast-client/${hazelcast-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hazelcast/${project.version}</bundle>
   </feature>
-  <feature name='camel-hdfs2' version='${project.version}' start-level='50'>
-    <details>The camel-hdfs2 feature can only run if you have libsnappyjava.dylib in java.library.path</details>
+  <feature name='camel-hdfs' version='${project.version}' start-level='50'>
+    <details>The camel-hdfs feature can only run if you have libsnappyjava.dylib in java.library.path</details>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
@@ -1233,7 +1253,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/${servicemix-specs-version}</bundle>
     <bundle dependency='true'>wrap:mvn:org.apache.htrace/htrace-core/${htrace-version}$Bundle-SymbolicName=Apache-HTrace-Core</bundle>
-    <bundle>mvn:org.apache.camel/camel-hdfs2/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-hdfs/${project.version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-client/${hadoop2-bundle-version}</bundle>
   </feature>
   <feature name='camel-headersmap' version='${project.version}' start-level='50'>
@@ -1251,26 +1271,26 @@
     <bundle>mvn:org.apache.camel/camel-hipchat/${project.version}</bundle>
   </feature>
   <feature name='camel-hl7' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-netty4</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <feature version='${project.version}'>camel-netty</feature>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle dependency='true'>mvn:ca.uhn.hapi/hapi-osgi-base/${hapi-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-hl7/${project.version}</bundle>
   </feature>
-  <feature name='camel-http4' version='${project.version}' start-level='50'>
+  <feature name='camel-http' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-http4/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http/${project.version}</bundle>
   </feature>
   <feature name='camel-hystrix' version='${project.version}' start-level='50'>
     <feature prerequisite='true'>wrap</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hystrix/${hystrix-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hystrix-event-stream/${hystrix-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:commons-configuration/commons-configuration/${commons-configuration-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:io.reactivex/rxjava/${rxjava-version}</bundle>
@@ -1317,29 +1337,10 @@
   </feature>
   <feature name='camel-infinispan' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature>transaction</feature>
-    <feature>aries-blueprint</feature>
-    <bundle dependency='true'>mvn:org.infinispan/infinispan-core/${infinispan-version}</bundle>
-    <bundle dependency='true'>mvn:org.infinispan/infinispan-commons/${infinispan-version}</bundle>
-    <bundle dependency='true'>mvn:org.infinispan/infinispan-query-dsl/${infinispan-version}</bundle>
-    <bundle dependency='true'>mvn:org.infinispan/infinispan-client-hotrod/${infinispan-version}</bundle>
-    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
-    <bundle dependency='true'>mvn:com.github.ben-manes.caffeine/caffeine/${caffeine-version}</bundle>
-    <bundle dependency='true'>mvn:io.reactivex.rxjava2/rxjava/${rxjava2-version}</bundle>
-    <bundle dependency='true'>mvn:org.reactivestreams/reactive-streams/${reactive-streams-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
-    <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-osgi/${jboss-marshalling-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${jboss-marshalling-version}</bundle>
-    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
+    <feature version="${infinispan-version}">infinispan-commons</feature>
+    <feature version="${infinispan-version}">infinispan-core</feature>
+    <feature version="${infinispan-version}">infinispan-jboss-marshalling</feature>
+    <feature version="${infinispan-version}">infinispan-client-hotrod-with-query</feature>
     <bundle>mvn:org.apache.camel/camel-infinispan/${project.version}</bundle>
   </feature>
   <feature name='camel-influxdb' version='${project.version}' start-level='50'>
@@ -1385,7 +1386,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-xml/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2v4-api-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jacksonxml/${project.version}</bundle>
   </feature>
   <feature name='camel-jasypt' version='${project.version}' start-level='50'>
@@ -1413,6 +1414,12 @@
     <bundle dependency='true'>mvn:org.kie/kie-api/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-core-reflective/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-canonical-model/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-model-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-parser/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:com.github.javaparser/javaparser-core/${javaparser-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/kie-pmml/${jbpm-version}</bundle>
     <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
@@ -1434,7 +1441,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.datatype/jackson-datatype-jsr310/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jaxws-api-2.2/${servicemix-specs-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream-java8/${xstream-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-xjc/${jaxb-bundle-version}</bundle>
@@ -1482,7 +1489,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jgroups-raft/${project.version}</bundle>
-    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-raft-jgroups-version}</bundle>
+    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
     <bundle dependency='true'>mvn:org.jgroups/jgroups-raft/${jgroups-raft-version}</bundle>
     <bundle dependency='true'>mvn:org.fusesource.leveldbjni/leveldbjni-all/${jgroups-raft-leveldbjni-version}</bundle>
     <bundle dependency='true'>mvn:org.mapdb/mapdb/${jgroups-raft-mapdb-version}</bundle>
@@ -1536,7 +1543,7 @@
     <feature version='${spring-version-range}'>spring-tx</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-annotation_1.0_spec/${geronimo-annotation-1.0-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jpa_2.1_spec/${geronimo-jpa-spec-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-el_1.0_spec/${geronimo-el-spec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-jta_1.1_spec/${geronimo-jta-spec-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
@@ -1579,7 +1586,7 @@
   <feature name='camel-jt400' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature>transaction</feature>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jt400/${jt400-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jt400/${project.version}</bundle>
   </feature>
@@ -1609,6 +1616,12 @@
     <bundle dependency='true'>mvn:io.fabric8/openshift-client/${kubernetes-client-version}/jar/bundle</bundle>
     <bundle>mvn:org.apache.camel/camel-kubernetes/${project.version}</bundle>
   </feature>
+  <feature name='camel-kudu' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.apache.kudu/kudu-client/${kudu-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.apache.yetus/audience-annotations/${yetus-audience-annotations-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-kudu/${project.version}</bundle>
+  </feature>
   <feature name='camel-kura' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature>scr</feature>
@@ -1620,55 +1633,26 @@
   </feature>
   <feature name='camel-ldif' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-i18n/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-asn1-api/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-asn1-ber/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-client-api/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-codec-core/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-aci/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-codec/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-codec-api/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-util/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-model/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-schema-data/1.0.0</bundle>
-    <bundle dependency='true'>mvn:org.apache.directory.api/api-util/1.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-i18n/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-asn1-api/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-asn1-ber/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-client-api/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-codec-core/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-aci/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-codec/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-codec-api/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-extras-util/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-model/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-ldap-schema-data/2.0.0</bundle>
+    <bundle dependency='true'>mvn:org.apache.directory.api/api-util/2.0.0</bundle>
     <bundle dependency='true'>mvn:org.apache.directory.server/apacheds-core-api/${apacheds-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/2.7.7_5</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
-    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-ldif/${project.version}</bundle>
-  </feature>
-  <feature name='camel-linkedin' version='${project.version}' start-level='50'>
-    <feature>aries-blueprint</feature>
-    <feature>pax-http-whiteboard</feature>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${cxf-version-range}'>cxf-core</feature>
-    <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
-    <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-api/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-common/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty.websocket/websocket-client/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.apache.httpcomponents/httpmime/${httpclient4-version}$Export-Package=org.apache.http.*;version=${httpclient4-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-collections4/${commons-collections4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.htmlunit/${htmlunit-bundle-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.w3c.css/sac/1.3</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.bcel/${bcel-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
-    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:org.jsoup/jsoup/${jsoup-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xalan/${xalan-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-linkedin-api/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-linkedin/${project.version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-ldif/${project.version}</bundle>
   </feature>
   <feature name='camel-leveldb' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1720,7 +1704,7 @@
   </feature>
   <feature name='camel-mail' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:com.sun.mail/javax.mail/${javax-mail-version}</bundle>
+    <bundle dependency='true'>mvn:com.sun.mail/jakarta.mail/${jakarta-mail-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mail/${project.version}</bundle>
   </feature>
@@ -1770,34 +1754,26 @@
     <bundle dependency='true'>mvn:org.eclipse.milo/bsd-parser-gson/${milo-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-milo/${project.version}</bundle>
   </feature>
-  <feature name='camel-mina2' version='${project.version}' start-level='50'>
+  <feature name='camel-mina' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-mina2/${project.version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-mina/${project.version}</bundle>
   </feature>
   <feature name='camel-mllp' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mllp/${project.version}</bundle>
   </feature>
-  <feature name='camel-mongodb3' version='${project.version}' start-level='50'>
+  <feature name='camel-mongodb' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jackson</feature>
     <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-mongodb3/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-mongodb/${project.version}</bundle>
   </feature>
   <feature name='camel-mongodb-gridfs' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-jackson</feature>
     <bundle dependency='true'>mvn:org.mongodb/mongo-java-driver/${mongo-java-driver-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-mongodb-gridfs/${project.version}</bundle>
-  </feature>
-  <feature name='camel-mqtt' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.fusesource.mqtt-client/mqtt-client/${mqtt-client-version}</bundle>
-    <bundle dependency='true'>mvn:org.fusesource.hawtdispatch/hawtdispatch/${hawtdispatch-version}</bundle>
-    <bundle dependency='true'>mvn:org.fusesource.hawtdispatch/hawtdispatch-transport/${hawtdispatch-version}</bundle>
-    <bundle dependency='true'>mvn:org.fusesource.hawtbuf/hawtbuf/${hawtbuf-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-mqtt/${project.version}</bundle>
   </feature>
   <feature name='camel-msv' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1838,7 +1814,7 @@
     <bundle dependency='true'>mvn:net.i2p.crypto/eddsa/${eddsa-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-nats/${project.version}</bundle>
   </feature>
-  <feature name='camel-netty4' version='${project.version}' start-level='50'>
+  <feature name='camel-netty' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
@@ -1849,15 +1825,20 @@
     <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-netty4/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-netty/${project.version}</bundle>
   </feature>
-  <feature name='camel-netty4-http' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-netty4</feature>
+  <feature name='camel-netty-http' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-netty</feature>
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-netty4-http/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-netty-http/${project.version}</bundle>
+  </feature>
+  <feature name='camel-nitrite' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.dizitart/nitrite/${nitrite-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-nitrite/${project.version}</bundle>
   </feature>
   <feature name='camel-nsq' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -1886,7 +1867,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpasyncclient-osgi/${httpasyncclient-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:com.google.code.gson/gson/${olingo2-gson-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.olingo/olingo-odata2-api/${olingo2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.olingo-odata2-core/${olingo-odata2-core-bundle-version}</bundle>
@@ -1907,7 +1888,6 @@
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
-    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpasyncclient-osgi/${httpasyncclient-version}</bundle>
@@ -1916,8 +1896,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-xml/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.codehaus.woodstox/woodstox-core-asl/${woodstox-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2v4-api-bundle-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml/aalto-xml/0.9.10</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
@@ -1951,11 +1930,17 @@
     <bundle dependency='true'>mvn:org.kie/kie-api/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-core/${drools-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-core-reflective/${drools-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-canonical-model/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-model-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-compiler/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-mvel-parser/${jbpm-version}</bundle>
+    <bundle dependency='true'>mvn:com.github.javaparser/javaparser-core/${javaparser-version}</bundle>
     <bundle dependency='true'>mvn:org.drools/drools-compiler/${drools-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jaxb-xjc/${jaxb-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream-java8/${xstream-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java/${protobuf-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/${javax-inject-bundle-version}</bundle>
@@ -2035,6 +2020,7 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${protobuf-guava-version}</bundle>
     <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <bundle>mvn:org.apache.camel/camel-protobuf/${project.version}</bundle>
   </feature>
   <feature name='camel-pubnub' version='${project.version}' start-level='50'>
@@ -2052,16 +2038,16 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.pulsar-client-admin/${pulsar-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-pulsar/${project.version}</bundle>
   </feature>
-  <feature name='camel-quartz2' version='${project.version}' start-level='50'>
+  <feature name='camel-quartz' version='${project.version}' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.c3p0/${c3p0-bundle-version}</bundle>
     <bundle dependency='true'>mvn:com.zaxxer/HikariCP-java7/${hikaricp-version}</bundle>
-    <bundle dependency='true'>wrap:mvn:org.quartz-scheduler/quartz/${quartz2-version}$overwrite=merge&amp;DynamicImport-Package=org.apache.camel.component.quartz2</bundle>
+    <bundle dependency='true'>wrap:mvn:org.quartz-scheduler/quartz/${quartz-version}$overwrite=merge&amp;DynamicImport-Package=org.apache.camel.component.quartz</bundle>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle>mvn:org.apache.camel/camel-quartz2/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-quartz/${project.version}</bundle>
   </feature>
   <feature name='camel-quickfix' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/${saxon-bundle-version}</bundle>
     <bundle>mvn:org.quickfixj/quickfixj-all/${quickfixj-version}</bundle>
@@ -2085,23 +2071,22 @@
     <bundle dependency='true'>wrap:mvn:io.micrometer/micrometer-core/${micrometer-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-reactor/${project.version}</bundle>
   </feature>
-  <feature name='camel-restlet' version='${project.version}' start-level='50'>
+  <!-- does not work in OSGi: https://github.com/resilience4j/resilience4j/issues/750
+  <feature name='camel-resilience4j' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:https://maven.restlet.com@id=restlet!org.restlet.osgi/org.restlet/${restlet-version}</bundle>
-    <bundle dependency='true'>mvn:https://maven.restlet.com@id=restlet!org.restlet.osgi/org.restlet.ext.httpclient/${restlet-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-restlet/${project.version}</bundle>
-  </feature>
-  <feature name='camel-restlet-jackson' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-restlet</feature>
-    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2-api-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.codehaus.woodstox/woodstox-core-asl/${restlet-woodstox-version}</bundle>
+    <bundle dependency='true'>mvn:io.github.resilience4j/resilience4j-core/${resilience4j-version}</bundle>
+    <bundle dependency='true'>mvn:io.github.resilience4j/resilience4j-circuitbreaker/${resilience4j-version}</bundle>
+    <bundle dependency='true'>mvn:io.github.resilience4j/resilience4j-bulkhead/${resilience4j-version}</bundle>
+    <bundle dependency='true'>mvn:io.github.resilience4j/resilience4j-timelimiter/${resilience4j-version}</bundle>
+    <bundle dependency='true'>mvn:io.vavr/vavr/${vavr-version}</bundle>
+    <bundle dependency='true'>mvn:io.vavr/vavr-match/${vavr-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-resilience4j/${project.version}</bundle>
+  </feature> -->
+  <feature name='camel-rest-openapi' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-http</feature>
     <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
+    <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-1-api-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
@@ -2111,16 +2096,14 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jsonSchema/${jackson2-version}</bundle>
-    <bundle>mvn:https://maven.restlet.com@id=restlet!org.restlet.osgi/org.restlet.ext.jackson/${restlet-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.apicurio/apicurio-data-models/${apicurio-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-rest-openapi/${project.version}</bundle>
   </feature>
-  <feature name='camel-restlet-gson' version='${project.version}' start-level='50'>
-    <feature version='${project.version}'>camel-restlet</feature>
-    <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.code.gson/gson/${gson-version}</bundle>
-    <bundle>mvn:https://maven.restlet.com@id=restlet!org.restlet.osgi/org.restlet.ext.gson/${restlet-version}</bundle>
-  </feature>
+
   <feature name='camel-rest-swagger' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-http</feature>
     <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-1-api-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
@@ -2134,12 +2117,20 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jsonSchema/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-java-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-core/${swagger-java-version}</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-annotations/${swagger-java-version}</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-models/${swagger-java-version}</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-jaxrs/${swagger-java-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.swagger/swagger-parser/${swagger-java-parser-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rest-swagger/${project.version}</bundle>
+  </feature>
+    <feature name='camel-robotframework' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.robotframework/robotframework/${robotframework-version}</bundle>
+	<bundle dependency='true'>wrap:mvn:org.python/jython/${jython-version}</bundle>
+	<bundle dependency='true'>wrap:mvn:org.python/jython-standalone/${jython-standalone-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-robotframework/${project.version}</bundle>
   </feature>
   <feature name='camel-rss' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-atom</feature>
@@ -2164,10 +2155,11 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jsonSchema/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.datatype/jackson-datatype-jsr310/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-1-api-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream-java8/${xstream-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:org.cometd.java/cometd-java-client/${cometd-java-client-version}</bundle>
     <bundle dependency='true'>mvn:org.cometd.java/bayeux-api/${cometd-java-client-version}</bundle>
     <bundle dependency='true'>mvn:org.cometd.java/cometd-java-common/${cometd-java-client-version}</bundle>
@@ -2250,7 +2242,7 @@
     <bundle dependency='true'>mvn:org.apache.camel/camel-util-json/${project.version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-slack/${project.version}</bundle>
   </feature>
   <feature name='camel-smpp' version='${project.version}' start-level='50'>
@@ -2326,16 +2318,6 @@
 
     <bundle>mvn:org.apache.camel/camel-soroush/${project.version}</bundle>
   </feature>
-  <feature name='camel-spark-rest' version='${project.version}' start-level='50'>
-    <details>camel-spark-rest is deprecated in OSGi, use camel-servlet or camel-jetty instead.
-      This feature requires sun.reflect package, you'll need to add it to your container. In Karaf you can do this by
-      adding sun.reflect in the JDK8 section of etc/jre.properties file
-    </details>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-jetty</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.sparkjava-core/${spark-rest-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-spark-rest/${project.version}</bundle>
-  </feature>
   <feature name='camel-splunk' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.splunk/${splunk-version}</bundle>
@@ -2392,22 +2374,9 @@
     <bundle dependency='true'>mvn:org.apache.commons/commons-pool2/${commons-pool2-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-spring-redis/${project.version}</bundle>
   </feature>
-  <feature name='camel-spring-security' version='${project.version}' start-level='50'>
-    <details>camel-spring-security is deprecated</details>
-    <feature>http</feature>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${spring-version-range}'>spring</feature>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-security-core/${spring-security-bundle-version}</bundle>
-    <bundle dependency="true">mvn:net.sf.ehcache/ehcache/${ehcache-version}</bundle>
-    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.spring-security-config/${spring-security-bundle-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-spring-security/${project.version}</bundle>
-  </feature>
   <feature name='camel-spring-ws' version='${project.version}' start-level='50'>
     <feature>http</feature>
-    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-xslt-saxon</feature>
     <feature version='${spring-version-range}'>spring</feature>
     <feature version='${spring-version-range}'>spring-jms</feature>
     <feature version='${spring-version-range}'>spring-oxm</feature>
@@ -2431,7 +2400,7 @@
   </feature>
   <feature name='camel-ssh' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.sshd/sshd-core/${sshd-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcprov-jdk15on/${bouncycastle-version}</bundle>
     <bundle dependency='true'>mvn:org.bouncycastle/bcpkix-jdk15on/${bouncycastle-version}</bundle>
@@ -2480,6 +2449,7 @@
     <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-1-api-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${swagger-java-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/failureaccess/1.0.1</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-core/${swagger-java-version}</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-annotations/${swagger-java-version}</bundle>
     <bundle dependency='true'>mvn:io.swagger/swagger-models/${swagger-java-version}</bundle>
@@ -2488,9 +2458,27 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.reflections/${reflections-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-swagger-java/${project.version}</bundle>
   </feature>
+  <feature name='camel-openapi-java' version='${project.version}' start-level='50'>
+    <feature>http</feature>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr311-api-1.1.1/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-xml/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.dataformat/jackson-dataformat-yaml/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.yaml/snakeyaml/${snakeyaml-version}</bundle>
+    <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-1-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-lang3/${commons-lang3-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:io.apicurio/apicurio-data-models/${apicurio-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-openapi-java/${project.version}</bundle>
+  </feature>
   <feature name='camel-syslog' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-netty4</feature>
+    <feature version='${project.version}'>camel-netty</feature>
     <bundle>mvn:org.apache.camel/camel-syslog/${project.version}</bundle>
   </feature>
   <feature name='camel-tagsoup' version='${project.version}' start-level='50'>
@@ -2506,13 +2494,26 @@
   <feature name='camel-telegram' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <feature version='${project.version}'>camel-webhook</feature>
-    <feature version='${cxf-version-range}'>cxf-core</feature>
-    <feature version='${cxf-version-range}'>cxf-jaxrs</feature>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
-    <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.asynchttpclient/async-http-client/${ahc-version}$Export-Package=org.asynchttpclient.*;version=${ahc-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.asynchttpclient/async-http-client-netty-utils/${ahc-version}$Export-Package=org.asynchttpclient.netty.util.*;version=${ahc-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-buffer/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-dns/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-codec-socks/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-handler-proxy/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-resolver/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-kqueue/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.typesafe.netty/netty-reactive-streams/${netty-reactive-streams-version}</bundle>
+    <bundle dependency='true'>mvn:org.reactivestreams/reactive-streams/${reactive-streams-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-telegram/${project.version}</bundle>
   </feature>
   <feature name='camel-test' version='${project.version}' start-level='50'>
@@ -2571,7 +2572,8 @@
     <bundle dependency='true'>mvn:io.undertow/undertow-core/${undertow-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.xnio/xnio-api/${jboss-xnio-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.xnio/xnio-nio/${jboss-xnio-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-undertow/${project.version}</bundle>
@@ -2617,7 +2619,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
@@ -2626,7 +2628,7 @@
   <feature name='camel-websocket' version='${project.version}' start-level='50'>
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax.servlet-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-websocket/${project.version}</bundle>
   </feature>
   <feature name='camel-websocket-jsr356' version='${project.version}' start-level='50'>
@@ -2658,6 +2660,7 @@
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-base/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.jaxrs/jackson-jaxrs-json-provider/${jackson2-version}</bundle>
     <bundle dependency='true'>mvn:com.fasterxml.jackson.module/jackson-module-jaxb-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.woodstox/stax2-api/${stax2v4-api-bundle-version}</bundle>
     <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-wordpress/${project.version}</bundle>
   </feature>
@@ -2666,6 +2669,12 @@
     <bundle dependency='true'>wrap:mvn:org.knowm.xchange/xchange-core/${xchange-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.github.mmazi/rescu/${rescu-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xchange/${project.version}</bundle>
+  </feature>
+  <feature name='camel-xj' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-xslt-saxon</feature>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-xj/${project.version}</bundle>
   </feature>
   <feature name='camel-xmlsecurity' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
@@ -2691,14 +2700,19 @@
     <bundle dependency='true'>wrap:mvn:org.minidns/minidns-core/${minidns-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xmpp/${project.version}</bundle>
   </feature>
+  <feature name='camel-xslt-saxon' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.saxon/${saxon-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-xslt-saxon/${project.version}</bundle>
+  </feature>
   <feature name='camel-xstream' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.codehaus.jettison/jettison/${jettison-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xpp3/${xpp3-bundle-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/${dom4j-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.kxml2/${kxml2-bundle-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream-java8/${xstream-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xstream/${project.version}</bundle>
   </feature>
   <feature name='camel-yammer' version='${project.version}' start-level='50'>
@@ -2722,6 +2736,7 @@
     <bundle dependency='true'>mvn:io.netty/netty-handler/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport-native-epoll/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty-transport-native-kqueue/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec-socks/${netty-version}</bundle>
@@ -2745,10 +2760,10 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:io.zipkin.brave/brave/${brave-zipkin-version}</bundle>
     <bundle dependency='true'>wrap:mvn:io.zipkin.brave/brave-context-slf4j/${brave-zipkin-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zipkin.zipkin2/zipkin/${zipkin-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zipkin.reporter2/zipkin-reporter/${zipkin-reporter-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zipkin.reporter2/zipkin-sender-urlconnection/${zipkin-reporter-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.zipkin.reporter2/zipkin-sender-libthrift/${zipkin-reporter-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.zipkin2/zipkin/${zipkin-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.reporter2/zipkin-reporter/${zipkin-reporter-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.reporter2/zipkin-sender-urlconnection/${zipkin-reporter-version}</bundle>
+    <bundle dependency='true'>mvn:io.zipkin.reporter2/zipkin-sender-libthrift/${zipkin-reporter-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.thrift/libthrift/${libthrift-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-zipkin/${project.version}</bundle>
   </feature>

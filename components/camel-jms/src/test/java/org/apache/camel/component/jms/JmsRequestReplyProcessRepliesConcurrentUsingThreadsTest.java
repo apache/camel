@@ -47,6 +47,7 @@ public class JmsRequestReplyProcessRepliesConcurrentUsingThreadsTest extends Cam
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

@@ -1,5 +1,5 @@
 [[HowdoIuseCamelinsideServiceMix-HowdoIuseCamelinsideServiceMix]]
-=== How do I use Camel inside ServiceMix?
+= How do I use Camel inside ServiceMix?
 
 See the
 http://servicemix.apache.org/3-beginner-using-apache-camel-inside-servicemix.html[Using Camel with ServiceMix tutorial]

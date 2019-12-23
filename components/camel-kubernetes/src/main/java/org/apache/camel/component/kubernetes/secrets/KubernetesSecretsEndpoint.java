@@ -22,11 +22,10 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Secrets component provides a producer to execute kubernetes secret operations.
+ * The Kubernetes Secrets component provides a producer to execute kubernetes
+ * secret operations.
  */
 @UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-secrets", title = "Kubernetes Secrets", syntax = "kubernetes-secrets:masterUrl", producerOnly = true, label = "container,cloud,paas")
 public class KubernetesSecretsEndpoint extends AbstractKubernetesEndpoint {

@@ -23,6 +23,7 @@ public class ConfiguredRouteBuilder extends RouteBuilder {
     private String fromUri;
     private String toUri;
 
+    @Override
     public void configure() throws Exception {
         ObjectHelper.notNull(fromUri, "fromUri");
         ObjectHelper.notNull(toUri, "toUri");

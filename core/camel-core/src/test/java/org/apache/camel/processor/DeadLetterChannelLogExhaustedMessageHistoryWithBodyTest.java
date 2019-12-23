@@ -37,12 +37,9 @@ public class DeadLetterChannelLogExhaustedMessageHistoryWithBodyTest extends Con
             @Override
             public void configure() throws Exception {
                 // no delay to speedup test
-                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3)
-                        .logExhaustedMessageHistory(true).logExhaustedMessageBody(true));
+                errorHandler(deadLetterChannel("mock:dead").redeliveryDelay(0).maximumRedeliveries(3).logExhaustedMessageHistory(true).logExhaustedMessageBody(true));
 
-                from("direct:start")
-                    .log("Incoming ${body}")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").log("Incoming ${body}").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

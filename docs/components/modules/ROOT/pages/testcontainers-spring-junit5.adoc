@@ -1,0 +1,29 @@
+= Testcontainers Spring
+:page-source: components/camel-testcontainers-spring-junit5/src/main/docs/testcontainers-spring-junit5.adoc
+
+*Available since 3.0.0*
+
+Testing camel components is sometime complex because the 3th party system a component interacts with does not provide testing facilities and/or is only available as a native application. To reduce this complexity, *Camel Testcontainers Spring JUnit 5* extends camel spring test support providing a way to create and interact with containerized applications.
+
+This module is an extension to the camel-testcontainers-junit5 component to add support for Spring.
+Therefore see the documentation for testcontainers for more details.
+
+== Migrating Camel Testcontainers Spring Tests from JUnit 4 to JUnit 5
+Find below some hints to help in migrating camel testcontainers spring tests from JUnit 4 to JUnit 5.
+
+=== Referencing the Camel Testcontainers Spring JUnit5 library in your project
+Projects using `camel-testcontainers-spring` would need to use `camel-testcontainers-spring-junit5`. For instance, maven users would update their pom.xml file as below:
+----
+<dependency>
+  <groupId>org.apache.camel</groupId>
+  <artifactId>camel-testcontainers-spring-junit5</artifactId>
+  <scope>test</scope>
+</dependency>
+----
+
+Tips: It's possible to run JUnit4 & JUnit5 based camel tests side by side including the following dependencies `camel-testcontainers-spring`,
+`camel-testcontainers-spring-junit5` and `junit-vintage-engine`. This configuration allows to migrate a camel test at once.
+
+=== Typical migration steps linked to JUnit 5 support in Camel Testcontainers Spring
+* Migration steps linked to xref:components::testcontainers-junit5.adoc[JUnit 5 support in Camel Testcontainers itself] should have been applied first
+* Imports of `org.apache.camel.test.testcontainers.spring.\*` should be replaced with `org.apache.camel.test.testcontainers.spring.junit5.*`

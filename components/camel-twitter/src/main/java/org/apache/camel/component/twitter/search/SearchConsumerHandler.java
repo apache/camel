@@ -48,6 +48,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         this.keywords = keywords;
     }
 
+    @Override
     public List<Exchange> pollConsume() throws TwitterException {
         String keywords = this.keywords;
 
@@ -68,6 +69,7 @@ public class SearchConsumerHandler extends AbstractTwitterConsumerHandler {
         return search(query);
     }
 
+    @Override
     public List<Exchange> directConsume() throws TwitterException {
         String keywords = this.keywords;
         if (keywords == null || keywords.trim().length() == 0) {

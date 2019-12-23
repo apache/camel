@@ -32,8 +32,7 @@ public class HttpRedirectTest extends BaseJettyTest {
             template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class,
-                                                                    e.getCause());
+            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(301, cause.getStatusCode());
             assertEquals(true, cause.isRedirectError());
             assertEquals(true, cause.hasRedirectLocation());
@@ -52,8 +51,7 @@ public class HttpRedirectTest extends BaseJettyTest {
             template.requestBody("direct:start", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class,
-                                                                    e.getCause());
+            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(302, cause.getStatusCode());
         }
         errorEndpoint.assertIsSatisfied();
@@ -76,9 +74,9 @@ public class HttpRedirectTest extends BaseJettyTest {
                         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
                     }
                 });
-                
-                from("direct:start").onException(HttpOperationFailedException.class).to("mock:error").end()
-                    .to("http://localhost:{{port}}/remove?throwExceptionOnFailure=true").to("mock:result");
+
+                from("direct:start").onException(HttpOperationFailedException.class).to("mock:error").end().to("http://localhost:{{port}}/remove?throwExceptionOnFailure=true")
+                    .to("mock:result");
 
             }
         };

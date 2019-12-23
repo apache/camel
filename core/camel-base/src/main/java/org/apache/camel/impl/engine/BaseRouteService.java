@@ -197,6 +197,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         }
     }
 
+    @Override
     protected void doStart() {
         try {
             warmUp();
@@ -216,6 +217,7 @@ public abstract class BaseRouteService extends ChildServiceSupport {
         }
     }
 
+    @Override
     protected void doStop() {
 
         // if we are stopping CamelContext then we are shutting down

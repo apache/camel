@@ -41,28 +41,6 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
             return (AdvancedHazelcastRingbufferEndpointBuilder) this;
         }
         /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastRingbufferEndpointBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastRingbufferEndpointBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
          * To specify a default operation to use, if no operation header has
          * been provided.
          * 
@@ -74,7 +52,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          */
         default HazelcastRingbufferEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -89,7 +67,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          */
         default HazelcastRingbufferEndpointBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -103,7 +81,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          */
         default HazelcastRingbufferEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -117,7 +95,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          */
         default HazelcastRingbufferEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -131,137 +109,47 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          */
         default HazelcastRingbufferEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastRingbufferEndpointBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastRingbufferEndpointBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastRingbufferEndpointBuilder onErrorDelay(int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastRingbufferEndpointBuilder onErrorDelay(
-                String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastRingbufferEndpointBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastRingbufferEndpointBuilder pollTimeout(
-                String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Group: seda
+         * Group: producer
          */
-        default HazelcastRingbufferEndpointBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+        default HazelcastRingbufferEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Group: seda
+         * Group: producer
          */
-        default HazelcastRingbufferEndpointBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastRingbufferEndpointBuilder transferExchange(
-                boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastRingbufferEndpointBuilder transferExchange(
-                String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+        default HazelcastRingbufferEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -285,7 +173,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          */
         default AdvancedHazelcastRingbufferEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -298,7 +186,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          */
         default AdvancedHazelcastRingbufferEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -311,7 +199,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          */
         default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -324,7 +212,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          */
         default AdvancedHazelcastRingbufferEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -378,7 +266,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
      * distributed ringbuffer.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.16
+     * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-ringbuffer:cacheName</code>

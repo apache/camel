@@ -36,13 +36,11 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StartupListener;
-import org.apache.camel.meta.Experimental;
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.HasId;
@@ -51,6 +49,7 @@ import org.apache.camel.spi.RouteController;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.support.EventNotifierSupport;
+import org.apache.camel.support.RoutePolicySupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.backoff.BackOff;
 import org.apache.camel.util.backoff.BackOffTimer;
@@ -59,12 +58,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A simple implementation of the {@link RouteController} that delays the startup
- * of the routes after the camel context startup and retries to start failing routes.
- *
- * NOTE: this is experimental/unstable.
+ * A supervising capable {@link RouteController} that delays the startup
+ * of the routes after the camel context startup and takes control of starting the routes in a safe manner.
+ * This controller is able to retry starting failing routes, and have various options to configure
+ * settings for backoff between restarting routes.
  */
-@Experimental
 public class SupervisingRouteController extends DefaultRouteController {
     private static final Logger LOGGER = LoggerFactory.getLogger(SupervisingRouteController.class);
     private final Object lock;
@@ -367,7 +365,6 @@ public class SupervisingRouteController extends DefaultRouteController {
 
                 consumer.accept(route);
             } catch (Exception e) {
-
                 if (checker) {
                     // if start fails the route is moved to controller supervision
                     // so its get (eventually) restarted
@@ -406,29 +403,6 @@ public class SupervisingRouteController extends DefaultRouteController {
             routes.stream().filter(r -> r.getStatus() == ServiceStatus.Started).count(),
             routeManager.routes.size()
         );
-    }
-
-    private synchronized void stopRoutes() {
-        if (!isRunAllowed()) {
-            return;
-        }
-
-        final List<String> routeList;
-
-        synchronized (lock) {
-            routeList = routes.stream()
-                .filter(r -> r.getStatus() == ServiceStatus.Started)
-                .map(RouteHolder::getId)
-                .collect(Collectors.toList());
-        }
-
-        for (String route: routeList) {
-            try {
-                stopRoute(route);
-            } catch (Exception e) {
-                // ignored, exception handled by stopRoute
-            }
-        }
     }
 
     // *********************************
@@ -501,11 +475,6 @@ public class SupervisingRouteController extends DefaultRouteController {
             return task != null;
         }
 
-        void clear() {
-            routes.values().forEach(BackOffTimer.Task::cancel);
-            routes.clear();
-        }
-
         public Optional<BackOffTimer.Task> getBackOffContext(String id) {
             return routes.entrySet().stream()
                 .filter(e -> ObjectHelper.equal(e.getKey().getId(), id))
@@ -518,7 +487,7 @@ public class SupervisingRouteController extends DefaultRouteController {
     //
     // *********************************
 
-    private class RouteHolder implements HasId, Comparable<RouteHolder> {
+    private static class RouteHolder implements HasId, Comparable<RouteHolder> {
         private final int order;
         private final Route route;
 
@@ -544,7 +513,7 @@ public class SupervisingRouteController extends DefaultRouteController {
             return getContext().getCamelContext().getRouteController().getRouteStatus(getId());
         }
 
-        public int getInitializationOrder() {
+        int getInitializationOrder() {
             return order;
         }
 
@@ -598,7 +567,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         }
     }
 
-    private class ManagedRoutePolicy implements RoutePolicy {
+    private class ManagedRoutePolicy extends RoutePolicySupport {
 
         private void startRoute(RouteHolder holder) {
             try {
@@ -658,31 +627,6 @@ public class SupervisingRouteController extends DefaultRouteController {
             }
         }
 
-        @Override
-        public void onStart(Route route) {
-        }
-
-        @Override
-        public void onStop(Route route) {
-        }
-
-        @Override
-        public void onSuspend(Route route) {
-        }
-
-        @Override
-        public void onResume(Route route) {
-        }
-
-        @Override
-        public void onExchangeBegin(Route route, Exchange exchange) {
-            // NO-OP
-        }
-
-        @Override
-        public void onExchangeDone(Route route, Exchange exchange) {
-            // NO-OP
-        }
     }
 
     private class CamelContextStartupListener extends EventNotifierSupport implements StartupListener {
@@ -734,7 +678,6 @@ public class SupervisingRouteController extends DefaultRouteController {
     // Filter
     // *********************************
 
-    @Experimental
     public static class FilterResult {
         public static final FilterResult SUPERVISED = new FilterResult(true, null);
 
@@ -759,7 +702,7 @@ public class SupervisingRouteController extends DefaultRouteController {
         }
     }
 
-    @Experimental
     public interface Filter extends Function<Route, FilterResult> {
     }
+
 }

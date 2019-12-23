@@ -49,6 +49,7 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
         this.springAssembler.setAttributeSource(new AnnotationJmxAttributeSource());
     }
 
+    @Override
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {
         ModelMBeanInfo mbi = null;
 

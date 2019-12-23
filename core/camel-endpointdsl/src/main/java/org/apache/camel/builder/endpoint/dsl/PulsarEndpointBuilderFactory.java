@@ -33,13 +33,99 @@ public interface PulsarEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint consumers for the Apache Pulsar component.
+     * Builder for endpoint consumers for the Pulsar component.
      */
     public interface PulsarEndpointConsumerBuilder
             extends
                 EndpointConsumerBuilder {
         default AdvancedPulsarEndpointConsumerBuilder advanced() {
             return (AdvancedPulsarEndpointConsumerBuilder) this;
+        }
+        /**
+         * Group the consumer acknowledgments for the specified time in
+         * milliseconds - defaults to 100.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder ackGroupTimeMillis(
+                long ackGroupTimeMillis) {
+            doSetProperty("ackGroupTimeMillis", ackGroupTimeMillis);
+            return this;
+        }
+        /**
+         * Group the consumer acknowledgments for the specified time in
+         * milliseconds - defaults to 100.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder ackGroupTimeMillis(
+                String ackGroupTimeMillis) {
+            doSetProperty("ackGroupTimeMillis", ackGroupTimeMillis);
+            return this;
+        }
+        /**
+         * Timeout for unacknowledged messages in milliseconds - defaults to
+         * 10000.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder ackTimeoutMillis(
+                long ackTimeoutMillis) {
+            doSetProperty("ackTimeoutMillis", ackTimeoutMillis);
+            return this;
+        }
+        /**
+         * Timeout for unacknowledged messages in milliseconds - defaults to
+         * 10000.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder ackTimeoutMillis(
+                String ackTimeoutMillis) {
+            doSetProperty("ackTimeoutMillis", ackTimeoutMillis);
+            return this;
+        }
+        /**
+         * Whether to allow manual message acknowledgements. If this option is
+         * enabled, then messages are not immediately acknowledged after being
+         * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
+         * header on the org.apache.camel.Exchange. Messages can then be
+         * acknowledged using PulsarMessageReceipt at any time before the
+         * ackTimeout occurs.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder allowManualAcknowledgement(
+                boolean allowManualAcknowledgement) {
+            doSetProperty("allowManualAcknowledgement", allowManualAcknowledgement);
+            return this;
+        }
+        /**
+         * Whether to allow manual message acknowledgements. If this option is
+         * enabled, then messages are not immediately acknowledged after being
+         * consumed. Instead, an instance of PulsarMessageReceipt is stored as a
+         * header on the org.apache.camel.Exchange. Messages can then be
+         * acknowledged using PulsarMessageReceipt at any time before the
+         * ackTimeout occurs.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default PulsarEndpointConsumerBuilder allowManualAcknowledgement(
+                String allowManualAcknowledgement) {
+            doSetProperty("allowManualAcknowledgement", allowManualAcknowledgement);
+            return this;
         }
         /**
          * Allows for bridging the consumer to the Camel routing Error Handler,
@@ -56,7 +142,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -74,7 +160,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -85,7 +171,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder consumerName(String consumerName) {
-            setProperty("consumerName", consumerName);
+            doSetProperty("consumerName", consumerName);
             return this;
         }
         /**
@@ -98,7 +184,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder consumerNamePrefix(
                 String consumerNamePrefix) {
-            setProperty("consumerNamePrefix", consumerNamePrefix);
+            doSetProperty("consumerNamePrefix", consumerNamePrefix);
             return this;
         }
         /**
@@ -110,7 +196,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder consumerQueueSize(
                 int consumerQueueSize) {
-            setProperty("consumerQueueSize", consumerQueueSize);
+            doSetProperty("consumerQueueSize", consumerQueueSize);
             return this;
         }
         /**
@@ -122,7 +208,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder consumerQueueSize(
                 String consumerQueueSize) {
-            setProperty("consumerQueueSize", consumerQueueSize);
+            doSetProperty("consumerQueueSize", consumerQueueSize);
             return this;
         }
         /**
@@ -134,7 +220,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder numberOfConsumers(
                 int numberOfConsumers) {
-            setProperty("numberOfConsumers", numberOfConsumers);
+            doSetProperty("numberOfConsumers", numberOfConsumers);
             return this;
         }
         /**
@@ -146,7 +232,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder numberOfConsumers(
                 String numberOfConsumers) {
-            setProperty("numberOfConsumers", numberOfConsumers);
+            doSetProperty("numberOfConsumers", numberOfConsumers);
             return this;
         }
         /**
@@ -158,7 +244,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder subscriptionName(
                 String subscriptionName) {
-            setProperty("subscriptionName", subscriptionName);
+            doSetProperty("subscriptionName", subscriptionName);
             return this;
         }
         /**
@@ -172,7 +258,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
                 SubscriptionType subscriptionType) {
-            setProperty("subscriptionType", subscriptionType);
+            doSetProperty("subscriptionType", subscriptionType);
             return this;
         }
         /**
@@ -186,13 +272,13 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
                 String subscriptionType) {
-            setProperty("subscriptionType", subscriptionType);
+            doSetProperty("subscriptionType", subscriptionType);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint consumers for the Apache Pulsar component.
+     * Advanced builder for endpoint consumers for the Pulsar component.
      */
     public interface AdvancedPulsarEndpointConsumerBuilder
             extends
@@ -213,7 +299,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -229,7 +315,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -241,7 +327,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -254,7 +340,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -267,7 +353,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -280,7 +366,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -293,7 +379,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -306,19 +392,187 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
 
     /**
-     * Builder for endpoint producers for the Apache Pulsar component.
+     * Builder for endpoint producers for the Pulsar component.
      */
     public interface PulsarEndpointProducerBuilder
             extends
                 EndpointProducerBuilder {
         default AdvancedPulsarEndpointProducerBuilder advanced() {
             return (AdvancedPulsarEndpointProducerBuilder) this;
+        }
+        /**
+         * Control whether automatic batching of messages is enabled for the
+         * producer. Default is true.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingEnabled(
+                boolean batchingEnabled) {
+            doSetProperty("batchingEnabled", batchingEnabled);
+            return this;
+        }
+        /**
+         * Control whether automatic batching of messages is enabled for the
+         * producer. Default is true.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingEnabled(
+                String batchingEnabled) {
+            doSetProperty("batchingEnabled", batchingEnabled);
+            return this;
+        }
+        /**
+         * Set the maximum number of messages permitted in a batch. Default
+         * 1,000.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingMaxMessages(
+                int batchingMaxMessages) {
+            doSetProperty("batchingMaxMessages", batchingMaxMessages);
+            return this;
+        }
+        /**
+         * Set the maximum number of messages permitted in a batch. Default
+         * 1,000.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingMaxMessages(
+                String batchingMaxMessages) {
+            doSetProperty("batchingMaxMessages", batchingMaxMessages);
+            return this;
+        }
+        /**
+         * Set the time period within which the messages sent will be batched if
+         * batch messages are enabled. If set to a non zero value, messages will
+         * be queued until either: this time interval expires the max number of
+         * messages in a batch is reached Default is 1ms.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingMaxPublishDelayMicros(
+                long batchingMaxPublishDelayMicros) {
+            doSetProperty("batchingMaxPublishDelayMicros", batchingMaxPublishDelayMicros);
+            return this;
+        }
+        /**
+         * Set the time period within which the messages sent will be batched if
+         * batch messages are enabled. If set to a non zero value, messages will
+         * be queued until either: this time interval expires the max number of
+         * messages in a batch is reached Default is 1ms.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder batchingMaxPublishDelayMicros(
+                String batchingMaxPublishDelayMicros) {
+            doSetProperty("batchingMaxPublishDelayMicros", batchingMaxPublishDelayMicros);
+            return this;
+        }
+        /**
+         * Set whether the send and asyncSend operations should block when the
+         * outgoing message queue is full. If set to false, send operations will
+         * immediately fail with ProducerQueueIsFullError when there is no space
+         * left in the pending queue. Default is false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder blockIfQueueFull(
+                boolean blockIfQueueFull) {
+            doSetProperty("blockIfQueueFull", blockIfQueueFull);
+            return this;
+        }
+        /**
+         * Set whether the send and asyncSend operations should block when the
+         * outgoing message queue is full. If set to false, send operations will
+         * immediately fail with ProducerQueueIsFullError when there is no space
+         * left in the pending queue. Default is false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder blockIfQueueFull(
+                String blockIfQueueFull) {
+            doSetProperty("blockIfQueueFull", blockIfQueueFull);
+            return this;
+        }
+        /**
+         * Set the compression type for the producer.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder compressionType(
+                CompressionType compressionType) {
+            doSetProperty("compressionType", compressionType);
+            return this;
+        }
+        /**
+         * Set the compression type for the producer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.CompressionType</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder compressionType(
+                String compressionType) {
+            doSetProperty("compressionType", compressionType);
+            return this;
+        }
+        /**
+         * Set the baseline for the sequence ids for messages published by the
+         * producer. First message will be using (initialSequenceId 1) as its
+         * sequence id and subsequent messages will be assigned incremental
+         * sequence ids, if not otherwise specified.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder initialSequenceId(
+                long initialSequenceId) {
+            doSetProperty("initialSequenceId", initialSequenceId);
+            return this;
+        }
+        /**
+         * Set the baseline for the sequence ids for messages published by the
+         * producer. First message will be using (initialSequenceId 1) as its
+         * sequence id and subsequent messages will be assigned incremental
+         * sequence ids, if not otherwise specified.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder initialSequenceId(
+                String initialSequenceId) {
+            doSetProperty("initialSequenceId", initialSequenceId);
+            return this;
         }
         /**
          * Whether the producer should be started lazy (on the first message).
@@ -337,7 +591,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -357,24 +611,149 @@ public interface PulsarEndpointBuilderFactory {
          */
         default PulsarEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
-         * Name of the producer.
+         * Set the max size of the queue holding the messages pending to receive
+         * an acknowledgment from the broker. Default is 1000.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder maxPendingMessages(
+                int maxPendingMessages) {
+            doSetProperty("maxPendingMessages", maxPendingMessages);
+            return this;
+        }
+        /**
+         * Set the max size of the queue holding the messages pending to receive
+         * an acknowledgment from the broker. Default is 1000.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder maxPendingMessages(
+                String maxPendingMessages) {
+            doSetProperty("maxPendingMessages", maxPendingMessages);
+            return this;
+        }
+        /**
+         * Set the number of max pending messages across all the partitions.
+         * Default is 50000.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
+                int maxPendingMessagesAcrossPartitions) {
+            doSetProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
+            return this;
+        }
+        /**
+         * Set the number of max pending messages across all the partitions.
+         * Default is 50000.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
+                String maxPendingMessagesAcrossPartitions) {
+            doSetProperty("maxPendingMessagesAcrossPartitions", maxPendingMessagesAcrossPartitions);
+            return this;
+        }
+        /**
+         * Set a custom Message Router.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder messageRouter(Object messageRouter) {
+            doSetProperty("messageRouter", messageRouter);
+            return this;
+        }
+        /**
+         * Set a custom Message Router.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.MessageRouter</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder messageRouter(String messageRouter) {
+            doSetProperty("messageRouter", messageRouter);
+            return this;
+        }
+        /**
+         * Set the message routing mode for the producer.
+         * 
+         * The option is a:
+         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder messageRoutingMode(
+                MessageRoutingMode messageRoutingMode) {
+            doSetProperty("messageRoutingMode", messageRoutingMode);
+            return this;
+        }
+        /**
+         * Set the message routing mode for the producer.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder messageRoutingMode(
+                String messageRoutingMode) {
+            doSetProperty("messageRoutingMode", messageRoutingMode);
+            return this;
+        }
+        /**
+         * Name of the producer. If unset, lets Pulsar select a unique
+         * identifier.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
         default PulsarEndpointProducerBuilder producerName(String producerName) {
-            setProperty("producerName", producerName);
+            doSetProperty("producerName", producerName);
+            return this;
+        }
+        /**
+         * Send timeout in milliseconds. Defaults to 30,000ms (30 seconds).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder sendTimeoutMs(int sendTimeoutMs) {
+            doSetProperty("sendTimeoutMs", sendTimeoutMs);
+            return this;
+        }
+        /**
+         * Send timeout in milliseconds. Defaults to 30,000ms (30 seconds).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default PulsarEndpointProducerBuilder sendTimeoutMs(String sendTimeoutMs) {
+            doSetProperty("sendTimeoutMs", sendTimeoutMs);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint producers for the Apache Pulsar component.
+     * Advanced builder for endpoint producers for the Pulsar component.
      */
     public interface AdvancedPulsarEndpointProducerBuilder
             extends
@@ -392,7 +771,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -405,7 +784,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -418,7 +797,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -431,13 +810,13 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
 
     /**
-     * Builder for endpoint for the Apache Pulsar component.
+     * Builder for endpoint for the Pulsar component.
      */
     public interface PulsarEndpointBuilder
             extends
@@ -448,7 +827,7 @@ public interface PulsarEndpointBuilderFactory {
     }
 
     /**
-     * Advanced builder for endpoint for the Apache Pulsar component.
+     * Advanced builder for endpoint for the Pulsar component.
      */
     public interface AdvancedPulsarEndpointBuilder
             extends
@@ -466,7 +845,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -479,7 +858,7 @@ public interface PulsarEndpointBuilderFactory {
          */
         default AdvancedPulsarEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -491,7 +870,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -503,7 +882,7 @@ public interface PulsarEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -517,12 +896,34 @@ public interface PulsarEndpointBuilderFactory {
         SHARED,
         FAILOVER;
     }
+
     /**
-     * Apache Pulsar (camel-pulsar)
+     * Proxy enum for <code>org.apache.pulsar.client.api.CompressionType</code>
+     * enum.
+     */
+    enum CompressionType {
+        NONE,
+        LZ4,
+        ZLIB,
+        ZSTD,
+        SNAPPY;
+    }
+
+    /**
+     * Proxy enum for
+     * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> enum.
+     */
+    enum MessageRoutingMode {
+        SinglePartition,
+        RoundRobinPartition,
+        CustomPartition;
+    }
+    /**
+     * Pulsar (camel-pulsar)
      * Camel Apache Pulsar Component
      * 
      * Category: messaging
-     * Available as of version: 2.24
+     * Since: 2.24
      * Maven coordinates: org.apache.camel:camel-pulsar
      * 
      * Syntax: <code>pulsar:persistence://tenant/namespace/topic</code>

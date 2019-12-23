@@ -26,7 +26,7 @@ import org.apache.camel.spi.UnitOfWork;
  * process the caused exception to send the message into the Camel routing engine
  * which allows to let the routing engine handle the exception.
  * <p/>
- * An endpoint can be configured with <tt>consumer.bridgeErrorHandler=true</tt> in the URI
+ * An endpoint can be configured with <tt>bridgeErrorHandler=true</tt> in the URI
  * to enable this {@link BridgeExceptionHandlerToErrorHandler} on the consumer.
  * The consumer must extend the {@link DefaultConsumer}, to support this, if not an
  * {@link IllegalArgumentException} is thrown upon startup.

@@ -22,7 +22,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.googlecode.junittoolbox.ParallelParameterized;
-
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum;
@@ -47,9 +46,8 @@ public class BulkApiJobIntegrationTest extends AbstractBulkApiTestBase {
     public void setupProfileWithHardDelete() throws IOException {
         final SalesforceLoginConfig loginConfig = LoginConfigHelper.getLoginConfig();
 
-        template().requestBodyAndHeader(
-            "salesforce:apexCall/UpdateProfile?apexMethod=PATCH&sObjectClass=java.lang.String", null,
-            SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "username", loginConfig.getUserName());
+        template().requestBodyAndHeader("salesforce:apexCall/UpdateProfile?apexMethod=PATCH&sObjectClass=java.lang.String", null,
+                                        SalesforceEndpointConfig.APEX_QUERY_PARAM_PREFIX + "username", loginConfig.getUserName());
     }
 
     @Test

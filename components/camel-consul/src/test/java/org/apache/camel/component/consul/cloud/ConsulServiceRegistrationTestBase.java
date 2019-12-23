@@ -28,8 +28,11 @@ import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.CamelContext;
 import org.apache.camel.cloud.ServiceDefinition;
 import org.apache.camel.component.consul.ConsulTestSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.SocketUtils;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSupport {
     protected static final String SERVICE_ID = UUID.randomUUID().toString();
@@ -76,11 +79,9 @@ public abstract class ConsulServiceRegistrationTestBase extends ConsulTestSuppor
         assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PROTOCOL + "=http"));
         assertTrue(services.get(0).getServiceTags().contains(ServiceDefinition.SERVICE_META_PATH + "=/service/endpoint"));
 
-        getMetadata().forEach(
-            (k, v) -> {
-                assertTrue(services.get(0).getServiceTags().contains(k + "=" + v));
-            }
-        );
+        getMetadata().forEach((k, v) -> {
+            assertTrue(services.get(0).getServiceTags().contains(k + "=" + v));
+        });
 
         List<ServiceHealth> checks = health.getHealthyServiceInstances(SERVICE_NAME).getResponse();
         assertEquals(1, checks.size());

@@ -59,6 +59,7 @@ public class StompConsumerUriTest extends StompBaseTest {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

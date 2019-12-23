@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.properties;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -26,9 +27,7 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/concatenation.properties");
-        context.addComponent("properties", pc);
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/concatenation.properties");
         return context;
     }
 
@@ -51,7 +50,7 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setBody(simple("${properties:concat.property}")).to("mock:result");
+                from("direct:start").setBody(simple("{{concat.property}}")).to("mock:result");
             }
         });
         context.start();
@@ -68,7 +67,7 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").setBody(simple("${properties:property.complete}")).to("mock:result");
+                from("direct:start").setBody(simple("{{property.complete}}")).to("mock:result");
             }
         });
         context.start();

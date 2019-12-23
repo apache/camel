@@ -62,13 +62,10 @@ public class CBRWithMulticastTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .choice()
-                        .when(body().contains("Camel"))
-                            // we need to use endChoice to tell Java DSL to return scope back to the choice DSL
-                            .multicast().to("mock:foo").to("mock:bar").endChoice()
-                        .otherwise()
-                            .to("mock:result");
+                from("direct:start").choice().when(body().contains("Camel"))
+                    // we need to use endChoice to tell Java DSL to return scope
+                    // back to the choice DSL
+                    .multicast().to("mock:foo").to("mock:bar").endChoice().otherwise().to("mock:result");
                 // END SNIPPET: e1
             }
         };

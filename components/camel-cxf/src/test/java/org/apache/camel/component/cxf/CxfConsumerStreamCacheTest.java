@@ -28,7 +28,6 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 //Modified from https://issues.apache.org/jira/secure/attachment/12730161/0001-CAMEL-8419-Camel-StreamCache-does-not-work-with-CXF-.patch
 public class CxfConsumerStreamCacheTest extends CamelTestSupport {
     
@@ -50,6 +49,7 @@ public class CxfConsumerStreamCacheTest extends CamelTestSupport {
     public boolean isCreateCamelContextPerClass() {
         return true;
     }
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

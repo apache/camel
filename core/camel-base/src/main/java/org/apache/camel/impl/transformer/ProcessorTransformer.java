@@ -65,7 +65,7 @@ public class ProcessorTransformer extends Transformer {
         transformExchange.setIn(message);
         transformExchange.setProperties(exchange.getProperties());
         processor.process(transformExchange);
-        Message answer = transformExchange.hasOut() ? transformExchange.getOut() : transformExchange.getIn();
+        Message answer = transformExchange.getMessage();
         
         if (to.isJavaType()) {
             Object answerBody = answer.getBody();

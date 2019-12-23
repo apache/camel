@@ -22,15 +22,12 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Nodes component provides a producer to execute kubernetes node operations
- * and a consumer to consume node events.
+ * The Kubernetes Nodes component provides a producer to execute kubernetes node
+ * operations and a consumer to consume node events.
  */
-@UriEndpoint(firstVersion = "2.20.0", scheme = "kubernetes-deployments", title = "Kubernetes Deployments",
-    syntax = "kubernetes-deployments:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.20.0", scheme = "kubernetes-deployments", title = "Kubernetes Deployments", syntax = "kubernetes-deployments:masterUrl", label = "container,cloud,paas")
 public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesDeploymentsEndpoint(String uri, KubernetesDeploymentsComponent component, KubernetesConfiguration config) {
@@ -44,7 +41,9 @@ public class KubernetesDeploymentsEndpoint extends AbstractKubernetesEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesDeploymentsConsumer(this, processor);
+        Consumer consumer = new KubernetesDeploymentsConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
 }

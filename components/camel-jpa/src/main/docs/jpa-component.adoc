@@ -1,7 +1,11 @@
 [[jpa-component]]
-== JPA Component
+= JPA Component
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The JPA component enables you to store and retrieve Java objects from
 persistent storage using EJB 3's Java Persistence Architecture (JPA),
@@ -21,7 +25,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### Sending to the endpoint
+== Sending to the endpoint
 
 You can store a Java entity bean in a database by sending it to a JPA
 producer endpoint. The body of the _In_ message is assumed to be an
@@ -30,7 +34,7 @@ http://java.sun.com/javaee/5/docs/api/javax/persistence/Entity.html[@Entity]
 annotation on it) or a collection or array of entity beans.
 
 If the body is a List of entities, make sure to use
-*entityType=java.util.ArrayList* as a configuration passed to the
+*entityType=java.util.List* as a configuration passed to the
 producer endpoint.
 
 If the body does not contain one of the previous listed types, put a
@@ -47,7 +51,7 @@ if you execute `UPDATE`/`DELETE` with `namedQuery` as camel don't look into the
 named query unlike `query` and `nativeQuery`.
 
 
-### Consuming from the endpoint
+== Consuming from the endpoint
 
 Consuming messages from a JPA consumer endpoint removes (or updates)
 entity beans in the database. This allows you to use a database table as
@@ -72,7 +76,7 @@ which will be invoked on your entity bean before it has been processed
 If you are consuming a lot (100K+) of rows and experience OutOfMemory
 problems you should set the maximumResults to sensible value.
 
-### URI format
+== URI format
 
 [source,java]
 -----------------------------
@@ -88,13 +92,13 @@ For consuming, the _entityClassName_ is mandatory.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 
 
 // component options: START
-The JPA component supports 6 options, which are listed below.
+The JPA component supports 7 options, which are listed below.
 
 
 
@@ -102,11 +106,12 @@ The JPA component supports 6 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *entityManagerFactory* (common) | To use the EntityManagerFactory. This is strongly recommended to configure. |  | EntityManagerFactory
-| *transactionManager* (common) | To use the PlatformTransactionManager for managing transactions. |  | PlatformTransaction Manager
+| *transactionManager* (common) | To use the PlatformTransactionManager for managing transactions. |  | PlatformTransactionManager
 | *joinTransaction* (common) | The camel-jpa component will join transaction by default. You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent, instead of having to set it on all endpoints. | true | boolean
 | *sharedEntityManager* (common) | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -126,7 +131,7 @@ jpa:entityType
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -136,7 +141,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (44 parameters):
+=== Query Parameters (46 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -146,11 +151,9 @@ with the following path and query parameters:
 | *maximumResults* (common) | Set the maximum number of results to retrieve on the Query. | -1 | int
 | *namedQuery* (common) | To use a named query. |  | String
 | *nativeQuery* (common) | To use a custom native query. You may want to use the option resultClass also when using native queries. |  | String
-| *parameters* (common) | This key/value mapping is used for building the query parameters. It is expected to be of the generic type java.util.Map where the keys are the named parameters of a given JPA query and the values are their corresponding effective values you want to select for. When it's used for producer, Simple expression can be used as a parameter value. It allows you to retrieve parameter values from the message body, header and etc. |  | Map
 | *persistenceUnit* (common) | *Required* The JPA persistence unit used by default. | camel | String
 | *query* (common) | To use a custom query. |  | String
 | *resultClass* (common) | Defines the type of the returned payload (we will call entityManager.createNativeQuery(nativeQuery, resultClass) instead of entityManager.createNativeQuery(nativeQuery)). Without this option, we will return an object array. Only has an affect when using in conjunction with native query when consuming data. |  | Class
-| *sharedEntityManager* (common) | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *consumeDelete* (consumer) | If true, the entity is deleted after it is consumed; if false, the entity is not deleted. | true | boolean
 | *consumeLockEntity* (consumer) | Specifies whether or not to set an exclusive lock on each entity bean while processing the results from polling. | true | boolean
@@ -163,15 +166,18 @@ with the following path and query parameters:
 | *transacted* (consumer) | Whether to run the consumer in transacted mode, by which all messages will either commit or rollback, when the entire batch has been processed. The default behavior (false) is to commit all the previously successfully processed messages, and only rollback the last failed message. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *parameters* (consumer) | This key/value mapping is used for building the query parameters. It is expected to be of the generic type java.util.Map where the keys are the named parameters of a given JPA query and the values are their corresponding effective values you want to select for. When it's used for producer, Simple expression can be used as a parameter value. It allows you to retrieve parameter values from the message body, header and etc. |  | Map
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *findEntity* (producer) | If enabled then the producer will find a single entity by using the message body as key and entityType as the class type. This can be used instead of a query to find a single entity. | false | boolean
 | *flushOnSend* (producer) | Flushes the EntityManager after the entity bean has been persisted. | true | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *remove* (producer) | Indicates to use entityManager.remove(entity). | false | boolean
 | *useExecuteUpdate* (producer) | To configure whether to use executeUpdate() when producer executes a query. When you use INSERT, UPDATE or DELETE statement as a named query, you need to specify this option to 'true'. |  | Boolean
-| *usePassedInEntityManager* (producer) | If set to true, then Camel will use the EntityManager from the header JpaConstants.ENTITY_MANAGER instead of the configured entity manager on the component/endpoint. This allows end users to control which entity manager will be in use. | false | boolean
 | *usePersist* (producer) | Indicates to use entityManager.persist(entity) instead of entityManager.merge(entity). Note: entityManager.persist(entity) doesn't work for detached entities (where the EntityManager has to execute an UPDATE instead of an INSERT query)! | false | boolean
+| *usePassedInEntityManager* (producer) | If set to true, then Camel will use the EntityManager from the header JpaConstants.ENTITY_MANAGER instead of the configured entity manager on the component/endpoint. This allows end users to control which entity manager will be in use. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *entityManagerProperties* (advanced) | Additional properties for the entity manager to use. |  | Map
+| *sharedEntityManager* (advanced) | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
 | *backoffIdleThreshold* (scheduler) | The number of subsequent idle polls that should happen before the backoffMultipler should kick-in. |  | int
@@ -179,24 +185,25 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-jpa-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -204,7 +211,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
@@ -212,10 +219,11 @@ The component supports 7 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.jpa.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.jpa.enabled* | Enable jpa component | true | Boolean
+| *camel.component.jpa.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.jpa.enabled* | Whether to enable auto configuration of the jpa component. This is enabled by default. |  | Boolean
 | *camel.component.jpa.entity-manager-factory* | To use the EntityManagerFactory. This is strongly recommended to configure. The option is a javax.persistence.EntityManagerFactory type. |  | String
 | *camel.component.jpa.join-transaction* | The camel-jpa component will join transaction by default. You can use this option to turn this off, for example if you use LOCAL_RESOURCE and join transaction doesn't work with your JPA provider. This option can also be set globally on the JpaComponent, instead of having to set it on all endpoints. | true | Boolean
-| *camel.component.jpa.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.jpa.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.jpa.shared-entity-manager* | Whether to use Spring's SharedEntityManager for the consumer/producer. Note in most cases joinTransaction should be set to false as this is not an EXTENDED EntityManager. | false | Boolean
 | *camel.component.jpa.transaction-manager* | To use the PlatformTransactionManager for managing transactions. The option is a org.springframework.transaction.PlatformTransactionManager type. |  | String
 |===
@@ -226,7 +234,7 @@ The component supports 7 options, which are listed below.
 
 
 
-### Message Headers
+== Message Headers
 
 Camel adds the following message headers to the exchange:
 
@@ -240,7 +248,7 @@ Camel adds the following message headers to the exchange:
 
 |=======================================================================
 
-### Configuring EntityManagerFactory
+== Configuring EntityManagerFactory
 
 Its strongly advised to configure the JPA component to use a specific
 `EntityManagerFactory` instance. If failed to do so each `JpaEndpoint`
@@ -263,13 +271,13 @@ you do not need to configure this on the `JpaComponent` as shown above.
 You only need to do so if there is ambiguity, in which case Camel will
 log a WARN.
 
-### Configuring TransactionManager
+== Configuring TransactionManager
 
 The `JpaComponent` looks up automatically the
 `TransactionManager` from the Registry. If Camel
 won't find any `TransactionManager` instance registered, it will also
-look up for the `TransactionTemplate` and try to
-extract `TransactionManager` from it.
+look up for the `TransactionTemplate` and try to
+extract `TransactionManager` from it.
 
 If none `TransactionTemplate` is available in the registry,
 `JpaEndpoint` will auto create their own instance of
@@ -288,7 +296,7 @@ explicitly configure a JPA component that references the
 </bean>
 -------------------------------------------------------------------
 
-### Using a consumer with a named query
+== Using a consumer with a named query
 
 For consuming only selected entities, you can use the
 `consumer.namedQuery` URI query option. First, you have to define the
@@ -311,7 +319,7 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.namedQuery=step1")
 .to("bean:myBusinessLogic");
 ----------------------------------------------------------------------------
 
-### Using a consumer with a query
+== Using a consumer with a query
 
 For consuming only selected entities, you can use the `consumer.query`
 URI query option. You only have to define the query option:
@@ -322,7 +330,7 @@ from("jpa://org.apache.camel.examples.MultiSteps?consumer.query=select o from or
 .to("bean:myBusinessLogic");
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-### Using a consumer with a native query
+== Using a consumer with a native query
 
 For consuming only selected entities, you can use the
 `consumer.nativeQuery` URI query option. You only have to define the
@@ -338,7 +346,7 @@ If you use the native query option, you will receive an object array in
 the message body.
 
 
-### Using a producer with a named query
+== Using a producer with a named query
 
 For retrieving selected entities or execute bulk update/delete, you can use the
 `namedQuery` URI query option. First, you have to define the
@@ -364,7 +372,7 @@ from("direct:namedQuery")
 Note that you need to specify `useExecuteUpdate` option to `true` to execute `UPDATE`/`DELETE` statement
 as a named query.
 
-### Using a producer with a query
+== Using a producer with a query
 
 For retrieving selected entities or execute bulk update/delete, you can use the `query`
 URI query option. You only have to define the query option:
@@ -375,7 +383,7 @@ from("direct:query")
 .to("jpa://org.apache.camel.examples.MultiSteps?query=select o from org.apache.camel.examples.MultiSteps o where o.step = 1");
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-### Using a producer with a native query
+== Using a producer with a native query
 
 For retrieving selected entities or execute bulk update/delete, you can use the
 `nativeQuery` URI query option. You only have to define the
@@ -390,12 +398,12 @@ from("direct:nativeQuery")
 If you use the native query option without specifying `resultClass`, you will receive an object array in
 the message body.
 
-### Example
+== Example
 
 See http://camel.apache.org/tracer-example.html[Tracer Example] for an example using
 xref:jpa-component.adoc[JPA] to store traced messages into a database.
 
-### Using the JPA-Based Idempotent Repository
+== Using the JPA-Based Idempotent Repository
 
 The Idempotent Consumer from the http://camel.apache.org/enterprise-integration-patterns.html[EIP patterns] is used to filter out duplicate messages. A JPA-based idempotent repository is provided.
 
@@ -419,7 +427,7 @@ Index: 20, Size: 20
 
 [source,xml]
 ---------------------------------------------------------------
-<camelContext xmlns="http://camel.apache.org/schema/spring">   
+<camelContext xmlns="http://camel.apache.org/schema/spring">
     <route id="JpaMessageIdRepositoryTest">
         <from uri="direct:start" />
         <idempotentConsumer messageIdRepositoryRef="jpaStore">
@@ -457,23 +465,13 @@ https://svn.apache.org/repos/asf/camel/trunk/components/camel-jpa/pom.xml[enhanc
 the byte-code at build time]. To overcome this you need to enable
 http://openjpa.apache.org/entity-enhancement.html#dynamic-enhancement[dynamic
 byte-code enhancement of OpenJPA]. For example, assuming the current
-OpenJPA version being used in Camel is 2.2.1, to run the 
+OpenJPA version being used in Camel is 2.2.1, to run the
 tests inside your IDE you would need to pass the following
 argument to the JVM:
 
 [source,java]
 -------------------------------------------------------------------------------------------
- 
+
 -javaagent:<path_to_your_local_m2_cache>/org/apache/openjpa/openjpa/2.2.1/openjpa-2.2.1.jar
 -------------------------------------------------------------------------------------------
 
-
-
-### See Also
-
-* http://camel.apache.org/configuring-camel.html[Configuring Camel]
-* http://camel.apache.org/component.html[Component]
-* http://camel.apache.org/endpoint.html[Endpoint]
-* http://camel.apache.org/getting-started.html[Getting Started]
-
-* http://camel.apache.org/tracer-example.html[Tracer Example]

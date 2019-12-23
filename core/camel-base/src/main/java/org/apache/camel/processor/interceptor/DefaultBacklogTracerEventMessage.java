@@ -44,26 +44,32 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
         this.messageAsXml = messageAsXml;
     }
 
+    @Override
     public long getUid() {
         return uid;
     }
 
+    @Override
     public Date getTimestamp() {
         return timestamp;
     }
 
+    @Override
     public String getRouteId() {
         return routeId;
     }
 
+    @Override
     public String getToNode() {
         return toNode;
     }
 
+    @Override
     public String getExchangeId() {
         return exchangeId;
     }
 
+    @Override
     public String getMessageAsXml() {
         return messageAsXml;
     }
@@ -80,6 +86,7 @@ public final class DefaultBacklogTracerEventMessage implements BacklogTracerEven
      *
      * @return xml representation of this event
      */
+    @Override
     public String toXml(int indent) {
         StringBuilder prefix = new StringBuilder();
         for (int i = 0; i < indent; i++) {

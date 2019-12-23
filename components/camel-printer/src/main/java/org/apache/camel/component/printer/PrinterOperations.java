@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.util.Locale;
 import java.util.UUID;
+
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -97,6 +98,7 @@ public class PrinterOperations implements PrinterOperationsInterface {
         }
     }
 
+    @Override
     public void print(Doc doc, String jobName) throws PrintException {
         // we need create a new job for each print
         DocPrintJob job = getPrintService().createPrintJob();

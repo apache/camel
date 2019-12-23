@@ -45,9 +45,7 @@ public class AggregateCompletionAwareAggregationStrategyTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new MyCompletionStrategy()).completionSize(3)
-                    .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).completionSize(3).to("mock:aggregated");
             }
         };
     }
@@ -68,7 +66,8 @@ public class AggregateCompletionAwareAggregationStrategyTest extends ContextTest
 
         @Override
         public void onCompletion(Exchange exchange) {
-            // copy body so we can test what the body was when this callback was invoked
+            // copy body so we can test what the body was when this callback was
+            // invoked
             exchange.getIn().setHeader("bodyCopy", exchange.getIn().getBody());
             // add a header so we know we were called
             exchange.getIn().setHeader("myStrategyCompleted", true);

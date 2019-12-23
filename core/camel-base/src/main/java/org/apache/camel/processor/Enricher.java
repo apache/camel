@@ -69,18 +69,22 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
         this.expression = expression;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
@@ -145,6 +149,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
      *
      * @param exchange input data.
      */
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // which producer to use
         final AsyncProducer producer;
@@ -329,6 +334,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
         return "Enrich[" + expression + "]";
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (aggregationStrategy == null) {
             aggregationStrategy = defaultAggregationStrategy();
@@ -345,12 +351,14 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
         ServiceHelper.startService(producerCache, aggregationStrategy);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(aggregationStrategy, producerCache);
     }
 
     private static class CopyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (newExchange != null) {
                 copyResultsPreservePattern(oldExchange, newExchange);

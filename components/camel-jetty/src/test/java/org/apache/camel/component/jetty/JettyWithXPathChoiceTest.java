@@ -63,17 +63,13 @@ public class JettyWithXPathChoiceTest extends BaseJettyTest {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("jetty:http://localhost:{{port}}/myworld")
                     // use stream caching
-                    .streamCaching()
-                    .choice()
-                        .when().xpath("/one").to("mock:x")
-                        .when().xpath("/two").to("mock:y")
-                        .otherwise().to("mock:z")
-                    .end();
+                    .streamCaching().choice().when().xpath("/one").to("mock:x").when().xpath("/two").to("mock:y").otherwise().to("mock:z").end();
 
             }
         };

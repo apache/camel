@@ -38,12 +38,11 @@ public class JettySteveIssueTest extends BaseJettyTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:" + serverUri)
-                    .setBody().simple("<html><body>${in.header.x}</body></html>")
-                    .to("mock:result");
+                from("jetty:" + serverUri).setBody().simple("<html><body>${in.header.x}</body></html>").to("mock:result");
             }
         };
     }

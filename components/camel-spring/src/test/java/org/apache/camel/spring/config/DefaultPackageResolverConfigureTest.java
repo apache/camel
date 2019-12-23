@@ -25,6 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/config/PackageResolverTest.xml");
     }
@@ -33,10 +34,6 @@ public class DefaultPackageResolverConfigureTest extends SpringTestSupport {
     public void testSetAcceptableSchema() throws Exception {
         DefaultPackageScanClassResolver resolver = (DefaultPackageScanClassResolver)context.adapt(ExtendedCamelContext.class).getPackageScanClassResolver();
         assertNotNull(resolver);
-        // just check the accept schema
-        assertTrue("We should accept the test:!", resolver.isAcceptableScheme("test://test"));
-        assertTrue("We should accept the test2:!", resolver.isAcceptableScheme("test2://test"));
-        
     }
 
 }

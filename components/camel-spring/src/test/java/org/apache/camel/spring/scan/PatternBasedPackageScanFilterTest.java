@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.scan;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.RandomAccessFile;
@@ -34,6 +35,7 @@ public class PatternBasedPackageScanFilterTest extends org.apache.camel.spring.s
 
     private Set<Class<?>> allClasses;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         // use classes that are pretty much constants

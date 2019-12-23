@@ -27,7 +27,6 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The jooq component enables you to store and retrieve entities from databases
@@ -63,7 +62,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -81,7 +80,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -92,7 +91,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: consumer
          */
         default JooqEndpointConsumerBuilder consumeDelete(boolean consumeDelete) {
-            setProperty("consumeDelete", consumeDelete);
+            doSetProperty("consumeDelete", consumeDelete);
             return this;
         }
         /**
@@ -103,7 +102,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: consumer
          */
         default JooqEndpointConsumerBuilder consumeDelete(String consumeDelete) {
-            setProperty("consumeDelete", consumeDelete);
+            doSetProperty("consumeDelete", consumeDelete);
             return this;
         }
         /**
@@ -116,7 +115,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -129,7 +128,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -142,7 +141,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -155,7 +154,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -168,7 +167,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -181,7 +180,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -198,7 +197,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -215,7 +214,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -228,7 +227,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -241,7 +240,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -253,7 +252,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -265,7 +264,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -278,7 +277,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -291,7 +290,33 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default JooqEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default JooqEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -304,7 +329,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -318,7 +343,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -333,7 +358,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -348,41 +373,24 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default JooqEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -391,12 +399,12 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -406,7 +414,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -418,7 +426,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -429,7 +437,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -440,7 +448,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -452,7 +460,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -464,7 +472,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -476,7 +484,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -503,7 +511,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -519,7 +527,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -531,7 +539,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -544,7 +552,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -560,7 +568,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -576,7 +584,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -589,7 +597,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -602,7 +610,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -615,7 +623,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -628,7 +636,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -659,7 +667,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -679,7 +687,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default JooqEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -691,7 +699,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: producer
          */
         default JooqEndpointProducerBuilder operation(JooqOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -703,7 +711,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: producer
          */
         default JooqEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -714,7 +722,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: producer
          */
         default JooqEndpointProducerBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
     }
@@ -738,7 +746,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -751,7 +759,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -764,7 +772,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -777,7 +785,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -812,7 +820,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -825,7 +833,7 @@ public interface JooqEndpointBuilderFactory {
          */
         default AdvancedJooqEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -837,7 +845,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJooqEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -849,7 +857,7 @@ public interface JooqEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJooqEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -869,7 +877,7 @@ public interface JooqEndpointBuilderFactory {
      * databases using JOOQ
      * 
      * Category: database
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-jooq
      * 
      * Syntax: <code>jooq:entityType</code>

@@ -23,6 +23,7 @@ public class Jt400ConfigurationTest extends Jt400TestSupport {
 
     private Jt400Configuration jt400Configuration;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

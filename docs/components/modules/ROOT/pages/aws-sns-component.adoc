@@ -1,12 +1,17 @@
 [[aws-sns-component]]
-== AWS Simple Notification System Component
+= AWS Simple Notification System Component
+:page-source: components/camel-aws-sns/src/main/docs/aws-sns-component.adoc
 
-*Available as of Camel version 2.8*
+*Since Camel 2.8*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The SNS component allows messages to be sent to an
 https://aws.amazon.com/sns[Amazon Simple Notification] Topic. The
 implementation of the Amazon API is provided by
-the https://aws.amazon.com/sdkforjava/[AWS SDK].
+the https://aws.amazon.com/sdkforjava/[AWS SDK].
 
 Prerequisites
 
@@ -14,7 +19,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon SNS. More information is available at
 https://aws.amazon.com/sns[Amazon SNS].
 
-### URI Format
+== URI Format
 
 [source,java]
 -----------------------------
@@ -25,11 +30,11 @@ The topic will be created if they don't already exists. +
  You can append query options to the URI in the following format,
 `?options=value&option2=value&...`
 
-### URI Options
+== URI Options
 
 
 // component options: START
-The AWS Simple Notification System component supports 6 options, which are listed below.
+The AWS Simple Notification System component supports 7 options, which are listed below.
 
 
 
@@ -40,8 +45,9 @@ The AWS Simple Notification System component supports 6 options, which are liste
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *region* (producer) | The region in which SNS client needs to work |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -58,7 +64,7 @@ aws-sns:topicNameOrArn
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -68,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,6 +90,7 @@ with the following path and query parameters:
 | *policy* (producer) | The policy for this queue |  | String
 | *proxyHost* (producer) | To define a proxy host when instantiating the SNS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the SNS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the SNS client | HTTPS | Protocol
 | *queueUrl* (producer) | The queueUrl to subscribe to |  | String
 | *region* (producer) | The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *serverSideEncryptionEnabled* (producer) | Define if Server Side Encryption is enabled or not on the topic | false | boolean
@@ -96,14 +103,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-aws-sns-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -111,7 +118,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 23 options, which are listed below.
+The component supports 25 options, which are listed below.
 
 
 
@@ -120,6 +127,7 @@ The component supports 23 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-sns.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-sns.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-sns.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.aws-sns.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-sns.configuration.amazon-s-n-s-client* | To use the AmazonSNS as the client |  | AmazonSNS
 | *camel.component.aws-sns.configuration.amazon-s-q-s-client* | An SQS Client to use as bridge between SNS and SQS |  | AmazonSQS
@@ -129,6 +137,7 @@ The component supports 23 options, which are listed below.
 | *camel.component.aws-sns.configuration.policy* | The policy for this queue |  | String
 | *camel.component.aws-sns.configuration.proxy-host* | To define a proxy host when instantiating the SNS client |  | String
 | *camel.component.aws-sns.configuration.proxy-port* | To define a proxy port when instantiating the SNS client |  | Integer
+| *camel.component.aws-sns.configuration.proxy-protocol* | To define a proxy protocol when instantiating the SNS client |  | Protocol
 | *camel.component.aws-sns.configuration.queue-url* | The queueUrl to subscribe to |  | String
 | *camel.component.aws-sns.configuration.region* | The region in which SNS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-sns.configuration.secret-key* | Amazon AWS Secret Key |  | String
@@ -138,8 +147,8 @@ The component supports 23 options, which are listed below.
 | *camel.component.aws-sns.configuration.topic-arn* | The Amazon Resource Name (ARN) assigned to the created topic. |  | String
 | *camel.component.aws-sns.configuration.topic-name* | The name of the topic |  | String
 | *camel.component.aws-sns.enabled* | Whether to enable auto configuration of the aws-sns component. This is enabled by default. |  | Boolean
+| *camel.component.aws-sns.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.aws-sns.region* | The region in which SNS client needs to work |  | String
-| *camel.component.aws-sns.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-sns.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END
@@ -154,9 +163,9 @@ You have to provide the amazonSNSClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/sns[Amazon's SNS].
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the SNS producer
+=== Message headers evaluated by the SNS producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -166,7 +175,7 @@ the https://aws.amazon.com/sns[Amazon's SNS].
 `SnsConfiguration` is used.
 |=======================================================================
 
-#### Message headers set by the SNS producer
+=== Message headers set by the SNS producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -175,7 +184,7 @@ the https://aws.amazon.com/sns[Amazon's SNS].
 |`CamelAwsSnsMessageId` |`String` |The Amazon SNS message ID.
 |=======================================================================
 
-#### Advanced AmazonSNS configuration
+=== Advanced AmazonSNS configuration
 
 If you need more control over the `AmazonSNS` instance configuration you
 can create your own instance and refer to it from the URI:
@@ -202,7 +211,7 @@ AmazonSNS client = new AmazonSNSClient(awsCredentials, clientConfiguration);
 registry.bind("client", client);
 --------------------------------------------------------------------------------------
 
-#### Create a subscription between an AWS SNS Topic and an AWS SQS Queue
+=== Create a subscription between an AWS SNS Topic and an AWS SQS Queue
 
 You can create a subscription of an SQS Queue to an SNS Topic in this way:
 
@@ -225,18 +234,18 @@ from("aws-sqs://test-camel?amazonSQSClient=#amazonSQSClient&delay=50&maxMessages
     .to(...);
 -------------------------------------------------
 
-### Topic Autocreation
+== Topic Autocreation
 
 With the option `autoCreateTopic` users are able to avoid the autocreation of an SNS Topic in case it doesn't exist. The default for this option is `true`.
 If set to false any operation on a not-existent topic in AWS won't be successful and an error will be returned.
 
-### Automatic detection of AmazonSNS client in registry
+== Automatic detection of AmazonSNS client in registry
 
 The component is capable of detecting the presence of an AmazonSNS bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -251,13 +260,5 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `\${camel-version}` must be replaced by the actual version of Camel.
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

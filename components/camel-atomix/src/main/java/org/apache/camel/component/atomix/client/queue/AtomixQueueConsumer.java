@@ -25,10 +25,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientConsumer;
 import org.apache.camel.component.atomix.client.AtomixClientConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-final class AtomixQueueConsumer extends AbstractAtomixClientConsumer<AtomixQueueEndpoint> {
+public final class AtomixQueueConsumer extends AbstractAtomixClientConsumer<AtomixQueueEndpoint> {
 
     private final List<Listener<DistributedQueue.ValueEvent<Object>>> listeners;
     private final String resourceName;

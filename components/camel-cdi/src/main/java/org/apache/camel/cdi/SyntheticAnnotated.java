@@ -22,12 +22,11 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.enterprise.inject.spi.Annotated;
+
 import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableSet;
 import static java.util.stream.Collectors.toSet;
-
-import javax.enterprise.inject.spi.Annotated;
-
 import static org.apache.camel.cdi.CdiSpiHelper.isAnnotationType;
 
 @Vetoed
@@ -64,18 +63,22 @@ final class SyntheticAnnotated implements Annotated {
         annotations.add(annotation);
     }
 
+    @Override
     public Type getBaseType() {
         return type;
     }
 
+    @Override
     public Set<Type> getTypeClosure() {
         return unmodifiableSet(types);
     }
 
+    @Override
     public Set<Annotation> getAnnotations() {
         return unmodifiableSet(annotations);
     }
 
+    @Override
     public <T extends Annotation> T getAnnotation(Class<T> type) {
         return annotations.stream()
             .filter(isAnnotationType(type))
@@ -84,6 +87,7 @@ final class SyntheticAnnotated implements Annotated {
             .orElse(null);
     }
 
+    @Override
     public <T extends Annotation> Set<T> getAnnotations(Class<T> type) {
         return annotations.stream()
             .filter(isAnnotationType(type))
@@ -91,6 +95,7 @@ final class SyntheticAnnotated implements Annotated {
             .collect(toSet());
     }
 
+    @Override
     public boolean isAnnotationPresent(Class<? extends Annotation> type) {
         return annotations.stream().anyMatch(isAnnotationType(type));
     }

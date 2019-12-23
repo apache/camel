@@ -38,6 +38,7 @@ public interface ManagedRoutingSlipMBean extends ManagedProcessorMBean, ManagedE
     @ManagedAttribute(description = "Ignore the invalidate endpoint exception when try to create a producer with that endpoint")
     Boolean isIgnoreInvalidEndpoints();
 
+    @Override
     @ManagedOperation(description = "Statistics of the endpoints which has been sent to")
     TabularData extendedInformation();
 

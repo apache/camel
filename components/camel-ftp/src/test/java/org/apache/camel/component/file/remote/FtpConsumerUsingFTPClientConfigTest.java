@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClientConfig;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for ftpClientConfig option.
@@ -33,20 +33,14 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myConfig", createConfig());
-        return jndi;
-    }
-
-    private FTPClientConfig createConfig() {
+    @BindToRegistry("myConfig")
+    public FTPClientConfig createConfig() {
         FTPClientConfig config = new FTPClientConfig(FTPClientConfig.SYST_UNIX);
         config.setServerTimeZoneId("Europe/Paris");
         return config;
@@ -67,6 +61,7 @@ public class FtpConsumerUsingFTPClientConfigTest extends FtpServerTestSupport {
         sendFile(getFtpUrl(), "Hello World", "hello.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

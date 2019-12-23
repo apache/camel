@@ -28,19 +28,19 @@ public class WebhookPathTest extends WebhookTestBase {
 
     @Test
     public void testComponentPath() {
-        String result = template.requestBody("netty4-http:http://localhost:" + port + "/comp", "", String.class);
+        String result = template.requestBody("netty-http:http://localhost:" + port + "/comp", "", String.class);
         assertEquals("msg: webhook", result);
     }
 
     @Test
     public void testUriPath() {
-        String result = template.requestBody("netty4-http:http://localhost:" + port + "/uri", "", String.class);
+        String result = template.requestBody("netty-http:http://localhost:" + port + "/uri", "", String.class);
         assertEquals("uri: webhook", result);
     }
 
     @Test(expected = CamelExecutionException.class)
     public void testRootPathError() {
-        template.requestBody("netty4-http:http://localhost:" + port, "", String.class);
+        template.requestBody("netty-http:http://localhost:" + port, "", String.class);
     }
 
     @Override

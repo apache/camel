@@ -51,6 +51,7 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
     
     public static class MyProcessor implements Processor {
 
+        @Override
         @SuppressWarnings("unchecked")
         public void process(Exchange exchange) throws Exception {
             CxfPayload<SoapHeader> in = exchange.getIn().getBody(CxfPayload.class);

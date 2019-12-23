@@ -1,5 +1,5 @@
 [[Lifecycle-CamelLifecycle]]
-=== Camel Lifecycle
+= Camel Lifecycle
 
 Camel uses a simple _lifecycle_ interface called
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Service.html[Service]
@@ -18,7 +18,7 @@ If you are working with Spring you may wish to read the
 Camel Spring documentation.
 
 [[Lifecycle-CamelContextLifecycle]]
-==== CamelContext Lifecycle
+== CamelContext Lifecycle
 
 The `CamelContext` provides methods to control its lifecycle:
 
@@ -54,12 +54,12 @@ Endpoints and therefore you can still use them after
 resuming.
 
 [[Lifecycle-Servicelifecycle]]
-==== Service lifecycle
+== Service lifecycle
 
 A service (`org.apache.camel.Service`) in Camel adheres to the following
 lifecycle states as illustrated in the diagram below:
 
-image:lifecycle.data/service_lifecycle.png[image]
+image::service_lifecycle.png[image]
 
 *Notice:* A service can optimally support suspend/resume by the
 `org.apache.camel.SuspendableService`. This means not all services in
@@ -72,7 +72,7 @@ track of state. You implement your custom logic in the `doStart`,
 `doStop`, `doSuspend`, `doResume` methods.
 
 [[Lifecycle-Routeslifecycle]]
-==== Routes lifecycle
+== Routes lifecycle
 
 Routes in Camel have the following operations to control its lifecycle
 
@@ -102,10 +102,7 @@ stop/start.
 If a route consumer does not support suspension, it will fallback and
 stop the route instead.
 
-[[Lifecycle-SeeAlso]]
-==== See Also
+[[Lifecycle-RelatedInfo]]
+== Related Info
 
-* xref:camelcontext.adoc[CamelContext]
-* xref:architecture.adoc[Architecture]
-* JMX
-
+xref:components::controlbus-component.adoc[Take a look at the Control Bus Component]

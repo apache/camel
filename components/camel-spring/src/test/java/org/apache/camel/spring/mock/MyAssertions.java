@@ -33,6 +33,7 @@ public class MyAssertions implements InitializingBean {
     @EndpointInject("mock:notMatched")
     private MockEndpoint notMatched;
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         // lets add some expectations
         matched.expectedMessageCount(1);

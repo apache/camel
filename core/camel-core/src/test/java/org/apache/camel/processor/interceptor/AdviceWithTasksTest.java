@@ -140,10 +140,7 @@ public class AdviceWithTasksTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e5
-                from("direct:start")
-                    .to("mock:foo")
-                    .to("mock:bar").id("bar")
-                    .to("mock:result");
+                from("direct:start").to("mock:foo").to("mock:bar").id("bar").to("mock:result");
                 // END SNIPPET: e5
             }
         };

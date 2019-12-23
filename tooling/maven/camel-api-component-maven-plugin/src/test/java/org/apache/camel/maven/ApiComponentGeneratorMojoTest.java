@@ -45,6 +45,7 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         assertExists(collectionFile);
     }
 
+    @Override
     protected ApiComponentGeneratorMojo createGeneratorMojo() {
         final ApiComponentGeneratorMojo mojo = new ApiComponentGeneratorMojo();
         configureSourceGeneratorMojo(mojo);

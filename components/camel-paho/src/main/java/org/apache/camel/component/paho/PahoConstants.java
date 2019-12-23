@@ -25,6 +25,11 @@ public final class PahoConstants {
      * Header indicating a topic of a MQTT message.
      */
     public static final String MQTT_TOPIC = "CamelMqttTopic";
+    /**
+     * Header indicating a QoS of a MQTT message.
+     */
+    public static final String MQTT_QOS = "CamelMqttQoS";
+
     public static final String DEFAULT_BROKER_URL = "tcp://localhost:1883";
     public static final int DEFAULT_QOS = 2;
 

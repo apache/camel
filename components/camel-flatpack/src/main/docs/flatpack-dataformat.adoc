@@ -1,7 +1,7 @@
 [[flatpack-dataformat]]
-== Flatpack DataFormat
+= Flatpack DataFormat
 
-*Available as of Camel version 2.1*
+*Since Camel 2.1*
 
 The xref:flatpack-component.adoc[Flatpack] component ships with the Flatpack data
 format that can be used to format between fixed width or delimited text
@@ -19,7 +19,7 @@ Splitter.
 *Notice:* The Flatpack library does currently not support header and
 trailers for the marshal operation.
 
-### Options
+== Options
 
 // dataformat options: START
 The Flatpack dataformat supports 9 options, which are listed below.
@@ -41,14 +41,14 @@ The Flatpack dataformat supports 9 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-flatpack-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -56,7 +56,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 13 options, which are listed below.
+The component supports 14 options, which are listed below.
 
 
 
@@ -64,13 +64,14 @@ The component supports 13 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.flatpack.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.flatpack.enabled* | Enable flatpack component | true | Boolean
-| *camel.component.flatpack.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.flatpack.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.flatpack.enabled* | Whether to enable auto configuration of the flatpack component. This is enabled by default. |  | Boolean
+| *camel.component.flatpack.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.dataformat.flatpack.allow-short-lines* | Allows for lines to be shorter than expected and ignores the extra characters | false | Boolean
 | *camel.dataformat.flatpack.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.flatpack.definition* | The flatpack pzmap configuration file. Can be omitted in simpler situations, but its preferred to use the pzmap. |  | String
 | *camel.dataformat.flatpack.delimiter* | The delimiter char (could be ; , or similar) | , | String
-| *camel.dataformat.flatpack.enabled* | Enable flatpack dataformat | true | Boolean
+| *camel.dataformat.flatpack.enabled* | Whether to enable auto configuration of the flatpack data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.flatpack.fixed* | Delimited or fixed. Is by default false = delimited | false | Boolean
 | *camel.dataformat.flatpack.ignore-extra-columns* | Allows for lines to be longer than expected and ignores the extra characters. | false | Boolean
 | *camel.dataformat.flatpack.ignore-first-record* | Whether the first line is ignored for delimited files (for the column headers). Is by default true. | true | Boolean
@@ -80,7 +81,7 @@ The component supports 13 options, which are listed below.
 // spring-boot-auto-configure options: END
 ND
 
-### Usage
+== Usage
 
 To use the data format, simply instantiate an instance and invoke the
 marshal or unmarshal operation in the route builder:
@@ -115,7 +116,7 @@ in Java code from e.g. a processor. We marshal the data according to the
 Flatpack format and convert the result as a `String` object and store it
 on a JMS queue.
 
-### Dependencies
+== Dependencies
 
 To use Flatpack in your camel routes you need to add the a dependency on
 *camel-flatpack* which implements this data format.

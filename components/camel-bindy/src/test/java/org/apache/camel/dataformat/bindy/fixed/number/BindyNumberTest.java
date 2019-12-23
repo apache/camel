@@ -103,6 +103,7 @@ public class BindyNumberTest extends AbstractJUnit4SpringContextTests {
     // *************************************************************************
 
     public static class ContextConfig extends RouteBuilder {
+        @Override
         public void configure() {
             BindyDataFormat bindy = new BindyDataFormat();
             bindy.setClassType(DataModel.class);

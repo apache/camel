@@ -25,9 +25,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.stream.Stream;
 
-import static java.util.concurrent.TimeUnit.MILLISECONDS;
-import static java.util.concurrent.TimeUnit.SECONDS;
-
 import org.apache.camel.CamelException;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceConsumer;
@@ -48,6 +45,8 @@ import org.eclipse.jetty.http.HttpHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.util.concurrent.TimeUnit.MILLISECONDS;
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.cometd.bayeux.Channel.META_CONNECT;
 import static org.cometd.bayeux.Channel.META_DISCONNECT;
 import static org.cometd.bayeux.Channel.META_HANDSHAKE;
@@ -67,7 +66,10 @@ public class SubscriptionHelper extends ServiceSupport {
 
     private static final String FAILURE_FIELD = "failure";
     private static final String EXCEPTION_FIELD = "exception";
+    private static final String SFDC_FIELD = "sfdc";
+    private static final String FAILURE_REASON_FIELD = "failureReason";
     private static final int DISCONNECT_INTERVAL = 5000;
+    private static final String SERVER_TOO_BUSY_ERROR = "503::";
 
     BayeuxClient client;
 
@@ -123,7 +125,7 @@ public class SubscriptionHelper extends ServiceSupport {
 
                     if (!message.isSuccessful()) {
                         LOG.warn("Handshake failure: {}", message);
-                        handshakeError = (String) message.get(ERROR_FIELD);
+                        handshakeError = (String)message.get(ERROR_FIELD);
                         handshakeException = getFailure(message);
 
                         if (handshakeError != null) {
@@ -167,7 +169,7 @@ public class SubscriptionHelper extends ServiceSupport {
                     if (!message.isSuccessful()) {
 
                         LOG.warn("Connect failure: {}", message);
-                        connectError = (String) message.get(ERROR_FIELD);
+                        connectError = (String)message.get(ERROR_FIELD);
                         connectException = getFailure(message);
 
                     } else if (reconnecting) {
@@ -175,7 +177,8 @@ public class SubscriptionHelper extends ServiceSupport {
                         reconnecting = false;
 
                         LOG.debug("Refreshing subscriptions to {} channels on reconnect", listenerMap.size());
-                        // reconnected to Salesforce, subscribe to existing channels
+                        // reconnected to Salesforce, subscribe to existing
+                        // channels
                         final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> map = new HashMap<>();
                         map.putAll(listenerMap);
                         listenerMap.clear();
@@ -208,20 +211,15 @@ public class SubscriptionHelper extends ServiceSupport {
         final long waitMs = MILLISECONDS.convert(CONNECT_TIMEOUT, SECONDS);
         if (!client.waitFor(waitMs, BayeuxClient.State.CONNECTED)) {
             if (handshakeException != null) {
-                throw new CamelException(
-                        String.format("Exception during HANDSHAKE: %s", handshakeException.getMessage()),
-                        handshakeException);
+                throw new CamelException(String.format("Exception during HANDSHAKE: %s", handshakeException.getMessage()), handshakeException);
             } else if (handshakeError != null) {
                 throw new CamelException(String.format("Error during HANDSHAKE: %s", handshakeError));
             } else if (connectException != null) {
-                throw new CamelException(
-                        String.format("Exception during CONNECT: %s", connectException.getMessage()),
-                        connectException);
+                throw new CamelException(String.format("Exception during CONNECT: %s", connectException.getMessage()), connectException);
             } else if (connectError != null) {
                 throw new CamelException(String.format("Error during CONNECT: %s", connectError));
             } else {
-                throw new CamelException(
-                        String.format("Handshake request timeout after %s seconds", CONNECT_TIMEOUT));
+                throw new CamelException(String.format("Handshake request timeout after %s seconds", CONNECT_TIMEOUT));
             }
         }
     }
@@ -305,12 +303,17 @@ public class SubscriptionHelper extends ServiceSupport {
     }
 
     @SuppressWarnings("unchecked")
-    private Exception getFailure(Message message) {
+    private static Exception getFailure(Message message) {
         Exception exception = null;
         if (message.get(EXCEPTION_FIELD) != null) {
-            exception = (Exception) message.get(EXCEPTION_FIELD);
+            exception = (Exception)message.get(EXCEPTION_FIELD);
         } else if (message.get(FAILURE_FIELD) != null) {
-            exception = (Exception) ((Map<String, Object>)message.get("failure")).get("exception");
+            exception = (Exception)((Map<String, Object>)message.get("failure")).get("exception");
+        } else {
+            String failureReason = getFailureReason(message);
+            if (failureReason != null) {
+                exception = new SalesforceException(failureReason, null);
+            }
         }
         return exception;
     }
@@ -332,7 +335,8 @@ public class SubscriptionHelper extends ServiceSupport {
     }
 
     static BayeuxClient createClient(final SalesforceComponent component) throws SalesforceException {
-        // use default Jetty client from SalesforceComponent, its shared by all consumers
+        // use default Jetty client from SalesforceComponent, its shared by all
+        // consumers
         final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
 
         Map<String, Object> options = new HashMap<>();
@@ -371,7 +375,7 @@ public class SubscriptionHelper extends ServiceSupport {
         // create subscription for consumer
         final String channelName = getChannelName(topicName);
 
-        setupReplay((SalesforceEndpoint) consumer.getEndpoint());
+        setupReplay((SalesforceEndpoint)consumer.getEndpoint());
 
         // channel message listener
         LOG.info("Subscribing to channel {}...", channelName);
@@ -396,18 +400,52 @@ public class SubscriptionHelper extends ServiceSupport {
                 if (channelName.equals(subscribedChannelName)) {
 
                     if (!message.isSuccessful()) {
-                        String error = (String) message.get(ERROR_FIELD);
+                        String error = (String)message.get(ERROR_FIELD);
                         if (error == null) {
                             error = "Missing error message";
                         }
+
                         Exception failure = getFailure(message);
-                        String msg = String.format("Error subscribing to %s: %s", topicName,
-                            failure != null ? failure.getMessage() : error);
-                        consumer.handleException(msg, new SalesforceException(msg, failure));
+                        String msg = String.format("Error subscribing to %s: %s", topicName, failure != null ? failure.getMessage() : error);
+                        boolean abort = true;
+
+                        if (isTemporaryError(message)) {
+                            LOG.warn(msg);
+
+                            // retry after delay
+                            final long backoff = restartBackoff.getAndAdd(backoffIncrement);
+                            if (backoff > maxBackoff) {
+                                LOG.error("Subscribe aborted after exceeding {} msecs backoff", maxBackoff);
+                            } else {
+                                abort = false;
+
+                                try {
+                                    LOG.debug("Pausing for {} msecs before subscribe attempt", backoff);
+                                    Thread.sleep(backoff);
+
+                                    final SalesforceHttpClient httpClient = component.getConfig().getHttpClient();
+                                    httpClient.getExecutor().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            subscribe(topicName, consumer);
+                                        }
+                                    });
+                                } catch (InterruptedException e) {
+                                    LOG.warn("Aborting subscribe on interrupt!", e);
+                                }
+                            }
+                        }
+
+                        if (abort) {
+                            consumer.handleException(msg, new SalesforceException(msg, failure));
+                        }
                     } else {
                         // remember subscription
                         LOG.info("Subscribed to channel {}", subscribedChannelName);
                         listenerMap.put(consumer, listener);
+
+                        // reset backoff interval
+                        restartBackoff.set(0);
                     }
 
                     // remove this subscription listener
@@ -419,6 +457,22 @@ public class SubscriptionHelper extends ServiceSupport {
 
         // subscribe asynchronously
         clientChannel.subscribe(listener);
+    }
+
+    private static boolean isTemporaryError(Message message) {
+        String failureReason = getFailureReason(message);
+        return failureReason != null && failureReason.startsWith(SERVER_TOO_BUSY_ERROR);
+    }
+
+    private static String getFailureReason(Message message) {
+        String failureReason = null;
+        if (message.getExt() != null) {
+            Map<String, Object> sfdcFields = (Map<String, Object>) message.getExt().get(SFDC_FIELD);
+            if (sfdcFields != null) {
+                failureReason  = (String) sfdcFields.get(FAILURE_REASON_FIELD);
+            }
+        }
+        return failureReason;
     }
 
     void setupReplay(final SalesforceEndpoint endpoint) {
@@ -453,10 +507,10 @@ public class SubscriptionHelper extends ServiceSupport {
         final Long componentReplayId = componentInitialReplayIdMap.getOrDefault(topicName, componentInitialReplayIdMap.get(channelName));
         final Long componentDefaultReplayId = componentConfiguration.getDefaultReplayId();
 
-        // the endpoint values have priority over component values, and the default values posteriority
+        // the endpoint values have priority over component values, and the
+        // default values posteriority
         // over give topic values
-        return Stream.of(replayId, endpointReplayId, componentReplayId, endpointDefaultReplayId, componentDefaultReplayId)
-            .filter(Objects::nonNull).findFirst();
+        return Stream.of(replayId, endpointReplayId, componentReplayId, endpointDefaultReplayId, componentDefaultReplayId).filter(Objects::nonNull).findFirst();
     }
 
     static String getChannelName(final String topicName) {
@@ -499,7 +553,7 @@ public class SubscriptionHelper extends ServiceSupport {
                     if (channelName.equals(unsubscribedChannelName)) {
 
                         if (!message.isSuccessful()) {
-                            unsubscribeError[0] = (String) message.get(ERROR_FIELD);
+                            unsubscribeError[0] = (String)message.get(ERROR_FIELD);
                             unsubscribeFailure[0] = getFailure(message);
                         } else {
                             // forget subscription
@@ -526,14 +580,11 @@ public class SubscriptionHelper extends ServiceSupport {
                     if (!latch.await(CHANNEL_TIMEOUT, SECONDS)) {
                         String message;
                         if (unsubscribeFailure[0] != null) {
-                            message = String.format("Error unsubscribing from topic %s: %s",
-                                topicName, unsubscribeFailure[0].getMessage());
+                            message = String.format("Error unsubscribing from topic %s: %s", topicName, unsubscribeFailure[0].getMessage());
                         } else if (unsubscribeError[0] != null) {
-                            message = String.format("Error unsubscribing from topic %s: %s",
-                                    topicName, unsubscribeError[0]);
+                            message = String.format("Error unsubscribing from topic %s: %s", topicName, unsubscribeError[0]);
                         } else {
-                            message = String.format("Timeout error unsubscribing from topic %s after %s seconds",
-                                    topicName, CHANNEL_TIMEOUT);
+                            message = String.format("Timeout error unsubscribing from topic %s after %s seconds", topicName, CHANNEL_TIMEOUT);
                         }
                         throw new CamelException(message, unsubscribeFailure[0]);
                     }
@@ -551,11 +602,9 @@ public class SubscriptionHelper extends ServiceSupport {
     static String getEndpointUrl(final SalesforceComponent component) {
         // In version 36.0 replay is only enabled on a separate endpoint
         if (Double.valueOf(component.getConfig().getApiVersion()) == 36.0) {
-            boolean replayOptionsPresent = component.getConfig().getDefaultReplayId() != null
-                    || !component.getConfig().getInitialReplayIdMap().isEmpty();
+            boolean replayOptionsPresent = component.getConfig().getDefaultReplayId() != null || !component.getConfig().getInitialReplayIdMap().isEmpty();
             if (replayOptionsPresent) {
-                return component.getSession().getInstanceUrl() + "/cometd/replay/"
-                        + component.getConfig().getApiVersion();
+                return component.getSession().getInstanceUrl() + "/cometd/replay/" + component.getConfig().getApiVersion();
             }
         }
         return component.getSession().getInstanceUrl() + "/cometd/" + component.getConfig().getApiVersion();

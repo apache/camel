@@ -54,6 +54,7 @@ public class ProcessorAsEndpointTest extends SpringTestSupport {
         }
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/bind/processorAsEndpoint.xml");
     }

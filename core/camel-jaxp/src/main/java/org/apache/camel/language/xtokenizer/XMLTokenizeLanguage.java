@@ -68,6 +68,7 @@ public class XMLTokenizeLanguage extends LanguageSupport {
         return language.createExpression(path);
     }
 
+    @Override
     public Predicate createPredicate(String expression) {
         return ExpressionToPredicateAdapter.toPredicate(createExpression(expression));
     }
@@ -75,6 +76,7 @@ public class XMLTokenizeLanguage extends LanguageSupport {
     /**
      * Creates a tokenize expression.
      */
+    @Override
     public Expression createExpression(String expression) {
         String path = expression != null ? expression : this.path;
         ObjectHelper.notNull(path, "path");
@@ -125,6 +127,7 @@ public class XMLTokenizeLanguage extends LanguageSupport {
         this.namespaces = namespaces;
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }

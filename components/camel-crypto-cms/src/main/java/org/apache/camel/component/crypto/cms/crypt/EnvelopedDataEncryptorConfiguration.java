@@ -124,7 +124,7 @@ public class EnvelopedDataEncryptorConfiguration extends CryptoCmsMarshallerConf
             if (recipientOb instanceof String) {
                 String recipientName = (String)recipientOb;
                 String valueNoHash = recipientName.replaceAll("#", "");
-                if (getContext() != null && recipientName != null) {
+                if (getContext() != null) {
                     RecipientInfo recipient = getContext().getRegistry().lookupByNameAndType(valueNoHash, RecipientInfo.class);
                     if (recipient != null) {
                         setRecipient(recipient);

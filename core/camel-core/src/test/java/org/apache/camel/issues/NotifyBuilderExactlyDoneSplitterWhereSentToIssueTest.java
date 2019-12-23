@@ -27,10 +27,7 @@ public class NotifyBuilderExactlyDoneSplitterWhereSentToIssueTest extends Contex
 
     @Test
     public void testReceiveTiAnalyticsArrayOfJsonEvents() {
-        NotifyBuilder notifier = new NotifyBuilder(context)
-                .wereSentTo("stub:direct:somewhere")
-                .whenExactlyDone(7)
-                .create();
+        NotifyBuilder notifier = new NotifyBuilder(context).wereSentTo("stub:direct:somewhere").whenExactlyDone(7).create();
 
         template.sendBody("direct:split", "A,B,C,D,E,F,G");
 
@@ -42,10 +39,7 @@ public class NotifyBuilderExactlyDoneSplitterWhereSentToIssueTest extends Contex
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:split")
-                    .split(body()).parallelProcessing()
-                        .log("Received: ${body}")
-                        .to("stub:direct:somewhere");
+                from("direct:split").split(body()).parallelProcessing().log("Received: ${body}").to("stub:direct:somewhere");
             }
         };
     }

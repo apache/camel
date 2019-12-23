@@ -106,6 +106,7 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         delegate.doStop();
     }
 
+    @Override
     public String toString() {
         return delegate.toString();
     }

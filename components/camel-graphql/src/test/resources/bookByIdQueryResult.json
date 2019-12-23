@@ -1,0 +1,11 @@
+{
+  "data": {
+    "bookById": {
+      "id": "book-1",
+      "name": "Harry Potter and the Philosopher's Stone",
+      "author": {
+        "name": "Joanne Rowling"
+      }
+    }
+  }
+}

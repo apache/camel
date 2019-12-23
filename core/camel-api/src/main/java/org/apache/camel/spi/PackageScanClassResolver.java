@@ -17,12 +17,15 @@
 package org.apache.camel.spi;
 
 import java.lang.annotation.Annotation;
+import java.net.URL;
 import java.util.Set;
 
 import org.apache.camel.StaticService;
 
 /**
- * A resolver that can find resources based on package scanning.
+ * A resolver that can find classes based on package scanning.
+ *
+ * @see PackageScanResourceResolver
  */
 public interface PackageScanClassResolver extends StaticService {
 
@@ -96,4 +99,15 @@ public interface PackageScanClassResolver extends StaticService {
      * @param filter filter to filter desired classes in all scan operations
      */
     void removeFilter(PackageScanFilter filter);
+
+    /**
+     * To specify a set of accepted schemas to use for loading resources as URL connections
+     * (besides http and https schemas)
+     */
+    void setAcceptableSchemes(String schemes);
+
+    /**
+     * Clears the internal cache.
+     */
+    void clearCache();
 }

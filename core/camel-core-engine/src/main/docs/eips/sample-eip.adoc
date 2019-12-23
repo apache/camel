@@ -1,0 +1,84 @@
+[[sample-eip]]
+= Sample EIP
+
+A sampling throttler allows you to extract a sample of the exchanges from the traffic through a route. +
+It is configured with a sampling period during which only a single exchange is allowed to pass through. All other exchanges will be stopped.
+Will by default use a sample period of 1 seconds.
+
+== Options
+// eip options: START
+The Sample EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *samplePeriod* | Sets the sample period during which only a single Exchange will pass through. | 1 | Long
+| *messageFrequency* | Sets the sample message count which only a single Exchange will pass through after this many received. |  | Long
+| *units* | Sets the time units for the sample period, defaulting to seconds. | SECONDS | TimeUnit
+|===
+// eip options: END
+
+
+== Samples
+You use this EIP with the `sample` DSL as show in these samples.
+
+These samples also show how you can use the different syntax to configure the sampling period:
+
+[source,java]
+----
+from("direct:sample")
+    .sample()
+    .to("mock:result");
+
+from("direct:sample-configured")
+    .sample(1, TimeUnit.SECONDS)
+    .to("mock:result");
+
+from("direct:sample-configured-via-dsl")
+    .sample().samplePeriod(1).timeUnits(TimeUnit.SECONDS)
+    .to("mock:result");
+
+from("direct:sample-messageFrequency")
+    .sample(10)
+    .to("mock:result");
+
+from("direct:sample-messageFrequency-via-dsl")
+    .sample().sampleMessageFrequency(5)
+    .to("mock:result");
+----
+
+And the same example in Spring XML is:
+
+[source,xml]
+----
+<route>
+    <from uri="direct:sample"/>
+    <sample samplePeriod="1" units="seconds">
+        <to uri="mock:result"/>
+    </sample>
+</route>
+<route>
+    <from uri="direct:sample-messageFrequency"/>
+    <sample messageFrequency="10">
+        <to uri="mock:result"/>
+    </sample>
+</route>
+<route>
+    <from uri="direct:sample-messageFrequency-via-dsl"/>
+    <sample messageFrequency="5">
+        <to uri="mock:result"/>
+    </sample>
+</route>
+----
+
+And since it uses a default of 1 second you can omit this configuration in case you also want to use 1 second
+[source,xml]
+----
+<route>
+    <from uri="direct:sample"/>
+    <!-- will by default use 1 second period -->
+    <sample>
+        <to uri="mock:result"/>
+    </sample>
+</route>
+----

@@ -61,7 +61,7 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
 
         assertEquals(4, counter); // 1 first + 3 redeliveries
     }
-    
+
     @Test
     public void testMulticastException() throws Exception {
         getMockEndpoint("mock:dead").expectedBodiesReceived("Hello", "Hello", "Hi", "Hi", "Bye", "Bye");
@@ -76,29 +76,15 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage()
-                        .maximumRedeliveries(3).redeliveryDelay(0));
+                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(3).redeliveryDelay(0));
 
-                from("direct:start")
-                    .to("mock:start")
-                    .process(new MyPreProcessor())
-                    .multicast().shareUnitOfWork()
-                        .to("direct:a")
-                        .to("direct:b")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").to("mock:start").process(new MyPreProcessor()).multicast().shareUnitOfWork().to("direct:a").to("direct:b").end().to("mock:result");
 
-                from("direct:a")
-                    .to("mock:a");
+                from("direct:a").to("mock:a");
 
-                from("direct:b")
-                    .process(new MyProcessor())
-                    .to("mock:b");
-                
-                from("direct:e")
-                    .multicast().shareUnitOfWork()
-                        .throwException(new IllegalArgumentException("exception1"))
-                        .throwException(new IllegalArgumentException("exception2"))
+                from("direct:b").process(new MyProcessor()).to("mock:b");
+
+                from("direct:e").multicast().shareUnitOfWork().throwException(new IllegalArgumentException("exception1")).throwException(new IllegalArgumentException("exception2"))
                     .end();
             }
         };
@@ -129,6 +115,5 @@ public class MulticastSubUnitOfWorkTest extends ContextTestSupport {
             }
         }
     }
-
 
 }

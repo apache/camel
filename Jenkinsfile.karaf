@@ -21,7 +21,7 @@ def LOCAL_REPOSITORY = env.LOCAL_REPOSITORY ?: '/home/jenkins/jenkins-slave/mave
 def AGENT_LABEL = env.AGENT_LABEL ?: 'ubuntu'
 def JDK_NAME = env.JDK_NAME ?: 'JDK 1.8 (latest)'
 
-def MAVEN_PARAMS = '-U -B -e -fae -V -Dmaven.repo.local=/home/jenkins/.m2/repository -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2'
+def MAVEN_PARAMS = '-U -B -e -fae -V -Dmaven.compiler.fork=true -Dsurefire.rerunFailingTestsCount=2'
 
 def karaf_itests_result
 
@@ -39,6 +39,10 @@ pipeline {
         jdk JDK_NAME
     }
 
+    environment {
+        MAVEN_SKIP_RC = true
+    }
+
     options {
         buildDiscarder(
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
@@ -50,7 +54,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh "./mvnw $MAVEN_PARAMS -Dmaven.test.skip.exec=true clean install"
+                sh "./mvnw $MAVEN_PARAMS -Papt -Dmaven.test.skip.exec=true clean install"
             }
         }
 

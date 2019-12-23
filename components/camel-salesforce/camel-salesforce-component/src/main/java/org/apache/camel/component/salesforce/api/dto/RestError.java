@@ -22,6 +22,7 @@ import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
+
 //CHECKSTYLE:OFF
 public class RestError extends AbstractDTOBase {
 
@@ -84,7 +85,7 @@ public class RestError extends AbstractDTOBase {
             return false;
         }
 
-        final RestError other = (RestError) obj;
+        final RestError other = (RestError)obj;
 
         return Objects.equals(errorCode, other.errorCode) && Objects.equals(message, other.message) && Objects.equals(fields, other.fields);
     }

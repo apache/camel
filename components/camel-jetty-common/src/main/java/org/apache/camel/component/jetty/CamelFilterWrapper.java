@@ -39,6 +39,7 @@ public class CamelFilterWrapper implements Filter {
         this.wrapped = wrapped;
     }
     
+    @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         if (request.getAttribute(CamelContinuationServlet.EXCHANGE_ATTRIBUTE_NAME) == null) {
             wrapped.doFilter(request, response, chain);
@@ -47,10 +48,12 @@ public class CamelFilterWrapper implements Filter {
         }
     }
 
+    @Override
     public void destroy() {
         wrapped.destroy();
     }
 
+    @Override
     public void init(FilterConfig config) throws ServletException {
         Object o = config.getServletContext().getAttribute("javax.servlet.context.tempdir");
         if (o == null) {

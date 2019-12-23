@@ -19,9 +19,11 @@ package org.apache.camel.builder.endpoint.dsl;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * The jmx component allows to receive JMX notifications.
@@ -40,6 +42,40 @@ public interface JMXEndpointBuilderFactory {
             return (AdvancedJMXEndpointBuilder) this;
         }
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default JMXEndpointBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default JMXEndpointBuilder bridgeErrorHandler(String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * Format for the message body. Either xml or raw. If xml, the
          * notification is serialized to xml. If raw, then the raw java object
          * is set as the body.
@@ -49,7 +85,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: consumer
          */
         default JMXEndpointBuilder format(String format) {
-            setProperty("format", format);
+            doSetProperty("format", format);
             return this;
         }
         /**
@@ -61,7 +97,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: consumer
          */
         default JMXEndpointBuilder granularityPeriod(long granularityPeriod) {
-            setProperty("granularityPeriod", granularityPeriod);
+            doSetProperty("granularityPeriod", granularityPeriod);
             return this;
         }
         /**
@@ -73,7 +109,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: consumer
          */
         default JMXEndpointBuilder granularityPeriod(String granularityPeriod) {
-            setProperty("granularityPeriod", granularityPeriod);
+            doSetProperty("granularityPeriod", granularityPeriod);
             return this;
         }
         /**
@@ -85,7 +121,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: consumer
          */
         default JMXEndpointBuilder monitorType(String monitorType) {
-            setProperty("monitorType", monitorType);
+            doSetProperty("monitorType", monitorType);
             return this;
         }
         /**
@@ -97,7 +133,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: consumer
          */
         default JMXEndpointBuilder objectDomain(String objectDomain) {
-            setProperty("objectDomain", objectDomain);
+            doSetProperty("objectDomain", objectDomain);
             return this;
         }
         /**
@@ -109,7 +145,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: consumer
          */
         default JMXEndpointBuilder objectName(String objectName) {
-            setProperty("objectName", objectName);
+            doSetProperty("objectName", objectName);
             return this;
         }
         /**
@@ -120,7 +156,76 @@ public interface JMXEndpointBuilderFactory {
          * Group: consumer
          */
         default JMXEndpointBuilder observedAttribute(String observedAttribute) {
-            setProperty("observedAttribute", observedAttribute);
+            doSetProperty("observedAttribute", observedAttribute);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute differs
+         * from the string to compare (string monitor or consumer). By default
+         * the consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyDiffer(boolean notifyDiffer) {
+            doSetProperty("notifyDiffer", notifyDiffer);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute differs
+         * from the string to compare (string monitor or consumer). By default
+         * the consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyDiffer(String notifyDiffer) {
+            doSetProperty("notifyDiffer", notifyDiffer);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute matches
+         * the string to compare (string monitor or consumer). By default the
+         * consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyMatch(boolean notifyMatch) {
+            doSetProperty("notifyMatch", notifyMatch);
+            return this;
+        }
+        /**
+         * If true, will fire a notification when the string attribute matches
+         * the string to compare (string monitor or consumer). By default the
+         * consumer will notify match if observed attribute and string to
+         * compare has been configured.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder notifyMatch(String notifyMatch) {
+            doSetProperty("notifyMatch", notifyMatch);
+            return this;
+        }
+        /**
+         * Value for attribute to compare (string monitor or consumer). By
+         * default the consumer will notify match if observed attribute and
+         * string to compare has been configured.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: string
+         */
+        default JMXEndpointBuilder stringToCompare(String stringToCompare) {
+            doSetProperty("stringToCompare", stringToCompare);
             return this;
         }
         /**
@@ -132,7 +237,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: counter
          */
         default JMXEndpointBuilder initThreshold(int initThreshold) {
-            setProperty("initThreshold", initThreshold);
+            doSetProperty("initThreshold", initThreshold);
             return this;
         }
         /**
@@ -144,7 +249,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: counter
          */
         default JMXEndpointBuilder initThreshold(String initThreshold) {
-            setProperty("initThreshold", initThreshold);
+            doSetProperty("initThreshold", initThreshold);
             return this;
         }
         /**
@@ -156,7 +261,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: counter
          */
         default JMXEndpointBuilder modulus(int modulus) {
-            setProperty("modulus", modulus);
+            doSetProperty("modulus", modulus);
             return this;
         }
         /**
@@ -168,7 +273,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: counter
          */
         default JMXEndpointBuilder modulus(String modulus) {
-            setProperty("modulus", modulus);
+            doSetProperty("modulus", modulus);
             return this;
         }
         /**
@@ -180,7 +285,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: counter
          */
         default JMXEndpointBuilder offset(int offset) {
-            setProperty("offset", offset);
+            doSetProperty("offset", offset);
             return this;
         }
         /**
@@ -192,7 +297,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: counter
          */
         default JMXEndpointBuilder offset(String offset) {
-            setProperty("offset", offset);
+            doSetProperty("offset", offset);
             return this;
         }
         /**
@@ -205,7 +310,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder differenceMode(boolean differenceMode) {
-            setProperty("differenceMode", differenceMode);
+            doSetProperty("differenceMode", differenceMode);
             return this;
         }
         /**
@@ -218,7 +323,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder differenceMode(String differenceMode) {
-            setProperty("differenceMode", differenceMode);
+            doSetProperty("differenceMode", differenceMode);
             return this;
         }
         /**
@@ -230,7 +335,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder notifyHigh(boolean notifyHigh) {
-            setProperty("notifyHigh", notifyHigh);
+            doSetProperty("notifyHigh", notifyHigh);
             return this;
         }
         /**
@@ -242,7 +347,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder notifyHigh(String notifyHigh) {
-            setProperty("notifyHigh", notifyHigh);
+            doSetProperty("notifyHigh", notifyHigh);
             return this;
         }
         /**
@@ -254,7 +359,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder notifyLow(boolean notifyLow) {
-            setProperty("notifyLow", notifyLow);
+            doSetProperty("notifyLow", notifyLow);
             return this;
         }
         /**
@@ -266,7 +371,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder notifyLow(String notifyLow) {
-            setProperty("notifyLow", notifyLow);
+            doSetProperty("notifyLow", notifyLow);
             return this;
         }
         /**
@@ -277,7 +382,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder thresholdHigh(Double thresholdHigh) {
-            setProperty("thresholdHigh", thresholdHigh);
+            doSetProperty("thresholdHigh", thresholdHigh);
             return this;
         }
         /**
@@ -288,7 +393,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder thresholdHigh(String thresholdHigh) {
-            setProperty("thresholdHigh", thresholdHigh);
+            doSetProperty("thresholdHigh", thresholdHigh);
             return this;
         }
         /**
@@ -299,7 +404,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder thresholdLow(Double thresholdLow) {
-            setProperty("thresholdLow", thresholdLow);
+            doSetProperty("thresholdLow", thresholdLow);
             return this;
         }
         /**
@@ -310,7 +415,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: gauge
          */
         default JMXEndpointBuilder thresholdLow(String thresholdLow) {
-            setProperty("thresholdLow", thresholdLow);
+            doSetProperty("thresholdLow", thresholdLow);
             return this;
         }
         /**
@@ -321,7 +426,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: security
          */
         default JMXEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -332,7 +437,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: security
          */
         default JMXEndpointBuilder user(String user) {
-            setProperty("user", user);
+            doSetProperty("user", user);
             return this;
         }
     }
@@ -347,6 +452,63 @@ public interface JMXEndpointBuilderFactory {
             return (JMXEndpointBuilder) this;
         }
         /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJMXEndpointBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJMXEndpointBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJMXEndpointBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedJMXEndpointBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -356,7 +518,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -369,7 +531,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -383,7 +545,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder executorService(
                 ExecutorService executorService) {
-            setProperty("executorService", executorService);
+            doSetProperty("executorService", executorService);
             return this;
         }
         /**
@@ -397,7 +559,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder executorService(
                 String executorService) {
-            setProperty("executorService", executorService);
+            doSetProperty("executorService", executorService);
             return this;
         }
         /**
@@ -410,7 +572,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder handback(Object handback) {
-            setProperty("handback", handback);
+            doSetProperty("handback", handback);
             return this;
         }
         /**
@@ -423,7 +585,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder handback(String handback) {
-            setProperty("handback", handback);
+            doSetProperty("handback", handback);
             return this;
         }
         /**
@@ -436,7 +598,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder notificationFilter(
                 Object notificationFilter) {
-            setProperty("notificationFilter", notificationFilter);
+            doSetProperty("notificationFilter", notificationFilter);
             return this;
         }
         /**
@@ -449,7 +611,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder notificationFilter(
                 String notificationFilter) {
-            setProperty("notificationFilter", notificationFilter);
+            doSetProperty("notificationFilter", notificationFilter);
             return this;
         }
         /**
@@ -463,7 +625,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder objectProperties(
                 Map<String, String> objectProperties) {
-            setProperty("objectProperties", objectProperties);
+            doSetProperty("objectProperties", objectProperties);
             return this;
         }
         /**
@@ -478,7 +640,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder objectProperties(
                 String objectProperties) {
-            setProperty("objectProperties", objectProperties);
+            doSetProperty("objectProperties", objectProperties);
             return this;
         }
         /**
@@ -491,7 +653,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder reconnectDelay(int reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -504,7 +666,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder reconnectDelay(String reconnectDelay) {
-            setProperty("reconnectDelay", reconnectDelay);
+            doSetProperty("reconnectDelay", reconnectDelay);
             return this;
         }
         /**
@@ -519,7 +681,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder reconnectOnConnectionFailure(
                 boolean reconnectOnConnectionFailure) {
-            setProperty("reconnectOnConnectionFailure", reconnectOnConnectionFailure);
+            doSetProperty("reconnectOnConnectionFailure", reconnectOnConnectionFailure);
             return this;
         }
         /**
@@ -534,7 +696,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder reconnectOnConnectionFailure(
                 String reconnectOnConnectionFailure) {
-            setProperty("reconnectOnConnectionFailure", reconnectOnConnectionFailure);
+            doSetProperty("reconnectOnConnectionFailure", reconnectOnConnectionFailure);
             return this;
         }
         /**
@@ -546,7 +708,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -558,7 +720,7 @@ public interface JMXEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -573,7 +735,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder testConnectionOnStartup(
                 boolean testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
         /**
@@ -588,7 +750,7 @@ public interface JMXEndpointBuilderFactory {
          */
         default AdvancedJMXEndpointBuilder testConnectionOnStartup(
                 String testConnectionOnStartup) {
-            setProperty("testConnectionOnStartup", testConnectionOnStartup);
+            doSetProperty("testConnectionOnStartup", testConnectionOnStartup);
             return this;
         }
     }
@@ -597,7 +759,7 @@ public interface JMXEndpointBuilderFactory {
      * The jmx component allows to receive JMX notifications.
      * 
      * Category: monitoring
-     * Available as of version: 2.6
+     * Since: 2.6
      * Maven coordinates: org.apache.camel:camel-jmx
      * 
      * Syntax: <code>jmx:serverURL</code>
@@ -606,7 +768,7 @@ public interface JMXEndpointBuilderFactory {
      * Server url comes from the remaining endpoint. Use platform to connect to
      * local JVM.
      */
-    default JMXEndpointBuilder jMX(String path) {
+    default JMXEndpointBuilder jmx(String path) {
         class JMXEndpointBuilderImpl extends AbstractEndpointBuilder implements JMXEndpointBuilder, AdvancedJMXEndpointBuilder {
             public JMXEndpointBuilderImpl(String path) {
                 super("jmx", path);

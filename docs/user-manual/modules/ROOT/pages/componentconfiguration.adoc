@@ -1,5 +1,5 @@
 [[ComponentConfiguration-ComponentConfigurationAPI]]
-=== ComponentConfiguration API
+= ComponentConfiguration API
 
 As of *Camel 2.12* the new ComponentConfiguration API provides a
 mechanism for tools (command line, IDE, web based) to introspect the

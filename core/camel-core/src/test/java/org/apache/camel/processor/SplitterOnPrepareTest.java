@@ -48,9 +48,7 @@ public class SplitterOnPrepareTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body()).onPrepare(new FixNamePrepare())
-                        .to("direct:a");
+                from("direct:start").split(body()).onPrepare(new FixNamePrepare()).to("direct:a");
 
                 from("direct:a").process(new ProcessorA()).to("mock:a");
             }
@@ -69,6 +67,7 @@ public class SplitterOnPrepareTest extends ContextTestSupport {
 
     public static final class FixNamePrepare implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             Animal body = exchange.getIn().getBody(Animal.class);
             assertEquals(1, body.getId());

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow.ws;
+
 import java.io.IOException;
 import java.net.URL;
 import java.security.GeneralSecurityException;

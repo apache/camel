@@ -57,10 +57,8 @@ public class CustomListAggregationStrategyCompletionFromBatchConsumerTest extend
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/batch?initialDelay=0&delay=10&sortBy=file:name").routeId("foo").noAutoStartup()
-                    .aggregate(new MyListOfNumbersStrategy()).constant(true)
-                    .completionFromBatchConsumer()
-                    .to("mock:result");
+                from("file:target/data/batch?initialDelay=0&delay=10&sortBy=file:name").routeId("foo").noAutoStartup().aggregate(new MyListOfNumbersStrategy()).constant(true)
+                    .completionFromBatchConsumer().to("mock:result");
             }
         };
     }

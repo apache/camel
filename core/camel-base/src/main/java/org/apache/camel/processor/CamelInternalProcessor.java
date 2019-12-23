@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.AsyncCallback;
@@ -28,6 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.MessageHistory;
 import org.apache.camel.NamedNode;
+import org.apache.camel.NamedRoute;
 import org.apache.camel.Ordered;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
@@ -37,17 +39,21 @@ import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.CamelInternalProcessorAdvice;
+import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.ManagementInterceptStrategy.InstrumentationProcessor;
 import org.apache.camel.spi.MessageHistoryFactory;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.spi.StreamCachingStrategy;
+import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.support.UnitOfWorkHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.StopWatch;
@@ -247,7 +253,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     /**
      * Strategy to determine if we should continue processing the {@link Exchange}.
      */
-    protected boolean continueProcessing(Exchange exchange) {
+    private boolean continueProcessing(Exchange exchange) {
         Object stop = exchange.getProperty(Exchange.ROUTE_STOP);
         if (stop != null) {
             boolean doStop = exchange.getContext().getTypeConverter().convertTo(Boolean.class, stop);
@@ -349,7 +355,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
          * @param policy the policy
          * @return <tt>true</tt> to run
          */
-        protected boolean isRoutePolicyRunAllowed(RoutePolicy policy) {
+        boolean isRoutePolicyRunAllowed(RoutePolicy policy) {
             if (policy instanceof StatefulService) {
                 StatefulService ss = (StatefulService) policy;
                 return ss.isRunAllowed();
@@ -394,9 +400,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         private static boolean isCamelStopping(CamelContext context) {
-            if (context instanceof StatefulService) {
-                StatefulService ss = (StatefulService) context;
-                return ss.isStopping() || ss.isStopped();
+            if (context != null) {
+                return context.isStopping() || context.isStopped();
             }
             return false;
         }
@@ -409,11 +414,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private final BacklogTracer backlogTracer;
         private final NamedNode processorDefinition;
-        private final NamedNode routeDefinition;
+        private final NamedRoute routeDefinition;
         private final boolean first;
 
         public BacklogTracerAdvice(BacklogTracer backlogTracer, NamedNode processorDefinition,
-                                   NamedNode routeDefinition, boolean first) {
+                                   NamedRoute routeDefinition, boolean first) {
             this.backlogTracer = backlogTracer;
             this.processorDefinition = processorDefinition;
             this.routeDefinition = routeDefinition;
@@ -430,7 +435,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                         backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(), backlogTracer.getBodyMaxChars());
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
-                String routeId = routeDefinition != null ? routeDefinition.getId() : null;
+                String routeId = routeDefinition != null ? routeDefinition.getRouteId() : null;
                 if (first) {
                     Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
@@ -489,6 +494,39 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (stopWatch != null) {
                 backlogDebugger.afterProcess(exchange, target, definition, stopWatch.taken());
             }
+        }
+
+        @Override
+        public int getOrder() {
+            // we want debugger just before calling the processor
+            return Ordered.LOWEST;
+        }
+    }
+
+    /**
+     * Advice to execute when using custom debugger.
+     */
+    public static final class DebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch>, Ordered {
+
+        private final Debugger debugger;
+        private final Processor target;
+        private final NamedNode definition;
+
+        public DebuggerAdvice(Debugger debugger, Processor target, NamedNode definition) {
+            this.debugger = debugger;
+            this.target = target;
+            this.definition = definition;
+        }
+
+        @Override
+        public StopWatch before(Exchange exchange) throws Exception {
+            debugger.beforeProcess(exchange, target, definition);
+            return new StopWatch();
+        }
+
+        @Override
+        public void after(Exchange exchange, StopWatch stopWatch) throws Exception {
+            debugger.afterProcess(exchange, target, definition, stopWatch.taken());
         }
 
         @Override
@@ -589,25 +627,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     /**
-     * Advice when an EIP uses the <tt>shareUnitOfWork</tt> functionality.
-     */
-    public static class SubUnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
-
-        @Override
-        public UnitOfWork before(Exchange exchange) throws Exception {
-            // begin savepoint
-            exchange.getUnitOfWork().beginSubUnitOfWork(exchange);
-            return exchange.getUnitOfWork();
-        }
-
-        @Override
-        public void after(Exchange exchange, UnitOfWork unitOfWork) throws Exception {
-            // end sub unit of work
-            unitOfWork.endSubUnitOfWork(exchange);
-        }
-    }
-
-    /**
      * Advice when Message History has been enabled.
      */
     @SuppressWarnings("unchecked")
@@ -689,12 +708,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public void after(Exchange exchange, StreamCache sc) throws Exception {
-            Object body;
-            if (exchange.hasOut()) {
-                body = exchange.getOut().getBody();
-            } else {
-                body = exchange.getIn().getBody();
-            }
+            Object body = exchange.getMessage().getBody();
             if (body instanceof StreamCache) {
                 // reset so the cache is ready to be reused after processing
                 ((StreamCache) body).reset();
@@ -740,6 +754,83 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
     }
 
     /**
+     * Advice for tracing
+     */
+    public static class TracingAdvice implements CamelInternalProcessorAdvice {
+
+        private final Tracer tracer;
+        private final NamedNode processorDefinition;
+        private final NamedRoute routeDefinition;
+        private final Synchronization tracingAfterRoute;
+        private boolean added;
+
+        public TracingAdvice(Tracer tracer, NamedNode processorDefinition, NamedRoute routeDefinition, boolean first) {
+            this.tracer = tracer;
+            this.processorDefinition = processorDefinition;
+            this.routeDefinition = routeDefinition;
+            this.tracingAfterRoute = routeDefinition != null ? new TracingAfterRoute(tracer, routeDefinition.getRouteId()) : null;
+        }
+
+        @Override
+        public Object before(Exchange exchange) throws Exception {
+            if (!added && tracingAfterRoute != null) {
+                // add before route and after route tracing but only once per route, so check if there is already an existing
+                boolean contains = exchange.getUnitOfWork().containsSynchronization(tracingAfterRoute);
+                if (!contains) {
+                    added = true;
+                    tracer.traceBeforeRoute(routeDefinition, exchange);
+                    exchange.addOnCompletion(tracingAfterRoute);
+                }
+            }
+
+            tracer.traceBeforeNode(processorDefinition, exchange);
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object data) throws Exception {
+            tracer.traceAfterNode(processorDefinition, exchange);
+        }
+
+        private static final class TracingAfterRoute extends SynchronizationAdapter {
+
+            private final Tracer tracer;
+            private final String routeId;
+
+            private TracingAfterRoute(Tracer tracer, String routeId) {
+                this.tracer = tracer;
+                this.routeId = routeId;
+            }
+
+            @Override
+            public void onAfterRoute(Route route, Exchange exchange) {
+                if (routeId.equals(route.getId())) {
+                    tracer.traceAfterRoute(route, exchange);
+                }
+            }
+
+            @Override
+            public boolean equals(Object o) {
+                // only match equals on route id so we can check this from containsSynchronization
+                // to avoid adding multiple times for the same route id
+                if (this == o) {
+                    return true;
+                }
+                if (o == null || getClass() != o.getClass()) {
+                    return false;
+                }
+                TracingAfterRoute that = (TracingAfterRoute) o;
+                return routeId.equals(that.routeId);
+            }
+
+            @Override
+            public int hashCode() {
+                return Objects.hash(routeId);
+            }
+        }
+    }
+
+    /**
      * Wrap an InstrumentationProcessor into a CamelInternalProcessorAdvice
      */
     public static <T> CamelInternalProcessorAdvice<T> wrap(InstrumentationProcessor<T> instrumentationProcessor) {
@@ -747,7 +838,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         if (instrumentationProcessor instanceof CamelInternalProcessor) {
             return (CamelInternalProcessorAdvice<T>) instrumentationProcessor;
         } else {
-            return new CamelInternalProcessorAdviceWrapper<T>(instrumentationProcessor);
+            return new CamelInternalProcessorAdviceWrapper<>(instrumentationProcessor);
         }
     }
 

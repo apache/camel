@@ -55,12 +55,14 @@ public class SmppEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         SmppConsumer answer = new SmppConsumer(this, configuration, processor);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new SmppProducer(this, configuration);
     }
@@ -154,7 +156,7 @@ public class SmppEndpoint extends DefaultEndpoint {
      * @return the connection string
      */
     public String getConnectionString() {
-        return (configuration.getUsingSSL() ? "smpps://" : "smpp://") 
+        return (configuration.isUsingSSL() ? "smpps://" : "smpp://")
                 + (getConfiguration().getSystemId() != null ? getConfiguration().getSystemId() + "@" : "")
                 + getConfiguration().getHost() + ":"
                 + getConfiguration().getPort();

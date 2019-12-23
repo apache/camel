@@ -16,59 +16,57 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileFilter;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.OS;
 
 /**
  * Unit test to verify FTP filter option.
  */
 public class FromFtpRemoteFileFilterDirectoryTest extends FtpServerTestSupport {
 
+    @BindToRegistry("myFilter")
+    private MyFileFilter filter = new MyFileFilter<>();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filefilter?password=admin&recursive=true&filter=#myFilter";
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myFilter", new MyFileFilter<>());
-        return jndi;
-    }
-
-    @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }
-    
+
+    // Skip testing on AIX as it have an issue with this test with the file filter
+    @DisabledOnOs(OS.AIX)
     @Test
     public void testFtpFilter() throws Exception {
-        if (isPlatform("aix")) {
-            // skip testing on AIX as it have an issue with this test with the file filter
-            return;
-        }
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Hello World");
-        
+
         mock.assertIsSatisfied();
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool        
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
+        // test that we can pool
         sendFile(getFtpUrl(), "This is a file to be filtered", "skipDir/skipme.txt");
         sendFile(getFtpUrl(), "This is a file to be filtered", "skipDir2/skipme.txt");
         sendFile(getFtpUrl(), "Hello World", "okDir/hello.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -80,8 +78,10 @@ public class FromFtpRemoteFileFilterDirectoryTest extends FtpServerTestSupport {
     // START SNIPPET: e1
     public class MyFileFilter<T> implements GenericFileFilter<T> {
 
+        @Override
         public boolean accept(GenericFile<T> file) {
-            // we dont accept any files within directory starting with skip in the name
+            // we dont accept any files within directory starting with skip in
+            // the name
             if (file.isDirectory() && file.getFileName().startsWith("skip")) {
                 return false;
             }

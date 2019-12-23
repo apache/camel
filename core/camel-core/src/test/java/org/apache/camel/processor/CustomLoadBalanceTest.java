@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -39,14 +40,14 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
                 from("direct:start")
                     // using our custom load balancer
-                    .loadBalance(new MyLoadBalancer())
-                    .to("mock:x", "mock:y", "mock:z");
+                    .loadBalance(new MyLoadBalancer()).to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: e1
             }
         };
@@ -73,6 +74,7 @@ public class CustomLoadBalanceTest extends ContextTestSupport {
     // START SNIPPET: e2
     public static class MyLoadBalancer extends LoadBalancerSupport {
 
+        @Override
         public boolean process(Exchange exchange, AsyncCallback callback) {
             String body = exchange.getIn().getBody(String.class);
             try {

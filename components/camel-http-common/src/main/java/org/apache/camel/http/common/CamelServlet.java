@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
+
 import javax.servlet.AsyncContext;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -256,6 +257,7 @@ public class CamelServlet extends HttpServlet {
         consumers.remove(consumer.getEndpoint().getEndpointUri());
     }
 
+    @Override
     public String getServletName() {
         return servletName;
     }

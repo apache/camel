@@ -58,6 +58,7 @@ public class SjmsEndpointNameOverrideTest extends CamelTestSupport {
         assertEquals(sjms.getEndpointUri(), BEAN_NAME + "://topic:test");
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

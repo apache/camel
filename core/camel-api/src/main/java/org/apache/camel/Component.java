@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.apache.camel.component.extension.ComponentExtension;
+import org.apache.camel.spi.PropertyConfigurer;
 
 /**
  * A <a href="http://camel.apache.org/component.html">component</a> is
@@ -70,6 +71,24 @@ public interface Component extends CamelContextAware, Service {
      * @since Camel 2.11.0
      */
     boolean useRawUri();
+
+    /**
+     * Gets the component {@link PropertyConfigurer}.
+     *
+     * @return the configurer, or <tt>null</tt> if the component does not support using property configurer.
+     */
+    default PropertyConfigurer getComponentPropertyConfigurer() {
+        return null;
+    }
+
+    /**
+     * Gets the endpoint {@link PropertyConfigurer}.
+     *
+     * @return the configurer, or <tt>null</tt> if the endpoint does not support using property configurer.
+     */
+    default PropertyConfigurer getEndpointPropertyConfigurer() {
+        return null;
+    }
 
     /**
      * Gets a list of supported extensions.

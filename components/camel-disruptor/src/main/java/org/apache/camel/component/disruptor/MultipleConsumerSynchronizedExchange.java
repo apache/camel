@@ -41,6 +41,7 @@ public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedEx
     }
 
 
+    @Override
     public void consumed(Exchange result) {
 
         if (processedConsumers.incrementAndGet() == expectedConsumers || result.getException() != null 

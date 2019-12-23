@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.disruptor;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -408,6 +409,7 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
             this.totalMessageCount = totalMessageCount;
         }
 
+        @Override
         public void run() {
             final Endpoint endpoint = context().getEndpoint(endpointUri);
             while (producedMessageCount++ < totalMessageCount) {

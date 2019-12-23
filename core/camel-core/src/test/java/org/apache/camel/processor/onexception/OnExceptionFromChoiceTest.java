@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.onexception;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -100,14 +101,9 @@ public class OnExceptionFromChoiceTest extends ContextTestSupport {
                 onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true).to("mock:tech");
                 onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("mock:func");
 
-                from("direct:start")
-                    .choice()
-                        .when(method("myServiceBean").isEqualTo("James")).to("mock:when")
-                    .otherwise()
-                        .to("mock:otherwise");
+                from("direct:start").choice().when(method("myServiceBean").isEqualTo("James")).to("mock:when").otherwise().to("mock:otherwise");
             }
         };
     }
-
 
 }

@@ -81,10 +81,12 @@ public class FlatpackEndpoint extends DefaultPollingEndpoint {
         this.resourceUri = resourceUri;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new FlatpackProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new FlatpackConsumer(this, processor, loadBalancer);
     }

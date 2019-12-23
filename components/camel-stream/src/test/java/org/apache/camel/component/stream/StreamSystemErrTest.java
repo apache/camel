@@ -35,6 +35,7 @@ public class StreamSystemErrTest extends CamelTestSupport {
         template.sendBody("direct:in", "Hello Bytes World\n".getBytes());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

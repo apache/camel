@@ -26,7 +26,7 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
     private static final String SERVICE_NAME = "http-service";
@@ -50,12 +50,7 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
         expectedBodies = new ArrayList<>(SERVICE_COUNT);
 
         for (int i = 0; i < SERVICE_COUNT; i++) {
-            Registration r = ImmutableRegistration.builder()
-                .id("service-" + i)
-                .name(SERVICE_NAME)
-                .address("127.0.0.1")
-                .port(AvailablePortFinder.getNextAvailable())
-                .build();
+            Registration r = ImmutableRegistration.builder().id("service-" + i).name(SERVICE_NAME).address("127.0.0.1").port(AvailablePortFinder.getNextAvailable()).build();
 
             client.register(r);
 
@@ -90,25 +85,14 @@ public class ConsulDefaultServiceCallRouteTest extends ConsulTestSupport {
     // *************************************************************************
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
+    protected RoutesBuilder createRouteBuilder() {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .serviceCall()
-                        .name(SERVICE_NAME)
-                        .component("http")
-                        .defaultLoadBalancer()
-                        .consulServiceDiscovery()
-                            .url(consulUrl())
-                        .endParent()
-                    .to("log:org.apache.camel.component.consul.cloud?level=INFO&showAll=true&multiline=true")
-                    .to("mock:result");
+                from("direct:start").serviceCall().name(SERVICE_NAME).component("http").defaultLoadBalancer().consulServiceDiscovery().url(consulUrl()).endParent()
+                    .to("log:org.apache.camel.component.consul.cloud?level=INFO&showAll=true&multiline=true").to("mock:result");
 
-                registrations.forEach(r ->
-                    fromF("jetty:http://%s:%d", r.getAddress().get(), r.getPort().get())
-                        .transform().simple("${in.body} on " + r.getPort().get())
-                );
+                registrations.forEach(r -> fromF("jetty:http://%s:%d", r.getAddress().get(), r.getPort().get()).transform().simple("${in.body} on " + r.getPort().get()));
             }
         };
     }

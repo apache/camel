@@ -19,6 +19,7 @@ package org.apache.camel.component.bean;
 public class CamelCustomer {
     public CamelCustomer() {
     }
+
     public void extraMethod() {
     }
 

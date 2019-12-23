@@ -39,8 +39,7 @@ public class ConstantLanguageBinaryResourceTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("language:constant:resource:classpath:org/apache/camel/logo.jpeg?binary=true");
+                from("direct:start").to("language:constant:resource:classpath:org/apache/camel/logo.jpeg?binary=true");
             }
         };
     }

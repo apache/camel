@@ -20,8 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static java.util.Collections.emptyList;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.ProducerTemplate;
@@ -39,6 +37,8 @@ import org.springframework.context.ResourceLoaderAware;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static java.util.Collections.emptyList;
+
 /**
  * A useful base class for writing
  * <a
@@ -52,6 +52,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     private AutowireCapableBeanFactory autowireCapableBeanFactory;
     private ApplicationContext applicationContext;
 
+    @Override
     public void setBeanFactory(BeanFactory beanFactory) {
         this.beanFactory = beanFactory;
         if (beanFactory instanceof AutowireCapableBeanFactory) {
@@ -63,6 +64,7 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
         return this.beanFactory;
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext ac) {
         this.applicationContext = ac;
     }

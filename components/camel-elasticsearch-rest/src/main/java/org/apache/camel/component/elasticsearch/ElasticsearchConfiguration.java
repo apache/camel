@@ -29,14 +29,15 @@ public class ElasticsearchConfiguration {
 
     private List<HttpHost> hostAddressesList;
 
+    private String user;
+    private String password;
+
     @UriPath @Metadata(required = true)
     private String clusterName;
     @UriParam
     private ElasticsearchOperation operation;
     @UriParam
     private String indexName;
-    @UriParam
-    private String indexType;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS)
     private int waitForActiveShards = ElasticsearchConstants.DEFAULT_FOR_WAIT_ACTIVE_SHARDS;
     @UriParam @Metadata(required = true)
@@ -55,13 +56,13 @@ public class ElasticsearchConfiguration {
     private boolean useScroll;
     @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS)
     private int scrollKeepAliveMs = ElasticsearchConstants.DEFAULT_SCROLL_KEEP_ALIVE_MS;
-
-    private String user;
-    private String password;
-    //Sniffer parameter.
+    @UriParam
     private boolean enableSniffer;
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL)
     private int snifferInterval = ElasticsearchConstants.DEFAULT_SNIFFER_INTERVAL;
+    @UriParam(defaultValue = "" + ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY)
     private int sniffAfterFailureDelay = ElasticsearchConstants.DEFAULT_AFTER_FAILURE_DELAY;
+
     /**
      * Name of the cluster
      */
@@ -93,17 +94,6 @@ public class ElasticsearchConfiguration {
 
     public void setIndexName(String indexName) {
         this.indexName = indexName;
-    }
-
-    /**
-     * The type of the index to act against
-     */
-    public String getIndexType() {
-        return indexType;
-    }
-
-    public void setIndexType(String indexType) {
-        this.indexType = indexType;
     }
 
     /**
@@ -183,11 +173,11 @@ public class ElasticsearchConfiguration {
     /**
      * Enable SSL
      */
-    public Boolean getEnableSSL() {
+    public boolean isEnableSSL() {
         return enableSSL;
     }
 
-    public void setEnableSSL(Boolean enableSSL) {
+    public void setEnableSSL(boolean enableSSL) {
         this.enableSSL = enableSSL;
     }
 
@@ -205,11 +195,11 @@ public class ElasticsearchConfiguration {
     /**
      * Disconnect after it finish calling the producer
      */
-    public Boolean getDisconnect() {
+    public boolean isDisconnect() {
         return disconnect;
     }
 
-    public void setDisconnect(Boolean disconnect) {
+    public void setDisconnect(boolean disconnect) {
         this.disconnect = disconnect;
     }
 
@@ -250,7 +240,7 @@ public class ElasticsearchConfiguration {
     /**
      * Enable scroll usage
      */
-    public boolean getUseScroll() {
+    public boolean isUseScroll() {
         return useScroll;
     }
 

@@ -16,12 +16,10 @@
  */
 package org.apache.camel.component.facebook.config;
 
-
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.component.facebook.FacebookComponent;
 import org.apache.camel.component.facebook.FacebookEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-
 import org.junit.Test;
 
 public class FacebookEndpointConfigurationTest extends CamelTestSupport {
@@ -30,18 +28,16 @@ public class FacebookEndpointConfigurationTest extends CamelTestSupport {
     public void testConfigurationBeanUriParam() throws Exception {
         FacebookComponent component = new FacebookComponent(context);
         FacebookEndpoint facebookEndpoint = (FacebookEndpoint) component.createEndpoint("facebook://getFeed?configuration=#configuration");
-        assertTrue("Configuration bean wasn't taken into account!", "fakeId".equals(facebookEndpoint.getConfiguration().getOAuthAppId()));
-        assertTrue("Configuration bean wasn't taken into account!", "fakeSecret".equals(facebookEndpoint.getConfiguration().getOAuthAppSecret()));
+        assertEquals("Configuration bean wasn't taken into account!", "fakeId", facebookEndpoint.getConfiguration().getOAuthAppId());
+        assertEquals("Configuration bean wasn't taken into account!", "fakeSecret", facebookEndpoint.getConfiguration().getOAuthAppSecret());
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("configuration")
+    public FacebookEndpointConfiguration createConf() throws Exception {
         FacebookEndpointConfiguration facebookEndpointConfiguration = new FacebookEndpointConfiguration();
         facebookEndpointConfiguration.setOAuthAppId("fakeId");
         facebookEndpointConfiguration.setOAuthAppSecret("fakeSecret");
-        jndi.bind("configuration", facebookEndpointConfiguration);
-        return jndi;
+        return facebookEndpointConfiguration;
     }
 
 }

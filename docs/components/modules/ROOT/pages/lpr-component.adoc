@@ -1,7 +1,12 @@
 [[lpr-component]]
-== Printer Component
+= Printer Component
+:page-source: components/camel-printer/src/main/docs/lpr-component.adoc
 
-*Available as of Camel version 2.1*
+*Since Camel 2.1*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The Printer component provides a way to direct payloads on a route to
 a printer. Obviously the payload has to be a formatted piece of payload
@@ -28,7 +33,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 Since the URI scheme for a printer has not been standardized (the
 nearest thing to a standard being the IETF print standard) and therefore
@@ -43,19 +48,20 @@ lpr://remotehost:port/path/to/printer[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### Options
+== Options
 
 
 // component options: START
-The Printer component supports 2 options, which are listed below.
+The Printer component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -70,7 +76,7 @@ lpr:hostname:port/printername
 
 with the following path and query parameters:
 
-==== Path Parameters (3 parameters):
+=== Path Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -82,7 +88,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (13 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -104,14 +110,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-printer-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -119,7 +125,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -127,22 +133,23 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.lpr.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.lpr.enabled* | Enable lpr component | true | Boolean
-| *camel.component.lpr.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.lpr.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.lpr.enabled* | Whether to enable auto configuration of the lpr component. This is enabled by default. |  | Boolean
+| *camel.component.lpr.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
-### Sending Messages to a Printer
+== Sending Messages to a Printer
 
-#### Printer Producer
+=== Printer Producer
 
 Sending data to the printer is very straightforward and involves
 creating a producer endpoint that can be sent message exchanges on in
 route.
 
-### Usage Samples
+== Usage Samples
 
-#### Example 1: Printing text based payloads on a Default printer using letter stationary and one-sided mode
+=== Example 1: Printing text based payloads on a Default printer using letter stationary and one-sided mode
 
 [source,java]
 -----------------------------------------------
@@ -157,7 +164,7 @@ RouteBuilder builder = new RouteBuilder() {
     }};
 -----------------------------------------------
 
-#### Example 2: Printing GIF based payloads on a Remote printer using A4 stationary and one-sided mode
+=== Example 2: Printing GIF based payloads on a Remote printer using A4 stationary and one-sided mode
 
 [source,java]
 --------------------------------------------------
@@ -171,7 +178,7 @@ RouteBuilder builder = new RouteBuilder() {
    }};
 --------------------------------------------------
 
-#### Example 3: Printing JPEG based payloads on a Remote printer using Japanese Postcard stationary and one-sided mode
+=== Example 3: Printing JPEG based payloads on a Remote printer using Japanese Postcard stationary and one-sided mode
 
 [source,java]
 --------------------------------------------------

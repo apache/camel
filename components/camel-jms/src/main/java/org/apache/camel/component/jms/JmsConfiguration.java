@@ -110,14 +110,14 @@ public class JmsConfiguration implements Cloneable {
                     + " the DefaultMessageListenerContainer.runningAllowed flag to quick stop in case JmsConfiguration#isAcceptMessagesWhileStopping"
                     + " is enabled, and org.apache.camel.CamelContext is currently being stopped. This quick stop ability is enabled by"
                     + " default in the regular JMS consumers but to enable for reply managers you must enable this flag.")
-    private boolean allowReplyManagerQuickStop;   
+    private boolean allowReplyManagerQuickStop;
     @UriParam(label = "consumer,advanced",
             description = "Specifies whether the consumer accept messages while it is stopping."
                     + " You may consider enabling this option, if you start and stop JMS routes at runtime, while there are still messages"
                     + " enqueued on the queue. If this option is false, and you stop the JMS route, then messages may be rejected,"
                     + " and the JMS broker would have to attempt redeliveries, which yet again may be rejected, and eventually the message"
                     + " may be moved at a dead letter queue on the JMS broker. To avoid this its recommended to enable this option.")
-    private boolean acceptMessagesWhileStopping;    
+    private boolean acceptMessagesWhileStopping;
     @UriParam(description = "Sets the JMS client ID to use. Note that this value, if specified, must be unique and can only be used by a single JMS connection instance."
             + " It is typically only required for durable topic subscriptions."
             + " If using Apache ActiveMQ you may prefer to use Virtual Topics instead.")
@@ -232,7 +232,7 @@ public class JmsConfiguration implements Cloneable {
             description = "Specifies whether Camel should auto map the received JMS message to a suited payload type, such as javax.jms.TextMessage to a String etc.")
     private boolean mapJmsMessage = true;
     @UriParam(defaultValue = "true", label = "advanced",
-            description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker." 
+            description = "When sending, specifies whether message IDs should be added. This is just an hint to the JMS broker."
                     + " If the JMS provider accepts this hint, these messages must have the message ID set to null; if the provider ignores the hint, "
                     + "the message ID must be set to its normal unique value.")
     private boolean messageIdEnabled = true;
@@ -274,11 +274,18 @@ public class JmsConfiguration implements Cloneable {
             + " handles the reply message. You can also use this option if you want to use Camel as a proxy between different"
             + " message brokers and you want to route message from one system to another.")
     private boolean disableReplyTo;
+    @UriParam(label = "consumer,advanced", defaultValue = "Poison JMS message due to ${exception.message}",
+            description = "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
+                    + " then set this text as the message body instead so the message can be processed"
+                    + " (the cause of the poison are already stored as exception on the Exchange)."
+                    + " This can be turned off by setting eagerPoisonBody=false."
+                    + " See also the option eagerLoadingOfProperties.")
+    private String eagerPoisonBody = "Poison JMS message payload: ${exception.message}";
     @UriParam(label = "consumer,advanced",
             description = "Enables eager loading of JMS properties and payload as soon as a message is loaded"
                     + " which generally is inefficient as the JMS properties may not be required"
                     + " but sometimes can catch early any issues with the underlying JMS provider"
-                    + " and the use of JMS properties")
+                    + " and the use of JMS properties. See also the option eagerPoisonBody.")
     private boolean eagerLoadingOfProperties;
     // Always make a JMS message copy when it's passed to Producer
     @UriParam(label = "producer,advanced",
@@ -309,7 +316,7 @@ public class JmsConfiguration implements Cloneable {
                     + " Possible values are: Bytes, Map, Object, Stream, Text."
                     + " By default, Camel would determine which JMS message type to use from the In body type. This option allows you to specify it.")
     private JmsMessageType jmsMessageType;
-    @UriParam(label = "advanced", enums = "default,passthrough", javaType = "java.lang.String",
+    @UriParam(label = "advanced", enums = "default,passthrough",
             description = "Pluggable strategy for encoding and decoding JMS keys so they can be compliant with the JMS specification."
                     + " Camel provides two implementations out of the box: default and passthrough."
                     + " The default strategy will safely marshal dots and hyphens (. and -). The passthrough strategy leaves the key as is."
@@ -322,7 +329,9 @@ public class JmsConfiguration implements Cloneable {
                     + " The following fields are transferred: In body, Out body, Fault body, In headers, Out headers, Fault headers,"
                     + " exchange properties, exchange exception."
                     + " This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level."
-                    + " You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload.")
+                    + " You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload."
+                    + " Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level, "
+                    + " which forces a strong coupling between the producers and consumer having to use compatible Camel versions!")
     private boolean transferExchange;
     @UriParam(label = "advanced",
             description = "Controls whether or not to include serialized headers."
@@ -337,15 +346,10 @@ public class JmsConfiguration implements Cloneable {
                     + " Notice that if you also have transferExchange enabled, this option takes precedence."
                     + " The caught exception is required to be serializable."
                     + " The original Exception on the consumer side can be wrapped in an outer exception"
-                    + " such as org.apache.camel.RuntimeCamelException when returned to the producer.")
+                    + " such as org.apache.camel.RuntimeCamelException when returned to the producer."
+                    + " Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level, "
+                    + " which forces a strong coupling between the producers and consumer!")
     private boolean transferException;
-    @UriParam(label = "advanced",
-            description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,"
-                    + " then the fault flag on Message#isFault() will be send back in the response as a JMS header with the key"
-                    + " org.apache.camel.component.jms.JmsConstants#JMS_TRANSFER_FAULT#JMS_TRANSFER_FAULT."
-                    + " If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}."
-                    + " You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.")
-    private boolean transferFault;
     @UriParam(description = "Specifies whether to test the connection on startup."
             + " This ensures that when Camel starts that all the JMS consumers have a valid connection to the JMS broker."
             + " If a connection cannot be granted then Camel throws an exception on startup."
@@ -487,6 +491,10 @@ public class JmsConfiguration implements Cloneable {
     @UriParam(label = "producer", description = "Sets whether JMS date properties should be formatted according to the ISO 8601 standard.")
     private boolean formatDateHeadersToIso8601;
 
+    @UriParam(defaultValue = "-1", label = "producer", description = "Sets delivery delay to use for send calls for JMS. "
+         + "This option requires JMS 2.0 compliant broker.")
+    private long deliveryDelay = -1;
+
     public JmsConfiguration() {
     }
 
@@ -534,6 +542,7 @@ public class JmsConfiguration implements Cloneable {
             }, false);
         }
 
+        @Override
         public void send(final String destinationName,
                          final MessageCreator messageCreator) throws JmsException {
             execute(new SessionCallback<Object>() {
@@ -544,6 +553,7 @@ public class JmsConfiguration implements Cloneable {
             }, false);
         }
 
+        @Override
         public void send(final Destination destination,
                          final MessageCreator messageCreator) throws JmsException {
             execute(new SessionCallback<Object>() {
@@ -668,7 +678,7 @@ public class JmsConfiguration implements Cloneable {
             return jmsOperations;
         }
 
-        ConnectionFactory factory = getTemplateConnectionFactory();
+        ConnectionFactory factory = getOrCreateTemplateConnectionFactory();
         JmsTemplate template = new CamelJmsTemplate(this, factory);
 
         template.setPubSubDomain(pubSubDomain);
@@ -718,6 +728,9 @@ public class JmsConfiguration implements Cloneable {
                 template.setSessionAcknowledgeModeName(acknowledgementModeName);
             }
         }
+
+        template.setDeliveryDelay(deliveryDelay);
+
         return template;
     }
 
@@ -809,6 +822,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public ConnectionFactory getListenerConnectionFactory() {
+        return listenerConnectionFactory;
+    }
+
+    public ConnectionFactory getOrCreateListenerConnectionFactory() {
         if (listenerConnectionFactory == null) {
             listenerConnectionFactory = createListenerConnectionFactory();
         }
@@ -823,6 +840,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public ConnectionFactory getTemplateConnectionFactory() {
+        return templateConnectionFactory;
+    }
+
+    public ConnectionFactory getOrCreateTemplateConnectionFactory() {
         if (templateConnectionFactory == null) {
             templateConnectionFactory = createTemplateConnectionFactory();
         }
@@ -864,7 +885,7 @@ public class JmsConfiguration implements Cloneable {
     }
 
     /**
-     * Whether the {@link DefaultMessageListenerContainer} used in the reply managers for request-reply messaging allow 
+     * Whether the {@link DefaultMessageListenerContainer} used in the reply managers for request-reply messaging allow
      * the {@link DefaultMessageListenerContainer#runningAllowed()} flag to quick stop in case {@link JmsConfiguration#isAcceptMessagesWhileStopping()}
      * is enabled, and {@link org.apache.camel.CamelContext} is currently being stopped. This quick stop ability is enabled by
      * default in the regular JMS consumers but to enable for reply managers you must enable this flag.
@@ -876,7 +897,7 @@ public class JmsConfiguration implements Cloneable {
     public void setAllowReplyManagerQuickStop(boolean allowReplyManagerQuickStop) {
         this.allowReplyManagerQuickStop = allowReplyManagerQuickStop;
     }
-    
+
     public String getClientId() {
         return clientId;
     }
@@ -1082,6 +1103,10 @@ public class JmsConfiguration implements Cloneable {
     }
 
     public PlatformTransactionManager getTransactionManager() {
+        return transactionManager;
+    }
+
+    public PlatformTransactionManager getOrCreateTransactionManager() {
         if (transactionManager == null && isTransacted() && isLazyCreateTransactionManager()) {
             transactionManager = createTransactionManager();
         }
@@ -1164,7 +1189,7 @@ public class JmsConfiguration implements Cloneable {
     public void setWaitForProvisionCorrelationToBeUpdatedThreadSleepingTime(long sleepingTime) {
         this.waitForProvisionCorrelationToBeUpdatedThreadSleepingTime = sleepingTime;
     }
-    
+
     public int getMaxConcurrentConsumers() {
         return maxConcurrentConsumers;
     }
@@ -1205,6 +1230,10 @@ public class JmsConfiguration implements Cloneable {
 
     public boolean isExplicitQosEnabled() {
         return explicitQosEnabled != null ? explicitQosEnabled : false;
+    }
+
+    public Boolean getExplicitQosEnabled() {
+        return explicitQosEnabled;
     }
 
     /**
@@ -1362,6 +1391,21 @@ public class JmsConfiguration implements Cloneable {
         this.lazyCreateTransactionManager = lazyCreating;
     }
 
+    public String getEagerPoisonBody() {
+        return eagerPoisonBody;
+    }
+
+    /**
+     * If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) (cannot be read/mapped),
+     * then set this text as the message body instead so the message can be processed
+     * (the cause of the poison are already stored as exception on the Exchange).
+     * This can be turned off by setting eagerPoisonBody=false.
+     * See also the option eagerLoadingOfProperties.
+     */
+    public void setEagerPoisonBody(String eagerPoisonBody) {
+        this.eagerPoisonBody = eagerPoisonBody;
+    }
+
     public boolean isEagerLoadingOfProperties() {
         return eagerLoadingOfProperties;
     }
@@ -1370,7 +1414,7 @@ public class JmsConfiguration implements Cloneable {
      * Enables eager loading of JMS properties and payload as soon as a message is loaded
      * which generally is inefficient as the JMS properties may not be required
      * but sometimes can catch early any issues with the underlying JMS provider
-     * and the use of JMS properties
+     * and the use of JMS properties. See also the option eagerPoisonBody.
      */
     public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
         this.eagerLoadingOfProperties = eagerLoadingOfProperties;
@@ -1439,7 +1483,9 @@ public class JmsConfiguration implements Cloneable {
 
     protected void configureMessageListenerContainer(AbstractMessageListenerContainer container,
                                                      JmsEndpoint endpoint) throws Exception {
-        container.setConnectionFactory(getListenerConnectionFactory());
+        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
+        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
+        container.setConnectionFactory(getOrCreateListenerConnectionFactory());
         if (endpoint instanceof DestinationEndpoint) {
             container.setDestinationResolver(createDestinationResolver((DestinationEndpoint) endpoint));
         } else if (destinationResolver != null) {
@@ -1548,7 +1594,7 @@ public class JmsConfiguration implements Cloneable {
         if (taskExecutor != null) {
             container.setTaskExecutor(taskExecutor);
         }
-        PlatformTransactionManager tm = getTransactionManager();
+        PlatformTransactionManager tm = getOrCreateTransactionManager();
         if (tm != null) {
             container.setTransactionManager(tm);
         } else if (transactionManager == null && transacted && !lazyCreateTransactionManager) {
@@ -1566,9 +1612,10 @@ public class JmsConfiguration implements Cloneable {
         if (isDisableReplyTo()) {
             listener.setDisableReplyTo(true);
         }
-        if (isEagerLoadingOfProperties()) {
-            listener.setEagerLoadingOfProperties(true);
+        if (!"false".equals(eagerPoisonBody)) {
+            listener.setEagerPoisonBody(eagerPoisonBody);
         }
+        listener.setEagerLoadingOfProperties(eagerLoadingOfProperties);
         if (getReplyTo() != null) {
             listener.setReplyToDestination(getReplyTo());
         }
@@ -1802,6 +1849,8 @@ public class JmsConfiguration implements Cloneable {
      * exchange properties, exchange exception.
      * This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level.
      * You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload.
+     * Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level,
+     * which forces a strong coupling between the producers and consumer having to use compatible Camel versions!
      */
     public void setTransferExchange(boolean transferExchange) {
         this.transferExchange = transferExchange;
@@ -1833,25 +1882,11 @@ public class JmsConfiguration implements Cloneable {
      * The caught exception is required to be serializable.
      * The original Exception on the consumer side can be wrapped in an outer exception
      * such as org.apache.camel.RuntimeCamelException when returned to the producer.
+     * Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level,
+     * which forces a strong coupling between the producers and consumer!
      */
     public void setTransferException(boolean transferException) {
         this.transferException = transferException;
-    }
-
-    public boolean isTransferFault() {
-        return transferFault;
-    }
-
-    /**
-     * If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,
-     * then the fault flag on {@link org.apache.camel.Message#isFault()} will be send back in the response as a JMS header with the key
-     * {@link JmsConstants#JMS_TRANSFER_FAULT}.
-     * If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}.
-     * <p>
-     * You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.
-     */
-    public void setTransferFault(boolean transferFault) {
-        this.transferFault = transferFault;
     }
 
     public boolean isAsyncStartListener() {
@@ -2069,7 +2104,7 @@ public class JmsConfiguration implements Cloneable {
 
     /**
      * Use this JMS property to correlate messages in InOut exchange pattern (request-reply)
-     * instead of JMSCorrelationID property. This allows you to exchange messages with 
+     * instead of JMSCorrelationID property. This allows you to exchange messages with
      * systems that do not correlate messages using JMSCorrelationID JMS property. If used
      * JMSCorrelationID will not be used or set by Camel. The value of here named property
      * will be generated if not supplied in the header of the message under the same name.
@@ -2177,6 +2212,17 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setFormatDateHeadersToIso8601(boolean formatDateHeadersToIso8601) {
         this.formatDateHeadersToIso8601 = formatDateHeadersToIso8601;
+    }
+
+    public long getDeliveryDelay() {
+        return deliveryDelay;
+    }
+
+    /**
+     * Sets delivery delay to use for send calls for JMS. This option requires JMS 2.0 compliant broker.
+     */
+    public void setDeliveryDelay(long deliveryDelay) {
+        this.deliveryDelay = deliveryDelay;
     }
 
 }

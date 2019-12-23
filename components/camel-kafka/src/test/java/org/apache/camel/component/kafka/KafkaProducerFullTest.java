@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.kafka;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
@@ -28,6 +29,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.StreamSupport;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -36,7 +38,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.serde.DefaultKafkaHeaderSerializer;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.DefaultHeaderFilterStrategy;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
@@ -96,14 +97,12 @@ public class KafkaProducerFullTest extends BaseEmbeddedKafkaTest {
 
     @Produce("direct:propagatedHeaders")
     private ProducerTemplate propagatedHeadersTemplate;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myStrategy", new MyHeaderFilterStrategy());
-        jndi.bind("myHeaderSerializer", new MyKafkaHeadersSerializer());
-        return jndi;
-    }
+    
+    @BindToRegistry("myStrategy")
+    private MyHeaderFilterStrategy strategy = new MyHeaderFilterStrategy();
+    
+    @BindToRegistry("myHeaderSerializer")
+    private MyKafkaHeadersSerializer serializer = new MyKafkaHeadersSerializer();
 
     @BeforeClass
     public static void before() {

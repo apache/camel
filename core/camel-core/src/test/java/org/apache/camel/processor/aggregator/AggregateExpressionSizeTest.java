@@ -49,11 +49,12 @@ public class AggregateExpressionSizeTest extends ContextTestSupport {
                 // START SNIPPET: e1
                 from("direct:start")
                     // aggregate all exchanges correlated by the id header.
-                    // Aggregate them using the BodyInAggregatingStrategy strategy which
-                    // and the header mySize determines the number of aggregated messages should trigger the completion
+                    // Aggregate them using the BodyInAggregatingStrategy
+                    // strategy which
+                    // and the header mySize determines the number of aggregated
+                    // messages should trigger the completion
                     // and send it to mock:aggregated
-                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(header("mySize"))
-                        .to("mock:aggregated");
+                    .aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(header("mySize")).to("mock:aggregated");
                 // END SNIPPET: e1
             }
         };

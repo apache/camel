@@ -99,6 +99,12 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedOperation(description = "To force complete of all groups")
     int forceCompletionOfAllGroups();
 
+    @ManagedOperation(description = "To force discarding a specific group by its key")
+    int forceDiscardingOfGroup(String key);
+
+    @ManagedOperation(description = "To force discarding of all groups")
+    int forceDiscardingOfAllGroups();
+
     @ManagedAttribute(description = "Current number of closed correlation keys in the memory cache")
     int getClosedCorrelationKeysCacheSize();
 
@@ -132,12 +138,17 @@ public interface ManagedAggregateProcessorMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Total number of exchanged completed by completion force trigger")
     long getCompletedByForce();
 
+    @ManagedAttribute(description = "Total number of exchanged discarded")
+    long getDiscarded();
+
     @ManagedOperation(description = " Reset the statistics counters")
     void resetStatistics();
 
+    @Override
     @ManagedAttribute(description = "Sets whether statistics is enabled")
     boolean isStatisticsEnabled();
 
+    @Override
     @ManagedAttribute(description = "Sets whether statistics is enabled")
     void setStatisticsEnabled(boolean statisticsEnabled);
 

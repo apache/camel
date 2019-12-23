@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.openstack.common.AbstractOpenstackProducer;
 import org.apache.camel.component.openstack.common.OpenstackConstants;
+import org.apache.camel.component.openstack.common.OpenstackException;
 import org.apache.camel.component.openstack.swift.SwiftConstants;
 import org.apache.camel.component.openstack.swift.SwiftEndpoint;
 import org.apache.camel.util.StringHelper;
@@ -102,8 +103,7 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         StringHelper.notEmpty(containerName, "Container name");
         StringHelper.notEmpty(objectName, "Object name");
         final ActionResponse out = os.objectStorage().objects().delete(containerName, objectName);
-        msg.setBody(out.getFault());
-        msg.setFault(!out.isSuccess());
+        checkFailure(out, exchange, "Delete container");
     }
 
     private void doGetMetadata(Exchange exchange) {
@@ -123,9 +123,8 @@ public class ObjectProducer extends AbstractOpenstackProducer {
         StringHelper.notEmpty(containerName, "Container name");
         StringHelper.notEmpty(objectName, "Object name");
         final boolean success = os.objectStorage().objects().updateMetadata(ObjectLocation.create(containerName, objectName), msg.getBody(Map.class));
-        msg.setFault(!success);
         if (!success) {
-            msg.setBody("Updating metadata was not successful");
+            exchange.setException(new OpenstackException("Updating metadata was not successful"));
         }
     }
 }

@@ -1,7 +1,12 @@
 [[tika-component]]
-== Tika Component
+= Tika Component
+:page-source: components/camel-tika/src/main/docs/tika-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The *Tika*: components provides the ability to detect and parse documents with 
 Apache Tika. This component uses
@@ -26,18 +31,19 @@ following dependency to their `pom.xml`:
 The TIKA component only supports producer endpoints.
 
 
-### Options
+== Options
 
 // component options: START
-The Tika component supports 2 options, which are listed below.
+The Tika component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -52,40 +58,40 @@ tika:operation
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *operation* | *Required* Tika Operation. parse or detect |  | TikaOperation
+| *operation* | *Required* Tika Operation - parse or detect |  | TikaOperation
 |===
 
 
-==== Query Parameters (7 parameters):
+=== Query Parameters (7 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
-| *tikaConfig* (producer) | Tika Config |  | TikaConfig
-| *tikaConfigUri* (producer) | Tika Config Uri: The URI of tika-config.xml |  | String
-| *tikaParseOutputEncoding* (producer) | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset() . |  | String
+| *tikaConfig* (producer) | To use a custom Tika config. |  | TikaConfig
+| *tikaConfigUri* (producer) | Tika Config Uri: The URI of tika-config.xml file to use. |  | String
+| *tikaParseOutputEncoding* (producer) | Tika Parse Output Encoding - Used to specify the character encoding of the parsed output. Defaults to Charset.defaultCharset(). |  | String
 | *tikaParseOutputFormat* (producer) | Tika Output Format. Supported output formats. xml: Returns Parsed Content as XML. html: Returns Parsed Content as HTML. text: Returns Parsed Content as Text. textMain: Uses the boilerpipe library to automatically extract the main content from a web page. | xml | TikaParseOutputFormat
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-tika-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -93,7 +99,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -101,15 +107,16 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.tika.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.tika.enabled* | Enable tika component | true | Boolean
-| *camel.component.tika.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.tika.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.tika.enabled* | Whether to enable auto configuration of the tika component. This is enabled by default. |  | Boolean
+| *camel.component.tika.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
 
-### To Detect a file's MIME Type
+== To Detect a file's MIME Type
 
 The file should be placed in the Body.
 
@@ -119,7 +126,7 @@ from("direct:start")
         .to("tika:detect");
 ----
 
-### To Parse a File
+== To Parse a File
 
 The file should be placed in the Body.
 

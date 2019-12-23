@@ -33,6 +33,7 @@ public abstract class AbstractContextEvent extends EventObject implements CamelC
         this.context = source;
     }
 
+    @Override
     public CamelContext getContext() {
         return context;
     }

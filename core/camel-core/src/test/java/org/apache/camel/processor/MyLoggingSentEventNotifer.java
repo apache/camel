@@ -23,10 +23,11 @@ import org.apache.camel.support.EventNotifierSupport;
 // START SNIPPET: e1
 public class MyLoggingSentEventNotifer extends EventNotifierSupport {
 
+    @Override
     public void notify(CamelEvent event) throws Exception {
         // react only when its the sent event
         if (event instanceof ExchangeSentEvent) {
-            ExchangeSentEvent sent = (ExchangeSentEvent) event;
+            ExchangeSentEvent sent = (ExchangeSentEvent)event;
             log.info("Took {} millis to send to: {}", sent.getTimeTaken(), sent.getEndpoint());
         }
 

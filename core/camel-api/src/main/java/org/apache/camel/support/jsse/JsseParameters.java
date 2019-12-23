@@ -43,6 +43,7 @@ public class JsseParameters implements CamelContextAware {
     /**
      * @see #setCamelContext(CamelContext)
      */
+    @Override
     public CamelContext getCamelContext() {
         return context;
     }
@@ -53,6 +54,7 @@ public class JsseParameters implements CamelContextAware {
      *
      * @param context the context to use
      */
+    @Override
     public void setCamelContext(CamelContext context) {
         this.context = context;
     }

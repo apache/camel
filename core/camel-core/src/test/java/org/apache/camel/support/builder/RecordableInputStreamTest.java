@@ -23,12 +23,12 @@ import org.junit.Test;
 
 public class RecordableInputStreamTest extends Assert {
     private static final byte[] DATA;
-    
+
     static {
         DATA = new byte[512];
         final int radix = 0x7f - 0x20;
         for (int i = 0; i < 512; i++) {
-            DATA[i] = (byte) (i % radix + 0x20);
+            DATA[i] = (byte)(i % radix + 0x20);
         }
     }
 
@@ -37,7 +37,7 @@ public class RecordableInputStreamTest extends Assert {
         RecordableInputStream ris = new RecordableInputStream(new ByteArrayInputStream(DATA), "utf-8");
         assertEquals(0, ris.size());
         byte[] buf = new byte[64];
-        
+
         // 8 * 64 = 512
         for (int i = 0; i < 8; i++) {
             // read in 64 bytes
@@ -58,7 +58,7 @@ public class RecordableInputStreamTest extends Assert {
 
             ris.record();
         }
-        
+
         ris.close();
     }
 
@@ -67,7 +67,7 @@ public class RecordableInputStreamTest extends Assert {
         RecordableInputStream ris = new RecordableInputStream(new ByteArrayInputStream(DATA), "utf-8");
         assertEquals(0, ris.size());
         byte[] buf = new byte[64];
-        
+
         // read 64 bytes
         int n = ris.read(buf, 0, buf.length);
         assertEquals(64, n);
@@ -75,7 +75,7 @@ public class RecordableInputStreamTest extends Assert {
 
         // consume the 64 bytes
         String text = ris.getText(64);
-        
+
         assertEquals(new String(DATA, 0, 64, "utf-8"), text);
         assertEquals(0, ris.size());
 
@@ -83,16 +83,16 @@ public class RecordableInputStreamTest extends Assert {
         n = ris.read(buf, 0, buf.length);
         assertEquals(64, n);
         assertEquals(0, ris.size());
-        
+
         // turn back on the recording and read the next 64 bytes
         ris.record();
         n = ris.read(buf, 0, buf.length);
         assertEquals(64, n);
         assertEquals(64, ris.size());
-        
+
         // consume the 64 bytes
         text = ris.getText(64);
-        
+
         // 64 * 2 = 128
         assertEquals(new String(DATA, 128, 64, "utf-8"), text);
         assertEquals(0, ris.size());

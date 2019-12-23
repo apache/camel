@@ -26,7 +26,7 @@ import org.junit.Test;
 public class SimpleRegistryTest extends Assert {
 
     private SimpleRegistry registry;
-    
+
     @Before
     public void setUp() throws Exception {
         registry = new SimpleRegistry();
@@ -54,7 +54,7 @@ public class SimpleRegistryTest extends Assert {
         Object answer = registry.lookupByNameAndType("a", Float.class);
         assertNull(answer);
     }
-    
+
     @Test
     public void testLookupByType() {
         Map<?, ?> map = registry.findByTypeWithName(String.class);
@@ -65,7 +65,7 @@ public class SimpleRegistryTest extends Assert {
         assertEquals("b", map.get("a"));
         assertEquals(1, map.get("c"));
     }
- 
+
     @Test
     public void testLookupByWrongType() {
         Map<?, ?> map = registry.findByTypeWithName(Float.class);
@@ -95,4 +95,3 @@ public class SimpleRegistryTest extends Assert {
     }
 
 }
-

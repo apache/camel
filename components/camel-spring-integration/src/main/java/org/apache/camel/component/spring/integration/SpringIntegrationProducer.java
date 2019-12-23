@@ -83,6 +83,7 @@ public class SpringIntegrationProducer extends DefaultProducer implements Proces
         }
     }
 
+    @Override
     public void process(final Exchange exchange) throws Exception {
         if (exchange.getPattern().isOutCapable()) {
 

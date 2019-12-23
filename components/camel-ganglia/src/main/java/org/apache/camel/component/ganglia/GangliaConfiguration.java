@@ -22,7 +22,6 @@ import java.net.URI;
 import info.ganglia.gmetric4j.gmetric.GMetric;
 import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -50,7 +49,7 @@ public class GangliaConfiguration implements Cloneable {
     @UriPath(defaultValue = "" + DEFAULT_PORT)
     private int port = DEFAULT_PORT;
 
-    @UriParam(defaultValue = "MULTICAST")
+    @UriParam(defaultValue = "MULTICAST", enums = "MULTICAST,UNICAST")
     private GMetric.UDPAddressingMode mode = DEFAULT_MODE;
 
     @UriParam(defaultValue = "5")
@@ -71,10 +70,10 @@ public class GangliaConfiguration implements Cloneable {
     @UriParam(defaultValue = "metric")
     private String metricName = DEFAULT_METRIC_NAME;
 
-    @UriParam(defaultValue = "STRING")
+    @UriParam(defaultValue = "STRING", enums = "STRING,INT8,UINT8,INT16,UINT16,INT32,UINT32,FLOAT,DOUBLE")
     private GMetricType type = DEFAULT_TYPE;
 
-    @UriParam(defaultValue = "BOTH")
+    @UriParam(defaultValue = "BOTH", enums = "ZERO,POSITIVE,NEGATIVE,BOTH")
     private GMetricSlope slope = DEFAULT_SLOPE;
 
     @UriParam

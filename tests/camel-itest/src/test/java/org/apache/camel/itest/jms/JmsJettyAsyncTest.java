@@ -17,6 +17,7 @@
 package org.apache.camel.itest.jms;
 
 import java.util.concurrent.TimeUnit;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -51,7 +52,7 @@ public class JmsJettyAsyncTest extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(8000);
+        port = AvailablePortFinder.getNextAvailable();
 
         return new RouteBuilder() {
             @Override

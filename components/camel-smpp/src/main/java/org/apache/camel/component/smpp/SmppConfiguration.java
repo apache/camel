@@ -521,7 +521,7 @@ public class SmppConfiguration implements Cloneable {
         this.numberingPlanIndicator = numberingPlanIndicator;
     }
 
-    public boolean getUsingSSL() {
+    public boolean isUsingSSL() {
         return usingSSL;
     }
 

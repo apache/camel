@@ -30,7 +30,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
-import org.apache.camel.component.jms.JmsConstants;
 import org.apache.camel.component.jms.JmsEndpoint;
 import org.apache.camel.component.jms.JmsMessage;
 import org.apache.camel.component.jms.JmsMessageHelper;
@@ -63,18 +62,22 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         this.camelContext = camelContext;
     }
 
+    @Override
     public void setScheduledExecutorService(ScheduledExecutorService executorService) {
         this.scheduledExecutorService = executorService;
     }
 
+    @Override
     public void setOnTimeoutExecutorService(ExecutorService executorService) {
         this.executorService = executorService;
     }
 
+    @Override
     public void setEndpoint(JmsEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void setReplyTo(Destination replyTo) {
         log.trace("ReplyTo destination: {}", replyTo);
         this.replyTo = replyTo;
@@ -87,6 +90,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         this.correlationProperty = correlationProperty;
     }
 
+    @Override
     public Destination getReplyTo() {
         if (replyTo != null) {
             return replyTo;
@@ -108,6 +112,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         return replyTo;
     }
     
+    @Override
     public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout) {
         // add to correlation map
@@ -126,6 +131,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
     protected abstract ReplyHandler createReplyHandler(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout);
 
+    @Override
     public void onMessage(Message message, Session session) throws JMSException {
         String correlationID = null;
 
@@ -150,6 +156,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         handleReplyMessage(correlationID, message, session);
     }
 
+    @Override
     public void processReply(ReplyHolder holder) {
         if (holder != null && isRunAllowed()) {
             try {
@@ -184,17 +191,6 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                         exchange.setException((Exception) body);
                     } else {
                         log.debug("Reply received. OUT message body set to reply payload: {}", body);
-                    }
-                    if (endpoint.isTransferFault()) {
-                        // remove the header as we do not want to keep it on the Camel Message either
-                        Object faultHeader = response.removeHeader(JmsConstants.JMS_TRANSFER_FAULT);
-                        if (faultHeader != null) {
-                            boolean isFault = exchange.getContext().getTypeConverter().tryConvertTo(boolean.class, faultHeader);
-                            log.debug("Transfer fault on OUT message: {}", isFault);
-                            if (isFault) {
-                                exchange.getOut().setFault(true);
-                            }
-                        }
                     }
 
                     // restore correlation id in case the remote server messed with it

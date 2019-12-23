@@ -50,6 +50,7 @@ public class CamelFluentProducerTemplateFactoryBean extends AbstractCamelFluentP
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
         this.applicationContext = applicationContext;
     }

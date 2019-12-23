@@ -22,6 +22,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.rabbitmq.client.AMQP;
@@ -166,13 +167,16 @@ public class RabbitMQMessageConverter {
         // TODO: Add support for a HeaderFilterStrategy. See: org.apache.camel.component.jms.JmsBinding#shouldOutputHeader
         for (Map.Entry<String, Object> header : headers.entrySet()) {
             // filter header values.
-            Object value = getValidRabbitMQHeaderValue(header.getValue());
-            
-            if (value != null || isAllowNullHeaders()) {
+            Object value = getValidRabbitMQHeaderValue(header.getKey(), header.getValue());
+
+            // additionaly filter out the OVERRIDE header so it does not propagate
+            if ((value != null || isAllowNullHeaders()) && !header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
                 filteredHeaders.put(header.getKey(), header.getValue());
             } else if (LOG.isDebugEnabled()) {
                 if (header.getValue() == null) {
                     LOG.debug("Ignoring header: {} with null value", header.getKey());
+                } else if (header.getKey().equals(RabbitMQConstants.EXCHANGE_OVERRIDE_NAME)) {
+                    LOG.debug("Preventing header propagation: {} with value {}:", header.getKey(), header.getValue());
                 } else {
                     LOG.debug("Ignoring header: {} of class: {} with value: {}",
                               header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue());
@@ -202,7 +206,12 @@ public class RabbitMQMessageConverter {
      * @return the value to use, <tt>null</tt> to ignore this header
      * @see com.rabbitmq.client.impl.Frame#fieldValueSize
      */
-    private Object getValidRabbitMQHeaderValue(Object headerValue) {
+    private Object getValidRabbitMQHeaderValue(String headerKey, Object headerValue) {
+        // accept all x- headers
+        if (headerKey.startsWith("x-") || headerKey.startsWith("X-")) {
+            return headerKey;
+        }
+
         if (headerValue instanceof String) {
             return headerValue;
         } else if (headerValue instanceof Number) {
@@ -214,6 +223,10 @@ public class RabbitMQMessageConverter {
         } else if (headerValue instanceof byte[]) {
             return headerValue;
         } else if (headerValue instanceof LongString) {
+            return headerValue;
+        } else if (headerValue instanceof Map) {
+            return headerValue;
+        } else if (headerValue instanceof List) {
             return headerValue;
         }
 

@@ -22,7 +22,6 @@ import org.reactivestreams.Publisher;
 import org.reactivestreams.Subscriber;
 import reactor.core.publisher.Flux;
 
-
 public class ReactorCorePlatformTest extends AbstractPlatformTestSupport {
 
     @Override

@@ -59,6 +59,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
             this.id = id;
         }
 
+        @Override
         public long getDelay(TimeUnit unit) {
             // if the answer is 0 then this task is ready to be taken
             long answer = id - index.get();
@@ -69,13 +70,17 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
             // so we have to return a delay value of one time unit
             if (TimeUnit.NANOSECONDS == unit) {
                 // okay this is too fast so use a little more delay to avoid CPU burning cycles
-                answer = unit.convert(1, TimeUnit.MICROSECONDS);
+                // To avoid align with java 11 impl of
+                // "java.util.concurrent.locks.AbstractQueuedSynchronizer.SPIN_FOR_TIMEOUT_THRESHOLD", otherwise
+                // no sleep with very high CPU usage
+                answer = 1001L;
             } else {
                 answer = unit.convert(1, unit);
             }
             return answer;
         }
 
+        @Override
         @SuppressWarnings("unchecked")
         public int compareTo(Delayed o) {
             SubmitOrderFutureTask other = (SubmitOrderFutureTask) o;
@@ -99,6 +104,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         this.executor = executor;
     }
 
+    @Override
     public Future<V> submit(Callable<V> task) {
         if (task == null) {
             throw new IllegalArgumentException("Task must be provided");
@@ -108,6 +114,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return f;
     }
 
+    @Override
     public Future<V> submit(Runnable task, Object result) {
         if (task == null) {
             throw new IllegalArgumentException("Task must be provided");
@@ -117,11 +124,13 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return f;
     }
 
+    @Override
     public Future<V> take() throws InterruptedException {
         index.incrementAndGet();
         return completionQueue.take();
     }
 
+    @Override
     public Future<V> poll() {
         index.incrementAndGet();
         Future<V> answer = completionQueue.poll();
@@ -132,6 +141,7 @@ public class SubmitOrderedCompletionService<V> implements CompletionService<V> {
         return answer;
     }
 
+    @Override
     public Future<V> poll(long timeout, TimeUnit unit) throws InterruptedException {
         index.incrementAndGet();
         Future<V> answer = completionQueue.poll(timeout, unit);

@@ -1,5 +1,5 @@
 [[HowdoIretrievethethrownExceptionduringprocessinganExchange-HowdoIretrievethethrownExceptionduringprocessinganExchange]]
-=== How do I retrieve the thrown Exception during processing an Exchange?
+= How do I retrieve the thrown Exception during processing an Exchange?
 
 You have send an Exchange to Camel but it fails during processing caused
 by a thrown Exception. How do I retrieve this Exception?

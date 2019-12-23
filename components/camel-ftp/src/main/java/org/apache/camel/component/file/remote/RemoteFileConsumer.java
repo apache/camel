@@ -50,6 +50,7 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
         return (RemoteFileOperations<T>) operations;
     }
 
+    @Override
     protected boolean prePollCheck() throws Exception {
         if (log.isTraceEnabled()) {
             log.trace("prePollCheck on {}", getEndpoint().getConfiguration().remoteServerInformation());

@@ -52,9 +52,7 @@ public class CustomUnitOfWorkFactoryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("log:foo")
-                    .to("mock:result");
+                from("direct:start").to("log:foo").to("mock:result");
             }
         };
     }

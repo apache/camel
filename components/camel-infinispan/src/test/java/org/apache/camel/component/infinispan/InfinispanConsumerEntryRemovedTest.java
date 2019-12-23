@@ -32,15 +32,15 @@ public class InfinispanConsumerEntryRemovedTest extends InfinispanTestSupport {
 
         mockResult.expectedMessageCount(2);
 
-        mockResult.message(0).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_REMOVED");
-        mockResult.message(0).outHeader(InfinispanConstants.IS_PRE).isEqualTo(true);
-        mockResult.message(0).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
-        mockResult.message(0).outHeader(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
+        mockResult.message(0).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_REMOVED");
+        mockResult.message(0).header(InfinispanConstants.IS_PRE).isEqualTo(true);
+        mockResult.message(0).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResult.message(0).header(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
 
-        mockResult.message(1).outHeader(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_REMOVED");
-        mockResult.message(1).outHeader(InfinispanConstants.IS_PRE).isEqualTo(false);
-        mockResult.message(1).outHeader(InfinispanConstants.CACHE_NAME).isNotNull();
-        mockResult.message(1).outHeader(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
+        mockResult.message(1).header(InfinispanConstants.EVENT_TYPE).isEqualTo("CACHE_ENTRY_REMOVED");
+        mockResult.message(1).header(InfinispanConstants.IS_PRE).isEqualTo(false);
+        mockResult.message(1).header(InfinispanConstants.CACHE_NAME).isNotNull();
+        mockResult.message(1).header(InfinispanConstants.KEY).isEqualTo(KEY_ONE);
 
         currentCache().remove(KEY_ONE);
         mockResult.assertIsSatisfied();

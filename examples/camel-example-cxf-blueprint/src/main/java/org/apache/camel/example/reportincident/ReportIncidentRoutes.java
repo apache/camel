@@ -25,6 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ReportIncidentRoutes extends RouteBuilder {
 
+    @Override
     public void configure() throws Exception {
         // webservice responses
         OutputReportIncident ok = new OutputReportIncident();

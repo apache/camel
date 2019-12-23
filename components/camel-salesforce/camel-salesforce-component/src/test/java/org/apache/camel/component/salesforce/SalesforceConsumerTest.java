@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -67,7 +66,7 @@ public class SalesforceConsumerTest {
                 return false;
             }
 
-            final AccountUpdates other = (AccountUpdates) obj;
+            final AccountUpdates other = (AccountUpdates)obj;
 
             return Objects.equals(id, other.id) && Objects.equals(name, other.name) && Objects.equals(phone, other.phone);
         }
@@ -108,7 +107,7 @@ public class SalesforceConsumerTest {
         when(component.getCamelContext()).thenReturn(camelContext);
         final ClassResolver classResolver = mock(ClassResolver.class);
         when(camelContext.getClassResolver()).thenReturn(classResolver);
-        when(classResolver.resolveClass(AccountUpdates.class.getName())).thenReturn((Class) AccountUpdates.class);
+        when(classResolver.resolveClass(AccountUpdates.class.getName())).thenReturn((Class)AccountUpdates.class);
 
         pushTopicMessage = createPushTopicMessage();
 
@@ -210,7 +209,7 @@ public class SalesforceConsumerTest {
         consumer.processMessage(mock(ClientSessionChannel.class), pushTopicMessage);
 
         @SuppressWarnings("unchecked")
-        final Object sobject = ((Map<String, Object>) pushTopicMessage.get("data")).get("sobject");
+        final Object sobject = ((Map<String, Object>)pushTopicMessage.get("data")).get("sobject");
         verify(in).setBody(sobject);
         verify(in).setHeader("CamelSalesforceEventType", "created");
         verify(in).setHeader("CamelSalesforceCreatedDate", "2016-09-16T19:45:27.454Z");

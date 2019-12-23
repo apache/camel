@@ -22,7 +22,6 @@ import java.util.List;
 import com.google.api.client.util.DateTime;
 import com.google.api.services.calendar.model.FreeBusyRequest;
 import com.google.api.services.calendar.model.FreeBusyRequestItem;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarFreebusyApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;

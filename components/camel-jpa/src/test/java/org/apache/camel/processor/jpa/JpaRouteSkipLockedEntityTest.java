@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.jpa;
+
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
@@ -68,9 +69,9 @@ public class JpaRouteSkipLockedEntityTest extends AbstractJpaTest {
         return new SpringRouteBuilder() {
             @Override
             public void configure() {
-                String options = "?consumer.skipLockedEntity=true"; //&consumer.lockModeType=PESSIMISTIC_FORCE_INCREMENT";
+                String options = "?skipLockedEntity=true"; //&lockModeType=PESSIMISTIC_FORCE_INCREMENT";
                 from("jpa://" + VersionedItem.class.getName() + options).routeId("first").autoStartup(false).bean(new WaitLatch()).log("route1: ${body}").to("mock:result1");
-                from("jpa2://select" + options + "&consumer.query=select s from VersionedItem s").routeId("second").autoStartup(false).bean(new WaitLatch()).log("route2: ${body}").to("mock:result2");
+                from("jpa2://select" + options + "&query=select s from VersionedItem s").routeId("second").autoStartup(false).bean(new WaitLatch()).log("route2: ${body}").to("mock:result2");
             }
         };
     }

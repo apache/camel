@@ -18,7 +18,6 @@ package org.apache.camel.component.web3j;
 
 import java.util.Map;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
@@ -33,13 +32,6 @@ public class Web3jComponent extends DefaultComponent {
     @Metadata(description = "Default configuration")
     private Web3jConfiguration configuration;
 
-    public Web3jComponent() {
-    }
-
-    public Web3jComponent(CamelContext camelContext) {
-        super(camelContext);
-    }
-
     public Web3jConfiguration getConfiguration() {
         return configuration;
     }
@@ -48,10 +40,13 @@ public class Web3jComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
-        Web3jConfiguration conf =  configuration != null ? configuration.copy() : new Web3jConfiguration();
-        setProperties(conf, parameters);
-        return new Web3jEndpoint(uri, remaining, this, conf);
+        Web3jConfiguration conf = configuration != null ? configuration.copy() : new Web3jConfiguration();
+
+        Web3jEndpoint endpoint = new Web3jEndpoint(uri, remaining, this, conf);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
 }

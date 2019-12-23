@@ -16,10 +16,11 @@
  */
 package org.apache.camel.spring.interceptor;
 
-import org.apache.camel.spring.SpringRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 
-public class AnnotatedRoute extends SpringRouteBuilder {
+public class AnnotatedRoute extends RouteBuilder {
 
+    @Override
     public void configure() throws Exception {
         from("direct:okay").
                 transacted().

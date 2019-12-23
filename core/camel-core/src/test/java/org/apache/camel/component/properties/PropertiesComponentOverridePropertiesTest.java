@@ -35,9 +35,7 @@ public class PropertiesComponentOverridePropertiesTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("{{hey}}")
-                    .to("mock:{{cool.result}}");
+                from("direct:start").to("{{hey}}").to("mock:{{cool.result}}");
             }
         });
         context.start();
@@ -55,14 +53,12 @@ public class PropertiesComponentOverridePropertiesTest extends ContextTestSuppor
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
-        context.addComponent("properties", pc);
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
 
         Properties extra = new Properties();
         extra.put("cool.result", "extra");
         extra.put("hey", "mock:hey");
-        pc.setOverrideProperties(extra);
+        context.getPropertiesComponent().setOverrideProperties(extra);
 
         return context;
     }

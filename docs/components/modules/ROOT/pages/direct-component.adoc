@@ -1,7 +1,12 @@
 [[direct-component]]
-== Direct Component
+= Direct Component
+:page-source: components/camel-direct/src/main/docs/direct-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Direct component provides direct, synchronous invocation of any
 consumers when a producer sends a message exchange. +
@@ -16,7 +21,7 @@ TIP: *Connection to other camel contexts*
 The xref:vm-component.adoc[VM] component provides connections between Camel
 contexts as long they run in the same *JVM*.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -25,12 +30,12 @@ direct:someName[?options]
 
 Where *someName* can be any string to uniquely identify the endpoint
 
-=== Options
+== Options
 
 
 
 // component options: START
-The Direct component supports 4 options, which are listed below.
+The Direct component supports 5 options, which are listed below.
 
 
 
@@ -39,8 +44,9 @@ The Direct component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *block* (producer) | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | boolean
 | *timeout* (producer) | The timeout value to use if block is enabled. | 30000 | long
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -56,7 +62,7 @@ direct:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -66,7 +72,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,14 +91,14 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-direct-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -100,7 +106,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 5 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -109,13 +115,14 @@ The component supports 5 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.direct.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.direct.block* | If sending a message to a direct endpoint which has no active consumer, then we can tell the producer to block and wait for the consumer to become active. | true | Boolean
+| *camel.component.direct.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.direct.enabled* | Whether to enable auto configuration of the direct component. This is enabled by default. |  | Boolean
-| *camel.component.direct.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.direct.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.direct.timeout* | The timeout value to use if block is enabled. | 30000 | Long
 |===
 // spring-boot-auto-configure options: END
 
-=== Samples
+== Samples
 
 In the route below we use the direct component to link the two routes
 together:
@@ -151,7 +158,3 @@ And the sample using spring DSL:
 See also samples from the xref:seda-component.adoc[SEDA] component, how they can
 be used together.
 
-=== See Also
-
-* xref:seda-component.adoc[SEDA]
-* xref:vm-component.adoc[VM]

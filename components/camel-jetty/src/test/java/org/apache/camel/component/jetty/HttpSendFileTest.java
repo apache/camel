@@ -51,15 +51,12 @@ public class HttpSendFileTest extends BaseJettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("jetty:http://localhost:{{port}}/myapp/myservice")
-                    .to("mock:result")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            assertNotNull("Body should not be null", body);
-                        }
-                    })
-                    .transform(constant("OK")).setHeader("Content-Type", constant("text/plain"));
+                from("jetty:http://localhost:{{port}}/myapp/myservice").to("mock:result").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String body = exchange.getIn().getBody(String.class);
+                        assertNotNull("Body should not be null", body);
+                    }
+                }).transform(constant("OK")).setHeader("Content-Type", constant("text/plain"));
             }
         };
     }

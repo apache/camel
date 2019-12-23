@@ -1,19 +1,23 @@
 [[ahc-ws-component]]
-== AHC Websocket Component
+= AHC Websocket Component
 
-*Available as of Camel version 2.14*
+*Since Camel 2.14*
 
-The AHC-WS component provides Websocket
-based endpoints for a client communicating with
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
+
+The AHC-WS component provides Websocket
+based endpoints for a client communicating with
 external servers over Websocket (as a client opening a websocket
 connection to an external server). +
 The component uses the xref:ahc-component.adoc[AHC] component that in turn uses
-the 
-https://github.com/AsyncHttpClient/async-http-client[Async Http Client] 
+the 
+https://github.com/AsyncHttpClient/async-http-client[Async Http Client] 
 library.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ------------------------------------------------------------
@@ -25,7 +29,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------------------------------
@@ -35,7 +39,7 @@ ahc-wss://hostname[:port][/resourceUri][?options]
 
 Will by default use port 80 for ahc-ws and 443 for ahc-wss.
 
-### AHC-WS Options
+== AHC-WS Options
 
 As the AHC-WS component is based on the AHC component, you can use the
 various configuration options of the AHC component.
@@ -43,7 +47,7 @@ various configuration options of the AHC component.
 
 
 // component options: START
-The AHC Websocket component supports 9 options, which are listed below.
+The AHC Websocket component supports 10 options, which are listed below.
 
 
 
@@ -57,8 +61,9 @@ The AHC Websocket component supports 9 options, which are listed below.
 | *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -74,7 +79,7 @@ ahc-ws:httpUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -84,7 +89,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (17 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,14 +115,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-ahc-ws-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -125,7 +130,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 10 options, which are listed below.
+The component supports 11 options, which are listed below.
 
 
 
@@ -135,11 +140,12 @@ The component supports 10 options, which are listed below.
 | *camel.component.ahc-ws.allow-java-serialized-object* | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | Boolean
 | *camel.component.ahc-ws.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
 | *camel.component.ahc-ws.binding* | To use a custom AhcBinding which allows to control how to bind between AHC and Camel. The option is a org.apache.camel.component.ahc.AhcBinding type. |  | String
+| *camel.component.ahc-ws.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.ahc-ws.client* | To use a custom AsyncHttpClient. The option is a org.asynchttpclient.AsyncHttpClient type. |  | String
 | *camel.component.ahc-ws.client-config* | To configure the AsyncHttpClient to use a custom com.ning.http.client.AsyncHttpClientConfig instance. The option is a org.asynchttpclient.AsyncHttpClientConfig type. |  | String
-| *camel.component.ahc-ws.enabled* | Enable ahc-ws component | true | Boolean
+| *camel.component.ahc-ws.enabled* | Whether to enable auto configuration of the ahc-ws component. This is enabled by default. |  | Boolean
 | *camel.component.ahc-ws.header-filter-strategy* | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. The option is a org.apache.camel.spi.HeaderFilterStrategy type. |  | String
-| *camel.component.ahc-ws.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.ahc-ws.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.ahc-ws.ssl-context-parameters* | Reference to a org.apache.camel.support.jsse.SSLContextParameters in the Registry. Note that configuring this option will override any SSL/TLS configuration options provided through the clientConfig option at the endpoint or component level. The option is a org.apache.camel.support.jsse.SSLContextParameters type. |  | String
 | *camel.component.ahc-ws.use-global-ssl-context-parameters* | Enable usage of global SSL context parameters. | false | Boolean
 |===
@@ -147,13 +153,13 @@ The component supports 10 options, which are listed below.
 
 
 
-### Writing and Reading Data over Websocket
+== Writing and Reading Data over Websocket
 
 An ahc-ws endpoint can either write data to the socket or read from the
 socket, depending on whether the endpoint is configured as the producer
 or the consumer, respectively.
 
-### Configuring URI to Write or Read Data
+== Configuring URI to Write or Read Data
 
 In the route below, Camel will write to the specified websocket
 connection.
@@ -197,14 +203,5 @@ And the equivalent Spring sample:
 </camelContext>
 ------------------------------------------------------------
 
- 
+ 
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* xref:../../../../camel-ahc/src/main/docs/readme.adoc[AHC]
-* xref:atmosphere-websocket-component.adoc[Atmosphere-Websocket]

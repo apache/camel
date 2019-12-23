@@ -18,6 +18,7 @@ package org.apache.camel.component.file.remote;
 
 public class FtpConsumerDoneFileNameFixedStepwiseTest extends FtpConsumerDoneFileNameFixedTest {
 
+    @Override
     protected String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/done?password=admin&initialDelay=0&delay=100&stepwise=true";
     }

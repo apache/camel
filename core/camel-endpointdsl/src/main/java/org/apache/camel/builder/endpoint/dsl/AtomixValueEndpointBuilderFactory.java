@@ -52,7 +52,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -89,7 +89,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointConsumerBuilder defaultAction(
                 Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -102,7 +102,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointConsumerBuilder defaultAction(
                 String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -114,7 +114,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -126,7 +126,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -138,32 +138,19 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointConsumerBuilder resultHeader(
                 String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
-         * Sets the Atomix transport.
+         * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a:
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixValueEndpointConsumerBuilder transport(
-                Class<Object> transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Sets the Atomix transport.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AtomixValueEndpointConsumerBuilder transport(String transport) {
-            setProperty("transport", transport);
+        default AtomixValueEndpointConsumerBuilder transportClassName(
+                String transportClassName) {
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -174,7 +161,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder ttl(long ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -185,7 +172,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder ttl(String ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -203,7 +190,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -221,7 +208,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -248,7 +235,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -264,7 +251,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -276,7 +263,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -289,7 +276,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -302,7 +289,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -315,7 +302,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -327,7 +314,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -340,7 +327,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -352,7 +339,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -365,7 +352,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -379,7 +366,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder ephemeral(
                 boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -393,7 +380,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder ephemeral(
                 String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -406,7 +393,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -419,7 +406,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -432,7 +419,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -446,7 +433,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -459,7 +446,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -473,7 +460,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -486,7 +473,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -499,7 +486,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -521,7 +508,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -533,7 +520,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -545,7 +532,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointProducerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -558,7 +545,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointProducerBuilder defaultAction(
                 Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -571,7 +558,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointProducerBuilder defaultAction(
                 String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -583,7 +570,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -595,7 +582,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -607,32 +594,19 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointProducerBuilder resultHeader(
                 String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
-         * Sets the Atomix transport.
+         * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a:
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixValueEndpointProducerBuilder transport(
-                Class<Object> transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Sets the Atomix transport.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AtomixValueEndpointProducerBuilder transport(String transport) {
-            setProperty("transport", transport);
+        default AtomixValueEndpointProducerBuilder transportClassName(
+                String transportClassName) {
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -643,7 +617,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder ttl(long ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -654,7 +628,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder ttl(String ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -674,7 +648,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -694,7 +668,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -718,7 +692,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -731,7 +705,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -743,7 +717,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -756,7 +730,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -768,7 +742,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -781,7 +755,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -795,7 +769,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder ephemeral(
                 boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -809,7 +783,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder ephemeral(
                 String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -822,7 +796,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -835,7 +809,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -848,7 +822,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -862,7 +836,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -875,7 +849,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -889,7 +863,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -902,7 +876,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -915,7 +889,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -937,7 +911,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointBuilder atomix(Object atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -949,7 +923,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointBuilder atomix(String atomix) {
-            setProperty("atomix", atomix);
+            doSetProperty("atomix", atomix);
             return this;
         }
         /**
@@ -961,7 +935,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AtomixValueEndpointBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -973,7 +947,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointBuilder defaultAction(Action defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -985,7 +959,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointBuilder defaultAction(String defaultAction) {
-            setProperty("defaultAction", defaultAction);
+            doSetProperty("defaultAction", defaultAction);
             return this;
         }
         /**
@@ -997,7 +971,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointBuilder nodes(List<Object> nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -1009,7 +983,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointBuilder nodes(String nodes) {
-            setProperty("nodes", nodes);
+            doSetProperty("nodes", nodes);
             return this;
         }
         /**
@@ -1020,31 +994,19 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointBuilder resultHeader(String resultHeader) {
-            setProperty("resultHeader", resultHeader);
+            doSetProperty("resultHeader", resultHeader);
             return this;
         }
         /**
-         * Sets the Atomix transport.
+         * The class name (fqn) of the Atomix transport.
          * 
-         * The option is a:
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
-         * 
-         * Group: common
-         */
-        default AtomixValueEndpointBuilder transport(Class<Object> transport) {
-            setProperty("transport", transport);
-            return this;
-        }
-        /**
-         * Sets the Atomix transport.
-         * 
-         * The option will be converted to a
-         * <code>java.lang.Class&lt;io.atomix.catalyst.transport.Transport&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
-        default AtomixValueEndpointBuilder transport(String transport) {
-            setProperty("transport", transport);
+        default AtomixValueEndpointBuilder transportClassName(
+                String transportClassName) {
+            doSetProperty("transportClassName", transportClassName);
             return this;
         }
         /**
@@ -1055,7 +1017,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointBuilder ttl(long ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -1066,7 +1028,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: common
          */
         default AtomixValueEndpointBuilder ttl(String ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
     }
@@ -1090,7 +1052,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1103,7 +1065,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1115,7 +1077,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder defaultResourceConfig(
                 Properties defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -1128,7 +1090,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder defaultResourceConfig(
                 String defaultResourceConfig) {
-            setProperty("defaultResourceConfig", defaultResourceConfig);
+            doSetProperty("defaultResourceConfig", defaultResourceConfig);
             return this;
         }
         /**
@@ -1140,7 +1102,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder defaultResourceOptions(
                 Properties defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -1153,7 +1115,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder defaultResourceOptions(
                 String defaultResourceOptions) {
-            setProperty("defaultResourceOptions", defaultResourceOptions);
+            doSetProperty("defaultResourceOptions", defaultResourceOptions);
             return this;
         }
         /**
@@ -1166,7 +1128,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointBuilder ephemeral(boolean ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -1179,7 +1141,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointBuilder ephemeral(String ephemeral) {
-            setProperty("ephemeral", ephemeral);
+            doSetProperty("ephemeral", ephemeral);
             return this;
         }
         /**
@@ -1192,7 +1154,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder readConsistency(
                 ReadConsistency readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -1205,7 +1167,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder readConsistency(
                 String readConsistency) {
-            setProperty("readConsistency", readConsistency);
+            doSetProperty("readConsistency", readConsistency);
             return this;
         }
         /**
@@ -1218,7 +1180,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder resourceConfigs(
                 Map<String, Properties> resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -1232,7 +1194,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder resourceConfigs(
                 String resourceConfigs) {
-            setProperty("resourceConfigs", resourceConfigs);
+            doSetProperty("resourceConfigs", resourceConfigs);
             return this;
         }
         /**
@@ -1245,7 +1207,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder resourceOptions(
                 Map<String, Properties> resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -1259,7 +1221,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder resourceOptions(
                 String resourceOptions) {
-            setProperty("resourceOptions", resourceOptions);
+            doSetProperty("resourceOptions", resourceOptions);
             return this;
         }
         /**
@@ -1272,7 +1234,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1285,7 +1247,7 @@ public interface AtomixValueEndpointBuilderFactory {
          */
         default AdvancedAtomixValueEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1315,7 +1277,7 @@ public interface AtomixValueEndpointBuilderFactory {
      * The atomix-value component is used to access Atomix's distributed value.
      * 
      * Category: clustering
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-atomix
      * 
      * Syntax: <code>atomix-value:resourceName</code>

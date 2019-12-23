@@ -20,13 +20,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.amazonaws.services.kafka.AWSKafka;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * For working with Amazon MSK.
@@ -50,30 +48,21 @@ public class MSKComponent extends DefaultComponent {
     public MSKComponent(CamelContext context) {
         super(context);
         
-        this.configuration = new MSKConfiguration();
         registerExtension(new MSKComponentVerifierExtension());
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        MSKConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
-
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        MSKConfiguration configuration = this.configuration != null ? this.configuration.copy() : new MSKConfiguration();
+        MSKEndpoint endpoint = new MSKEndpoint(uri, this, configuration);
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getMskClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("Amazon msk client or accessKey and secretKey must be specified");
         }
-        
-        MSKEndpoint endpoint = new MSKEndpoint(uri, this, configuration);
         return endpoint;
     }
     
@@ -89,36 +78,36 @@ public class MSKComponent extends DefaultComponent {
     }
 
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
     
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     /**
      * The region in which MSK client needs to work
      */
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
 
     private void checkAndSetRegistryClient(MSKConfiguration configuration) {

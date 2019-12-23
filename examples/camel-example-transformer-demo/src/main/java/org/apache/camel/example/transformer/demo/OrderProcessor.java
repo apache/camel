@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
  */
 public class OrderProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) {
         Order order = exchange.getIn().getBody(Order.class);
         OrderResponse answer = new OrderResponse()

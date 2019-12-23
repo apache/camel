@@ -35,6 +35,7 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -43,6 +44,7 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -97,18 +99,18 @@ public class SqlConsumerOutputTypeStreamListTest extends CamelTestSupport {
             public void configure() {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id?outputType=StreamList&consumer.initialDelay=0&consumer.delay=50").routeId("route1").noAutoStartup()
+                from("sql:select * from projects order by id?outputType=StreamList&initialDelay=0&delay=50").routeId("route1").noAutoStartup()
                         .to("log:stream")
                         .to("mock:result");
 
-                from("sql:select * from projects order by id?outputType=StreamList&consumer.initialDelay=0&consumer.delay=50").routeId("route2").noAutoStartup()
+                from("sql:select * from projects order by id?outputType=StreamList&initialDelay=0&delay=50").routeId("route2").noAutoStartup()
                         .to("log:stream")
                         .split(body()).streaming()
                             .to("log:row")
                             .to("mock:result")
                         .end();
 
-                from("sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel&consumer.initialDelay=0&consumer.delay=50")
+                from("sql:select * from projects order by id?outputType=StreamList&outputClass=org.apache.camel.component.sql.ProjectModel&initialDelay=0&delay=50")
                         .routeId("route3").noAutoStartup()
                         .to("log:stream")
                         .split(body()).streaming()

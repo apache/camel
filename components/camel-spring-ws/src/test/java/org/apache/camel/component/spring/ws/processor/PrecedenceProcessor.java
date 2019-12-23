@@ -33,6 +33,7 @@ import org.apache.camel.component.spring.ws.SpringWebserviceConstants;
  */
 public class PrecedenceProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // same sample data
         InputStream is = getClass().getResourceAsStream("/stockquote-response.xml");

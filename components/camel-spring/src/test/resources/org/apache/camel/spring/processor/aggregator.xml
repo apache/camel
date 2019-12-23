@@ -27,9 +27,13 @@
     <!-- START SNIPPET: example -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
 
+        <!-- spring property placeholder, ignore resource not found as the file resource is for unit testing -->
+        <propertyPlaceholder id="properties"
+                             ignoreMissingLocation="true" location="classpath:custom.properties"/>
+
         <route>
             <from uri="direct:start"/>
-            <aggregate strategyRef="latestAggregationStrategy" completionTimeout="1000">
+            <aggregate strategyRef="latestAggregationStrategy" completionTimeout="{{aggregation.timeout}}">
                 <correlationExpression>
                     <header>cheese</header>
                 </correlationExpression>

@@ -26,7 +26,7 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonSNSClientMock awsSNSClient = new AmazonSNSClientMock();
         context.getRegistry().bind("awsSNSClient", awsSNSClient);
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic");
 
         assertNotNull(endpoint.getConfiguration().getAmazonSNSClient());
@@ -35,7 +35,7 @@ public class SNSComponentClientRegistryTest extends CamelTestSupport {
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalSNSClientMisconfiguration() throws Exception {
 
-        SnsComponent component = new SnsComponent(context);
+        SnsComponent component = context.getComponent("aws-sns", SnsComponent.class);
         SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic");
     }
 }

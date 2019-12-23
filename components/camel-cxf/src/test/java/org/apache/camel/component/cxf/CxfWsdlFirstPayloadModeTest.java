@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import javax.xml.ws.Endpoint;
 
 import org.apache.camel.wsdl_first.JaxwsTestHandler;
@@ -44,11 +45,13 @@ public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
     }
     
 
+    @Override
     @Test
     public void testInvokingServiceWithCamelProducer() throws Exception {
         // this test does not apply to PAYLOAD mode
     }
 
+    @Override
     protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
         assertEquals(2, fromHandler.getFaultCount());
         assertEquals(4, fromHandler.getMessageCount());

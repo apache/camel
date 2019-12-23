@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -24,8 +25,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * To test that using polling consumer with file will not keep scheduled file consumer keep running
- * in the background. It should suspend/resume the consumer on demand instead.
+ * To test that using polling consumer with file will not keep scheduled file
+ * consumer keep running in the background. It should suspend/resume the
+ * consumer on demand instead.
  */
 public class FilePollingConsumerTest extends ContextTestSupport {
 
@@ -46,13 +48,15 @@ public class FilePollingConsumerTest extends ContextTestSupport {
         assertNotNull(exchange);
         assertEquals("Hello World", exchange.getIn().getBody(String.class));
 
-        // sleep a bit to ensure polling consumer would be suspended after we have used it
+        // sleep a bit to ensure polling consumer would be suspended after we
+        // have used it
         Thread.sleep(500);
 
         // drop a new file which should not be picked up by the consumer
         template.sendBodyAndHeader("file:target/data/enrich", "Bye World", Exchange.FILE_NAME, "bye.txt");
 
-        // sleep a bit to ensure polling consumer would not have picked up that file
+        // sleep a bit to ensure polling consumer would not have picked up that
+        // file
         Thread.sleep(1000);
 
         File file = new File("target/data/enrich/bye.txt");

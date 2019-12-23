@@ -189,23 +189,16 @@ public class BeanProxyNoBindingTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                        .choice()
-                        .when(xpath("/order/@type = 'book'")).to("direct:book")
-                        .otherwise().to("direct:other")
-                        .end();
+                from("direct:start").choice().when(xpath("/order/@type = 'book'")).to("direct:book").otherwise().to("direct:other").end();
 
                 from("direct:book").transform(constant("<order id=\"123\">OK</order>"));
 
                 from("direct:other").transform(constant("<order>FAIL</order>"));
                 // END SNIPPET: e1
 
-                from("direct:bean")
-                        .bean(MyFooBean.class, "hello");
+                from("direct:bean").bean(MyFooBean.class, "hello");
 
-                from("seda:delay")
-                        .delay(1000)
-                        .to("mock:delay");
+                from("seda:delay").delay(1000).to("mock:delay");
             }
         };
     }

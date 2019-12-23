@@ -23,23 +23,13 @@ import org.apache.camel.builder.RouteBuilder;
  * The handle catch clause has a pipeline processing the exception.
  */
 public class ValidationWithNestedFinallyBlockPipelineTest extends ValidationTest {
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .doTry()
-                        .to("direct:embedded")
-                    .doCatch(ValidationException.class)
-                        .to("mock:invalid");
+                from("direct:start").doTry().to("direct:embedded").doCatch(ValidationException.class).to("mock:invalid");
 
-                from("direct:embedded")
-                    .errorHandler(noErrorHandler())
-                    .doTry()
-                        .process(validator)
-                        .to("mock:valid")
-                    .doFinally()
-                        .setHeader("valid", constant(false))
-                    .end();
+                from("direct:embedded").errorHandler(noErrorHandler()).doTry().process(validator).to("mock:valid").doFinally().setHeader("valid", constant(false)).end();
             }
         };
     }

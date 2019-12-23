@@ -50,12 +50,7 @@ public class SimpleLanguageBeanBodyParenthesisTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:single")
-                    .choice()
-                        .when().simple("${body.contains(\")\")}")
-                            .to("mock:result")
-                        .otherwise()
-                            .to("mock:other");
+                from("direct:single").choice().when().simple("${body.contains(\")\")}").to("mock:result").otherwise().to("mock:other");
 
             }
         };

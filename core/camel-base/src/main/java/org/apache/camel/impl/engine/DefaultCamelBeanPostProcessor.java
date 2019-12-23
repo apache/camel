@@ -30,12 +30,14 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.DeferredContextBinding;
 import org.apache.camel.EndpointInject;
+import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Produce;
 import org.apache.camel.PropertyInject;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.CamelBeanPostProcessor;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ReflectionHelper;
@@ -74,6 +76,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         this.camelContext = camelContext;
     }
 
+    @Override
     public Object postProcessBeforeInitialization(Object bean, String beanName) throws Exception {
         LOG.trace("Camel bean processing before initialization for bean: {}", beanName);
 
@@ -82,10 +85,13 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             return bean;
         }
 
-        injectClass(bean, beanName);
-        injectNestedClasses(bean, beanName);
-        injectBindToRegistryFields(bean, beanName);
-        injectBindToRegistryMethods(bean, beanName);
+        if (bindToRegistrySupported()) {
+            injectClass(bean, beanName);
+            injectNestedClasses(bean, beanName);
+            injectBindToRegistryFields(bean, beanName);
+            injectBindToRegistryMethods(bean, beanName);
+        }
+
         injectFields(bean, beanName);
         injectMethods(bean, beanName);
 
@@ -104,6 +110,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         return bean;
     }
 
+    @Override
     public Object postProcessAfterInitialization(Object bean, String beanName) throws Exception {
         LOG.trace("Camel bean processing after initialization for bean: {}", beanName);
 
@@ -138,7 +145,20 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     }
 
     protected boolean canPostProcessBean(Object bean, String beanName) {
+        if (beanName != null && "properties".equals(beanName)) {
+            // we cannot process the properties component
+            // its instantiated very eager during creation of camel context
+            return false;
+        }
         return bean != null;
+    }
+
+    /**
+     * Whether support for the annotation {@link BindToRegistry} is supported.
+     * This is only intended for standalone runtimes such as camel-main, camel-quarkus, etc.
+     */
+    protected boolean bindToRegistrySupported() {
+        return true;
     }
 
     protected boolean canSetCamelContext(Object bean, String beanName) {
@@ -161,42 +181,38 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
      * @param bean the bean to be injected
      */
     protected void injectFields(final Object bean, final String beanName) {
-        ReflectionHelper.doWithFields(bean.getClass(), new ReflectionHelper.FieldCallback() {
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
-                if (propertyInject != null && getPostProcessorHelper().matchContext(propertyInject.context())) {
-                    injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
-                }
+        ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
+            if (propertyInject != null) {
+                injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
+            }
 
-                BeanInject beanInject = field.getAnnotation(BeanInject.class);
-                if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
-                    injectFieldBean(field, beanInject.value(), bean, beanName);
-                }
+            BeanInject beanInject = field.getAnnotation(BeanInject.class);
+            if (beanInject != null) {
+                injectFieldBean(field, beanInject.value(), bean, beanName);
+            }
 
-                EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
-                if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
-                    @SuppressWarnings("deprecation")
-                    String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
-                    injectField(field, uri, endpointInject.property(), bean, beanName);
-                }
+            EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
+            if (endpointInject != null) {
+                @SuppressWarnings("deprecation")
+                String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
+                injectField(field, uri, endpointInject.property(), bean, beanName);
+            }
 
-                Produce produce = field.getAnnotation(Produce.class);
-                if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
-                    @SuppressWarnings("deprecation")
-                    String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
-                    injectField(field, uri, produce.property(), bean, beanName, produce.binding());
-                }
+            Produce produce = field.getAnnotation(Produce.class);
+            if (produce != null) {
+                @SuppressWarnings("deprecation")
+                String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
+                injectField(field, uri, produce.property(), bean, beanName, produce.binding());
             }
         });
     }
 
     protected void injectBindToRegistryFields(final Object bean, final String beanName) {
-        ReflectionHelper.doWithFields(bean.getClass(), new ReflectionHelper.FieldCallback() {
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
-                if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
-                    bindToRegistry(field, bind.value(), bean, beanName);
-                }
+        ReflectionHelper.doWithFields(bean.getClass(), field -> {
+            BindToRegistry bind = field.getAnnotation(BindToRegistry.class);
+            if (bind != null) {
+                bindToRegistry(field, bind.value(), bean, beanName, bind.beanPostProcess());
             }
         });
     }
@@ -225,21 +241,19 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
     }
 
     protected void injectMethods(final Object bean, final String beanName) {
-        ReflectionHelper.doWithMethods(bean.getClass(), new ReflectionHelper.MethodCallback() {
-            public void doWith(Method method) throws IllegalArgumentException, IllegalAccessException {
-                setterInjection(method, bean, beanName);
-                getPostProcessorHelper().consumerInjection(method, bean, beanName);
-            }
+        ReflectionHelper.doWithMethods(bean.getClass(), method -> {
+            setterInjection(method, bean, beanName);
+            getPostProcessorHelper().consumerInjection(method, bean, beanName);
         });
     }
 
     protected void injectBindToRegistryMethods(final Object bean, final String beanName) {
         // sort the methods so the simplest are used first
 
-        final List<Method> methods = new ArrayList<Method>();
+        final List<Method> methods = new ArrayList<>();
         ReflectionHelper.doWithMethods(bean.getClass(), method -> {
             BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
-            if (bind != null && getPostProcessorHelper().matchContext(bind.context())) {
+            if (bind != null) {
                 methods.add(method);
             }
         });
@@ -278,49 +292,47 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         // bind each method
         methods.forEach(method -> {
             BindToRegistry bind = method.getAnnotation(BindToRegistry.class);
-            bindToRegistry(method, bind.value(), bean, beanName);
+            bindToRegistry(method, bind.value(), bean, beanName, bind.beanPostProcess());
         });
     }
 
     protected void injectClass(final Object bean, final String beanName) {
         Class<?> clazz = bean.getClass();
         BindToRegistry ann = clazz.getAnnotation(BindToRegistry.class);
-        if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
-            bindToRegistry(clazz, ann.value(), bean, beanName);
+        if (ann != null) {
+            bindToRegistry(clazz, ann.value(), bean, beanName, ann.beanPostProcess());
         }
     }
 
     protected void injectNestedClasses(final Object bean, final String beanName) {
-        ReflectionHelper.doWithClasses(bean.getClass(), new ReflectionHelper.ClassCallback() {
-            public void doWith(Class clazz) throws IllegalArgumentException, IllegalAccessException {
-                BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
-                if (ann != null && getPostProcessorHelper().matchContext(ann.context())) {
-                    // its a nested class so we dont have a bean instance for it
-                    bindToRegistry(clazz, ann.value(), null, null);
-                }
+        ReflectionHelper.doWithClasses(bean.getClass(), clazz -> {
+            BindToRegistry ann = (BindToRegistry) clazz.getAnnotation(BindToRegistry.class);
+            if (ann != null) {
+                // its a nested class so we dont have a bean instance for it
+                bindToRegistry(clazz, ann.value(), null, null, ann.beanPostProcess());
             }
         });
     }
 
     protected void setterInjection(Method method, Object bean, String beanName) {
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
-        if (propertyInject != null && getPostProcessorHelper().matchContext(propertyInject.context())) {
+        if (propertyInject != null) {
             setterPropertyInjection(method, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
         }
 
         BeanInject beanInject = method.getAnnotation(BeanInject.class);
-        if (beanInject != null && getPostProcessorHelper().matchContext(beanInject.context())) {
+        if (beanInject != null) {
             setterBeanInjection(method, beanInject.value(), bean, beanName);
         }
 
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
-        if (endpointInject != null && getPostProcessorHelper().matchContext(endpointInject.context())) {
+        if (endpointInject != null) {
             String uri = endpointInject.value().isEmpty() ? endpointInject.uri() : endpointInject.value();
             setterInjection(method, bean, beanName, uri, endpointInject.property());
         }
 
         Produce produce = method.getAnnotation(Produce.class);
-        if (produce != null && getPostProcessorHelper().matchContext(produce.context())) {
+        if (produce != null) {
             String uri = produce.value().isEmpty() ? produce.uri() : produce.value();
             setterInjection(method, bean, beanName, uri, produce.property());
         }
@@ -360,7 +372,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
         }
     }
 
-    private void bindToRegistry(Class<?> clazz, String name, Object bean, String beanName) {
+    private void bindToRegistry(Class<?> clazz, String name, Object bean, String beanName, boolean beanPostProcess) {
         if (isEmpty(name)) {
             name = clazz.getSimpleName();
         }
@@ -368,20 +380,36 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             // no bean so then create an instance from its type
             bean = camelContext.getInjector().newInstance(clazz);
         }
+        if (beanPostProcess) {
+            try {
+                camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(bean, beanName);
+                camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(bean, beanName);
+            } catch (Exception e) {
+                throw RuntimeCamelException.wrapRuntimeException(e);
+            }
+        }
         camelContext.getRegistry().bind(name, bean);
     }
 
-    private void bindToRegistry(Field field, String name, Object bean, String beanName) {
+    private void bindToRegistry(Field field, String name, Object bean, String beanName, boolean beanPostProcess) {
         if (isEmpty(name)) {
             name = field.getName();
         }
         Object value = ReflectionHelper.getField(field, bean);
         if (value != null) {
+            if (beanPostProcess) {
+                try {
+                    camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(value, beanName);
+                    camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(value, beanName);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            }
             camelContext.getRegistry().bind(name, value);
         }
     }
 
-    private void bindToRegistry(Method method, String name, Object bean, String beanName) {
+    private void bindToRegistry(Method method, String name, Object bean, String beanName, boolean beanPostProcess) {
         if (isEmpty(name)) {
             name = method.getName();
         }
@@ -399,6 +427,14 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
             value = invokeMethod(method, bean);
         }
         if (value != null) {
+            if (beanPostProcess) {
+                try {
+                    camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessBeforeInitialization(value, beanName);
+                    camelContext.adapt(ExtendedCamelContext.class).getBeanPostProcessor().postProcessAfterInitialization(value, beanName);
+                } catch (Exception e) {
+                    throw RuntimeCamelException.wrapRuntimeException(e);
+                }
+            }
             camelContext.getRegistry().bind(name, value);
         }
     }
@@ -432,7 +468,7 @@ public class DefaultCamelBeanPostProcessor implements CamelBeanPostProcessor {
                             key = key + ":" + pi.defaultValue();
                         }
                         // need to force property lookup by having key enclosed in tokens
-                        key = camelContext.getPropertiesComponent().getPrefixToken() + key + camelContext.getPropertiesComponent().getSuffixToken();
+                        key = PropertiesComponent.PREFIX_TOKEN + key + PropertiesComponent.SUFFIX_TOKEN;
                         try {
                             Object value = camelContext.resolvePropertyPlaceholders(key);
                             parameters[i] = camelContext.getTypeConverter().convertTo(type, value);

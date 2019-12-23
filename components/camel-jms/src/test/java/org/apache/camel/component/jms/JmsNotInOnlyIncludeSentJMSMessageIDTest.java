@@ -51,6 +51,7 @@ public class JmsNotInOnlyIncludeSentJMSMessageIDTest extends CamelTestSupport {
         assertNull("Should not have enriched with JMSMessageID", id);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

@@ -16,17 +16,13 @@
  */
 package org.apache.camel.component.google.calendar;
 
-
 import com.google.api.services.calendar.model.Calendar;
 import com.google.api.services.calendar.model.CalendarList;
 import com.google.api.services.calendar.model.CalendarListEntry;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.google.calendar.internal.CalendarCalendarListApiMethod;
 import org.apache.camel.component.google.calendar.internal.GoogleCalendarApiCollection;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Test class for {@link com.google.api.services.calendar.Calendar$CalendarList} APIs.

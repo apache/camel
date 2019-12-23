@@ -21,12 +21,11 @@ import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class JsonStreamTest {
 
@@ -39,9 +38,9 @@ public class JsonStreamTest {
     public void iSO88591() throws Exception {
         try {
             test("json_stream/jsonISO8859-1.txt", "ISO-8859-1");
-            fail("Error exepcted");
+            fail("Error expected");
         } catch (AssertionError e) {
-            assertEquals("expected:<ISO-8859-1> but was:<UTF-8>", e.getMessage());
+            assertEquals("expected: <ISO-8859-1> but was: <UTF-8>", e.getMessage());
         }
     }
 
@@ -108,7 +107,7 @@ public class JsonStreamTest {
 
     private void test(String file, String encoding, String expectedString) throws Exception {
         InputStream is = JsonStreamTest.class.getClassLoader().getResourceAsStream(file);
-        assertNotNull("File " + file + " not found", is);
+        assertNotNull(is, "File " + file + " not found");
         JsonStream js = new JsonStream(is);
         Charset actual = js.getEncoding();
         Charset expected = Charset.forName(encoding);

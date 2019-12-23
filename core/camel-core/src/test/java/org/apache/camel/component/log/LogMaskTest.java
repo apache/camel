@@ -71,6 +71,7 @@ public class LogMaskTest {
 
     public static class MockMaskingFormatter implements MaskingFormatter {
         private String received;
+
         @Override
         public String format(String source) {
             received = source;

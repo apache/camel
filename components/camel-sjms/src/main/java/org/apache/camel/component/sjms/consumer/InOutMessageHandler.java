@@ -158,8 +158,7 @@ public class InOutMessageHandler extends AbstractMessageHandler {
         @Override
         public void done(boolean sync) {
             try {
-                // the response can either be in OUT or IN
-                org.apache.camel.Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+                org.apache.camel.Message msg = exchange.getMessage();
                 Message response = getEndpoint().getBinding().makeJmsMessage(exchange, msg.getBody(), msg.getHeaders(), getSession(), null);
                 response.setJMSCorrelationID(exchange.getIn().getHeader(JmsConstants.JMS_CORRELATION_ID, String.class));
                 localProducer.send(response);

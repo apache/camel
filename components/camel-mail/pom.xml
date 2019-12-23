@@ -17,14 +17,13 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-mail</artifactId>
@@ -49,13 +48,13 @@
         </dependency>
         <dependency>
             <groupId>com.sun.mail</groupId>
-            <artifactId>javax.mail</artifactId>
-            <version>${javax-mail-version}</version>
+            <artifactId>jakarta.mail</artifactId>
+            <version>${jakarta-mail-version}</version>
             <exclusions>
                 <!-- javax activation is part of the JDK now -->
                 <exclusion>
-                    <groupId>javax.activation</groupId>
-                    <artifactId>activation</artifactId>
+                    <groupId>com.sun.activation</groupId>
+                    <artifactId>jakarta.activation</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -110,7 +109,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-quartz2</artifactId>
+            <artifactId>camel-quartz</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -142,12 +141,12 @@
                         <configuration>
                             <artifactSet>
                                 <includes>
-                                    <include>com.sun.mail:javax.mail</include>
+                                    <include>com.sun.mail:jakarta.mail</include>
                                 </includes>
                             </artifactSet>
                             <filters>
                                 <filter>
-                                    <artifact>com.sun.mail:javax.mail</artifact>
+                                    <artifact>com.sun.mail:jakarta.mail</artifact>
                                     <includes>
                                         <include>META-INF/javamail.default.address.map</include>
                                         <include>META-INF/javamail.default.providers</include>

@@ -54,7 +54,7 @@ public interface VmEndpointBuilderFactory {
          * Group: common
          */
         default VmEndpointConsumerBuilder size(int size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface VmEndpointBuilderFactory {
          * Group: common
          */
         default VmEndpointConsumerBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
     }
@@ -154,7 +154,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
                 boolean limitConcurrentConsumers) {
-            setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
+            doSetProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder limitConcurrentConsumers(
                 String limitConcurrentConsumers) {
-            setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
+            doSetProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
-            setProperty("multipleConsumers", multipleConsumers);
+            doSetProperty("multipleConsumers", multipleConsumers);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
-            setProperty("multipleConsumers", multipleConsumers);
+            doSetProperty("multipleConsumers", multipleConsumers);
             return this;
         }
         /**
@@ -270,7 +270,7 @@ public interface VmEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -283,7 +283,7 @@ public interface VmEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedVmEndpointConsumerBuilder pollTimeout(String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -297,7 +297,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
                 boolean purgeWhenStopping) {
-            setProperty("purgeWhenStopping", purgeWhenStopping);
+            doSetProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
         }
         /**
@@ -311,7 +311,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder purgeWhenStopping(
                 String purgeWhenStopping) {
-            setProperty("purgeWhenStopping", purgeWhenStopping);
+            doSetProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
         }
         /**
@@ -324,7 +324,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -337,7 +337,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -351,7 +351,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder queue(BlockingQueue queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -365,7 +365,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder queue(String queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -378,7 +378,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -390,7 +390,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointConsumerBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -414,7 +414,7 @@ public interface VmEndpointBuilderFactory {
          * Group: common
          */
         default VmEndpointProducerBuilder size(int size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -427,7 +427,7 @@ public interface VmEndpointBuilderFactory {
          * Group: common
          */
         default VmEndpointProducerBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -442,7 +442,7 @@ public interface VmEndpointBuilderFactory {
          * Group: producer
          */
         default VmEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
-            setProperty("blockWhenFull", blockWhenFull);
+            doSetProperty("blockWhenFull", blockWhenFull);
             return this;
         }
         /**
@@ -457,7 +457,7 @@ public interface VmEndpointBuilderFactory {
          * Group: producer
          */
         default VmEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
-            setProperty("blockWhenFull", blockWhenFull);
+            doSetProperty("blockWhenFull", blockWhenFull);
             return this;
         }
         /**
@@ -472,7 +472,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointProducerBuilder discardIfNoConsumers(
                 boolean discardIfNoConsumers) {
-            setProperty("discardIfNoConsumers", discardIfNoConsumers);
+            doSetProperty("discardIfNoConsumers", discardIfNoConsumers);
             return this;
         }
         /**
@@ -487,7 +487,38 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointProducerBuilder discardIfNoConsumers(
                 String discardIfNoConsumers) {
-            setProperty("discardIfNoConsumers", discardIfNoConsumers);
+            doSetProperty("discardIfNoConsumers", discardIfNoConsumers);
+            return this;
+        }
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default VmEndpointProducerBuilder discardWhenFull(
+                boolean discardWhenFull) {
+            doSetProperty("discardWhenFull", discardWhenFull);
+            return this;
+        }
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default VmEndpointProducerBuilder discardWhenFull(String discardWhenFull) {
+            doSetProperty("discardWhenFull", discardWhenFull);
             return this;
         }
         /**
@@ -502,7 +533,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
-            setProperty("failIfNoConsumers", failIfNoConsumers);
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
         }
         /**
@@ -517,7 +548,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
-            setProperty("failIfNoConsumers", failIfNoConsumers);
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
         }
         /**
@@ -537,7 +568,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -557,7 +588,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -570,7 +601,7 @@ public interface VmEndpointBuilderFactory {
          * Group: producer
          */
         default VmEndpointProducerBuilder offerTimeout(long offerTimeout) {
-            setProperty("offerTimeout", offerTimeout);
+            doSetProperty("offerTimeout", offerTimeout);
             return this;
         }
         /**
@@ -583,7 +614,7 @@ public interface VmEndpointBuilderFactory {
          * Group: producer
          */
         default VmEndpointProducerBuilder offerTimeout(String offerTimeout) {
-            setProperty("offerTimeout", offerTimeout);
+            doSetProperty("offerTimeout", offerTimeout);
             return this;
         }
         /**
@@ -596,7 +627,7 @@ public interface VmEndpointBuilderFactory {
          * Group: producer
          */
         default VmEndpointProducerBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -609,7 +640,7 @@ public interface VmEndpointBuilderFactory {
          * Group: producer
          */
         default VmEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -627,7 +658,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
-            setProperty("waitForTaskToComplete", waitForTaskToComplete);
+            doSetProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
         }
         /**
@@ -645,7 +676,7 @@ public interface VmEndpointBuilderFactory {
          */
         default VmEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
-            setProperty("waitForTaskToComplete", waitForTaskToComplete);
+            doSetProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
         }
     }
@@ -669,7 +700,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -682,7 +713,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -696,7 +727,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder queue(BlockingQueue queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -710,7 +741,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder queue(String queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -723,7 +754,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -735,7 +766,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointProducerBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -759,7 +790,7 @@ public interface VmEndpointBuilderFactory {
          * Group: common
          */
         default VmEndpointBuilder size(int size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -772,7 +803,7 @@ public interface VmEndpointBuilderFactory {
          * Group: common
          */
         default VmEndpointBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
     }
@@ -796,7 +827,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -809,7 +840,7 @@ public interface VmEndpointBuilderFactory {
          */
         default AdvancedVmEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -823,7 +854,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointBuilder queue(BlockingQueue queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -837,7 +868,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointBuilder queue(String queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -849,7 +880,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -861,7 +892,7 @@ public interface VmEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedVmEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -871,7 +902,7 @@ public interface VmEndpointBuilderFactory {
      * same CamelContext.
      * 
      * Category: core,endpoint
-     * Available as of version: 1.1
+     * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-vm
      * 
      * Syntax: <code>vm:name</code>

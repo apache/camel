@@ -18,11 +18,9 @@ package org.apache.camel.component.twitter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.twitter.data.StreamingType;
 import org.apache.camel.component.twitter.data.TimelineType;
 import org.apache.camel.component.twitter.directmessage.TwitterDirectMessageEndpoint;
 import org.apache.camel.component.twitter.search.TwitterSearchEndpoint;
-import org.apache.camel.component.twitter.streaming.TwitterStreamingEndpoint;
 import org.apache.camel.component.twitter.timeline.TwitterTimelineEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
@@ -77,22 +75,6 @@ public class UriConfigurationTest extends Assert {
     public void testSearchEndpoint() throws Exception {
         Endpoint endpoint = context.getEndpoint("twitter-search:foo");
         assertTrue("Endpoint not a TwitterSearchEndpoint: " + endpoint, endpoint instanceof TwitterSearchEndpoint);
-    }
-
-    @Test
-    public void testStreamingEndpoint() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter-streaming:filter");
-        assertTrue("Endpoint not a TwitterStreamingEndpoint: " + endpoint, endpoint instanceof TwitterStreamingEndpoint);
-        TwitterStreamingEndpoint streamingEndpoint = (TwitterStreamingEndpoint)endpoint;
-        assertEquals(StreamingType.FILTER, streamingEndpoint.getStreamingType());
-        endpoint = context.getEndpoint("twitter-streaming:sample");
-        assertTrue("Endpoint not a TwitterStreamingEndpoint: " + endpoint, endpoint instanceof TwitterStreamingEndpoint);
-        streamingEndpoint = (TwitterStreamingEndpoint)endpoint;
-        assertEquals(StreamingType.SAMPLE, streamingEndpoint.getStreamingType());
-        endpoint = context.getEndpoint("twitter-streaming:user");
-        assertTrue("Endpoint not a TwitterStreamingEndpoint: " + endpoint, endpoint instanceof TwitterStreamingEndpoint);
-        streamingEndpoint = (TwitterStreamingEndpoint)endpoint;
-        assertEquals(StreamingType.USER, streamingEndpoint.getStreamingType());
     }
 
     @Test

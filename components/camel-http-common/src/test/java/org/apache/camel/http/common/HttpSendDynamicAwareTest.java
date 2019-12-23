@@ -17,7 +17,6 @@
 package org.apache.camel.http.common;
 
 import org.apache.camel.spi.SendDynamicAware.DynamicAwareEntry;
-
 import org.junit.Before;
 import org.junit.Test;
 
@@ -46,22 +45,6 @@ public class HttpSendDynamicAwareTest {
         DynamicAwareEntry entry = new DynamicAwareEntry("https://localhost/test", null, null, null);
         String[] result = httpSendDynamicAware.parseUri(entry);
         assertEquals("Parse should not add port if https and not specified", "localhost", result[0]);
-    }
-    
-    @Test
-    public void testHttp4UndefinedPortWithPathParseUri() {
-        this.httpSendDynamicAware.setScheme("http4");
-        DynamicAwareEntry entry = new DynamicAwareEntry("http4://localhost/test", null, null, null);
-        String[] result = httpSendDynamicAware.parseUri(entry);
-        assertEquals("Parse should not add port if http4 and not specified", "localhost", result[0]);
-    }
-    
-    @Test
-    public void testHttps4UndefinedPortParseUri() {
-        this.httpSendDynamicAware.setScheme("https4");
-        DynamicAwareEntry entry = new DynamicAwareEntry("https4://localhost/test", null, null, null);
-        String[] result = httpSendDynamicAware.parseUri(entry);
-        assertEquals("Parse should not add port if https4 and not specified", "localhost", result[0]);
     }
     
     @Test

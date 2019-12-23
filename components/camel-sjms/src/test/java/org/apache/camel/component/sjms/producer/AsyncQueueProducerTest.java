@@ -52,6 +52,7 @@ public class AsyncQueueProducerTest extends CamelTestSupport {
         assertEquals("AB", route);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

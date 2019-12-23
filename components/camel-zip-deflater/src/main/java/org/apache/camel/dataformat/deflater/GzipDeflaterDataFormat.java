@@ -22,10 +22,10 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 
@@ -40,6 +40,7 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
         return "gzipdeflater";
     }
 
+    @Override
     public void marshal(final Exchange exchange, final Object graph, final OutputStream stream) throws Exception {
         InputStream is = exchange.getContext().getTypeConverter().mandatoryConvertTo(InputStream.class, exchange, graph);
 
@@ -52,6 +53,7 @@ public class GzipDeflaterDataFormat extends ServiceSupport implements DataFormat
         }
     }
 
+    @Override
     public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
         GZIPInputStream unzipInput = null;
 

@@ -50,12 +50,14 @@ public class FloatFormatFactory extends AbstractFormatFactory {
             super(impliedDecimalPosition, precision, locale);
         }
 
+        @Override
         public String format(Float object) throws Exception {
             return !super.hasImpliedDecimalPosition()
                     ? super.getFormat().format(object)
                     : super.getFormat().format(object * super.getMultiplier());
         }
 
+        @Override
         public Float parse(String string) throws Exception {
             Float value;
             if (!super.hasImpliedDecimalPosition()) {

@@ -37,7 +37,7 @@ public class StopCamelFromRouteTest extends Assert {
     // START SNIPPET: e1
     // use a latch as signal when to stop Camel
     private final CountDownLatch latch = new CountDownLatch(1);
-    
+
     @Test
     public void testStopCamelFromRoute() throws Exception {
         // create camel, add routes, and start camel
@@ -72,15 +72,13 @@ public class StopCamelFromRouteTest extends Assert {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                    .to("mock:start")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            // stop Camel by signalling to the latch
-                            latch.countDown();
-                        }
-                    }).to("mock:done");
+                from("direct:start").routeId("myRoute").to("mock:start").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        // stop Camel by signalling to the latch
+                        latch.countDown();
+                    }
+                }).to("mock:done");
             }
         };
     }

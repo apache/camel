@@ -61,7 +61,7 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
                 }
 
                 return 0;
-            };
+            }
         });
     }
 
@@ -84,7 +84,7 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
                     LOG.trace("Update count {}", updateCount);
                 }
                 return updateCount;
-            };
+            }
         });
     }
 }

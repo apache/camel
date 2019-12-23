@@ -38,15 +38,14 @@ public class JettyOnExceptionHandledTest extends BaseJettyTest {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("jetty://http://localhost:{{port}}/myserver")
-                    // use onException to catch all exceptions and return a custom reply message
-                    .onException(Exception.class)
-                        .handled(true)
-                        // create a custom failure response
-                        .transform(constant("Dude something went wrong"))
-                        // we must remember to set error code 500 as handled(true)
-                        // otherwise would let Camel thing its a OK response (200)
-                        .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500))
-                    .end()
+                    // use onException to catch all exceptions and return a
+                    // custom reply message
+                    .onException(Exception.class).handled(true)
+                    // create a custom failure response
+                    .transform(constant("Dude something went wrong"))
+                    // we must remember to set error code 500 as handled(true)
+                    // otherwise would let Camel thing its a OK response (200)
+                    .setHeader(Exchange.HTTP_RESPONSE_CODE, constant(500)).end()
                     // now just force an exception immediately
                     .throwException(new IllegalArgumentException("I cannot do this"));
                 // END SNIPPET: e1

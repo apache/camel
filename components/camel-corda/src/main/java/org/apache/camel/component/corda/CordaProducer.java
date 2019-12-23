@@ -18,9 +18,11 @@ package org.apache.camel.component.corda;
 
 import java.io.InputStream;
 import java.security.PublicKey;
+
 import net.corda.core.contracts.ContractState;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.flows.FlowLogic;
+import net.corda.core.flows.StateMachineRunId;
 import net.corda.core.identity.AbstractParty;
 import net.corda.core.identity.CordaX500Name;
 import net.corda.core.messaging.CordaRPCOps;
@@ -29,8 +31,8 @@ import net.corda.core.node.services.vault.AttachmentSort;
 import net.corda.core.node.services.vault.PageSpecification;
 import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.node.services.vault.Sort;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
+import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.support.HeaderSelectorProducer;
 
 import static org.apache.camel.component.corda.CordaConstants.ARGUMENTS;
@@ -202,13 +204,13 @@ public class CordaProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY)
     void vaultQuery(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         message.setBody(cordaRPCOps.vaultQuery(contractStateClass));
     }
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY)
     void vaultQueryBy(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         PageSpecification pageSpec = message.getHeader(PAGE_SPECIFICATION, PageSpecification.class);
         Sort sorting = message.getHeader(SORT, Sort.class);
@@ -217,14 +219,14 @@ public class CordaProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY_CRITERIA)
     void vaultQueryByCriteria(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         message.setBody(cordaRPCOps.vaultQueryByCriteria(criteria, contractStateClass));
     }
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY_WITH_PAGING_SPEC)
     void vaultQueryByWithPagingSpec(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         PageSpecification pageSpec = message.getHeader(PAGE_SPECIFICATION, PageSpecification.class);
         message.setBody(cordaRPCOps.vaultQueryByWithPagingSpec(contractStateClass, criteria, pageSpec));
@@ -232,9 +234,60 @@ public class CordaProducer extends HeaderSelectorProducer {
 
     @InvokeOnHeader(CordaConstants.VAULT_QUERY_BY_WITH_SORTING)
     void vaultQueryByWithSorting(Message message) throws Exception {
-        Class<ContractState> contractStateClass = (Class<ContractState>) message.getBody(Class.class);
+        Class<ContractState> contractStateClass = message.getBody(Class.class);
         QueryCriteria criteria = message.getHeader(QUERY_CRITERIA, QueryCriteria.class);
         Sort sorting = message.getHeader(SORT, Sort.class);
         message.setBody(cordaRPCOps.vaultQueryByWithSorting(contractStateClass, criteria, sorting));
+    }
+
+    @InvokeOnHeader(CordaConstants.TERMINATE)
+    void terminate(Message message) throws Exception {
+        cordaRPCOps.terminate(true);
+    }
+
+    @InvokeOnHeader(CordaConstants.IS_WAITING_FOR_SHUTDOWN)
+    void isWaitingForShutdown(Message message) throws Exception {
+        message.setBody(cordaRPCOps.isWaitingForShutdown());
+    }
+
+    @InvokeOnHeader(CordaConstants.REFRESH_NETWORK_MAP_CACHE)
+    void refreshNetworkMapCache(Message message) throws Exception {
+        cordaRPCOps.refreshNetworkMapCache();
+    }
+
+    @InvokeOnHeader(CordaConstants.SHUTDOWN)
+    void shutdown(Message message) throws Exception {
+        cordaRPCOps.shutdown();
+    }
+
+    @InvokeOnHeader(CordaConstants.WAIT_UNTIL_NETWORK_READY)
+    void waitUntilNetworkReady(Message message) throws Exception {
+        message.setBody(cordaRPCOps.waitUntilNetworkReady());
+    }
+
+    @InvokeOnHeader(CordaConstants.ACCEPT_NEWNETWORK_PARAMETERS)
+    void acceptNewNetworkParameters(Message message) throws Exception {
+        SecureHash secureHash = message.getHeader(SECURE_HASH, SecureHash.class);
+        cordaRPCOps.acceptNewNetworkParameters(secureHash);
+    }
+
+    @InvokeOnHeader(CordaConstants.KILL_FLOW)
+    void killFlow(Message message) throws Exception {
+        StateMachineRunId stateMachineRunId = message.getBody(StateMachineRunId.class);
+        cordaRPCOps.killFlow(stateMachineRunId);
+    }
+
+    @InvokeOnHeader(CordaConstants.NETWORK_PARAMETERS_FEED)
+    void networkParametersFeed(Message message) throws Exception {
+        message.setBody(cordaRPCOps.networkParametersFeed());
+    }
+
+    @InvokeOnHeader(CordaConstants.UPLOAD_ATTACHMENT_WITH_META_DATA)
+    void uploadAttachmentWithMetadata(Message message) throws Exception {
+        InputStream inputStream = message.getBody(InputStream.class);
+        String uploader = message.getBody(String.class);
+        String filename = message.getBody(String.class);
+        SecureHash secureHash = cordaRPCOps.uploadAttachmentWithMetadata(inputStream, uploader, filename);
+        message.setHeader(SECURE_HASH, secureHash);
     }
 }

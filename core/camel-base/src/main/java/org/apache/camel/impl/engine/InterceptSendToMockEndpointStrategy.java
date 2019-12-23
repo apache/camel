@@ -67,6 +67,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
         this.skip = skip;
     }
 
+    @Override
     public Endpoint registerEndpoint(String uri, Endpoint endpoint) {
         if (endpoint instanceof DefaultInterceptSendToEndpoint) {
             // endpoint already decorated
@@ -100,7 +101,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
 
             // allow custom logic
             producer = onInterceptEndpoint(uri, endpoint, mock, producer);
-            proxy.setDetour(producer);
+            proxy.setBefore(producer);
 
             return proxy;
         } else {

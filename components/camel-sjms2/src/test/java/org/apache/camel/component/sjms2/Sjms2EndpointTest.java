@@ -20,7 +20,6 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -181,6 +180,7 @@ public class Sjms2EndpointTest extends CamelTestSupport {
         assertTrue(qe.getTransactionBatchTimeout() == 3000);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

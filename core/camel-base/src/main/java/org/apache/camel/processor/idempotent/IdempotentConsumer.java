@@ -82,14 +82,17 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
         this.camelContext = camelContext;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         final AsyncCallback target;
 
@@ -148,6 +151,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
         return processor.process(exchange, target);
     }
 
+    @Override
     public List<Processor> next() {
         if (!hasNext()) {
             return null;
@@ -157,6 +161,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
         return answer;
     }
 
+    @Override
     public boolean hasNext() {
         return processor != null;
     }
@@ -182,6 +187,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
     // Implementation methods
     // -------------------------------------------------------------------------
 
+    @Override
     protected void doStart() throws Exception {
         // must add before start so it will have CamelContext injected first
         if (!camelContext.hasService(idempotentRepository)) {
@@ -190,6 +196,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
         ServiceHelper.startService(processor, idempotentRepository);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(processor, idempotentRepository);
     }

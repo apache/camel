@@ -39,10 +39,12 @@ public class FileResultHandler implements ResultHandler {
         this.result = new StreamResult(file);
     }
 
+    @Override
     public Result getResult() {
         return result;
     }
 
+    @Override
     public void setBody(Message in) {
         in.setBody(file);
     }

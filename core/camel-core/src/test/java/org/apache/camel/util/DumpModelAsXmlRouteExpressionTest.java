@@ -77,21 +77,13 @@ public class DumpModelAsXmlRouteExpressionTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                   .setBody(simple("Hello ${body}"))
-                   .to("mock:result");
+                from("direct:start").routeId("myRoute").setBody(simple("Hello ${body}")).to("mock:result");
 
-                from("direct:other").routeId("myOtherRoute")
-                   .setBody(xpath("/foo"))
-                   .to("mock:result");
+                from("direct:other").routeId("myOtherRoute").setBody(xpath("/foo")).to("mock:result");
 
-                from("direct:foo").routeId("myFooRoute")
-                   .setBody(header("bar"))
-                   .to("mock:result");
+                from("direct:foo").routeId("myFooRoute").setBody(header("bar")).to("mock:result");
 
-                from("direct:bean").routeId("myBeanRoute")
-                   .setHeader("foo", method("myCoolBean"))
-                   .to("mock:result");
+                from("direct:bean").routeId("myBeanRoute").setHeader("foo", method("myCoolBean")).to("mock:result");
             }
         };
     }

@@ -50,6 +50,7 @@ public class SObjectDescription extends SObject {
         this.fields = fields;
     }
 
+    @Override
     public SObjectDescriptionUrls getUrls() {
         return urls;
     }
@@ -83,8 +84,8 @@ public class SObjectDescription extends SObject {
     }
 
     /**
-     * Removes some of the less used properties from this object. Useful to reduce serialized form or for code
-     * generation that relies on reflection.
+     * Removes some of the less used properties from this object. Useful to
+     * reduce serialized form or for code generation that relies on reflection.
      */
     public SObjectDescription prune() {
         final SObjectDescription pruned = new SObjectDescription();
@@ -93,6 +94,7 @@ public class SObjectDescription extends SObject {
         pruned.setLabelPlural(getLabelPlural());
         pruned.fields = fields;
         pruned.urls = urls;
+        pruned.setChildRelationships(childRelationships);
 
         return pruned;
     }

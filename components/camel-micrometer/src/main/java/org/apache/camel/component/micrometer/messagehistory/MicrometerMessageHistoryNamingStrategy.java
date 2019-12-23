@@ -17,10 +17,12 @@
 package org.apache.camel.component.micrometer.messagehistory;
 
 import java.util.function.Predicate;
+
 import io.micrometer.core.instrument.Meter;
 import io.micrometer.core.instrument.Tags;
 import org.apache.camel.NamedNode;
 import org.apache.camel.Route;
+
 import static org.apache.camel.component.micrometer.MicrometerConstants.CAMEL_CONTEXT_TAG;
 import static org.apache.camel.component.micrometer.MicrometerConstants.DEFAULT_CAMEL_MESSAGE_HISTORY_METER_NAME;
 import static org.apache.camel.component.micrometer.MicrometerConstants.NODE_ID_TAG;

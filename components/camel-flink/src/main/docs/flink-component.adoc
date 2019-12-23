@@ -1,10 +1,17 @@
 [[flink-component]]
-== Apache Flink Component
+= Flink Component
 
-*Available as of Camel version 2.18*
+*Since Camel 2.18*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+*Since Camel 2.18*
+
 
 This documentation page covers the https://flink.apache.org[Apache Flink]
-component for the Apache Camel. The *camel-flink* component provides a
+component for the Apache Camel. The *camel-flink* component provides a
 bridge between Camel connectors and Flink tasks. +
 This Camel Flink connector provides a way to route message from various
 transports, dynamically choosing a flink task to execute, use incoming
@@ -12,7 +19,7 @@ message as input data for the task and finally deliver the results back to
 the Camel pipeline.
 
 Maven users will need to add the following dependency to
-their `pom.xml` for this component:
+their `pom.xml` for this component:
 
 [source,xml]
 ------------------------------------------------------------
@@ -24,7 +31,7 @@ their `pom.xml` for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI Format
+== URI Format
 
 Currently, the Flink Component supports only Producers. One can create DataSet, DataStream jobs.
 
@@ -40,7 +47,7 @@ FlinkEndpoint Options
 
 
 // endpoint options: START
-The Apache Flink endpoint is configured using URI syntax:
+The Flink endpoint is configured using URI syntax:
 
 ----
 flink:endpointType
@@ -48,7 +55,7 @@ flink:endpointType
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -58,7 +65,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (8 parameters):
+=== Query Parameters (8 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -75,14 +82,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-flink-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -90,7 +97,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
@@ -98,25 +105,26 @@ The component supports 7 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.flink.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.flink.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.flink.data-set* | DataSet to compute against. The option is a org.apache.flink.api.java.DataSet type. |  | String
 | *camel.component.flink.data-set-callback* | Function performing action against a DataSet. The option is a org.apache.camel.component.flink.DataSetCallback type. |  | String
 | *camel.component.flink.data-stream* | DataStream to compute against. The option is a org.apache.flink.streaming.api.datastream.DataStream type. |  | String
 | *camel.component.flink.data-stream-callback* | Function performing action against a DataStream. The option is a org.apache.camel.component.flink.DataStreamCallback type. |  | String
-| *camel.component.flink.enabled* | Enable flink component | true | Boolean
-| *camel.component.flink.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.flink.enabled* | Whether to enable auto configuration of the flink component. This is enabled by default. |  | Boolean
+| *camel.component.flink.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
 
-### FlinkComponent Options
+== FlinkComponent Options
 
 
 
 
 // component options: START
-The Apache Flink component supports 6 options, which are listed below.
+The Flink component supports 7 options, which are listed below.
 
 
 
@@ -127,8 +135,9 @@ The Apache Flink component supports 6 options, which are listed below.
 | *dataStream* (producer) | DataStream to compute against. |  | DataStream
 | *dataSetCallback* (producer) | Function performing action against a DataSet. |  | DataSetCallback
 | *dataStreamCallback* (producer) | Function performing action against a DataStream. |  | DataStreamCallback
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -136,7 +145,7 @@ The Apache Flink component supports 6 options, which are listed below.
 
 
 
-### Flink DataSet Callback
+== Flink DataSet Callback
 
 [source,java]
 -----------------------------------
@@ -155,7 +164,7 @@ public DataSetCallback<Long> dataSetCallback() {
 }
 -----------------------------------
 
-### Flink DataStream Callback
+== Flink DataStream Callback
 
 [source,java]
 ---------------------------
@@ -172,7 +181,7 @@ public VoidDataStreamCallback dataStreamCallback() {
 }
 ---------------------------
 
-### Camel-Flink Producer call
+== Camel-Flink Producer call
 
 [source,java]
 -----------------------------------
@@ -188,10 +197,3 @@ try {
         camelContext.stop();
     }
 -----------------------------------
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

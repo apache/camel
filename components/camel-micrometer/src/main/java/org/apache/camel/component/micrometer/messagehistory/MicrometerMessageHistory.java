@@ -55,6 +55,7 @@ public class MicrometerMessageHistory extends DefaultMessageHistory {
         sample.stop(timer);
     }
 
+    @Override
     public String toString() {
         return "MicrometerMessageHistory[routeId=" + getRouteId() + ", node=" + getNode().getId() + ']';
     }

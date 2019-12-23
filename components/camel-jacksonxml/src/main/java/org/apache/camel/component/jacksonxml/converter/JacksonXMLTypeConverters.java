@@ -27,7 +27,7 @@ import org.apache.camel.component.jacksonxml.JacksonXMLConstants;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.TypeConverterRegistry;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class JacksonXMLTypeConverters {
 
     private final XmlMapper defaultMapper = new XmlMapper();

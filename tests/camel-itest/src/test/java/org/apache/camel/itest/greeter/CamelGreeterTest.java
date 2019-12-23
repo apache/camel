@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.itest.greeter;
+
 import java.util.List;
 
 import javax.xml.ws.Endpoint;
@@ -46,7 +47,7 @@ public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
     
     private static Endpoint endpoint;
     
-    private static int port = AvailablePortFinder.getNextAvailable(20004);
+    private static int port = AvailablePortFinder.getNextAvailable();
     static {
         //set them as system properties so Spring can use the property placeholder
         //things to set them into the URL's in the spring contexts 

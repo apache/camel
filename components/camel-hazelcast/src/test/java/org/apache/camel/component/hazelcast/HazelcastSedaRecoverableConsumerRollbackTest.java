@@ -23,9 +23,9 @@ import org.mockito.Mockito;
 
 import static org.mockito.Mockito.*;
 
-
 public class HazelcastSedaRecoverableConsumerRollbackTest extends HazelcastSedaRecoverableConsumerTest {
 
+    @Override
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         TransactionContext transactionContext = Mockito.mock(TransactionContext.class);
         HazelcastException hazelcastException = new HazelcastException("Could not obtain Connection!!!");
@@ -40,6 +40,7 @@ public class HazelcastSedaRecoverableConsumerRollbackTest extends HazelcastSedaR
         when(transactionContext.getQueue("foo")).thenReturn(tqueue);
     }
 
+    @Override
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
         verify(hazelcastInstance, times(2)).getQueue("foo");
         verify(hazelcastInstance, atLeastOnce()).newTransactionContext();

@@ -75,6 +75,7 @@ public class JmsRequestReplyFixedReplyToInEndpointTest extends CamelTestSupport 
         assertEquals("queue://bar", reply.getOut().getHeader("JMSReplyTo", String.class));
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

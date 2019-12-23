@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -43,6 +44,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
     @XmlTransient
     private Endpoint endpoint;
 
+    @Override
     public Endpoint getObject() throws Exception {
         if (endpoint == null || !endpoint.isSingleton()) {
             // resolve placeholders (but leave the original uri unchanged)
@@ -56,6 +58,7 @@ public abstract class AbstractCamelEndpointFactoryBean extends AbstractCamelFact
         return endpoint;
     }
 
+    @Override
     public Class<Endpoint> getObjectType() {
         return Endpoint.class;
     }

@@ -24,7 +24,9 @@ import com.orbitz.consul.model.catalog.CatalogService;
 import com.orbitz.consul.model.health.ServiceHealth;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.apache.camel.impl.cloud.DefaultServiceDefinition;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConsulServiceRegistryTest extends ConsulTestSupport {
     @Override
@@ -33,7 +35,7 @@ public class ConsulServiceRegistryTest extends ConsulTestSupport {
     }
 
     @Test
-    public void testSimpleServiceRegistration() throws Exception {
+    public void testSimpleServiceRegistration() {
         ConsulServiceRegistry registry = new ConsulServiceRegistry();
         registry.setCamelContext(context());
         registry.setUrl(consulUrl());
@@ -41,14 +43,7 @@ public class ConsulServiceRegistryTest extends ConsulTestSupport {
         registry.setOverrideServiceHost(true);
         registry.start();
 
-        registry.register(
-            DefaultServiceDefinition.builder()
-                .withId("my-id")
-                .withName("service-name")
-                .withHost("my-host")
-                .withPort(9091)
-                .build()
-        );
+        registry.register(DefaultServiceDefinition.builder().withId("my-id").withName("service-name").withHost("my-host").withPort(9091).build());
 
         final CatalogClient catalog = getConsul().catalogClient();
         final HealthClient health = getConsul().healthClient();
@@ -68,7 +63,8 @@ public class ConsulServiceRegistryTest extends ConsulTestSupport {
 
         registry.stop();
 
-        // check that service has been de registered on service registry shutdown
+        // check that service has been de registered on service registry
+        // shutdown
         assertEquals(0, catalog.getService("service-name").getResponse().size());
         assertEquals(0, health.getServiceChecks("service-name").getResponse().size());
     }

@@ -1,0 +1,98 @@
+[[step-eip]]
+= Step EIP
+
+Camel supports the http://www.enterpriseintegrationpatterns.com/PipesAndFilters.html[Pipes and Filters] from the xref:enterprise-integration-patterns.adoc[EIP patterns] in various ways.
+
+image::eip/PipesAndFilters.gif[image]
+
+With Camel you can split your processing across multiple independent processing
+ which can then be chained together in a logical unit as a step.
+
+A step groups together the child processors into a single composite unit.
+This allows to capture metrics at a group level which can make management and monitoring
+of Camel routes easier by using higher-level abstractions. You can also
+think this as a middle-level between route vs each individual processors in the routes.
+
+You may want to do this when you have large routes and want to breakup the routes into
+logical steps.
+
+This means you can monitor your Camel applications and gather statistics at 4-tiers:
+
+- context level
+* route(s) level
+** step(s) level
+*** processor(s) level
+
+
+== JMX Management
+
+Each Step EIP is registered in JMX under the `type=steps` tree, which allows to monitor
+all the steps in the CamelContext. Its also possible to dump statistics in XML format
+by the `dumpStepStatsAsXml` operations on the CamelContext or Route mbeans.
+
+
+== Options
+
+// eip options: START
+The Step EIP has no options.
+// eip options: END
+
+[[step-Examples]]
+== Examples
+
+
+
+In Java you do:
+[source,java]
+----
+from("activemq:SomeQueue")
+    .step("foo")
+      .bean("foo")
+      .to("acitvemq:OutputQueue")
+    .end()
+----
+
+In XML you can use the `<step>` element
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:SomeQueue"/>
+  <step id="foo">
+    <bean ref="foo"/>
+    <to uri="activemq:OutputQueue"/>
+  </step>
+</route>
+----
+
+You can have multiple steps:
+
+[source,java]
+----
+from("activemq:SomeQueue")
+    .step("foo")
+      .bean("foo")
+      .to("acitvemq:OutputQueue")
+    .end()
+    .step("bar")
+      .bean("something")
+      .to("log:Something")
+    .end()
+----
+
+And in XML
+
+[source,xml]
+----
+<route>
+  <from uri="activemq:SomeQueue"/>
+  <step id="foo">
+    <bean ref="foo"/>
+    <to uri="activemq:OutputQueue"/>
+  </step>
+  <step id="bar">
+    <bean ref="something"/>
+    <to uri="log:Something"/>
+  </step>
+</route>
+----

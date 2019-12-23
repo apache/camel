@@ -22,6 +22,11 @@ package org.apache.camel.runtimecatalog;
 public interface JSonSchemaResolver {
 
     /**
+     * Sets an extra class loader to use first for loading resources.
+     */
+    void setClassLoader(ClassLoader classLoader);
+
+    /**
      * Returns the component information as JSon format.
      *
      * @param name the component name
@@ -60,5 +65,12 @@ public interface JSonSchemaResolver {
      * @return model details in JSon
      */
     String getModelJSonSchema(String name);
+
+    /**
+     * Returns the camel-main json schema
+     *
+     * @return the camel-main json schema
+     */
+    String getMainJsonSchema();
 
 }

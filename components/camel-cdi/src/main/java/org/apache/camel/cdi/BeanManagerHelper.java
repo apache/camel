@@ -20,10 +20,10 @@ import java.lang.annotation.Annotation;
 import java.util.Optional;
 import java.util.Set;
 
-import static java.util.stream.Collectors.toSet;
-
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
+
+import static java.util.stream.Collectors.toSet;
 
 @Vetoed
 final class BeanManagerHelper {

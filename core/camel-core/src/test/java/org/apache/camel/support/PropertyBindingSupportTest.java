@@ -73,6 +73,30 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
     @Test
+    public void testWithFluentBuilder() throws Exception {
+        Foo foo = new Foo();
+
+        Map<String, Object> prop = new HashMap<>();
+        prop.put("bar.age", "33");
+        prop.put("bar.{{committer}}", "true");
+        prop.put("bar.gold-customer", "true");
+        prop.put("bar.work.name", "{{companyName}}");
+
+        PropertyBindingSupport.build().withCamelContext(context).withTarget(foo).withProperty("name", "James").withProperty("bar.work.id", "123")
+            // and add the rest
+            .withProperties(prop).bind();
+
+        assertEquals("James", foo.getName());
+        assertEquals(33, foo.getBar().getAge());
+        assertTrue(foo.getBar().isRider());
+        assertTrue(foo.getBar().isGoldCustomer());
+        assertEquals(123, foo.getBar().getWork().getId());
+        assertEquals("Acme", foo.getBar().getWork().getName());
+
+        assertTrue("Should bind all properties", prop.isEmpty());
+    }
+
+    @Test
     public void testPropertiesIgnoreCase() throws Exception {
         Foo foo = new Foo();
 
@@ -84,7 +108,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         prop.put("bAr.work.ID", "123");
         prop.put("bar.WORk.naME", "{{companyName}}");
 
-        PropertyBindingSupport.bindProperties(context, foo, prop, true);
+        PropertyBindingSupport.build().withIgnoreCase(true).bind(context, foo, prop);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -109,7 +133,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         prop.put("my.prefix.bar.work.name", "{{companyName}}");
         prop.put("my.other.prefix.something", "test");
 
-        PropertyBindingSupport.bindProperties(context, foo, prop, "my.prefix.");
+        PropertyBindingSupport.build().withOptionPrefix("my.prefix.").bind(context, foo, prop);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -134,7 +158,7 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         prop.put("my.prEFIx.bar.Work.Name", "{{companyName}}");
         prop.put("my.other.prefix.something", "test");
 
-        PropertyBindingSupport.bindProperties(context, foo, prop, "my.prefix.", true);
+        PropertyBindingSupport.build().withOptionPrefix("my.prefix.").withIgnoreCase(true).bind(context, foo, prop);
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -150,12 +174,12 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     public void testNested() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.{{committer}}", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work.id", "123");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work.name", "{{companyName}}");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "bar.age", "33");
+        PropertyBindingSupport.build().bind(context, foo, "bar.{{committer}}", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work.id", "123");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work.name", "{{companyName}}");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -169,11 +193,11 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     public void testNestedReference() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.rider", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#bean:myWork");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "bar.age", "33");
+        PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.rider", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work", "#bean:myWork");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -187,11 +211,11 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     public void testNestedReferenceId() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.rider", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#bean:myWork");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "bar.age", "33");
+        PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.rider", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work", "#bean:myWork");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -205,11 +229,11 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     public void testNestedType() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.{{committer}}", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#type:org.apache.camel.support.Company");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "bar.age", "33");
+        PropertyBindingSupport.build().bind(context, foo, "bar.{{committer}}", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work", "#type:org.apache.camel.support.Company");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -223,11 +247,11 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     public void testNestedClass() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.{{committer}}", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#class:org.apache.camel.support.Company");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "bar.age", "33");
+        PropertyBindingSupport.build().bind(context, foo, "bar.{{committer}}", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work", "#class:org.apache.camel.support.Company");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -242,11 +266,11 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     public void testAutowired() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.age", "33");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.{{committer}}", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.gold-customer", "true");
-        PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#autowired");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "bar.age", "33");
+        PropertyBindingSupport.build().bind(context, foo, "bar.{{committer}}", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.gold-customer", "true");
+        PropertyBindingSupport.build().bind(context, foo, "bar.work", "#autowired");
 
         assertEquals("James", foo.getName());
         assertEquals(33, foo.getBar().getAge());
@@ -260,13 +284,13 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     public void testMandatory() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindMandatoryProperty(context, foo, "name", "James");
+        PropertyBindingSupport.build().withMandatory(true).bind(context, foo, "name", "James");
 
-        boolean bound = PropertyBindingSupport.bindProperty(context, foo, "bar.myAge", "33");
+        boolean bound = PropertyBindingSupport.build().bind(context, foo, "bar.myAge", "33");
         assertFalse(bound);
 
         try {
-            PropertyBindingSupport.bindMandatoryProperty(context, foo, "bar.myAge", "33");
+            PropertyBindingSupport.build().withMandatory(true).bind(context, foo, "bar.myAge", "33");
             fail("Should have thrown exception");
         } catch (PropertyBindingException e) {
             assertEquals("bar.myAge", e.getPropertyName());
@@ -278,9 +302,9 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     public void testDoesNotExistClass() throws Exception {
         Foo foo = new Foo();
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
         try {
-            PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#class:org.apache.camel.support.DoesNotExist");
+            PropertyBindingSupport.build().bind(context, foo, "bar.work", "#class:org.apache.camel.support.DoesNotExist");
             fail("Should throw exception");
         } catch (PropertyBindingException e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
@@ -313,18 +337,56 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
             }
         });
 
-        PropertyBindingSupport.bindProperty(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
         try {
-            PropertyBindingSupport.bindProperty(context, foo, "bar.work", "#class:org.apache.camel.support.Company");
+            PropertyBindingSupport.build().bind(context, foo, "bar.work", "#class:org.apache.camel.support.Company");
             fail("Should throw exception");
         } catch (PropertyBindingException e) {
             assertIsInstanceOf(IllegalStateException.class, e.getCause());
         }
     }
 
+    @Test
+    public void testNestedClassConstructorParameterOneParameter() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('Tony Tiger')");
+        PropertyBindingSupport.build().bind(context, foo, "animal.dangerous", "true");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Tony Tiger", foo.getAnimal().getName());
+        assertEquals(true, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassConstructorParameterPlaceholder() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('{{companyName}}', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Acme", foo.getAnimal().getName());
+        assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
+    @Test
+    public void testNestedClassConstructorParameterTwoParameter() throws Exception {
+        Foo foo = new Foo();
+
+        PropertyBindingSupport.build().bind(context, foo, "name", "James");
+        PropertyBindingSupport.build().bind(context, foo, "animal", "#class:org.apache.camel.support.Animal('Donald Duck', false)");
+
+        assertEquals("James", foo.getName());
+        assertEquals("Donald Duck", foo.getAnimal().getName());
+        assertEquals(false, foo.getAnimal().isDangerous());
+    }
+
     public static class Foo {
         private String name;
         private Bar bar = new Bar();
+        private Animal animal;
 
         public String getName() {
             return name;
@@ -341,12 +403,21 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         public void setBar(Bar bar) {
             this.bar = bar;
         }
+
+        public Animal getAnimal() {
+            return animal;
+        }
+
+        public void setAnimal(Animal animal) {
+            this.animal = animal;
+        }
     }
 
     public static class Bar {
         private int age;
         private boolean rider;
-        private Company work; // has no default value but Camel can automatic create one if there is a setter
+        private Company work; // has no default value but Camel can automatic
+                              // create one if there is a setter
         private boolean goldCustomer;
 
         public int getAge() {
@@ -366,7 +437,8 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
         }
 
         // this has no setter but only builders
-        // and mix the builders with both styles (with as prefix and no prefix at all)
+        // and mix the builders with both styles (with as prefix and no prefix
+        // at all)
 
         public Bar withAge(int age) {
             this.age = age;
@@ -390,4 +462,3 @@ public class PropertyBindingSupportTest extends ContextTestSupport {
     }
 
 }
-

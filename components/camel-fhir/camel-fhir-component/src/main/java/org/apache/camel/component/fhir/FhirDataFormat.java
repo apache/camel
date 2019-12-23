@@ -18,6 +18,7 @@ package org.apache.camel.component.fhir;
 
 import java.util.List;
 import java.util.Set;
+
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.context.FhirVersionEnum;
 import ca.uhn.fhir.context.ParserOptions;

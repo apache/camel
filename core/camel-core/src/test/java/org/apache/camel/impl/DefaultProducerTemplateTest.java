@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
@@ -31,6 +32,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.engine.DefaultProducerTemplate;
 import org.junit.Test;
 
+import static org.awaitility.Awaitility.await;
 /**
  * Unit test for DefaultProducerTemplate
  */
@@ -60,18 +62,6 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         assertEquals("Bye Bye World", result);
-    }
-
-    @Test
-    public void testFault() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(0);
-
-        Object result = template.requestBody("direct:fault", "Hello World");
-
-        assertMockEndpointsSatisfied();
-
-        assertEquals("Faulty World", result);
     }
 
     @Test
@@ -274,14 +264,6 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
                     }
                 }).to("mock:result");
 
-                from("direct:fault").process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getOut().setFault(true);
-                        exchange.getOut().setBody("Faulty World");
-                    }
-                }).to("mock:result");
-
                 from("direct:exception").process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
@@ -302,7 +284,8 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
 
-        // test that we cache at most 500 producers to avoid it eating to much memory
+        // test that we cache at most 500 producers to avoid it eating to much
+        // memory
         for (int i = 0; i < 503; i++) {
             Endpoint e = context.getEndpoint("seda:queue:" + i);
             template.sendBody(e, "Hello");
@@ -310,7 +293,7 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
         // the eviction is async so force cleanup
         template.cleanUp();
-
+        await().atMost(1, TimeUnit.SECONDS).until(() -> template.getCurrentCacheSize() == 500);
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();
 
@@ -324,7 +307,8 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
 
-        // test that we cache at most 500 producers to avoid it eating to much memory
+        // test that we cache at most 500 producers to avoid it eating to much
+        // memory
         for (int i = 0; i < 503; i++) {
             Endpoint e = context.getEndpoint("seda:queue:" + i);
             template.sendBody(e, "Hello");
@@ -332,12 +316,11 @@ public class DefaultProducerTemplateTest extends ContextTestSupport {
 
         // the eviction is async so force cleanup
         template.cleanUp();
-
+        await().atMost(1, TimeUnit.SECONDS).until(() -> template.getCurrentCacheSize() == 500);
         assertEquals("Size should be 500", 500, template.getCurrentCacheSize());
         template.stop();
 
         // should be 0
         assertEquals("Size should be 0", 0, template.getCurrentCacheSize());
     }
-
 }

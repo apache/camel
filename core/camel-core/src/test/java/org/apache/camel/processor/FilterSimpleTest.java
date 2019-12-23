@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class FilterSimpleTest extends FilterTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

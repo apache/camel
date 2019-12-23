@@ -41,14 +41,8 @@ public class Olingo2BatchChangeRequest extends Olingo2BatchRequest {
 
     @Override
     public String toString() {
-        return new StringBuilder("Batch Change Request{ ")
-            .append(resourcePath)
-            .append(", headers=").append(headers)
-            .append(", contentId=").append(contentId)
-            .append(", operation=").append(operation)
-            .append(", body=").append(body)
-            .append('}')
-            .toString();
+        return new StringBuilder("Batch Change Request{ ").append(resourcePath).append(", headers=").append(headers).append(", contentId=").append(contentId).append(", operation=")
+            .append(operation).append(", body=").append(body).append('}').toString();
     }
 
     public static Olingo2BatchChangeRequestBuilder resourcePath(String resourcePath) {

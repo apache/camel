@@ -47,9 +47,7 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new MyCompletionStrategy()).completionTimeout(1000)
-                    .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyCompletionStrategy()).completionTimeout(1000).to("mock:aggregated");
             }
         };
     }
@@ -62,8 +60,7 @@ public class AggregationStrategyCompleteByPropertyTest extends ContextTestSuppor
                 return newExchange;
             }
 
-            String body = oldExchange.getIn().getBody(String.class) + "+" 
-                + newExchange.getIn().getBody(String.class);
+            String body = oldExchange.getIn().getBody(String.class) + "+" + newExchange.getIn().getBody(String.class);
             oldExchange.getIn().setBody(body);
             if (body.length() >= 5) {
                 oldExchange.setProperty(Exchange.AGGREGATION_COMPLETE_CURRENT_GROUP, true);

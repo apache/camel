@@ -49,12 +49,11 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:bar").routeId("bar")
-                        .to("mock:bar");
+                from("direct:bar").routeId("bar").to("mock:bar");
 
-                // the foo route fails to startup but it should be stopped when camel stops
-                from("my:foo").routeId("foo")
-                        .to("mock:foo");
+                // the foo route fails to startup but it should be stopped when
+                // camel stops
+                from("my:foo").routeId("foo").to("mock:foo");
             }
         });
 
@@ -67,16 +66,11 @@ public class RouteStartupFailShouldStopAlsoIssueTest extends ContextTestSupport 
         assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
         assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
 
-        assertFalse(context.getRouteController().getRouteStatus("bar").isStopped());
-        assertTrue(context.getRouteController().getRouteStatus("bar").isStarted());
-
-        context.stop();
-
-        assertTrue(context.getRouteController().getRouteStatus("foo").isStopped());
-        assertFalse(context.getRouteController().getRouteStatus("foo").isStarted());
-
         assertTrue(context.getRouteController().getRouteStatus("bar").isStopped());
         assertFalse(context.getRouteController().getRouteStatus("bar").isStarted());
+
+        assertFalse(context.getStatus().isStarted());
+        assertTrue(context.getStatus().isStopped());
 
         assertEquals(3, EVENTS.size());
         assertEquals("constructor", EVENTS.get(0));

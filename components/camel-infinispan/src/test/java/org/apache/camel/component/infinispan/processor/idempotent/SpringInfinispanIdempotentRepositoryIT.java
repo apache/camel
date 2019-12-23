@@ -20,12 +20,25 @@ import java.util.UUID;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.infinispan.client.hotrod.RemoteCache;
+import org.infinispan.client.hotrod.RemoteCacheManager;
+import org.infinispan.client.hotrod.marshall.MarshallerUtil;
+import org.infinispan.query.remote.client.impl.MarshallerRegistration;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
 public class SpringInfinispanIdempotentRepositoryIT extends CamelSpringTestSupport {
+
+    @Override
+    public void doPreSetup() throws Exception {
+        RemoteCacheManager manager = new RemoteCacheManager();
+        MarshallerRegistration.init(MarshallerUtil.getSerializationContext(manager));
+        RemoteCache<Object, Object> cache = manager.administration().getOrCreateCache("idempotent", (String) null);
+        assertNotNull(cache);
+        super.doPreSetup();
+    }
+
     @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/infinispan/processor/idempotent/SpringInfinispanIdempotentRepositoryIT.xml");

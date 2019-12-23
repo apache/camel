@@ -23,7 +23,6 @@ import java.util.Set;
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxEvent;
 import com.box.sdk.EventListener;
-
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.box.api.BoxEventsManager;

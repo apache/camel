@@ -41,9 +41,7 @@ public class ShutdownStrategyNotSuppressLoggingOnTimeoutTest extends ContextTest
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo")
-                    .delay(8000)
-                    .to("log:out");
+                from("seda:foo").delay(8000).to("log:out");
             }
         };
     }

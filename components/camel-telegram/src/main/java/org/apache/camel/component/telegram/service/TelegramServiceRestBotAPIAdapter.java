@@ -17,15 +17,22 @@
 package org.apache.camel.component.telegram.service;
 
 import java.io.ByteArrayInputStream;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import javax.ws.rs.core.MultivaluedHashMap;
-import javax.ws.rs.core.MultivaluedMap;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
+import io.netty.handler.codec.http.HttpHeaders;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
@@ -41,186 +48,377 @@ import org.apache.camel.component.telegram.model.StopMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.UpdateResult;
 import org.apache.camel.component.telegram.model.WebhookInfo;
 import org.apache.camel.component.telegram.model.WebhookResult;
-import org.apache.cxf.jaxrs.client.JAXRSClientFactory;
-import org.apache.cxf.jaxrs.client.WebClient;
-import org.apache.cxf.jaxrs.ext.multipart.Attachment;
-import org.apache.cxf.jaxrs.ext.multipart.ContentDisposition;
-import org.apache.cxf.transport.http.HTTPConduit;
+import org.apache.camel.support.GZIPHelper;
+import org.apache.camel.util.IOHelper;
+import org.asynchttpclient.AsyncHandler;
+import org.asynchttpclient.AsyncHttpClient;
+import org.asynchttpclient.HttpResponseBodyPart;
+import org.asynchttpclient.HttpResponseStatus;
+import org.asynchttpclient.Request;
+import org.asynchttpclient.RequestBuilder;
+import org.asynchttpclient.Response;
+import org.asynchttpclient.request.body.multipart.ByteArrayPart;
+import org.asynchttpclient.request.body.multipart.StringPart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.asynchttpclient.util.HttpUtils.extractContentTypeCharsetAttribute;
+import static org.asynchttpclient.util.MiscUtils.withDefault;
 
 /**
  * Adapts the {@code RestBotAPI} to the {@code TelegramService} interface.
  */
 public class TelegramServiceRestBotAPIAdapter implements TelegramService {
+    private static final Logger LOG = LoggerFactory.getLogger(TelegramServiceRestBotAPIAdapter.class);
 
-    private RestBotAPI api;
+    private final Map<Class<?>, OutgoingMessageHandler<?>> handlers;
+    private final AsyncHttpClient asyncHttpClient;
+    private final ObjectMapper mapper;
+    private final String baseUri;
 
-    public TelegramServiceRestBotAPIAdapter() {
-        this.api = JAXRSClientFactory.create(RestBotAPI.BOT_API_DEFAULT_URL, RestBotAPI.class, Collections.singletonList(providerByCustomObjectMapper()));
-        HTTPConduit httpConduit = WebClient.getConfig(this.api).getHttpConduit();
-        httpConduit.getClient().setAllowChunking(false);
-    }
-
-    public TelegramServiceRestBotAPIAdapter(RestBotAPI api) {
-        this.api = api;
+    public TelegramServiceRestBotAPIAdapter(AsyncHttpClient asyncHttpClient, int bufferSize, String telegramBaseUri,
+            String authorizationToken) {
+        this.asyncHttpClient = asyncHttpClient;
+        this.baseUri = telegramBaseUri + "/bot" + authorizationToken;
+        this.mapper = new ObjectMapper();
+        final Map<Class<?>, OutgoingMessageHandler<?>> m = new HashMap<>();
+        m.put(OutgoingTextMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendMessage"));
+        m.put(OutgoingPhotoMessage.class, new OutgoingPhotoMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
+        m.put(OutgoingAudioMessage.class, new OutgoingAudioMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
+        m.put(OutgoingVideoMessage.class, new OutgoingVideoMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
+        m.put(OutgoingDocumentMessage.class, new OutgoingDocumentMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
+        m.put(SendLocationMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendLocation"));
+        m.put(EditMessageLiveLocationMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageLiveLocation"));
+        m.put(StopMessageLiveLocationMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/stopMessageLiveLocation"));
+        m.put(SendVenueMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendVenue"));
+        this.handlers = m;
     }
 
     @Override
-    public void setHttpProxy(String host, Integer port) {
-        HTTPConduit httpConduit = WebClient.getConfig(this.api).getHttpConduit();
-        httpConduit.getClient().setProxyServer(host);
-        httpConduit.getClient().setProxyServerPort(port);
+    public UpdateResult getUpdates(Long offset, Integer limit, Integer timeoutSeconds) {
+        final String uri = baseUri + "/getUpdates";
+        final RequestBuilder request = new RequestBuilder("GET")
+                .setUrl(uri);
+        if (offset != null) {
+            request.addQueryParam("offset", String.valueOf(offset));
+        }
+        if (limit != null) {
+            request.addQueryParam("limit", String.valueOf(limit));
+        }
+        if (timeoutSeconds != null) {
+            request.addQueryParam("timeout", String.valueOf(timeoutSeconds));
+        }
+        return sendSyncRequest(request.build(), UpdateResult.class);
+    }
+
+    <T> T sendSyncRequest(final Request request, Class<T> resultType) {
+        try {
+            final Response response = asyncHttpClient.executeRequest(request).get();
+            int code = response.getStatusCode();
+            if (code >= 200 && code < 300) {
+                try {
+                    final String responseBody = response.getResponseBody();
+                    if (LOG.isWarnEnabled()) {
+                        LOG.warn("Received body for {} {}: {}", request.getMethod(), request.getUrl(), responseBody);
+                    }
+                    return mapper.readValue(responseBody, resultType);
+                } catch (IOException e) {
+                    throw new RuntimeException(
+                            "Could not parse the response from " + request.getMethod() + " " + request.getUrl(), e);
+                }
+            } else {
+                throw new RuntimeException(
+                        "Could not " + request.getMethod() + " " + request.getUrl() + ": " + response.getStatusCode() + " "
+                                + response.getStatusText());
+            }
+        } catch (ExecutionException e) {
+            throw new RuntimeException("Could not request " + request.getMethod() + " " + request.getUrl(), e);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
-    public UpdateResult getUpdates(String authorizationToken, Long offset, Integer limit, Integer timeoutSeconds) {
-        return api.getUpdates(authorizationToken, offset, limit, timeoutSeconds);
-    }
-
-    @Override
-    public boolean setWebhook(String authorizationToken, String url) {
-        WebhookResult res = api.setWebhook(authorizationToken, new WebhookInfo(url));
+    public boolean setWebhook(String url) {
+        final String uri = baseUri + "/setWebhook";
+        final RequestBuilder request = new RequestBuilder("POST")
+                .setUrl(uri);
+        final WebhookInfo message = new WebhookInfo(url);
+        try {
+            final String body = mapper.writeValueAsString(message);
+            request.setBody(body);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Could not serialize " + message);
+        }
+        WebhookResult res = sendSyncRequest(request.build(), WebhookResult.class);
         return res.isOk() && res.isResult();
     }
 
     @Override
-    public boolean removeWebhook(String authorizationToken) {
-        WebhookResult res = api.setWebhook(authorizationToken, new WebhookInfo(""));
-        return res.isOk() && res.isResult();
+    public boolean removeWebhook() {
+        return setWebhook("");
     }
 
     @Override
-    public Object sendMessage(String authorizationToken, OutgoingMessage message) {
-        Object resultMessage;
-
-        if (message instanceof OutgoingTextMessage) {
-            resultMessage = this.sendMessage(authorizationToken, (OutgoingTextMessage) message);
-        } else if (message instanceof OutgoingPhotoMessage) {
-            resultMessage = this.sendMessage(authorizationToken, (OutgoingPhotoMessage) message);
-        } else if (message instanceof OutgoingAudioMessage) {
-            resultMessage = this.sendMessage(authorizationToken, (OutgoingAudioMessage) message);
-        } else if (message instanceof OutgoingVideoMessage) {
-            resultMessage = this.sendMessage(authorizationToken, (OutgoingVideoMessage) message);
-        } else if (message instanceof OutgoingDocumentMessage) {
-            resultMessage = this.sendMessage(authorizationToken, (OutgoingDocumentMessage) message);
-        } else if (message instanceof SendLocationMessage) {
-            resultMessage = api.sendLocation(authorizationToken, (SendLocationMessage) message);
-        } else if (message instanceof EditMessageLiveLocationMessage) {
-            resultMessage = api.editMessageLiveLocation(authorizationToken, (EditMessageLiveLocationMessage) message);
-        } else if (message instanceof StopMessageLiveLocationMessage) {
-            resultMessage = api.stopMessageLiveLocation(authorizationToken, (StopMessageLiveLocationMessage) message);
-        } else if (message instanceof SendVenueMessage) {
-            resultMessage = api.sendVenue(authorizationToken, (SendVenueMessage) message);
-        } else {
-            throw new IllegalArgumentException("Unsupported message type " + (message != null ? message.getClass().getName() : null));
+    public void sendMessage(Exchange exchange, AsyncCallback callback, OutgoingMessage message) {
+        @SuppressWarnings("unchecked")
+        final OutgoingMessageHandler<OutgoingMessage> handler = (OutgoingMessageHandler<OutgoingMessage>) handlers
+                .get(message.getClass());
+        if (handler == null) {
+            throw new IllegalArgumentException(
+                    "Unsupported message type " + (message != null ? message.getClass().getName() : null));
         }
-
-        return resultMessage;
+        handler.sendMessage(exchange, callback, message);
     }
 
-    private MessageResult sendMessage(String authorizationToken, OutgoingTextMessage message) {
-        return api.sendMessage(authorizationToken, message);
+    static class OutgoingPlainMessageHandler extends OutgoingMessageHandler<OutgoingMessage> {
+
+        public OutgoingPlainMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper, String uri) {
+            super(asyncHttpClient, bufferSize, mapper, uri, "application/json");
+        }
+
+        @Override
+        protected void addBody(RequestBuilder builder, OutgoingMessage message) {
+            try {
+                final String body = mapper.writeValueAsString(message);
+                LOG.warn("sending " + body);
+                builder.setBody(body);
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("Could not serialize " + message);
+            }
+        }
+
     }
 
-    private MessageResult sendMessage(String authorizationToken, OutgoingPhotoMessage message) {
-        List<Attachment> parts = new LinkedList<>();
+    static class OutgoingAudioMessageHandler extends OutgoingMessageHandler<OutgoingAudioMessage> {
 
-        fillCommonMediaParts(parts, message);
-
-        parts.add(buildMediaPart("photo", message.getFilenameWithExtension(), message.getPhoto()));
-        if (message.getCaption() != null) {
-            parts.add(buildTextPart("caption", message.getCaption()));
+        public OutgoingAudioMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
+                String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendAudio", null);
         }
 
-        return api.sendPhoto(authorizationToken, parts);
+        @Override
+        protected void addBody(RequestBuilder builder, OutgoingAudioMessage message) {
+            fillCommonMediaParts(builder, message);
+            buildMediaPart(builder, "audio", message.getFilenameWithExtension(), message.getAudio());
+            buildTextPart(builder, "title", message.getTitle());
+            buildTextPart(builder, "duration", message.getDurationSeconds());
+            buildTextPart(builder, "performer", message.getPerformer());
+        }
+
     }
 
-    private MessageResult sendMessage(String authorizationToken, OutgoingAudioMessage message) {
-        List<Attachment> parts = new LinkedList<>();
+    static class OutgoingVideoMessageHandler extends OutgoingMessageHandler<OutgoingVideoMessage> {
 
-        fillCommonMediaParts(parts, message);
-
-        parts.add(buildMediaPart("audio", message.getFilenameWithExtension(), message.getAudio()));
-        if (message.getTitle() != null) {
-            parts.add(buildTextPart("title", message.getTitle()));
-        }
-        if (message.getDurationSeconds() != null) {
-            parts.add(buildTextPart("duration", String.valueOf(message.getDurationSeconds())));
-        }
-        if (message.getPerformer() != null) {
-            parts.add(buildTextPart("performer", message.getPerformer()));
+        public OutgoingVideoMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
+                String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendVideo", null);
         }
 
-        return api.sendAudio(authorizationToken, parts);
+        @Override
+        protected void addBody(RequestBuilder builder, OutgoingVideoMessage message) {
+            fillCommonMediaParts(builder, message);
+            buildMediaPart(builder, "video", message.getFilenameWithExtension(), message.getVideo());
+            buildTextPart(builder, "caption", message.getCaption());
+            buildTextPart(builder, "duration", message.getDurationSeconds());
+            buildTextPart(builder, "width", message.getWidth());
+            buildTextPart(builder, "height", message.getHeight());
+        }
+
     }
 
-    private MessageResult sendMessage(String authorizationToken, OutgoingVideoMessage message) {
-        List<Attachment> parts = new LinkedList<>();
+    static class OutgoingDocumentMessageHandler extends OutgoingMessageHandler<OutgoingDocumentMessage> {
 
-        fillCommonMediaParts(parts, message);
-
-        parts.add(buildMediaPart("video", message.getFilenameWithExtension(), message.getVideo()));
-        if (message.getCaption() != null) {
-            parts.add(buildTextPart("caption", message.getCaption()));
-        }
-        if (message.getDurationSeconds() != null) {
-            parts.add(buildTextPart("duration", String.valueOf(message.getDurationSeconds())));
-        }
-        if (message.getWidth() != null) {
-            parts.add(buildTextPart("width", String.valueOf(message.getWidth())));
-        }
-        if (message.getHeight() != null) {
-            parts.add(buildTextPart("height", String.valueOf(message.getHeight())));
+        public OutgoingDocumentMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
+                String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendDocument", null);
         }
 
-        return api.sendVideo(authorizationToken, parts);
+        @Override
+        protected void addBody(RequestBuilder builder, OutgoingDocumentMessage message) {
+            fillCommonMediaParts(builder, message);
+            buildMediaPart(builder, "document", message.getFilenameWithExtension(), message.getDocument());
+            buildTextPart(builder, "caption", message.getCaption());
+        }
+
     }
 
-    private MessageResult sendMessage(String authorizationToken, OutgoingDocumentMessage message) {
-        List<Attachment> parts = new LinkedList<>();
+    static class OutgoingPhotoMessageHandler extends OutgoingMessageHandler<OutgoingPhotoMessage> {
 
-        fillCommonMediaParts(parts, message);
-
-        parts.add(buildMediaPart("document", message.getFilenameWithExtension(), message.getDocument()));
-        if (message.getCaption() != null) {
-            parts.add(buildTextPart("caption", message.getCaption()));
+        public OutgoingPhotoMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper,
+                String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendPhoto", null);
         }
 
-        return api.sendDocument(authorizationToken, parts);
-    }
-
-    private void fillCommonMediaParts(List<Attachment> parts, OutgoingMessage message) {
-        parts.add(buildTextPart("chat_id", message.getChatId()));
-
-        if (message.getReplyToMessageId() != null) {
-            parts.add(buildTextPart("reply_to_message_id", String.valueOf(message.getReplyToMessageId())));
+        @Override
+        protected void addBody(RequestBuilder builder, OutgoingPhotoMessage message) {
+            fillCommonMediaParts(builder, message);
+            buildMediaPart(builder, "photo", message.getFilenameWithExtension(), message.getPhoto());
+            buildTextPart(builder, "caption", message.getCaption());
         }
-        if (message.getDisableNotification() != null) {
-            parts.add(buildTextPart("disable_notification", String.valueOf(message.getDisableNotification())));
+
+    }
+
+    abstract static class OutgoingMessageHandler<T extends OutgoingMessage> {
+        protected final ObjectMapper mapper;
+        private final AsyncHttpClient asyncHttpClient;
+        private final int bufferSize;
+        private final String contentType;
+        private final String uri;
+
+        public OutgoingMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper, String uri,
+                String contentType) {
+            this.asyncHttpClient = asyncHttpClient;
+            this.bufferSize = bufferSize;
+            this.mapper = mapper;
+            this.uri = uri;
+            this.contentType = contentType;
+        }
+
+        public void sendMessage(Exchange exchange, AsyncCallback callback, T message) {
+            final RequestBuilder builder = new RequestBuilder("POST")
+                    .setUrl(uri);
+            if (contentType != null) {
+                builder.setHeader("Content-Type", contentType);
+            }
+            builder.setHeader("Accept", "application/json");
+            addBody(builder, message);
+            asyncHttpClient.executeRequest(builder.build(),
+                    new TelegramAsyncHandler(exchange, callback, uri, bufferSize, mapper));
+        }
+
+        protected abstract void addBody(RequestBuilder builder, T message);
+
+        protected void fillCommonMediaParts(RequestBuilder builder, OutgoingMessage message) {
+            buildTextPart(builder, "chat_id", message.getChatId());
+            buildTextPart(builder, "reply_to_message_id", message.getReplyToMessageId());
+            buildTextPart(builder, "disable_notification", message.getDisableNotification());
+        }
+
+        protected void buildTextPart(RequestBuilder builder, String name, Object value) {
+            if (value != null) {
+                builder.addBodyPart(new StringPart(name, String.valueOf(value), "text/plain", StandardCharsets.UTF_8));
+            }
+        }
+
+        protected void buildMediaPart(RequestBuilder builder, String name, String fileNameWithExtension, byte[] value) {
+            builder.addBodyPart(
+                    new ByteArrayPart(name, value, "application/octet-stream", StandardCharsets.UTF_8, fileNameWithExtension));
+        }
+
+    }
+
+    private static final class TelegramAsyncHandler implements AsyncHandler<Exchange> {
+
+        private final Exchange exchange;
+        private final AsyncCallback callback;
+        private final String url;
+        private final ByteArrayOutputStream os;
+        private final ObjectMapper mapper;
+        private int statusCode;
+        private String statusText;
+        private String contentType;
+        private String contentEncoding;
+        private Charset charset;
+
+        private TelegramAsyncHandler(Exchange exchange, AsyncCallback callback, String url, int bufferSize,
+                ObjectMapper mapper) {
+            this.exchange = exchange;
+            this.callback = callback;
+            this.url = url;
+            this.os = new ByteArrayOutputStream(bufferSize);
+            this.mapper = mapper;
+        }
+
+        @Override
+        public void onThrowable(Throwable t) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("{} onThrowable {}", exchange.getExchangeId(), t);
+            }
+            exchange.setException(t);
+            callback.done(false);
+        }
+
+        @Override
+        public Exchange onCompleted() throws Exception {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("{} onCompleted", exchange.getExchangeId());
+            }
+            try {
+                // copy from output stream to input stream
+                os.flush();
+                os.close();
+                final boolean success = statusCode >= 200 && statusCode < 300;
+                try (InputStream maybeGzStream = new ByteArrayInputStream(os.toByteArray());
+                        InputStream is = GZIPHelper.uncompressGzip(contentEncoding, maybeGzStream);
+                        Reader r = new InputStreamReader(is, charset)) {
+
+                    if (success) {
+                        final Object result;
+                        if (LOG.isTraceEnabled()) {
+                            final String body = IOHelper.toString(r);
+                            LOG.trace("Received body for {}: {}", url, body);
+                            result = mapper.readValue(body, MessageResult.class);
+                        } else {
+                            result = mapper.readValue(r, MessageResult.class);
+                        }
+
+                        exchange.getMessage().setBody(result);
+                    } else {
+                        throw new RuntimeException(
+                                url + " responded: " + statusCode + " " + statusText + " " + IOHelper.toString(r));
+                    }
+                } catch (IOException e) {
+                    throw new RuntimeException("Could not parse the response from " + url, e);
+                }
+            } catch (Exception e) {
+                exchange.setException(e);
+            } finally {
+                // signal we are done
+                callback.done(false);
+            }
+            return exchange;
+        }
+
+        @Override
+        public String toString() {
+            return "AhcAsyncHandler for exchangeId: " + exchange.getExchangeId() + " -> " + url;
+        }
+
+        @Override
+        public State onBodyPartReceived(HttpResponseBodyPart bodyPart)
+                throws Exception {
+            // write body parts to stream, which we will bind to the Camel Exchange in onComplete
+            os.write(bodyPart.getBodyPartBytes());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("{} onBodyPartReceived {} bytes", exchange.getExchangeId(), bodyPart.length());
+            }
+            return State.CONTINUE;
+        }
+
+        @Override
+        public State onStatusReceived(HttpResponseStatus responseStatus)
+                throws Exception {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("{} onStatusReceived {}", exchange.getExchangeId(), responseStatus);
+            }
+            statusCode = responseStatus.getStatusCode();
+            statusText = responseStatus.getStatusText();
+            return State.CONTINUE;
+        }
+
+        @Override
+        public State onHeadersReceived(HttpHeaders headers) throws Exception {
+            contentEncoding = headers.get("Content-Encoding");
+            contentType = headers.get("Content-Type");
+            charset = withDefault(extractContentTypeCharsetAttribute(contentType), StandardCharsets.UTF_8);
+            return State.CONTINUE;
         }
     }
-
-    private Attachment buildTextPart(String name, String value) {
-        MultivaluedMap m = new MultivaluedHashMap<>();
-        m.putSingle("Content-Type", "text/plain");
-        m.putSingle("Content-Disposition", "form-data; name=\"" + escapeMimeName(name) + "\"");
-
-        Attachment a = new Attachment(m, value);
-        return a;
-    }
-
-    private Attachment buildMediaPart(String name, String fileNameWithExtension, byte[] value) {
-        Attachment a = new Attachment(name, new ByteArrayInputStream(value),
-                new ContentDisposition("form-data; name=\"" + escapeMimeName(name) + "\"; filename=\"" + escapeMimeName(fileNameWithExtension) + "\""));
-        return a;
-    }
-
-    private String escapeMimeName(String name) {
-        return name.replace("\"", "");
-    }
-    
-    private JacksonJsonProvider providerByCustomObjectMapper() {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setSerializationInclusion(Include.NON_NULL);
-        return new JacksonJsonProvider(mapper);
-    }    
 }

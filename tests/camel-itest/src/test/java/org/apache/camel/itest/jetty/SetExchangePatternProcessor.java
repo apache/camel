@@ -22,6 +22,7 @@ import org.apache.camel.Processor;
 
 public class SetExchangePatternProcessor implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // Override the exchange pattern
         exchange.setPattern(ExchangePattern.InOnly);

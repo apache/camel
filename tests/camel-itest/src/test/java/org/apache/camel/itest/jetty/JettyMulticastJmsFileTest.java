@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration
 public class JettyMulticastJmsFileTest extends AbstractJUnit4SpringContextTests {
     
-    private static int port = AvailablePortFinder.getNextAvailable(20040);
+    private static int port = AvailablePortFinder.getNextAvailable();
     private static final String URL = "http://localhost:" + port + "/test";
     static {
         //set them as system properties so Spring can use the property placeholder

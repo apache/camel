@@ -38,7 +38,6 @@ import org.openstack4j.model.compute.Flavor;
 import org.openstack4j.model.compute.builder.FlavorBuilder;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -164,7 +163,6 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
         verify(flavorService).delete(flavorIdCaptor.capture());
         assertEquals(id, flavorIdCaptor.getValue());
 
-        assertFalse(msg.isFault());
         assertNull(msg.getBody());
     }
 
@@ -179,9 +177,6 @@ public class FlavorProducerTest extends NovaProducerTestSupport {
 
         verify(flavorService).delete(flavorIdCaptor.capture());
         assertEquals(id, flavorIdCaptor.getValue());
-
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failReason));
     }
 
     private Flavor createTestFlavor() {

@@ -52,7 +52,7 @@ public class IOConverterTest extends ContextTestSupport {
         File file = new File("src/test/resources/org/apache/camel/converter/dummy.txt");
         byte[] data = IOConverter.toBytes(Files.newInputStream(Paths.get(file.getAbsolutePath())));
         assertEquals("get the wrong byte size", file.length(), data.length);
-        assertEquals('#', (char) data[0]);
+        assertEquals('#', (char)data[0]);
 
         // should contain Hello World!
         String s = new String(data);
@@ -80,7 +80,7 @@ public class IOConverterTest extends ContextTestSupport {
         File file = new File("target/data/test/hello.txt");
 
         OutputStream os = IOConverter.toOutputStream(file);
-        assertIsInstanceOf(BufferedOutputStream.class, os); 
+        assertIsInstanceOf(BufferedOutputStream.class, os);
         os.close();
     }
 
@@ -119,7 +119,7 @@ public class IOConverterTest extends ContextTestSupport {
         assertNotNull(is);
         assertEquals("Hello World", IOConverter.toString(is, exchange));
     }
-    
+
     @Test
     public void testToInputStreamStringBufferAndBuilderExchange() throws Exception {
         Exchange exchange = new DefaultExchange(context);
@@ -129,7 +129,7 @@ public class IOConverterTest extends ContextTestSupport {
         InputStream is = IOConverter.toInputStream(buffer, exchange);
         assertNotNull(is);
         assertEquals("Hello World", IOConverter.toString(is, exchange));
-        
+
         StringBuilder builder = new StringBuilder();
         builder.append("Hello World");
         is = IOConverter.toInputStream(builder, exchange);
@@ -236,7 +236,7 @@ public class IOConverterTest extends ContextTestSupport {
         assertNotNull(data);
         assertEquals("Hello World", context.getTypeConverter().convertTo(String.class, data));
     }
-    
+
     @Test
     public void testInputStreamToString() throws Exception {
         String data = "46\u00B037'00\"N\"";
@@ -262,7 +262,7 @@ public class IOConverterTest extends ContextTestSupport {
         Properties p = IOConverter.toProperties(new File("src/test/resources/log4j2.properties"));
         assertNotNull(p);
         assertTrue("Should be 8 or more properties, was " + p.size(), p.size() >= 8);
-        String root = (String) p.get("rootLogger.level");
+        String root = (String)p.get("rootLogger.level");
         assertNotNull(root);
         assertTrue(root.contains("INFO"));
     }

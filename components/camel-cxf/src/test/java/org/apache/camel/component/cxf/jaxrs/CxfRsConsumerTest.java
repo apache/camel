@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+
 import javax.servlet.ServletRequest;
 import javax.ws.rs.HttpMethod;
 import javax.ws.rs.WebApplicationException;
@@ -53,7 +54,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
-
 public class CxfRsConsumerTest extends CamelTestSupport {
     private static final String PUT_REQUEST = "<Customer><name>Mary</name><id>123</id></Customer>";
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConsumerTest";
@@ -75,13 +75,14 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             + "modelRef=classpath:/org/apache/camel/component/cxf/jaxrs/CustomerServiceDefaultHandlerModel.xml";
     private static final String CXF_RS_ENDPOINT_URI6 =
             "cxfrs://http://localhost:" + CXT + "/rest6?"
-            + "performInvocation=true&serviceBeans=#serviceBean";
+            + "performInvocation=true&serviceBeans=#myServiceBean";
 
     @Override
     protected void bindToRegistry(Registry registry) throws Exception {
-        registry.bind("serviceBean", new CustomerService());
+        registry.bind("myServiceBean", new CustomerService());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor testProcessor = new TestProcessor();
         final Processor testProcessor2 = new TestProcessor2();
@@ -255,12 +256,10 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                     Response r = Response.status(404).entity("Can't found the customer with uri " + path)
                         .header("Content-Type", "text/plain").build();
                     exchange.getOut().setBody(r);
-                    exchange.getOut().setFault(true);
                 } else if ("/customerservice/customers/789".equals(path)) {
                     exchange.getOut().setBody("Can't found the customer with uri " + path);
                     exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "text/plain");
                     exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, "404");                    
-                    exchange.getOut().setFault(true);
                 } else {
                     throw new RuntimeCamelException("Can't found the customer with uri " + path);
                 }
@@ -269,6 +268,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             
     }
     private static class TestProcessor extends AbstractTestProcessor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             Message inMessage = exchange.getIn();                        
             // Get the operation name from in message
@@ -291,6 +291,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             
     }
     private static class TestProcessor2 extends AbstractTestProcessor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             Message inMessage = exchange.getIn();                        
             // Get the operation name from in message
@@ -308,6 +309,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             
     }
     private static class TestProcessor3 extends AbstractTestProcessor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             UriInfo ui = exchange.getProperty(UriInfo.class.getName(), UriInfo.class);
             String path = ui.getPath();

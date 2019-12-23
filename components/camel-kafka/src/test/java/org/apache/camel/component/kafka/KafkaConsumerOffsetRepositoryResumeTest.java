@@ -17,15 +17,18 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.engine.MemoryStateRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
 import org.junit.Test;
+
+import static org.awaitility.Awaitility.await;
 
 public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTest {
     private static final String TOPIC = "offset-resume";
@@ -35,6 +38,7 @@ public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTe
 
     private org.apache.kafka.clients.producer.KafkaProducer<String, String> producer;
 
+    @BindToRegistry("offset")
     private MemoryStateRepository stateRepository;
 
     @Override
@@ -73,15 +77,11 @@ public class KafkaConsumerOffsetRepositoryResumeTest extends BaseEmbeddedKafkaTe
 
         result.assertIsSatisfied(5000);
 
+        // to give the local state some buffer
+        await().atMost(1, TimeUnit.SECONDS).until(stateRepository::isStarted);
+
         assertEquals("partition-0", "4", stateRepository.getState(TOPIC + "/0"));
         assertEquals("partition-1", "4", stateRepository.getState(TOPIC + "/1"));
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("offset", stateRepository);
-        return registry;
     }
 
     @Override

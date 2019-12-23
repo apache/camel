@@ -17,7 +17,6 @@
 package org.apache.camel.pgevent.integration;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class AbstractPgEventIntegrationTest extends CamelTestSupport {
@@ -27,8 +26,7 @@ public class AbstractPgEventIntegrationTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
-        PropertiesComponent component = new PropertiesComponent("classpath:/test-options.properties");
-        camelContext.addComponent("properties", component);
+        camelContext.getPropertiesComponent().setLocation("classpath:/test-options.properties");
         return camelContext;
     }
 }

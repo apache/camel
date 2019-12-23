@@ -22,13 +22,12 @@ import java.util.Map;
 
 import javax.net.ssl.TrustManager;
 
-import com.rabbitmq.client.Address;
 import com.rabbitmq.client.ConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 
 @Component("rabbitmq")
 public class RabbitMQComponent extends DefaultComponent {
@@ -49,7 +48,7 @@ public class RabbitMQComponent extends DefaultComponent {
     @Metadata(label = "common", defaultValue = ConnectionFactory.DEFAULT_VHOST)
     private String vhost = ConnectionFactory.DEFAULT_VHOST;
     @Metadata(label = "common")
-    private Address[] addresses;
+    private String addresses;
     @Metadata(label = "common")
     private ConnectionFactory connectionFactory;
     @Metadata(label = "consumer", defaultValue = "true")
@@ -254,8 +253,13 @@ public class RabbitMQComponent extends DefaultComponent {
             // copy over the component configured args
             localArgs.putAll(getArgs());
         }
-        localArgs.putAll(IntrospectionSupport.extractProperties(params, ARG_PREFIX));
-        endpoint.setArgs(localArgs);
+        localArgs.putAll(PropertiesHelper.extractProperties(params, ARG_PREFIX));
+        Map<String, Object> existing = endpoint.getArgs();
+        if (existing != null) {
+            existing.putAll(localArgs);
+        } else {
+            endpoint.setArgs(localArgs);
+        }
 
         // Change null headers processing for message converter
         endpoint.getMessageConverter().setAllowNullHeaders(endpoint.isAllowNullHeaders());
@@ -324,22 +328,10 @@ public class RabbitMQComponent extends DefaultComponent {
      * looks like "server1:12345, server2:12345"
      */
     public void setAddresses(String addresses) {
-        Address[] addressArray = Address.parseAddresses(addresses);
-        if (addressArray.length > 0) {
-            this.addresses = addressArray;
-        }
-    }
-
-    /**
-     * If this option is set, camel-rabbitmq will try to create connection based
-     * on the setting of option addresses. The addresses value is a string which
-     * looks like "server1:12345, server2:12345"
-     */
-    public void setAddresses(Address[] addresses) {
         this.addresses = addresses;
     }
 
-    public Address[] getAddresses() {
+    public String getAddresses() {
         return addresses;
     }
 

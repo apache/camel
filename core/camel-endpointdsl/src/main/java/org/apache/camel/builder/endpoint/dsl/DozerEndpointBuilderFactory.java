@@ -39,6 +39,44 @@ public interface DozerEndpointBuilderFactory {
             return (AdvancedDozerEndpointBuilder) this;
         }
         /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DozerEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DozerEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * The name of a DozerBeanMapperConfiguration bean in the Camel registry
          * which should be used for configuring the Dozer mapping. This is an
          * alternative to the mappingFile option that can be used for
@@ -53,7 +91,7 @@ public interface DozerEndpointBuilderFactory {
          */
         default DozerEndpointBuilder mappingConfiguration(
                 Object mappingConfiguration) {
-            setProperty("mappingConfiguration", mappingConfiguration);
+            doSetProperty("mappingConfiguration", mappingConfiguration);
             return this;
         }
         /**
@@ -71,7 +109,7 @@ public interface DozerEndpointBuilderFactory {
          */
         default DozerEndpointBuilder mappingConfiguration(
                 String mappingConfiguration) {
-            setProperty("mappingConfiguration", mappingConfiguration);
+            doSetProperty("mappingConfiguration", mappingConfiguration);
             return this;
         }
         /**
@@ -84,7 +122,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder mappingFile(String mappingFile) {
-            setProperty("mappingFile", mappingFile);
+            doSetProperty("mappingFile", mappingFile);
             return this;
         }
         /**
@@ -96,7 +134,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder marshalId(String marshalId) {
-            setProperty("marshalId", marshalId);
+            doSetProperty("marshalId", marshalId);
             return this;
         }
         /**
@@ -109,7 +147,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder sourceModel(String sourceModel) {
-            setProperty("sourceModel", sourceModel);
+            doSetProperty("sourceModel", sourceModel);
             return this;
         }
         /**
@@ -121,7 +159,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder targetModel(String targetModel) {
-            setProperty("targetModel", targetModel);
+            doSetProperty("targetModel", targetModel);
             return this;
         }
         /**
@@ -133,7 +171,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: producer
          */
         default DozerEndpointBuilder unmarshalId(String unmarshalId) {
-            setProperty("unmarshalId", unmarshalId);
+            doSetProperty("unmarshalId", unmarshalId);
             return this;
         }
     }
@@ -157,7 +195,7 @@ public interface DozerEndpointBuilderFactory {
          */
         default AdvancedDozerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -170,7 +208,7 @@ public interface DozerEndpointBuilderFactory {
          */
         default AdvancedDozerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -182,7 +220,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDozerEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -194,7 +232,7 @@ public interface DozerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedDozerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -204,7 +242,7 @@ public interface DozerEndpointBuilderFactory {
      * the Dozer mapping library.
      * 
      * Category: transformation
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-dozer
      * 
      * Syntax: <code>dozer:name</code>

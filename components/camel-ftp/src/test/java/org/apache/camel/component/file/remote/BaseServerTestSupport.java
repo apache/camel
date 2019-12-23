@@ -17,15 +17,25 @@
 package org.apache.camel.component.file.remote;
 
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.BeforeClass;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.BeforeEach;
 
 public class BaseServerTestSupport extends CamelTestSupport {
-    protected static int port;
 
-    @BeforeClass
-    public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(21000);
+    protected static final String LS = System.lineSeparator();
+
+    protected int port;
+
+    private boolean portInitialized;
+
+    @BeforeEach
+    public void initPort() throws Exception {
+        if (!portInitialized) {
+            // call only once per test method (Some tests can call this method manually in setUp method,
+            // which is called before this if setUp method is overridden)
+            port = AvailablePortFinder.getNextAvailable();
+            portInitialized = true;
+        }
     }
 
     protected int getPort() {

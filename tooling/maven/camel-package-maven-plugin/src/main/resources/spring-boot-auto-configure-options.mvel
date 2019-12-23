@@ -1,4 +1,4 @@
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
@@ -22,6 +22,6 @@ The component supports @{options.size()} options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-@foreach{row : options}| *@{row.name}* | @{util.escape(row.description)} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType(25)}
+@foreach{row : options}| *@{row.name}* | @{util.escape(row.description)} | @{row.getShortDefaultValue(20)} | @{row.getShortJavaType()}
 @end{}|===
 @end{}

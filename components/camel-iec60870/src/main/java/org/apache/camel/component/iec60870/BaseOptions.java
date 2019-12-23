@@ -32,7 +32,7 @@ public abstract class BaseOptions<T extends BaseOptions<T>> {
     /**
      * Protocol options
      */
-    @UriParam(javaType = "ProtocolOptions")
+    @UriParam(javaType = "org.eclipse.neoscada.protocol.iec60870.ProtocolOptions")
     private ProtocolOptions.Builder protocolOptions;
 
     // dummy for doc generation

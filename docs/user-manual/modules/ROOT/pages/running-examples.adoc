@@ -1,0 +1,64 @@
+= Running Examples
+
+== Before you start
+
+To run the demos with maven, you need to
+http://maven.apache.org[download and install Apache Maven].
+
+To test your Maven install, change directory to the examples directory
+and type:
+
+[source,shell]
+----
+mvn -v
+----
+
+You should see something like:
+
+[source,shell]
+----
+camel-rider:/tmp/camel/examples$ mvn -v
+Maven version: 3.0.3
+----
+
+== Running the examples in Maven
+
+To run the xref:walk-through-an-example.adoc[first example] using Maven,
+change directory to the example you want to run then issue the following
+command:
+
+[source,shell]
+----
+mvn exec:java
+----
+
+To run the other Spring-based examples such as the
+xref:spring-example.adoc[Spring Example], use the
+xref:camel-maven-plugin.adoc[Camel Maven Plugin]. For example:
+
+[source,shell]
+----
+cd camel-example-spring
+mvn camel:run
+----
+
+== Running the examples in your IDE
+
+In each example you can run the main() from your IDE.
+
+To create an IDEA project, run
+
+[source,shell]
+----
+mvn idea:idea
+----
+
+If you are an Eclipse user, run
+
+[source,shell]
+----
+mvn eclipse:eclipse
+----
+
+You should now be able to open the project(s) in your IDE and run any
+main() method you wish.

@@ -19,14 +19,18 @@ package org.apache.camel.component.file.remote;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.file.GenericFileOperationFailedException;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.support.service.ServiceSupport;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
 
 /**
  * Unit test for login failure due bad password and no re connect attempts allowed
@@ -34,17 +38,13 @@ import org.junit.Test;
 public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSupport {
 
     private CountDownLatch latch = new CountDownLatch(1);
+    
+    @BindToRegistry("myPoll")
+    private MyPoll poll = new MyPoll();
 
     private String getFtpUrl() {
         return "ftp://dummy@localhost:" + getPort() + "/badlogin?password=cantremember"
                 + "&throwExceptionOnConnectFailed=true&maximumReconnectAttempts=0&pollStrategy=#myPoll&autoCreate=false";
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myPoll", new MyPoll());
-        return jndi;
     }
 
     @Test
@@ -59,7 +59,7 @@ public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSup
         Thread.sleep(1000);
 
         Consumer consumer = context.getRoute("foo").getConsumer();
-        assertTrue("Consumer should be stopped", ((ServiceSupport)consumer).isStopped());
+        assertTrue(((ServiceSupport)consumer).isStopped(), "Consumer should be stopped");
     }
 
     @Override
@@ -74,13 +74,16 @@ public class FtpConsumerThrowExceptionOnLoginFailedTest extends FtpServerTestSup
 
     private class MyPoll implements PollingConsumerPollStrategy {
 
+        @Override
         public boolean begin(Consumer consumer, Endpoint endpoint) {
             return true;
         }
 
+        @Override
         public void commit(Consumer consumer, Endpoint endpoint, int polledMessages) {
         }
 
+        @Override
         public boolean rollback(Consumer consumer, Endpoint endpoint, int retryCounter, Exception cause) throws Exception {
             GenericFileOperationFailedException e = assertIsInstanceOf(GenericFileOperationFailedException.class, cause);
             assertEquals(530, e.getCode());

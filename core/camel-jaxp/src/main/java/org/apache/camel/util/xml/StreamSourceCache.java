@@ -69,6 +69,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
     
+    @Override
     public void reset() {
         if (streamCache != null) {
             streamCache.reset();
@@ -78,6 +79,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
 
+    @Override
     public void writeTo(OutputStream os) throws IOException {
         if (streamCache != null) {
             streamCache.writeTo(os);
@@ -86,6 +88,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
 
+    @Override
     public StreamCache copy(Exchange exchange) throws IOException {
         if (streamCache != null) {
             return new StreamSourceCache(streamCache.copy(exchange));
@@ -96,6 +99,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         return null;
     }
 
+    @Override
     public boolean inMemory() {
         if (streamCache != null) {
             return streamCache.inMemory();
@@ -108,6 +112,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
     }
 
     
+    @Override
     public long length() {
         if (streamCache != null) {
             return streamCache.length();

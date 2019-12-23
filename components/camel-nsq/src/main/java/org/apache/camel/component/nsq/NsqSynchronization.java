@@ -17,7 +17,6 @@
 package org.apache.camel.component.nsq;
 
 import com.github.brainlag.nsq.NSQMessage;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.support.SynchronizationAdapter;
 

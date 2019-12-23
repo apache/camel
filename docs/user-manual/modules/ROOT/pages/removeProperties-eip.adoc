@@ -1,9 +1,10 @@
 [[removeProperties-eip]]
-== Remove Properties EIP
+= Remove Properties EIP
+:page-source: core/camel-core-engine/src/main/docs/eips/removeProperties-eip.adoc
 
 The RemoveProperties EIP allows you to remove Properties from you exchange.
 
-=== Options
+== Options
 
 // eip options: START
 The Remove Properties EIP supports 2 options which are listed below:
@@ -16,7 +17,7 @@ The Remove Properties EIP supports 2 options which are listed below:
 |===
 // eip options: END
 
-=== Examples
+== Examples
 
 The following example shows how to use the removeProperties EIP
 

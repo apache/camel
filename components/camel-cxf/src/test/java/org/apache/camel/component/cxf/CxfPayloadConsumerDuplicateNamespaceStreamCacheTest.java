@@ -29,6 +29,7 @@ public class CxfPayloadConsumerDuplicateNamespaceStreamCacheTest extends CxfPayl
             + "<soap:Body><ns2:getToken xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:ns2=\"http://camel.apache.org/cxf/namespace\">"
             + "<arg0 xsi:type=\"xs:string\">Send</arg0></ns2:getToken></soap:Body></soap:Envelope>";
 
+    @Override
     @Test
     public void testInvokeRouter() {
         Object returnValue = template.requestBody("direct:router", REQUEST_MESSAGE);

@@ -50,6 +50,7 @@ public class PgEventConsumer extends DefaultConsumer implements PGNotificationLi
     }
 
 
+    @Override
     public void notification(int processId, String channel, String payload) {
         if (log.isDebugEnabled()) {
             log.debug("Notification processId: {}, channel: {}, payload: {}", processId, channel, payload);

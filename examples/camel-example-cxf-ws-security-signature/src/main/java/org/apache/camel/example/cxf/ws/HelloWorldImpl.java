@@ -24,6 +24,7 @@ import javax.jws.WebService;
             endpointInterface = "org.apache.camel.example.cxf.ws.HelloWorld")
 public class HelloWorldImpl implements HelloWorld {
 
+    @Override
     @WebMethod
     public String sayHello(@WebParam(name = "toWhom") String toWhom) {
         return "Hello " + toWhom;

@@ -20,15 +20,13 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.util.SedaConstants;
 import org.junit.Test;
 
 /**
  *
  */
 public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
-    
-    
+
     @Test
     public void testSameQueue() throws Exception {
         for (int i = 0; i < 100; i++) {
@@ -73,11 +71,9 @@ public class SameSedaQueueSizeAndNoSizeTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?size=100").routeId("foo").noAutoStartup()
-                    .to("mock:foo");
+                from("seda:foo?size=100").routeId("foo").noAutoStartup().to("mock:foo");
 
-                from("seda:bar").routeId("bar").noAutoStartup()
-                    .to("mock:bar");
+                from("seda:bar").routeId("bar").noAutoStartup().to("mock:bar");
             }
         };
     }

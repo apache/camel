@@ -21,7 +21,6 @@ import java.util.Hashtable;
 
 import org.apache.camel.spi.CamelEvent;
 import org.apache.camel.support.EventNotifierSupport;
-
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -60,6 +59,7 @@ public class OsgiEventAdminNotifier extends EventNotifierSupport {
         setIgnoreExchangeEvents(true);
     }
 
+    @Override
     public void notify(CamelEvent event) throws Exception {
         EventAdmin eventAdmin = tracker.getService();
         if (eventAdmin == null) {
@@ -82,6 +82,7 @@ public class OsgiEventAdminNotifier extends EventNotifierSupport {
         eventAdmin.postEvent(new Event(getTopic(event), props));
     }
 
+    @Override
     public boolean isEnabled(CamelEvent event) {
         return true;
     }

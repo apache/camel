@@ -19,7 +19,6 @@ package org.apache.camel.component.salesforce;
 import java.util.Arrays;
 
 import com.googlecode.junittoolbox.ParallelParameterized;
-
 import org.apache.camel.component.salesforce.api.dto.composite.SObjectTree;
 import org.apache.camel.component.salesforce.dto.generated.Account;
 import org.apache.camel.component.salesforce.dto.generated.Account_IndustryEnum;
@@ -85,8 +84,7 @@ public class CompositeApiTreeIntegrationTest extends AbstractSalesforceTestBase 
 
         tree.addObject(simpleAccount3).addChild("Contacts", contact).addChild("Assets", asset);
 
-        final SObjectTree response = template.requestBody("salesforce:composite-tree?format=" + format, tree,
-            SObjectTree.class);
+        final SObjectTree response = template.requestBody("salesforce:composite-tree?format=" + format, tree, SObjectTree.class);
 
         assertNotNull("Response should be provided", response);
 

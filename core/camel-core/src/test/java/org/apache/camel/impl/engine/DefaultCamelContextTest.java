@@ -42,6 +42,14 @@ import org.junit.Test;
 public class DefaultCamelContextTest extends TestSupport {
 
     @Test
+    public void testStartDate() {
+        DefaultCamelContext ctx = new DefaultCamelContext(false);
+        assertNull(ctx.getStartDate());
+        ctx.start();
+        assertNotNull(ctx.getStartDate());
+    }
+
+    @Test
     public void testAutoCreateComponentsOn() {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
@@ -58,14 +66,14 @@ public class DefaultCamelContextTest extends TestSupport {
         Component component = ctx.getComponent("bean");
         assertNull(component);
     }
-    
+
     @Test
     public void testAutoStartComponentsOff() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext(false);
         ctx.disableJMX();
         ctx.start();
 
-        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, false);
+        BeanComponent component = (BeanComponent)ctx.getComponent("bean", true, false);
         // should be stopped
         assertTrue(component.getStatus().isStopped());
     }
@@ -76,7 +84,7 @@ public class DefaultCamelContextTest extends TestSupport {
         ctx.disableJMX();
         ctx.start();
 
-        BeanComponent component = (BeanComponent) ctx.getComponent("bean", true, true);
+        BeanComponent component = (BeanComponent)ctx.getComponent("bean", true, true);
         // should be started
         assertTrue(component.getStatus().isStarted());
     }
@@ -117,7 +125,7 @@ public class DefaultCamelContextTest extends TestSupport {
             // expected
         }
     }
-    
+
     @Test
     public void testGetEndpointNoScheme() throws Exception {
         DefaultCamelContext ctx = new DefaultCamelContext();
@@ -270,7 +278,7 @@ public class DefaultCamelContextTest extends TestSupport {
 
         Map<String, Endpoint> map = ctx.getEndpointMap();
         assertEquals(1, map.size());
-        
+
         try {
             ctx.hasEndpoint(null);
             fail("Should have thrown exception");
@@ -412,10 +420,12 @@ public class DefaultCamelContextTest extends TestSupport {
 
         private CamelContext camelContext;
 
+        @Override
         public CamelContext getCamelContext() {
             return camelContext;
         }
 
+        @Override
         public void setCamelContext(CamelContext camelContext) {
             this.camelContext = camelContext;
         }

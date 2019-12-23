@@ -61,16 +61,13 @@ public class BeanProcessorSpecializedMessageTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("mock:foo")
-                    .bean(MyBean.class, "empty")
-                    .to("mock:result");
+                from("direct:start").to("mock:foo").bean(MyBean.class, "empty").to("mock:result");
             }
         };
     }

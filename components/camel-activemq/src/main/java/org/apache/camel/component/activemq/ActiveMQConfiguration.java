@@ -20,21 +20,23 @@ import java.lang.reflect.Constructor;
 
 import javax.jms.ConnectionFactory;
 
+import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.Service;
-import org.apache.activemq.spring.ActiveMQConnectionFactory;
 import org.apache.camel.component.jms.JmsConfiguration;
+import org.apache.camel.spi.Metadata;
+import org.springframework.jms.connection.CachingConnectionFactory;
+import org.springframework.jms.connection.DelegatingConnectionFactory;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.connection.SingleConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
-/**
- *
- */
 public class ActiveMQConfiguration extends JmsConfiguration {
     private ActiveMQComponent activeMQComponent;
     private String brokerURL = ActiveMQConnectionFactory.DEFAULT_BROKER_URL;
+    private volatile boolean customBrokerURL;
     private boolean useSingleConnection;
+    @Metadata(defaultValue = "true")
     private boolean usePooledConnection = true;
     private boolean trustAllPackages;
 
@@ -46,14 +48,11 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     }
 
     /**
-     * Sets the broker URL to use to connect to ActiveMQ using the
-     * <a href="http://activemq.apache.org/configuring-transports.html">ActiveMQ
-     * URI format</a>
-     *
-     * @param brokerURL the URL of the broker.
+     * Sets the broker URL to use to connect to ActiveMQ broker.
      */
     public void setBrokerURL(String brokerURL) {
         this.brokerURL = brokerURL;
+        this.customBrokerURL = true;
     }
 
     public boolean isUseSingleConnection() {
@@ -102,8 +101,7 @@ public class ActiveMQConfiguration extends JmsConfiguration {
      * Spring {@link JmsTemplate} which will create a new connection, session,
      * producer for each message then close them all down again.
      * <p/>
-     * The default value is true. Note that this requires an extra dependency on
-     * commons-pool2.
+     * The default value is true.
      */
     public void setUsePooledConnection(boolean usePooledConnection) {
         this.usePooledConnection = usePooledConnection;
@@ -144,8 +142,30 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     }
 
     @Override
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        if (customBrokerURL) {
+            // okay a custom broker url was configured which we want to ensure
+            // the real target connection factory knows about
+            ConnectionFactory target = connectionFactory;
+            if (target instanceof CachingConnectionFactory) {
+                CachingConnectionFactory ccf = (CachingConnectionFactory) target;
+                target = ccf.getTargetConnectionFactory();
+            }
+            if (target instanceof DelegatingConnectionFactory) {
+                DelegatingConnectionFactory dcf = (DelegatingConnectionFactory) target;
+                target = dcf.getTargetConnectionFactory();
+            }
+            if (target instanceof ActiveMQConnectionFactory) {
+                ActiveMQConnectionFactory acf = (ActiveMQConnectionFactory) target;
+                acf.setBrokerURL(brokerURL);
+            }
+        }
+        super.setConnectionFactory(connectionFactory);
+    }
+
+    @Override
     protected ConnectionFactory createConnectionFactory() {
-        ActiveMQConnectionFactory answer = new ActiveMQConnectionFactory();
+        org.apache.activemq.spring.ActiveMQConnectionFactory answer = new org.apache.activemq.spring.ActiveMQConnectionFactory();
         answer.setTrustAllPackages(trustAllPackages);
         if (getUsername() != null) {
             answer.setUserName(getUsername());
@@ -175,9 +195,6 @@ public class ActiveMQConfiguration extends JmsConfiguration {
     }
 
     protected ConnectionFactory createPooledConnectionFactory(ActiveMQConnectionFactory connectionFactory) {
-        // lets not use classes directly to avoid a runtime dependency on
-        // commons-pool2
-        // for folks not using this option
         try {
             Class type = loadClass("org.apache.activemq.pool.PooledConnectionFactory", getClass().getClassLoader());
             Constructor constructor = type.getConstructor(org.apache.activemq.ActiveMQConnectionFactory.class);

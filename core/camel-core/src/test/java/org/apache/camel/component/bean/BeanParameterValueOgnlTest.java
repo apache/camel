@@ -70,17 +70,11 @@ public class BeanParameterValueOgnlTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:foo?method=bar(${body},true)")
-                    .to("mock:result");
+                from("direct:start").to("bean:foo?method=bar(${body},true)").to("mock:result");
 
-                from("direct:start2")
-                    .to("bean:foo?method=bar(${body.name}, true)")
-                    .to("mock:result");
+                from("direct:start2").to("bean:foo?method=bar(${body.name}, true)").to("mock:result");
 
-                from("direct:start3")
-                    .to("bean:foo?method=bar(${header.animal?.friend.name}, true)")
-                    .to("mock:result");
+                from("direct:start3").to("bean:foo?method=bar(${header.animal?.friend.name}, true)").to("mock:result");
             }
         };
     }
@@ -143,6 +137,5 @@ public class BeanParameterValueOgnlTest extends ContextTestSupport {
             return name;
         }
     }
-
 
 }

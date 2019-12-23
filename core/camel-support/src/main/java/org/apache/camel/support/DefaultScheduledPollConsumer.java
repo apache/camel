@@ -40,6 +40,7 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
         super(endpoint, processor, executor);
     }
 
+    @Override
     protected int poll() throws Exception {
         int messagesPolled = 0;
 
@@ -60,14 +61,8 @@ public class DefaultScheduledPollConsumer extends ScheduledPollConsumer {
             messagesPolled++;
             log.trace("Polled {} {}", messagesPolled, exchange);
 
-            // if the result of the polled exchange has output we should create a new exchange and
-            // use the output as input to the next processor
-            if (exchange.hasOut()) {
-                // lets create a new exchange
-                Exchange newExchange = getEndpoint().createExchange();
-                newExchange.getIn().copyFrom(exchange.getOut());
-                exchange = newExchange;
-            }
+            // prepare for processing where message should be IN
+            ExchangeHelper.prepareOutToIn(exchange);
             getProcessor().process(exchange);
         }
 

@@ -1,0 +1,50 @@
+[[Templating-Templating]]
+= Templating
+
+When you are testing distributed systems its a very common requirement
+to have to stub out certain external systems with some stub so that you
+can test other parts of the system until a specific system is available
+or written etc.
+
+A great way to do this is using some kind of Template system to generate
+responses to requests generating a dynamic message using a mostly-static
+body.
+
+There are a number of templating components included in the Camel
+distribution you could use
+
+* xref:components::freemarker-component.adoc[FreeMarker]
+* xref:components::mustache-component.adoc[Mustache]
+* xref:components::string-template-component.adoc[StringTemplate]
+* xref:components::velocity-component.adoc[Velocity]
+* xref:components::xquery-component.adoc[XQuery]
+* xref:components::xslt-component.adoc[XSLT]
+
+or the following external Camel components
+
+* http://scalate.fusesource.org/camel.html[Scalate]
+
+[[Templating-Example]]
+== Example
+
+Here's a simple example showing how we can respond to InOut requests on
+the *My.Queue* queue on xref:components::activemq-component.adoc[ActiveMQ] with a template
+generated response. The reply would be sent back to the JMSReplyTo
+Destination.
+
+[source,syntaxhighlighter-pre]
+----
+from("activemq:My.Queue").
+  to("velocity:com/acme/MyResponse.vm");
+----
+
+If you want to use InOnly and consume the message and send it to another
+destination you could use
+
+[source,syntaxhighlighter-pre]
+----
+from("activemq:My.Queue").
+  to("velocity:com/acme/MyResponse.vm").
+  to("activemq:Another.Queue");
+----
+

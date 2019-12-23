@@ -25,19 +25,19 @@ import java.security.cert.Certificate;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
-public class SpringSignatureTest extends SignatureTests {
+public class SpringSignatureTest extends SignatureTest {
 
     private static KeyPair rsaPair;
+    private static KeyPair dsaPair;
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         rsaPair = getKeyPair("RSA");
-        return SpringCamelContext.springCamelContext(
-                new ClassPathXmlApplicationContext("org/apache/camel/component/crypto/SpringSignatureTests.xml"), true);
+        dsaPair = getKeyPair("DSA");
+        return SpringCamelContext.springCamelContext(new ClassPathXmlApplicationContext("org/apache/camel/component/crypto/SpringSignatureTest.xml"), true);
     }
 
     public static KeyStore keystore() throws Exception {
@@ -45,7 +45,7 @@ public class SpringSignatureTest extends SignatureTests {
     }
 
     public static PrivateKey privateKeyFromKeystore() throws Exception {
-        return new SignatureTests().getKeyFromKeystore();
+        return new SignatureTest().getKeyFromKeystore();
     }
 
     public static Certificate certificateFromKeystore() throws Exception {
@@ -68,17 +68,20 @@ public class SpringSignatureTest extends SignatureTests {
         return rsaPair.getPrivate();
     }
 
+    public static PrivateKey privateDSAKey() throws Exception {
+        return dsaPair.getPrivate();
+    }
+
     public static PublicKey publicRSAKey() throws Exception {
         return rsaPair.getPublic();
     }
 
-    public static SecureRandom random() throws Exception {
-        return new SecureRandom();
+    public static PublicKey publicDSAKey() throws Exception {
+        return dsaPair.getPublic();
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        return super.createRegistry();
+    public static SecureRandom random() throws Exception {
+        return new SecureRandom();
     }
 
     @Override

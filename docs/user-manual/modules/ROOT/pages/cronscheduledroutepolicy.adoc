@@ -1,0 +1,132 @@
+= CronScheduledRoutePolicy
+
+CronScheduledRoutePolicy is a
+xref:scheduledroutepolicy.adoc[ScheduledRoutePolicy] that facilitates
+route activation, de-activation, suspension and resumption of routes
+based on a xref:components::quartz-component.adoc[Quartz] `CronTrigger`.
+
+Maven users will need to add a camel-quartz dependency to their
+`pom.xml` to avail this capability.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-quartz</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+[TIP]
+====
+ **Relationship to the [Quartz] component**
+
+All Scheduled route policies share the scheduler created by the Quartz
+component. In this way, scheduler, jobs and triggers can be managed in a
+common and consistent way.
+
+====
+
+**Relationship to the [Quartz] component**
+
+From Camel 2.12.2 onwards you can also make use of the
+xref:components::quartz-component.adoc[Quartz] based implementation of this route policy.
+
+[source,xml]
+----
+<bean id="myStartPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
+  <!-- start every 5min from monday to saturday -->
+  <property name="routeStartTime" value="0 0/5 * ? * 1-6 *" />
+</bean>
+----
+
+See xref:cronscheduledroutepolicy.adoc[CronScheduledRoutePolicy
+description].
+
+== How it works
+
+In order to use a
+xref:cronscheduledroutepolicy.adoc[CronScheduledRoutePolicy] it is
+necessary to instantiate an object of the type
+`org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy`.
+
+In order to perform a route operation at a given time the following
+information must be provided.
+
+* Starting a route
++
+[width="100%",cols="25%,25%,25%,25%",options="header",]
+|=======================================================================
+|Parameter Name |Type |Default Value |Description
+|routeStartTime |String |  |the initial scheduled Date and time as a
+Cron Expression for route start
+|=======================================================================
+
+* Stopping a route
++
+[width="100%",cols="25%,25%,25%,25%",options="header",]
+|=======================================================================
+|Parameter Name |Type |Default Value |Description
+|routeStopTime |String |  |the initial scheduled Date and time as a Cron
+Expression for route stop
+
+|routeStopGracePeriod |int |10 seconds |the time period to wait before
+initiating graceful route stop
+
+|routeStopTimeUnit |long |TimeUnit.MILLISECONDS |the time unit for the
+grace period expressed as java.util.concurrent.TimeUnit
+|=======================================================================
+
+* Suspending a route
++
+[width="100%",cols="25%,25%,25%,25%",options="header",]
+|=======================================================================
+|Parameter Name |Type |Default Value |Description
+|routeSuspendTime |String |  |the initial scheduled Date and time as a
+Cron Expression for route suspension
+|=======================================================================
+
+* Resuming a route
++
+[width="100%",cols="25%,25%,25%,25%",options="header",]
+|=======================================================================
+|Parameter Name |Type |Default Value |Description
+|routeResumeTime |String |  |the initial scheduled Date and time as a
+Cron Expression for route resumption
+|=======================================================================
+
+Once the `org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy`
+is created it can be wired into the camel route as follows
+
+== Configuring the policy
+
+* In Java
+
+[source,java]
+----
+ 
+CronScheduledRoutePolicy startPolicy = new CronScheduledRoutePolicy();
+startPolicy.setRouteStartTime("*/3 * * * * ?");
+                
+from("direct:start")
+    .routeId("testRoute").routePolicy(startPolicy).noAutoStartup()
+    .to("mock:success");
+----
+
+* Using Spring
+
+[source,xml]
+----
+<bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.CronScheduledRoutePolicy">
+    <property name="routeStartTime" value="*/3 * * * * ?"/>
+</bean>
+    
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route id="testRoute" routePolicyRef="startPolicy" autoStartup="false">
+        <from uri="direct:start"/>
+        <to uri="mock:success"/>
+    </route>
+</camelContext>
+----
+

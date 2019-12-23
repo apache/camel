@@ -33,9 +33,7 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .loadBalance().failover().roundRobin()
-                        .to("mock:a", "mock:b");
+                    from("direct:start").loadBalance().failover().roundRobin().to("mock:a", "mock:b");
                 }
             });
             fail("Should have thrown an exception");
@@ -50,9 +48,7 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .loadBalance().failover().random()
-                        .to("mock:a", "mock:b");
+                    from("direct:start").loadBalance().failover().random().to("mock:a", "mock:b");
                 }
             });
             fail("Should have thrown an exception");
@@ -67,9 +63,7 @@ public class DoubleLoadBalancerMisconfigurationTest extends ContextTestSupport {
             context.addRoutes(new RouteBuilder() {
                 @Override
                 public void configure() throws Exception {
-                    from("direct:start")
-                        .loadBalance().random().failover()
-                        .to("mock:a", "mock:b");
+                    from("direct:start").loadBalance().random().failover().to("mock:a", "mock:b");
                 }
             });
             fail("Should have thrown an exception");

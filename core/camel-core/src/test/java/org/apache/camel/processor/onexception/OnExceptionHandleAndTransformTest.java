@@ -35,11 +35,11 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
 
                 // START SNIPPET: e1
-                // we catch MyFunctionalException and want to mark it as handled (= no failure returned to client)
-                // but we want to return a fixed text response, so we transform OUT body as Sorry.
-                onException(MyFunctionalException.class)
-                        .handled(true)
-                        .transform().constant("Sorry");
+                // we catch MyFunctionalException and want to mark it as handled
+                // (= no failure returned to client)
+                // but we want to return a fixed text response, so we transform
+                // OUT body as Sorry.
+                onException(MyFunctionalException.class).handled(true).transform().constant("Sorry");
                 // END SNIPPET: e1
 
                 from("direct:start").process(new Processor() {
@@ -62,11 +62,11 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
 
                 // START SNIPPET: e2
-                // we catch MyFunctionalException and want to mark it as handled (= no failure returned to client)
-                // but we want to return a fixed text response, so we transform OUT body and return the exception message
-                onException(MyFunctionalException.class)
-                        .handled(true)
-                        .transform(exceptionMessage());
+                // we catch MyFunctionalException and want to mark it as handled
+                // (= no failure returned to client)
+                // but we want to return a fixed text response, so we transform
+                // OUT body and return the exception message
+                onException(MyFunctionalException.class).handled(true).transform(exceptionMessage());
                 // END SNIPPET: e2
 
                 from("direct:start").process(new Processor() {
@@ -89,12 +89,13 @@ public class OnExceptionHandleAndTransformTest extends ContextTestSupport {
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
 
                 // START SNIPPET: e3
-                // we catch MyFunctionalException and want to mark it as handled (= no failure returned to client)
-                // but we want to return a fixed text response, so we transform OUT body and return a nice message
-                // using the simple language where we want insert the exception message
-                onException(MyFunctionalException.class)
-                        .handled(true)
-                        .transform().simple("Error reported: ${exception.message} - cannot process this message.");
+                // we catch MyFunctionalException and want to mark it as handled
+                // (= no failure returned to client)
+                // but we want to return a fixed text response, so we transform
+                // OUT body and return a nice message
+                // using the simple language where we want insert the exception
+                // message
+                onException(MyFunctionalException.class).handled(true).transform().simple("Error reported: ${exception.message} - cannot process this message.");
                 // END SNIPPET: e3
 
                 from("direct:start").process(new Processor() {

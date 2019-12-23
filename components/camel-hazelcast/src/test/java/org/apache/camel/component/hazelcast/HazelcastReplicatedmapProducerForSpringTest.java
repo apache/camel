@@ -21,7 +21,6 @@ import java.util.Collection;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.ReplicatedMap;
-
 import org.junit.After;
 import org.junit.Test;
 import org.mockito.Mock;

@@ -17,8 +17,6 @@
 package org.apache.camel.component.servlet;
 
 import java.net.URI;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -35,6 +33,7 @@ import org.apache.camel.spi.RestApiConsumerFactory;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.annotations.Component;
+import org.apache.camel.support.RestComponentHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -60,7 +59,6 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
     }
 
     public ServletComponent(Class<? extends ServletEndpoint> endpointClass) {
-        super();
     }
 
     @Override
@@ -68,6 +66,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         // must extract well known parameters before we create the endpoint
         Boolean throwExceptionOnFailure = getAndRemoveParameter(parameters, "throwExceptionOnFailure", Boolean.class);
         Boolean transferException = getAndRemoveParameter(parameters, "transferException", Boolean.class);
+        Boolean muteException = getAndRemoveParameter(parameters, "muteException", Boolean.class);
         Boolean bridgeEndpoint = getAndRemoveParameter(parameters, "bridgeEndpoint", Boolean.class);
         HttpBinding binding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         Boolean matchOnUriPrefix = getAndRemoveParameter(parameters, "matchOnUriPrefix", Boolean.class);
@@ -121,6 +120,9 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
         // should we transfer exception as serialized object
         if (transferException != null) {
             endpoint.setTransferException(transferException);
+        }
+        if (muteException != null) {
+            endpoint.setMuteException(muteException);
         }
         if (bridgeEndpoint != null) {
             endpoint.setBridgeEndpoint(bridgeEndpoint);
@@ -276,43 +278,21 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             config = camelContext.getRestConfiguration("servlet", true);
         }
 
-        Map<String, Object> map = new HashMap<>();
-        // build query string, and append any endpoint configuration properties
-        if (config.getComponent() == null || config.getComponent().equals("servlet")) {
-            // setup endpoint options
-            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
-                map.putAll(config.getEndpointProperties());
-            }
-        }
+        Map<String, Object> map = RestComponentHelper.initRestEndpointProperties("servlet", config);
 
         boolean cors = config.isEnableCORS();
         if (cors) {
             // allow HTTP Options as we want to handle CORS in rest-dsl
             map.put("optionsEnabled", "true");
         }
-
-        // do not append with context-path as the servlet path should be without context-path
-
-        String query = URISupport.createQueryString(map);
-
-        String url;
-        if (api) {
-            url = "servlet:///%s?matchOnUriPrefix=true&httpMethodRestrict=%s";
-        } else {
-            url = "servlet:///%s?httpMethodRestrict=%s";
-        }
-
-        // must use upper case for restrict
-        String restrict = verb.toUpperCase(Locale.US);
-        if (cors) {
-            restrict += ",OPTIONS";
-        }
-        // get the endpoint
-        url = String.format(url, path, restrict);
         
-        if (!query.isEmpty()) {
-            url = url + "&" + query;
-        }       
+        if (api) {
+            map.put("matchOnUriPrefix", "true");
+        }
+        
+        RestComponentHelper.addHttpRestrictParam(map, verb, cors);
+
+        String url = RestComponentHelper.createRestConsumerUrl("servlet", path, map);  
 
         ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
         setProperties(camelContext, endpoint, parameters);
@@ -322,6 +302,7 @@ public class ServletComponent extends HttpCommonComponent implements RestConsume
             HttpBinding binding = new ServletRestHttpBinding();
             binding.setHeaderFilterStrategy(endpoint.getHeaderFilterStrategy());
             binding.setTransferException(endpoint.isTransferException());
+            binding.setMuteException(endpoint.isMuteException());
             binding.setEagerCheckContentAvailable(endpoint.isEagerCheckContentAvailable());
             endpoint.setHttpBinding(binding);
         }

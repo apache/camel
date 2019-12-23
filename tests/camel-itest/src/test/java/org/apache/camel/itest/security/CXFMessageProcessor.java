@@ -33,6 +33,7 @@ public class CXFMessageProcessor implements Processor {
         + "<soap:Body><greetMeResponse xmlns=\"http://apache.org/hello_world_soap_http/types\">"
         + "<responseType> Hello CXF</responseType></greetMeResponse></soap:Body></soap:Envelope>";
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // just print out the request message
         Message in = exchange.getIn();

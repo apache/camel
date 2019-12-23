@@ -112,6 +112,7 @@ public class HL7ValidateTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         HapiContext hapiContext = new DefaultHapiContext();
         hapiContext.setValidationContext(new NoValidation());

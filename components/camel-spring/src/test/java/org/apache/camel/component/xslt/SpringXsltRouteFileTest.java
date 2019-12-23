@@ -22,6 +22,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringXsltRouteFileTest extends XsltRouteFileTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/component/xslt/SpringXsltRouteFileTest.xml");
     }

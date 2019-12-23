@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -61,6 +62,7 @@ public class InjectedBeanTest extends SpringTestSupport {
         bean = getMandatoryBean(InjectedBean.class, "injectedBean");
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/injectedBean.xml");
     }

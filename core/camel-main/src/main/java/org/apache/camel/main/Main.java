@@ -26,7 +26,7 @@ import org.apache.camel.spi.Registry;
 /**
  * A Main class for booting up Camel in standalone mode.
  */
-public class Main extends MainSupport {
+public class Main extends MainCommandLineSupport {
 
     protected static Main instance;
     protected final MainRegistry registry = new MainRegistry();
@@ -123,6 +123,7 @@ public class Main extends MainSupport {
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         super.doStop();
         if (getCamelContext() != null) {
@@ -130,6 +131,7 @@ public class Main extends MainSupport {
         }
     }
 
+    @Override
     protected ProducerTemplate findOrCreateCamelTemplate() {
         if (getCamelContext() != null) {
             return getCamelContext().createProducerTemplate();
@@ -138,6 +140,7 @@ public class Main extends MainSupport {
         }
     }
 
+    @Override
     protected CamelContext createCamelContext() {
         return new DefaultCamelContext(registry);
     }

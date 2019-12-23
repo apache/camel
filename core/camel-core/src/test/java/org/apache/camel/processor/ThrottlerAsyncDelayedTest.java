@@ -58,10 +58,11 @@ public class ThrottlerAsyncDelayedTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
 
         context.stop();
-        
+
         executor.shutdownNow();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

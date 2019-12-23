@@ -136,15 +136,15 @@ public class EhcacheManagerTest {
             EhcacheEndpoint e1 = context.getEndpoint("ehcache:myCache1?cacheManager=#myManager", EhcacheEndpoint.class);
             EhcacheEndpoint e2 = context.getEndpoint("ehcache:myCache2?cacheManager=#myManager", EhcacheEndpoint.class);
 
-            Assert.assertEquals(e1.getManager(), e2.getManager());
-            Assert.assertEquals(e1.getManager().getCacheManager(), e2.getManager().getCacheManager());
+            Assert.assertSame(e1.getManager(), e2.getManager());
+            Assert.assertSame(e1.getManager().getCacheManager(), e2.getManager().getCacheManager());
             Assert.assertEquals(2, e1.getManager().getReferenceCount().get());
             Assert.assertEquals(Status.AVAILABLE, e1.getManager().getCacheManager().getStatus());
 
             context.stop();
 
-            Assert.assertEquals(e1.getManager(), e2.getManager());
-            Assert.assertEquals(e1.getManager().getCacheManager(), e2.getManager().getCacheManager());
+            Assert.assertSame(e1.getManager(), e2.getManager());
+            Assert.assertSame(e1.getManager().getCacheManager(), e2.getManager().getCacheManager());
             Assert.assertEquals(0, e1.getManager().getReferenceCount().get());
             Assert.assertEquals(Status.AVAILABLE, e1.getManager().getCacheManager().getStatus());
 

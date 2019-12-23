@@ -22,13 +22,14 @@ import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.telegram.model.IncomingMessage;
-import org.apache.camel.component.telegram.model.UpdateResult;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.component.telegram.util.TelegramTestUtil;
+import org.junit.jupiter.api.Test;
 
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.apache.camel.test.junit5.TestSupport.assertCollectionSize;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 /**
  * Tests the reception of messages without text having media content.
@@ -38,23 +39,10 @@ public class TelegramConsumerMediaPhotoTest extends TelegramTestSupport {
     @EndpointInject("mock:telegram")
     private MockEndpoint endpoint;
 
-    @Before
-    public void mockAPIs() {
-        TelegramService api = mockTelegramService();
-
-        UpdateResult res = getJSONResource("messages/updates-media.json", UpdateResult.class);
-
-        UpdateResult defaultRes = getJSONResource("messages/updates-empty.json", UpdateResult.class);
-
-        when(api.getUpdates(any(), any(), any(), any()))
-                .thenReturn(res)
-                .thenAnswer((i) -> defaultRes);
-    }
-
     @Test
     public void testReceptionOfTwoMessagesOneWithMedia() throws Exception {
         endpoint.expectedMinimumMessageCount(2);
-        endpoint.assertIsSatisfied();
+        endpoint.assertIsSatisfied(5000);
 
         Exchange mediaExchange = endpoint.getExchanges().get(1);
         IncomingMessage msg = mediaExchange.getIn().getBody(IncomingMessage.class);
@@ -65,14 +53,27 @@ public class TelegramConsumerMediaPhotoTest extends TelegramTestSupport {
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("telegram:bots/mock-token")
-                        .to("mock:telegram");
-            }
-        };
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] {
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("telegram:bots?authorizationToken=mock-token")
+                            .to("mock:telegram");
+                }
+            }};
+    }
+
+    @Override
+    protected TelegramMockRoutes createMockRoutes() {
+        return new TelegramMockRoutes(port)
+                .addEndpoint(
+                        "getUpdates",
+                        "GET",
+                        String.class,
+                        TelegramTestUtil.stringResource("messages/updates-media.json"),
+                        TelegramTestUtil.stringResource("messages/updates-empty.json"));
     }
 
 }

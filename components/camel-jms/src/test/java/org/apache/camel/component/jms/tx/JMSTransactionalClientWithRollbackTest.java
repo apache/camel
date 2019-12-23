@@ -28,6 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JMSTransactionalClientWithRollbackTest extends CamelSpringTestSupport {
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/component/jms/tx/JMSTransactionalClientWithRollbackTest.xml");
@@ -49,6 +50,7 @@ public class JMSTransactionalClientWithRollbackTest extends CamelSpringTestSuppo
     public static class MyProcessor implements Processor {
         private int count;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setBody("Bye World");
             exchange.getIn().setHeader("count", ++count);

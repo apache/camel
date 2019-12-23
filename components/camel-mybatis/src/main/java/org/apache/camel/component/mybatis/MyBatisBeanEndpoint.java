@@ -44,6 +44,7 @@ public class MyBatisBeanEndpoint extends BaseMyBatisEndpoint {
         this.methodName = methodName;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new MyBatisBeanProducer(this);
     }

@@ -55,8 +55,7 @@ public class HashMapHeadersMapFactoryRouteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("mock:result");
+                from("direct:start").to("mock:result");
             }
         };
     }

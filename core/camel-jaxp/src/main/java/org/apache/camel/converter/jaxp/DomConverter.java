@@ -39,7 +39,7 @@ import org.apache.camel.support.ObjectHelper;
 /**
  * Converts from some DOM types to Java types
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class DomConverter {
     private final XmlConverter xml;
 

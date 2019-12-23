@@ -51,6 +51,7 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
     private final AsyncProcessor processor;
     private JmsBinding binding;
     private boolean eagerLoadingOfProperties;
+    private String eagerPoisonBody;
     private Object replyToDestination;
     private JmsOperations template;
     private boolean disableReplyTo;
@@ -83,10 +84,27 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
             }
 
             final Exchange exchange = createExchange(message, session, replyDestination);
-            if (eagerLoadingOfProperties) {
+            if (ObjectHelper.isNotEmpty(eagerPoisonBody) && eagerLoadingOfProperties) {
+                try {
+                    exchange.getIn().getBody();
+                    exchange.getIn().getHeaders();
+                } catch (Throwable e) {
+                    // any problems with eager loading then set an exception so Camel error handler can react
+                    exchange.setException(e);
+                    String text = eagerPoisonBody;
+                    try {
+                        text = endpoint.getCamelContext().resolveLanguage("simple")
+                                .createExpression(eagerPoisonBody).evaluate(exchange, String.class);
+                    } catch (Throwable t) {
+                        // ignore
+                    }
+                    exchange.getIn().setBody(text);
+                }
+            } else if (eagerLoadingOfProperties) {
                 exchange.getIn().getBody();
                 exchange.getIn().getHeaders();
             }
+
             String correlationId = message.getJMSCorrelationID();
             if (correlationId != null) {
                 LOG.debug("Received Message has JMSCorrelationID [{}]", correlationId);
@@ -193,13 +211,6 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
                         // do not send a reply but wrap and rethrow the exception
                         rce = wrapRuntimeCamelException(exchange.getException());
                     }
-                } else {
-                    org.apache.camel.Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-                    if (msg.isFault()) {
-                        // a fault occurred while processing
-                        body = msg;
-                        cause = null;
-                    }
                 }
             } else {
                 // process OK so get the reply body if we are InOut and has a body
@@ -282,6 +293,14 @@ public class EndpointMessageListener implements SessionAwareMessageListener {
 
     public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
         this.eagerLoadingOfProperties = eagerLoadingOfProperties;
+    }
+
+    public String getEagerPoisonBody() {
+        return eagerPoisonBody;
+    }
+
+    public void setEagerPoisonBody(String eagerPoisonBody) {
+        this.eagerPoisonBody = eagerPoisonBody;
     }
 
     public synchronized JmsOperations getTemplate() {

@@ -45,12 +45,14 @@ public class CXFMultiPartTest extends CamelTestSupport {
     protected static Endpoint endpoint;
     protected AbstractXmlApplicationContext applicationContext;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
 
@@ -104,6 +106,7 @@ public class CXFMultiPartTest extends CamelTestSupport {
     }
    
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return SpringCamelContext.springCamelContext(applicationContext, true);
     }

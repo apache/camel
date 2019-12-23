@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atomix.client.map;
 
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -33,7 +32,7 @@ import org.apache.camel.spi.UriParam;
     title = "Atomix Map",
     syntax = "atomix-map:resourceName",
     label = "clustering")
-class AtomixMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMapComponent, AtomixMapConfiguration> {
+public class AtomixMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMapComponent, AtomixMapConfiguration> {
     @UriParam
     private AtomixMapConfiguration configuration;
 
@@ -48,7 +47,9 @@ class AtomixMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMapComponent,
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AtomixMapConsumer(this, processor, getResourceName());
+        AtomixMapConsumer consumer = new AtomixMapConsumer(this, processor, getResourceName());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

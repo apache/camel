@@ -77,8 +77,8 @@ public class HttpSendDynamicAware implements SendDynamicAware {
                     params.put("httpUri", host);
                 } else if (params.containsKey("httpURI")) {
                     params.put("httpURI", host);
-                } else if ("netty4-http".equals(scheme)) {
-                    // the netty4-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
+                } else if ("netty-http".equals(scheme)) {
+                    // the netty-http stores host,port etc in other fields than httpURI so we can just remove the path parameter
                     params.remove("path");
                 }
             }
@@ -116,8 +116,8 @@ public class HttpSendDynamicAware implements SendDynamicAware {
     protected String[] parseUri(DynamicAwareEntry entry) {
         String u = entry.getUri();
 
-        // remove scheme prefix (unless its camel-http or camel-http4)
-        boolean httpComponent = "http".equals(scheme) || "https".equals(scheme) || "http4".equals(scheme) || "https4".equals(scheme);
+        // remove scheme prefix (unless its camel-http or camel-http)
+        boolean httpComponent = "http".equals(scheme) || "https".equals(scheme);
         if (!httpComponent) {
             String prefix = scheme + "://";
             String prefix2 = scheme + ":";

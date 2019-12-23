@@ -58,7 +58,7 @@ public class EndpointRegistryKeepRouteEndpointsTest extends ContextTestSupport {
         int count = 0;
         for (int i = 0; i < 50; i++) {
             String uri = "mock://unknown" + i;
-            if (context.hasEndpoint(uri)  != null) {
+            if (context.hasEndpoint(uri) != null) {
                 count++;
                 // and it should be dynamic
                 assertTrue(context.getEndpointRegistry().isDynamic(uri));

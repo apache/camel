@@ -65,7 +65,7 @@ public @interface DataField {
     String timezone() default "";
 
     /**
-     * Length of the data block if the record is set to a fixed length
+     * Length of the data block (number of characters) if the record is set to a fixed length
      */
     int length() default 0;
     
@@ -144,14 +144,14 @@ public @interface DataField {
      * e.g : Number = 123456.789, Precision = 2, Rounding =  CEILING
      * Result : 123456.79
      */
-     String rounding() default "CEILING";
+    String rounding() default "CEILING";
 
-     /**
-      * Method name to call to apply such customization
-      * on DataField. This must be the method on the datafield
-      * itself or you must provide static fully qualified name of
-      * the class's method e.g: see unit test 
-      * org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar
-      */
-     String method() default ""; 
+    /**
+     * Method name to call to apply such customization
+     * on DataField. This must be the method on the datafield
+     * itself or you must provide static fully qualified name of
+     * the class's method e.g: see unit test 
+     * org.apache.camel.dataformat.bindy.csv.BindySimpleCsvFunctionWithExternalMethodTest.replaceToBar
+     */
+    String method() default ""; 
 }

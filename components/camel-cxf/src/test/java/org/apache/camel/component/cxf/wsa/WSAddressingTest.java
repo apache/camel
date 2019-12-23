@@ -42,6 +42,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+
 @ContextConfiguration
 public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
     protected static int port0 = CXFTestSupport.getPort1(); 
@@ -124,6 +125,7 @@ public class WSAddressingTest extends AbstractJUnit4SpringContextTests {
     
     public static class RemoveRequestOutHeaderProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             List<?> headerList = (List<?>) exchange.getIn().getHeader(Header.HEADER_LIST);
             assertNotNull("We should get the header list.", headerList);

@@ -42,6 +42,11 @@ public class AbstractSpanDecoratorTest {
             public String getComponent() {
                 return null;
             }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
         };
 
         // Operation name is scheme, as no specific span decorator to
@@ -58,6 +63,11 @@ public class AbstractSpanDecoratorTest {
         SpanDecorator decorator = new AbstractSpanDecorator() {
             @Override
             public String getComponent() {
+                return null;
+            }
+
+            @Override
+            public String getComponentClassName() {
                 return null;
             }
         };
@@ -82,6 +92,11 @@ public class AbstractSpanDecoratorTest {
         SpanDecorator decorator = new AbstractSpanDecorator() {
             @Override
             public String getComponent() {
+                return null;
+            }
+
+            @Override
+            public String getComponentClassName() {
                 return null;
             }
         };

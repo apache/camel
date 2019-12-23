@@ -39,6 +39,7 @@ public class DelayInterceptorTest extends ContextTestSupport {
         assertTrue("Should not take that long to run: " + delta, delta < 5000);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             // START SNIPPET: e1
@@ -48,13 +49,11 @@ public class DelayInterceptorTest extends ContextTestSupport {
 
                 // regular routes here
 
-                from("direct:start").
-                        process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                // do nothing
-                            }
-                        }).
-                        to("mock:result");
+                from("direct:start").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        // do nothing
+                    }
+                }).to("mock:result");
             }
         };
     }

@@ -52,8 +52,8 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         contentStream.setFont(PDType1Font.HELVETICA, 12);
         contentStream.beginText();
-        contentStream.moveTextPositionByAmount(20, 400);
-        contentStream.drawString(expectedText);
+        contentStream.newLineAtOffset(20, 400);
+        contentStream.showText(expectedText);
         contentStream.endText();
         contentStream.close();
 
@@ -88,8 +88,8 @@ public class PdfTextExtractionTest extends CamelTestSupport {
         PDPageContentStream contentStream = new PDPageContentStream(document, page);
         contentStream.setFont(PDType1Font.HELVETICA, 12);
         contentStream.beginText();
-        contentStream.moveTextPositionByAmount(20, 400);
-        contentStream.drawString(expectedText);
+        contentStream.newLineAtOffset(20, 400);
+        contentStream.showText(expectedText);
         contentStream.endText();
         contentStream.close();
 

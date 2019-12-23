@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.web3j;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
@@ -39,6 +39,7 @@ public class Web3jMockTestSupport extends CamelTestSupport {
     protected MockEndpoint mockError;
 
     @Mock
+    @BindToRegistry("mockWeb3j")
     protected Web3j mockWeb3j;
 
     @Mock
@@ -47,13 +48,6 @@ public class Web3jMockTestSupport extends CamelTestSupport {
     @Override
     public boolean isUseAdviceWith() {
         return true;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("mockWeb3j", mockWeb3j);
-        return registry;
     }
 
     protected String getUrl() {

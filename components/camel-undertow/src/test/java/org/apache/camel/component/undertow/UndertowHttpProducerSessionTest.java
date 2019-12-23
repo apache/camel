@@ -15,13 +15,14 @@
  * limitations under the License.
  */
 package org.apache.camel.component.undertow;
+
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
 import org.apache.camel.http.common.cookie.InstanceCookieHandler;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
@@ -29,10 +30,16 @@ import org.junit.Test;
 
 public class UndertowHttpProducerSessionTest extends CamelTestSupport {
     private static volatile int port;
+    
+    @BindToRegistry("instanceCookieHandler")
+    private InstanceCookieHandler instanceCookieHandler = new InstanceCookieHandler();
+    
+    @BindToRegistry("exchangeCookieHandler")
+    private ExchangeCookieHandler exchangeCookieHandler = new ExchangeCookieHandler();
 
     @BeforeClass
     public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(24000);
+        port = AvailablePortFinder.getNextAvailable();
     }
 
     @Test
@@ -57,14 +64,6 @@ public class UndertowHttpProducerSessionTest extends CamelTestSupport {
         template.sendBody("direct:exchange", "World");
         template.sendBody("direct:exchange", "World");
         assertMockEndpointsSatisfied();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndiRegistry = super.createRegistry();
-        jndiRegistry.bind("instanceCookieHandler", new InstanceCookieHandler());
-        jndiRegistry.bind("exchangeCookieHandler", new ExchangeCookieHandler());
-        return jndiRegistry;
     }
 
     private String getTestServerEndpointSessionUrl() {

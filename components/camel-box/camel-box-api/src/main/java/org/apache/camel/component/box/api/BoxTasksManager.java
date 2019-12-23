@@ -25,7 +25,6 @@ import com.box.sdk.BoxFile;
 import com.box.sdk.BoxTask;
 import com.box.sdk.BoxTaskAssignment;
 import com.box.sdk.BoxUser;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

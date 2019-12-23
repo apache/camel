@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -35,7 +36,7 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
         y = getMockEndpoint("mock:y");
         z = getMockEndpoint("mock:z");
     }
-    
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
@@ -50,16 +51,14 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start")
-                    .loadBalance().weighted(true, "4,2,1")
-                        .to("mock:x", "mock:y", "mock:z");
+                from("direct:start").loadBalance().weighted(true, "4,2,1").to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
         context.start();
-        
+
         sendMessages(1, 2, 3, 4, 5, 6, 7, 8);
-        
+
         assertMockEndpointsSatisfied();
         x.expectedBodiesReceived(1, 4, 6, 7, 8);
         y.expectedBodiesReceived(2, 5);
@@ -74,18 +73,16 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                
+
                 // START SNIPPET: example
-                from("direct:start")
-                    .loadBalance().weighted(true, "2, 1, 3", ",")
-                        .to("mock:x", "mock:y", "mock:z");
+                from("direct:start").loadBalance().weighted(true, "2, 1, 3", ",").to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
         context.start();
-        
+
         sendMessages(1, 2, 3, 4, 5, 6, 7);
-        
+
         assertMockEndpointsSatisfied();
         x.expectedBodiesReceived(1, 4, 7);
         y.expectedBodiesReceived(2);
@@ -102,28 +99,24 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("direct:start")
-                    .loadBalance().weighted(true, "2-3-5", "-")
-                        .to("mock:x", "mock:y", "mock:z");
+                from("direct:start").loadBalance().weighted(true, "2-3-5", "-").to("mock:x", "mock:y", "mock:z");
                 // END SNIPPET: example
             }
         });
         context.start();
-        
+
         sendBulkMessages(50);
-        
+
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testUnmatchedRatiosToProcessors() throws Exception {
         try {
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
                     // START SNIPPET: example
-                    from("direct:start")
-                        .loadBalance().weighted(true, "2,3")
-                            .to("mock:x", "mock:y", "mock:z");
+                    from("direct:start").loadBalance().weighted(true, "2,3").to("mock:x", "mock:y", "mock:z");
                     // END SNIPPET: example
                 }
             });
@@ -134,13 +127,13 @@ public class WeightedRoundRobinLoadBalanceTest extends ContextTestSupport {
             assertEquals("Loadbalacing with 3 should match number of distributions 2", iae.getMessage());
         }
     }
-    
+
     protected void sendBulkMessages(int number) {
         for (int i = 0; i < number; i++) {
             template.sendBodyAndHeader("direct:start", createTestMessage(i), "counter", i);
         }
     }
-    
+
     protected void sendMessages(int... counters) {
         for (int counter : counters) {
             template.sendBodyAndHeader("direct:start", createTestMessage(counter), "counter", counter);

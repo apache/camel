@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -80,7 +81,6 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
         System.arraycopy(buffer, 0, data, 0, len);
         fis.close();
 
-
         for (byte b : data) {
             log.info("loaded byte: {}", b);
         }
@@ -103,8 +103,7 @@ public class FileProducerCharsetUTFtoISOConvertBodyToTest extends ContextTestSup
                     // now convert the input file from utf-8 to iso-8859-1
                     .convertBodyTo(byte[].class, "iso-8859-1")
                     // and write the file using that encoding
-                    .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader"))
-                    .to("file:target/data/charset/?fileName=output.txt");
+                    .setProperty(Exchange.CHARSET_NAME, header("someCharsetHeader")).to("file:target/data/charset/?fileName=output.txt");
             }
         };
     }

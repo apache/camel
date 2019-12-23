@@ -47,7 +47,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder amazonCwClient(Object amazonCwClient) {
-            setProperty("amazonCwClient", amazonCwClient);
+            doSetProperty("amazonCwClient", amazonCwClient);
             return this;
         }
         /**
@@ -59,7 +59,45 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder amazonCwClient(String amazonCwClient) {
-            setProperty("amazonCwClient", amazonCwClient);
+            doSetProperty("amazonCwClient", amazonCwClient);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default CwEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default CwEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -70,7 +108,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder name(String name) {
-            setProperty("name", name);
+            doSetProperty("name", name);
             return this;
         }
         /**
@@ -81,7 +119,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -92,7 +130,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -104,7 +142,30 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the CW client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: producer
+         */
+        default CwEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the CW client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default CwEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -118,7 +179,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder region(String region) {
-            setProperty("region", region);
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -129,7 +190,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder timestamp(Date timestamp) {
-            setProperty("timestamp", timestamp);
+            doSetProperty("timestamp", timestamp);
             return this;
         }
         /**
@@ -140,7 +201,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder timestamp(String timestamp) {
-            setProperty("timestamp", timestamp);
+            doSetProperty("timestamp", timestamp);
             return this;
         }
         /**
@@ -151,7 +212,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder unit(String unit) {
-            setProperty("unit", unit);
+            doSetProperty("unit", unit);
             return this;
         }
         /**
@@ -162,7 +223,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder value(Double value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -173,7 +234,7 @@ public interface CwEndpointBuilderFactory {
          * Group: producer
          */
         default CwEndpointBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -184,7 +245,7 @@ public interface CwEndpointBuilderFactory {
          * Group: security
          */
         default CwEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -195,7 +256,7 @@ public interface CwEndpointBuilderFactory {
          * Group: security
          */
         default CwEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -219,7 +280,7 @@ public interface CwEndpointBuilderFactory {
          */
         default AdvancedCwEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -232,7 +293,7 @@ public interface CwEndpointBuilderFactory {
          */
         default AdvancedCwEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -244,7 +305,7 @@ public interface CwEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCwEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -256,16 +317,24 @@ public interface CwEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedCwEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
+    }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
     }
     /**
      * AWS CloudWatch (camel-aws-cw)
      * The aws-cw component is used for sending metrics to an Amazon CloudWatch.
      * 
      * Category: cloud,monitoring
-     * Available as of version: 2.11
+     * Since: 2.11
      * Maven coordinates: org.apache.camel:camel-aws-cw
      * 
      * Syntax: <code>aws-cw:namespace</code>
@@ -273,7 +342,7 @@ public interface CwEndpointBuilderFactory {
      * Path parameter: namespace (required)
      * The metric namespace
      */
-    default CwEndpointBuilder cw(String path) {
+    default CwEndpointBuilder awsCw(String path) {
         class CwEndpointBuilderImpl extends AbstractEndpointBuilder implements CwEndpointBuilder, AdvancedCwEndpointBuilder {
             public CwEndpointBuilderImpl(String path) {
                 super("aws-cw", path);

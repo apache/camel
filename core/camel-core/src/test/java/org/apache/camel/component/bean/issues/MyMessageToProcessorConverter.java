@@ -22,9 +22,10 @@ import org.apache.camel.support.TypeConverterSupport;
 
 public class MyMessageToProcessorConverter extends TypeConverterSupport {
 
+    @Override
     @SuppressWarnings("unchecked")
     public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return (T) new Processor() {
+        return (T)new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Bye World");
             }

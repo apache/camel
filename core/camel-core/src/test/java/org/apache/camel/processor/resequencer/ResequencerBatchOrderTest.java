@@ -27,12 +27,11 @@ public class ResequencerBatchOrderTest extends ContextTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(ResequencerBatchOrderTest.class);
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .resequence(body()).batch().size(2).timeout(50)
-                    .to("mock:result");
+                from("direct:start").resequence(body()).batch().size(2).timeout(50).to("mock:result");
             }
         };
     }
@@ -59,7 +58,8 @@ public class ResequencerBatchOrderTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // because the order can change a bit depending when the resequencer trigger cut-off
+        // because the order can change a bit depending when the resequencer
+        // trigger cut-off
         // then the order can be a bit different
 
         String a = me.getExchanges().get(0).getIn().getBody(String.class);

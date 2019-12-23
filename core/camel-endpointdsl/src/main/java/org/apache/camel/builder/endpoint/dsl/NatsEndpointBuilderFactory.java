@@ -42,29 +42,6 @@ public interface NatsEndpointBuilderFactory {
             return (AdvancedNatsEndpointConsumerBuilder) this;
         }
         /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option is a: <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointConsumerBuilder connection(Object connection) {
-            setProperty("connection", connection);
-            return this;
-        }
-        /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option will be converted to a
-         * <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointConsumerBuilder connection(String connection) {
-            setProperty("connection", connection);
-            return this;
-        }
-        /**
          * Timeout for connection attempts. (in milliseconds).
          * 
          * The option is a: <code>int</code> type.
@@ -73,7 +50,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -85,11 +62,11 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -97,11 +74,11 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder flushConnection(
                 boolean flushConnection) {
-            setProperty("flushConnection", flushConnection);
+            doSetProperty("flushConnection", flushConnection);
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -109,7 +86,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder flushConnection(
                 String flushConnection) {
-            setProperty("flushConnection", flushConnection);
+            doSetProperty("flushConnection", flushConnection);
             return this;
         }
         /**
@@ -120,7 +97,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder flushTimeout(int flushTimeout) {
-            setProperty("flushTimeout", flushTimeout);
+            doSetProperty("flushTimeout", flushTimeout);
             return this;
         }
         /**
@@ -131,7 +108,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder flushTimeout(String flushTimeout) {
-            setProperty("flushTimeout", flushTimeout);
+            doSetProperty("flushTimeout", flushTimeout);
             return this;
         }
         /**
@@ -143,7 +120,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder maxPingsOut(int maxPingsOut) {
-            setProperty("maxPingsOut", maxPingsOut);
+            doSetProperty("maxPingsOut", maxPingsOut);
             return this;
         }
         /**
@@ -155,7 +132,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder maxPingsOut(String maxPingsOut) {
-            setProperty("maxPingsOut", maxPingsOut);
+            doSetProperty("maxPingsOut", maxPingsOut);
             return this;
         }
         /**
@@ -167,7 +144,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder maxReconnectAttempts(
                 int maxReconnectAttempts) {
-            setProperty("maxReconnectAttempts", maxReconnectAttempts);
+            doSetProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
         }
         /**
@@ -179,7 +156,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder maxReconnectAttempts(
                 String maxReconnectAttempts) {
-            setProperty("maxReconnectAttempts", maxReconnectAttempts);
+            doSetProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
         }
         /**
@@ -193,7 +170,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder noEcho(boolean noEcho) {
-            setProperty("noEcho", noEcho);
+            doSetProperty("noEcho", noEcho);
             return this;
         }
         /**
@@ -207,7 +184,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder noEcho(String noEcho) {
-            setProperty("noEcho", noEcho);
+            doSetProperty("noEcho", noEcho);
             return this;
         }
         /**
@@ -220,7 +197,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder noRandomizeServers(
                 boolean noRandomizeServers) {
-            setProperty("noRandomizeServers", noRandomizeServers);
+            doSetProperty("noRandomizeServers", noRandomizeServers);
             return this;
         }
         /**
@@ -233,7 +210,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder noRandomizeServers(
                 String noRandomizeServers) {
-            setProperty("noRandomizeServers", noRandomizeServers);
+            doSetProperty("noRandomizeServers", noRandomizeServers);
             return this;
         }
         /**
@@ -244,7 +221,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder pedantic(boolean pedantic) {
-            setProperty("pedantic", pedantic);
+            doSetProperty("pedantic", pedantic);
             return this;
         }
         /**
@@ -255,7 +232,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder pedantic(String pedantic) {
-            setProperty("pedantic", pedantic);
+            doSetProperty("pedantic", pedantic);
             return this;
         }
         /**
@@ -267,7 +244,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder pingInterval(int pingInterval) {
-            setProperty("pingInterval", pingInterval);
+            doSetProperty("pingInterval", pingInterval);
             return this;
         }
         /**
@@ -279,7 +256,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder pingInterval(String pingInterval) {
-            setProperty("pingInterval", pingInterval);
+            doSetProperty("pingInterval", pingInterval);
             return this;
         }
         /**
@@ -290,7 +267,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder reconnect(boolean reconnect) {
-            setProperty("reconnect", reconnect);
+            doSetProperty("reconnect", reconnect);
             return this;
         }
         /**
@@ -301,7 +278,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder reconnect(String reconnect) {
-            setProperty("reconnect", reconnect);
+            doSetProperty("reconnect", reconnect);
             return this;
         }
         /**
@@ -313,7 +290,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder reconnectTimeWait(
                 int reconnectTimeWait) {
-            setProperty("reconnectTimeWait", reconnectTimeWait);
+            doSetProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
         }
         /**
@@ -325,7 +302,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder reconnectTimeWait(
                 String reconnectTimeWait) {
-            setProperty("reconnectTimeWait", reconnectTimeWait);
+            doSetProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
         }
         /**
@@ -337,7 +314,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder requestCleanupInterval(
                 int requestCleanupInterval) {
-            setProperty("requestCleanupInterval", requestCleanupInterval);
+            doSetProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
         }
         /**
@@ -349,19 +326,19 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder requestCleanupInterval(
                 String requestCleanupInterval) {
-            setProperty("requestCleanupInterval", requestCleanupInterval);
+            doSetProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
         }
         /**
-         * The name of topic we want to use.
+         * URLs to one or more NAT servers. Use comma to separate URLs when
+         * specifying multiple servers.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          */
-        default NatsEndpointConsumerBuilder topic(String topic) {
-            setProperty("topic", topic);
+        default NatsEndpointConsumerBuilder servers(String servers) {
+            doSetProperty("servers", servers);
             return this;
         }
         /**
@@ -372,7 +349,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder verbose(boolean verbose) {
-            setProperty("verbose", verbose);
+            doSetProperty("verbose", verbose);
             return this;
         }
         /**
@@ -383,7 +360,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointConsumerBuilder verbose(String verbose) {
-            setProperty("verbose", verbose);
+            doSetProperty("verbose", verbose);
             return this;
         }
         /**
@@ -401,7 +378,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -419,7 +396,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -431,29 +408,29 @@ public interface NatsEndpointBuilderFactory {
          * Group: consumer
          */
         default NatsEndpointConsumerBuilder maxMessages(String maxMessages) {
-            setProperty("maxMessages", maxMessages);
+            doSetProperty("maxMessages", maxMessages);
             return this;
         }
         /**
-         * Consumer pool size.
+         * Consumer thread pool size (default is 10).
          * 
          * The option is a: <code>int</code> type.
          * 
          * Group: consumer
          */
         default NatsEndpointConsumerBuilder poolSize(int poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
-         * Consumer pool size.
+         * Consumer thread pool size (default is 10).
          * 
          * The option will be converted to a <code>int</code> type.
          * 
          * Group: consumer
          */
         default NatsEndpointConsumerBuilder poolSize(String poolSize) {
-            setProperty("poolSize", poolSize);
+            doSetProperty("poolSize", poolSize);
             return this;
         }
         /**
@@ -464,7 +441,31 @@ public interface NatsEndpointBuilderFactory {
          * Group: consumer
          */
         default NatsEndpointConsumerBuilder queueName(String queueName) {
-            setProperty("queueName", queueName);
+            doSetProperty("queueName", queueName);
+            return this;
+        }
+        /**
+         * Can be used to turn off sending back reply message in the consumer.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default NatsEndpointConsumerBuilder replyToDisabled(
+                boolean replyToDisabled) {
+            doSetProperty("replyToDisabled", replyToDisabled);
+            return this;
+        }
+        /**
+         * Can be used to turn off sending back reply message in the consumer.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default NatsEndpointConsumerBuilder replyToDisabled(
+                String replyToDisabled) {
+            doSetProperty("replyToDisabled", replyToDisabled);
             return this;
         }
         /**
@@ -475,7 +476,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: security
          */
         default NatsEndpointConsumerBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -486,7 +487,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: security
          */
         default NatsEndpointConsumerBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -499,7 +500,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -512,7 +513,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -539,7 +540,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -555,7 +556,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -567,7 +568,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -580,7 +581,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -593,7 +594,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -606,7 +607,30 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option is a: <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointConsumerBuilder connection(Object connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+        /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option will be converted to a
+         * <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointConsumerBuilder connection(String connection) {
+            doSetProperty("connection", connection);
             return this;
         }
         /**
@@ -619,7 +643,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -632,7 +656,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -647,29 +671,6 @@ public interface NatsEndpointBuilderFactory {
             return (AdvancedNatsEndpointProducerBuilder) this;
         }
         /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option is a: <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointProducerBuilder connection(Object connection) {
-            setProperty("connection", connection);
-            return this;
-        }
-        /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option will be converted to a
-         * <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointProducerBuilder connection(String connection) {
-            setProperty("connection", connection);
-            return this;
-        }
-        /**
          * Timeout for connection attempts. (in milliseconds).
          * 
          * The option is a: <code>int</code> type.
@@ -678,7 +679,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -690,11 +691,11 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -702,11 +703,11 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder flushConnection(
                 boolean flushConnection) {
-            setProperty("flushConnection", flushConnection);
+            doSetProperty("flushConnection", flushConnection);
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -714,7 +715,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder flushConnection(
                 String flushConnection) {
-            setProperty("flushConnection", flushConnection);
+            doSetProperty("flushConnection", flushConnection);
             return this;
         }
         /**
@@ -725,7 +726,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder flushTimeout(int flushTimeout) {
-            setProperty("flushTimeout", flushTimeout);
+            doSetProperty("flushTimeout", flushTimeout);
             return this;
         }
         /**
@@ -736,7 +737,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder flushTimeout(String flushTimeout) {
-            setProperty("flushTimeout", flushTimeout);
+            doSetProperty("flushTimeout", flushTimeout);
             return this;
         }
         /**
@@ -748,7 +749,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder maxPingsOut(int maxPingsOut) {
-            setProperty("maxPingsOut", maxPingsOut);
+            doSetProperty("maxPingsOut", maxPingsOut);
             return this;
         }
         /**
@@ -760,7 +761,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder maxPingsOut(String maxPingsOut) {
-            setProperty("maxPingsOut", maxPingsOut);
+            doSetProperty("maxPingsOut", maxPingsOut);
             return this;
         }
         /**
@@ -772,7 +773,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder maxReconnectAttempts(
                 int maxReconnectAttempts) {
-            setProperty("maxReconnectAttempts", maxReconnectAttempts);
+            doSetProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
         }
         /**
@@ -784,7 +785,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder maxReconnectAttempts(
                 String maxReconnectAttempts) {
-            setProperty("maxReconnectAttempts", maxReconnectAttempts);
+            doSetProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
         }
         /**
@@ -798,7 +799,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder noEcho(boolean noEcho) {
-            setProperty("noEcho", noEcho);
+            doSetProperty("noEcho", noEcho);
             return this;
         }
         /**
@@ -812,7 +813,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder noEcho(String noEcho) {
-            setProperty("noEcho", noEcho);
+            doSetProperty("noEcho", noEcho);
             return this;
         }
         /**
@@ -825,7 +826,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder noRandomizeServers(
                 boolean noRandomizeServers) {
-            setProperty("noRandomizeServers", noRandomizeServers);
+            doSetProperty("noRandomizeServers", noRandomizeServers);
             return this;
         }
         /**
@@ -838,7 +839,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder noRandomizeServers(
                 String noRandomizeServers) {
-            setProperty("noRandomizeServers", noRandomizeServers);
+            doSetProperty("noRandomizeServers", noRandomizeServers);
             return this;
         }
         /**
@@ -849,7 +850,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder pedantic(boolean pedantic) {
-            setProperty("pedantic", pedantic);
+            doSetProperty("pedantic", pedantic);
             return this;
         }
         /**
@@ -860,7 +861,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder pedantic(String pedantic) {
-            setProperty("pedantic", pedantic);
+            doSetProperty("pedantic", pedantic);
             return this;
         }
         /**
@@ -872,7 +873,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder pingInterval(int pingInterval) {
-            setProperty("pingInterval", pingInterval);
+            doSetProperty("pingInterval", pingInterval);
             return this;
         }
         /**
@@ -884,7 +885,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder pingInterval(String pingInterval) {
-            setProperty("pingInterval", pingInterval);
+            doSetProperty("pingInterval", pingInterval);
             return this;
         }
         /**
@@ -895,7 +896,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder reconnect(boolean reconnect) {
-            setProperty("reconnect", reconnect);
+            doSetProperty("reconnect", reconnect);
             return this;
         }
         /**
@@ -906,7 +907,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder reconnect(String reconnect) {
-            setProperty("reconnect", reconnect);
+            doSetProperty("reconnect", reconnect);
             return this;
         }
         /**
@@ -918,7 +919,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder reconnectTimeWait(
                 int reconnectTimeWait) {
-            setProperty("reconnectTimeWait", reconnectTimeWait);
+            doSetProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
         }
         /**
@@ -930,7 +931,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder reconnectTimeWait(
                 String reconnectTimeWait) {
-            setProperty("reconnectTimeWait", reconnectTimeWait);
+            doSetProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
         }
         /**
@@ -942,7 +943,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder requestCleanupInterval(
                 int requestCleanupInterval) {
-            setProperty("requestCleanupInterval", requestCleanupInterval);
+            doSetProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
         }
         /**
@@ -954,19 +955,19 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder requestCleanupInterval(
                 String requestCleanupInterval) {
-            setProperty("requestCleanupInterval", requestCleanupInterval);
+            doSetProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
         }
         /**
-         * The name of topic we want to use.
+         * URLs to one or more NAT servers. Use comma to separate URLs when
+         * specifying multiple servers.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          */
-        default NatsEndpointProducerBuilder topic(String topic) {
-            setProperty("topic", topic);
+        default NatsEndpointProducerBuilder servers(String servers) {
+            doSetProperty("servers", servers);
             return this;
         }
         /**
@@ -977,7 +978,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder verbose(boolean verbose) {
-            setProperty("verbose", verbose);
+            doSetProperty("verbose", verbose);
             return this;
         }
         /**
@@ -988,7 +989,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointProducerBuilder verbose(String verbose) {
-            setProperty("verbose", verbose);
+            doSetProperty("verbose", verbose);
             return this;
         }
         /**
@@ -1008,7 +1009,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1028,7 +1029,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1039,7 +1040,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: producer
          */
         default NatsEndpointProducerBuilder replySubject(String replySubject) {
-            setProperty("replySubject", replySubject);
+            doSetProperty("replySubject", replySubject);
             return this;
         }
         /**
@@ -1050,7 +1051,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: security
          */
         default NatsEndpointProducerBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -1061,7 +1062,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: security
          */
         default NatsEndpointProducerBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -1074,7 +1075,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1087,7 +1088,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1111,7 +1112,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1124,7 +1125,30 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option is a: <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointProducerBuilder connection(Object connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+        /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option will be converted to a
+         * <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointProducerBuilder connection(String connection) {
+            doSetProperty("connection", connection);
             return this;
         }
         /**
@@ -1137,7 +1161,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1150,7 +1174,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1165,29 +1189,6 @@ public interface NatsEndpointBuilderFactory {
             return (AdvancedNatsEndpointBuilder) this;
         }
         /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option is a: <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointBuilder connection(Object connection) {
-            setProperty("connection", connection);
-            return this;
-        }
-        /**
-         * Reference an already instantiated connection to Nats server.
-         * 
-         * The option will be converted to a
-         * <code>io.nats.client.Connection</code> type.
-         * 
-         * Group: common
-         */
-        default NatsEndpointBuilder connection(String connection) {
-            setProperty("connection", connection);
-            return this;
-        }
-        /**
          * Timeout for connection attempts. (in milliseconds).
          * 
          * The option is a: <code>int</code> type.
@@ -1195,7 +1196,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder connectionTimeout(int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1206,29 +1207,29 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder connectionTimeout(String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option is a: <code>boolean</code> type.
          * 
          * Group: common
          */
         default NatsEndpointBuilder flushConnection(boolean flushConnection) {
-            setProperty("flushConnection", flushConnection);
+            doSetProperty("flushConnection", flushConnection);
             return this;
         }
         /**
-         * Define if we want to flush connection or not.
+         * Define if we want to flush connection when stopping or not.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: common
          */
         default NatsEndpointBuilder flushConnection(String flushConnection) {
-            setProperty("flushConnection", flushConnection);
+            doSetProperty("flushConnection", flushConnection);
             return this;
         }
         /**
@@ -1239,7 +1240,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder flushTimeout(int flushTimeout) {
-            setProperty("flushTimeout", flushTimeout);
+            doSetProperty("flushTimeout", flushTimeout);
             return this;
         }
         /**
@@ -1250,7 +1251,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder flushTimeout(String flushTimeout) {
-            setProperty("flushTimeout", flushTimeout);
+            doSetProperty("flushTimeout", flushTimeout);
             return this;
         }
         /**
@@ -1262,7 +1263,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder maxPingsOut(int maxPingsOut) {
-            setProperty("maxPingsOut", maxPingsOut);
+            doSetProperty("maxPingsOut", maxPingsOut);
             return this;
         }
         /**
@@ -1274,7 +1275,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder maxPingsOut(String maxPingsOut) {
-            setProperty("maxPingsOut", maxPingsOut);
+            doSetProperty("maxPingsOut", maxPingsOut);
             return this;
         }
         /**
@@ -1286,7 +1287,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder maxReconnectAttempts(
                 int maxReconnectAttempts) {
-            setProperty("maxReconnectAttempts", maxReconnectAttempts);
+            doSetProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
         }
         /**
@@ -1298,7 +1299,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder maxReconnectAttempts(
                 String maxReconnectAttempts) {
-            setProperty("maxReconnectAttempts", maxReconnectAttempts);
+            doSetProperty("maxReconnectAttempts", maxReconnectAttempts);
             return this;
         }
         /**
@@ -1312,7 +1313,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder noEcho(boolean noEcho) {
-            setProperty("noEcho", noEcho);
+            doSetProperty("noEcho", noEcho);
             return this;
         }
         /**
@@ -1326,7 +1327,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder noEcho(String noEcho) {
-            setProperty("noEcho", noEcho);
+            doSetProperty("noEcho", noEcho);
             return this;
         }
         /**
@@ -1339,7 +1340,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder noRandomizeServers(
                 boolean noRandomizeServers) {
-            setProperty("noRandomizeServers", noRandomizeServers);
+            doSetProperty("noRandomizeServers", noRandomizeServers);
             return this;
         }
         /**
@@ -1351,7 +1352,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder noRandomizeServers(String noRandomizeServers) {
-            setProperty("noRandomizeServers", noRandomizeServers);
+            doSetProperty("noRandomizeServers", noRandomizeServers);
             return this;
         }
         /**
@@ -1362,7 +1363,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder pedantic(boolean pedantic) {
-            setProperty("pedantic", pedantic);
+            doSetProperty("pedantic", pedantic);
             return this;
         }
         /**
@@ -1373,7 +1374,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder pedantic(String pedantic) {
-            setProperty("pedantic", pedantic);
+            doSetProperty("pedantic", pedantic);
             return this;
         }
         /**
@@ -1385,7 +1386,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder pingInterval(int pingInterval) {
-            setProperty("pingInterval", pingInterval);
+            doSetProperty("pingInterval", pingInterval);
             return this;
         }
         /**
@@ -1397,7 +1398,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder pingInterval(String pingInterval) {
-            setProperty("pingInterval", pingInterval);
+            doSetProperty("pingInterval", pingInterval);
             return this;
         }
         /**
@@ -1408,7 +1409,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder reconnect(boolean reconnect) {
-            setProperty("reconnect", reconnect);
+            doSetProperty("reconnect", reconnect);
             return this;
         }
         /**
@@ -1419,7 +1420,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder reconnect(String reconnect) {
-            setProperty("reconnect", reconnect);
+            doSetProperty("reconnect", reconnect);
             return this;
         }
         /**
@@ -1430,7 +1431,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder reconnectTimeWait(int reconnectTimeWait) {
-            setProperty("reconnectTimeWait", reconnectTimeWait);
+            doSetProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
         }
         /**
@@ -1441,7 +1442,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder reconnectTimeWait(String reconnectTimeWait) {
-            setProperty("reconnectTimeWait", reconnectTimeWait);
+            doSetProperty("reconnectTimeWait", reconnectTimeWait);
             return this;
         }
         /**
@@ -1453,7 +1454,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder requestCleanupInterval(
                 int requestCleanupInterval) {
-            setProperty("requestCleanupInterval", requestCleanupInterval);
+            doSetProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
         }
         /**
@@ -1465,19 +1466,19 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder requestCleanupInterval(
                 String requestCleanupInterval) {
-            setProperty("requestCleanupInterval", requestCleanupInterval);
+            doSetProperty("requestCleanupInterval", requestCleanupInterval);
             return this;
         }
         /**
-         * The name of topic we want to use.
+         * URLs to one or more NAT servers. Use comma to separate URLs when
+         * specifying multiple servers.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Required: true
          * Group: common
          */
-        default NatsEndpointBuilder topic(String topic) {
-            setProperty("topic", topic);
+        default NatsEndpointBuilder servers(String servers) {
+            doSetProperty("servers", servers);
             return this;
         }
         /**
@@ -1488,7 +1489,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder verbose(boolean verbose) {
-            setProperty("verbose", verbose);
+            doSetProperty("verbose", verbose);
             return this;
         }
         /**
@@ -1499,7 +1500,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: common
          */
         default NatsEndpointBuilder verbose(String verbose) {
-            setProperty("verbose", verbose);
+            doSetProperty("verbose", verbose);
             return this;
         }
         /**
@@ -1510,7 +1511,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: security
          */
         default NatsEndpointBuilder secure(boolean secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -1521,7 +1522,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: security
          */
         default NatsEndpointBuilder secure(String secure) {
-            setProperty("secure", secure);
+            doSetProperty("secure", secure);
             return this;
         }
         /**
@@ -1534,7 +1535,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1547,7 +1548,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default NatsEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -1571,7 +1572,7 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1584,7 +1585,30 @@ public interface NatsEndpointBuilderFactory {
          */
         default AdvancedNatsEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option is a: <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointBuilder connection(Object connection) {
+            doSetProperty("connection", connection);
+            return this;
+        }
+        /**
+         * Reference an already instantiated connection to Nats server.
+         * 
+         * The option will be converted to a
+         * <code>io.nats.client.Connection</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedNatsEndpointBuilder connection(String connection) {
+            doSetProperty("connection", connection);
             return this;
         }
         /**
@@ -1596,7 +1620,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNatsEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1608,7 +1632,7 @@ public interface NatsEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedNatsEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1617,14 +1641,13 @@ public interface NatsEndpointBuilderFactory {
      * The nats component allows you produce and consume messages from NATS.
      * 
      * Category: messaging
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-nats
      * 
-     * Syntax: <code>nats:servers</code>
+     * Syntax: <code>nats:topic</code>
      * 
-     * Path parameter: servers (required)
-     * URLs to one or more NAT servers. Use comma to separate URLs when
-     * specifying multiple servers.
+     * Path parameter: topic (required)
+     * The name of topic we want to use
      */
     default NatsEndpointBuilder nats(String path) {
         class NatsEndpointBuilderImpl extends AbstractEndpointBuilder implements NatsEndpointBuilder, AdvancedNatsEndpointBuilder {

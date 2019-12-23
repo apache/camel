@@ -1,7 +1,11 @@
 [[aws-eks-component]]
-== AWS EKS Component
+= AWS EKS Component
 
-*Available as of Camel version 3.0*
+*Since Camel 3.0*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The EKS component supports create, delete, describe and list
 https://aws.amazon.com/eks/[AWS EKS] clusters instances.
@@ -12,7 +16,7 @@ You must have a valid Amazon Web Services developer account, and be
 signed up to use Amazon EKS. More information is available at
 https://aws.amazon.com/eks/[Amazon EKS].
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------
@@ -22,11 +26,11 @@ aws-eks://label[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
-The AWS EKS component supports 6 options, which are listed below.
+The AWS EKS component supports 7 options, which are listed below.
 
 
 
@@ -37,8 +41,9 @@ The AWS EKS component supports 6 options, which are listed below.
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *region* (producer) | The region in which EKS client needs to work |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -54,7 +59,7 @@ aws-eks:label
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -64,7 +69,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,6 +81,7 @@ with the following path and query parameters:
 | *operation* (producer) | *Required* The operation to perform |  | EKSOperations
 | *proxyHost* (producer) | To define a proxy host when instantiating the EKS client |  | String
 | *proxyPort* (producer) | To define a proxy port when instantiating the EKS client |  | Integer
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the EKS client | HTTPS | Protocol
 | *region* (producer) | The region in which EKS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -83,14 +89,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-aws-eks-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -98,7 +104,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 13 options, which are listed below.
+The component supports 15 options, which are listed below.
 
 
 
@@ -107,16 +113,18 @@ The component supports 13 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-eks.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-eks.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-eks.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.aws-eks.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-eks.configuration.eks-client* | To use a existing configured AWS EKS as client |  | AmazonEKS
 | *camel.component.aws-eks.configuration.operation* | The operation to perform |  | EKSOperations
 | *camel.component.aws-eks.configuration.proxy-host* | To define a proxy host when instantiating the EKS client |  | String
 | *camel.component.aws-eks.configuration.proxy-port* | To define a proxy port when instantiating the EKS client |  | Integer
+| *camel.component.aws-eks.configuration.proxy-protocol* | To define a proxy protocol when instantiating the EKS client |  | Protocol
 | *camel.component.aws-eks.configuration.region* | The region in which EKS client needs to work. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-eks.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-eks.enabled* | Whether to enable auto configuration of the aws-eks component. This is enabled by default. |  | Boolean
+| *camel.component.aws-eks.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.aws-eks.region* | The region in which EKS client needs to work |  | String
-| *camel.component.aws-eks.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-eks.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END
@@ -130,9 +138,9 @@ You have to provide the amazonEKSClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/eks/[Amazon EKS] service.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the EKS producer
+=== Message headers evaluated by the EKS producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -151,7 +159,7 @@ the https://aws.amazon.com/eks/[Amazon EKS] service.
 |`CamelAwsEKSVPCConfig` |`VPCConfigRequest` |The VPC config for the creations of an EKS cluster
 |=======================================================================
 
-#### EKS Producer operations
+=== EKS Producer operations
 
 Camel-AWS EKS component provides the following operation on the producer side:
 
@@ -160,7 +168,17 @@ Camel-AWS EKS component provides the following operation on the producer side:
 - describeCluster
 - deleteCluster
 
-### Automatic detection of AmazonEKS client in registry
+== Producer Examples
+
+- listClusters: this operation will list the available clusters in EKS
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listClusters")
+    .to("aws-eks://test?ecsClient=#amazonEksClient&operation=listClusters")
+--------------------------------------------------------------------------------
+
+== Automatic detection of AmazonEKS client in registry
 
 The component is capable of detecting the presence of an AmazonEKS bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
@@ -181,13 +199,5 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `\${camel-version}` must be replaced by the actual version of Camel.
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

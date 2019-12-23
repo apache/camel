@@ -1,0 +1,170 @@
+[[loop-eip]]
+= Loop EIP
+
+The Loop allows for processing a message a number of times, possibly in a different way for each iteration. Useful mostly during testing.
+
+[NOTE]
+.Default mode
+===
+Notice by default the loop uses the same exchange throughout the looping. So the result from the previous iteration will be used for the next (eg Pipes and Filters). You can enable copy mode instead. See the options table for more details.
+===
+
+== Options
+
+// eip options: START
+The Loop EIP supports 2 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *copy* | If the copy attribute is true, a copy of the input Exchange is used for each iteration. That means each iteration will start from a copy of the same message. By default loop will loop the same exchange all over, so each iteration may have different message content. | false | Boolean
+| *doWhile* | Enables the while loop that loops until the predicate evaluates to false or null. | false | Boolean
+|===
+// eip options: END
+
+
+== Exchange properties
+
+For each iteration two properties are set on the Exchange. Processors can rely on these properties to process the Message in different ways.
+
+[width="100%",cols="3,6",options="header"]
+|===
+| Property | Description
+| CamelLoopSize | Total number of loops. This is not available if running the loop in while loop mode.
+| CamelLoopIndex | Index of the current iteration (0 based)
+|===
+
+== Samples
+The following example shows how to take a request from the *direct:x* endpoint, then send the message repetitively to *mock:result*. The number of times the message is sent is either passed as an argument to `loop()`, or determined at runtime by evaluating an expression. The expression *must* evaluate to an int, otherwise a `RuntimeCamelException` is thrown.
+
+Pass loop count as an argument
+[source,java]
+----
+from("direct:a")
+    .loop(8)
+        .to("mock:result");
+----
+
+Use expression to determine loop count
+[source,java]
+----
+from("direct:b")
+    .loop(header("loop"))
+        .to("mock:result");
+----
+
+Use expression to determine loop count
+[source,java]
+----
+from("direct:c")
+    .loop(xpath("/hello/@times"))
+        .to("mock:result");
+----
+
+And examples in XML:
+
+Pass loop count as an argument
+[source,xml]
+----
+<route>
+  <from uri="direct:a"/>
+  <loop>
+    <constant>8</constant>
+    <to uri="mock:result"/>
+  </loop>
+</route>
+----
+
+Use expression to determine loop count
+[source,xml]
+----
+<route>
+  <from uri="direct:b"/>
+  <loop>
+    <header>loop</header>
+    <to uri="mock:result"/>
+  </loop>
+</route>
+----
+
+== Using copy mode
+
+Now suppose we send a message to "direct:start" endpoint containing the letter A. +
+The output of processing this route will be that, each "mock:loop" endpoint will receive "AB" as message.
+
+[source,java]
+----
+from("direct:start")
+    // instruct loop to use copy mode, which mean it will use a copy of the input exchange
+    // for each loop iteration, instead of keep using the same exchange all over
+    .loop(3).copy()
+        .transform(body().append("B"))
+        .to("mock:loop")
+    .end() // end loop
+    .to("mock:result");
+----
+
+However if we do *not* enable copy mode then "mock:loop" will receive "AB", "ABB", "ABBB", etc. messages.
+
+[source,java]
+----
+from("direct:start")
+    // by default loop will keep using the same exchange so on the 2nd and 3rd iteration its
+    // the same exchange that was previous used that are being looped all over
+    .loop(3)
+        .transform(body().append("B"))
+        .to("mock:loop")
+    .end() // end loop
+    .to("mock:result");
+----
+
+The equivalent example in XML DSL in copy mode is as follows:
+
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <!-- enable copy mode for loop eip -->
+  <loop copy="true">
+    <constant>3</constant>
+    <transform>
+      <simple>${body}B</simple>
+    </transform>
+    <to uri="mock:loop"/>
+  </loop>
+  <to uri="mock:result"/>
+</route>
+----
+
+== Using while mode
+
+The loop can act like a while loop that loops until the expression evaluates to false or null. +
+For example the route below loops while the length of the message body is 5 or less characters. Notice that the DSL uses *loopDoWhile*.
+
+[source,java]
+----
+from("direct:start")
+    .loopDoWhile(simple("${body.length} <= 5"))
+        .to("mock:loop")
+        .transform(body().append("A"))
+    .end() // end loop
+    .to("mock:result");
+----
+
+And the same example in XML:
+[source,xml]
+----
+<route>
+  <from uri="direct:start"/>
+  <loop doWhile="true">
+    <simple>${body.length} &lt;= 5</simple>
+    <to uri="mock:loop"/>
+    <transform>
+      <simple>A${body}</simple>
+    </transform>
+  </loop>
+  <to uri="mock:result"/>
+</route>
+----
+
+Notice in XML that the while loop is turned on using the *doWhile* attribute.

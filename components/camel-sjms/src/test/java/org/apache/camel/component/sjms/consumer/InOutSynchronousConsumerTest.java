@@ -36,6 +36,7 @@ public class InOutSynchronousConsumerTest extends JmsTestSupport {
         assertTrue("Should use same threads", beforeThreadName.equalsIgnoreCase(afterThreadName));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.docker.consumer;
 
-import java.util.Date;
-
 import com.github.dockerjava.api.command.EventsCmd;
 import com.github.dockerjava.api.model.Event;
 import com.github.dockerjava.core.command.EventsResultCallback;
@@ -80,6 +78,7 @@ public class DockerEventsConsumer extends DefaultConsumer {
 
     protected class EventsCallback extends EventsResultCallback {
 
+        @Override
         public void onNext(Event event) {
             log.debug("Received Docker Event: {}", event);
 

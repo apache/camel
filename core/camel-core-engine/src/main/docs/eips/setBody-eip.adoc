@@ -1,0 +1,39 @@
+[[setBody-eip]]
+= Set Body EIP
+
+The SetBody EIP allows you to set the body of your exchange.
+
+== Options
+
+// eip options: START
+The Set Body EIP has no options.
+// eip options: END
+
+== Examples
+
+The following example shows how to use the SetBody EIP
+
+[source,java]
+----
+RouteBuilder builder = new RouteBuilder() {
+    public void configure() {
+        from("direct:a")
+            .setBody(constant("test"))
+            .to("direct:b");
+    }
+};
+----
+
+
+And the same example using XML:
+
+[source,xml]
+----
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="direct:a"/>
+        <setBody><constant>test</constant></setBody>
+        <to uri="direct:b"/>
+    </route>
+</camelContext>
+----

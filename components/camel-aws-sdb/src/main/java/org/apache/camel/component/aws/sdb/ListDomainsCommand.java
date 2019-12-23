@@ -19,7 +19,6 @@ package org.apache.camel.component.aws.sdb;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.ListDomainsRequest;
 import com.amazonaws.services.simpledb.model.ListDomainsResult;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 
@@ -29,6 +28,7 @@ public class ListDomainsCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         ListDomainsRequest request = new ListDomainsRequest()
             .withMaxNumberOfDomains(determineMaxNumberOfDomains())

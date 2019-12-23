@@ -25,7 +25,6 @@ import java.util.Map;
 import com.box.sdk.BoxAPIConnection;
 import com.box.sdk.BoxComment;
 import com.box.sdk.BoxFolder;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.box.api.BoxCommentsManager;
 import org.apache.camel.component.box.internal.BoxApiCollection;

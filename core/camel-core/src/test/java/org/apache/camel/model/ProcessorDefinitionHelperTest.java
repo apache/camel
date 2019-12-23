@@ -45,12 +45,8 @@ public class ProcessorDefinitionHelperTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(header("foo")).id("whenfoo").to("mock:foo").id("foo")
-                        .when(header("bar")).id("whenbar").to("mock:bar").id("bar")
-                    .otherwise()
-                        .to("mock:baz").id("baz");
+                from("direct:start").choice().when(header("foo")).id("whenfoo").to("mock:foo").id("foo").when(header("bar")).id("whenbar").to("mock:bar").id("bar").otherwise()
+                    .to("mock:baz").id("baz");
             }
         };
     }

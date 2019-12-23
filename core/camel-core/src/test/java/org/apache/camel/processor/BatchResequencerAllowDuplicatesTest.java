@@ -47,9 +47,9 @@ public class BatchResequencerAllowDuplicatesTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // allow duplicates which means messages with same id is retained
-                    .resequence(header("id")).allowDuplicates()
-                    .to("mock:result");
+                    // allow duplicates which means messages with same id is
+                    // retained
+                    .resequence(header("id")).allowDuplicates().to("mock:result");
                 // END SNIPPET: e1
             }
         };

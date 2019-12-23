@@ -48,15 +48,8 @@ public class BeanMethodNameHeaderIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .bean(BeanMethodNameHeaderIssueTest.class)
-                    .to("mock:a")
-                    .bean(BeanMethodNameHeaderIssueTest.class, "bar")
-                    .to("mock:b")
-                    .bean(BeanMethodNameHeaderIssueTest.class)
-                    .to("mock:c")
-                    .setHeader(Exchange.BEAN_METHOD_NAME, constant("echo"))
-                    .bean(BeanMethodNameHeaderIssueTest.class)
+                from("direct:start").bean(BeanMethodNameHeaderIssueTest.class).to("mock:a").bean(BeanMethodNameHeaderIssueTest.class, "bar").to("mock:b")
+                    .bean(BeanMethodNameHeaderIssueTest.class).to("mock:c").setHeader(Exchange.BEAN_METHOD_NAME, constant("echo")).bean(BeanMethodNameHeaderIssueTest.class)
                     .to("mock:d");
             }
         };

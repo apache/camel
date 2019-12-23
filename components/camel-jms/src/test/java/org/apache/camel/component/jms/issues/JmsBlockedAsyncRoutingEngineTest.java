@@ -76,6 +76,7 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         broker.start();
     }
     
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         startBroker();
@@ -111,6 +112,7 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         LOG.info(">>>>> Latch countdown count was: " + latch.getCount());
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

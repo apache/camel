@@ -32,8 +32,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
@@ -142,27 +142,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
     protected Iterator<ProducerRecord> createRecorder(Exchange exchange) throws Exception {
         String topic = endpoint.getConfiguration().getTopic();
 
-        if (!endpoint.getConfiguration().isBridgeEndpoint()) {
-            String headerTopic = exchange.getIn().getHeader(KafkaConstants.TOPIC, String.class);
-            boolean allowHeader = true;
-
-            // when we do not bridge then detect if we try to send back to ourselves
-            // which we most likely do not want to do
-            if (headerTopic != null && endpoint.getConfiguration().isCircularTopicDetection()) {
-                Endpoint from = exchange.getFromEndpoint();
-                if (from instanceof KafkaEndpoint) {
-                    String fromTopic = ((KafkaEndpoint) from).getConfiguration().getTopic();
-                    allowHeader = !headerTopic.equals(fromTopic);
-                    if (!allowHeader) {
-                        log.debug("Circular topic detected from message header."
-                                + " Cannot send to same topic as the message comes from: {}"
-                                + ". Will use endpoint configured topic: {}", from, topic);
-                    }
-                }
-            }
-            if (allowHeader && headerTopic != null) {
-                topic = headerTopic;
-            }
+        // must remove header so its not propagated
+        Object overrideTopic = exchange.getIn().removeHeader(KafkaConstants.OVERRIDE_TOPIC);
+        if (overrideTopic != null) {
+            log.debug("Using override topic: {}", overrideTopic);
+            topic = overrideTopic.toString();
         }
 
         if (topic == null) {
@@ -207,14 +191,24 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 public ProducerRecord next() {
                     // must convert each entry of the iterator into the value according to the serializer
                     Object next = msgList.next();
+                    String innerTopic = msgTopic;
+
+                    if (next instanceof Exchange && ((Exchange) next).getIn().getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
+                        innerTopic = (String) ((Exchange) next).getIn().removeHeader(KafkaConstants.OVERRIDE_TOPIC);
+                    }
+
+                    if (next instanceof Message && ((Message) next).getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
+                        innerTopic = (String) ((Message) next).removeHeader(KafkaConstants.OVERRIDE_TOPIC);
+                    }
+
                     Object value = tryConvertToSerializedType(exchange, next, endpoint.getConfiguration().getSerializerClass());
 
                     if (hasPartitionKey && hasMessageKey) {
-                        return new ProducerRecord(msgTopic, partitionKey, null, key, value, propagatedHeaders);
+                        return new ProducerRecord(innerTopic, partitionKey, null, key, value, propagatedHeaders);
                     } else if (hasMessageKey) {
-                        return new ProducerRecord(msgTopic, null, null, key, value, propagatedHeaders);
+                        return new ProducerRecord(innerTopic, null, null, key, value, propagatedHeaders);
                     } else {
-                        return new ProducerRecord(msgTopic, null, null, null, value, propagatedHeaders);
+                        return new ProducerRecord(innerTopic, null, null, null, value, propagatedHeaders);
                     }
                 }
 

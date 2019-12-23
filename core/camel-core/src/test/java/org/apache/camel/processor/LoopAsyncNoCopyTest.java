@@ -39,15 +39,11 @@ public class LoopAsyncNoCopyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("direct:start")
-                    // by default loop will keep using the same exchange so on the 2nd and 3rd iteration its
-                    // the same exchange that was previous used that are being looped all over
-                    .loop(3)
-                        .threads(1)
-                            .transform(body().append("B"))
-                        .end()
-                        .to("mock:loop")
-                    .end()
-                    .to("mock:result");
+                    // by default loop will keep using the same exchange so on
+                    // the 2nd and 3rd iteration its
+                    // the same exchange that was previous used that are being
+                    // looped all over
+                    .loop(3).threads(1).transform(body().append("B")).end().to("mock:loop").end().to("mock:result");
                 // END SNIPPET: e1
             }
         };

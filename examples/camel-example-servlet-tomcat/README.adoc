@@ -1,0 +1,44 @@
+== Camel Servlet and Apache Tomcat example
+
+=== Introduction
+
+An example which shows how to use the Camel Servlet with Apache Tomcat.
+
+=== Build
+
+You will need to package this example first:
+
+....
+mvn package
+....
+
+=== Run
+
+To run the example deploy it in Apache Tomcat by copying the `+.war+` to
+the deploy folder of Apache Tomcat.
+
+And then hit this url from a webbrowser which has further instructions
+
+....
+http://localhost:8080/camel-example-servlet-tomcat
+....
+
+http://localhost:8080/camel-example-servlet-tomcat
+
+The servlet is located at
+
+....
+http://localhost:8080/camel-example-servlet-tomcat/camel/hello
+....
+
+http://localhost:8080/camel-example-servlet-tomcat/camel/hello
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

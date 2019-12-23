@@ -45,7 +45,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder allowCompression(Boolean allowCompression) {
-            setProperty("allowCompression", allowCompression);
+            doSetProperty("allowCompression", allowCompression);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder allowCompression(String allowCompression) {
-            setProperty("allowCompression", allowCompression);
+            doSetProperty("allowCompression", allowCompression);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder connectionTimeout(Integer connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder connectionTimeout(String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -92,7 +92,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder defaultMaxConnectionsPerHost(
                 Integer defaultMaxConnectionsPerHost) {
-            setProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
+            doSetProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
             return this;
         }
         /**
@@ -105,7 +105,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder defaultMaxConnectionsPerHost(
                 String defaultMaxConnectionsPerHost) {
-            setProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
+            doSetProperty("defaultMaxConnectionsPerHost", defaultMaxConnectionsPerHost);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder followRedirects(Boolean followRedirects) {
-            setProperty("followRedirects", followRedirects);
+            doSetProperty("followRedirects", followRedirects);
             return this;
         }
         /**
@@ -128,7 +128,45 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder followRedirects(String followRedirects) {
-            setProperty("followRedirects", followRedirects);
+            doSetProperty("followRedirects", followRedirects);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SolrEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SolrEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -140,7 +178,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder maxRetries(Integer maxRetries) {
-            setProperty("maxRetries", maxRetries);
+            doSetProperty("maxRetries", maxRetries);
             return this;
         }
         /**
@@ -153,7 +191,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder maxRetries(String maxRetries) {
-            setProperty("maxRetries", maxRetries);
+            doSetProperty("maxRetries", maxRetries);
             return this;
         }
         /**
@@ -165,7 +203,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder maxTotalConnections(
                 Integer maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -178,7 +216,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -189,7 +227,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder requestHandler(String requestHandler) {
-            setProperty("requestHandler", requestHandler);
+            doSetProperty("requestHandler", requestHandler);
             return this;
         }
         /**
@@ -201,7 +239,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder soTimeout(Integer soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -214,7 +252,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder soTimeout(String soTimeout) {
-            setProperty("soTimeout", soTimeout);
+            doSetProperty("soTimeout", soTimeout);
             return this;
         }
         /**
@@ -225,7 +263,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder streamingQueueSize(int streamingQueueSize) {
-            setProperty("streamingQueueSize", streamingQueueSize);
+            doSetProperty("streamingQueueSize", streamingQueueSize);
             return this;
         }
         /**
@@ -236,7 +274,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: producer
          */
         default SolrEndpointBuilder streamingQueueSize(String streamingQueueSize) {
-            setProperty("streamingQueueSize", streamingQueueSize);
+            doSetProperty("streamingQueueSize", streamingQueueSize);
             return this;
         }
         /**
@@ -248,7 +286,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder streamingThreadCount(
                 int streamingThreadCount) {
-            setProperty("streamingThreadCount", streamingThreadCount);
+            doSetProperty("streamingThreadCount", streamingThreadCount);
             return this;
         }
         /**
@@ -260,7 +298,29 @@ public interface SolrEndpointBuilderFactory {
          */
         default SolrEndpointBuilder streamingThreadCount(
                 String streamingThreadCount) {
-            setProperty("streamingThreadCount", streamingThreadCount);
+            doSetProperty("streamingThreadCount", streamingThreadCount);
+            return this;
+        }
+        /**
+         * Sets password for basic auth plugin enabled servers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SolrEndpointBuilder password(String password) {
+            doSetProperty("password", password);
+            return this;
+        }
+        /**
+         * Sets username for basic auth plugin enabled servers.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SolrEndpointBuilder username(String username) {
+            doSetProperty("username", username);
             return this;
         }
         /**
@@ -271,7 +331,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: solrCloud
          */
         default SolrEndpointBuilder collection(String collection) {
-            setProperty("collection", collection);
+            doSetProperty("collection", collection);
             return this;
         }
         /**
@@ -283,7 +343,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: solrCloud
          */
         default SolrEndpointBuilder zkHost(String zkHost) {
-            setProperty("zkHost", zkHost);
+            doSetProperty("zkHost", zkHost);
             return this;
         }
     }
@@ -307,7 +367,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default AdvancedSolrEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -320,7 +380,7 @@ public interface SolrEndpointBuilderFactory {
          */
         default AdvancedSolrEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -332,7 +392,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSolrEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -344,7 +404,7 @@ public interface SolrEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSolrEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -354,7 +414,7 @@ public interface SolrEndpointBuilderFactory {
      * server.
      * 
      * Category: monitoring,search
-     * Available as of version: 2.9
+     * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-solr
      * 
      * Syntax: <code>solr:url</code>
@@ -363,11 +423,57 @@ public interface SolrEndpointBuilderFactory {
      * Hostname and port for the solr server
      */
     default SolrEndpointBuilder solr(String path) {
+        return solr("solr", path);
+    }
+    /**
+     * Solr (camel-solr)
+     * The solr component allows you to interface with an Apache Lucene Solr
+     * server.
+     * 
+     * Category: monitoring,search
+     * Since: 2.9
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solrCloud:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the solr server
+     */
+    default SolrEndpointBuilder solrCloud(String path) {
+        return solr("solrCloud", path);
+    }
+    /**
+     * Solr (Secure) (camel-solr)
+     * The solr component allows you to interface with an Apache Lucene Solr
+     * server.
+     * 
+     * Category: monitoring,search
+     * Since: 2.9
+     * Maven coordinates: org.apache.camel:camel-solr
+     * 
+     * Syntax: <code>solrs:url</code>
+     * 
+     * Path parameter: url (required)
+     * Hostname and port for the solr server
+     */
+    default SolrEndpointBuilder solrs(String path) {
+        return solr("solrs", path);
+    }
+    /**
+     * Solr (camel-solr)
+     * The solr component allows you to interface with an Apache Lucene Solr
+     * server.
+     * 
+     * Category: monitoring,search
+     * Since: 2.9
+     * Maven coordinates: org.apache.camel:camel-solr
+     */
+    default SolrEndpointBuilder solr(String scheme, String path) {
         class SolrEndpointBuilderImpl extends AbstractEndpointBuilder implements SolrEndpointBuilder, AdvancedSolrEndpointBuilder {
-            public SolrEndpointBuilderImpl(String path) {
-                super("solr", path);
+            public SolrEndpointBuilderImpl(String scheme, String path) {
+                super(scheme, path);
             }
         }
-        return new SolrEndpointBuilderImpl(path);
+        return new SolrEndpointBuilderImpl(scheme, path);
     }
 }

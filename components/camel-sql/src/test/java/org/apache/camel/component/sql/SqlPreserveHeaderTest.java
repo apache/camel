@@ -41,6 +41,7 @@ public class SqlPreserveHeaderTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -49,6 +50,7 @@ public class SqlPreserveHeaderTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

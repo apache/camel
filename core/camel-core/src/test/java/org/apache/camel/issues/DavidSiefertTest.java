@@ -60,10 +60,11 @@ public class DavidSiefertTest extends ContextTestSupport {
     }
 
     public static class MyProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().getBody(String.class);
 
-            Message output = exchange.getOut();
+            Message output = exchange.getMessage();
             output.setHeader("sample.name", "myValue");
             output.setBody(expectedBody);
         }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.xslt;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.transform.URIResolver;
@@ -26,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
 
 /**
@@ -39,16 +36,12 @@ public class XsltComponent extends DefaultComponent {
     private URIResolver uriResolver;
     @Metadata(label = "advanced")
     private XsltUriResolverFactory uriResolverFactory;
-    @Metadata(label = "advanced")
-    private Object saxonConfiguration;
-    @Metadata(label = "advanced")
-    private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
-    @Metadata(label = "advanced", javaType = "java.lang.String")
-    private List<Object> saxonExtensionFunctions;
     @Metadata(defaultValue = "true")
     private boolean contentCache = true;
-    @Metadata
-    private boolean saxon;
+    @Metadata(label = "advanced")
+    private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
+    @Metadata(label = "advanced")
+    private String transformerFactoryClass;
 
     public XsltComponent() {
     }
@@ -88,81 +81,51 @@ public class XsltComponent extends DefaultComponent {
         this.contentCache = contentCache;
     }
 
-    public boolean isSaxon() {
-        return saxon;
+    public TransformerFactoryConfigurationStrategy getTransformerFactoryConfigurationStrategy() {
+        return transformerFactoryConfigurationStrategy;
     }
 
     /**
-     * Whether to use Saxon as the transformerFactoryClass.
-     * If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
+     * A configuration strategy to apply on freshly created instances of TransformerFactory.
      */
-    public void setSaxon(boolean saxon) {
-        this.saxon = saxon;
+    public void setTransformerFactoryConfigurationStrategy(
+            TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
+        this.transformerFactoryConfigurationStrategy = transformerFactoryConfigurationStrategy;
     }
 
-    public List<Object> getSaxonExtensionFunctions() {
-        return saxonExtensionFunctions;
+    public String getTransformerFactoryClass() {
+        return transformerFactoryClass;
     }
 
     /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
+     * To use a custom XSLT transformer factory, specified as a FQN class name
      */
-    public void setSaxonExtensionFunctions(List<Object> extensionFunctions) {
-        this.saxonExtensionFunctions = extensionFunctions;
-    }
-
-    /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
-     */
-    public void setSaxonExtensionFunctions(String extensionFunctions) {
-        this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
-            getCamelContext(),
-            extensionFunctions,
-            Object.class
-        );
-    }
-
-    public Object getSaxonConfiguration() {
-        return saxonConfiguration;
-    }
-
-    /**
-     * To use a custom Saxon configuration
-     */
-    public void setSaxonConfiguration(Object saxonConfiguration) {
-        this.saxonConfiguration = saxonConfiguration;
-    }
-
-    public Map<String, Object> getSaxonConfigurationProperties() {
-        return saxonConfigurationProperties;
-    }
-
-    /**
-     * To set custom Saxon configuration properties
-     */
-    public void setSaxonConfigurationProperties(Map<String, Object> configurationProperties) {
-        this.saxonConfigurationProperties = configurationProperties;
+    public void setTransformerFactoryClass(String transformerFactoryClass) {
+        this.transformerFactoryClass = transformerFactoryClass;
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, final String remaining, Map<String, Object> parameters) throws Exception {
-        XsltEndpoint endpoint = new XsltEndpoint(uri, this);
-        endpoint.setContentCache(isContentCache());
-        endpoint.setSaxon(isSaxon());
-        endpoint.setSaxonConfiguration(saxonConfiguration);
-        endpoint.setSaxonConfigurationProperties(saxonConfigurationProperties);
-        endpoint.setSaxonExtensionFunctions(saxonExtensionFunctions);
+        XsltEndpoint endpoint = createXsltEndpoint(uri);
+        configureEndpoint(endpoint, remaining, parameters);
+
+        return endpoint;
+    }
+
+    protected XsltEndpoint createXsltEndpoint(String uri) {
+        return new XsltEndpoint(uri, this);
+    }
+
+    protected void configureEndpoint(Endpoint endpoint, final String remaining, Map<String, Object> parameters) throws Exception {
+        XsltEndpoint xslt = (XsltEndpoint) endpoint;
+        xslt.setContentCache(isContentCache());
 
         // lookup custom resolver to use
         URIResolver resolver = resolveAndRemoveReferenceParameter(parameters, "uriResolver", URIResolver.class);
         if (resolver == null) {
             // not in endpoint then use component specific resolver
             resolver = getUriResolver();
-        }       
+        }
         if (resolver == null) {
             // lookup custom resolver factory to use
             XsltUriResolverFactory resolverFactory = resolveAndRemoveReferenceParameter(parameters, "uriResolverFactory", XsltUriResolverFactory.class);
@@ -174,10 +137,10 @@ public class XsltComponent extends DefaultComponent {
                 // fallback to use the Default URI resolver factory
                 resolverFactory = new DefaultXsltUriResolverFactory();
             }
-            
+
             resolver = resolverFactory.createUriResolver(getCamelContext(), remaining);
         }
-        endpoint.setUriResolver(resolver);
+        xslt.setUriResolver(resolver);
 
         setProperties(endpoint, parameters);
 
@@ -187,14 +150,11 @@ public class XsltComponent extends DefaultComponent {
             resourceUri = ResourceHelper.appendParameters(resourceUri, parameters);
         }
         log.debug("{} using schema resource: {}", this, resourceUri);
-        endpoint.setResourceUri(resourceUri);
+        xslt.setResourceUri(resourceUri);
 
         if (!parameters.isEmpty()) {
             // additional parameters need to be stored on endpoint as they can be used to configure xslt builder additionally
-            endpoint.setParameters(parameters);
+            xslt.setParameters(parameters);
         }
-
-        return endpoint;
     }
-
 }

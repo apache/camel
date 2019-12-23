@@ -37,6 +37,7 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     private static int port1 = CXFTestSupport.getPort1(); 
     
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         final Processor testProcessor = new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -48,7 +49,7 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
             public void process(Exchange exchange) throws Exception {
                 // do something else with the request properties as usual
                 // do something else with the response
-                exchange.getOut().getBody(Customer.class).setId(246);
+                exchange.getMessage().getBody(Customer.class).setId(246);
             }  
         };
         return new RouteBuilder() {

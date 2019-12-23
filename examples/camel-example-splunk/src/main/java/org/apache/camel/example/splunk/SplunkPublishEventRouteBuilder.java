@@ -17,7 +17,6 @@
 package org.apache.camel.example.splunk;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 
 public class SplunkPublishEventRouteBuilder extends RouteBuilder {
@@ -27,8 +26,7 @@ public class SplunkPublishEventRouteBuilder extends RouteBuilder {
         log.info("About to start route: direct --> Splunk Server");
 
         // configure properties component
-        PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
-        pc.setLocation("classpath:application.properties");
+        getContext().getPropertiesComponent().setLocation("classpath:application.properties");
 
         from("direct:start")
                 .convertBodyTo(SplunkEvent.class)

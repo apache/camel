@@ -1,7 +1,12 @@
 [[mybatis-component]]
-== MyBatis Component
+= MyBatis Component
+:page-source: components/camel-mybatis/src/main/docs/mybatis-component.adoc
 
-*Available as of Camel version 2.7*
+*Since Camel 2.7*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The MyBatis component allows you to query, poll, insert, update and
 delete data in a relational database using http://mybatis.org/[MyBatis].
@@ -19,7 +24,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source,text]
 ----
@@ -39,10 +44,10 @@ the root of the classpath with the expected name of
  If the file is located in another location, you will need to configure
 the `configurationUri` option on the `MyBatisComponent` component.
 
-=== Options
+== Options
 
 // component options: START
-The MyBatis component supports 4 options, which are listed below.
+The MyBatis component supports 5 options, which are listed below.
 
 
 
@@ -51,8 +56,9 @@ The MyBatis component supports 4 options, which are listed below.
 | Name | Description | Default | Type
 | *sqlSessionFactory* (advanced) | To use the SqlSessionFactory |  | SqlSessionFactory
 | *configurationUri* (common) | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -66,7 +72,7 @@ mybatis:statement
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -76,7 +82,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (31 parameters):
+=== Query Parameters (32 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,8 +97,8 @@ with the following path and query parameters:
 | *useIterator* (consumer) | Process resultset individually or as a list | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
-| *processingStrategy* (consumer) | To use a custom MyBatisProcessingStrategy |  | MyBatisProcessing Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
+| *processingStrategy* (consumer) | To use a custom MyBatisProcessingStrategy |  | MyBatisProcessingStrategy
 | *executorType* (producer) | The executor type to be used while executing statements. simple - executor does nothing special. reuse - executor reuses prepared statements. batch - executor reuses statements and batches updates. | SIMPLE | ExecutorType
 | *inputHeader* (producer) | User the header value for input parameters instead of the message body. By default, inputHeader == null and the input parameters are taken from the message body. If outputHeader is set, the value is used and query parameters will be taken from the header instead of the body. |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -106,24 +112,25 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-mybatis-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -131,7 +138,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 5 options, which are listed below.
+The component supports 6 options, which are listed below.
 
 
 
@@ -139,9 +146,10 @@ The component supports 5 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.mybatis.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.mybatis.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.mybatis.configuration-uri* | Location of MyBatis xml configuration file. The default value is: SqlMapConfig.xml loaded from the classpath | SqlMapConfig.xml | String
-| *camel.component.mybatis.enabled* | Enable mybatis component | true | Boolean
-| *camel.component.mybatis.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.mybatis.enabled* | Whether to enable auto configuration of the mybatis component. This is enabled by default. |  | Boolean
+| *camel.component.mybatis.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.mybatis.sql-session-factory* | To use the SqlSessionFactory. The option is a org.apache.ibatis.session.SqlSessionFactory type. |  | String
 |===
 // spring-boot-auto-configure options: END
@@ -149,7 +157,7 @@ The component supports 5 options, which are listed below.
 
 
 
-=== Message Headers
+== Message Headers
 
 Camel will populate the result message, either IN or OUT with a header
 with the statement used:
@@ -165,7 +173,7 @@ instance an `INSERT` could return the auto-generated key, or number of
 rows etc.
 |=======================================================================
 
-=== Message Body
+== Message Body
 
 The response from MyBatis will only be set as the body if it's a
 `SELECT` statement. That means, for example, for `INSERT` statements
@@ -173,7 +181,7 @@ Camel will not replace the body. This allows you to continue routing and
 keep the original body. The response from MyBatis is always stored in
 the header with the key `CamelMyBatisResult`.
 
-=== Samples
+== Samples
 
 For example if you wish to consume beans from a JMS queue and insert
 them into a database you could do the following:
@@ -205,7 +213,7 @@ Where *insertAccount* is the MyBatis ID in the SQL mapping file:
   </insert>
 ----
 
-=== Using StatementType for better control of MyBatis
+== Using StatementType for better control of MyBatis
 
 When routing to an MyBatis endpoint you will want more fine grained
 control so you can control whether the SQL statement to be executed is a
@@ -223,9 +231,9 @@ We can do the same for some of the other operations, such as
 And the same for `UPDATE`, where we can send an `Account` object as the
 IN body to MyBatis:
 
-==== Using InsertList StatementType
+=== Using InsertList StatementType
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 MyBatis allows you to insert multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
@@ -235,9 +243,9 @@ Then you can insert multiple rows, by sending a Camel message to the
 `mybatis` endpoint which uses the `InsertList` statement type, as shown
 below:
 
-==== Using UpdateList StatementType
+=== Using UpdateList StatementType
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 MyBatis allows you to update multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
@@ -267,9 +275,9 @@ from("direct:start")
     .to("mock:result");
 ----
 
-==== Using DeleteList StatementType
+=== Using DeleteList StatementType
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 MyBatis allows you to delete multiple rows using its for-each batch
 driver. To use this, you need to use the <foreach> in the mapper XML
@@ -298,17 +306,17 @@ from("direct:start")
     .to("mock:result");
 ----
 
-==== Notice on InsertList, UpdateList and DeleteList StatementTypes
+=== Notice on InsertList, UpdateList and DeleteList StatementTypes
 
 Parameter of any type (List, Map, etc.) can be passed to mybatis and an
 end user is responsible for handling it as required +
  with the help of http://www.mybatis.org/mybatis-3/dynamic-sql.html[mybatis
 dynamic queries] capabilities.
 
-==== Scheduled polling example
+=== Scheduled polling example
 
 This component supports scheduled polling and can therefore be used as
-a Polling Consumer. For example to poll the
+a Polling Consumer. For example to poll the
 database every minute:
 
 [source,java]
@@ -318,11 +326,11 @@ from("mybatis:selectAllAccounts?delay=60000")
 ----
 
 See "ScheduledPollConsumer Options"
-on Polling Consumer for more options.
+on Polling Consumer for more options.
 
 Alternatively you can use another mechanism for triggering the scheduled
-polls, such as the xref:timer-component,Timer>> or <<timer-component.adoc[Quartz]
-components. In the sample below we poll the database, every 30 seconds
+polls, such as the xref:timer-component.adoc[Timer] or xref:timer-component.adoc[Quartz]
+components. In the sample below we poll the database, every 30 seconds
 using the xref:timer-component.adoc[Timer] component and send the data to the JMS
 queue:
 
@@ -343,7 +351,7 @@ And the MyBatis SQL mapping file used:
   </select>
 ----
 
-==== Using onConsume
+=== Using onConsume
 
 This component supports executing statements *after* data have been
 consumed and processed by Camel. This allows you to do post updates in
@@ -357,7 +365,7 @@ database to processed, so we avoid consuming it twice or more.
 
 And the statements in the sqlmap file:
 
-==== Participating in transactions
+=== Participating in transactions
 
 Setting up a transaction manager under camel-mybatis can be a little bit
 fiddly, as it involves externalising the database configuration outside

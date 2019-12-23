@@ -25,7 +25,10 @@ import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.remote.RemoteFile;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.commons.io.FileUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class SftpConsumerWithCharsetTest extends SftpServerTestSupport {
 

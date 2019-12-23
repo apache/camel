@@ -54,7 +54,6 @@ public final class PubNubGeoLocationExample {
         String text;
 
         Foo(String foo, String text) {
-            super();
             this.foo = foo;
             this.text = text;
         }

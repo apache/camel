@@ -46,6 +46,7 @@ public class WeightedRoundRobinLoadBalancer extends WeightedLoadBalancer {
         }
     }
 
+    @Override
     protected void reset() {
         super.reset();
         counter = -1;

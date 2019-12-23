@@ -30,10 +30,10 @@ import org.kie.api.KieServices;
 @Component("optaplanner")
 public class OptaPlannerComponent extends DefaultComponent {
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         OptaPlannerConfiguration configuration = new OptaPlannerConfiguration();
         configuration.setConfigFile(remaining);
-        setProperties(configuration, parameters);
         
         // [CAMEL-11889] Kie assumes that the TCCL can load its services
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
@@ -45,7 +45,9 @@ public class OptaPlannerComponent extends DefaultComponent {
             Thread.currentThread().setContextClassLoader(tccl);
         }
         
-        return new OptaPlannerEndpoint(uri, this, configuration);
+        OptaPlannerEndpoint answer = new OptaPlannerEndpoint(uri, this, configuration);
+        setProperties(answer, parameters);
+        return answer;
     }
 
 }

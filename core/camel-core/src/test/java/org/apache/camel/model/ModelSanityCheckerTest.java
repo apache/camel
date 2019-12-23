@@ -33,7 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Performs sanity check on the model classes that their JAXB annotations and getter/setter match up.
+ * Performs sanity check on the model classes that their JAXB annotations and
+ * getter/setter match up.
  */
 public class ModelSanityCheckerTest extends Assert {
 
@@ -73,7 +74,8 @@ public class ModelSanityCheckerTest extends Assert {
                 boolean element = field.getAnnotation(XmlElement.class) != null;
                 boolean elementRef = field.getAnnotation(XmlElementRef.class) != null;
 
-                // only one of those 3 is allowed, so check that we don't have 2+ of them
+                // only one of those 3 is allowed, so check that we don't have
+                // 2+ of them
                 if ((attribute && element) || (attribute && elementRef) || (element && elementRef)) {
                     fail("Class " + clazz.getName() + " has field " + field.getName() + " which has 2+ annotations that are not allowed together.");
                 }
@@ -93,7 +95,8 @@ public class ModelSanityCheckerTest extends Assert {
             for (Method method : clazz.getDeclaredMethods()) {
                 LOG.debug("Class {} has method {}", clazz.getName(), method.getName());
 
-                // special for OptionalIdentifiedDefinition as it has setter, so we should skip it
+                // special for OptionalIdentifiedDefinition as it has setter, so
+                // we should skip it
                 if (clazz.getCanonicalName().equals(OptionalIdentifiedDefinition.class.getCanonicalName())) {
                     continue;
                 }

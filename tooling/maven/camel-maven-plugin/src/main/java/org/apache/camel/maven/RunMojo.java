@@ -323,6 +323,7 @@ public class RunMojo extends AbstractExecMojo {
      *                 threads it generated failed.
      * @throws MojoFailureException something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         String skip = System.getProperties().getProperty("maven.test.skip");
@@ -526,6 +527,7 @@ public class RunMojo extends AbstractExecMojo {
             super(name);
         }
 
+        @Override
         public void uncaughtException(Thread thread, Throwable throwable) {
             if (throwable instanceof ThreadDeath) {
                 return; // harmless
@@ -965,6 +967,7 @@ public class RunMojo extends AbstractExecMojo {
      * @return an artifact which refers to the actual executable tool (not a POM)
      * @throws MojoExecutionException
      */
+    @Override
     protected Artifact findExecutableArtifact() throws MojoExecutionException {
         // ILimitedArtifactIdentifier execToolAssembly =
         // this.getExecutableToolAssembly();

@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 
 public class FilePrepareRequest implements Processor {
+    @Override
     public void process(Exchange exchange) throws Exception {
         String request = exchange.getIn().getBody(String.class);       
         exchange.getOut().setBody(request);

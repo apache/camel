@@ -35,6 +35,7 @@ public class MailSearchTermNotSpamTest extends MailSearchTermTest {
         return build.build();
     }
 
+    @Override
     @Test
     public void testSearchTerm() throws Exception {
         Mailbox mailbox = Mailbox.get("bill@localhost");

@@ -32,7 +32,6 @@ import org.apache.camel.spi.Condition;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class DebugTest extends ContextTestSupport {
 
     private List<String> logs = new ArrayList<>();
@@ -68,7 +67,7 @@ public class DebugTest extends ContextTestSupport {
             public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
                 // match when sending to mocks
                 if (definition instanceof ToDefinition) {
-                    ToDefinition to = (ToDefinition) definition;
+                    ToDefinition to = (ToDefinition)definition;
                     return to.getUri().startsWith("mock");
                 }
                 return false;

@@ -20,23 +20,18 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class JacksonObjectMapperRegistryTest extends CamelTestSupport {
 
-    private JacksonDataFormat df = new JacksonDataFormat();
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private JacksonDataFormat df;
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myMapper", objectMapper);
-        return jndi;
-    }
+    @BindToRegistry("myMapper")
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Test
     public void testMarshalAndUnmarshalMap() throws Exception {
@@ -64,6 +59,9 @@ public class JacksonObjectMapperRegistryTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                df = new JacksonDataFormat();
+                df.setAutoDiscoverObjectMapper(true);
+
                 from("direct:in").marshal(df);
                 from("direct:back").unmarshal(df).to("mock:reverse");
             }

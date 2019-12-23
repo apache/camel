@@ -23,6 +23,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 
 public class UnitOfWorkSynchronizationAdapterTest extends UnitOfWorkTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -50,11 +51,7 @@ public class UnitOfWorkSynchronizationAdapterTest extends UnitOfWorkTest {
                         });
 
                         String name = getName();
-                        if (name.equals("testFail")) {
-                            log.info("Failing test!");
-                            exchange.getOut().setFault(true);
-                            exchange.getOut().setBody("testFail() should always fail with a fault!");
-                        } else if (name.equals("testException")) {
+                        if (name.equals("testException")) {
                             log.info("Throwing exception!");
                             throw new Exception("Failing test!");
                         }

@@ -30,7 +30,7 @@ public class SortBodyTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", new String[]{"Hadrian", "William", "Claus"});
+        template.sendBody("direct:start", new String[] {"Hadrian", "William", "Claus"});
 
         assertMockEndpointsSatisfied();
 
@@ -40,6 +40,7 @@ public class SortBodyTest extends ContextTestSupport {
         assertEquals("William", list.get(2));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

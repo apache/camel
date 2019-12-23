@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -36,11 +37,11 @@ public class StickyLoadBalanceTest extends ContextTestSupport {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").loadBalance().
-                sticky(header("foo")).to("mock:x", "mock:y", "mock:z");
+                from("direct:start").loadBalance().sticky(header("foo")).to("mock:x", "mock:y", "mock:z");
             }
         };
     }

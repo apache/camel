@@ -20,6 +20,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringIntegrationChannelConverterTest extends SpringIntegrationOneWayConsumerTest {
 
+    @Override
     public ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/spring/integration/springChannelConverter.xml");
     }

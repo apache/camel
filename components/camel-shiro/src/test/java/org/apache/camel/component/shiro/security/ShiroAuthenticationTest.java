@@ -19,6 +19,7 @@ package org.apache.camel.component.shiro.security;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -42,33 +43,33 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
         (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,
         (byte) 0x10, (byte) 0x11, (byte) 0x12, (byte) 0x13,
-        (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};    
-    
+        (byte) 0x14, (byte) 0x15, (byte) 0x16, (byte) 0x17};
+
     @Test
-    public void testShiroAuthenticationFailure() throws Exception {        
+    public void testShiroAuthenticationFailure() throws Exception {
         //Incorrect password
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "stirr");
         TestShiroSecurityTokenInjector shiroSecurityTokenInjector = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
-        
+
         successEndpoint.expectedMessageCount(0);
         failureEndpoint.expectedMessageCount(1);
-        
+
         template.send("direct:secureEndpoint", shiroSecurityTokenInjector);
-        
+
         successEndpoint.assertIsSatisfied();
         failureEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
-    public void testSuccessfulShiroAuthenticationWithNoAuthorization() throws Exception {        
+    public void testSuccessfulShiroAuthenticationWithNoAuthorization() throws Exception {
         ShiroSecurityToken shiroSecurityToken = new ShiroSecurityToken("ringo", "starr");
         TestShiroSecurityTokenInjector shiroSecurityTokenInjector = new TestShiroSecurityTokenInjector(shiroSecurityToken, passPhrase);
-        
+
         successEndpoint.expectedMessageCount(1);
         failureEndpoint.expectedMessageCount(0);
-        
+
         template.send("direct:secureEndpoint", shiroSecurityTokenInjector);
-        
+
         successEndpoint.assertIsSatisfied();
         failureEndpoint.assertIsSatisfied();
     }
@@ -100,10 +101,26 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
         failureEndpoint.assertIsSatisfied();
     }
 
-    protected RouteBuilder createRouteBuilder() throws Exception {
+    @Test
+    public void testMissingEncryptionKey() throws Exception {
+        Map<String, Object> headers = new HashMap<>();
+        headers.put(ShiroSecurityConstants.SHIRO_SECURITY_USERNAME, "ringo");
+        headers.put(ShiroSecurityConstants.SHIRO_SECURITY_PASSWORD, "starr");
+        try {
+            template.sendBodyAndHeaders("direct:secureEndpointMissingKey", "Beatle Mania", headers);
+            fail("Failure expected on a missing key");
+        } catch (CamelExecutionException ex) {
+            // expected
+            assertTrue(ex.getCause() instanceof IllegalArgumentException);
+        }
+    }
+
+    @Override
+    protected RouteBuilder[] createRouteBuilders() throws Exception {
         final ShiroSecurityPolicy securityPolicy = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini", passPhrase);
-        
-        return new RouteBuilder() {
+        final ShiroSecurityPolicy securityPolicy2 = new ShiroSecurityPolicy("src/test/resources/securityconfig.ini");
+
+        return new RouteBuilder[] {new RouteBuilder() {
             @SuppressWarnings("unchecked")
             public void configure() {
                 onException(UnknownAccountException.class, IncorrectCredentialsException.class,
@@ -115,20 +132,33 @@ public class ShiroAuthenticationTest extends CamelTestSupport {
                     to("log:incoming payload").
                     to("mock:success");
             }
-        };
+        }, new RouteBuilder() {
+            @SuppressWarnings("unchecked")
+            public void configure() {
+                onException(UnknownAccountException.class, IncorrectCredentialsException.class,
+                        LockedAccountException.class, AuthenticationException.class).
+                    to("mock:authenticationException");
+
+                from("direct:secureEndpointMissingKey").
+                    policy(securityPolicy2).
+                    to("log:incoming payload").
+                    to("mock:success");
+            }
+        }};
     }
 
-    
+
     private static class TestShiroSecurityTokenInjector extends ShiroSecurityTokenInjector {
 
         TestShiroSecurityTokenInjector(ShiroSecurityToken shiroSecurityToken, byte[] bytes) {
             super(shiroSecurityToken, bytes);
         }
-        
+
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encrypt());
             exchange.getIn().setBody("Beatle Mania");
         }
     }
-    
+
 }

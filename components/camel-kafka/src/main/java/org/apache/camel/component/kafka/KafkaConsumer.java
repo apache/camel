@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -216,6 +217,8 @@ public class KafkaConsumer extends DefaultConsumer {
                 // re-connect
                 reConnect = doRun();
             }
+
+            log.info("Terminating KafkaConsumer thread: {} receiving from topic: {}", threadId, topicName);
         }
 
         void preInit() {
@@ -285,13 +288,13 @@ public class KafkaConsumer extends DefaultConsumer {
                         log.debug("{} is seeking to the beginning on topic {}", threadId, topicName);
                         // This poll to ensures we have an assigned partition
                         // otherwise seek won't work
-                        consumer.poll(100);
+                        consumer.poll(Duration.ofMillis(100));
                         consumer.seekToBeginning(consumer.assignment());
                     } else if (endpoint.getConfiguration().getSeekTo().equals("end")) {
                         log.debug("{} is seeking to the end on topic {}", threadId, topicName);
                         // This poll to ensures we have an assigned partition
                         // otherwise seek won't work
-                        consumer.poll(100);
+                        consumer.poll(Duration.ofMillis(100));
                         consumer.seekToEnd(consumer.assignment());
                     }
                 }
@@ -410,7 +413,7 @@ public class KafkaConsumer extends DefaultConsumer {
                 if (unsubscribing) {
                     getExceptionHandler().handleException("Error unsubscribing " + threadId + " from kafka topic " + topicName, e);
                 } else {
-                    log.warn("KafkaException consuming {} from topic {}. Will attempt to re-connect on next run", threadId, topicName);
+                    log.debug("KafkaException consuming {} from topic {} causedby {}. Will attempt to re-connect on next run", threadId, topicName, e.getMessage());
                     reConnect = true;
                 }
             } catch (Exception e) {
@@ -490,7 +493,7 @@ public class KafkaConsumer extends DefaultConsumer {
     }
 
     private boolean isAutoCommitEnabled() {
-        return endpoint.getConfiguration().isAutoCommitEnable() != null && endpoint.getConfiguration().isAutoCommitEnable();
+        return endpoint.getConfiguration().getAutoCommitEnable() != null && endpoint.getConfiguration().getAutoCommitEnable();
     }
 
     protected String serializeOffsetKey(TopicPartition topicPartition) {

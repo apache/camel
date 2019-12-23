@@ -53,8 +53,7 @@ public class BeanParameterInvalidSyntaxTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:a")
                     // invalid due extra parenthesis at the end
-                    .to("bean:foo?method=echo(${body}, 5))")
-                    .to("mock:result");
+                    .to("bean:foo?method=echo(${body}, 5))").to("mock:result");
             }
         };
     }

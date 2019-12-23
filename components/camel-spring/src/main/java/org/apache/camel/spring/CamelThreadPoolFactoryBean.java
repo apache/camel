@@ -47,6 +47,7 @@ public class CamelThreadPoolFactoryBean extends AbstractCamelThreadPoolFactoryBe
         return CamelContextResolverHelper.getCamelContextWithId(applicationContext, camelContextId);
     }
 
+    @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }

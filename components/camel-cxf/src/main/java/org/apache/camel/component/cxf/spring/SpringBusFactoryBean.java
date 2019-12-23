@@ -36,6 +36,7 @@ public class SpringBusFactoryBean implements SmartFactoryBean<Bus> {
     private boolean includeDefaultBus;
     private SpringBusFactory bf;
 
+    @Override
     public Bus getObject() throws Exception {
         bf = new SpringBusFactory();
         if (cfgFiles != null) {
@@ -45,6 +46,7 @@ public class SpringBusFactoryBean implements SmartFactoryBean<Bus> {
         }
     }
 
+    @Override
     public Class<?> getObjectType() {
         return Bus.class;
     }
@@ -57,14 +59,17 @@ public class SpringBusFactoryBean implements SmartFactoryBean<Bus> {
         this.includeDefaultBus = includeDefaultBus;
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }
 
+    @Override
     public boolean isEagerInit() {
         return true;
     }
 
+    @Override
     public boolean isPrototype() {
         return false;
     }

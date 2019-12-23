@@ -1,11 +1,15 @@
 [[sql-stored-component]]
-== SQL Stored Procedure Component
+= SQL Stored Procedure Component
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The SQL Stored component allows you to work with databases using JDBC
 Stored Procedure queries. This component is an extension to
-the xref:sql-component.adoc[SQL Component] but specialized for calling
+the xref:sql-component.adoc[SQL Component] but specialized for calling
 stored procedures.
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
@@ -24,7 +28,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 The SQL component uses the following endpoint URI notation:
 
@@ -34,7 +38,7 @@ sql-stored:template[?options]
 ----
 
 Where template is the stored procedure template, where you declare the
-name of the stored procedure and the IN, INOUT, and OUT arguments. 
+name of the stored procedure and the IN, INOUT, and OUT arguments. 
 
 You can also refer to the template in a external file on the file system
 or classpath such as:
@@ -60,12 +64,12 @@ SUBNUMBERS(
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
 // component options: START
-The SQL Stored Procedure component supports 3 options, which are listed below.
+The SQL Stored Procedure component supports 4 options, which are listed below.
 
 
 
@@ -73,8 +77,9 @@ The SQL Stored Procedure component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *dataSource* (producer) | Sets the DataSource to use to communicate with the database. |  | DataSource
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -90,7 +95,7 @@ sql-stored:template
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -100,7 +105,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -118,14 +123,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-sql-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -133,7 +138,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -141,15 +146,16 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.sql-stored.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.sql-stored.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.sql-stored.data-source* | Sets the DataSource to use to communicate with the database. The option is a javax.sql.DataSource type. |  | String
-| *camel.component.sql-stored.enabled* | Enable sql-stored component | true | Boolean
-| *camel.component.sql-stored.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.sql-stored.enabled* | Whether to enable auto configuration of the sql-stored component. This is enabled by default. |  | Boolean
+| *camel.component.sql-stored.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
-=== Declaring the stored procedure template
+== Declaring the stored procedure template
 
 The template is declared using a syntax that would be similar to a Java
 method signature. The name of the stored procedure, and then the
@@ -174,7 +180,7 @@ In SQL term the stored procedure could be declared as:
 CREATE PROCEDURE STOREDSAMPLE(VALUE1 INTEGER, VALUE2 INTEGER, INOUT RESULT1 INTEGER, OUT RESULT2 INTEGER)
 ----
 
-==== IN Parameters
+=== IN Parameters
 
 IN parameters take four parts separated by a space: parameter name, SQL type (with scale), type name and value source.
 
@@ -210,7 +216,7 @@ URI is identical to previous on except SQL-type is 100 and type name is "mytypen
 
 Actual call will be done using org.springframework.jdbc.core.SqlParameter.
 
-==== OUT Parameters
+=== OUT Parameters
 
 OUT parameters work similarly IN parameters and contain three parts: SQL type(with scale), type name and output parameter name.
 
@@ -236,7 +242,7 @@ This is identical to previous one but type name will be "mytype".
 
 Actual call will be done using `org.springframework.jdbc.core.SqlOutParameter`.
 
-==== INOUT Parameters
+=== INOUT Parameters
 
 INOUT parameters are a combination of all of the above.  They receive a value from the exchange, as well as store a
 result as a message header.  The only caveat is that the IN parameter's "name" is skipped.  Instead, the OUT
@@ -249,7 +255,7 @@ parameter's "name" defines both the SQL parameter name, as well as the result he
 
 Actual call will be done using org.springframework.jdbc.core.SqlInOutParameter.
 
-=== Camel SQL Starter
+== Camel SQL Starter
 
 A starter module is available to spring-boot users. When using the starter,
 the `DataSource` can be directly configured using spring-boot properties.
@@ -282,6 +288,3 @@ To use this feature, add the following dependencies to your spring boot pom.xml 
 
 You should also include the specific database driver, if needed.
 
-=== See Also
-
-* xref:sql-component.adoc[SQL Component]

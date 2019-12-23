@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.atomix.client.multimap;
 
-
 import org.apache.camel.Producer;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientEndpoint;
 import org.apache.camel.spi.UriEndpoint;
@@ -30,9 +29,9 @@ import org.apache.camel.spi.UriParam;
     scheme = "atomix-multimap",
     title = "Atomix MultiMap",
     syntax = "atomix-multimap:resourceName",
-    consumerOnly = true,
+    producerOnly = true,
     label = "clustering")
-final class AtomixMultiMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMultiMapComponent, AtomixMultiMapConfiguration> {
+public final class AtomixMultiMapEndpoint extends AbstractAtomixClientEndpoint<AtomixMultiMapComponent, AtomixMultiMapConfiguration> {
     @UriParam
     private AtomixMultiMapConfiguration configuration;
 

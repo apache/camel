@@ -47,7 +47,7 @@ import org.osgi.framework.Constants;
 @Ignore("Flaky on CI server")
 public class CamelCxfBeanInjectTest extends AbstractFeatureTest {
 
-    private static final int PORT = AvailablePortFinder.getNextAvailable(30000);
+    private static final int PORT = AvailablePortFinder.getNextAvailable();
     private static final String ENDPOINT_ADDRESS = String.format(
         "http://localhost:%s/CamelCxfBeanInjectTest/router", PORT);
 

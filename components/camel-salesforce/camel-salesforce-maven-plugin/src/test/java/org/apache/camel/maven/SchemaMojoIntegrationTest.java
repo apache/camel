@@ -21,7 +21,6 @@ import java.io.File;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jsonSchema.JsonSchema;
 import com.fasterxml.jackson.module.jsonSchema.types.ObjectSchema;
-
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 import org.junit.Assert;
 import org.junit.Rule;
@@ -53,8 +52,7 @@ public class SchemaMojoIntegrationTest {
         Assert.assertTrue("Output file was not created", schemaFile.exists());
         final ObjectMapper objectMapper = JsonUtils.createObjectMapper();
         final JsonSchema jsonSchema = objectMapper.readValue(schemaFile, JsonSchema.class);
-        Assert.assertTrue("Expected root JSON schema with oneOf element",
-            jsonSchema.isObjectSchema() && !((ObjectSchema) jsonSchema).getOneOf().isEmpty());
+        Assert.assertTrue("Expected root JSON schema with oneOf element", jsonSchema.isObjectSchema() && !((ObjectSchema)jsonSchema).getOneOf().isEmpty());
     }
 
 }

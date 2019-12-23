@@ -27,7 +27,6 @@ import org.knowm.xchange.exceptions.ExchangeException;
 import org.knowm.xchange.service.account.AccountService;
 import org.knowm.xchange.service.marketdata.MarketDataService;
 import org.knowm.xchange.service.trade.TradeService;
-
 import si.mazi.rescu.SynchronizedValueFactory;
 
 // Wraps the exchange to avoid anem collision with the camel exchange
@@ -39,42 +38,52 @@ public class XChange implements Exchange {
         this.delegate = delegate;
     }
 
+    @Override
     public ExchangeSpecification getExchangeSpecification() {
         return delegate.getExchangeSpecification();
     }
 
+    @Override
     public ExchangeMetaData getExchangeMetaData() {
         return delegate.getExchangeMetaData();
     }
 
+    @Override
     public List<CurrencyPair> getExchangeSymbols() {
         return delegate.getExchangeSymbols();
     }
 
+    @Override
     public SynchronizedValueFactory<Long> getNonceFactory() {
         return delegate.getNonceFactory();
     }
 
+    @Override
     public ExchangeSpecification getDefaultExchangeSpecification() {
         return delegate.getDefaultExchangeSpecification();
     }
 
+    @Override
     public void applySpecification(ExchangeSpecification exchangeSpecification) {
         delegate.applySpecification(exchangeSpecification);
     }
 
+    @Override
     public MarketDataService getMarketDataService() {
         return delegate.getMarketDataService();
     }
 
+    @Override
     public TradeService getTradeService() {
         return delegate.getTradeService();
     }
 
+    @Override
     public AccountService getAccountService() {
         return delegate.getAccountService();
     }
 
+    @Override
     public void remoteInit() throws IOException, ExchangeException {
         delegate.remoteInit();
     }

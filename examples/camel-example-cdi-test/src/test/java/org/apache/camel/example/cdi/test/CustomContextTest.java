@@ -19,9 +19,9 @@ package org.apache.camel.example.cdi.test;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Default;
+import javax.inject.Named;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.DefaultManagementStrategy;
 import org.apache.camel.test.cdi.CamelCdiRunner;
@@ -39,7 +39,7 @@ public class CustomContextTest {
     }
 
     @Default
-    @ContextName("camel-test-cdi")
+    @Named("camel-test-cdi")
     @ApplicationScoped
     static class CustomCamelContext extends DefaultCamelContext {
 

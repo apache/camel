@@ -49,7 +49,7 @@ public class RoasterCdiConcatRouteBuilderConfigureTest {
             LOG.info("Producer: " + result.getElement());
         }
         Assert.assertEquals("log:a", list.get(0).getElement());
-        Assert.assertEquals("netty4-http:http:someserver:80/hello", list.get(1).getElement());
+        Assert.assertEquals("netty-http:http:someserver:80/hello", list.get(1).getElement());
     }
 
 }

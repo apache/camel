@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.builder;
+
 import java.util.Arrays;
 
 import org.apache.camel.Exchange;

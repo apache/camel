@@ -28,6 +28,11 @@ public class JmsSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.jms.JmsComponent";
+    }
+
+    @Override
     protected String getMessageId(Exchange exchange) {
         return (String)exchange.getIn().getHeader(JMS_MESSAGE_ID);
     }

@@ -40,6 +40,7 @@ public class JmsReconnectTest {
 
     private static final class EchoServiceImpl implements MyService {
 
+        @Override
         public String echo(String st) {
             return st;
         }

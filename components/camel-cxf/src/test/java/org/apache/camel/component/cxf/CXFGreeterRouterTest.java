@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.cxf;
+
 import javax.xml.ws.Endpoint;
 
 import org.apache.hello_world_soap_http.GreeterImpl;
@@ -42,6 +43,7 @@ public class CXFGreeterRouterTest extends AbstractCXFGreeterRouterTest {
 
 
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointsRouterContext.xml");
     }

@@ -46,22 +46,15 @@ public class ThreadsRequestReplyTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.setTracing(true);
 
-                from("direct:start")
-                    .to("log:before")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            beforeThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .threads(5)
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            afterThreadName = Thread.currentThread().getName();
-                        }
-                    })
-                    .to("log:after")
-                    .to("mock:result")
-                    .transform(constant("Bye World"));
+                from("direct:start").to("log:before").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        beforeThreadName = Thread.currentThread().getName();
+                    }
+                }).threads(5).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        afterThreadName = Thread.currentThread().getName();
+                    }
+                }).to("log:after").to("mock:result").transform(constant("Bye World"));
             }
         };
     }

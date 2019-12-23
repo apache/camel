@@ -23,18 +23,16 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static java.util.Optional.ofNullable;
-
 import javax.websocket.RemoteEndpoint;
 import javax.websocket.Session;
 import javax.websocket.server.ServerContainer;
 
 import org.apache.camel.Endpoint;
-
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.util.IOHelper;
+
+import static java.util.Optional.ofNullable;
 
 @Component("websocket-jsr356")
 public class JSR356WebSocketComponent extends DefaultComponent {
@@ -42,7 +40,6 @@ public class JSR356WebSocketComponent extends DefaultComponent {
     // CamelContext is in the ServletContext
     private static final Map<String, ContextBag> SERVER_CONTAINERS = new ConcurrentHashMap<>();
 
-    @Metadata(label = "sessionCount")
     protected int sessionCount;
 
     @Override
@@ -51,9 +48,7 @@ public class JSR356WebSocketComponent extends DefaultComponent {
     }
 
     public static void sendMessage(final Session session, final Object message) throws IOException {
-        final RemoteEndpoint.Basic basicRemote = session.getBasicRemote(); // todo:
-                                                                           // handle
-                                                                           // async?
+        final RemoteEndpoint.Basic basicRemote = session.getBasicRemote(); // todo: handle async?
         synchronized (session) {
             if (String.class.isInstance(message)) {
                 basicRemote.sendText(String.valueOf(message));

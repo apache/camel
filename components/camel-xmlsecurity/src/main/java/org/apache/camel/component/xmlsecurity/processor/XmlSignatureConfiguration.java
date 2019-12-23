@@ -17,6 +17,7 @@
 package org.apache.camel.component.xmlsecurity.processor;
 
 import java.util.Map;
+
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.XMLCryptoContext;
 import javax.xml.crypto.dsig.XMLSignContext;
@@ -52,10 +53,12 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
     public XmlSignatureConfiguration() {
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return context;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.context = camelContext;
     }

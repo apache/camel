@@ -36,6 +36,7 @@ public class SpringBatchIntegrationTest extends CamelSpringTestSupport {
 
     String[] inputMessages = new String[]{"foo", "bar", "baz", null};
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

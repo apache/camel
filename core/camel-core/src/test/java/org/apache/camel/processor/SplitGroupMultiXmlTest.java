@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -67,10 +68,9 @@ public class SplitGroupMultiXmlTest extends ContextTestSupport {
             public void configure() throws Exception {
                 // START SNIPPET: e1
                 from("file:target/data/pair?initialDelay=0&delay=10")
-                        // split the order child tags, and inherit namespaces from the orders root tag
-                        .split().tokenizeXML("order", "orders", 2)
-                        .to("log:split")
-                        .to("mock:split");
+                    // split the order child tags, and inherit namespaces from
+                    // the orders root tag
+                    .split().tokenizeXML("order", "orders", 2).to("log:split").to("mock:split");
                 // END SNIPPET: e1
             }
         };

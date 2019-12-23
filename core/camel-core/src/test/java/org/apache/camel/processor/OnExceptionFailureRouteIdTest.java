@@ -19,7 +19,8 @@ package org.apache.camel.processor;
 import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Unit test to test that route id of the failed route is available to the end user.
+ * Unit test to test that route id of the failed route is available to the end
+ * user.
  */
 public class OnExceptionFailureRouteIdTest extends DeadLetterChannelFailureRouteIdTest {
 
@@ -30,18 +31,11 @@ public class OnExceptionFailureRouteIdTest extends DeadLetterChannelFailureRoute
             public void configure() throws Exception {
                 onException(IllegalArgumentException.class).handled(true).to("direct:dead");
 
-                from("direct:foo").routeId("foo")
-                    .to("mock:foo")
-                    .to("direct:bar")
-                    .to("mock:result");
+                from("direct:foo").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
 
-                from("direct:bar").routeId("bar")
-                    .to("mock:bar")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:bar").routeId("bar").to("mock:bar").throwException(new IllegalArgumentException("Forced"));
 
-                from("direct:dead")
-                    .log("Failed at route ${exchangeProperty.CamelFailureRouteId}")
-                    .to("mock:dead");
+                from("direct:dead").log("Failed at route ${exchangeProperty.CamelFailureRouteId}").to("mock:dead");
             }
         };
     }

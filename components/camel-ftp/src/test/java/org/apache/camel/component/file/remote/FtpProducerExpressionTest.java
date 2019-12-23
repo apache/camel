@@ -20,31 +20,30 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.camel.BindToRegistry;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.assertFileExists;
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
 
 /**
  * Unit test for FTP using expression (file language)
  */
 public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
+    @BindToRegistry("myguidgenerator")
+    private MyGuidGenerator guid = new MyGuidGenerator();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin";
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/filelanguage");
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myguidgenerator", new MyGuidGenerator());
-        return jndi;
     }
 
     @Test
@@ -79,9 +78,10 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
     @Test
     public void testProducerComplexByExpression() throws Exception {
-        // need one extra subdirectory (=foo) to be able to start with .. in the fileName option
+        // need one extra subdirectory (=foo) to be able to start with .. in the
+        // fileName option
         String url = "ftp://admin@localhost:" + getPort() + "/filelanguage/foo?password=admin&jailStartingDirectory=false";
-        
+
         String expression = "../filelanguageinbox/myfile-${bean:myguidgenerator.guid}-${date:now:yyyyMMdd}.txt";
         template.sendBody(url + "&fileName=" + expression, "Hello World");
 
@@ -91,8 +91,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
     @Test
     public void testProducerSimpleWithHeaderByExpression() throws Exception {
-        template.sendBodyAndHeader(getFtpUrl() + "&fileName=myfile-${in.header.foo}.txt",
-                "Hello World", "foo", "abc");
+        template.sendBodyAndHeader(getFtpUrl() + "&fileName=myfile-${in.header.foo}.txt", "Hello World", "foo", "abc");
 
         assertFileExists(FTP_ROOT_DIR + "/filelanguage/myfile-abc.txt");
     }
@@ -103,8 +102,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 
-        template.sendBodyAndHeader(getFtpUrl() + "&fileName=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt",
-                "Hello World", "birthday", date);
+        template.sendBodyAndHeader(getFtpUrl() + "&fileName=mybirthday-${date:in.header.birthday:yyyyMMdd}.txt", "Hello World", "birthday", date);
 
         assertFileExists(FTP_ROOT_DIR + "/filelanguage/mybirthday-19740420.txt");
     }

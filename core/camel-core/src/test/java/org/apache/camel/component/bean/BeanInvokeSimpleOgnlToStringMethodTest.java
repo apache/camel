@@ -40,9 +40,7 @@ public class BeanInvokeSimpleOgnlToStringMethodTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .log("${body.toString}")
-                    .to("mock:result");
+                from("direct:start").log("${body.toString}").to("mock:result");
             }
         };
     }

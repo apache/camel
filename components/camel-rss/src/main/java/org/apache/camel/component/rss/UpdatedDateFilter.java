@@ -20,7 +20,6 @@ import java.util.Date;
 import java.util.Map;
 
 import com.rometools.rome.feed.synd.SyndEntry;
-
 import org.apache.camel.component.feed.EntryFilter;
 import org.apache.camel.component.feed.FeedEndpoint;
 import org.apache.camel.support.LRUCacheFactory;
@@ -43,6 +42,7 @@ public class UpdatedDateFilter implements EntryFilter {
         this.lastUpdate = lastUpdate;
     }
 
+    @Override
     public boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry) {
         Date updated = ((SyndEntry) entry).getUpdatedDate();
         if (updated == null) {

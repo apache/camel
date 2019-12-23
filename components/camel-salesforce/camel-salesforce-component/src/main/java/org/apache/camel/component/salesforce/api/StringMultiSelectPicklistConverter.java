@@ -38,16 +38,14 @@ public class StringMultiSelectPicklistConverter implements Converter {
             // construct a string of form value1;value2;...
             final StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < length; i++) {
-                buffer.append((String) o);
+                buffer.append((String)o);
                 if (i < (length - 1)) {
                     buffer.append(';');
                 }
             }
             writer.setValue(buffer.toString());
         } catch (Exception e) {
-            throw new ConversionException(
-                    String.format("Exception writing pick list value %s of type %s: %s",
-                            o, o.getClass().getName(), e.getMessage()), e);
+            throw new ConversionException(String.format("Exception writing pick list value %s of type %s: %s", o, o.getClass().getName(), e.getMessage()), e);
         }
     }
 
@@ -68,15 +66,14 @@ public class StringMultiSelectPicklistConverter implements Converter {
             }
             return resultArray;
         } catch (Exception e) {
-            throw new ConversionException(
-                    String.format("Exception reading pick list value %s of type %s: %s",
-                            listValue, requiredArrayType.getName(), e.getMessage()), e);
+            throw new ConversionException(String.format("Exception reading pick list value %s of type %s: %s", listValue, requiredArrayType.getName(), e.getMessage()), e);
         }
     }
 
     @Override
     public boolean canConvert(Class aClass) {
-        // check whether the Class is an array, and whether the array element is a String
+        // check whether the Class is an array, and whether the array element is
+        // a String
         final Class<?> componentType = aClass.getComponentType();
         return componentType != null && String.class == componentType;
     }

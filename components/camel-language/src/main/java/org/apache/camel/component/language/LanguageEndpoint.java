@@ -33,6 +33,8 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
+import org.apache.camel.support.CamelContextHelper;
+import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ResourceHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -43,10 +45,6 @@ import org.apache.camel.util.ObjectHelper;
  * By having a component to execute language scripts, it allows more dynamic routing capabilities.
  * For example by using the Routing Slip or Dynamic Router EIPs you can send messages to language endpoints
  * where the script is dynamic defined as well.
- *
- * This component is provided out of the box in camel-core and hence no additional JARs is needed.
- * You only have to include additional Camel components if the language of choice mandates it,
- * such as using Groovy or JavaScript languages.
  */
 @UriEndpoint(firstVersion = "2.5.0", scheme = "language", title = "Language", syntax = "language:languageName:resourceUri", producerOnly = true, label = "core,script")
 public class LanguageEndpoint extends ResourceEndpoint {
@@ -69,6 +67,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private boolean binary;
     @UriParam
     private boolean cacheScript;
+    @UriParam(defaultValue = "true", description = "Sets whether to use resource content cache or not")
+    private boolean contentCache;
 
     public LanguageEndpoint() {
         // enable cache by default
@@ -83,6 +83,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
         setContentCache(true);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(getCamelContext(), "CamelContext", this);
 
@@ -99,6 +100,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
         return new LanguageProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new RuntimeCamelException("Cannot consume to a LanguageEndpoint: " + getEndpointUri());
     }
@@ -112,10 +114,13 @@ public class LanguageEndpoint extends ResourceEndpoint {
      */
     protected String resolveScript(String script) throws IOException {
         String answer;
+
         if (ResourceHelper.hasScheme(script)) {
             InputStream is = loadResource(script);
             answer = getCamelContext().getTypeConverter().convertTo(String.class, is);
             IOHelper.close(is);
+        } else if (EndpointHelper.isReferenceParameter(script)) {
+            answer = CamelContextHelper.mandatoryLookup(getCamelContext(), script, String.class);
         } else {
             answer = script;
         }
@@ -238,6 +243,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
         this.cacheScript = cacheScript;
     }
 
+    @Override
     public void clearContentCache() {
         super.clearContentCache();
         // must also clear expression and script

@@ -63,9 +63,9 @@ import org.slf4j.LoggerFactory;
 public class ResponseMDN implements HttpResponseInterceptor {
 
     public static final String BOUNDARY_PARAM_NAME = "boundary";
-    
-    private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n" 
-            + " Message ID: $requestHeaders[\"Message-Id\"]\n" 
+
+    private static final String DEFAULT_MDN_MESSAGE_TEMPLATE = "MDN for -\n"
+            + " Message ID: $requestHeaders[\"Message-Id\"]\n"
             + "  Subject: $requestHeaders[\"Subject\"]\n"
             + "  Date: $requestHeaders[\"Date\"]\n"
             + "  From: $requestHeaders[\"AS2-From\"]\n"
@@ -84,7 +84,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     private VelocityEngine velocityEngine;
 
-    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm, 
+    public ResponseMDN(String as2Version, String serverFQDN, AS2SignatureAlgorithm signingAlgorithm,
                        Certificate[] signingCertificateChain, PrivateKey signingPrivateKey, PrivateKey decryptingPrivateKey) {
         this.as2Version = as2Version;
         this.serverFQDN = serverFQDN;
@@ -96,7 +96,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
     @Override
     public void process(HttpResponse response, HttpContext context) throws HttpException, IOException {
-        
+
         int statusCode = response.getStatusLine().getStatusCode();
         if (statusCode < 200 || statusCode >= 300) {
             // RFC4130 - 7.6 - Status codes in the 200 range SHOULD also be used when an entity is returned
@@ -107,7 +107,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
         }
 
         HttpCoreContext coreContext = HttpCoreContext.adapt(context);
-        
+
         HttpRequest request = coreContext.getAttribute(HttpCoreContext.HTTP_REQUEST, HttpRequest.class);
         if (request == null || !(request instanceof HttpEntityEnclosingRequest)) {
             // Not an enclosing request so nothing to do.
@@ -125,11 +125,21 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
         // Return a Message Disposition Notification Receipt in response body
         String boundary = EntityUtils.createBoundaryValue();
-        String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY, 
-        AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
-        DispositionNotificationMultipartReportEntity multipartReportEntity = new DispositionNotificationMultipartReportEntity(
-                httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
-                AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey, mdnMessage);
+        DispositionNotificationMultipartReportEntity multipartReportEntity;
+        if (HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) != null || HttpMessageUtils.getHeaderValue(request, AS2Header.DISPOSITION_TYPE) == AS2DispositionType.FAILED.getType()) {
+            // Return a failed Message Disposition Notification Receipt in response body
+            String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
+            multipartReportEntity = new DispositionNotificationMultipartReportEntity(
+                    httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.FAILED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey, mdnMessage);
+        } else {
+            String mdnMessage = createMdnDescription(httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, DEFAULT_MDN_MESSAGE_TEMPLATE);
+            multipartReportEntity = new DispositionNotificationMultipartReportEntity(
+                    httpEntityEnclosingRequest, response, DispositionMode.AUTOMATIC_ACTION_MDN_SENT_AUTOMATICALLY,
+                    AS2DispositionType.PROCESSED, null, null, null, null, null, AS2Charset.US_ASCII, boundary, true, decryptingPrivateKey, mdnMessage);
+        }
 
         DispositionNotificationOptions dispositionNotificationOptions = DispositionNotificationOptionsParser
                 .parseDispositionNotificationOptions(
@@ -141,7 +151,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
             coreContext.setAttribute(AS2AsynchronousMDNManager.RECIPIENT_ADDRESS, receiptAddress);
             coreContext.setAttribute(AS2AsynchronousMDNManager.ASYNCHRONOUS_MDN, multipartReportEntity);
-            
+
         } else {
             // Synchronous Delivery
 
@@ -216,7 +226,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
 
         LOG.debug(AS2Utils.printMessage(response));
     }
-    
+
     private String createMdnDescription(HttpEntityEnclosingRequest request,
                                         HttpResponse response,
                                         DispositionMode dispositionMode,
@@ -228,22 +238,22 @@ public class ResponseMDN implements HttpResponseInterceptor {
                                         Map<String, String> extensionFields,
                                         String charset,
                                         String mdnMessageTemplate) throws HttpException {
-        
+
         try {
             Context context = new VelocityContext();
             context.put("request", request);
             Map<String, Object> requestHeaders = new HashMap<>();
-            for (Header header: request.getAllHeaders()) {
+            for (Header header : request.getAllHeaders()) {
                 requestHeaders.put(header.getName(), header.getValue());
             }
             context.put("requestHeaders", requestHeaders);
-            
+
             Map<String, Object> responseHeaders = new HashMap<>();
-            for (Header header: response.getAllHeaders()) {
+            for (Header header : response.getAllHeaders()) {
                 responseHeaders.put(header.getName(), header.getValue());
             }
             context.put("responseHeaders", responseHeaders);
-            
+
             context.put("dispositionMode", dispositionMode);
             context.put("dispositionType", dispositionType);
             context.put("dispositionModifier", dispositionModifier);
@@ -251,12 +261,12 @@ public class ResponseMDN implements HttpResponseInterceptor {
             context.put("errorFields", errorFields);
             context.put("warningFields", warningFields);
             context.put("extensionFields", extensionFields);
-            
+
             VelocityEngine engine = getVelocityEngine();
             StringWriter buffer = new StringWriter();
             engine.evaluate(context, buffer, getClass().getName(), mdnMessageTemplate);
             return buffer.toString();
-            
+
         } catch (Exception e) {
             throw new HttpException("failed to create MDN description", e);
         }
@@ -265,7 +275,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
     private synchronized VelocityEngine getVelocityEngine() throws Exception {
         if (velocityEngine == null) {
             velocityEngine = new VelocityEngine();
-            
+
             // set default properties
             Properties properties = new Properties();
             properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file, class");
@@ -273,7 +283,7 @@ public class ResponseMDN implements HttpResponseInterceptor {
             properties.setProperty("class.resource.loader.class", ClasspathResourceLoader.class.getName());
             final Logger velocityLogger = LoggerFactory.getLogger("org.apache.camel.maven.Velocity");
             properties.setProperty(RuntimeConstants.RUNTIME_LOG_NAME, velocityLogger.getName());
-            
+
             velocityEngine.init(properties);
         }
         return velocityEngine;

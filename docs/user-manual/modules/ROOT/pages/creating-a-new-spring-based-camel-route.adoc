@@ -1,0 +1,35 @@
+= Creating a new Spring based Camel Route
+
+If you want to create your own version of the Spring Example you can
+use the maven archetype.
+
+[source,shell]
+----
+mvn archetype:generate                   \
+  -DarchetypeGroupId=org.apache.camel.archetypes  \
+  -DarchetypeArtifactId=camel-archetype-spring   \
+  -DarchetypeVersion=1.5.0             \
+  -DgroupId=myGroupId                  \
+  -DartifactId=myArtifactId   
+----
+
+*Note*: -DarchetypeVersion=1.5.0 is the version number of Camel. Change
+this to the current version of Camel you are using.
+
+When using camel archetypes, make sure your package name is not
+org.apache.camel (or a sub package of this) as this will instruct Camel
+to search in its own packages for your routes. This can also cause Camel
+not to start, as shown in CAMEL-1197. You can change your package name
+by specifying -Dpackage
+
+This will create a maven project which can be run immediately via the
+xref:camel-maven-plugin.adoc[Camel Maven Plugin] as follows
+
+[source,shell]
+----
+cd myArtifactId
+mvn camel:run
+----
+
+The configuration file is in
+*src/main/resources/META-INF/spring/camel-context.xml*.

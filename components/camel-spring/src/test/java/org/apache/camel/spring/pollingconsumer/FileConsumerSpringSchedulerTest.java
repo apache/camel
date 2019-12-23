@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.pollingconsumer;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.spring.SpringTestSupport;
 import org.junit.Before;

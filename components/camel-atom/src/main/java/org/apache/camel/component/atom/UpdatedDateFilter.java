@@ -37,7 +37,8 @@ public class UpdatedDateFilter implements EntryFilter {
         this.lastUpdate = lastUpdate;
     }
 
-    public boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry) {        
+    @Override
+    public boolean isValidEntry(FeedEndpoint endpoint, Object feed, Object entry) {
         Date updated = ((Entry)entry).getUpdated();
         if (updated == null) {
             // never been updated so get published date

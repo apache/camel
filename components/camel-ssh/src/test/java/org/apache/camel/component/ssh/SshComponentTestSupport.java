@@ -29,7 +29,7 @@ public class SshComponentTestSupport extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(22000);
+        port = AvailablePortFinder.getNextAvailable();
 
         sshd = SshServer.setUpDefaultServer();
         sshd.setPort(port);

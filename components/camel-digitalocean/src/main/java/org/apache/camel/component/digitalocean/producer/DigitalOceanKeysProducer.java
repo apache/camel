@@ -34,6 +34,7 @@ public class DigitalOceanKeysProducer extends DigitalOceanProducer {
         super(endpoint, configuration);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         switch (determineOperation(exchange)) {

@@ -112,6 +112,7 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return answer;
     }
 
+    @Override
     protected boolean doPollDirectory(String absolutePath, String dirName, List<GenericFile<FTPFile>> fileList, int depth) {
         log.trace("doPollDirectory from absolutePath: {}, dirName: {}", absolutePath, dirName);
 

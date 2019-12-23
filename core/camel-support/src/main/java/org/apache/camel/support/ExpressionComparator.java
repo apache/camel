@@ -33,6 +33,7 @@ public class ExpressionComparator implements Comparator<Exchange> {
         this.expression = expression;
     }
 
+    @Override
     public int compare(Exchange e1, Exchange e2) {
         Object o1 = expression.evaluate(e1, Object.class);
         Object o2 = expression.evaluate(e2, Object.class);

@@ -48,6 +48,7 @@ public class PredicateAsBeanTest extends ContextTestSupport {
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -59,6 +60,7 @@ public class PredicateAsBeanTest extends ContextTestSupport {
     public static class MyPredicate implements Predicate {
         public String body;
 
+        @Override
         public boolean matches(Exchange exchange) {
             LOG.info("matches(exchange) called with: " + exchange);
             body = exchange.getIn().getBody(String.class);

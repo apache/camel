@@ -65,14 +65,17 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware 
         return "Logger[" + logger + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (logger.shouldLog()) {
             String output = formatter.format(exchange);
@@ -153,6 +156,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware 
      * {@link ExchangeFormatter} that calls <tt>toString</tt> on the {@link Exchange}.
      */
     static class ToStringExchangeFormatter implements ExchangeFormatter {
+        @Override
         public String format(Exchange exchange) {
             return exchange.toString();
         }

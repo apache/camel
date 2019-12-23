@@ -37,7 +37,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.TypeConverterRegistry;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class SaxonConverter {
 
     private SaxonConverter() {

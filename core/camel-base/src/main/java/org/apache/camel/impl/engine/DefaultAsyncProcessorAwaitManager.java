@@ -72,6 +72,7 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
      * @param processor the processor
      * @param exchange  the exchange
      */
+    @Override
     public void process(final AsyncProcessor processor, final Exchange exchange) {
         CountDownLatch latch = new CountDownLatch(1);
         processor.process(exchange, doneSync -> countDown(exchange, latch));
@@ -188,14 +189,17 @@ public class DefaultAsyncProcessorAwaitManager extends ServiceSupport implements
         }
     }
 
+    @Override
     public boolean isInterruptThreadsWhileStopping() {
         return interruptThreadsWhileStopping;
     }
 
+    @Override
     public void setInterruptThreadsWhileStopping(boolean interruptThreadsWhileStopping) {
         this.interruptThreadsWhileStopping = interruptThreadsWhileStopping;
     }
 
+    @Override
     public Statistics getStatistics() {
         return statistics;
     }

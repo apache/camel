@@ -42,11 +42,13 @@ public class BundleDelegatingClassLoader extends ClassLoader {
         this.classLoader = classLoader;
     }
 
+    @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
         LOG.trace("FindClass: {}", name);
         return bundle.loadClass(name);
     }
 
+    @Override
     protected URL findResource(String name) {
         LOG.trace("FindResource: {}", name);
         URL resource = bundle.getResource(name);
@@ -56,12 +58,14 @@ public class BundleDelegatingClassLoader extends ClassLoader {
         return resource;
     }
 
+    @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     protected Enumeration findResources(String name) throws IOException {
         LOG.trace("FindResource: {}", name);
         return bundle.getResources(name);
     }
 
+    @Override
     protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
         LOG.trace("LoadClass: {}, resolve: {}", name, resolve);
         Class<?> clazz;

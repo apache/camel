@@ -47,6 +47,7 @@ public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
 
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 

@@ -51,8 +51,7 @@ public class OnCompletionShutdownProcessorTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().process(processor);
 
-                from("direct:start")
-                    .to("mock:result");
+                from("direct:start").to("mock:result");
             }
         };
     }
@@ -62,14 +61,17 @@ public class OnCompletionShutdownProcessorTest extends ContextTestSupport {
         public MyProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setBody("Bye World");
         }
 
+        @Override
         protected void doStart() throws Exception {
             // noop
         }
 
+        @Override
         protected void doStop() throws Exception {
             // noop
         }

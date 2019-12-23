@@ -48,6 +48,7 @@ public class StreamCachingInterceptorTest extends ContextTestSupport {
         assertNotNull(streamCache);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/interceptor/streamCachingOnRoute.xml");
     }

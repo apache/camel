@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.kubernetes;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class KubernetesTestSupport extends CamelTestSupport {
@@ -35,8 +38,8 @@ public class KubernetesTestSupport extends CamelTestSupport {
         host = "https://192.168.99.100:8443";
         super.setUp();
     }
-    
-    public static String toUrlEncoded(String str) {
-        return str.replaceAll("=", "%3D");
+
+    public static String toUrlEncoded(String str) throws UnsupportedEncodingException {
+        return URLEncoder.encode(str, "UTF-8");
     }
 }

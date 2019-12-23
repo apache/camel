@@ -22,6 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.annotations.ConstantProvider;
 
 /**
  * An Exchange is the message container holding the information during the entire routing of
@@ -68,6 +69,7 @@ import org.apache.camel.spi.UnitOfWork;
  * See this <a href="http://camel.apache.org/using-getin-or-getout-methods-on-exchange.html">FAQ entry</a> 
  * for more details.
  */
+@ConstantProvider("org.apache.camel.ExchangeConstantProvider")
 public interface Exchange {
 
     String AUTHENTICATION                   = "CamelAuthentication";
@@ -234,6 +236,8 @@ public interface Exchange {
     String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
+    String TRACING_HEADER_FORMAT      = "CamelTracingHeaderFormat";
+    String TRACING_OUTPUT_FORMAT      = "CamelTracingOutputFormat";
     String TRY_ROUTE_BLOCK       = "TryRouteBlock";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
 
@@ -417,7 +421,9 @@ public interface Exchange {
      *
      * @return the response
      * @see #getIn()
+     * @deprecated use {@link #getMessage()}
      */
+    @Deprecated
     Message getOut();
 
     /**
@@ -435,21 +441,27 @@ public interface Exchange {
      * @param type the given type
      * @return the message as the given type or <tt>null</tt> if not possible to covert to given type
      * @see #getIn(Class)
+     * @deprecated use {@link #getMessage(Class)}
      */
+    @Deprecated
     <T> T getOut(Class<T> type);
 
     /**
      * Returns whether an OUT message has been set or not.
      *
      * @return <tt>true</tt> if an OUT message exists, <tt>false</tt> otherwise.
+     * @deprecated use {@link #getMessage()}
      */
+    @Deprecated
     boolean hasOut();
 
     /**
      * Sets the outbound message
      *
      * @param out the outbound message
+     * @deprecated use {@link #setMessage(Message)}
      */
+    @Deprecated
     void setOut(Message out);
 
     /**
@@ -488,8 +500,6 @@ public interface Exchange {
      *
      * @return true if this exchange failed due to either an exception or fault
      * @see Exchange#getException()
-     * @see Message#setFault(boolean)
-     * @see Message#isFault()
      */
     boolean isFailed();
 

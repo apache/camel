@@ -28,7 +28,6 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.UserInfo;
-
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
@@ -74,7 +73,7 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
 
     @BeforeClass
     public static void initPort() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(21000);
+        port = AvailablePortFinder.getNextAvailable();
     }
 
     @Override

@@ -64,17 +64,15 @@ public class OnCompletionTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .onCompletion()
-                        // this route is only invoked when the original route is complete as a kind
-                        // of completion callback
-                        .to("log:sync")
-                        .to("mock:sync")
+                from("direct:start").onCompletion()
+                    // this route is only invoked when the original route is
+                    // complete as a kind
+                    // of completion callback
+                    .to("log:sync").to("mock:sync")
                     // must use end to denote the end of the onCompletion route
                     .end()
                     // here the original route contiues
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                    .process(new MyProcessor()).to("mock:result");
                 // END SNIPPET: e1
             }
         };
@@ -85,6 +83,7 @@ public class OnCompletionTest extends ContextTestSupport {
         public MyProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if ("Kabom".equals(exchange.getIn().getBody())) {
                 throw new IllegalArgumentException("Kabom");

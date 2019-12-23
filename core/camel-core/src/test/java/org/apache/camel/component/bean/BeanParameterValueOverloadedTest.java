@@ -56,13 +56,9 @@ public class BeanParameterValueOverloadedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:foo?method=bar(*,true)")
-                    .to("mock:result");
+                from("direct:start").to("bean:foo?method=bar(*,true)").to("mock:result");
 
-                from("direct:start2")
-                    .to("bean:foo?method=bar(${body},false,true)")
-                    .to("mock:result");
+                from("direct:start2").to("bean:foo?method=bar(${body},false,true)").to("mock:result");
             }
         };
     }

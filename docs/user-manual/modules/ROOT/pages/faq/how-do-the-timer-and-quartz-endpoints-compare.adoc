@@ -1,8 +1,8 @@
 [[HowdotheTimerandQuartzendpointscompare-HowdotheTimerandQuartzendpointscompare]]
-=== How do the Timer and Quartz endpoints compare?
+= How do the Timer and Quartz endpoints compare?
 
-xref:timer-component.adoc[Timer] is a simple, non persistence timer using the
+xref:components::timer-component.adoc[Timer] is a simple, non persistence timer using the
 JDK's in built timer mechanism.
 
-xref:quartz-component.adoc[Quartz] uses the Quartz library which uses a database
+xref:components::quartz-component.adoc[Quartz] uses the Quartz library which uses a database
 to store timer events and supports distributed timers and cron notation.

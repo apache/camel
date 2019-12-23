@@ -19,9 +19,11 @@ package org.apache.camel.builder.endpoint.dsl;
 import java.util.Date;
 import java.util.Timer;
 import javax.annotation.Generated;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
+import org.apache.camel.spi.ExceptionHandler;
 
 /**
  * The timer component is used for generating message exchanges when a timer
@@ -41,6 +43,42 @@ public interface TimerEndpointBuilderFactory {
             return (AdvancedTimerEndpointBuilder) this;
         }
         /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default TimerEndpointBuilder bridgeErrorHandler(
+                boolean bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * Allows for bridging the consumer to the Camel routing Error Handler,
+         * which mean any exceptions occurred while the consumer is trying to
+         * pickup incoming messages, or the likes, will now be processed as a
+         * message and handled by the routing Error Handler. By default the
+         * consumer will use the org.apache.camel.spi.ExceptionHandler to deal
+         * with exceptions, that will be logged at WARN or ERROR level and
+         * ignored.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default TimerEndpointBuilder bridgeErrorHandler(
+                String bridgeErrorHandler) {
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
          * The number of milliseconds to wait before the first event is
          * generated. Should not be used in conjunction with the time option.
          * The default value is 1000. You can also specify time values using
@@ -52,7 +90,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -67,7 +105,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -79,7 +117,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder fixedRate(boolean fixedRate) {
-            setProperty("fixedRate", fixedRate);
+            doSetProperty("fixedRate", fixedRate);
             return this;
         }
         /**
@@ -91,7 +129,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder fixedRate(String fixedRate) {
-            setProperty("fixedRate", fixedRate);
+            doSetProperty("fixedRate", fixedRate);
             return this;
         }
         /**
@@ -105,7 +143,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder period(long period) {
-            setProperty("period", period);
+            doSetProperty("period", period);
             return this;
         }
         /**
@@ -119,7 +157,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder period(String period) {
-            setProperty("period", period);
+            doSetProperty("period", period);
             return this;
         }
         /**
@@ -132,7 +170,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder repeatCount(long repeatCount) {
-            setProperty("repeatCount", repeatCount);
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -145,7 +183,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: consumer
          */
         default TimerEndpointBuilder repeatCount(String repeatCount) {
-            setProperty("repeatCount", repeatCount);
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
     }
@@ -160,6 +198,63 @@ public interface TimerEndpointBuilderFactory {
             return (TimerEndpointBuilder) this;
         }
         /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option is a: <code>org.apache.camel.spi.ExceptionHandler</code>
+         * type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedTimerEndpointBuilder exceptionHandler(
+                ExceptionHandler exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * To let the consumer use a custom ExceptionHandler. Notice if the
+         * option bridgeErrorHandler is enabled then this option is not in use.
+         * By default the consumer will deal with exceptions, that will be
+         * logged at WARN or ERROR level and ignored.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.ExceptionHandler</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedTimerEndpointBuilder exceptionHandler(
+                String exceptionHandler) {
+            doSetProperty("exceptionHandler", exceptionHandler);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedTimerEndpointBuilder exchangePattern(
+                ExchangePattern exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * Sets the exchange pattern when the consumer creates an exchange.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.ExchangePattern</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedTimerEndpointBuilder exchangePattern(
+                String exchangePattern) {
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
          * Whether the endpoint should use basic property binding (Camel 2.x) or
          * the newer property binding with additional capabilities.
          * 
@@ -169,7 +264,7 @@ public interface TimerEndpointBuilderFactory {
          */
         default AdvancedTimerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -182,7 +277,7 @@ public interface TimerEndpointBuilderFactory {
          */
         default AdvancedTimerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -194,7 +289,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder daemon(boolean daemon) {
-            setProperty("daemon", daemon);
+            doSetProperty("daemon", daemon);
             return this;
         }
         /**
@@ -206,7 +301,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder daemon(String daemon) {
-            setProperty("daemon", daemon);
+            doSetProperty("daemon", daemon);
             return this;
         }
         /**
@@ -218,7 +313,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder pattern(String pattern) {
-            setProperty("pattern", pattern);
+            doSetProperty("pattern", pattern);
             return this;
         }
         /**
@@ -230,7 +325,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -242,7 +337,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -255,7 +350,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder time(Date time) {
-            setProperty("time", time);
+            doSetProperty("time", time);
             return this;
         }
         /**
@@ -268,7 +363,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder time(String time) {
-            setProperty("time", time);
+            doSetProperty("time", time);
             return this;
         }
         /**
@@ -279,7 +374,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder timer(Timer timer) {
-            setProperty("timer", timer);
+            doSetProperty("timer", timer);
             return this;
         }
         /**
@@ -290,7 +385,7 @@ public interface TimerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder timer(String timer) {
-            setProperty("timer", timer);
+            doSetProperty("timer", timer);
             return this;
         }
     }
@@ -300,7 +395,7 @@ public interface TimerEndpointBuilderFactory {
      * fires.
      * 
      * Category: core,scheduling
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-timer
      * 
      * Syntax: <code>timer:timerName</code>

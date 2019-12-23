@@ -1,5 +1,6 @@
 [[idempotentConsumer-eip]]
-== Idempotent Consumer EIP
+= Idempotent Consumer EIP
+:page-source: core/camel-core-engine/src/main/docs/eips/idempotentConsumer-eip.adoc
 
 The
 http://www.enterpriseintegrationpatterns.com/IdempotentReceiver.html[Idempotent
@@ -7,7 +8,7 @@ Consumer] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] is used to filter out duplicate messages.
 
 The Idempotent Consumer essentially acts like a
-xref:message-filter.adoc[Message Filter] to filter out duplicates.
+xref:filter-eip.adoc[Message Filter] to filter out duplicates.
 
 Camel will add the message id eagerly to the repository to detect
 duplication also for Exchanges currently in progress. 
@@ -17,17 +18,17 @@ the Exchange failed, otherwise it stays there.
 Camel provides the following Idempotent Consumer implementations:
 
 * MemoryIdempotentRepository
-* xref:file2.adoc[FileIdempotentRepository]
-* xref:hazelcast-component.adoc[HazelcastIdempotentRepository]
-* xref:sql-component.adoc[JdbcMessageIdRepository]
-* xref:jpa-component.adoc[JpaMessageIdRepository]
-* xref:infinispan-component.adoc[InfinispanIdempotentRepository]
-* xref:jcache-component.adoc[JCacheIdempotentRepository]
+* xref:components::file-component.adoc[FileIdempotentRepository]
+* xref:components::hazelcast.adoc[HazelcastIdempotentRepository]
+* xref:components::sql-component.adoc[JdbcMessageIdRepository]
+* xref:components::jpa-component.adoc[JpaMessageIdRepository]
+* xref:components::infinispan-component.adoc[InfinispanIdempotentRepository]
+* xref:components::jcache-component.adoc[JCacheIdempotentRepository]
 * xref:spring.adoc[SpringCacheIdempotentRepository]
-* xref:ehcache-component.adoc[EhcacheIdempotentRepository]
-* xref:kafka-component.adoc[KafkaIdempotentRepository]
+* xref:components::ehcache-component.adoc[EhcacheIdempotentRepository]
+* xref:components::kafka-component.adoc[KafkaIdempotentRepository]
 
-=== Options
+== Options
 
 // eip options: START
 The Idempotent Consumer EIP supports 5 options which are listed below:

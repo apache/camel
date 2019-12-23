@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.weather.http;
 
-
 import org.apache.commons.httpclient.HttpClient;
 
 /**

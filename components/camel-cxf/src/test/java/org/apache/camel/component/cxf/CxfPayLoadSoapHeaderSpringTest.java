@@ -27,13 +27,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CxfPayLoadSoapHeaderSpringTest extends CxfPayLoadSoapHeaderTest {
     protected AbstractXmlApplicationContext applicationContext;
     
+    @Override
     protected String getRouterEndpointURI() {
         return "cxf:bean:routerEndpoint?dataFormat=PAYLOAD";
     }
+    @Override
     protected String getServiceEndpointURI() {
         return "cxf:bean:serviceEndpoint?dataFormat=PAYLOAD";
     }
    
+    @Override
     @Before
     public void setUp() throws Exception {
         applicationContext = createApplicationContext();
@@ -41,6 +44,7 @@ public class CxfPayLoadSoapHeaderSpringTest extends CxfPayLoadSoapHeaderTest {
         assertNotNull("Should have created a valid spring context", applicationContext);
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         IOHelper.close(applicationContext);

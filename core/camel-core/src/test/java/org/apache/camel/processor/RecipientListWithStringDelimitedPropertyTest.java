@@ -35,11 +35,11 @@ public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSup
         x.expectedBodiesReceived(BODY);
         y.expectedBodiesReceived(BODY);
         z.expectedBodiesReceived(BODY);
-        
+
         x.message(0).exchangeProperty("myProperty").isEqualTo(PROPERTY_VALUE);
         y.message(0).exchangeProperty("myProperty").isEqualTo(PROPERTY_VALUE);
         z.message(0).exchangeProperty("myProperty").isEqualTo(PROPERTY_VALUE);
-        
+
         sendBody();
 
         assertMockEndpointsSatisfied();
@@ -49,6 +49,7 @@ public class RecipientListWithStringDelimitedPropertyTest extends ContextTestSup
         template.sendBodyAndProperty("direct:a", BODY, "myProperty", PROPERTY_VALUE);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

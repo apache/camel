@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.flink;
 
-import static java.lang.String.format;
-
 import org.apache.camel.CamelContext;
 import org.apache.flink.api.java.DataSet;
+
+import static java.lang.String.format;
 
 public abstract class ConvertingDataSetCallback<T> implements DataSetCallback<T> {
 

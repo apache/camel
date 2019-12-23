@@ -30,7 +30,7 @@ import org.apache.camel.Converter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class SyslogConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(SyslogConverter.class);

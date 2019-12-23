@@ -39,59 +39,73 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         return fallbackTypeConverters;
     }
     
+    @Override
     public void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter) {
         typeConverters.add(typeConverter);
     }
 
+    @Override
     public void addTypeConverters(TypeConverters typeConverters) {
         // noop
     }
 
+    @Override
     public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
         // noop
         return true;
     }
 
+    @Override
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         fallbackTypeConverters.add(typeConverter);
     }
 
-    public TypeConverter lookup(Class<?> toType, Class<?> fromType) {       
+    @Override
+    public TypeConverter lookup(Class<?> toType, Class<?> fromType) {
         return null;
     }
 
+    @Override
     public List<Class<?>[]> listAllTypeConvertersFromTo() {
         return null;
     }
 
+    @Override
     public void setInjector(Injector injector) {
        // do nothing
     }
 
+    @Override
     public Injector getInjector() {
         return null;
     }
 
+    @Override
     public Statistics getStatistics() {
         return null;
     }
 
+    @Override
     public int size() {
         return typeConverters.size();
     }
 
+    @Override
     public LoggingLevel getTypeConverterExistsLoggingLevel() {
         return LoggingLevel.WARN;
     }
 
+    @Override
     public void setTypeConverterExistsLoggingLevel(LoggingLevel loggingLevel) {
         // noop
     }
 
+    @Override
     public TypeConverterExists getTypeConverterExists() {
         return TypeConverterExists.Override;
     }
 
+    @Override
     public void setTypeConverterExists(TypeConverterExists typeConverterExists) {
         // noop
     }
@@ -104,18 +118,22 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         // noop
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         // noop
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return null;
     }
 
+    @Override
     public void start() {
         // noop
     }
 
+    @Override
     public void stop() {
         // noop
     }

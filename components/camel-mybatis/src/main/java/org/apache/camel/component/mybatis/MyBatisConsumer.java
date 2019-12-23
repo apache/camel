@@ -54,6 +54,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
         super(endpoint, processor);
     }
 
+    @Override
     public MyBatisEndpoint getEndpoint() {
         return (MyBatisEndpoint) super.getEndpoint();
     }
@@ -96,6 +97,7 @@ public class MyBatisConsumer extends ScheduledBatchPollingConsumer {
         return processBatch(CastUtils.cast(answer));
     }
 
+    @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         final MyBatisEndpoint endpoint = getEndpoint();
 

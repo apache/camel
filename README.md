@@ -35,17 +35,17 @@ unit test your routes.
 ## Components
 
 Apache Camel comes with a lot of artifacts with components, data formats, languages and various other kinds.
-The up to date list is available online at:
+The up to date list is available online at the Camel website:
 
-* Components: <https://github.com/apache/camel/tree/master/components/readme.adoc#components>
-* Data Formats: <https://github.com/apache/camel/tree/master/components/readme.adoc#data-formats>
-* Languages: <https://github.com/apache/camel/tree/master/components/readme.adoc#expression-languages>
-* Miscellaneous: <https://github.com/apache/camel/tree/master/components/readme.adoc#miscellaneous-components>
+* Components: <https://camel.apache.org/components/latest/>
+* Data Formats: <https://camel.apache.org/components/latest/#_data_formats>
+* Languages: <https://camel.apache.org/components/latest/#_expression_languages>
+* Miscellaneous: <https://camel.apache.org/components/latest/#_miscellaneous_components>
 
 ## Examples
 
 Apache Camel comes with many examples.
-The up to date list is available online at:
+The up to date list is available online at github:
 
 * Examples: <https://github.com/apache/camel/tree/master/examples#examples>
 
@@ -72,19 +72,19 @@ We welcome contributions of all kinds, for details of how you can help
 <https://github.com/apache/camel/blob/master/CONTRIBUTING.md>
 
 Please refer to the website for details of finding the issue tracker, 
-email lists, IRC and Gitter chat
+email lists, github, chat
   
 Website: <http://camel.apache.org/>
 
-Github: <https://github.com/apache/camel>
+Github (source): <https://github.com/apache/camel>
 
 Issue tracker: <https://issues.apache.org/jira/projects/CAMEL>
 
 Mailing list: <http://camel.apache.org/mailing-lists.html>
 
-IRC chat: <http://camel.apache.org/irc-room.html>
+Chat: <https://gitter.im/apache/apache-camel>
 
-Gitter chat: <https://gitter.im/apache/apache-camel>
+StackOverflow: <https://stackoverflow.com/questions/tagged/apache-camel>
 
 Twitter: <https://twitter.com/ApacheCamel>
 
@@ -95,11 +95,9 @@ If you need support or help then read this page first
   
 <http://camel.apache.org/support.html>
 
-**Forum**
+**Getting Help**
 
-If you hit any problems please talk to us on the Camel Forums
-  
-<http://camel.apache.org/discussion-forums.html>
+If you hit any problems please talk to us on either StackOverflow, Chat, or the email mailing list.
 
 Please help us make Apache Camel better - we appreciate any feedback 
 you may have.
@@ -142,14 +140,12 @@ software:
 * **camel-cxf** can be configured for secure communications
 * **camel-ftp** can be configured for secure communications
 * **camel-http** can be configured to use https
-* **camel-http4** can be configured to use https
 * **camel-infinispan** can be configured for secure communications
 * **camel-jasypt** can be used for secure communications
 * **camel-jetty** can be configured to use https
 * **camel-mail** can be configured for secure communications
 * **camel-nagios** can be configured for secure communications
 * **camel-netty-http** can be configured to use https
-* **camel-netty4-http** can be configured to use https
 * **camel-undertow** can be configured to use https
 * **camel-xmlsecurity** can be configured for secure communications
 

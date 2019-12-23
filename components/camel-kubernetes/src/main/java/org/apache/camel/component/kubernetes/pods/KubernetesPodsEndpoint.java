@@ -22,15 +22,12 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConfiguration;
 import org.apache.camel.spi.UriEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
- * The Kubernetes Pods component provides a producer to execute kubernetes pod operations
- * and a consumer to consume pod events.
+ * The Kubernetes Pods component provides a producer to execute kubernetes pod
+ * operations and a consumer to consume pod events.
  */
-@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-pods", title = "Kubernetes Pods",
-    syntax = "kubernetes-pods:masterUrl", label = "container,cloud,paas")
+@UriEndpoint(firstVersion = "2.17.0", scheme = "kubernetes-pods", title = "Kubernetes Pods", syntax = "kubernetes-pods:masterUrl", label = "container,cloud,paas")
 public class KubernetesPodsEndpoint extends AbstractKubernetesEndpoint {
 
     public KubernetesPodsEndpoint(String uri, KubernetesPodsComponent component, KubernetesConfiguration config) {
@@ -44,7 +41,10 @@ public class KubernetesPodsEndpoint extends AbstractKubernetesEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new KubernetesPodsConsumer(this, processor);
+        Consumer consumer = new KubernetesPodsConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
+
     }
 
 }

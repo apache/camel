@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl;
+
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 

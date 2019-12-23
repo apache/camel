@@ -27,13 +27,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static java.lang.String.format;
-import static java.util.Collections.addAll;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.singleton;
-import static java.util.Objects.requireNonNull;
-import static java.util.stream.Collectors.toSet;
-
 import javax.enterprise.inject.CreationException;
 import javax.enterprise.inject.spi.AnnotatedType;
 import javax.enterprise.inject.spi.Bean;
@@ -60,6 +53,12 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
+import static java.util.Collections.addAll;
+import static java.util.Collections.emptySet;
+import static java.util.Collections.singleton;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toSet;
 import static org.apache.camel.cdi.AnyLiteral.ANY;
 import static org.apache.camel.cdi.ApplicationScopedLiteral.APPLICATION_SCOPED;
 import static org.apache.camel.cdi.CdiSpiHelper.createCamelContextWithTCCL;
@@ -157,8 +156,7 @@ final class XmlCdiBeanFactory {
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
         if (hasId(factory)) {
-            addAll(annotations,
-                ContextName.Literal.of(factory.getId()), NamedLiteral.of(factory.getId()));
+            addAll(annotations, NamedLiteral.of(factory.getId()));
         } else {
             annotations.add(DEFAULT);
             factory.setImplicitId(true);
@@ -250,7 +248,6 @@ final class XmlCdiBeanFactory {
 
         Set<Annotation> annotations = new HashSet<>();
         annotations.add(ANY);
-        // FIXME: should add @ContextName if the Camel context bean has it
         annotations.add(hasId(factory) ? NamedLiteral.of(factory.getId()) : DEFAULT);
 
         // TODO: should that be @Singleton to enable injection points with bean instance type?
@@ -404,6 +401,11 @@ final class XmlCdiBeanFactory {
         if (isNotEmpty(definition.getUseOriginalMessage())
             && type.equals(ErrorHandlerType.NoErrorHandler)) {
             throw attributeNotSupported("useOriginalMessage", type, definition.getId());
+        }
+
+        if (isNotEmpty(definition.getUseOriginalBody())
+            && type.equals(ErrorHandlerType.NoErrorHandler)) {
+            throw attributeNotSupported("useOriginalBody", type, definition.getId());
         }
 
         if (isNotEmpty(definition.getOnRedeliveryRef())

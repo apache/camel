@@ -1,0 +1,263 @@
+[[debezium-sqlserver-component]]
+= Debezium SQL Server Connector Component
+:page-source: components/camel-debezium-sqlserver/src/main/docs/debezium-sqlserver-component.adoc
+
+*Since Camel 3.0*
+
+// HEADER START
+*Only consumer is supported*
+// HEADER END
+
+The Debezium SQL Server component is wrapper around https://debezium.io/[Debezium] using https://debezium.io/documentation/reference/0.10/operations/embedded.html[Debezium Embedded], which enables Change Data Capture from SQL Server database using Debezium without the need for Kafka or Kafka Connect.
+
+*Note on handling failures:* Per https://debezium.io/documentation/reference/0.10/operations/embedded.html#_handling_failures[Debezium Embedded Engine] documentation, the engines is actively recording source offsets and periodically flushes these offsets to a persistent storage, so when the application is restarted or crashed, the engine will resume from the last recorded offset.
+Thus, at normal operation, your downstream routes will receive each event exactly once, however in case of an application crash (not having a graceful shutdown), the application will resume from the last recorded offset,
+which may result in receiving duplicate events immediately after the restart. Therefore, your downstream routes should be tolerant enough of such case and deduplicate events if needed.
+
+*Note:* The Debezium SQL Server component is currently not supported in OSGi
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component.
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-debezium-sqlserver</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== URI format
+
+[source,text]
+---------------------------
+debezium-sqlserver:name[?options]
+---------------------------
+
+== Options
+
+
+// component options: START
+The Debezium SQL Server Connector component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *configuration* (consumer) | Allow pre-configured Configurations to be set. |  | SqlServerConnectorEmbeddedDebeziumConfiguration
+| *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+|===
+// component options: END
+
+
+// endpoint options: START
+The Debezium SQL Server Connector endpoint is configured using URI syntax:
+
+----
+debezium-sqlserver:name
+----
+
+with the following path and query parameters:
+
+=== Path Parameters (1 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *name* | *Required* Unique name for the connector. Attempting to register again with the same name will fail. |  | String
+|===
+
+
+=== Query Parameters (45 parameters):
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
+| *internalKeyConverter* (consumer) | The Converter class that should be used to serialize and deserialize key data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
+| *internalValueConverter* (consumer) | The Converter class that should be used to serialize and deserialize value data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
+| *offsetCommitPolicy* (consumer) | The name of the Java class of the commit policy. It defines when offsets commit has to be triggered based on the number of events processed and the time elapsed since the last commit. This class must implement the interface 'OffsetCommitPolicy'. The default is a periodic commit policy based upon time intervals. | io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy | String
+| *offsetCommitTimeoutMs* (consumer) | Maximum number of milliseconds to wait for records to flush and partition offset data to be committed to offset storage before cancelling the process and restoring the offset data to be committed in a future attempt. The default is 5 seconds. | 5000 | long
+| *offsetFlushIntervalMs* (consumer) | Interval at which to try committing offsets. The default is 1 minute. | 60000 | long
+| *offsetStorage* (consumer) | The name of the Java class that is responsible for persistence of connector offsets. | org.apache.kafka.connect.storage.FileOffsetBackingStore | String
+| *offsetStorageFileName* (consumer) | Path to file where offsets are to be stored. Required when offset.storage is set to the FileOffsetBackingStore |  | String
+| *offsetStoragePartitions* (consumer) | The number of partitions used when creating the offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'. |  | int
+| *offsetStorageReplication Factor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
+| *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
+| *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
+| *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
+| *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
+| *columnBlacklist* (sqlserver) | Description is not available here, please check Debezium website for corresponding key 'column.blacklist' description. |  | String
+| *databaseDbname* (sqlserver) | The name of the database the connector should be monitoring. When working with a multi-tenant set-up, must be set to the CDB name. |  | String
+| *databaseHistory* (sqlserver) | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
+| *databaseHistoryFileFilename* (sqlserver) | The path to the file that will be used to record the database history |  | String
+| *databaseHistoryKafka BootstrapServers* (sqlserver) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
+| *databaseHistoryKafka RecoveryAttempts* (sqlserver) | The number of attempts in a row that no data are returned from Kafka before recover completes. The maximum amount of time to wait after receiving no data is (recovery.attempts) x (recovery.poll.interval.ms). | 100 | int
+| *databaseHistoryKafka RecoveryPollIntervalMs* (sqlserver) | The number of milliseconds to wait while polling for persisted data during recovery. | 100 | int
+| *databaseHistoryKafkaTopic* (sqlserver) | The name of the topic for the database schema history |  | String
+| *databaseHostname* (sqlserver) | Resolvable hostname or IP address of the SQL Server database server. |  | String
+| *databasePassword* (sqlserver) | *Required* Password of the SQL Server database user to be used when connecting to the database. |  | String
+| *databasePort* (sqlserver) | Port of the SQL Server database server. | 1433 | int
+| *databaseServerName* (sqlserver) | *Required* Unique name that identifies the database server and all recorded offsets, and that is used as a prefix for all schemas and topics. Each distinct installation should have a separate namespace and be monitored by at most one Debezium connector. |  | String
+| *databaseUser* (sqlserver) | Name of the SQL Server database user to be used when connecting to the database. |  | String
+| *decimalHandlingMode* (sqlserver) | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
+| *heartbeatIntervalMs* (sqlserver) | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0 | int
+| *heartbeatTopicsPrefix* (sqlserver) | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
+| *maxBatchSize* (sqlserver) | Maximum size of each batch of source records. Defaults to 2048. | 2048 | int
+| *maxQueueSize* (sqlserver) | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | int
+| *messageKeyColumns* (sqlserver) | A semicolon-separated list of expressions that match fully-qualified tables and column(s) to be used as message key. Each expression must match the pattern ':',where the table names could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the key columns are a comma-separated list of columns representing the custom key. For any table without an explicit key configuration the table's primary key column(s) will be used as message key.Example: dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id |  | String
+| *pollIntervalMs* (sqlserver) | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500 | long
+| *snapshotDelayMs* (sqlserver) | The number of milliseconds to delay before a snapshot will begin. | 0 | long
+| *snapshotFetchSize* (sqlserver) | The maximum number of records that should be loaded into memory while performing a snapshot |  | int
+| *snapshotLockTimeoutMs* (sqlserver) | The maximum number of millis to wait for table locks at the beginning of a snapshot. If locks cannot be acquired in this time frame, the snapshot will be aborted. Defaults to 10 seconds | 10000 | long
+| *snapshotMode* (sqlserver) | The criteria for running a snapshot upon startup of the connector. Options include: 'initial' (the default) to specify the connector should run a snapshot only when no offsets are available for the logical server name; 'initial_schema_only' to specify the connector should run a snapshot of the schema when no offsets are available for the logical server name. | initial | String
+| *snapshotSelectStatement Overrides* (sqlserver) | This property contains a comma-separated list of fully-qualified tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on thespecific connectors . Select statements for the individual tables are specified in further configuration properties, one for each table, identified by the id 'snapshot.select.statement.overrides.DB_NAME.TABLE_NAME' or 'snapshot.select.statement.overrides.SCHEMA_NAME.TABLE_NAME', respectively. The value of those properties is the select statement to use when retrieving data from the specific table during snapshotting. A possible use case for large append-only tables is setting a specific point where to start (resume) snapshotting, in case a previous snapshotting was interrupted. |  | String
+| *sourceStructVersion* (sqlserver) | A version of the format of the publicly visible source part in the message | v2 | String
+| *tableBlacklist* (sqlserver) | Description is not available here, please check Debezium website for corresponding key 'table.blacklist' description. |  | String
+| *tableIgnoreBuiltin* (sqlserver) | Flag specifying whether built-in tables should be ignored. | true | boolean
+| *tableWhitelist* (sqlserver) | The tables for which changes are to be captured |  | String
+| *timePrecisionMode* (sqlserver) | Time, date, and timestamps can be represented with different kinds of precisions, including:'adaptive' (the default) bases the precision of time, date, and timestamp values on the database column's precision; 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always use microseconds precision;'connect' always represents time, date, and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision . | adaptive | String
+|===
+// endpoint options: END
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.springboot</groupId>
+  <artifactId>camel-debezium-sqlserver-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 46 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.debezium-sqlserver.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.debezium-sqlserver.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.debezium-sqlserver.configuration.column-blacklist* | Description is not available here, please check Debezium website for corresponding key 'column.blacklist' description. |  | String
+| *camel.component.debezium-sqlserver.configuration.connector-class* | The name of the Java class for the connector |  | Class
+| *camel.component.debezium-sqlserver.configuration.database-dbname* | The name of the database the connector should be monitoring. When working with a multi-tenant set-up, must be set to the CDB name. |  | String
+| *camel.component.debezium-sqlserver.configuration.database-history* | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
+| *camel.component.debezium-sqlserver.configuration.database-history-file-filename* | The path to the file that will be used to record the database history |  | String
+| *camel.component.debezium-sqlserver.configuration.database-history-kafka-bootstrap-servers* | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
+| *camel.component.debezium-sqlserver.configuration.database-history-kafka-recovery-attempts* | The number of attempts in a row that no data are returned from Kafka before recover completes. The maximum amount of time to wait after receiving no data is (recovery.attempts) x (recovery.poll.interval.ms). | 100 | Integer
+| *camel.component.debezium-sqlserver.configuration.database-history-kafka-recovery-poll-interval-ms* | The number of milliseconds to wait while polling for persisted data during recovery. | 100 | Integer
+| *camel.component.debezium-sqlserver.configuration.database-history-kafka-topic* | The name of the topic for the database schema history |  | String
+| *camel.component.debezium-sqlserver.configuration.database-hostname* | Resolvable hostname or IP address of the SQL Server database server. |  | String
+| *camel.component.debezium-sqlserver.configuration.database-password* | Password of the SQL Server database user to be used when connecting to the database. |  | String
+| *camel.component.debezium-sqlserver.configuration.database-port* | Port of the SQL Server database server. | 1433 | Integer
+| *camel.component.debezium-sqlserver.configuration.database-server-name* | Unique name that identifies the database server and all recorded offsets, and that is used as a prefix for all schemas and topics. Each distinct installation should have a separate namespace and be monitored by at most one Debezium connector. |  | String
+| *camel.component.debezium-sqlserver.configuration.database-user* | Name of the SQL Server database user to be used when connecting to the database. |  | String
+| *camel.component.debezium-sqlserver.configuration.decimal-handling-mode* | Specify how DECIMAL and NUMERIC columns should be represented in change events, including:'precise' (the default) uses java.math.BigDecimal to represent values, which are encoded in the change events using a binary representation and Kafka Connect's 'org.apache.kafka.connect.data.Decimal' type; 'string' uses string to represent values; 'double' represents values using Java's 'double', which may not offer the precision but will be far easier to use in consumers. | precise | String
+| *camel.component.debezium-sqlserver.configuration.heartbeat-interval-ms* | Length of an interval in milli-seconds in in which the connector periodically sends heartbeat messages to a heartbeat topic. Use 0 to disable heartbeat messages. Disabled by default. | 0 | Integer
+| *camel.component.debezium-sqlserver.configuration.heartbeat-topics-prefix* | The prefix that is used to name heartbeat topics.Defaults to __debezium-heartbeat. | __debezium-heartbeat | String
+| *camel.component.debezium-sqlserver.configuration.internal-key-converter* | The Converter class that should be used to serialize and deserialize key data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
+| *camel.component.debezium-sqlserver.configuration.internal-value-converter* | The Converter class that should be used to serialize and deserialize value data for offsets. The default is JSON converter. | org.apache.kafka.connect.json.JsonConverter | String
+| *camel.component.debezium-sqlserver.configuration.max-batch-size* | Maximum size of each batch of source records. Defaults to 2048. | 2048 | Integer
+| *camel.component.debezium-sqlserver.configuration.max-queue-size* | Maximum size of the queue for change events read from the database log but not yet recorded or forwarded. Defaults to 8192, and should always be larger than the maximum batch size. | 8192 | Integer
+| *camel.component.debezium-sqlserver.configuration.message-key-columns* | A semicolon-separated list of expressions that match fully-qualified tables and column(s) to be used as message key. Each expression must match the pattern '<fully-qualified table name>:<key columns>',where the table names could be defined as (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on the specific connector,and the key columns are a comma-separated list of columns representing the custom key. For any table without an explicit key configuration the table's primary key column(s) will be used as message key.Example: dbserver1.inventory.orderlines:orderId,orderLineId;dbserver1.inventory.orders:id |  | String
+| *camel.component.debezium-sqlserver.configuration.name* | Unique name for the connector. Attempting to register again with the same name will fail. |  | String
+| *camel.component.debezium-sqlserver.configuration.offset-commit-policy* | The name of the Java class of the commit policy. It defines when offsets commit has to be triggered based on the number of events processed and the time elapsed since the last commit. This class must implement the interface 'OffsetCommitPolicy'. The default is a periodic commit policy based upon time intervals. | io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy | String
+| *camel.component.debezium-sqlserver.configuration.offset-commit-timeout-ms* | Maximum number of milliseconds to wait for records to flush and partition offset data to be committed to offset storage before cancelling the process and restoring the offset data to be committed in a future attempt. The default is 5 seconds. | 5000 | Long
+| *camel.component.debezium-sqlserver.configuration.offset-flush-interval-ms* | Interval at which to try committing offsets. The default is 1 minute. | 60000 | Long
+| *camel.component.debezium-sqlserver.configuration.offset-storage* | The name of the Java class that is responsible for persistence of connector offsets. | org.apache.kafka.connect.storage.FileOffsetBackingStore | String
+| *camel.component.debezium-sqlserver.configuration.offset-storage-file-name* | Path to file where offsets are to be stored. Required when offset.storage is set to the FileOffsetBackingStore |  | String
+| *camel.component.debezium-sqlserver.configuration.offset-storage-partitions* | The number of partitions used when creating the offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'. |  | Integer
+| *camel.component.debezium-sqlserver.configuration.offset-storage-replication-factor* | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | Integer
+| *camel.component.debezium-sqlserver.configuration.offset-storage-topic* | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
+| *camel.component.debezium-sqlserver.configuration.poll-interval-ms* | Frequency in milliseconds to wait for new change events to appear after receiving no events. Defaults to 500ms. | 500 | Long
+| *camel.component.debezium-sqlserver.configuration.snapshot-delay-ms* | The number of milliseconds to delay before a snapshot will begin. | 0 | Long
+| *camel.component.debezium-sqlserver.configuration.snapshot-fetch-size* | The maximum number of records that should be loaded into memory while performing a snapshot |  | Integer
+| *camel.component.debezium-sqlserver.configuration.snapshot-lock-timeout-ms* | The maximum number of millis to wait for table locks at the beginning of a snapshot. If locks cannot be acquired in this time frame, the snapshot will be aborted. Defaults to 10 seconds | 10000 | Long
+| *camel.component.debezium-sqlserver.configuration.snapshot-mode* | The criteria for running a snapshot upon startup of the connector. Options include: 'initial' (the default) to specify the connector should run a snapshot only when no offsets are available for the logical server name; 'initial_schema_only' to specify the connector should run a snapshot of the schema when no offsets are available for the logical server name. | initial | String
+| *camel.component.debezium-sqlserver.configuration.snapshot-select-statement-overrides* | This property contains a comma-separated list of fully-qualified tables (DB_NAME.TABLE_NAME) or (SCHEMA_NAME.TABLE_NAME), depending on thespecific connectors . Select statements for the individual tables are specified in further configuration properties, one for each table, identified by the id 'snapshot.select.statement.overrides.[DB_NAME].[TABLE_NAME]' or 'snapshot.select.statement.overrides.[SCHEMA_NAME].[TABLE_NAME]', respectively. The value of those properties is the select statement to use when retrieving data from the specific table during snapshotting. A possible use case for large append-only tables is setting a specific point where to start (resume) snapshotting, in case a previous snapshotting was interrupted. |  | String
+| *camel.component.debezium-sqlserver.configuration.source-struct-version* | A version of the format of the publicly visible source part in the message | v2 | String
+| *camel.component.debezium-sqlserver.configuration.table-blacklist* | Description is not available here, please check Debezium website for corresponding key 'table.blacklist' description. |  | String
+| *camel.component.debezium-sqlserver.configuration.table-ignore-builtin* | Flag specifying whether built-in tables should be ignored. | true | Boolean
+| *camel.component.debezium-sqlserver.configuration.table-whitelist* | The tables for which changes are to be captured |  | String
+| *camel.component.debezium-sqlserver.configuration.time-precision-mode* | Time, date, and timestamps can be represented with different kinds of precisions, including:'adaptive' (the default) bases the precision of time, date, and timestamp values on the database column's precision; 'adaptive_time_microseconds' like 'adaptive' mode, but TIME fields always use microseconds precision;'connect' always represents time, date, and timestamp values using Kafka Connect's built-in representations for Time, Date, and Timestamp, which uses millisecond precision regardless of the database columns' precision . | adaptive | String
+| *camel.component.debezium-sqlserver.enabled* | Whether to enable auto configuration of the debezium-sqlserver component. This is enabled by default. |  | Boolean
+| *camel.component.debezium-sqlserver.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+For more information about configuration:
+https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties[https://debezium.io/documentation/reference/0.10/operations/embedded.html#engine-properties]
+https://debezium.io/documentation/reference/0.10/connectors/sqlserver.html#connector-properties[https://debezium.io/documentation/reference/0.10/connectors/sqlserver.html#connector-properties]
+
+== Message headers
+
+=== Consumer headers
+
+The following headers are available when consuming change events from Debezium.
+[width="100%",cols="2m,2m,1m,5",options="header"]
+|===
+| Header constant                           | Header value                                   | Type        | Description
+| DebeziumConstants.HEADER_IDENTIFIER       | "CamelDebeziumIdentifier"                      | String      | The identifier of the connector, normally is this format "{server-name}.{database-name}.{table-name}".
+| DebeziumConstants.HEADER_KEY              | "CamelDebeziumKey"                             | Struct      | The key of the event, normally is the table Primary Key.
+| DebeziumConstants.HEADER_SOURCE_METADATA  | "CamelDebeziumSourceMetadata"                  | Map         | The metadata about the source event, for example `table` name, database `name`, log position, etc, please refer to the Debezium documentation for more info.
+| DebeziumConstants.HEADER_OPERATION        | "CamelDebeziumOperation"                       | String      | If presents, the type of event operation. Values for the connector are `c` for create (or insert), `u` for update, `d` for delete or `r` in case of a snapshot event.
+| DebeziumConstants.HEADER_TIMESTAMP        | "CamelDebeziumTimestamp"                       | Long        | If presents, the time (using the system clock in the JVM) at which the connector processed the event.
+| DebeziumConstants.HEADER_BEFORE           | "CamelDebeziumBefore"                          | Struct     | If presents, contains the state of the row before the event occurred.
+|===
+
+== Message body
+The message body if is not `null` (in case of tombstones), it contains the state of the row after the event occurred as `Struct` format or `Map` format if you use the included Type Converter from `Struct` to `Map` (please look below for more explanation).
+
+== Samples
+
+=== Consuming events
+
+Here is a very simple route that you can use in order to listen to Debezium events from SQL Server connector.
+[source,java]
+----
+from("debezium-sqlserver:dbz-test-1?offsetStorageFileName=/usr/offset-file-1.dat&databaseHostName=localhost&databaseUser=debezium&databasePassword=dbz&databaseServerName=my-app-connector&databaseHistoryFileName=/usr/history-file-1.dat")
+    .log("Event received from Debezium : ${body}")
+    .log("    with this identifier ${headers.CamelDebeziumIdentifier}")
+    .log("    with these source metadata ${headers.CamelDebeziumSourceMetadata}")
+    .log("    the event occured upon this operation '${headers.CamelDebeziumSourceOperation}'")
+    .log("    on this database '${headers.CamelDebeziumSourceMetadata[db]}' and this table '${headers.CamelDebeziumSourceMetadata[table]}'")
+    .log("    with the key ${headers.CamelDebeziumKey}")
+    .log("    the previous value is ${headers.CamelDebeziumBefore}")
+----
+
+By default, the component will emit the events in the body and `CamelDebeziumBefore` header as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] data type, the reasoning behind this, is to perceive the schema information in case is needed.
+However, the component as well contains a xref:manual::type-converter.adoc[Type Converter] that converts
+from default output type of https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Struct.html[`Struct`] to `Map` in order to leverage Camel's rich xref:manual::data-format.adoc[Data Format] types which many of them work out of box with `Map` data type.
+To use it, you can either add `Map.class` type when you access the message e.g: `exchange.getIn().getBody(Map.class)`, or you can convert the body always to `Map` from the route builder by adding `.convertBodyTo(Map.class)` to your Camel Route DSL after `from` statement.
+
+We mentioned above about the schema, which can be used in case you need to perform advance data transformation and the schema is needed for that. If you choose not to convert your body to `Map`,
+you can obtain the schema information as https://kafka.apache.org/22/javadoc/org/apache/kafka/connect/data/Schema.html[`Schema`] type from `Struct` like this:
+[source,java]
+----
+from("debezium-sqlserver:[name]?[options]])
+    .process(exchange -> {
+        final Struct bodyValue = exchange.getIn().getBody(Struct.class);
+        final Schema schemaValue = bodyValue.schema();
+
+        log.info("Body value is :" + bodyValue);
+        log.info("With Schema : " + schemaValue);
+        log.info("And fields of :" + schemaValue.fields());
+        log.info("Field name has `" + schemaValue.field("name").schema() + "` type");
+    });
+----
+
+*Important Note:* This component is a thin wrapper around Debezium Engine as mentioned, therefore before using this component in production, you need to understand how Debezium works and how configurations can reflect the expected behavior, especially in regards to https://debezium.io/documentation/reference/0.9/operations/embedded.html#_handling_failures[handling failures].

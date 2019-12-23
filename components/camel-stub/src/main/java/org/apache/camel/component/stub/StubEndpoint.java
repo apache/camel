@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.seda.BlockingQueueFactory;
-import org.apache.camel.component.vm.VmConsumer;
 import org.apache.camel.component.vm.VmEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 
@@ -59,6 +58,6 @@ public class StubEndpoint extends VmEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new StubProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), getOfferTimeout());
+        return new StubProducer(this, getWaitForTaskToComplete(), getTimeout(), isBlockWhenFull(), isDiscardWhenFull(), getOfferTimeout());
     }
 }

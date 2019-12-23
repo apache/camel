@@ -1,28 +1,32 @@
 [[ganglia-component]]
-== Ganglia Component
+= Ganglia Component
 
-*Available as of Camel version 2.15*
+*Since Camel 2.15*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 Provides a mechanism to send a value (the message body) as a metric to
-the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
-library.  Can be used in conjunction with standard
+the http://ganglia.info[Ganglia] monitoring system.  Uses the gmetric4j
+library.  Can be used in conjunction with standard
 http://ganglia.info[Ganglia] and
 https://github.com/ganglia/jmxetric[JMXetric] for monitoring metrics
 from the OS, JVM and business processes through a single platform.
 
 You should have a Ganglia gmond agent running on the machine where your
-JVM runs.  The gmond sends a heartbeat to the Ganglia infrastructure,
+JVM runs.  The gmond sends a heartbeat to the Ganglia infrastructure,
 camel-ganglia can't send the heartbeat itself currently.
 
 On most Linux systems (Debian, Ubuntu, Fedora and RHEL/CentOS with EPEL)
 you can just install the Ganglia agent package and it runs automatically
-using multicast configuration.  You can configure it to use regular UDP
+using multicast configuration.  You can configure it to use regular UDP
 unicast if you prefer.
 
 Maven users will need to add the following dependency to their `pom.xml`
 for this component:
 
- 
+ 
 
 [source,xml]
 ----
@@ -34,7 +38,7 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source,java]
 ----
@@ -44,14 +48,14 @@ ganglia:address:port[?options]
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Ganglia component and endpoint URI options
+== Ganglia component and endpoint URI options
 
 
 
 
 
 // component options: START
-The Ganglia component supports 3 options, which are listed below.
+The Ganglia component supports 4 options, which are listed below.
 
 
 
@@ -59,8 +63,9 @@ The Ganglia component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared configuration |  | GangliaConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -78,7 +83,7 @@ ganglia:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -89,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (15 parameters):
+=== Query Parameters (15 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -113,14 +118,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-ganglia-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -128,7 +133,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 17 options, which are listed below.
+The component supports 18 options, which are listed below.
 
 
 
@@ -136,11 +141,12 @@ The component supports 17 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.ganglia.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.ganglia.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.ganglia.configuration.dmax* | Minumum time in seconds before Ganglia will purge the metric value if it expires. Set to 0 and the value will remain in Ganglia indefinitely until a gmond agent restart. | 0 | Integer
 | *camel.component.ganglia.configuration.group-name* | The group that the metric belongs to. | java | String
 | *camel.component.ganglia.configuration.host* | Host name for Ganglia server | 239.2.11.71 | String
 | *camel.component.ganglia.configuration.metric-name* | The name to use for the metric. | metric | String
-| *camel.component.ganglia.configuration.mode* | Send the UDP metric packets using MULTICAST or UNICAST |  | GMetric$UDP AddressingMode
+| *camel.component.ganglia.configuration.mode* | Send the UDP metric packets using MULTICAST or UNICAST |  | GMetric$UDPAddressingMode
 | *camel.component.ganglia.configuration.port* | Port for Ganglia server | 8649 | Integer
 | *camel.component.ganglia.configuration.prefix* | Prefix the metric name with this string and an underscore. |  | String
 | *camel.component.ganglia.configuration.slope* | The slope |  | GMetricSlope
@@ -150,31 +156,31 @@ The component supports 17 options, which are listed below.
 | *camel.component.ganglia.configuration.type* | The type of value |  | GMetricType
 | *camel.component.ganglia.configuration.units* | Any unit of measurement that qualifies the metric, e.g. widgets, litres, bytes. Do not include a prefix such as k (kilo) or m (milli), other tools may scale the units later. The value should be unscaled. |  | String
 | *camel.component.ganglia.configuration.wire-format31x* | Use the wire format of Ganglia 3.1.0 and later versions. Set this to false to use Ganglia 3.0.x or earlier. | true | Boolean
-| *camel.component.ganglia.enabled* | Enable ganglia component | true | Boolean
-| *camel.component.ganglia.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.ganglia.enabled* | Whether to enable auto configuration of the ganglia component. This is enabled by default. |  | Boolean
+| *camel.component.ganglia.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
 
-=== Message body
+== Message body
 
 Any value (such as a string or numeric type) in the body is sent to the
 Ganglia system.
 
-=== Return value / response
+== Return value / response
 
-Ganglia sends metrics using unidirectional UDP or multicast.  There is
+Ganglia sends metrics using unidirectional UDP or multicast.  There is
 no response or change to the message body.
 
-=== Examples
+== Examples
 
-==== Sending a String metric
+=== Sending a String metric
 
 The message body will be converted to a String and sent as a metric
-value.  Unlike numeric metrics, String values can't be charted but
-Ganglia makes them available for reporting.  The os_version string at
+value.  Unlike numeric metrics, String values can't be charted but
+Ganglia makes them available for reporting.  The os_version string at
 the top of every Ganglia host page is an example of a String metric.
 
 [source,java]
@@ -188,7 +194,7 @@ from("direct:ganglia.tx")
     .to("ganglia:239.2.11.71:8649?mode=MULTICAST&prefix=test");
 ----
 
-==== Sending a numeric metric
+=== Sending a numeric metric
 
 [source,java]
 ----

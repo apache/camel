@@ -36,10 +36,8 @@ public class BeanCachedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:noCache")
-                        .to("bean:something?cache=false");
-                from("direct:cached")
-                        .to("bean:something?cache=true");
+                from("direct:noCache").to("bean:something?cache=false");
+                from("direct:cached").to("bean:something?cache=true");
 
             }
         };
@@ -83,7 +81,6 @@ public class BeanCachedTest extends ContextTestSupport {
             assertEquals("This bean is not supported to be invoked again!", ex.getCause().getMessage());
         }
     }
-
 
     public static class MyBean {
         private boolean invoked;

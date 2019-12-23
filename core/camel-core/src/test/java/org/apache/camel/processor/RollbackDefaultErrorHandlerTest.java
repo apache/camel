@@ -64,19 +64,11 @@ public class RollbackDefaultErrorHandlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .choice()
-                        .when(body().isNotEqualTo("ok"))
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertFalse("Rollback flag should have been cleared on redelivery", exchange.isRollbackOnly());
-                            }
-                        })
-                        .to("mock:rollback")
-                        .rollback("That do not work")
-                    .otherwise()
-                        .to("mock:result")
-                    .end();
+                from("direct:start").choice().when(body().isNotEqualTo("ok")).process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertFalse("Rollback flag should have been cleared on redelivery", exchange.isRollbackOnly());
+                    }
+                }).to("mock:rollback").rollback("That do not work").otherwise().to("mock:result").end();
             }
         };
     }

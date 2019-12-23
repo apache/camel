@@ -35,7 +35,6 @@ public class CamelHl7Test extends AbstractSpringBootTestSupport {
     public static ITestConfig createTestConfig() {
         return new ITestConfigBuilder()
                 .module(inferModuleName(CamelHl7Test.class))
-                //.dependency(DependencyResolver.withVersion("org.apache.camel:camel-netty4"))
                 .build();
     }
 

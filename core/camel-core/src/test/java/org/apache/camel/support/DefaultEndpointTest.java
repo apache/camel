@@ -34,11 +34,11 @@ public class DefaultEndpointTest extends ContextTestSupport {
         assertSanitizedUriUnchanged("direct:foo?bar=123&cheese=yes");
         assertSanitizedUriUnchanged("https://issues.apache.org/activemq/secure/AddComment!default.jspa?id=33239");
         assertEquals("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=xxxxxx",
-            URISupport.sanitizeUri("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=superSecret"));
+                     URISupport.sanitizeUri("ftp://host.mysite.com/records?passiveMode=true&user=someuser&password=superSecret"));
         assertEquals("sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=xxxxxx&knownHostsFile=hosts.list",
-            URISupport.sanitizeUri("sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=superSecret&knownHostsFile=hosts.list"));
+                     URISupport.sanitizeUri("sftp://host.mysite.com/records?user=someuser&privateKeyFile=key.file&privateKeyFilePassphrase=superSecret&knownHostsFile=hosts.list"));
         assertEquals("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=xxxxxx",
-            URISupport.sanitizeUri("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=qi472qfberu33dqjncq"));
+                     URISupport.sanitizeUri("aws-sqs://MyQueue?accessKey=1672t4rflhnhli3&secretKey=qi472qfberu33dqjncq"));
     }
 
     @Test

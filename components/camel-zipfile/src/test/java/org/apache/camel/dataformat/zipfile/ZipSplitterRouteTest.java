@@ -36,7 +36,7 @@ public class ZipSplitterRouteTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // Unzip file and Split it according to FileEntry
-                from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data?consumer.delay=1000&noop=true")
+                from("file:src/test/resources/org/apache/camel/dataformat/zipfile/data?delay=1000&noop=true")
                     .log("Start processing big file: ${header.CamelFileName}")
                     .split(new ZipSplitter()).streaming()
                         .to("log:entry")

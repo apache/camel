@@ -24,9 +24,11 @@ public class PropertyEditorTypeConverterIssueTest extends ContextTestSupport {
 
     @Test
     public void testPropertyEditorTypeConverter() throws Exception {
-        // test that converters a custom object (MyBean) to a String which causes
+        // test that converters a custom object (MyBean) to a String which
+        // causes
         // PropertyEditorTypeConverter to be used. And this test times how fast
-        // this is. As we want to optimize PropertyEditorTypeConverter to be faster
+        // this is. As we want to optimize PropertyEditorTypeConverter to be
+        // faster
         MyBean bean = new MyBean();
         bean.setBar("Hello");
 

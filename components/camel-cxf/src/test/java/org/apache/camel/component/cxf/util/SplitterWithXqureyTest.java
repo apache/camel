@@ -42,6 +42,7 @@ public class SplitterWithXqureyTest extends CamelTestSupport {
         "<other xmlns=\"http://camel.apache.org/schema/one\"><test>Foure</test></other>"
     };
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

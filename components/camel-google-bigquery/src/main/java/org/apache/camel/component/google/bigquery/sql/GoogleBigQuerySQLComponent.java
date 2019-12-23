@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.bigquery.sql;
 
 import java.util.Map;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.google.bigquery.GoogleBigQueryConnectionFactory;
@@ -29,7 +30,6 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
     private GoogleBigQueryConnectionFactory connectionFactory;
 
     public GoogleBigQuerySQLComponent() {
-        super();
     }
 
     public GoogleBigQuerySQLComponent(CamelContext camelContext) {
@@ -46,14 +46,15 @@ public class GoogleBigQuerySQLComponent extends DefaultComponent {
         }
 
         GoogleBigQuerySQLConfiguration configuration = new GoogleBigQuerySQLConfiguration();
-        setProperties(configuration, parameters);
         configuration.parseRemaining(remaining);
 
         if (configuration.getConnectionFactory() == null) {
             configuration.setConnectionFactory(getConnectionFactory());
         }
 
-        return new GoogleBigQuerySQLEndpoint(uri, this, configuration);
+        GoogleBigQuerySQLEndpoint endpoint = new GoogleBigQuerySQLEndpoint(uri, this, configuration);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     public String getProjectId() {

@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import javax.swing.text.html.parser.DTD;
 
 import org.apache.camel.support.component.ApiMethodParser;
@@ -35,7 +36,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
-import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Parses ApiMethod signatures from Javadoc.

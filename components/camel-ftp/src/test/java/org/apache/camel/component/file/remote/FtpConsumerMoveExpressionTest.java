@@ -20,35 +20,34 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.apache.camel.test.junit5.TestSupport.deleteDirectory;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test for FTP using expression (file language)
  */
 public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
 
+    @BindToRegistry("myguidgenerator")
+    private MyGuidGenerator guid = new MyGuidGenerator();
+    
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin&consumer.delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "/filelanguage?password=admin&delay=5000";
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         deleteDirectory("target/filelanguage");
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myguidgenerator", new MyGuidGenerator());
-        return jndi;
-    }
-    
     @Test
     public void testMoveUsingExpression() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -63,15 +62,14 @@ public class FtpConsumerMoveExpressionTest extends FtpServerTestSupport {
 
         String now = new SimpleDateFormat("yyyyMMdd").format(new Date());
         File file = new File(FTP_ROOT_DIR + "/filelanguage/backup/" + now + "/123-report2.bak");
-        assertTrue("File should have been renamed", file.exists());
+        assertTrue(file.exists(), "File should have been renamed");
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}"
-                        + "-${file:name.noext}.bak").to("mock:result");
+                from(getFtpUrl() + "&move=backup/${date:now:yyyyMMdd}/${bean:myguidgenerator}" + "-${file:name.noext}.bak").to("mock:result");
             }
         };
     }

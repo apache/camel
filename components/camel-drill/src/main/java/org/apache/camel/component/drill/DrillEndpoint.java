@@ -33,7 +33,6 @@ import org.apache.camel.support.DefaultPollingEndpoint;
 import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
-
 /**
  * The drill component gives you the ability to quering into apache drill
  * cluster.
@@ -64,10 +63,12 @@ public class DrillEndpoint extends DefaultPollingEndpoint {
         super(uri, component);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("DrillConsumer is not supported!");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new DrillProducer(this);
     }

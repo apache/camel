@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.language;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -53,9 +54,9 @@ public class LanguageLoadScriptFromFileUpdateTest extends ContextTestSupport {
 
                 // START SNIPPET: e1
                 from("direct:start")
-                    // the script will be loaded on each message, as we disabled cache
-                    .to("language:simple:file:target/data/script/myscript.txt?contentCache=false")
-                    .to("mock:result");
+                    // the script will be loaded on each message, as we disabled
+                    // cache
+                    .to("language:simple:file:target/data/script/myscript.txt?contentCache=false").to("mock:result");
                 // END SNIPPET: e1
             }
         };

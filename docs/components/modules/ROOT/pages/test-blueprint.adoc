@@ -1,6 +1,7 @@
-## Blueprint Testing
+= Blueprint Testing
+:page-source: components/camel-test-blueprint/src/main/docs/test-blueprint.adoc
 
-*Available as of Camel 2.10*
+*Since Camel 2.10*
 
 camel-test-blueprint does only support testing _one_ CamelContext. So
 if you have two or more CamelContexts in your blueprint XML files, then
@@ -11,7 +12,7 @@ integration work. Camel supports the definition of
 Blueprint routes, but given
 that Blueprint is an OSGi specific technology, writing unit tests is
 quite difficult. This library leverages
-http://code.google.com/p/pojosr/[PojoSR] (now Felix Connect) which
+http://code.google.com/p/pojosr/[PojoSR] (now Felix Connect) which
 provides a service registry without using a fully compliant OSGi
 container. This allows defining real unit tests (as opposed to
 integration tests using
@@ -22,11 +23,32 @@ Also notice the use of *`getBlueprintDescriptor`* to specify the
 location of the OSGi Blueprint XML file. +
  If you have multiple OSGi Blueprint XML files, then you can specify
 them with a comma-separated list in the *`getBlueprintDescriptor`*
-method.
+method. Notice that only **one** `CamelContext` is supported per blueprint bundle,
+so if you have multiple XML files then only one of them should have `<camelContext>`.
 
-Here's the
-http://svn.apache.org/viewvc/camel/trunk/components/camel-test-blueprint/src/test/resources/org/apache/camel/test/blueprint/camelContext.xml?view=markup[Blueprint
-XML file]:
+Here's the XML file]:
+
+[source,xml]
+----
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+             http://www.osgi.org/xmlns/blueprint/v1.0.0 https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+
+    <route>
+      <from uri="direct:start"/>
+      <transform>
+        <simple>Hello ${body}</simple>
+      </transform>
+      <to uri="mock:a"/>
+    </route>
+
+  </camelContext>
+
+</blueprint>
+----
 
 In order to define blueprint tests, add the following dependency to your
 pom:
@@ -41,14 +63,14 @@ pom:
 </dependency>
 -----------------------------------------------
 
-### Classpath scanning
+== Classpath scanning
 
 By default PojoSR test container scans the test classpath for all the
 OSGi bundles available there. All the bundles with Blueprint descriptor
 files will be automatically started by the test container. If you would
 like to prevent particular bundles from being started by the test
 container, override the `getBundleFilter` method, just as demonstrated
-in the snippet below. 
+in the snippet below. 
 
 [source,java]
 --------------------------------------------------------------------------------
@@ -64,9 +86,7 @@ getBlueprintDescriptor method will not prevent the test container from
 loading a given descriptor. The `getBundleFilter` method is the proper
 way of filtering out bundles you don't want to start during the test.
 
-### Setting timeout when getting CamelContext
-
-*Available as of Camel 2.13.0/2.12.1/2.11.2*
+== Setting timeout when getting CamelContext
 
 `CamelBlueprintTestSupport` waits 30 seconds for Camel Context to be
 ready by default, now you can override this value in two ways:
@@ -77,9 +97,7 @@ property.
 * Locally for each test, by overriding _getCamelContextCreationTimeout_
 method.
 
-### Adding services on startup
-
-*Available as of Camel 2.11.2/2.12.0*
+== Adding services on startup
 
 When using `camel-test-blueprint` you may do unit tests which requires
 using shared services which are not available during unit testing, but
@@ -147,11 +165,9 @@ And in the route we use the FQN name:
     </route>
 ----------------------------------------------------------------
 
- 
-
-From *Camel 2.16.0*, an additional `addServicesOnStartup` method is
+An additional `addServicesOnStartup` method is
 available to be overridden making it ideal for when needing to specify
-multiple services with the same interface. 
+multiple services with the same interface. 
 
 [source,java]
 ------------------------------------------------------------------------------------------------------------------
@@ -159,10 +175,10 @@ multiple services with the same interface. 
   protected void addServicesOnStartup(List<KeyValueHolder<String, KeyValueHolder<Object, Dictionary>>> services) {
       Dictionary<String, String> dict1 = new Hashtable<String, String>();
       dict1.put("osgi.jndi.service.name", "jdbc/db1");
-        
+        
       Dictionary<String, String> dict2 = new Hashtable<String, String>();
       dict2.put("osgi.jndi.service.name", "jdbc/db2");
-        
+        
       services.add(asKeyValueService(javax.sql.DataSource.class.getName(), mockService1, dict1));
       services.add(asKeyValueService(javax.sql.DataSource.class.getName(), mockService2, dict2));
     }
@@ -170,5 +186,5 @@ multiple services with the same interface. 
 
 The `asKeyValueService` builder method can be used to construct the
 necessary parameters to create the service. The method takes in the name
-of the registered service, the object, and and a `Dictionary` as
+of the registered service, the object, and and a `Dictionary` as
 arguments.

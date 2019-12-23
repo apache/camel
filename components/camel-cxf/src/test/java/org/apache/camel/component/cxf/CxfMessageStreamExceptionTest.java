@@ -24,6 +24,7 @@ import org.apache.cxf.binding.soap.SoapFault;
 
 public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedExceptionTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -33,7 +34,6 @@ public class CxfMessageStreamExceptionTest extends CxfMessageCustomizedException
                         public void process(Exchange exchange) throws Exception {
                             SoapFault fault = exchange
                                 .getProperty(Exchange.EXCEPTION_CAUGHT, SoapFault.class);
-                            exchange.getOut().setFault(true);
                             exchange.getOut().setBody(fault);
                         }
 

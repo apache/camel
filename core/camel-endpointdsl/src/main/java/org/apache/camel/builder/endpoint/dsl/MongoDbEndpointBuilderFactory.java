@@ -49,7 +49,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder collection(String collection) {
-            setProperty("collection", collection);
+            doSetProperty("collection", collection);
             return this;
         }
         /**
@@ -62,7 +62,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder collectionIndex(
                 String collectionIndex) {
-            setProperty("collectionIndex", collectionIndex);
+            doSetProperty("collectionIndex", collectionIndex);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder createCollection(
                 boolean createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -88,7 +88,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder createCollection(
                 String createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -99,61 +99,59 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder database(String database) {
-            setProperty("database", database);
+            doSetProperty("database", database);
             return this;
         }
         /**
          * Sets the Mongo instance that represents the backing connection.
          * 
-         * The option is a: <code>com.mongodb.MongoClient</code> type.
+         * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder mongoConnection(
                 Object mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
          * Sets the Mongo instance that represents the backing connection.
          * 
          * The option will be converted to a
-         * <code>com.mongodb.MongoClient</code> type.
+         * <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder mongoConnection(
                 String mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder operation(
                 MongoDbOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -163,14 +161,14 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder outputType(
                 MongoDbOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -180,13 +178,13 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -204,7 +202,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -222,7 +220,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -233,7 +231,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: consumer
          */
         default MongoDbEndpointConsumerBuilder consumerType(String consumerType) {
-            setProperty("consumerType", consumerType);
+            doSetProperty("consumerType", consumerType);
             return this;
         }
         /**
@@ -244,7 +242,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: changeStream
          */
         default MongoDbEndpointConsumerBuilder streamFilter(String streamFilter) {
-            setProperty("streamFilter", streamFilter);
+            doSetProperty("streamFilter", streamFilter);
             return this;
         }
         /**
@@ -257,7 +255,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder persistentId(String persistentId) {
-            setProperty("persistentId", persistentId);
+            doSetProperty("persistentId", persistentId);
             return this;
         }
         /**
@@ -272,7 +270,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder persistentTailTracking(
                 boolean persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -287,7 +285,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder persistentTailTracking(
                 String persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -301,7 +299,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder tailTrackCollection(
                 String tailTrackCollection) {
-            setProperty("tailTrackCollection", tailTrackCollection);
+            doSetProperty("tailTrackCollection", tailTrackCollection);
             return this;
         }
         /**
@@ -315,7 +313,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder tailTrackDb(String tailTrackDb) {
-            setProperty("tailTrackDb", tailTrackDb);
+            doSetProperty("tailTrackDb", tailTrackDb);
             return this;
         }
         /**
@@ -328,17 +326,17 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder tailTrackField(
                 String tailTrackField) {
-            setProperty("tailTrackField", tailTrackField);
+            doSetProperty("tailTrackField", tailTrackField);
             return this;
         }
         /**
          * Correlation field in the incoming record which is of increasing
          * nature and will be used to position the tailing cursor every time it
          * is generated. The cursor will be (re)created with a query of type:
-         * tailTrackIncreasingField lastValue (possibly recovered from
-         * persistent tail tracking). Can be of type Integer, Date, String, etc.
-         * NOTE: No support for dot notation at the current time, so the field
-         * should be at the top level of the document.
+         * tailTrackIncreasingField greater than lastValue (possibly recovered
+         * from persistent tail tracking). Can be of type Integer, Date, String,
+         * etc. NOTE: No support for dot notation at the current time, so the
+         * field should be at the top level of the document.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -346,7 +344,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointConsumerBuilder tailTrackIncreasingField(
                 String tailTrackIncreasingField) {
-            setProperty("tailTrackIncreasingField", tailTrackIncreasingField);
+            doSetProperty("tailTrackIncreasingField", tailTrackIncreasingField);
             return this;
         }
     }
@@ -373,7 +371,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -389,7 +387,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -401,7 +399,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -414,7 +412,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -427,7 +425,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -440,7 +438,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -458,7 +456,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
                 long cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -476,7 +474,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -493,7 +491,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder dynamicity(
                 boolean dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
             return this;
         }
         /**
@@ -510,7 +508,21 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder dynamicity(
                 String dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
+            return this;
+        }
+        /**
+         * Configure how MongoDB clients route read operations to the members of
+         * a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED,
+         * SECONDARY, SECONDARY_PREFERRED or NEAREST.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder readPreference(
+                String readPreference) {
+            doSetProperty("readPreference", readPreference);
             return this;
         }
         /**
@@ -523,7 +535,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -536,7 +548,22 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Configure the connection bean with the level of acknowledgment
+         * requested from MongoDB for write operations to a standalone mongod,
+         * replicaset or cluster. Possible values are ACKNOWLEDGED, W1, W2, W3,
+         * UNACKNOWLEDGED, JOURNALED or MAJORITY.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMongoDbEndpointConsumerBuilder writeConcern(
+                String writeConcern) {
+            doSetProperty("writeConcern", writeConcern);
             return this;
         }
         /**
@@ -550,7 +577,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
                 boolean writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
         /**
@@ -564,7 +591,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
     }
@@ -586,7 +613,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointProducerBuilder collection(String collection) {
-            setProperty("collection", collection);
+            doSetProperty("collection", collection);
             return this;
         }
         /**
@@ -599,7 +626,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder collectionIndex(
                 String collectionIndex) {
-            setProperty("collectionIndex", collectionIndex);
+            doSetProperty("collectionIndex", collectionIndex);
             return this;
         }
         /**
@@ -612,7 +639,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder createCollection(
                 boolean createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -625,7 +652,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder createCollection(
                 String createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -636,61 +663,59 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointProducerBuilder database(String database) {
-            setProperty("database", database);
+            doSetProperty("database", database);
             return this;
         }
         /**
          * Sets the Mongo instance that represents the backing connection.
          * 
-         * The option is a: <code>com.mongodb.MongoClient</code> type.
+         * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          */
         default MongoDbEndpointProducerBuilder mongoConnection(
                 Object mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
          * Sets the Mongo instance that represents the backing connection.
          * 
          * The option will be converted to a
-         * <code>com.mongodb.MongoClient</code> type.
+         * <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          */
         default MongoDbEndpointProducerBuilder mongoConnection(
                 String mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointProducerBuilder operation(
                 MongoDbOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -700,14 +725,14 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointProducerBuilder outputType(
                 MongoDbOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -717,13 +742,13 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointProducerBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -743,7 +768,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -763,7 +788,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -774,7 +799,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: changeStream
          */
         default MongoDbEndpointProducerBuilder streamFilter(String streamFilter) {
-            setProperty("streamFilter", streamFilter);
+            doSetProperty("streamFilter", streamFilter);
             return this;
         }
         /**
@@ -787,7 +812,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder persistentId(String persistentId) {
-            setProperty("persistentId", persistentId);
+            doSetProperty("persistentId", persistentId);
             return this;
         }
         /**
@@ -802,7 +827,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder persistentTailTracking(
                 boolean persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -817,7 +842,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder persistentTailTracking(
                 String persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -831,7 +856,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder tailTrackCollection(
                 String tailTrackCollection) {
-            setProperty("tailTrackCollection", tailTrackCollection);
+            doSetProperty("tailTrackCollection", tailTrackCollection);
             return this;
         }
         /**
@@ -845,7 +870,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder tailTrackDb(String tailTrackDb) {
-            setProperty("tailTrackDb", tailTrackDb);
+            doSetProperty("tailTrackDb", tailTrackDb);
             return this;
         }
         /**
@@ -858,17 +883,17 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder tailTrackField(
                 String tailTrackField) {
-            setProperty("tailTrackField", tailTrackField);
+            doSetProperty("tailTrackField", tailTrackField);
             return this;
         }
         /**
          * Correlation field in the incoming record which is of increasing
          * nature and will be used to position the tailing cursor every time it
          * is generated. The cursor will be (re)created with a query of type:
-         * tailTrackIncreasingField lastValue (possibly recovered from
-         * persistent tail tracking). Can be of type Integer, Date, String, etc.
-         * NOTE: No support for dot notation at the current time, so the field
-         * should be at the top level of the document.
+         * tailTrackIncreasingField greater than lastValue (possibly recovered
+         * from persistent tail tracking). Can be of type Integer, Date, String,
+         * etc. NOTE: No support for dot notation at the current time, so the
+         * field should be at the top level of the document.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -876,7 +901,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointProducerBuilder tailTrackIncreasingField(
                 String tailTrackIncreasingField) {
-            setProperty("tailTrackIncreasingField", tailTrackIncreasingField);
+            doSetProperty("tailTrackIncreasingField", tailTrackIncreasingField);
             return this;
         }
     }
@@ -900,7 +925,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -913,7 +938,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -931,7 +956,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
                 long cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -949,7 +974,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -966,7 +991,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder dynamicity(
                 boolean dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
             return this;
         }
         /**
@@ -983,7 +1008,21 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder dynamicity(
                 String dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
+            return this;
+        }
+        /**
+         * Configure how MongoDB clients route read operations to the members of
+         * a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED,
+         * SECONDARY, SECONDARY_PREFERRED or NEAREST.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMongoDbEndpointProducerBuilder readPreference(
+                String readPreference) {
+            doSetProperty("readPreference", readPreference);
             return this;
         }
         /**
@@ -996,7 +1035,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1009,7 +1048,22 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Configure the connection bean with the level of acknowledgment
+         * requested from MongoDB for write operations to a standalone mongod,
+         * replicaset or cluster. Possible values are ACKNOWLEDGED, W1, W2, W3,
+         * UNACKNOWLEDGED, JOURNALED or MAJORITY.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMongoDbEndpointProducerBuilder writeConcern(
+                String writeConcern) {
+            doSetProperty("writeConcern", writeConcern);
             return this;
         }
         /**
@@ -1023,7 +1077,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
                 boolean writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
         /**
@@ -1037,7 +1091,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
     }
@@ -1059,7 +1113,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder collection(String collection) {
-            setProperty("collection", collection);
+            doSetProperty("collection", collection);
             return this;
         }
         /**
@@ -1071,7 +1125,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder collectionIndex(String collectionIndex) {
-            setProperty("collectionIndex", collectionIndex);
+            doSetProperty("collectionIndex", collectionIndex);
             return this;
         }
         /**
@@ -1083,7 +1137,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder createCollection(boolean createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -1095,7 +1149,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder createCollection(String createCollection) {
-            setProperty("createCollection", createCollection);
+            doSetProperty("createCollection", createCollection);
             return this;
         }
         /**
@@ -1106,58 +1160,56 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: common
          */
         default MongoDbEndpointBuilder database(String database) {
-            setProperty("database", database);
+            doSetProperty("database", database);
             return this;
         }
         /**
          * Sets the Mongo instance that represents the backing connection.
          * 
-         * The option is a: <code>com.mongodb.MongoClient</code> type.
+         * The option is a: <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          */
         default MongoDbEndpointBuilder mongoConnection(Object mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
          * Sets the Mongo instance that represents the backing connection.
          * 
          * The option will be converted to a
-         * <code>com.mongodb.MongoClient</code> type.
+         * <code>com.mongodb.client.MongoClient</code> type.
          * 
          * Group: common
          */
         default MongoDbEndpointBuilder mongoConnection(String mongoConnection) {
-            setProperty("mongoConnection", mongoConnection);
+            doSetProperty("mongoConnection", mongoConnection);
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointBuilder operation(MongoDbOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
-         * Sets the operation this endpoint will execute against MongoDB. For
-         * possible values, see MongoDbOperation.
+         * Sets the operation this endpoint will execute against MongoDB.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOperation</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -1167,13 +1219,13 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointBuilder outputType(MongoDbOutputType outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1183,13 +1235,13 @@ public interface MongoDbEndpointBuilderFactory {
          * operations.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code>
+         * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code>
          * type.
          * 
          * Group: common
          */
         default MongoDbEndpointBuilder outputType(String outputType) {
-            setProperty("outputType", outputType);
+            doSetProperty("outputType", outputType);
             return this;
         }
         /**
@@ -1200,7 +1252,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: changeStream
          */
         default MongoDbEndpointBuilder streamFilter(String streamFilter) {
-            setProperty("streamFilter", streamFilter);
+            doSetProperty("streamFilter", streamFilter);
             return this;
         }
         /**
@@ -1213,7 +1265,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointBuilder persistentId(String persistentId) {
-            setProperty("persistentId", persistentId);
+            doSetProperty("persistentId", persistentId);
             return this;
         }
         /**
@@ -1228,7 +1280,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder persistentTailTracking(
                 boolean persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -1243,7 +1295,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder persistentTailTracking(
                 String persistentTailTracking) {
-            setProperty("persistentTailTracking", persistentTailTracking);
+            doSetProperty("persistentTailTracking", persistentTailTracking);
             return this;
         }
         /**
@@ -1257,7 +1309,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder tailTrackCollection(
                 String tailTrackCollection) {
-            setProperty("tailTrackCollection", tailTrackCollection);
+            doSetProperty("tailTrackCollection", tailTrackCollection);
             return this;
         }
         /**
@@ -1271,7 +1323,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointBuilder tailTrackDb(String tailTrackDb) {
-            setProperty("tailTrackDb", tailTrackDb);
+            doSetProperty("tailTrackDb", tailTrackDb);
             return this;
         }
         /**
@@ -1283,17 +1335,17 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: tail
          */
         default MongoDbEndpointBuilder tailTrackField(String tailTrackField) {
-            setProperty("tailTrackField", tailTrackField);
+            doSetProperty("tailTrackField", tailTrackField);
             return this;
         }
         /**
          * Correlation field in the incoming record which is of increasing
          * nature and will be used to position the tailing cursor every time it
          * is generated. The cursor will be (re)created with a query of type:
-         * tailTrackIncreasingField lastValue (possibly recovered from
-         * persistent tail tracking). Can be of type Integer, Date, String, etc.
-         * NOTE: No support for dot notation at the current time, so the field
-         * should be at the top level of the document.
+         * tailTrackIncreasingField greater than lastValue (possibly recovered
+         * from persistent tail tracking). Can be of type Integer, Date, String,
+         * etc. NOTE: No support for dot notation at the current time, so the
+         * field should be at the top level of the document.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
@@ -1301,7 +1353,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default MongoDbEndpointBuilder tailTrackIncreasingField(
                 String tailTrackIncreasingField) {
-            setProperty("tailTrackIncreasingField", tailTrackIncreasingField);
+            doSetProperty("tailTrackIncreasingField", tailTrackIncreasingField);
             return this;
         }
     }
@@ -1325,7 +1377,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1338,7 +1390,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1356,7 +1408,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder cursorRegenerationDelay(
                 long cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -1374,7 +1426,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder cursorRegenerationDelay(
                 String cursorRegenerationDelay) {
-            setProperty("cursorRegenerationDelay", cursorRegenerationDelay);
+            doSetProperty("cursorRegenerationDelay", cursorRegenerationDelay);
             return this;
         }
         /**
@@ -1390,7 +1442,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder dynamicity(boolean dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
             return this;
         }
         /**
@@ -1406,7 +1458,21 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder dynamicity(String dynamicity) {
-            setProperty("dynamicity", dynamicity);
+            doSetProperty("dynamicity", dynamicity);
+            return this;
+        }
+        /**
+         * Configure how MongoDB clients route read operations to the members of
+         * a replica set. Possible values are PRIMARY, PRIMARY_PREFERRED,
+         * SECONDARY, SECONDARY_PREFERRED or NEAREST.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMongoDbEndpointBuilder readPreference(
+                String readPreference) {
+            doSetProperty("readPreference", readPreference);
             return this;
         }
         /**
@@ -1418,7 +1484,7 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1430,7 +1496,21 @@ public interface MongoDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
+            return this;
+        }
+        /**
+         * Configure the connection bean with the level of acknowledgment
+         * requested from MongoDB for write operations to a standalone mongod,
+         * replicaset or cluster. Possible values are ACKNOWLEDGED, W1, W2, W3,
+         * UNACKNOWLEDGED, JOURNALED or MAJORITY.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedMongoDbEndpointBuilder writeConcern(String writeConcern) {
+            doSetProperty("writeConcern", writeConcern);
             return this;
         }
         /**
@@ -1444,7 +1524,7 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder writeResultAsHeader(
                 boolean writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
         /**
@@ -1458,14 +1538,14 @@ public interface MongoDbEndpointBuilderFactory {
          */
         default AdvancedMongoDbEndpointBuilder writeResultAsHeader(
                 String writeResultAsHeader) {
-            setProperty("writeResultAsHeader", writeResultAsHeader);
+            doSetProperty("writeResultAsHeader", writeResultAsHeader);
             return this;
         }
     }
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.mongodb3.MongoDbOperation</code> enum.
+     * <code>org.apache.camel.component.mongodb.MongoDbOperation</code> enum.
      */
     enum MongoDbOperation {
         findById,
@@ -1486,7 +1566,7 @@ public interface MongoDbEndpointBuilderFactory {
 
     /**
      * Proxy enum for
-     * <code>org.apache.camel.component.mongodb3.MongoDbOutputType</code> enum.
+     * <code>org.apache.camel.component.mongodb.MongoDbOutputType</code> enum.
      */
     enum MongoDbOutputType {
         DocumentList,
@@ -1494,22 +1574,22 @@ public interface MongoDbEndpointBuilderFactory {
         MongoIterable;
     }
     /**
-     * MongoDB (camel-mongodb3)
+     * MongoDB (camel-mongodb)
      * Component for working with documents stored in MongoDB database.
      * 
      * Category: database,nosql
-     * Available as of version: 2.19
-     * Maven coordinates: org.apache.camel:camel-mongodb3
+     * Since: 2.19
+     * Maven coordinates: org.apache.camel:camel-mongodb
      * 
-     * Syntax: <code>mongodb3:connectionBean</code>
+     * Syntax: <code>mongodb:connectionBean</code>
      * 
      * Path parameter: connectionBean (required)
      * Name of com.mongodb.Mongo to use.
      */
-    default MongoDbEndpointBuilder mongoDb(String path) {
+    default MongoDbEndpointBuilder mongodb(String path) {
         class MongoDbEndpointBuilderImpl extends AbstractEndpointBuilder implements MongoDbEndpointBuilder, AdvancedMongoDbEndpointBuilder {
             public MongoDbEndpointBuilderImpl(String path) {
-                super("mongodb3", path);
+                super("mongodb", path);
             }
         }
         return new MongoDbEndpointBuilderImpl(path);

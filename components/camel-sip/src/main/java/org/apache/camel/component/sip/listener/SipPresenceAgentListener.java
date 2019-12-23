@@ -51,6 +51,7 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         this.sipPresenceAgent = sipPresenceAgent;
     }
 
+    @Override
     public void processRequest(RequestEvent requestEvent) {
         Request request = requestEvent.getRequest();
         ServerTransaction serverTransactionId = requestEvent.getServerTransaction();
@@ -179,6 +180,7 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         }
     }
 
+    @Override
     public synchronized void processResponse(ResponseEvent responseReceivedEvent) {
         Response response = responseReceivedEvent.getResponse();
         Integer statusCode = response.getStatusCode();
@@ -187,18 +189,21 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         }
     }
 
+    @Override
     public void processTimeout(javax.sip.TimeoutEvent timeoutEvent) {
         if (LOG.isWarnEnabled()) {
             LOG.warn("TimeoutEvent received at Sip Presence Agent Listener");
         }
     }
 
+    @Override
     public void processIOException(IOExceptionEvent exceptionEvent) {
         if (LOG.isWarnEnabled()) {
             LOG.warn("IOExceptionEvent received at SipPresenceAgentListener");
         }
     }
 
+    @Override
     public void processTransactionTerminated(
             TransactionTerminatedEvent transactionTerminatedEvent) {
         if (LOG.isWarnEnabled()) {
@@ -206,6 +211,7 @@ public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
         }
     }
 
+    @Override
     public void processDialogTerminated(
             DialogTerminatedEvent dialogTerminatedEvent) {
         if (LOG.isWarnEnabled()) {

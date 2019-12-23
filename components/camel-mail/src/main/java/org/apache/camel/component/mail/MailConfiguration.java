@@ -201,6 +201,14 @@ public class MailConfiguration implements Cloneable {
         }
         if (session != null) {
             answer.setSession(session);
+            String host = session.getProperty("mail.smtp.host");
+            if (host != null && !host.isEmpty()) {
+                answer.setHost(host);
+            }
+            String port = session.getProperty("mail.smtp.port");
+            if (port != null && !port.isEmpty()) {
+                answer.setPort(Integer.parseInt(port));
+            }
         } else {
             ClassLoader tccl = Thread.currentThread().getContextClassLoader();
             try {
@@ -394,7 +402,7 @@ public class MailConfiguration implements Cloneable {
     /**
      * Specifies the mail session that camel should use for all mail interactions. Useful in scenarios where
      * mail sessions are created and managed by some other resource, such as a JavaEE container.
-     * If this is not specified, Camel automatically creates the mail session for you.
+     * When using a custom mail session, then the hostname and port from the mail session will be used (if configured on the session).
      */
     public void setSession(Session session) {
         this.session = session;

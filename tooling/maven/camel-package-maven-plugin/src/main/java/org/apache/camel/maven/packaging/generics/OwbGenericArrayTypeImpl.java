@@ -57,6 +57,7 @@ public class OwbGenericArrayTypeImpl implements GenericArrayType {
 
     }
 
+    @Override
     public String toString() {
         return componentType + "[]";
     }

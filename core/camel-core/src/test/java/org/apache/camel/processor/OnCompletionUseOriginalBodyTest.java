@@ -45,15 +45,9 @@ public class OnCompletionUseOriginalBodyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion().useOriginalBody().parallelProcessing()
-                    .to("mock:before")
-                    .delay(1000)
-                    .setBody(simple("OnComplete:${body}"))
-                    .to("mock:after");
+                onCompletion().useOriginalBody().parallelProcessing().to("mock:before").delay(1000).setBody(simple("OnComplete:${body}")).to("mock:after");
 
-                from("direct:start")
-                    .process(new MyProcessor())
-                    .to("mock:result");
+                from("direct:start").process(new MyProcessor()).to("mock:result");
             }
         };
     }
@@ -63,6 +57,7 @@ public class OnCompletionUseOriginalBodyTest extends ContextTestSupport {
         public MyProcessor() {
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if (exchange.getIn().getBody(String.class).contains("Kabom")) {
                 throw new IllegalArgumentException("Kabom");

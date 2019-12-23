@@ -1,0 +1,24 @@
+{
+    "ok": true,
+    "result": {
+        "message_id": 934,
+        "from": {
+            "id": 770882310,
+            "is_bot": true,
+            "first_name": "camelDemoBot",
+            "username": "camelDemoBot"
+        },
+        "chat": {
+            "id": 434822960,
+            "first_name": "Peter",
+            "last_name": "Palaga",
+            "type": "private"
+        },
+        "date": 1576249600,
+        "document": {
+            "file_name": "file",
+            "file_id": "BQADBAAD5wUAAmcaoVNbRjnV8IcCmhYE",
+            "file_size": 7638
+        }
+    }
+}

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.braintree;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.LinkedList;

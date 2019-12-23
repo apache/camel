@@ -16,12 +16,18 @@
  */
 package org.apache.camel.tools.apt;
 
+import java.util.Iterator;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
+import javax.annotation.processing.Messager;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
+import javax.tools.Diagnostic.Kind;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
@@ -38,19 +44,61 @@ public class ModelAnnotationProcessor extends AbstractCamelAnnotationProcessor {
     @Override
     protected void doProcess(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) throws Exception {
         Set<? extends Element> elements = roundEnv.getElementsAnnotatedWith(XmlRootElement.class);
-        for (Element element : elements) {
-            if (element instanceof TypeElement) {
-                TypeElement classElement = (TypeElement) element;
 
-                final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
-                boolean core = javaTypeName.startsWith("org.apache.camel.model");
-                boolean spring = javaTypeName.startsWith("org.apache.camel.spring") || javaTypeName.startsWith("org.apache.camel.core.xml");
-                if (core) {
-                    coreProcessor.processModelClass(processingEnv, roundEnv, classElement);
-                } else if (spring) {
-                    springProcessor.processModelClass(processingEnv, roundEnv, classElement);
-                }
-            }
+        final Messager messager = processingEnv.getMessager();
+
+        messager.printMessage(Kind.WARNING, String.format("Found %d elements annotated with XmlRootElement", elements.size()));
+
+        Set<? extends Element> coreElements = elements.stream()
+                .filter(new Predicate<Element>() {
+                    @Override
+                    public boolean test(Element element) {
+                        if (element instanceof TypeElement) {
+                            TypeElement classElement = (TypeElement) element;
+
+                            final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
+                            return javaTypeName.startsWith("org.apache.camel.model");
+                        }
+                        return false;
+                    }
+                }).collect(Collectors.toSet());
+
+        messager.printMessage(Kind.WARNING, String.format("Found %d core elements", coreElements.size()));
+
+        Set<? extends Element> springElements = elements.stream()
+                .filter(new Predicate<Element>() {
+                    @Override
+                    public boolean test(Element element) {
+                        if (element instanceof TypeElement) {
+                            TypeElement classElement = (TypeElement) element;
+
+                            final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
+                            return javaTypeName.startsWith("org.apache.camel.spring") || javaTypeName.startsWith("org.apache.camel.core.xml");
+                        }
+                        return false;
+                    }
+                }).collect(Collectors.toSet());
+
+        messager.printMessage(Kind.WARNING, String.format("Found %d spring elements", springElements.size()));
+
+        // we want them to be sorted
+        Set<String> propertyPlaceholderDefinitions = new TreeSet<>(String::compareToIgnoreCase);
+
+        Iterator<? extends Element> it = coreElements.iterator();
+        while (it.hasNext()) {
+            TypeElement classElement = (TypeElement) it.next();
+            coreProcessor.processModelClass(processingEnv, roundEnv, classElement, propertyPlaceholderDefinitions);
+        }
+
+        it = springElements.iterator();
+        while (it.hasNext()) {
+            TypeElement classElement = (TypeElement) it.next();
+            springProcessor.processModelClass(processingEnv, roundEnv, classElement);
+        }
+
+        if (!propertyPlaceholderDefinitions.isEmpty()) {
+            messager.printMessage(Kind.WARNING, String.format("Generating placeholder definitions helper for %d definitions", propertyPlaceholderDefinitions.size()));
+            PropertyPlaceholderGenerator.generatePropertyPlaceholderDefinitionsHelper(processingEnv, roundEnv, propertyPlaceholderDefinitions);
         }
     }
 

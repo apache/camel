@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.telegram.model;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 /**
  * An outgoing document message.
  */
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class OutgoingDocumentMessage extends OutgoingMessage {
 
     private byte[] document;

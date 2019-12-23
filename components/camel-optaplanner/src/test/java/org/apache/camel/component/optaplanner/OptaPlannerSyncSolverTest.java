@@ -43,6 +43,7 @@ public class OptaPlannerSyncSolverTest extends CamelTestSupport {
         assertNotNull(bestSolution.getProcessList().get(0).getComputer());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

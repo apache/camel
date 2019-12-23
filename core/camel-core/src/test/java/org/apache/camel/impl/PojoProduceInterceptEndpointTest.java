@@ -36,11 +36,9 @@ public class PojoProduceInterceptEndpointTest extends Assert {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:start")
-                        .to("language:simple:${body}${body}");
+                interceptSendToEndpoint("direct:start").to("language:simple:${body}${body}");
 
-                from("direct:start")
-                    .to("mock:result");
+                from("direct:start").to("mock:result");
             }
         });
 
@@ -68,11 +66,9 @@ public class PojoProduceInterceptEndpointTest extends Assert {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("direct:start")
-                        .to("language:simple:${body}${body}");
+                interceptSendToEndpoint("direct:start").to("language:simple:${body}${body}");
 
-                from("direct:start")
-                    .to("mock:result");
+                from("direct:start").to("mock:result");
             }
         });
 
@@ -103,7 +99,7 @@ public class PojoProduceInterceptEndpointTest extends Assert {
             Exchange exchange = producer.getEndpoint().createExchange();
             exchange.getIn().setBody(body);
             producer.process(exchange);
-            return exchange.hasOut() ? exchange.getOut().getBody() : exchange.getIn().getBody();
+            return exchange.getMessage().getBody();
         }
     }
 

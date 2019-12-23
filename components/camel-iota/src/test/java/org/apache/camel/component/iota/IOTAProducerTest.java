@@ -19,6 +19,7 @@ package org.apache.camel.component.iota;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class IOTAProducerTest extends CamelTestSupport {
@@ -28,6 +29,7 @@ public class IOTAProducerTest extends CamelTestSupport {
 
     private static final String IOTA_NODE_URL = "https://nodes.thetangle.org:443";
 
+    @Ignore
     @Test
     public void sendTransferTest() throws Exception {
         final String message = "ILOVEAPACHECAMEL";
@@ -45,7 +47,7 @@ public class IOTAProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:iota-new-address-response");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody("direct:iota-new-address", new String());
+        template.sendBody("direct:iota-new-address", "");
 
         assertMockEndpointsSatisfied();
     }
@@ -55,7 +57,7 @@ public class IOTAProducerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:iota-get-transfers-response");
         mock.expectedMinimumMessageCount(1);
 
-        template.sendBody("direct:iota-get-transfers", new String());
+        template.sendBody("direct:iota-get-transfers", "");
 
         assertMockEndpointsSatisfied();
     }

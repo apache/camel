@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.spring.scan;
+
 import java.lang.annotation.Annotation;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -34,6 +35,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
     private Set<Class<? extends Annotation>> annotations = new HashSet<>();
     private String scanPackage = "org.apache.camel.spring.scan";
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -42,14 +44,6 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
         annotations.add(org.apache.camel.spring.scan.ScannableTwo.class);
     }
     
-    @Test
-    public void testAccepableSchema() {
-        assertFalse("We should not accept the test by default!", resolver.isAcceptableScheme("test://test"));
-        resolver.setAcceptableSchemes("test:;test2:");
-        assertTrue("We should accept the test:!", resolver.isAcceptableScheme("test://test"));
-        assertTrue("We should accept the test2:!", resolver.isAcceptableScheme("test2://test"));
-    }
-
     @Test
     public void testFindByAnnotationWithoutExtraFilters() {
         Set<Class<?>> scanned = resolver.findAnnotated(org.apache.camel.spring.scan.ScannableOne.class, scanPackage);
@@ -152,7 +146,6 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             URL urls[] = {new URL("jar:" + url.toString() + "!/")};
             URLClassLoader classLoader = new URLClassLoader(urls, savedClassLoader);
 
-
             Thread.currentThread().setContextClassLoader(classLoader);
 
             // recreate resolver since we mess with context class loader
@@ -164,9 +157,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             assertEquals(1, scanned.size());
             assertEquals("class a.b.c.Test", scanned.iterator().next().toString());            
         } finally {
-            if (savedClassLoader != null) {
-                Thread.currentThread().setContextClassLoader(savedClassLoader);
-            } 
+            Thread.currentThread().setContextClassLoader(savedClassLoader);
         }
     }
     
@@ -192,9 +183,7 @@ public class DefaultPackageScanClassResolverTest extends org.apache.camel.spring
             assertEquals(1, scanned.size());
             assertEquals("class a.b.c.Test", scanned.iterator().next().toString());
         } finally {
-            if (savedClassLoader != null) {
-                Thread.currentThread().setContextClassLoader(savedClassLoader);
-            }
+            Thread.currentThread().setContextClassLoader(savedClassLoader);
         }
     }
 

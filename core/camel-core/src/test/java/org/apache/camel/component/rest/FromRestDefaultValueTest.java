@@ -36,7 +36,8 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
         getMockEndpoint("mock:bye").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:bye").expectedHeaderReceived("kind", "customer");
 
-        // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
+        // the rest becomes routes and the input is a seda endpoint created by
+        // the DummyRestConsumerFactory
         template.sendBody("seda:get-say-bye", "Hello World");
 
         assertMockEndpointsSatisfied();
@@ -47,7 +48,8 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
         getMockEndpoint("mock:bye").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:bye").expectedHeaderReceived("kind", "admin");
 
-        // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
+        // the rest becomes routes and the input is a seda endpoint created by
+        // the DummyRestConsumerFactory
         template.sendBodyAndHeader("seda:get-say-bye", "Bye World", "kind", "admin");
 
         assertMockEndpointsSatisfied();
@@ -60,9 +62,7 @@ public class FromRestDefaultValueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost").enableCORS(true);
 
-                rest("/say/bye").consumes("application/json")
-                    .get().param().type(RestParamType.query).name("kind").defaultValue("customer").endParam()
-                        .to("mock:bye");
+                rest("/say/bye").consumes("application/json").get().param().type(RestParamType.query).name("kind").defaultValue("customer").endParam().to("mock:bye");
             }
         };
     }

@@ -21,10 +21,12 @@ package org.apache.camel.component.jms;
  */
 public class PassThroughJmsKeyFormatStrategy implements JmsKeyFormatStrategy {
 
+    @Override
     public String encodeKey(String key) {
         return key;
     }
 
+    @Override
     public String decodeKey(String key) {
         return key;
     }

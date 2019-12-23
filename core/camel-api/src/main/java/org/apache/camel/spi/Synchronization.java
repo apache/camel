@@ -35,8 +35,7 @@ public interface Synchronization {
 
     /**
      * Called when the processing of the message exchange has failed for some reason.
-     * The exception which caused the problem is in {@link Exchange#getException()} and
-     * there could be a fault message via {@link org.apache.camel.Message#isFault()}
+     * The exception which caused the problem is in {@link Exchange#getException()}.
      *
      * @param exchange the exchange being processed
      */

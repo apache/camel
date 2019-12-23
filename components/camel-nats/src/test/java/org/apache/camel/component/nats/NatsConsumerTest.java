@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.nats;
 
-import java.io.IOException;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,9 +27,11 @@ public class NatsConsumerTest extends NatsTestSupport {
     protected MockEndpoint mockResultEndpoint;
 
     @Test
-    public void testConsumer() throws InterruptedException, IOException {
-        mockResultEndpoint.expectedMessageCount(1);
-        template.requestBody("direct:send", "test");
+    public void testConsumer() throws Exception {
+        mockResultEndpoint.expectedBodiesReceived("Hello World");
+        mockResultEndpoint.expectedHeaderReceived(NatsConstants.NATS_SUBJECT, "test");
+
+        template.sendBody("direct:send", "Hello World");
 
         mockResultEndpoint.assertIsSatisfied();
     }
@@ -41,8 +41,9 @@ public class NatsConsumerTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:send").to("nats://"  + getNatsUrl() + "?topic=test&flushConnection=true");
-                from("nats://" + getNatsUrl() + "?topic=test&flushConnection=true").to(mockResultEndpoint);
+                from("direct:send").to("nats:test?flushConnection=true");
+                
+                from("nats:test?flushConnection=true").to(mockResultEndpoint);
             }
         };
     }

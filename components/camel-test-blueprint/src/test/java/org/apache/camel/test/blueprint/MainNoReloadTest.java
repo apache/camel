@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.blueprint;
 
-
 import org.apache.camel.ProducerTemplate;
 import org.junit.Test;
 

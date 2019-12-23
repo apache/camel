@@ -17,6 +17,7 @@
 package org.apache.camel.component.telegram;
 
 import java.time.Instant;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -25,16 +26,17 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.telegram.model.Chat;
 import org.apache.camel.component.telegram.model.IncomingMessage;
-import org.apache.camel.component.telegram.model.UpdateResult;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.Before;
-import org.junit.Test;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import org.apache.camel.component.telegram.util.TelegramTestUtil;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 
 /**
- * 
+ *
  * Test channel data updates are converted by camel application.
  *
  */
@@ -43,33 +45,22 @@ public class TelegramConsumerChannelPostTest extends TelegramTestSupport {
     @EndpointInject("mock:telegram")
     private MockEndpoint endpoint;
 
-    @Before
-    public void mockAPIs() {
-        TelegramService api = mockTelegramService();
-
-        UpdateResult res1 = getJSONResource("messages/updates-channelMessage.json", UpdateResult.class);
-
-        UpdateResult defaultRes = getJSONResource("messages/updates-empty.json", UpdateResult.class);
-
-        when(api.getUpdates(any(), any(), any(), any())).thenReturn(res1).thenAnswer((i) -> defaultRes);
-    }
-    
     @Test
     public void testReceptionOfMessageWithAMessage() throws Exception {
         endpoint.expectedMinimumMessageCount(1);
-        endpoint.assertIsSatisfied();
+        endpoint.assertIsSatisfied(5000);
 
         Exchange mediaExchange = endpoint.getExchanges().get(0);
         IncomingMessage msg = mediaExchange.getIn().getBody(IncomingMessage.class);
-        
+
         assertEquals("-1001245756934", mediaExchange.getIn().getHeader(TelegramConstants.TELEGRAM_CHAT_ID));
-        
+
         //checking body
         assertNotNull(msg);
         assertEquals("test", msg.getText());
         assertEquals(Long.valueOf(67L), msg.getMessageId());
         assertEquals(Instant.ofEpochSecond(1546505413L), msg.getDate());
-        
+
         // checking chat
         Chat chat = msg.getChat();
         assertNotNull(chat);
@@ -78,15 +69,29 @@ public class TelegramConsumerChannelPostTest extends TelegramTestSupport {
         assertEquals("channel", chat.getType());
 
     }
-    
+
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("telegram:bots/mock-token")
-                        .to("mock:telegram");
-            }
-        };
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] {
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("telegram:bots?authorizationToken=mock-token")
+                            .to("mock:telegram");
+                }
+            }};
+    }
+
+
+    @Override
+    protected TelegramMockRoutes createMockRoutes() {
+        return new TelegramMockRoutes(port)
+                .addEndpoint(
+                        "getUpdates",
+                        "GET",
+                        String.class,
+                        TelegramTestUtil.stringResource("messages/updates-channelMessage.json"),
+                        TelegramTestUtil.stringResource("messages/updates-empty.json"));
     }
 }

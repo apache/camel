@@ -38,8 +38,8 @@ import org.apache.camel.ProxyInstantiationException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.Service;
 import org.apache.camel.spi.BeanProxyFactory;
+import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.support.CamelContextHelper;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -64,29 +64,19 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         this.setCamelContext(camelContext);
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
-    /**
-     * Does the given context match this camel context
-     */
-    public boolean matchContext(String context) {
-        if (ObjectHelper.isNotEmpty(context)) {
-            if (!getCamelContext().getName().equals(context)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public void consumerInjection(Method method, Object bean, String beanName) {
         Consume consume = method.getAnnotation(Consume.class);
-        if (consume != null && matchContext(consume.context())) {
+        if (consume != null) {
             LOG.debug("Creating a consumer for: {}", consume);
             String uri = consume.value().isEmpty() ? consume.uri() : consume.value();
             subscribeMethod(method, bean, beanName, uri, consume.property(), consume.predicate());
@@ -188,10 +178,10 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         // 2. then the getter with Endpoint as postfix
         // 3. then if start with on then try step 1 and 2 again, but omit the on prefix
         try {
-            Object value = IntrospectionSupport.getOrElseProperty(bean, propertyName, null);
+            Object value = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(bean, propertyName, null, false);
             if (value == null) {
                 // try endpoint as postfix
-                value = IntrospectionSupport.getOrElseProperty(bean, propertyName + "Endpoint", null);
+                value = getCamelContext().adapt(ExtendedCamelContext.class).getBeanIntrospection().getOrElseProperty(bean, propertyName + "Endpoint", null, false);
             }
             if (value == null && propertyName.startsWith("on")) {
                 // retry but without the on as prefix
@@ -268,12 +258,9 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     public Object getInjectionPropertyValue(Class<?> type, String propertyName, String propertyDefaultValue,
             String injectionPointName, Object bean, String beanName) {
         try {
-            // enforce a properties component to be created if none existed
-            getCamelContext().getPropertiesComponent(true);
-
             String key;
-            String prefix = getCamelContext().getPropertyPrefixToken();
-            String suffix = getCamelContext().getPropertySuffixToken();
+            String prefix = PropertiesComponent.PREFIX_TOKEN;
+            String suffix = PropertiesComponent.SUFFIX_TOKEN;
             if (!propertyName.contains(prefix)) {
                 // must enclose the property name with prefix/suffix to have it resolved
                 key = prefix + propertyName + suffix;

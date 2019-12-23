@@ -19,8 +19,6 @@ package org.apache.camel.component.corda;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
@@ -39,12 +37,6 @@ public class CordaTestSupport extends CamelTestSupport {
     @Override
     public boolean isUseAdviceWith() {
         return true;
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        return registry;
     }
 
     protected String getUrl() {

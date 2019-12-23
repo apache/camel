@@ -45,42 +45,18 @@ import org.apache.camel.impl.scan.CompositePackageScanFilter;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.support.LRUCacheFactory;
-import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
  */
-public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver, NonManagedService {
+public class DefaultPackageScanClassResolver extends BasePackageScanResolver implements PackageScanClassResolver, NonManagedService {
 
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final Set<ClassLoader> classLoaders = new LinkedHashSet<>();
     private Map<String, List<String>> jarCache;
     private Set<PackageScanFilter> scanFilters;
-    private String[] acceptableSchemes = {};
 
-    public DefaultPackageScanClassResolver() {
-        try {
-            ClassLoader ccl = Thread.currentThread().getContextClassLoader();
-            if (ccl != null) {
-                log.trace("Adding ContextClassLoader from current thread: {}", ccl);
-                classLoaders.add(ccl);
-            }
-        } catch (Exception e) {
-            // Ignore this exception
-            log.warn("Cannot add ContextClassLoader from current thread due {}. This exception will be ignored.", e.getMessage());
-        }
-
-        classLoaders.add(DefaultPackageScanClassResolver.class.getClassLoader());
-    }
-
-    public void addClassLoader(ClassLoader classLoader) {
-        classLoaders.add(classLoader);
-    }
-
+    @Override
     public void addFilter(PackageScanFilter filter) {
         if (scanFilters == null) {
             scanFilters = new LinkedHashSet<>();
@@ -88,34 +64,14 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         scanFilters.add(filter);
     }
 
+    @Override
     public void removeFilter(PackageScanFilter filter) {
         if (scanFilters != null) {
             scanFilters.remove(filter);
         }
     }
-    
-    public void setAcceptableSchemes(String schemes) {
-        if (schemes != null) {
-            acceptableSchemes = schemes.split(";");
-        }
-    }
-    
-    public boolean isAcceptableScheme(String urlPath) {
-        if (urlPath != null) {
-            for (String scheme : acceptableSchemes) {
-                if (urlPath.startsWith(scheme)) {
-                    return true;
-                }
-            }
-        } 
-        return false;
-    }
 
-    public Set<ClassLoader> getClassLoaders() {
-        // return a new set to avoid any concurrency issues in other runtimes such as OSGi
-        return Collections.unmodifiableSet(new LinkedHashSet<>(classLoaders));
-    }
-
+    @Override
     public Set<Class<?>> findAnnotated(Class<? extends Annotation> annotation, String... packageNames) {
         if (packageNames == null) {
             return Collections.emptySet();
@@ -136,6 +92,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
+    @Override
     public Set<Class<?>> findAnnotated(Set<Class<? extends Annotation>> annotations, String... packageNames) {
         if (packageNames == null) {
             return Collections.emptySet();
@@ -156,6 +113,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
+    @Override
     public Set<Class<?>> findImplementations(Class<?> parent, String... packageNames) {
         if (packageNames == null) {
             return Collections.emptySet();
@@ -176,6 +134,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         return classes;
     }
 
+    @Override
     public Set<Class<?>> findByFilter(PackageScanFilter filter, String... packageNames) {
         if (packageNames == null) {
             return Collections.emptySet();
@@ -273,58 +232,34 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
                     log.trace("Loading from directory using file: {}", file);
                     loadImplementationsInDirectory(test, packageName, file, classes);
                 } else {
-                    InputStream stream;
-                    if (urlPath.startsWith("http:") || urlPath.startsWith("https:")
-                            || urlPath.startsWith("sonicfs:")
-                            || isAcceptableScheme(urlPath)) {                        
-                        // load resources using http/https, sonicfs and other acceptable scheme
-                        // sonic ESB requires to be loaded using a regular URLConnection
-                        log.trace("Loading from jar using url: {}", urlPath);
-                        URL urlStream = new URL(urlPath);
-                        URLConnection con = urlStream.openConnection();
-                        // disable cache mainly to avoid jar file locking on Windows
-                        con.setUseCaches(false);
-                        stream = con.getInputStream();
-                    } else {
-                        log.trace("Loading from jar using file: {}", file);
-                        stream = new FileInputStream(file);
-                    }
+                    InputStream stream = null;
+                    try {
+                        if (urlPath.startsWith("http:") || urlPath.startsWith("https:")
+                                || urlPath.startsWith("sonicfs:")
+                                || isAcceptableScheme(urlPath)) {
+                            // load resources using http/https, sonicfs and other acceptable scheme
+                            // sonic ESB requires to be loaded using a regular URLConnection
+                            log.trace("Loading from jar using url: {}", urlPath);
+                            URL urlStream = new URL(urlPath);
+                            URLConnection con = urlStream.openConnection();
+                            // disable cache mainly to avoid jar file locking on Windows
+                            con.setUseCaches(false);
+                            stream = con.getInputStream();
+                        } else {
+                            log.trace("Loading from jar using file: {}", file);
+                            stream = new FileInputStream(file);
+                        }
 
-                    loadImplementationsInJar(test, packageName, stream, urlPath, classes, jarCache);
+                        loadImplementationsInJar(test, packageName, stream, urlPath, classes, jarCache);
+                    } finally {
+                        IOHelper.close(stream);
+                    }
                 }
             } catch (IOException e) {
                 // use debug logging to avoid being to noisy in logs
                 log.debug("Cannot read entries in url: {}", url, e);
             }
         }
-    }
-
-    // We can override this method to support the custom ResourceLocator
-    protected URL customResourceLocator(URL url) throws IOException {
-        // Do nothing here
-        return url;
-    }
-
-    /**
-     * Strategy to get the resources by the given classloader.
-     * <p/>
-     * Notice that in WebSphere platforms there is a {@link WebSpherePackageScanClassResolver}
-     * to take care of WebSphere's oddity of resource loading.
-     *
-     * @param loader  the classloader
-     * @param packageName   the packagename for the package to load
-     * @return  URL's for the given package
-     * @throws IOException is thrown by the classloader
-     */
-    protected Enumeration<URL> getResources(ClassLoader loader, String packageName) throws IOException {
-        log.trace("Getting resource URL for package: {} with classloader: {}", packageName, loader);
-        
-        // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.  The
-        // trailing slash is harmless for other URLs  
-        if (!packageName.endsWith("/")) {
-            packageName = packageName + "/";
-        }
-        return loader.getResources(packageName);
     }
 
     private PackageScanFilter getCompositeFilter(PackageScanFilter filter) {
@@ -385,7 +320,7 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
      * @param jarCache cache for JARs to speedup loading
      */
     private void loadImplementationsInJar(PackageScanFilter test, String parent, InputStream stream,
-                                                       String urlPath, Set<Class<?>> classes, Map<String, List<String>> jarCache) {
+                                          String urlPath, Set<Class<?>> classes, Map<String, List<String>> jarCache) {
         ObjectHelper.notNull(classes, "classes");
 
         List<String> entries = jarCache != null ? jarCache.get(urlPath) : null;
@@ -500,16 +435,25 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @Override
+    public void clearCache() {
+        if (jarCache != null) {
+            jarCache.clear();
+        }
+    }
+
+    @Override
     protected void doStart() throws Exception {
         if (jarCache == null) {
-            // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
+            // use a JAR cache to speed up scanning JARs, but let it be soft referenced
+            // so it can claim the data when memory is needed
             jarCache = LRUCacheFactory.newLRUCache(1000);
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
-        jarCache.clear();
+        clearCache();
     }
 
 }

@@ -36,10 +36,12 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport implemen
     private final AtomicReference<AsyncProcessor[]> processors = new AtomicReference<>(new AsyncProcessor[0]);
     private String id;
 
+    @Override
     public void addProcessor(AsyncProcessor processor) {
         processors.updateAndGet(op -> doAdd(processor, op));
     }
 
+    @Override
     public void removeProcessor(AsyncProcessor processor) {
         processors.updateAndGet(op -> doRemove(processor, op));
     }
@@ -64,6 +66,7 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport implemen
         return op;
     }
 
+    @Override
     public List<AsyncProcessor> getProcessors() {
         return Arrays.asList(processors.get());
     }
@@ -72,6 +75,7 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport implemen
         return processors.get();
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public List<Processor> next() {
         if (!hasNext()) {
@@ -80,22 +84,27 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport implemen
         return (List) getProcessors();
     }
 
+    @Override
     public boolean hasNext() {
         return doGetProcessors().length > 0;
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService((Object[]) processors.get());
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService((Object[]) processors.get());
     }
@@ -109,6 +118,7 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport implemen
         }
     }
 
+    @Override
     public String toString() {
         return getClass().getSimpleName() + Arrays.toString(doGetProcessors());
     }

@@ -1,7 +1,12 @@
 [[stax-component]]
-== StAX Component
+= StAX Component
+:page-source: components/camel-stax/src/main/docs/stax-component.adoc
 
-*Available as of Camel version 2.9*
+*Since Camel 2.9*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The StAX component allows messages to be process through a SAX
 http://download.oracle.com/javase/6/docs/api/org/xml/sax/ContentHandler.html[ContentHandler]. +
@@ -22,7 +27,7 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------
@@ -44,19 +49,20 @@ using the # syntax as shown:
 stax:#myHandler
 ---------------
 
-### Options
+== Options
 
 
 // component options: START
-The StAX component supports 2 options, which are listed below.
+The StAX component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -71,7 +77,7 @@ stax:contentHandlerClass
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -81,7 +87,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (3 parameters):
+=== Query Parameters (3 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -93,14 +99,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-stax-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -108,7 +114,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -116,14 +122,15 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.stax.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.stax.enabled* | Enable stax component | true | Boolean
-| *camel.component.stax.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.stax.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.stax.enabled* | Whether to enable auto configuration of the stax component. This is enabled by default. |  | Boolean
+| *camel.component.stax.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
-### Usage of a content handler as StAX parser
+== Usage of a content handler as StAX parser
 
 The message body after the handling is the handler itself.
 
@@ -143,7 +150,7 @@ from("file:target/in")
   });
 --------------------------------------------------------------------------------------------------------
 
-### Iterate over a collection using JAXB and StAX
+== Iterate over a collection using JAXB and StAX
 
 First we suppose you have JAXB objects.
 
@@ -247,13 +254,7 @@ from("file:target/in")
         .to("mock:records");
 -------------------------------------------------
 
-#### The previous example with XML DSL
+=== The previous example with XML DSL
 
 The example above could be implemented as follows in XML DSL
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

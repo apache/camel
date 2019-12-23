@@ -30,6 +30,7 @@ public class StompProducer extends DefaultAsyncProducer implements Processor {
         this.stompEndpoint = stompEndpoint;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             stompEndpoint.send(exchange, callback);

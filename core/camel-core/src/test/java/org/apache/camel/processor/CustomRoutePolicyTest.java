@@ -47,6 +47,7 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
             }
         }
 
+        @Override
         public boolean isStopped() {
             return stopped.get();
         }
@@ -82,4 +83,3 @@ public class CustomRoutePolicyTest extends ContextTestSupport {
         };
     }
 }
-

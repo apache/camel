@@ -41,12 +41,12 @@ public class WordpressComponentConfiguration {
     private String user;
     @UriParam(description = "Password from authorized user")
     private String password;
-    @UriParam(description = "The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post", javaType = "java.lang.Integer")
+    @UriParam(description = "The entity ID. Should be passed when the operation performed requires a specific entity, e.g. deleting a post")
     private Integer id;
     @UriParam(description = "The criteria to use with complex searches.", prefix = "criteria.", multiValue = true)
     private Map<String, Object> criteria;
-    @UriParam(description = "Whether to bypass trash and force deletion.", defaultValue = "false", javaType = "java.lang.Boolean")
-    private Boolean force = false;
+    @UriParam(description = "Whether to bypass trash and force deletion.")
+    private boolean force;
     @UriParam(description = "Search criteria")
     private SearchCriteria searchCriteria;
 
@@ -94,11 +94,19 @@ public class WordpressComponentConfiguration {
         this.id = id;
     }
 
-    public Boolean isForce() {
+    public Map<String, Object> getCriteria() {
+        return criteria;
+    }
+
+    public void setCriteria(Map<String, Object> criteria) {
+        this.criteria = criteria;
+    }
+
+    public boolean isForce() {
         return force;
     }
 
-    public void setForce(Boolean force) {
+    public void setForce(boolean force) {
         this.force = force;
     }
 

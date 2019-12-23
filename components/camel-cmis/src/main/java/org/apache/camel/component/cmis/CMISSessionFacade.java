@@ -194,6 +194,10 @@ public class CMISSessionFacade {
         return session.getObjectByPath(path);
     }
 
+    public CmisObject getObjectById(String id) {
+        return this.session.getObject(id);
+    }
+
     public boolean isObjectTypeVersionable(String objectType) {
         if (CamelCMISConstants.CMIS_DOCUMENT.equals(getCMISTypeFor(objectType))) {
             ObjectType typeDefinition = session.getTypeDefinition(objectType);
@@ -232,11 +236,19 @@ public class CMISSessionFacade {
         return session.createOperationContext();
     }
 
+    public String getUsername() {
+        return username;
+    }
+
     /**
      * Username for the cmis repository
      */
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     /**
@@ -246,11 +258,19 @@ public class CMISSessionFacade {
         this.password = password;
     }
 
+    public String getRepositoryId() {
+        return repositoryId;
+    }
+
     /**
      * The Id of the repository to use. If not specified the first available repository is used
      */
     public void setRepositoryId(String repositoryId) {
         this.repositoryId = repositoryId;
+    }
+
+    public boolean isReadContent() {
+        return readContent;
     }
 
     /**
@@ -260,11 +280,19 @@ public class CMISSessionFacade {
         this.readContent = readContent;
     }
 
+    public int getReadCount() {
+        return readCount;
+    }
+
     /**
      * Max number of nodes to read
      */
     public void setReadCount(int readCount) {
         this.readCount = readCount;
+    }
+
+    public String getQuery() {
+        return query;
     }
 
     /**
@@ -273,6 +301,10 @@ public class CMISSessionFacade {
      */
     public void setQuery(String query) {
         this.query = query;
+    }
+
+    public int getPageSize() {
+        return pageSize;
     }
 
     /**

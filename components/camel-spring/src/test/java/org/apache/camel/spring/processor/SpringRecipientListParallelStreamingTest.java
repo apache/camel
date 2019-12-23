@@ -23,6 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringRecipientListParallelStreamingTest extends RecipientListParallelStreamingTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/SpringRecipientListParallelStreamingTest.xml");

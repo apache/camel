@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -75,13 +76,12 @@ public class XPathChoiceTest extends ContextTestSupport {
         z = getMockEndpoint("mock:z");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").choice()
-                        .when().xpath("/body[@id='a']").setHeader("name", constant("a")).to("mock:x")
-                        .when().xpath("/body[@id='b']").to("mock:y")
-                        .otherwise().to("mock:z");
+                from("direct:start").choice().when().xpath("/body[@id='a']").setHeader("name", constant("a")).to("mock:x").when().xpath("/body[@id='b']").to("mock:y").otherwise()
+                    .to("mock:z");
             }
         };
     }

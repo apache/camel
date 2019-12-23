@@ -120,7 +120,7 @@ public class GlanceProducer extends AbstractOpenstackProducer {
         final String imageId = msg.getHeader(OpenstackConstants.ID, String.class);
         StringHelper.notEmpty(imageId, "ImageID");
         final ActionResponse response = os.compute().images().delete(imageId);
-        checkFailure(response, msg, "Delete image " + imageId);
+        checkFailure(response, exchange, "Delete image " + imageId);
     }
 
     private Image messageToImage(Message message) {

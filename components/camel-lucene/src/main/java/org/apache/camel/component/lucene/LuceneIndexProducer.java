@@ -36,6 +36,7 @@ public class LuceneIndexProducer extends DefaultProducer {
         super.doStop();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         indexer.index(exchange);
     }

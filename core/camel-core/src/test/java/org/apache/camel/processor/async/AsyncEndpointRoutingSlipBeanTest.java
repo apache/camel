@@ -48,8 +48,7 @@ public class AsyncEndpointRoutingSlipBeanTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                    .bean("myBean");
+                from("direct:start").bean("myBean");
             }
         };
     }
@@ -61,6 +60,5 @@ public class AsyncEndpointRoutingSlipBeanTest extends ContextTestSupport {
             return "async:bye:camel,mock:result";
         }
     }
-
 
 }

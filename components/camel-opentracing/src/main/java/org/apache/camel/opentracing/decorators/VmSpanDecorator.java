@@ -23,4 +23,9 @@ public class VmSpanDecorator extends AbstractInternalSpanDecorator {
         return "vm";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.vm.VmComponent";
+    }
+
 }

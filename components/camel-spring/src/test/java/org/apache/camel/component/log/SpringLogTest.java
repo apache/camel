@@ -36,6 +36,7 @@ public class SpringLogTest extends SpringTestSupport {
         result.assertIsSatisfied();
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/log/SpringLogTest-context.xml");
     }

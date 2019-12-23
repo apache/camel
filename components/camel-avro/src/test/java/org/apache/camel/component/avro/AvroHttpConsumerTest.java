@@ -47,6 +47,7 @@ public class AvroHttpConsumerTest extends AvroConsumerTestSupport {
         reflectRequestor = new ReflectRequestor(TestReflection.class, reflectTransceiver);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

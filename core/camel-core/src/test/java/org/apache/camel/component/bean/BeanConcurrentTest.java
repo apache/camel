@@ -59,7 +59,6 @@ public class BeanConcurrentTest extends ContextTestSupport {
         }
     }
 
-
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -72,9 +71,7 @@ public class BeanConcurrentTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:foo?concurrentConsumers=10").routeId("foo").noAutoStartup()
-                    .to("bean:myBean")
-                    .to("mock:result");
+                from("seda:foo?concurrentConsumers=10").routeId("foo").noAutoStartup().to("bean:myBean").to("mock:result");
             }
         };
     }

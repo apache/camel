@@ -1,5 +1,6 @@
 [[hystrixConfiguration-eip]]
-== Hystrix Configuration EIP
+= Hystrix Configuration EIP
+:page-source: core/camel-core-engine/src/main/docs/eips/hystrixConfiguration-eip.adoc
 
 
 // eip options: START

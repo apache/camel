@@ -49,14 +49,11 @@ public class AggregatorAndOnExceptionTest extends ContextTestSupport {
 
                 onException(CamelException.class).maximumRedeliveries(2);
 
-                from("seda:start")
-                    .aggregate(header("id"),
-                        new AggregationStrategy() {
-                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                                return newExchange;
-                            }
-                        }).completionSize(2).completionTimeout(500L)
-                    .to("mock:result");
+                from("seda:start").aggregate(header("id"), new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        return newExchange;
+                    }
+                }).completionSize(2).completionTimeout(500L).to("mock:result");
             }
         };
     }

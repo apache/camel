@@ -1,11 +1,12 @@
 [[base64-dataformat]]
-== Base64 DataFormat
+= Base64 DataFormat
+:page-source: components/camel-base64/src/main/docs/base64-dataformat.adoc
 
-*Available as of Camel version 2.11*
+*Since Camel 2.11*
 
 The Base64 data format is used for base64 encoding and decoding.
 
-=== Options
+== Options
 
 // dataformat options: START
 The Base64 dataformat supports 4 options, which are listed below.
@@ -22,14 +23,14 @@ The Base64 dataformat supports 4 options, which are listed below.
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-base64-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -45,7 +46,7 @@ The component supports 5 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.dataformat.base64.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
-| *camel.dataformat.base64.enabled* | Enable base64 dataformat | true | Boolean
+| *camel.dataformat.base64.enabled* | Whether to enable auto configuration of the base64 data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.base64.line-length* | To specific a maximum line length for the encoded data. By default 76 is used. | 76 | Integer
 | *camel.dataformat.base64.line-separator* | The line separators to use. Uses new line characters (CRLF) by default. |  | String
 | *camel.dataformat.base64.url-safe* | Instead of emitting '' and '/' we emit '-' and '_' respectively. urlSafe is only applied to encode operations. Decoding seamlessly handles both modes. Is by default false. | false | Boolean
@@ -82,7 +83,7 @@ Most of the time, you won't need to declare the data format if you use
 the default options. In that case, you can declare the data format
 inline as shown below.
 
-=== Marshal
+== Marshal
 
 In this example we marshal the file content to base64 object.
 
@@ -104,7 +105,7 @@ In Spring DSL:
  <to uri="jms://myqueue"/> 
 ----
 
-=== Unmarshal
+== Unmarshal
 
 In this example we unmarshal the payload from the JMS queue to a byte[]
 object, before its processed by the newOrder processor.
@@ -127,7 +128,7 @@ In Spring DSL:
  <to uri="bean:newOrder"/> 
 ----
 
-=== Dependencies
+== Dependencies
 
 To use Base64 in your Camel routes you need to add a dependency on
 *camel-base64* which implements this data format.

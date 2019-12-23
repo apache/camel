@@ -27,8 +27,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.stream.IntStream;
 
-import static java.util.stream.Collectors.toList;
-
 import javax.websocket.ClientEndpointConfig;
 import javax.websocket.CloseReason;
 import javax.websocket.ContainerProvider;
@@ -40,6 +38,8 @@ import javax.websocket.WebSocketContainer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.toList;
 
 class ClientSessions implements Closeable {
     private final Logger log = LoggerFactory.getLogger(ClientSessions.class);

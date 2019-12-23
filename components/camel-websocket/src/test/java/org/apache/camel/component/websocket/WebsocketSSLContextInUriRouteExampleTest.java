@@ -28,7 +28,8 @@ import javax.net.ssl.SSLContext;
 import io.netty.handler.ssl.ClientAuth;
 import io.netty.handler.ssl.JdkSslContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.support.jsse.KeyManagersParameters;
 import org.apache.camel.support.jsse.KeyStoreParameters;
 import org.apache.camel.support.jsse.SSLContextParameters;
@@ -58,7 +59,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(16300);
+        port = AvailablePortFinder.getNextAvailable();
 
         uri = "websocket://" + server + ":" + port + "/test?sslContextParameters=#sslContextParameters";
 
@@ -66,9 +67,9 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
+    protected Registry createCamelRegistry() throws Exception {
         KeyStoreParameters ksp = new KeyStoreParameters();
-        ksp.setResource("jsse/localhost.ks");
+        ksp.setResource("jsse/localhost.p12");
         ksp.setPassword(pwd);
 
         KeyManagersParameters kmp = new KeyManagersParameters();
@@ -87,7 +88,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         sslContextParameters.setTrustManagers(tmp);
         sslContextParameters.setServerParameters(scsp);
 
-        JndiRegistry registry = super.createRegistry();
+        Registry registry = new SimpleRegistry();
         registry.bind("sslContextParameters", sslContextParameters);
         return registry;
     }
@@ -103,7 +104,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
         SSLContextParameters sslContextParameters = new SSLContextParameters();
 
         KeyStoreParameters truststoreParameters = new KeyStoreParameters();
-        truststoreParameters.setResource("jsse/localhost.ks");
+        truststoreParameters.setResource("jsse/localhost.p12");
         truststoreParameters.setPassword(pwd);
 
         TrustManagersParameters clientSSLTrustManagers = new TrustManagersParameters();

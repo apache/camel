@@ -30,16 +30,14 @@ public class CamelSpringRunnerUseAdviceWithTest extends CamelSpringRunnerPlainTe
     
     @Before
     public void testContextStarted() throws Exception {
-        
         assertEquals(ServiceStatus.Stopped, camelContext.getStatus());
-        assertEquals(ServiceStatus.Stopped, camelContext2.getStatus());
         camelContext.start();
-        camelContext2.start();
 
         // just sleep a little to simulate testing take a bit time
         Thread.sleep(1000);
     }
     
+    @Override
     @Test
     public void testStopwatch() {
         StopWatch stopWatch = StopWatchTestExecutionListener.getStopWatch();

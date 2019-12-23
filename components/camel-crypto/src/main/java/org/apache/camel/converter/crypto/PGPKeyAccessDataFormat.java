@@ -30,10 +30,10 @@ import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
@@ -216,6 +216,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return exchange.getIn().getHeader(Exchange.FILE_NAME, getFileName(), String.class);
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception { //NOPMD
         List<String> userids = determineEncryptionUserIds(exchange);
         List<PGPPublicKey> keys = publicKeyAccessor.getEncryptionKeys(exchange, userids);
@@ -356,6 +357,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         return sigGens;
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception { //NOPMD
         if (encryptedStream == null) {
             return null;

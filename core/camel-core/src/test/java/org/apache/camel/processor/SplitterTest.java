@@ -85,7 +85,7 @@ public class SplitterTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        Message out = result.getOut();
+        Message out = result.getMessage();
         assertEquals("Roman", out.getBody());
         assertMessageHeader(out, "foo", "bar");
         assertProperty(result, Exchange.SPLIT_INDEX, 4);
@@ -150,10 +150,10 @@ public class SplitterTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        Message out = result.getOut();
+        Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
     }
 
     @Test
@@ -171,12 +171,12 @@ public class SplitterTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        Message out = result.getOut();
+        Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
-        assertEquals((Integer) 5, result.getProperty("aggregated", Integer.class));
+        assertEquals((Integer)5, result.getProperty("aggregated", Integer.class));
     }
-    
+
     @Test
     public void testSplitterParallelAggregate() throws Exception {
         MockEndpoint resultEndpoint = getMockEndpoint("mock:result");
@@ -192,10 +192,11 @@ public class SplitterTest extends ContextTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        Message out = result.getOut();
+        Message out = result.getMessage();
 
         assertMessageHeader(out, "foo", "bar");
-        // we aggregate parallel and therefore its not thread-safe when setting values
+        // we aggregate parallel and therefore its not thread-safe when setting
+        // values
     }
 
     @Test
@@ -205,7 +206,7 @@ public class SplitterTest extends ContextTestSupport {
         File file = new File(url.getFile());
         sendToSplitterWithStreaming(file);
     }
-    
+
     @Test
     public void testSplitterWithStreamingAndStringBody() throws Exception {
         sendToSplitterWithStreaming("James,Guillaume,Hiram,Rob,Roman");
@@ -233,7 +234,8 @@ public class SplitterTest extends ContextTestSupport {
             assertEquals(i, exchange.getProperty(Exchange.SPLIT_INDEX));
             if (i < (size - 1)) {
                 assertEquals(Boolean.FALSE, exchange.getProperty(Exchange.SPLIT_COMPLETE));
-                //this header cannot be set when streaming is used, except for the last exchange
+                // this header cannot be set when streaming is used, except for
+                // the last exchange
                 assertNull(exchange.getProperty(Exchange.SPLIT_SIZE));
             } else {
                 assertEquals(Boolean.TRUE, exchange.getProperty(Exchange.SPLIT_COMPLETE));
@@ -281,6 +283,7 @@ public class SplitterTest extends ContextTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -291,19 +294,15 @@ public class SplitterTest extends ContextTestSupport {
                 from("direct:parallelAggregate").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().parallelAggregate().to("mock:result");
                 from("direct:streaming").split(body().tokenize(",")).streaming().to("mock:result");
                 from("direct:parallel-streaming").split(body().tokenize(","), new MyAggregationStrategy()).parallelProcessing().streaming().to("mock:result");
-                from("direct:exception")
-                        .split(body().tokenize(","))
-                        .aggregationStrategy(new MyAggregationStrategy())
-                        .parallelProcessing()
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                String string = exchange.getIn().getBody(String.class);
-                                if ("Exception".equals(string)) {
-                                    throw new CamelException("Just want to throw exception here");
-                                }
+                from("direct:exception").split(body().tokenize(",")).aggregationStrategy(new MyAggregationStrategy()).parallelProcessing().process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        String string = exchange.getIn().getBody(String.class);
+                        if ("Exception".equals(string)) {
+                            throw new CamelException("Just want to throw exception here");
+                        }
 
-                            }
-                        }).to("mock:result");
+                    }
+                }).to("mock:result");
                 from("direct:simple").split(body()).to("mock:result");
             }
         };

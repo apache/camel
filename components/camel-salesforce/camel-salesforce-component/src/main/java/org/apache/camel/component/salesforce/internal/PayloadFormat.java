@@ -17,6 +17,5 @@
 package org.apache.camel.component.salesforce.internal;
 
 public enum PayloadFormat {
-    JSON,
-    XML
+    JSON, XML
 }

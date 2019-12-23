@@ -1,0 +1,64 @@
+= Apache Camel 3.x Upgrade Guide
+
+This document is intended for helping you upgrade your Apache Camel application
+from Camel 3.x to 3.y.
+
+IMPORTANT: If you are migrating from Camel 2.x then use the
+xref:camel-3-migration-guide.adoc[Camel 2.x to 3.0 Migration Guide].
+
+For example if you are upgrading Camel 3.0 to 3.2, then you should follow the guides
+from both 3.0 to 3.1 and 3.1 to 3.2.
+
+== Upgrading Camel 3.0 to 3.1
+
+=== camel-nats
+
+The `camel-nats` component has changed its endpoint syntax from `nats:servers` to `nats:topic`.
+For example before
+
+[source,text]
+----
+nats:myserver:4222?topic=myTopic
+----
+
+Should be changed to
+----
+nats:myTopic?servers=myserver:4222
+----
+
+This change is motivated by allowing to configure servers on component level,
+and also for Spring Boot auto-configuration etc.
+
+=== camel-nsq
+
+The `camel-nsq` component has changed its endpoint syntax from `nsq:servers` to `nsq:topic`.
+For example before
+
+[source,text]
+----
+nsq:myserver:4161/myTopic
+----
+
+Should be changed to
+----
+nsq:myTopic?servers=myserver:4161
+----
+
+This change is motivated by allowing to configure servers on component level,
+and also for Spring Boot auto-configuration etc.
+
+
+=== Java DSL
+
+The Java DSL has been revisited and the following methods have been removed:
+
+* ExpressionClause::body(Supplier<Object>)
+* MulticastDefinition::onPrepare(Supplier<Processor>)
+* ProcessorDefinition::process(Supplier<Processor>)
+* ProcessorDefinition::setBody(Supplier<Result>)
+* RecipientListDefinition::onPrepare(Supplier<Processor>)
+* SplitDefinition::onPrepare(Supplier<Processor>)
+* WireTapDefinition::newExchange(Supplier<Processor>)
+* WireTapDefinition::onPrepare(Supplier<Processor>)
+
+This change is motivated by the need to remove method ambiguity for untyped languages such as Groovy and JavaScript, for more info see https://issues.apache.org/jira/browse/CAMEL-14300

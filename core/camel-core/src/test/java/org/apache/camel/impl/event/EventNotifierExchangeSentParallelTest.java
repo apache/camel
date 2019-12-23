@@ -22,6 +22,7 @@ import org.junit.Test;
 
 public class EventNotifierExchangeSentParallelTest extends EventNotifierExchangeSentTest {
 
+    @Override
     @Test
     public void testExchangeSentRecipient() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);

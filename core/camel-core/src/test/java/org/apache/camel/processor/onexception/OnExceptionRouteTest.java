@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.onexception;
+
 import java.io.IOException;
 
 import org.apache.camel.CamelExecutionException;
@@ -74,7 +75,8 @@ public class OnExceptionRouteTest extends ContextTestSupport {
 
     @Test
     public void testErrorWhileHandlingException() throws Exception {
-        // DLC does not handle the exception as we failed during processing in onException
+        // DLC does not handle the exception as we failed during processing in
+        // onException
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedMessageCount(0);
 
@@ -121,27 +123,26 @@ public class OnExceptionRouteTest extends ContextTestSupport {
 
                 // default should errors go to mock:error
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0));
-                
-                // if a MyTechnicalException is thrown we will not try to redeliver and we mark it as handled
+
+                // if a MyTechnicalException is thrown we will not try to
+                // redeliver and we mark it as handled
                 // so the caller does not get a failure
-                // since we have no to then the exchange will continue to be routed to the normal error handler
+                // since we have no to then the exchange will continue to be
+                // routed to the normal error handler
                 // destination that is mock:error as defined above
                 onException(MyTechnicalException.class).maximumRedeliveries(0).handled(true);
 
-                // if a MyFunctionalException is thrown we do not want Camel to redelivery but handle it our self using
-                // our bean myOwnHandler, then the exchange is not routed to the default error (mock:error)
+                // if a MyFunctionalException is thrown we do not want Camel to
+                // redelivery but handle it our self using
+                // our bean myOwnHandler, then the exchange is not routed to the
+                // default error (mock:error)
                 onException(MyFunctionalException.class).maximumRedeliveries(0).handled(true).to("bean:myOwnHandler");
 
                 // here we route message to our service bean
-                from("direct:start")
-                    .choice()
-                        .when().xpath("//type = 'myType'").to("bean:myServiceBean")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").choice().when().xpath("//type = 'myType'").to("bean:myServiceBean").end().to("mock:result");
                 // END SNIPPET: e1
             }
         };
     }
-
 
 }

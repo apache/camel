@@ -22,6 +22,7 @@ import org.apache.camel.processor.ChoiceTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringChoiceTest extends ChoiceTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/choice.xml");
     }

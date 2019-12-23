@@ -17,6 +17,7 @@
 package org.apache.camel.blueprint;
 
 import java.util.Set;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -47,6 +48,8 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
     @XmlAttribute
     private Boolean useOriginalMessage;
     @XmlAttribute
+    private Boolean useOriginalBody;
+    @XmlAttribute
     private String onRedeliveryRef;
     @XmlAttribute
     private String onPrepareFailureRef;
@@ -76,6 +79,9 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
             }
             if (useOriginalMessage != null) {
                 handler.setUseOriginalMessage(useOriginalMessage);
+            }
+            if (useOriginalBody != null) {
+                handler.setUseOriginalBody(useOriginalBody);
             }
             if (redeliveryPolicy != null) {
                 handler.setRedeliveryPolicy(ErrorHandlerReifier.createRedeliveryPolicy(redeliveryPolicy, getCamelContext(), null));
@@ -111,6 +117,7 @@ public class CamelErrorHandlerFactoryBean extends AbstractCamelFactoryBean<Error
         this.blueprintContainer = blueprintContainer;
     }
 
+    @Override
     protected CamelContext getCamelContextWithId(String camelContextId) {
         if (blueprintContainer != null) {
             return (CamelContext) blueprintContainer.getComponentInstance(camelContextId);

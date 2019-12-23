@@ -1,0 +1,33 @@
+{
+  "query": {
+    "fi&lter": {
+      "ä<type": "&",
+      "conditions": {
+        "object": {
+          "filter": {
+            "type": "and",
+            "conditions": [
+              {
+                "\nop": "contains",
+                "field": "id",
+                "value": "\trtg1"
+              },
+              {
+                "filter": {
+                  "type": "not",
+                  "conditions": {
+                    "object": {
+                      "op": "eq",
+                      "field": "id",
+                      "value": "ext-rtg1"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  }
+}

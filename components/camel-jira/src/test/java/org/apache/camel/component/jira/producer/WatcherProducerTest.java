@@ -73,7 +73,7 @@ public class WatcherProducerTest extends CamelTestSupport {
     private MockEndpoint mockResult;
 
     private Issue backendIssue;
-    private List<String> backendwatchers = new ArrayList<>();;
+    private List<String> backendwatchers = new ArrayList<>();
 
     @Override
     protected void bindToRegistry(Registry registry) {

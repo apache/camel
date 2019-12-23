@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 // START SNIPPET: e1
 public class AnimalDeepClonePrepare implements Processor {
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Animal body = exchange.getIn().getBody(Animal.class);
 

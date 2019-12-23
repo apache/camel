@@ -45,6 +45,7 @@ public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
         assertExists(outFile);
     }
 
+    @Override
     protected FileApiMethodGeneratorMojo createGeneratorMojo() {
         final FileApiMethodGeneratorMojo mojo = new FileApiMethodGeneratorMojo();
         mojo.substitutions = new Substitution[2];

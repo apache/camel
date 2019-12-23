@@ -43,7 +43,7 @@ public class OnExceptionRouteScopedErrorHandlerRefIssueTest extends ContextTestS
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myDLC", new DeadLetterChannelBuilder("mock:dead"));
-        return  jndi;
+        return jndi;
     }
 
     @Override
@@ -51,14 +51,8 @@ public class OnExceptionRouteScopedErrorHandlerRefIssueTest extends ContextTestS
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .errorHandler(new ErrorHandlerBuilderRef("myDLC"))
-                    .onException(IllegalArgumentException.class)
-                        .handled(true)
-                        .to("mock:handled")
-                    .end()
-                    .to("mock:a")
-                    .throwException(new IllegalArgumentException("Damn"));
+                from("direct:start").errorHandler(new ErrorHandlerBuilderRef("myDLC")).onException(IllegalArgumentException.class).handled(true).to("mock:handled").end()
+                    .to("mock:a").throwException(new IllegalArgumentException("Damn"));
             }
         };
     }

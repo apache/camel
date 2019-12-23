@@ -38,7 +38,8 @@ public class DirectRequestReplyAndSedaInOnlyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // send the message as InOnly to SEDA as we want to continue routing
+                // send the message as InOnly to SEDA as we want to continue
+                // routing
                 // (as we don't want to do request/reply over SEDA)
                 // In EIP patterns the WireTap pattern is what this would be
                 from("direct:start").transform(constant("Bye World")).inOnly("seda:log");

@@ -54,7 +54,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder algorithm(String algorithm) {
-            setProperty("algorithm", algorithm);
+            doSetProperty("algorithm", algorithm);
             return this;
         }
         /**
@@ -69,7 +69,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder alias(String alias) {
-            setProperty("alias", alias);
+            doSetProperty("alias", alias);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default DigitalSignatureEndpointBuilder certificateName(
                 String certificateName) {
-            setProperty("certificateName", certificateName);
+            doSetProperty("certificateName", certificateName);
             return this;
         }
         /**
@@ -98,7 +98,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder keystore(KeyStore keystore) {
-            setProperty("keystore", keystore);
+            doSetProperty("keystore", keystore);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder keystore(String keystore) {
-            setProperty("keystore", keystore);
+            doSetProperty("keystore", keystore);
             return this;
         }
         /**
@@ -127,7 +127,47 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder keystoreName(String keystoreName) {
-            setProperty("keystoreName", keystoreName);
+            doSetProperty("keystoreName", keystoreName);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DigitalSignatureEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default DigitalSignatureEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -138,7 +178,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder privateKey(PrivateKey privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -150,7 +190,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder privateKey(String privateKey) {
-            setProperty("privateKey", privateKey);
+            doSetProperty("privateKey", privateKey);
             return this;
         }
         /**
@@ -163,7 +203,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default DigitalSignatureEndpointBuilder privateKeyName(
                 String privateKeyName) {
-            setProperty("privateKeyName", privateKeyName);
+            doSetProperty("privateKeyName", privateKeyName);
             return this;
         }
         /**
@@ -175,7 +215,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder provider(String provider) {
-            setProperty("provider", provider);
+            doSetProperty("provider", provider);
             return this;
         }
         /**
@@ -187,7 +227,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default DigitalSignatureEndpointBuilder publicKeyName(
                 String publicKeyName) {
-            setProperty("publicKeyName", publicKeyName);
+            doSetProperty("publicKeyName", publicKeyName);
             return this;
         }
         /**
@@ -200,7 +240,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default DigitalSignatureEndpointBuilder secureRandomName(
                 String secureRandomName) {
-            setProperty("secureRandomName", secureRandomName);
+            doSetProperty("secureRandomName", secureRandomName);
             return this;
         }
         /**
@@ -213,31 +253,19 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default DigitalSignatureEndpointBuilder signatureHeaderName(
                 String signatureHeaderName) {
-            setProperty("signatureHeaderName", signatureHeaderName);
+            doSetProperty("signatureHeaderName", signatureHeaderName);
             return this;
         }
         /**
          * Sets the password used to access an aliased PrivateKey in the
          * KeyStore.
          * 
-         * The option is a: <code>char[]</code> type.
-         * 
-         * Group: security
-         */
-        default DigitalSignatureEndpointBuilder password(Character[] password) {
-            setProperty("password", password);
-            return this;
-        }
-        /**
-         * Sets the password used to access an aliased PrivateKey in the
-         * KeyStore.
-         * 
-         * The option will be converted to a <code>char[]</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: security
          */
         default DigitalSignatureEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
     }
@@ -261,7 +289,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -274,7 +302,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -286,7 +314,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder bufferSize(
                 Integer bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -299,7 +327,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder bufferSize(
                 String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -312,7 +340,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder certificate(
                 Certificate certificate) {
-            setProperty("certificate", certificate);
+            doSetProperty("certificate", certificate);
             return this;
         }
         /**
@@ -326,7 +354,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder certificate(
                 String certificate) {
-            setProperty("certificate", certificate);
+            doSetProperty("certificate", certificate);
             return this;
         }
         /**
@@ -341,7 +369,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
                 boolean clearHeaders) {
-            setProperty("clearHeaders", clearHeaders);
+            doSetProperty("clearHeaders", clearHeaders);
             return this;
         }
         /**
@@ -356,7 +384,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
                 String clearHeaders) {
-            setProperty("clearHeaders", clearHeaders);
+            doSetProperty("clearHeaders", clearHeaders);
             return this;
         }
         /**
@@ -375,7 +403,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
                 Object keyStoreParameters) {
-            setProperty("keyStoreParameters", keyStoreParameters);
+            doSetProperty("keyStoreParameters", keyStoreParameters);
             return this;
         }
         /**
@@ -394,7 +422,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder keyStoreParameters(
                 String keyStoreParameters) {
-            setProperty("keyStoreParameters", keyStoreParameters);
+            doSetProperty("keyStoreParameters", keyStoreParameters);
             return this;
         }
         /**
@@ -407,7 +435,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder publicKey(
                 PublicKey publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -421,7 +449,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder publicKey(
                 String publicKey) {
-            setProperty("publicKey", publicKey);
+            doSetProperty("publicKey", publicKey);
             return this;
         }
         /**
@@ -433,7 +461,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder secureRandom(
                 SecureRandom secureRandom) {
-            setProperty("secureRandom", secureRandom);
+            doSetProperty("secureRandom", secureRandom);
             return this;
         }
         /**
@@ -446,7 +474,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder secureRandom(
                 String secureRandom) {
-            setProperty("secureRandom", secureRandom);
+            doSetProperty("secureRandom", secureRandom);
             return this;
         }
         /**
@@ -459,7 +487,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -472,7 +500,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          */
         default AdvancedDigitalSignatureEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -482,7 +510,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
      * the Signature Service of the Java Cryptographic Extension (JCE).
      * 
      * Category: security,transformation
-     * Available as of version: 2.3
+     * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-crypto
      * 
      * Syntax: <code>crypto:cryptoOperation:name</code>
@@ -495,7 +523,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
      * Path parameter: name (required)
      * The logical name of this operation.
      */
-    default DigitalSignatureEndpointBuilder digitalSignature(String path) {
+    default DigitalSignatureEndpointBuilder crypto(String path) {
         class DigitalSignatureEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalSignatureEndpointBuilder, AdvancedDigitalSignatureEndpointBuilder {
             public DigitalSignatureEndpointBuilderImpl(String path) {
                 super("crypto", path);

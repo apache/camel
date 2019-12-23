@@ -47,14 +47,9 @@ public class DeadLetterChannelNoRedeliveryTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("mock:dead")
-                        .useOriginalMessage()
-                        .maximumRedeliveries(0));
+                errorHandler(deadLetterChannel("mock:dead").useOriginalMessage().maximumRedeliveries(0));
 
-                from("direct:start")
-                    .to("mock:a")
-                    .process(new MyFailProcessor())
-                    .to("mock:b");
+                from("direct:start").to("mock:a").process(new MyFailProcessor()).to("mock:b");
             }
         };
     }

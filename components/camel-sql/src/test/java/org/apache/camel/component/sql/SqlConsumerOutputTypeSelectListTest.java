@@ -37,6 +37,7 @@ public class SqlConsumerOutputTypeSelectListTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -45,6 +46,7 @@ public class SqlConsumerOutputTypeSelectListTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -83,7 +85,7 @@ public class SqlConsumerOutputTypeSelectListTest extends CamelTestSupport {
             public void configure() throws Exception {
                 getContext().getComponent("sql", SqlComponent.class).setDataSource(db);
 
-                from("sql:select * from projects order by id?outputType=SelectList&consumer.initialDelay=0&consumer.delay=50")
+                from("sql:select * from projects order by id?outputType=SelectList&initialDelay=0&delay=50")
                         .to("mock:result");
             }
         };

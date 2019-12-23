@@ -36,20 +36,20 @@ public class SplitterMethodCallTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
+    @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("splitterBean", new SplitWordsBean());
         return jndi;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: e1
-                from("direct:start")
-                    .split().method("splitterBean", "splitWords")
-                    .to("mock:result");
+                from("direct:start").split().method("splitterBean", "splitWords").to("mock:result");
                 // END SNIPPET: e1
             }
         };

@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class S3ComponentDeleteObjectSpringTest extends CamelSpringTestSupport {
-    
+
     @EndpointInject("direct:start")
     private ProducerTemplate template;
 

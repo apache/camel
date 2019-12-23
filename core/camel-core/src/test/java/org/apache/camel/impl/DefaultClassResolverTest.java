@@ -61,14 +61,14 @@ public class DefaultClassResolverTest extends Assert {
     }
 
     @Test
-    public void testResolveMandatoryClassType()throws Exception {
+    public void testResolveMandatoryClassType() throws Exception {
         DefaultClassResolver resolver = new DefaultClassResolver();
         Class<Integer> clazz = resolver.resolveMandatoryClass("java.lang.Integer", Integer.class);
         assertNotNull(clazz);
     }
 
     @Test
-    public void testResolveMandatorySimpleClassType()throws Exception {
+    public void testResolveMandatorySimpleClassType() throws Exception {
         DefaultClassResolver resolver = new DefaultClassResolver();
 
         Class<Byte> clazz = resolver.resolveMandatoryClass("Byte", Byte.class);
@@ -117,7 +117,7 @@ public class DefaultClassResolverTest extends Assert {
     }
 
     @Test
-    public void testResolveMandatoryClassNotFound()  {
+    public void testResolveMandatoryClassNotFound() {
         DefaultClassResolver resolver = new DefaultClassResolver();
         try {
             resolver.resolveMandatoryClass("com.FooBar");

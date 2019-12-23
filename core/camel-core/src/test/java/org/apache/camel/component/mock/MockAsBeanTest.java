@@ -55,8 +55,8 @@ public class MockAsBeanTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    // END SNIPPET: e1    
-    
+    // END SNIPPET: e1
+
     @Override
     // START SNIPPET: e2
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -72,13 +72,13 @@ public class MockAsBeanTest extends ContextTestSupport {
         };
     }
     // END SNIPPET: e2
-    
+
     // START SNIPPET: e3
     @Test
     public void testMockAsBeanWithReplyBody() throws Exception {
         // we should expect to receive the transformed message
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
-        
+
         foo.returnReplyBody(ExpressionBuilder.simpleExpression("Bye ${body}"));
 
         template.sendBody("direct:start", "World");
@@ -86,13 +86,13 @@ public class MockAsBeanTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     // END SNIPPET: e3
-    
+
     // START SNIPPET: e4
     @Test
     public void testMockAsBeanWithReplyHeader() throws Exception {
         // we should expect to receive the transformed message
         getMockEndpoint("mock:result").expectedHeaderReceived("myHeader", "Bye World");
-        
+
         foo.returnReplyHeader("myHeader", ExpressionBuilder.simpleExpression("Bye ${body}"));
 
         template.sendBody("direct:start", "World");

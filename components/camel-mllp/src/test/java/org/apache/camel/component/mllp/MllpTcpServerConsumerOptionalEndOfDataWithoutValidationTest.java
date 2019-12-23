@@ -82,6 +82,7 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest extends
         runInvalidMessageContainingEmbeddedEndOfBlock();
     }
 
+    @Override
     @Test
     public void testInitialMessageWithoutEndOfDataByte() throws Exception {
         expectedCompleteCount = 1;
@@ -93,6 +94,7 @@ public class MllpTcpServerConsumerOptionalEndOfDataWithoutValidationTest extends
         mllpClient.sendFramedData(Hl7TestMessageGenerator.generateMessage());
     }
 
+    @Override
     @Test
     public void testMessageWithoutEndOfDataByte() throws Exception {
         expectedCompleteCount = 2;

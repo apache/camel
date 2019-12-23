@@ -78,7 +78,7 @@ public class FileLockClusterView extends AbstractCamelClusterView {
     @Override
     protected void doStart() throws Exception {
         if (file != null) {
-            close();
+            closeInternal();
 
             fireLeadershipChangedEvent(Optional.empty());
         }
@@ -103,14 +103,14 @@ public class FileLockClusterView extends AbstractCamelClusterView {
 
     @Override
     protected void doStop() throws Exception {
-        close();
+        closeInternal();
     }
 
     // *********************************
     //
     // *********************************
 
-    private void close() throws Exception {
+    private void closeInternal() throws Exception {
         if (task != null) {
             task.cancel(true);
         }

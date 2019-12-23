@@ -45,17 +45,13 @@ public class ChoiceNoErrorHandlerTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(noErrorHandler());
 
-                from("direct:start")
-                        .choice()
-                        .when(header("foo").isEqualTo("bar")).to("direct:end")
-                        .otherwise().end();
+                from("direct:start").choice().when(header("foo").isEqualTo("bar")).to("direct:end").otherwise().end();
 
-                from("direct:end")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) {
-                                assertEquals("Hello World", exchange.getIn().getBody(String.class));
-                            }
-                        }).to("mock:result");
+                from("direct:end").process(new Processor() {
+                    public void process(Exchange exchange) {
+                        assertEquals("Hello World", exchange.getIn().getBody(String.class));
+                    }
+                }).to("mock:result");
             }
         };
     }

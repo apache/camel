@@ -31,21 +31,17 @@ public class BreadcrumbDisabledTest extends MDCTest {
                 context.setUseMDCLogging(false);
                 context.setUseBreadcrumb(false);
 
-                from("direct:a").routeId("route-a")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertNull("Should not have breadcrumb", exchange.getIn().getHeader("breadcrumbId"));
-                            }
-                        })
-                        .to("log:foo").to("direct:b");
+                from("direct:a").routeId("route-a").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertNull("Should not have breadcrumb", exchange.getIn().getHeader("breadcrumbId"));
+                    }
+                }).to("log:foo").to("direct:b");
 
-                from("direct:b").routeId("route-b")
-                        .process(new Processor() {
-                            public void process(Exchange exchange) throws Exception {
-                                assertNull("Should not have breadcrumb", exchange.getIn().getHeader("breadcrumbId"));
-                            }
-                        })
-                        .to("log:bar").to("mock:result");
+                from("direct:b").routeId("route-b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        assertNull("Should not have breadcrumb", exchange.getIn().getHeader("breadcrumbId"));
+                    }
+                }).to("log:bar").to("mock:result");
             }
         };
     }

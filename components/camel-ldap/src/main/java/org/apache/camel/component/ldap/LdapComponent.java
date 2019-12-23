@@ -31,6 +31,7 @@ public class LdapComponent extends DefaultComponent {
     public LdapComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new LdapEndpoint(uri, remaining, this);
         setProperties(endpoint, parameters);

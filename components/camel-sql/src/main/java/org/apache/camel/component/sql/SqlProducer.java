@@ -70,6 +70,7 @@ public class SqlProducer extends DefaultProducer {
         resolvedQuery = SqlHelper.resolveQuery(getEndpoint().getCamelContext(), query, placeholder);
     }
 
+    @Override
     public void process(final Exchange exchange) throws Exception {
         final String sql;
         if (useMessageBodyForSql) {

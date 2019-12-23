@@ -27,7 +27,6 @@ import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.commons.codec.binary.Base64;
 
-
 /**
  * <code>VerifyingProcessor</code>
  */
@@ -37,6 +36,7 @@ public class VerifyingProcessor extends DigitalSignatureProcessor {
         super(configuration);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Signature signer = createSignatureService();
         Certificate cert = getCertificate(exchange);

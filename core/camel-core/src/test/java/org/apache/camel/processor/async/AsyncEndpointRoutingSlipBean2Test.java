@@ -44,8 +44,7 @@ public class AsyncEndpointRoutingSlipBean2Test extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addComponent("async", new MyAsyncComponent());
 
-                from("direct:start")
-                    .bean("myBean");
+                from("direct:start").bean("myBean");
             }
         };
     }

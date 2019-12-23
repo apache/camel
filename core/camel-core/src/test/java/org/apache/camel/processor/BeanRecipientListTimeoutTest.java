@@ -58,6 +58,7 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -82,11 +83,16 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
 
     private class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public void timeout(Exchange oldExchange, int index, int total, long timeout) {
-            // we can't assert on the expected values here as the contract of this method doesn't
-            // allow to throw any Throwable (including AssertionError) so that we assert
-            // about the expected values directly inside the test method itself. other than that
-            // asserting inside a thread other than the main thread dosen't make much sense as
+            // we can't assert on the expected values here as the contract of
+            // this method doesn't
+            // allow to throw any Throwable (including AssertionError) so that
+            // we assert
+            // about the expected values directly inside the test method itself.
+            // other than that
+            // asserting inside a thread other than the main thread dosen't make
+            // much sense as
             // junit would not realize the failed assertion!
             receivedExchange = oldExchange;
             receivedIndex = index;
@@ -94,6 +100,7 @@ public class BeanRecipientListTimeoutTest extends ContextTestSupport {
             receivedTimeout = timeout;
         }
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

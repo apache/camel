@@ -27,7 +27,6 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The flatpack component supports fixed width and delimited file parsing via
@@ -58,7 +57,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder allowShortLines(
                 boolean allowShortLines) {
-            setProperty("allowShortLines", allowShortLines);
+            doSetProperty("allowShortLines", allowShortLines);
             return this;
         }
         /**
@@ -71,7 +70,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder allowShortLines(
                 String allowShortLines) {
-            setProperty("allowShortLines", allowShortLines);
+            doSetProperty("allowShortLines", allowShortLines);
             return this;
         }
         /**
@@ -82,7 +81,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder delimiter(char delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -93,7 +92,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder delimiter(String delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -106,7 +105,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder ignoreExtraColumns(
                 boolean ignoreExtraColumns) {
-            setProperty("ignoreExtraColumns", ignoreExtraColumns);
+            doSetProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
         }
         /**
@@ -119,7 +118,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder ignoreExtraColumns(
                 String ignoreExtraColumns) {
-            setProperty("ignoreExtraColumns", ignoreExtraColumns);
+            doSetProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
         }
         /**
@@ -132,7 +131,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder ignoreFirstRecord(
                 boolean ignoreFirstRecord) {
-            setProperty("ignoreFirstRecord", ignoreFirstRecord);
+            doSetProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
         }
         /**
@@ -145,7 +144,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder ignoreFirstRecord(
                 String ignoreFirstRecord) {
-            setProperty("ignoreFirstRecord", ignoreFirstRecord);
+            doSetProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
         }
         /**
@@ -157,7 +156,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder splitRows(boolean splitRows) {
-            setProperty("splitRows", splitRows);
+            doSetProperty("splitRows", splitRows);
             return this;
         }
         /**
@@ -169,7 +168,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder splitRows(String splitRows) {
-            setProperty("splitRows", splitRows);
+            doSetProperty("splitRows", splitRows);
             return this;
         }
         /**
@@ -180,7 +179,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder textQualifier(char textQualifier) {
-            setProperty("textQualifier", textQualifier);
+            doSetProperty("textQualifier", textQualifier);
             return this;
         }
         /**
@@ -192,7 +191,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder textQualifier(
                 String textQualifier) {
-            setProperty("textQualifier", textQualifier);
+            doSetProperty("textQualifier", textQualifier);
             return this;
         }
         /**
@@ -210,7 +209,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -228,7 +227,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -241,7 +240,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -254,7 +253,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -267,7 +266,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -280,7 +279,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -293,7 +292,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -306,7 +305,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -323,7 +322,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -340,7 +339,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -353,7 +352,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -366,7 +365,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -378,7 +377,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -390,7 +389,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -403,7 +402,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -416,7 +415,33 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default FlatpackEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default FlatpackEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -429,7 +454,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -443,7 +468,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -458,7 +483,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -473,41 +498,24 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default FlatpackEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -516,12 +524,12 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -531,7 +539,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -543,7 +551,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -555,7 +563,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -566,7 +574,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -578,7 +586,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -591,7 +599,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -604,7 +612,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointConsumerBuilder useFixedDelay(
                 String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -631,7 +639,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -647,7 +655,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -659,7 +667,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -672,7 +680,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -688,7 +696,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -704,7 +712,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -717,7 +725,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -730,7 +738,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -743,7 +751,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -756,7 +764,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -780,7 +788,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointProducerBuilder allowShortLines(
                 boolean allowShortLines) {
-            setProperty("allowShortLines", allowShortLines);
+            doSetProperty("allowShortLines", allowShortLines);
             return this;
         }
         /**
@@ -793,7 +801,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointProducerBuilder allowShortLines(
                 String allowShortLines) {
-            setProperty("allowShortLines", allowShortLines);
+            doSetProperty("allowShortLines", allowShortLines);
             return this;
         }
         /**
@@ -804,7 +812,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointProducerBuilder delimiter(char delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -815,7 +823,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointProducerBuilder delimiter(String delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -828,7 +836,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointProducerBuilder ignoreExtraColumns(
                 boolean ignoreExtraColumns) {
-            setProperty("ignoreExtraColumns", ignoreExtraColumns);
+            doSetProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
         }
         /**
@@ -841,7 +849,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointProducerBuilder ignoreExtraColumns(
                 String ignoreExtraColumns) {
-            setProperty("ignoreExtraColumns", ignoreExtraColumns);
+            doSetProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
         }
         /**
@@ -854,7 +862,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointProducerBuilder ignoreFirstRecord(
                 boolean ignoreFirstRecord) {
-            setProperty("ignoreFirstRecord", ignoreFirstRecord);
+            doSetProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
         }
         /**
@@ -867,7 +875,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointProducerBuilder ignoreFirstRecord(
                 String ignoreFirstRecord) {
-            setProperty("ignoreFirstRecord", ignoreFirstRecord);
+            doSetProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
         }
         /**
@@ -879,7 +887,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointProducerBuilder splitRows(boolean splitRows) {
-            setProperty("splitRows", splitRows);
+            doSetProperty("splitRows", splitRows);
             return this;
         }
         /**
@@ -891,7 +899,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointProducerBuilder splitRows(String splitRows) {
-            setProperty("splitRows", splitRows);
+            doSetProperty("splitRows", splitRows);
             return this;
         }
         /**
@@ -902,7 +910,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointProducerBuilder textQualifier(char textQualifier) {
-            setProperty("textQualifier", textQualifier);
+            doSetProperty("textQualifier", textQualifier);
             return this;
         }
         /**
@@ -914,7 +922,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointProducerBuilder textQualifier(
                 String textQualifier) {
-            setProperty("textQualifier", textQualifier);
+            doSetProperty("textQualifier", textQualifier);
             return this;
         }
         /**
@@ -934,7 +942,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -954,7 +962,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -978,7 +986,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -991,7 +999,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1004,7 +1012,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1017,7 +1025,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1040,7 +1048,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointBuilder allowShortLines(boolean allowShortLines) {
-            setProperty("allowShortLines", allowShortLines);
+            doSetProperty("allowShortLines", allowShortLines);
             return this;
         }
         /**
@@ -1052,7 +1060,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointBuilder allowShortLines(String allowShortLines) {
-            setProperty("allowShortLines", allowShortLines);
+            doSetProperty("allowShortLines", allowShortLines);
             return this;
         }
         /**
@@ -1063,7 +1071,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointBuilder delimiter(char delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -1074,7 +1082,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointBuilder delimiter(String delimiter) {
-            setProperty("delimiter", delimiter);
+            doSetProperty("delimiter", delimiter);
             return this;
         }
         /**
@@ -1087,7 +1095,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointBuilder ignoreExtraColumns(
                 boolean ignoreExtraColumns) {
-            setProperty("ignoreExtraColumns", ignoreExtraColumns);
+            doSetProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
         }
         /**
@@ -1100,7 +1108,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointBuilder ignoreExtraColumns(
                 String ignoreExtraColumns) {
-            setProperty("ignoreExtraColumns", ignoreExtraColumns);
+            doSetProperty("ignoreExtraColumns", ignoreExtraColumns);
             return this;
         }
         /**
@@ -1113,7 +1121,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointBuilder ignoreFirstRecord(
                 boolean ignoreFirstRecord) {
-            setProperty("ignoreFirstRecord", ignoreFirstRecord);
+            doSetProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
         }
         /**
@@ -1126,7 +1134,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default FlatpackEndpointBuilder ignoreFirstRecord(
                 String ignoreFirstRecord) {
-            setProperty("ignoreFirstRecord", ignoreFirstRecord);
+            doSetProperty("ignoreFirstRecord", ignoreFirstRecord);
             return this;
         }
         /**
@@ -1138,7 +1146,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointBuilder splitRows(boolean splitRows) {
-            setProperty("splitRows", splitRows);
+            doSetProperty("splitRows", splitRows);
             return this;
         }
         /**
@@ -1150,7 +1158,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointBuilder splitRows(String splitRows) {
-            setProperty("splitRows", splitRows);
+            doSetProperty("splitRows", splitRows);
             return this;
         }
         /**
@@ -1161,7 +1169,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointBuilder textQualifier(char textQualifier) {
-            setProperty("textQualifier", textQualifier);
+            doSetProperty("textQualifier", textQualifier);
             return this;
         }
         /**
@@ -1172,7 +1180,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: common
          */
         default FlatpackEndpointBuilder textQualifier(String textQualifier) {
-            setProperty("textQualifier", textQualifier);
+            doSetProperty("textQualifier", textQualifier);
             return this;
         }
     }
@@ -1196,7 +1204,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1209,7 +1217,7 @@ public interface FlatpackEndpointBuilderFactory {
          */
         default AdvancedFlatpackEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1221,7 +1229,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFlatpackEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1233,7 +1241,7 @@ public interface FlatpackEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFlatpackEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1243,7 +1251,7 @@ public interface FlatpackEndpointBuilderFactory {
      * via the FlatPack library.
      * 
      * Category: transformation
-     * Available as of version: 1.4
+     * Since: 1.4
      * Maven coordinates: org.apache.camel:camel-flatpack
      * 
      * Syntax: <code>flatpack:type:resourceUri</code>

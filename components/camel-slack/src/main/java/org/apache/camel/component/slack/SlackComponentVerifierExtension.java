@@ -107,14 +107,14 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
                 builder.error(ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, "Invalid webhookUrl").parameterKey("webhookUrl").build());
             }
         } 
-        if (ObjectHelper.isNotEmpty((String)parameters.get("token"))) {
+        if (ObjectHelper.isNotEmpty(parameters.get("token"))) {
             String token = (String)parameters.get("token");
 
             try {
                 HttpClient client = HttpClientBuilder.create().useSystemProperties().build();
                 HttpPost httpPost = new HttpPost(parameters.get("serverUrl") + "/api/channels.list");
 
-                List<BasicNameValuePair> params = new ArrayList<BasicNameValuePair>();
+                List<BasicNameValuePair> params = new ArrayList<>();
                 params.add(new BasicNameValuePair("token", token));
                 httpPost.setEntity(new UrlEncodedFormEntity(params));
 
@@ -139,7 +139,7 @@ public class SlackComponentVerifierExtension extends DefaultComponentVerifierExt
         Map<String, Object> jsonMap = new HashMap<>();
 
         // Put the values in a map
-        jsonMap.put("text", message.getText());
+        jsonMap.put(SlackConstants.SLACK_TEXT_FIELD, message.getText());
 
         // Generate a JSONObject
         return new JsonObject(jsonMap).toJson();

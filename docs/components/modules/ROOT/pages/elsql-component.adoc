@@ -1,11 +1,16 @@
 [[elsql-component]]
-== ElSQL Component
+= ElSQL Component
+:page-source: components/camel-elsql/src/main/docs/elsql-component.adoc
 
-*Available as of Camel version 2.16*
+*Since Camel 2.16*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The ELSQL component is an extension to the existing
 xref:sql-component.adoc[SQL Component] that uses
-https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
+https://github.com/OpenGamma/ElSql[ElSql] to define the SQL queries. 
 
 This component uses `spring-jdbc` behind the scenes for the actual SQL
 handling.
@@ -34,13 +39,13 @@ sql:elSqlName:resourceUri[?options]
 ----
 
 You can append query options to the URI in the following
-format, `?option=value&option=value&...`
+format, `?option=value&option=value&...`
 
 The parameters to the SQL queries are named parameters in the elsql
-mapping files, and maps to corresponding keys from the Camel message, in
+mapping files, and maps to corresponding keys from the Camel message, in
 the given precedence:
 
-1. from message body if xref:simple-language.adoc[Simple]
+1. from message body if xref:manual::simple-language.adoc[Simple]
 expression.
 
 2. from message body if its a `java.util.Map`
@@ -49,10 +54,10 @@ expression.
 
 If a named parameter cannot be resolved, then an exception is thrown.
 
-=== Options
+== Options
 
 // component options: START
-The ElSQL component supports 6 options, which are listed below.
+The ElSQL component supports 7 options, which are listed below.
 
 
 
@@ -63,8 +68,9 @@ The ElSQL component supports 6 options, which are listed below.
 | *dataSource* (common) | Sets the DataSource to use to communicate with the database. |  | DataSource
 | *elSqlConfig* (advanced) | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. |  | ElSqlConfig
 | *resourceUri* (common) | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default, you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint. |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -77,7 +83,7 @@ elsql:elsqlName:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -88,7 +94,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (49 parameters):
+=== Query Parameters (50 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -111,11 +117,11 @@ with the following path and query parameters:
 | *onConsumeFailed* (consumer) | After processing each row then this query can be executed, if the Exchange failed, for example to mark the row as failed. The query can have parameter. |  | String
 | *routeEmptyResultSet* (consumer) | Sets whether empty resultset should be allowed to be sent to the next hop. Defaults to false. So the empty resultset will be filtered out. | false | boolean
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
-| *transacted* (consumer) | Enables or disables transaction. If enabled then if processing an exchange failed then the consumerbreak out processing any further exchanges to cause a rollback eager. | false | boolean
+| *transacted* (consumer) | Enables or disables transaction. If enabled then if processing an exchange failed then the consumer breaks out processing any further exchanges to cause a rollback eager. | false | boolean
 | *useIterator* (consumer) | Sets how resultset should be delivered to route. Indicates delivery as either a list or individual object. defaults to true. | true | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *processingStrategy* (consumer) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlProcessingStrategy to execute queries when the consumer has processed the rows/batch. |  | SqlProcessingStrategy
 | *batch* (producer) | Enables or disables batch mode | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -126,7 +132,7 @@ with the following path and query parameters:
 | *elSqlConfig* (advanced) | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. |  | ElSqlConfig
 | *parametersCount* (advanced) | If set greater than zero, then Camel will use this count value of parameters to replace instead of querying via JDBC metadata API. This is useful if the JDBC vendor could not return correct parameters count, then user may override instead. |  | int
 | *placeholder* (advanced) | Specifies a character that will be replaced to in SQL query. Notice, that it is simple String.replaceAll() operation and no SQL parsing is involved (quoted strings will also change). | # | String
-| *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement. |  | SqlPrepareStatement Strategy
+| *prepareStatementStrategy* (advanced) | Allows to plugin to use a custom org.apache.camel.component.sql.SqlPrepareStatementStrategy to control preparation of the query and prepared statement. |  | SqlPrepareStatementStrategy
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *templateOptions* (advanced) | Configures the Spring JdbcTemplate with the key/values from the Map |  | Map
 | *usePlaceholder* (advanced) | Sets whether to use placeholder and replace all placeholder characters with sign in the SQL queries. | true | boolean
@@ -136,24 +142,25 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-elsql-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -161,7 +168,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 7 options, which are listed below.
+The component supports 8 options, which are listed below.
 
 
 
@@ -169,31 +176,32 @@ The component supports 7 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.elsql.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.elsql.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.elsql.data-source* | Sets the DataSource to use to communicate with the database. The option is a javax.sql.DataSource type. |  | String
 | *camel.component.elsql.database-vendor* | To use a vendor specific com.opengamma.elsql.ElSqlConfig |  | ElSqlDatabaseVendor
 | *camel.component.elsql.el-sql-config* | To use a specific configured ElSqlConfig. It may be better to use the databaseVendor option instead. The option is a com.opengamma.elsql.ElSqlConfig type. |  | String
-| *camel.component.elsql.enabled* | Enable elsql component | true | Boolean
-| *camel.component.elsql.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.elsql.enabled* | Whether to enable auto configuration of the elsql component. This is enabled by default. |  | Boolean
+| *camel.component.elsql.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.elsql.resource-uri* | The resource file which contains the elsql SQL statements to use. You can specify multiple resources separated by comma. The resources are loaded on the classpath by default, you can prefix with file: to load from file system. Notice you can set this option on the component and then you do not have to configure this on the endpoint. |  | String
 |===
 // spring-boot-auto-configure options: END
 
 
-=== Result of the query
+== Result of the query
 
 For `select` operations, the result is an instance of
 `List<Map<String, Object>>` type, as returned by the
 JdbcTemplate.queryForList() method. For `update` operations, the result
 is the number of updated rows, returned as an `Integer`.
 
-By default, the result is placed in the message body.  If the
-outputHeader parameter is set, the result is placed in the header.  This
+By default, the result is placed in the message body.  If the
+outputHeader parameter is set, the result is placed in the header.  This
 is an alternative to using a full message enrichment pattern to add
 headers, it provides a concise syntax for querying a sequence or some
-other small value into a header.  It is convenient to use outputHeader
+other small value into a header.  It is convenient to use outputHeader
 and outputType together:
 
-=== Header values
+== Header values
 
 When performing `update` operations, the SQL Component stores the update
 count in the following message headers:
@@ -209,7 +217,7 @@ count in the following message headers:
 `Integer` object.
 |===
 
-==== Sample
+=== Sample
 
 In the given route below, we want to get all the projects from the
 projects table. Notice the SQL query has 2 named parameters, :#lic and
@@ -248,11 +256,11 @@ parameters will be taken from the body.
      .to("elsql:projects:com/foo/orders.elsql")
 ----
 
-=== Using expression parameters in producers
+== Using expression parameters in producers
 
 In from Camel 2.16.1 onwards you can use Simple expressions as well,
 which allows to use an OGNL like notation on the message body, where it
-assumes to have `getLicense` and `getMinimum` methods:
+assumes to have `getLicense` and `getMinimum` methods:
 
 [source,sql]
 ----
@@ -263,9 +271,9 @@ assumes to have `getLicense` and `getMinimum` methods:
   ORDER BY id
 ----
 
-==== Using expression parameters in consumers
+=== Using expression parameters in consumers
 
-*Available as of Camel 2.23*
+*Since Camel 2.23*
 
 When using the ElSql component as consumer, you can now also use expression parameters (simple language)
 to build dynamic query parameters, such as calling a method on a bean to retrieve an id, date or something.

@@ -42,6 +42,7 @@ public class JmsInOutUseMessageIDasCorrelationIDTest extends CamelTestSupport {
         assertEquals("Bye World", reply);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
@@ -49,6 +50,7 @@ public class JmsInOutUseMessageIDasCorrelationIDTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -41,6 +41,7 @@ public class ApnsComponent extends DefaultComponent {
         this.apnsService = apnsService;
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         ApnsEndpoint endpoint = new ApnsEndpoint(uri, this);
         endpoint.setName(remaining);

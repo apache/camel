@@ -92,14 +92,17 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
         return "Log(" + logger.getLog().getName() + ")[" + expression + "]";
     }
 
+    @Override
     public String getTraceLabel() {
         return "log[" + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

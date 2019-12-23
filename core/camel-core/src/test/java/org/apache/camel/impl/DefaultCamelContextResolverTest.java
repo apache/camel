@@ -41,8 +41,10 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Tests if the default camel context is able to resolve components and data formats using both their real names and/or fallback names.
- * Fallback names have been introduced to avoid name clash in some registries (eg. Spring application context) between components and other camel features.
+ * Tests if the default camel context is able to resolve components and data
+ * formats using both their real names and/or fallback names. Fallback names
+ * have been introduced to avoid name clash in some registries (eg. Spring
+ * application context) between components and other camel features.
  */
 public class DefaultCamelContextResolverTest {
 
@@ -87,7 +89,7 @@ public class DefaultCamelContextResolverTest {
         Component component = context.getComponent("green");
         assertNotNull("Component not found in registry", component);
         assertTrue("Wrong instance type of the Component", component instanceof SampleComponent);
-        assertTrue("Here we should have the fallback Component", ((SampleComponent) component).isFallback());
+        assertTrue("Here we should have the fallback Component", ((SampleComponent)component).isFallback());
     }
 
     @Test
@@ -95,7 +97,7 @@ public class DefaultCamelContextResolverTest {
         Component component = context.getComponent("yellow");
         assertNotNull("Component not found in registry", component);
         assertTrue("Wrong instance type of the Component", component instanceof SampleComponent);
-        assertFalse("Here we should NOT have the fallback Component", ((SampleComponent) component).isFallback());
+        assertFalse("Here we should NOT have the fallback Component", ((SampleComponent)component).isFallback());
     }
 
     @Test
@@ -103,7 +105,7 @@ public class DefaultCamelContextResolverTest {
         DataFormat dataFormat = context.resolveDataFormat("green");
         assertNotNull("DataFormat not found in registry", dataFormat);
         assertTrue("Wrong instance type of the DataFormat", dataFormat instanceof SampleDataFormat);
-        assertTrue("Here we should have the fallback DataFormat", ((SampleDataFormat) dataFormat).isFallback());
+        assertTrue("Here we should have the fallback DataFormat", ((SampleDataFormat)dataFormat).isFallback());
     }
 
     @Test
@@ -111,7 +113,7 @@ public class DefaultCamelContextResolverTest {
         DataFormat dataFormat = context.resolveDataFormat("red");
         assertNotNull("DataFormat not found in registry", dataFormat);
         assertTrue("Wrong instance type of the DataFormat", dataFormat instanceof SampleDataFormat);
-        assertFalse("Here we should NOT have the fallback DataFormat", ((SampleDataFormat) dataFormat).isFallback());
+        assertFalse("Here we should NOT have the fallback DataFormat", ((SampleDataFormat)dataFormat).isFallback());
     }
 
     @Test
@@ -119,7 +121,7 @@ public class DefaultCamelContextResolverTest {
         Language language = context.resolveLanguage("green");
         assertNotNull("Language not found in registry", language);
         assertTrue("Wrong instance type of the Language", language instanceof SampleLanguage);
-        assertTrue("Here we should have the fallback Language", ((SampleLanguage) language).isFallback());
+        assertTrue("Here we should have the fallback Language", ((SampleLanguage)language).isFallback());
     }
 
     @Test
@@ -127,7 +129,7 @@ public class DefaultCamelContextResolverTest {
         Language language = context.resolveLanguage("blue");
         assertNotNull("Language not found in registry", language);
         assertTrue("Wrong instance type of the Language", language instanceof SampleLanguage);
-        assertFalse("Here we should NOT have the fallback Language", ((SampleLanguage) language).isFallback());
+        assertFalse("Here we should NOT have the fallback Language", ((SampleLanguage)language).isFallback());
     }
 
     @Test
@@ -222,6 +224,5 @@ public class DefaultCamelContextResolverTest {
             this.fallback = fallback;
         }
     }
-
 
 }

@@ -22,11 +22,11 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http4.HttpMethods;
+import org.apache.camel.component.http.HttpMethods;
 import org.junit.Test;
 
 public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJettyTest {
-    
+
     @Test
     public void testSendToJetty() throws Exception {
         Map<String, Object> map = new HashMap<>();
@@ -42,14 +42,14 @@ public class HttpBindingMapHttpMessageFormUrlEncodedFalseBodyTest extends BaseJe
                 from("jetty:http://localhost:{{port}}/myapp/myservice?mapHttpMessageFormUrlEncodedBody=false").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
-                        
+
                         // for unit testing make sure we got right message
                         assertEquals("The body message is wrong", "b1=x&b2=y", body);
                         assertEquals("Get a wrong query parameter from the message header", "a", exchange.getIn().getHeader("query1"));
                         assertEquals("Get a wrong query parameter from the message header", "b", exchange.getIn().getHeader("query2"));
                         assertNotEquals("Get a wrong form parameter from the message header", "x", exchange.getIn().getHeader("b1"));
                         assertNotEquals("Get a wrong form parameter from the message header", "y", exchange.getIn().getHeader("b2"));
-                        
+
                         // send a response
                         exchange.getOut().setBody("Request message is OK");
                     }

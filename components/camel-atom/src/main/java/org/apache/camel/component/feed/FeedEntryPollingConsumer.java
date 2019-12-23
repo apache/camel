@@ -41,6 +41,7 @@ public abstract class FeedEntryPollingConsumer extends FeedPollingConsumer {
         this.throttleEntries = throttleEntries;
     }
 
+    @Override
     public int poll() throws Exception {
         if (feed == null) {
             // populate new feed

@@ -36,7 +36,6 @@ import com.amazonaws.services.mq.model.RebootBrokerResult;
 import com.amazonaws.services.mq.model.UpdateBrokerRequest;
 import com.amazonaws.services.mq.model.UpdateBrokerResult;
 import com.amazonaws.services.mq.model.User;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -56,6 +55,7 @@ public class MQProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
         case listBrokers:

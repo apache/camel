@@ -23,21 +23,14 @@ import org.apache.camel.builder.RouteBuilder;
  * The handle catch clause has a pipeline processing the exception.
  */
 public class ValidationWithMultipleHandlesTest extends ValidationTest {
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 context.setTracing(true);
 
-                from("direct:start")
-                    .doTry()
-                        .process(validator)
-                    .doCatch(ValidationException.class)
-                        .setHeader("xxx", constant("yyy"))
-                    .end()
-                    .doTry()
-                        .process(validator).to("mock:valid")
-                    .doCatch(ValidationException.class)
-                        .pipeline("seda:a", "mock:invalid");
+                from("direct:start").doTry().process(validator).doCatch(ValidationException.class).setHeader("xxx", constant("yyy")).end().doTry().process(validator)
+                    .to("mock:valid").doCatch(ValidationException.class).pipeline("seda:a", "mock:invalid");
             }
         };
     }

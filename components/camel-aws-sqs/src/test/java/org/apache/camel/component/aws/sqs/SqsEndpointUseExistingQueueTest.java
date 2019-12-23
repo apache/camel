@@ -30,11 +30,10 @@ import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
 import com.amazonaws.services.sqs.model.SetQueueAttributesResult;
-
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -42,6 +41,9 @@ public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
+
+    @BindToRegistry("amazonSQSClient")
+    private AmazonSQSClientMock client = new SqsEndpointUseExistingQueueTest.AmazonSQSClientMock();
 
     @Test
     public void defaultsToDisabled() throws Exception {
@@ -51,28 +53,17 @@ public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        
-        AmazonSQSClientMock clientMock = new SqsEndpointUseExistingQueueTest.AmazonSQSClientMock();
-        registry.bind("amazonSQSClient", clientMock);
-        
-        return registry;
-    }
-
-    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient")
-                    .to("mock:result");
+                from("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient").to("mock:result");
             }
         };
     }
-    
+
     static class AmazonSQSClientMock extends AmazonSQSClient {
-        
+
         AmazonSQSClientMock() {
             super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
         }
@@ -85,24 +76,24 @@ public class SqsEndpointUseExistingQueueTest extends CamelTestSupport {
             result.getQueueUrls().add("http://queue.amazonaws.com/0815/Bar");
             return result;
         }
-        
+
         @Override
         public CreateQueueResult createQueue(CreateQueueRequest createQueueRequest) throws AmazonServiceException, AmazonClientException {
             throw new AmazonServiceException("forced exception for test if this method is called");
         }
-        
+
         @Override
         public SetQueueAttributesResult setQueueAttributes(SetQueueAttributesRequest setQueueAttributesRequest) throws AmazonServiceException, AmazonClientException {
             return new SetQueueAttributesResult();
         }
-        
+
         @Override
         public ReceiveMessageResult receiveMessage(ReceiveMessageRequest receiveMessageRequest) throws AmazonServiceException, AmazonClientException {
             ReceiveMessageResult result = new ReceiveMessageResult();
             List<Message> resultMessages = result.getMessages();
             Message message = new Message();
             resultMessages.add(message);
-            
+
             return result;
         }
     }

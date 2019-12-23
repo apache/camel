@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 public class MyInterceptorProcessor extends DelegateProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(MyInterceptorProcessor.class);
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         LOG.debug("START of onExchange: " + exchange);
         super.process(exchange);

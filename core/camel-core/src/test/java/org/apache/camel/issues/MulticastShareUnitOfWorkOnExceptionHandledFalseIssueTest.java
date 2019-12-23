@@ -44,19 +44,11 @@ public class MulticastShareUnitOfWorkOnExceptionHandledFalseIssueTest extends Co
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(false)
-                    .to("mock:a");
+                onException(Exception.class).handled(false).to("mock:a");
 
-                from("direct:start")
-                    .multicast().shareUnitOfWork().stopOnException()
-                        .to("direct:b")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").multicast().shareUnitOfWork().stopOnException().to("direct:b").end().to("mock:result");
 
-                from("direct:b")
-                    .to("mock:b")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:b").to("mock:b").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

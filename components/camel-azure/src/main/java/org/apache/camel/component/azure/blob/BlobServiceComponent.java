@@ -42,9 +42,9 @@ public class BlobServiceComponent extends DefaultComponent {
         this.configuration = new BlobServiceConfiguration();
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        final BlobServiceConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
+        final BlobServiceConfiguration configuration = this.configuration != null ? this.configuration.copy() : new BlobServiceConfiguration();
 
         String[] parts = null;
         if (remaining != null) {
@@ -68,11 +68,13 @@ public class BlobServiceComponent extends DefaultComponent {
             }
             configuration.setBlobName(sb.toString());
         }
-        checkAndSetRegistryClient(configuration);
-        checkCredentials(configuration);
 
         BlobServiceEndpoint endpoint = new BlobServiceEndpoint(uri, this, configuration);
         setProperties(endpoint, parameters);
+
+        checkAndSetRegistryClient(configuration);
+        checkCredentials(configuration);
+
         return endpoint;
     }
 

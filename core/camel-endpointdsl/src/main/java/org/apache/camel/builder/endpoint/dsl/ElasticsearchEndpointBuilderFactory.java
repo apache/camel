@@ -49,7 +49,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -61,7 +61,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -72,7 +72,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -83,7 +83,31 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
+            return this;
+        }
+        /**
+         * Enable automatically discover nodes from a running Elasticsearch
+         * cluster.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder enableSniffer(boolean enableSniffer) {
+            doSetProperty("enableSniffer", enableSniffer);
+            return this;
+        }
+        /**
+         * Enable automatically discover nodes from a running Elasticsearch
+         * cluster.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder enableSniffer(String enableSniffer) {
+            doSetProperty("enableSniffer", enableSniffer);
             return this;
         }
         /**
@@ -94,7 +118,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
-            setProperty("enableSSL", enableSSL);
+            doSetProperty("enableSSL", enableSSL);
             return this;
         }
         /**
@@ -105,7 +129,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder enableSSL(String enableSSL) {
-            setProperty("enableSSL", enableSSL);
+            doSetProperty("enableSSL", enableSSL);
             return this;
         }
         /**
@@ -118,7 +142,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder hostAddresses(String hostAddresses) {
-            setProperty("hostAddresses", hostAddresses);
+            doSetProperty("hostAddresses", hostAddresses);
             return this;
         }
         /**
@@ -129,18 +153,47 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder indexName(String indexName) {
-            setProperty("indexName", indexName);
+            doSetProperty("indexName", indexName);
             return this;
         }
         /**
-         * The type of the index to act against.
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
          * 
-         * The option is a: <code>java.lang.String</code> type.
+         * The option is a: <code>boolean</code> type.
          * 
          * Group: producer
          */
-        default ElasticsearchEndpointBuilder indexType(String indexType) {
-            setProperty("indexType", indexType);
+        default ElasticsearchEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -151,7 +204,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder maxRetryTimeout(int maxRetryTimeout) {
-            setProperty("maxRetryTimeout", maxRetryTimeout);
+            doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
         }
         /**
@@ -163,7 +216,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder maxRetryTimeout(
                 String maxRetryTimeout) {
-            setProperty("maxRetryTimeout", maxRetryTimeout);
+            doSetProperty("maxRetryTimeout", maxRetryTimeout);
             return this;
         }
         /**
@@ -176,7 +229,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder operation(
                 ElasticsearchOperation operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -188,7 +241,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -200,7 +253,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 int scrollKeepAliveMs) {
-            setProperty("scrollKeepAliveMs", scrollKeepAliveMs);
+            doSetProperty("scrollKeepAliveMs", scrollKeepAliveMs);
             return this;
         }
         /**
@@ -212,7 +265,60 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
                 String scrollKeepAliveMs) {
-            setProperty("scrollKeepAliveMs", scrollKeepAliveMs);
+            doSetProperty("scrollKeepAliveMs", scrollKeepAliveMs);
+            return this;
+        }
+        /**
+         * The delay of a sniff execution scheduled after a failure (in
+         * milliseconds).
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder sniffAfterFailureDelay(
+                int sniffAfterFailureDelay) {
+            doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
+            return this;
+        }
+        /**
+         * The delay of a sniff execution scheduled after a failure (in
+         * milliseconds).
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder sniffAfterFailureDelay(
+                String sniffAfterFailureDelay) {
+            doSetProperty("sniffAfterFailureDelay", sniffAfterFailureDelay);
+            return this;
+        }
+        /**
+         * The interval between consecutive ordinary sniff executions in
+         * milliseconds. Will be honoured when sniffOnFailure is disabled or
+         * when there are no failures between consecutive sniff executions.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder snifferInterval(int snifferInterval) {
+            doSetProperty("snifferInterval", snifferInterval);
+            return this;
+        }
+        /**
+         * The interval between consecutive ordinary sniff executions in
+         * milliseconds. Will be honoured when sniffOnFailure is disabled or
+         * when there are no failures between consecutive sniff executions.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: producer
+         */
+        default ElasticsearchEndpointBuilder snifferInterval(
+                String snifferInterval) {
+            doSetProperty("snifferInterval", snifferInterval);
             return this;
         }
         /**
@@ -223,7 +329,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder socketTimeout(int socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -234,7 +340,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder socketTimeout(String socketTimeout) {
-            setProperty("socketTimeout", socketTimeout);
+            doSetProperty("socketTimeout", socketTimeout);
             return this;
         }
         /**
@@ -245,7 +351,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder useScroll(boolean useScroll) {
-            setProperty("useScroll", useScroll);
+            doSetProperty("useScroll", useScroll);
             return this;
         }
         /**
@@ -256,7 +362,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * Group: producer
          */
         default ElasticsearchEndpointBuilder useScroll(String useScroll) {
-            setProperty("useScroll", useScroll);
+            doSetProperty("useScroll", useScroll);
             return this;
         }
         /**
@@ -269,7 +375,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder waitForActiveShards(
                 int waitForActiveShards) {
-            setProperty("waitForActiveShards", waitForActiveShards);
+            doSetProperty("waitForActiveShards", waitForActiveShards);
             return this;
         }
         /**
@@ -282,7 +388,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default ElasticsearchEndpointBuilder waitForActiveShards(
                 String waitForActiveShards) {
-            setProperty("waitForActiveShards", waitForActiveShards);
+            doSetProperty("waitForActiveShards", waitForActiveShards);
             return this;
         }
     }
@@ -306,7 +412,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -319,7 +425,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -332,7 +438,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default AdvancedElasticsearchEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -345,7 +451,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          */
         default AdvancedElasticsearchEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -366,8 +472,7 @@ public interface ElasticsearchEndpointBuilderFactory {
         DeleteIndex,
         Search,
         Exists,
-        Ping,
-        Info;
+        Ping;
     }
     /**
      * Elastichsearch Rest (camel-elasticsearch-rest)
@@ -375,7 +480,7 @@ public interface ElasticsearchEndpointBuilderFactory {
      * server using REST API.
      * 
      * Category: monitoring,search
-     * Available as of version: 2.21
+     * Since: 2.21
      * Maven coordinates: org.apache.camel:camel-elasticsearch-rest
      * 
      * Syntax: <code>elasticsearch-rest:clusterName</code>
@@ -383,7 +488,7 @@ public interface ElasticsearchEndpointBuilderFactory {
      * Path parameter: clusterName (required)
      * Name of the cluster
      */
-    default ElasticsearchEndpointBuilder elasticsearch(String path) {
+    default ElasticsearchEndpointBuilder elasticsearchRest(String path) {
         class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder, AdvancedElasticsearchEndpointBuilder {
             public ElasticsearchEndpointBuilderImpl(String path) {
                 super("elasticsearch-rest", path);

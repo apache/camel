@@ -18,7 +18,6 @@ package org.apache.camel.component.google.pubsub;
 
 import java.util.concurrent.ExecutorService;
 
-import com.google.api.client.repackaged.com.google.common.base.Strings;
 import com.google.api.services.pubsub.Pubsub;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -30,6 +29,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +38,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * Built on top of the Service API libraries (v1).
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub",
-        syntax = "google-pubsub:projectId:destinationName", label = "messaging")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "google-pubsub", title = "Google Pubsub", syntax = "google-pubsub:projectId:destinationName", label = "messaging")
 public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     private Logger log;
@@ -64,8 +63,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     @UriParam(name = "connectionFactory", description = "ConnectionFactory to obtain connection to PubSub Service. If non provided the default one will be used")
     private GooglePubsubConnectionFactory connectionFactory;
 
-    @UriParam(defaultValue = "AUTO", enums = "AUTO,NONE",
-            description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
+    @UriParam(defaultValue = "AUTO", enums = "AUTO,NONE", description = "AUTO = exchange gets ack'ed/nack'ed on completion. NONE = downstream process has to ack/nack explicitly")
     private GooglePubsubConstants.AckMode ackMode = GooglePubsubConstants.AckMode.AUTO;
 
     private Pubsub pubsub;
@@ -80,11 +78,11 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
     @Override
     public GooglePubsubComponent getComponent() {
-        return (GooglePubsubComponent) super.getComponent();
+        return (GooglePubsubComponent)super.getComponent();
     }
 
     public void afterPropertiesSet() throws Exception {
-        if (Strings.isNullOrEmpty(loggerId)) {
+        if (ObjectHelper.isEmpty(loggerId)) {
             log = LoggerFactory.getLogger(this.getClass().getName());
         } else {
             log = LoggerFactory.getLogger(loggerId);
@@ -92,7 +90,7 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
 
         // Default pubsub connection.
         // With the publisher endpoints - the main publisher
-        // with the consumer endpoints  - the ack client
+        // with the consumer endpoints - the ack client
         pubsub = getConnectionFactory().getDefaultClient();
 
         log.trace("Credential file location : {}", getConnectionFactory().getCredentialsFileLocation());
@@ -100,11 +98,13 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
         log.trace("Destination Name: {}", this.destinationName);
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         afterPropertiesSet();
         return new GooglePubsubProducer(this);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         afterPropertiesSet();
         setExchangePattern(ExchangePattern.InOnly);
@@ -112,13 +112,10 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext()
-                .getExecutorServiceManager()
-                .newFixedThreadPool(this,
-                                    "GooglePubsubConsumer[" + getDestinationName() + "]",
-                                    concurrentConsumers);
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "GooglePubsubConsumer[" + getDestinationName() + "]", concurrentConsumers);
     }
 
+    @Override
     public boolean isSingleton() {
         return false;
     }
@@ -176,12 +173,11 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * ConnectionFactory to obtain connection to PubSub Service. If non provided the default will be used.
+     * ConnectionFactory to obtain connection to PubSub Service. If non provided
+     * the default will be used.
      */
     public GooglePubsubConnectionFactory getConnectionFactory() {
-        return (null == connectionFactory)
-                ? getComponent().getConnectionFactory()
-                : connectionFactory;
+        return (null == connectionFactory) ? getComponent().getConnectionFactory() : connectionFactory;
     }
 
     public void setConnectionFactory(GooglePubsubConnectionFactory connectionFactory) {

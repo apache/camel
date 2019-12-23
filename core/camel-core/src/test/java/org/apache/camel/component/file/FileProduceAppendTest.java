@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -51,9 +52,7 @@ public class FileProduceAppendTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .setHeader(Exchange.FILE_NAME, constant("hello.txt"))
-                    .to("file://target/data/test-file-append?fileExist=Append", "mock:result");
+                from("direct:start").setHeader(Exchange.FILE_NAME, constant("hello.txt")).to("file://target/data/test-file-append?fileExist=Append", "mock:result");
             }
         };
     }

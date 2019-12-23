@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
@@ -96,6 +95,7 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
 
         BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math.class);
 
+        @Override
         public void configure() {
 
             // default should errors go to mock:error

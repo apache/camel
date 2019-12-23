@@ -66,18 +66,14 @@ public class InterceptSendToEndpointConditionalSkip3Test extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // we have 2 interceptors, which may both trigger, or either or, or none
-                interceptSendToEndpoint("mock:skip").skipSendToOriginalEndpoint()
-                        .when(body().contains("skip")).to("mock:detour1");
+                // we have 2 interceptors, which may both trigger, or either or,
+                // or none
+                interceptSendToEndpoint("mock:skip").skipSendToOriginalEndpoint().when(body().contains("skip")).to("mock:detour1");
 
                 // we intercept the interceptor
-                interceptSendToEndpoint("mock:detour1").skipSendToOriginalEndpoint()
-                        .when(body().contains("skip2")).to("mock:detour2");
+                interceptSendToEndpoint("mock:detour1").skipSendToOriginalEndpoint().when(body().contains("skip2")).to("mock:detour2");
 
-                from("direct:start")
-                        .to("mock:a")
-                        .to("mock:skip")
-                        .to("mock:c");
+                from("direct:start").to("mock:a").to("mock:skip").to("mock:c");
             }
         };
     }

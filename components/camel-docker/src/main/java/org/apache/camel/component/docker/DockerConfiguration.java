@@ -189,7 +189,7 @@ public class DockerConfiguration implements Cloneable {
         this.maxPerRouteConnections = maxPerRouteConnections;
     }
 
-    public boolean isLoggingFilterEnabled() {
+    public boolean isLoggingFilter() {
         return loggingFilter;
     }
 
@@ -200,7 +200,7 @@ public class DockerConfiguration implements Cloneable {
         this.loggingFilter = loggingFilterEnabled;
     }
 
-    public boolean isFollowRedirectFilterEnabled() {
+    public boolean isFollowRedirectFilter() {
         return followRedirectFilter;
     }
 

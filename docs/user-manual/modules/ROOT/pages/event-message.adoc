@@ -1,24 +1,24 @@
 [[eventMessage-eip]]
-== Event Message
+= Event Message
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/EventMessage.html[Event
 Message] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns] by supporting the xref:exchange-pattern.adoc[Exchange Pattern]
 on a xref:message.adoc[Message] which can be set to *InOnly* to indicate
-a oneway event message. Camel xref:components.adoc[Components] then
+a oneway event message. Camel xref:components::index.adoc[Components] then
 implement this pattern using the underlying transport or protocols.
 
-image:http://www.enterpriseintegrationpatterns.com/img/EventMessageSolution.gif[image]
+image::eip/EventMessageSolution.gif[image]
 
-The default behaviour of many xref:components.adoc[Components] is InOnly
-such as for xref:jms-component,JMS>>, <<jms-component.adoc[File] or
-xref:seda-component.adoc[SEDA]
+The default behaviour of many xref:components::index.adoc[Components] is InOnly
+such as for xref:components::jms-component.adoc[JMS], xref:components::jms-component.adoc[File] or
+xref:components::seda-component.adoc[SEDA]
 
 TIP: See the related xref:request-reply.adoc[Request Reply] message.
 
 [[eventMessage-ExplicitlyspecifyingInOnly]]
-=== Explicitly specifying InOnly
+== Explicitly specifying InOnly
 
 If you are using a component which defaults to InOut you can override
 the xref:exchange-pattern.adoc[Exchange Pattern] for an endpoint using
@@ -30,7 +30,7 @@ foo:bar?exchangePattern=InOnly
 ----
 
 
-=== Samples
+== Samples
 
 From 2.0 onwards on Camel you can specify the
 xref:exchange-pattern.adoc[Exchange Pattern] using the DSL.

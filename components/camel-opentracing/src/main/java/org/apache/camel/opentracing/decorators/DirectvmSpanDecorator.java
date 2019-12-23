@@ -23,4 +23,9 @@ public class DirectvmSpanDecorator extends AbstractInternalSpanDecorator {
         return "direct-vm";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.directvm.DirectVmComponent";
+    }
+
 }

@@ -93,7 +93,7 @@ public class PortProducer extends AbstractOpenstackProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.PORT_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Port ID");
         final ActionResponse response = os.networking().port().delete(id);
-        checkFailure(response, msg, "Delete port with ID " + id);
+        checkFailure(response, exchange, "Delete port with ID " + id);
     }
 
     private Port messageToPort(Message message) {

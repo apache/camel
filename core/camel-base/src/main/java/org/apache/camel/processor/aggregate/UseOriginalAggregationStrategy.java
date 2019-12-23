@@ -51,6 +51,7 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
         return new UseOriginalAggregationStrategy(original, propagateException);
     }
 
+    @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (propagateException) {
             Exception exception = checkException(oldExchange, newExchange);

@@ -43,6 +43,7 @@ public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSu
         assertNull(failedEndpoint.getExchanges().get(0).getException());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -50,11 +51,9 @@ public class DeadLetterChannelExceptionCausePropagatedTest extends ContextTestSu
 
                 onException(RuntimeException.class).handled(true).to("mock:failed");
 
-                from("direct:start")
-                    .process(e -> {
-                        throw RUNTIME_EXCEPTION;
-                    })
-                    .to("mock:success");
+                from("direct:start").process(e -> {
+                    throw RUNTIME_EXCEPTION;
+                }).to("mock:success");
             }
         };
     }

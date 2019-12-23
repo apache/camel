@@ -46,11 +46,11 @@ public interface SalesforceProcessor extends Service {
                 final Object headerValue = inboundMessage.getHeader(headerName);
 
                 if (headerValue instanceof String) {
-                    answer.put(headerName, Collections.singletonList((String) headerValue));
+                    answer.put(headerName, Collections.singletonList((String)headerValue));
                 } else if (headerValue instanceof String[]) {
-                    answer.put(headerName, Arrays.asList((String[]) headerValue));
+                    answer.put(headerName, Arrays.asList((String[])headerValue));
                 } else if (headerValue instanceof Collection) {
-                    Collection<?> collection = (Collection<?>) headerValue;
+                    Collection<?> collection = (Collection<?>)headerValue;
                     answer.put(headerName, collection.stream().map(String.class::cast).collect(Collectors.toList()));
                 } else {
                     answer.put(headerName, Collections.singletonList(String.valueOf(headerValue)));

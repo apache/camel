@@ -31,7 +31,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class GoogleDriveFilesConverter {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleDriveFilesConverter.class);
     
@@ -59,10 +59,8 @@ public final class GoogleDriveFilesConverter {
             com.google.api.services.drive.model.File fileMetadata = new com.google.api.services.drive.model.File();
             fileMetadata.setTitle(file.getFileName());
             InputStreamContent mediaContent = new InputStreamContent(null, is);
-            if (exchange != null) {
-                exchange.getIn().setHeader("CamelGoogleDrive.content", fileMetadata);
-                exchange.getIn().setHeader("CamelGoogleDrive.mediaContent", mediaContent);
-            }            
+            exchange.getIn().setHeader("CamelGoogleDrive.content", fileMetadata);
+            exchange.getIn().setHeader("CamelGoogleDrive.mediaContent", mediaContent);
             
             return fileMetadata;
         }

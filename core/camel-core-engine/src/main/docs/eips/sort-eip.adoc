@@ -1,0 +1,69 @@
+[[sort-eip]]
+= Sort EIP
+
+Sort can be used to sort a message. Imagine you consume text files and before processing each file you want to be sure the content is sorted.
+
+Sort will by default sort the body using a default comparator that handles numeric values or uses the string representation. You can provide your own comparator, and even an expression to return the value to be sorted. Sort requires the value returned from the expression evaluation is convertible to `java.util.List` as this is required by the JDK sort operation.
+
+== Options
+
+// eip options: START
+The Sort EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *comparatorRef* | Sets a reference to lookup for the comparator to use for sorting |  | String
+|===
+// eip options: END
+
+
+== Samples
+
+In the route below it will read the file content and tokenize by line breaks so each line can be sorted.
+
+[source,java]
+----
+from("file://inbox")
+    .sort(body().tokenize("\n"))
+    .to("bean:MyServiceBean.processLine");
+----
+
+You can pass in your own comparator as a 2nd argument:
+
+[source,java]
+----
+from("file://inbox")
+    .sort(body().tokenize("\n"), new MyReverseComparator())
+    .to("bean:MyServiceBean.processLine");
+----
+
+In the route below it will read the file content and tokenize by line breaks so each line can be sorted.
+
+[source,xml]
+----
+<route>
+  <from uri="file://inbox"/>
+  <sort>
+    <simple>body</simple>
+  </sort>
+  <beanRef ref="myServiceBean" method="processLine"/>
+</route>
+----
+
+And to use our own comparator we can refer to it as a spring bean:
+
+[source,xml]
+----
+<route>
+  <from uri="file://inbox"/>
+  <sort comparatorRef="myReverseComparator">
+    <simple>body</simple>
+  </sort>
+  <beanRef ref="MyServiceBean" method="processLine"/>
+</route>
+
+<bean id="myReverseComparator" class="com.mycompany.MyReverseComparator"/>
+----
+
+Besides `<simple>`, you can supply an expression using any language you like, so long as it returns a list.

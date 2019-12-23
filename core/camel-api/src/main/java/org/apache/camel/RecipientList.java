@@ -43,11 +43,6 @@ import java.lang.annotation.Target;
 public @interface RecipientList {
 
     /**
-     * Id of {@link CamelContext} to use
-     */
-    String context() default "";
-
-    /**
      * Delimiter used if the Expression returned multiple endpoints. Can be turned off using the value <tt>false</tt>.
      * <p/>
      * The default value is ,

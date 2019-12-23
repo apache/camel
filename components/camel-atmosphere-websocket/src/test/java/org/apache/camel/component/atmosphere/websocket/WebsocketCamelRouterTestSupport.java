@@ -34,6 +34,7 @@ public class WebsocketCamelRouterTestSupport extends CamelTestSupport {
 
     protected ServletHolder servletHolder;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         server = new Server(PORT);
@@ -53,6 +54,7 @@ public class WebsocketCamelRouterTestSupport extends CamelTestSupport {
         server.start();
     }
     
+    @Override
     @After
     public void tearDown() throws Exception {
         if (startCamelContext) {

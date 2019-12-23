@@ -30,7 +30,7 @@ public class AggregateExpressionSizeFallbackTest extends ContextTestSupport {
     public void testAggregateExpressionSizeFallback() throws Exception {
         getMockEndpoint("mock:aggregated").expectedBodiesReceived("A+B+C");
 
-        Map<String, Object> headers = new HashMap<>(); 
+        Map<String, Object> headers = new HashMap<>();
         headers.put("id", 123);
 
         template.sendBodyAndHeaders("direct:start", "A", headers);
@@ -45,11 +45,9 @@ public class AggregateExpressionSizeFallbackTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        // if no mySize header it will fallback to the 3 in size
-                        .completionSize(header("mySize")).completionSize(3)
-                        .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy())
+                    // if no mySize header it will fallback to the 3 in size
+                    .completionSize(header("mySize")).completionSize(3).to("mock:aggregated");
             }
         };
     }

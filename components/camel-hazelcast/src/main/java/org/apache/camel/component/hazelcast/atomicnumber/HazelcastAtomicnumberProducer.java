@@ -20,7 +20,6 @@ import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
@@ -38,6 +37,7 @@ public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
         this.atomicnumber = hazelcastInstance.getAtomicLong(cacheName);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         Map<String, Object> headers = exchange.getIn().getHeaders();

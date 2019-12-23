@@ -22,6 +22,7 @@ import org.apache.camel.processor.ConvertBodyTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringConvertBodyTest extends ConvertBodyTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/convertBody.xml");

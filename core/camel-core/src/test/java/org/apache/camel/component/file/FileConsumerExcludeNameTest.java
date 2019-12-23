@@ -48,11 +48,11 @@ public class FileConsumerExcludeNameTest extends ContextTestSupport {
         template.sendBodyAndHeader(url, "Secret2", Exchange.FILE_NAME, "Secret2.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/data/exclude/?initialDelay=0&delay=10&exclude=^secret.*|.*xml$")
-                    .convertBodyTo(String.class).to("mock:result");
+                from("file://target/data/exclude/?initialDelay=0&delay=10&exclude=^secret.*|.*xml$").convertBodyTo(String.class).to("mock:result");
             }
         };
     }

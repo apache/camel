@@ -26,6 +26,7 @@ import org.junit.Test;
  */
 public class TokenXMLPairMultiNamespaceSplitTest extends TokenXMLPairNamespaceSplitTest {
 
+    @Override
     @Test
     public void testTokenXMLPair() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
@@ -40,6 +41,7 @@ public class TokenXMLPairMultiNamespaceSplitTest extends TokenXMLPairNamespaceSp
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     @Ignore
     @Test
     public void testTokenXMLPair2() throws Exception {

@@ -20,7 +20,7 @@ package org.apache.camel.processor;
  *
  */
 public class MyDelayCalcBean {
-    
+
     public long delayMe(String body) {
         return 100;
     }

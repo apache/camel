@@ -19,8 +19,6 @@ package org.apache.camel.example;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
-
-
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringDataFormatTest extends CamelSpringTestSupport {
@@ -39,6 +37,7 @@ public class SpringDataFormatTest extends CamelSpringTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/example/springDataFormat.xml");
     }

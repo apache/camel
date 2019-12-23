@@ -43,6 +43,7 @@ public class XPathAnnotationResultTypeTest extends CamelTestSupport {
         registry.bind("myBean", myBean);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

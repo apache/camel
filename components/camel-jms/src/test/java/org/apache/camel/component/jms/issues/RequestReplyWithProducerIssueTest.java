@@ -47,6 +47,7 @@ public class RequestReplyWithProducerIssueTest extends CamelTestSupport {
         assertTrue("Bye World".equals(exchange.getOut().getBody()));
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

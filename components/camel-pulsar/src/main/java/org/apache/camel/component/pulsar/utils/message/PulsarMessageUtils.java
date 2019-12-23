@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.NotSerializableException;
 import java.io.ObjectOutputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.pulsar.client.api.Message;
@@ -35,7 +36,7 @@ import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeade
 import static org.apache.camel.component.pulsar.utils.message.PulsarMessageHeaders.TOPIC_NAME;
 
 public final class PulsarMessageUtils {
-    
+
     private PulsarMessageUtils() {
     }
 

@@ -1,7 +1,12 @@
 [[aws-lambda-component]]
-== AWS Lambda Component
+= AWS Lambda Component
+:page-source: components/camel-aws-lambda/src/main/docs/aws-lambda-component.adoc
 
-*Available as of Camel version 2.20*
+*Since Camel 2.20*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The Lambda component supports create, get, list, delete and invoke
 https://aws.amazon.com/lambda/[AWS Lambda] functions.
@@ -18,7 +23,7 @@ When creating a Lambda function, you need to specify a IAM role which has at lea
 
 Lambda is regional service. Unlike S3 bucket, Lambda function created in a given region is not available on other regions.
 
-### URI Format
+== URI Format
 
 [source,java]
 -------------------------
@@ -28,11 +33,11 @@ aws-lambda://functionName[?options]
 You can append query options to the URI in the following format,
 ?options=value&option2=value&...
 
-### URI Options
+== URI Options
 
 
 // component options: START
-The AWS Lambda component supports 6 options, which are listed below.
+The AWS Lambda component supports 7 options, which are listed below.
 
 
 
@@ -43,8 +48,9 @@ The AWS Lambda component supports 6 options, which are listed below.
 | *accessKey* (producer) | Amazon AWS Access Key |  | String
 | *secretKey* (producer) | Amazon AWS Secret Key |  | String
 | *region* (producer) | Amazon AWS Region |  | String
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -60,7 +66,7 @@ aws-lambda:function
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -70,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (10 parameters):
+=== Query Parameters (11 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -78,6 +84,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *operation* (producer) | *Required* The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction |  | LambdaOperations
+| *proxyProtocol* (producer) | To define a proxy protocol when instantiating the Lambda client | HTTPS | Protocol
 | *region* (producer) | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *awsLambdaClient* (advanced) | To use a existing configured AwsLambdaClient as client |  | AWSLambda
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -89,14 +96,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-aws-lambda-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -104,7 +111,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 14 options, which are listed below.
+The component supports 16 options, which are listed below.
 
 
 
@@ -113,17 +120,19 @@ The component supports 14 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.aws-lambda.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-lambda.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.aws-lambda.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.aws-lambda.configuration.access-key* | Amazon AWS Access Key |  | String
 | *camel.component.aws-lambda.configuration.aws-lambda-client* | To use a existing configured AwsLambdaClient as client |  | AWSLambda
 | *camel.component.aws-lambda.configuration.function* | Name of the Lambda function. |  | String
 | *camel.component.aws-lambda.configuration.operation* | The operation to perform. It can be listFunctions, getFunction, createFunction, deleteFunction or invokeFunction |  | LambdaOperations
 | *camel.component.aws-lambda.configuration.proxy-host* | To define a proxy host when instantiating the Lambda client |  | String
 | *camel.component.aws-lambda.configuration.proxy-port* | To define a proxy port when instantiating the Lambda client |  | Integer
+| *camel.component.aws-lambda.configuration.proxy-protocol* | To define a proxy protocol when instantiating the Lambda client |  | Protocol
 | *camel.component.aws-lambda.configuration.region* | Amazon AWS Region. When using this parameter, the configuration will expect the capitalized name of the region (for example AP_EAST_1) You'll need to use the name Regions.EU_WEST_1.name() |  | String
 | *camel.component.aws-lambda.configuration.secret-key* | Amazon AWS Secret Key |  | String
 | *camel.component.aws-lambda.enabled* | Whether to enable auto configuration of the aws-lambda component. This is enabled by default. |  | Boolean
+| *camel.component.aws-lambda.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.aws-lambda.region* | Amazon AWS Region |  | String
-| *camel.component.aws-lambda.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 | *camel.component.aws-lambda.secret-key* | Amazon AWS Secret Key |  | String
 |===
 // spring-boot-auto-configure options: END
@@ -137,9 +146,9 @@ You have to provide the awsLambdaClient in the
 Registry or your accessKey and secretKey to access
 the https://aws.amazon.com/lambda/[Amazon Lambda] service.
 
-### Usage
+== Usage
 
-#### Message headers evaluated by the Lambda producer
+=== Message headers evaluated by the Lambda producer
 
 [width="100%",cols="5%,5%,10%,75%,5%",options="header",]
 |=======================================================================
@@ -198,7 +207,7 @@ The default is 3 seconds.|No
 
 |=======================================================================
 
-### List of Avalaible Operations
+== List of Avalaible Operations
 
 - listFunctions
 - getFunction,
@@ -215,18 +224,18 @@ The default is 3 seconds.|No
 - publishVersion
 - listVersions
 
-### Example
+== Example
 
 To have a full understanding of how the component works, you may have a look at this https://github.com/apache/camel/blob/master/components/camel-aws/src/test/java/org/apache/camel/component/aws/lambda/integration/LambdaComponentIntegrationTest.java[integration test]
 
-### Automatic detection of AmazonLambda client in registry
+== Automatic detection of AmazonLambda client in registry
 
 The component is capable of detecting the presence of an AmazonLambda bean into the registry.
 If it's the only instance of that type it will be used as client and you won't have to define it as uri parameter.
 This may be really useful for smarter configuration of the endpoint.
 
 
-### Dependencies
+== Dependencies
 
 Maven users will need to add the following dependency to their pom.xml.
 
@@ -241,13 +250,5 @@ Maven users will need to add the following dependency to their pom.xml.
 </dependency>
 ---------------------------------------
 
-where `\${camel-version}` must be replaced by the actual version of Camel.
+where `$\{camel-version\}` must be replaced by the actual version of Camel.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* AWS Component

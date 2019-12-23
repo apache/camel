@@ -30,7 +30,6 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * To send or receive emails using imap/pop3 or smtp protocols.
@@ -65,7 +64,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -83,7 +82,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -96,7 +95,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder closeFolder(boolean closeFolder) {
-            setProperty("closeFolder", closeFolder);
+            doSetProperty("closeFolder", closeFolder);
             return this;
         }
         /**
@@ -109,7 +108,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder closeFolder(String closeFolder) {
-            setProperty("closeFolder", closeFolder);
+            doSetProperty("closeFolder", closeFolder);
             return this;
         }
         /**
@@ -123,7 +122,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder copyTo(String copyTo) {
-            setProperty("copyTo", copyTo);
+            doSetProperty("copyTo", copyTo);
             return this;
         }
         /**
@@ -138,7 +137,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder delete(boolean delete) {
-            setProperty("delete", delete);
+            doSetProperty("delete", delete);
             return this;
         }
         /**
@@ -153,7 +152,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder delete(String delete) {
-            setProperty("delete", delete);
+            doSetProperty("delete", delete);
             return this;
         }
         /**
@@ -165,7 +164,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder disconnect(boolean disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -177,7 +176,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder disconnect(String disconnect) {
-            setProperty("disconnect", disconnect);
+            doSetProperty("disconnect", disconnect);
             return this;
         }
         /**
@@ -194,7 +193,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder handleFailedMessage(
                 boolean handleFailedMessage) {
-            setProperty("handleFailedMessage", handleFailedMessage);
+            doSetProperty("handleFailedMessage", handleFailedMessage);
             return this;
         }
         /**
@@ -211,7 +210,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder handleFailedMessage(
                 String handleFailedMessage) {
-            setProperty("handleFailedMessage", handleFailedMessage);
+            doSetProperty("handleFailedMessage", handleFailedMessage);
             return this;
         }
         /**
@@ -226,7 +225,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -241,7 +240,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -254,7 +253,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder mimeDecodeHeaders(
                 boolean mimeDecodeHeaders) {
-            setProperty("mimeDecodeHeaders", mimeDecodeHeaders);
+            doSetProperty("mimeDecodeHeaders", mimeDecodeHeaders);
             return this;
         }
         /**
@@ -267,7 +266,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder mimeDecodeHeaders(
                 String mimeDecodeHeaders) {
-            setProperty("mimeDecodeHeaders", mimeDecodeHeaders);
+            doSetProperty("mimeDecodeHeaders", mimeDecodeHeaders);
             return this;
         }
         /**
@@ -282,7 +281,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder peek(boolean peek) {
-            setProperty("peek", peek);
+            doSetProperty("peek", peek);
             return this;
         }
         /**
@@ -297,7 +296,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder peek(String peek) {
-            setProperty("peek", peek);
+            doSetProperty("peek", peek);
             return this;
         }
         /**
@@ -310,7 +309,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -323,7 +322,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -339,7 +338,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder skipFailedMessage(
                 boolean skipFailedMessage) {
-            setProperty("skipFailedMessage", skipFailedMessage);
+            doSetProperty("skipFailedMessage", skipFailedMessage);
             return this;
         }
         /**
@@ -355,7 +354,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder skipFailedMessage(
                 String skipFailedMessage) {
-            setProperty("skipFailedMessage", skipFailedMessage);
+            doSetProperty("skipFailedMessage", skipFailedMessage);
             return this;
         }
         /**
@@ -366,7 +365,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder unseen(boolean unseen) {
-            setProperty("unseen", unseen);
+            doSetProperty("unseen", unseen);
             return this;
         }
         /**
@@ -377,7 +376,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer
          */
         default MailEndpointConsumerBuilder unseen(String unseen) {
-            setProperty("unseen", unseen);
+            doSetProperty("unseen", unseen);
             return this;
         }
         /**
@@ -393,7 +392,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder idempotentRepository(
                 IdempotentRepository idempotentRepository) {
-            setProperty("idempotentRepository", idempotentRepository);
+            doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
         /**
@@ -409,7 +408,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder idempotentRepository(
                 String idempotentRepository) {
-            setProperty("idempotentRepository", idempotentRepository);
+            doSetProperty("idempotentRepository", idempotentRepository);
             return this;
         }
         /**
@@ -429,7 +428,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder idempotentRepositoryRemoveOnCommit(
                 boolean idempotentRepositoryRemoveOnCommit) {
-            setProperty("idempotentRepositoryRemoveOnCommit", idempotentRepositoryRemoveOnCommit);
+            doSetProperty("idempotentRepositoryRemoveOnCommit", idempotentRepositoryRemoveOnCommit);
             return this;
         }
         /**
@@ -449,7 +448,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder idempotentRepositoryRemoveOnCommit(
                 String idempotentRepositoryRemoveOnCommit) {
-            setProperty("idempotentRepositoryRemoveOnCommit", idempotentRepositoryRemoveOnCommit);
+            doSetProperty("idempotentRepositoryRemoveOnCommit", idempotentRepositoryRemoveOnCommit);
             return this;
         }
         /**
@@ -462,7 +461,7 @@ public interface MailEndpointBuilderFactory {
          * Group: filter
          */
         default MailEndpointConsumerBuilder searchTerm(Object searchTerm) {
-            setProperty("searchTerm", searchTerm);
+            doSetProperty("searchTerm", searchTerm);
             return this;
         }
         /**
@@ -476,7 +475,7 @@ public interface MailEndpointBuilderFactory {
          * Group: filter
          */
         default MailEndpointConsumerBuilder searchTerm(String searchTerm) {
-            setProperty("searchTerm", searchTerm);
+            doSetProperty("searchTerm", searchTerm);
             return this;
         }
         /**
@@ -489,7 +488,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -502,7 +501,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -515,7 +514,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -528,7 +527,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -545,7 +544,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -562,7 +561,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -573,7 +572,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -584,7 +583,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -596,7 +595,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -608,7 +607,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -621,7 +620,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -634,7 +633,33 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default MailEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default MailEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -647,7 +672,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -661,7 +686,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -676,7 +701,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -691,41 +716,24 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default MailEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -734,12 +742,12 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -749,7 +757,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -761,7 +769,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -772,7 +780,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder startScheduler(String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -783,7 +791,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -795,7 +803,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -807,7 +815,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -819,7 +827,7 @@ public interface MailEndpointBuilderFactory {
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -832,7 +840,7 @@ public interface MailEndpointBuilderFactory {
          * Group: sort
          */
         default MailEndpointConsumerBuilder sortTerm(Object[] sortTerm) {
-            setProperty("sortTerm", sortTerm);
+            doSetProperty("sortTerm", sortTerm);
             return this;
         }
         /**
@@ -846,7 +854,7 @@ public interface MailEndpointBuilderFactory {
          * Group: sort
          */
         default MailEndpointConsumerBuilder sortTerm(String sortTerm) {
-            setProperty("sortTerm", sortTerm);
+            doSetProperty("sortTerm", sortTerm);
             return this;
         }
         /**
@@ -857,7 +865,7 @@ public interface MailEndpointBuilderFactory {
          * Group: security
          */
         default MailEndpointConsumerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -870,7 +878,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -883,7 +891,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -894,7 +902,7 @@ public interface MailEndpointBuilderFactory {
          * Group: security
          */
         default MailEndpointConsumerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -921,7 +929,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -937,7 +945,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -949,7 +957,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -962,7 +970,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -978,7 +986,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder fetchSize(int fetchSize) {
-            setProperty("fetchSize", fetchSize);
+            doSetProperty("fetchSize", fetchSize);
             return this;
         }
         /**
@@ -994,7 +1002,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder fetchSize(String fetchSize) {
-            setProperty("fetchSize", fetchSize);
+            doSetProperty("fetchSize", fetchSize);
             return this;
         }
         /**
@@ -1005,7 +1013,7 @@ public interface MailEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder folderName(String folderName) {
-            setProperty("folderName", folderName);
+            doSetProperty("folderName", folderName);
             return this;
         }
         /**
@@ -1019,7 +1027,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder mailUidGenerator(
                 Object mailUidGenerator) {
-            setProperty("mailUidGenerator", mailUidGenerator);
+            doSetProperty("mailUidGenerator", mailUidGenerator);
             return this;
         }
         /**
@@ -1033,7 +1041,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder mailUidGenerator(
                 String mailUidGenerator) {
-            setProperty("mailUidGenerator", mailUidGenerator);
+            doSetProperty("mailUidGenerator", mailUidGenerator);
             return this;
         }
         /**
@@ -1052,7 +1060,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder mapMailMessage(
                 boolean mapMailMessage) {
-            setProperty("mapMailMessage", mapMailMessage);
+            doSetProperty("mapMailMessage", mapMailMessage);
             return this;
         }
         /**
@@ -1071,7 +1079,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder mapMailMessage(
                 String mapMailMessage) {
-            setProperty("mapMailMessage", mapMailMessage);
+            doSetProperty("mapMailMessage", mapMailMessage);
             return this;
         }
         /**
@@ -1087,7 +1095,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -1103,7 +1111,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -1118,7 +1126,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder postProcessAction(
                 Object postProcessAction) {
-            setProperty("postProcessAction", postProcessAction);
+            doSetProperty("postProcessAction", postProcessAction);
             return this;
         }
         /**
@@ -1133,7 +1141,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder postProcessAction(
                 String postProcessAction) {
-            setProperty("postProcessAction", postProcessAction);
+            doSetProperty("postProcessAction", postProcessAction);
             return this;
         }
         /**
@@ -1148,7 +1156,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder additionalJavaMailProperties(
                 Properties additionalJavaMailProperties) {
-            setProperty("additionalJavaMailProperties", additionalJavaMailProperties);
+            doSetProperty("additionalJavaMailProperties", additionalJavaMailProperties);
             return this;
         }
         /**
@@ -1164,7 +1172,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder additionalJavaMailProperties(
                 String additionalJavaMailProperties) {
-            setProperty("additionalJavaMailProperties", additionalJavaMailProperties);
+            doSetProperty("additionalJavaMailProperties", additionalJavaMailProperties);
             return this;
         }
         /**
@@ -1180,7 +1188,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder alternativeBodyHeader(
                 String alternativeBodyHeader) {
-            setProperty("alternativeBodyHeader", alternativeBodyHeader);
+            doSetProperty("alternativeBodyHeader", alternativeBodyHeader);
             return this;
         }
         /**
@@ -1194,7 +1202,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder attachmentsContentTransferEncodingResolver(
                 Object attachmentsContentTransferEncodingResolver) {
-            setProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
+            doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
         /**
@@ -1208,7 +1216,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder attachmentsContentTransferEncodingResolver(
                 String attachmentsContentTransferEncodingResolver) {
-            setProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
+            doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
         /**
@@ -1221,7 +1229,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1234,7 +1242,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1247,7 +1255,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1260,7 +1268,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1272,7 +1280,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1284,7 +1292,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1296,7 +1304,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder contentType(
                 String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -1310,7 +1318,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder contentTypeResolver(
                 Object contentTypeResolver) {
-            setProperty("contentTypeResolver", contentTypeResolver);
+            doSetProperty("contentTypeResolver", contentTypeResolver);
             return this;
         }
         /**
@@ -1324,7 +1332,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder contentTypeResolver(
                 String contentTypeResolver) {
-            setProperty("contentTypeResolver", contentTypeResolver);
+            doSetProperty("contentTypeResolver", contentTypeResolver);
             return this;
         }
         /**
@@ -1336,7 +1344,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder debugMode(boolean debugMode) {
-            setProperty("debugMode", debugMode);
+            doSetProperty("debugMode", debugMode);
             return this;
         }
         /**
@@ -1348,7 +1356,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder debugMode(String debugMode) {
-            setProperty("debugMode", debugMode);
+            doSetProperty("debugMode", debugMode);
             return this;
         }
         /**
@@ -1362,7 +1370,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1376,7 +1384,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1391,7 +1399,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUnsupportedCharset(
                 boolean ignoreUnsupportedCharset) {
-            setProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
+            doSetProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
             return this;
         }
         /**
@@ -1406,7 +1414,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUnsupportedCharset(
                 String ignoreUnsupportedCharset) {
-            setProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
+            doSetProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
             return this;
         }
         /**
@@ -1421,7 +1429,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUriScheme(
                 boolean ignoreUriScheme) {
-            setProperty("ignoreUriScheme", ignoreUriScheme);
+            doSetProperty("ignoreUriScheme", ignoreUriScheme);
             return this;
         }
         /**
@@ -1436,30 +1444,30 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUriScheme(
                 String ignoreUriScheme) {
-            setProperty("ignoreUriScheme", ignoreUriScheme);
+            doSetProperty("ignoreUriScheme", ignoreUriScheme);
             return this;
         }
         /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
-         * managed by some other resource, such as a JavaEE container. If this
-         * is not specified, Camel automatically creates the mail session for
-         * you.
+         * managed by some other resource, such as a JavaEE container. When
+         * using a custom mail session, then the hostname and port from the mail
+         * session will be used (if configured on the session).
          * 
          * The option is a: <code>javax.mail.Session</code> type.
          * 
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder session(Object session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
-         * managed by some other resource, such as a JavaEE container. If this
-         * is not specified, Camel automatically creates the mail session for
-         * you.
+         * managed by some other resource, such as a JavaEE container. When
+         * using a custom mail session, then the hostname and port from the mail
+         * session will be used (if configured on the session).
          * 
          * The option will be converted to a <code>javax.mail.Session</code>
          * type.
@@ -1467,7 +1475,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder session(String session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
@@ -1480,7 +1488,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1493,7 +1501,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1505,7 +1513,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder useInlineAttachments(
                 boolean useInlineAttachments) {
-            setProperty("useInlineAttachments", useInlineAttachments);
+            doSetProperty("useInlineAttachments", useInlineAttachments);
             return this;
         }
         /**
@@ -1517,7 +1525,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointConsumerBuilder useInlineAttachments(
                 String useInlineAttachments) {
-            setProperty("useInlineAttachments", useInlineAttachments);
+            doSetProperty("useInlineAttachments", useInlineAttachments);
             return this;
         }
     }
@@ -1540,7 +1548,7 @@ public interface MailEndpointBuilderFactory {
          * Group: producer
          */
         default MailEndpointProducerBuilder bcc(String bcc) {
-            setProperty("bcc", bcc);
+            doSetProperty("bcc", bcc);
             return this;
         }
         /**
@@ -1552,7 +1560,7 @@ public interface MailEndpointBuilderFactory {
          * Group: producer
          */
         default MailEndpointProducerBuilder cc(String cc) {
-            setProperty("cc", cc);
+            doSetProperty("cc", cc);
             return this;
         }
         /**
@@ -1563,7 +1571,7 @@ public interface MailEndpointBuilderFactory {
          * Group: producer
          */
         default MailEndpointProducerBuilder from(String from) {
-            setProperty("from", from);
+            doSetProperty("from", from);
             return this;
         }
         /**
@@ -1583,7 +1591,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1603,7 +1611,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -1615,7 +1623,7 @@ public interface MailEndpointBuilderFactory {
          * Group: producer
          */
         default MailEndpointProducerBuilder replyTo(String replyTo) {
-            setProperty("replyTo", replyTo);
+            doSetProperty("replyTo", replyTo);
             return this;
         }
         /**
@@ -1627,7 +1635,7 @@ public interface MailEndpointBuilderFactory {
          * Group: producer
          */
         default MailEndpointProducerBuilder subject(String subject) {
-            setProperty("subject", subject);
+            doSetProperty("subject", subject);
             return this;
         }
         /**
@@ -1639,7 +1647,7 @@ public interface MailEndpointBuilderFactory {
          * Group: producer
          */
         default MailEndpointProducerBuilder to(String to) {
-            setProperty("to", to);
+            doSetProperty("to", to);
             return this;
         }
         /**
@@ -1650,7 +1658,7 @@ public interface MailEndpointBuilderFactory {
          * Group: security
          */
         default MailEndpointProducerBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -1663,7 +1671,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1676,7 +1684,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -1687,7 +1695,7 @@ public interface MailEndpointBuilderFactory {
          * Group: security
          */
         default MailEndpointProducerBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -1712,7 +1720,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder javaMailSender(
                 Object javaMailSender) {
-            setProperty("javaMailSender", javaMailSender);
+            doSetProperty("javaMailSender", javaMailSender);
             return this;
         }
         /**
@@ -1726,7 +1734,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder javaMailSender(
                 String javaMailSender) {
-            setProperty("javaMailSender", javaMailSender);
+            doSetProperty("javaMailSender", javaMailSender);
             return this;
         }
         /**
@@ -1741,7 +1749,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder additionalJavaMailProperties(
                 Properties additionalJavaMailProperties) {
-            setProperty("additionalJavaMailProperties", additionalJavaMailProperties);
+            doSetProperty("additionalJavaMailProperties", additionalJavaMailProperties);
             return this;
         }
         /**
@@ -1757,7 +1765,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder additionalJavaMailProperties(
                 String additionalJavaMailProperties) {
-            setProperty("additionalJavaMailProperties", additionalJavaMailProperties);
+            doSetProperty("additionalJavaMailProperties", additionalJavaMailProperties);
             return this;
         }
         /**
@@ -1773,7 +1781,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder alternativeBodyHeader(
                 String alternativeBodyHeader) {
-            setProperty("alternativeBodyHeader", alternativeBodyHeader);
+            doSetProperty("alternativeBodyHeader", alternativeBodyHeader);
             return this;
         }
         /**
@@ -1787,7 +1795,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder attachmentsContentTransferEncodingResolver(
                 Object attachmentsContentTransferEncodingResolver) {
-            setProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
+            doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
         /**
@@ -1801,7 +1809,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder attachmentsContentTransferEncodingResolver(
                 String attachmentsContentTransferEncodingResolver) {
-            setProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
+            doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
         /**
@@ -1814,7 +1822,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1827,7 +1835,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1840,7 +1848,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1853,7 +1861,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -1865,7 +1873,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1877,7 +1885,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -1889,7 +1897,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder contentType(
                 String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -1903,7 +1911,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder contentTypeResolver(
                 Object contentTypeResolver) {
-            setProperty("contentTypeResolver", contentTypeResolver);
+            doSetProperty("contentTypeResolver", contentTypeResolver);
             return this;
         }
         /**
@@ -1917,7 +1925,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder contentTypeResolver(
                 String contentTypeResolver) {
-            setProperty("contentTypeResolver", contentTypeResolver);
+            doSetProperty("contentTypeResolver", contentTypeResolver);
             return this;
         }
         /**
@@ -1929,7 +1937,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder debugMode(boolean debugMode) {
-            setProperty("debugMode", debugMode);
+            doSetProperty("debugMode", debugMode);
             return this;
         }
         /**
@@ -1941,7 +1949,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder debugMode(String debugMode) {
-            setProperty("debugMode", debugMode);
+            doSetProperty("debugMode", debugMode);
             return this;
         }
         /**
@@ -1955,7 +1963,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1969,7 +1977,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1984,7 +1992,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder ignoreUnsupportedCharset(
                 boolean ignoreUnsupportedCharset) {
-            setProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
+            doSetProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
             return this;
         }
         /**
@@ -1999,7 +2007,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder ignoreUnsupportedCharset(
                 String ignoreUnsupportedCharset) {
-            setProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
+            doSetProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
             return this;
         }
         /**
@@ -2014,7 +2022,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder ignoreUriScheme(
                 boolean ignoreUriScheme) {
-            setProperty("ignoreUriScheme", ignoreUriScheme);
+            doSetProperty("ignoreUriScheme", ignoreUriScheme);
             return this;
         }
         /**
@@ -2029,30 +2037,30 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder ignoreUriScheme(
                 String ignoreUriScheme) {
-            setProperty("ignoreUriScheme", ignoreUriScheme);
+            doSetProperty("ignoreUriScheme", ignoreUriScheme);
             return this;
         }
         /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
-         * managed by some other resource, such as a JavaEE container. If this
-         * is not specified, Camel automatically creates the mail session for
-         * you.
+         * managed by some other resource, such as a JavaEE container. When
+         * using a custom mail session, then the hostname and port from the mail
+         * session will be used (if configured on the session).
          * 
          * The option is a: <code>javax.mail.Session</code> type.
          * 
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder session(Object session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
-         * managed by some other resource, such as a JavaEE container. If this
-         * is not specified, Camel automatically creates the mail session for
-         * you.
+         * managed by some other resource, such as a JavaEE container. When
+         * using a custom mail session, then the hostname and port from the mail
+         * session will be used (if configured on the session).
          * 
          * The option will be converted to a <code>javax.mail.Session</code>
          * type.
@@ -2060,7 +2068,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder session(String session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
@@ -2073,7 +2081,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2086,7 +2094,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2098,7 +2106,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder useInlineAttachments(
                 boolean useInlineAttachments) {
-            setProperty("useInlineAttachments", useInlineAttachments);
+            doSetProperty("useInlineAttachments", useInlineAttachments);
             return this;
         }
         /**
@@ -2110,7 +2118,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointProducerBuilder useInlineAttachments(
                 String useInlineAttachments) {
-            setProperty("useInlineAttachments", useInlineAttachments);
+            doSetProperty("useInlineAttachments", useInlineAttachments);
             return this;
         }
     }
@@ -2132,7 +2140,7 @@ public interface MailEndpointBuilderFactory {
          * Group: security
          */
         default MailEndpointBuilder password(String password) {
-            setProperty("password", password);
+            doSetProperty("password", password);
             return this;
         }
         /**
@@ -2145,7 +2153,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2158,7 +2166,7 @@ public interface MailEndpointBuilderFactory {
          */
         default MailEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -2169,7 +2177,7 @@ public interface MailEndpointBuilderFactory {
          * Group: security
          */
         default MailEndpointBuilder username(String username) {
-            setProperty("username", username);
+            doSetProperty("username", username);
             return this;
         }
     }
@@ -2195,7 +2203,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder additionalJavaMailProperties(
                 Properties additionalJavaMailProperties) {
-            setProperty("additionalJavaMailProperties", additionalJavaMailProperties);
+            doSetProperty("additionalJavaMailProperties", additionalJavaMailProperties);
             return this;
         }
         /**
@@ -2211,7 +2219,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder additionalJavaMailProperties(
                 String additionalJavaMailProperties) {
-            setProperty("additionalJavaMailProperties", additionalJavaMailProperties);
+            doSetProperty("additionalJavaMailProperties", additionalJavaMailProperties);
             return this;
         }
         /**
@@ -2227,7 +2235,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder alternativeBodyHeader(
                 String alternativeBodyHeader) {
-            setProperty("alternativeBodyHeader", alternativeBodyHeader);
+            doSetProperty("alternativeBodyHeader", alternativeBodyHeader);
             return this;
         }
         /**
@@ -2241,7 +2249,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder attachmentsContentTransferEncodingResolver(
                 Object attachmentsContentTransferEncodingResolver) {
-            setProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
+            doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
         /**
@@ -2255,7 +2263,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder attachmentsContentTransferEncodingResolver(
                 String attachmentsContentTransferEncodingResolver) {
-            setProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
+            doSetProperty("attachmentsContentTransferEncodingResolver", attachmentsContentTransferEncodingResolver);
             return this;
         }
         /**
@@ -2268,7 +2276,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2281,7 +2289,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -2294,7 +2302,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -2307,7 +2315,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -2319,7 +2327,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder connectionTimeout(
                 int connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -2331,7 +2339,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder connectionTimeout(
                 String connectionTimeout) {
-            setProperty("connectionTimeout", connectionTimeout);
+            doSetProperty("connectionTimeout", connectionTimeout);
             return this;
         }
         /**
@@ -2342,7 +2350,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder contentType(String contentType) {
-            setProperty("contentType", contentType);
+            doSetProperty("contentType", contentType);
             return this;
         }
         /**
@@ -2356,7 +2364,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder contentTypeResolver(
                 Object contentTypeResolver) {
-            setProperty("contentTypeResolver", contentTypeResolver);
+            doSetProperty("contentTypeResolver", contentTypeResolver);
             return this;
         }
         /**
@@ -2370,7 +2378,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder contentTypeResolver(
                 String contentTypeResolver) {
-            setProperty("contentTypeResolver", contentTypeResolver);
+            doSetProperty("contentTypeResolver", contentTypeResolver);
             return this;
         }
         /**
@@ -2382,7 +2390,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder debugMode(boolean debugMode) {
-            setProperty("debugMode", debugMode);
+            doSetProperty("debugMode", debugMode);
             return this;
         }
         /**
@@ -2394,7 +2402,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder debugMode(String debugMode) {
-            setProperty("debugMode", debugMode);
+            doSetProperty("debugMode", debugMode);
             return this;
         }
         /**
@@ -2408,7 +2416,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -2422,7 +2430,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -2437,7 +2445,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder ignoreUnsupportedCharset(
                 boolean ignoreUnsupportedCharset) {
-            setProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
+            doSetProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
             return this;
         }
         /**
@@ -2452,7 +2460,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder ignoreUnsupportedCharset(
                 String ignoreUnsupportedCharset) {
-            setProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
+            doSetProperty("ignoreUnsupportedCharset", ignoreUnsupportedCharset);
             return this;
         }
         /**
@@ -2467,7 +2475,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder ignoreUriScheme(
                 boolean ignoreUriScheme) {
-            setProperty("ignoreUriScheme", ignoreUriScheme);
+            doSetProperty("ignoreUriScheme", ignoreUriScheme);
             return this;
         }
         /**
@@ -2482,30 +2490,30 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder ignoreUriScheme(
                 String ignoreUriScheme) {
-            setProperty("ignoreUriScheme", ignoreUriScheme);
+            doSetProperty("ignoreUriScheme", ignoreUriScheme);
             return this;
         }
         /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
-         * managed by some other resource, such as a JavaEE container. If this
-         * is not specified, Camel automatically creates the mail session for
-         * you.
+         * managed by some other resource, such as a JavaEE container. When
+         * using a custom mail session, then the hostname and port from the mail
+         * session will be used (if configured on the session).
          * 
          * The option is a: <code>javax.mail.Session</code> type.
          * 
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder session(Object session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
          * Specifies the mail session that camel should use for all mail
          * interactions. Useful in scenarios where mail sessions are created and
-         * managed by some other resource, such as a JavaEE container. If this
-         * is not specified, Camel automatically creates the mail session for
-         * you.
+         * managed by some other resource, such as a JavaEE container. When
+         * using a custom mail session, then the hostname and port from the mail
+         * session will be used (if configured on the session).
          * 
          * The option will be converted to a <code>javax.mail.Session</code>
          * type.
@@ -2513,7 +2521,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder session(String session) {
-            setProperty("session", session);
+            doSetProperty("session", session);
             return this;
         }
         /**
@@ -2525,7 +2533,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2537,7 +2545,7 @@ public interface MailEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -2549,7 +2557,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder useInlineAttachments(
                 boolean useInlineAttachments) {
-            setProperty("useInlineAttachments", useInlineAttachments);
+            doSetProperty("useInlineAttachments", useInlineAttachments);
             return this;
         }
         /**
@@ -2561,7 +2569,7 @@ public interface MailEndpointBuilderFactory {
          */
         default AdvancedMailEndpointBuilder useInlineAttachments(
                 String useInlineAttachments) {
-            setProperty("useInlineAttachments", useInlineAttachments);
+            doSetProperty("useInlineAttachments", useInlineAttachments);
             return this;
         }
     }
@@ -2570,7 +2578,7 @@ public interface MailEndpointBuilderFactory {
      * To send or receive emails using imap/pop3 or smtp protocols.
      * 
      * Category: mail
-     * Available as of version: 1.0
+     * Since: 1.0
      * Maven coordinates: org.apache.camel:camel-mail
      * 
      * Syntax: <code>imap:host:port</code>
@@ -2581,12 +2589,118 @@ public interface MailEndpointBuilderFactory {
      * Path parameter: port
      * The port number of the mail server
      */
-    default MailEndpointBuilder mail(String path) {
+    default MailEndpointBuilder imap(String path) {
+        return imap("imap", path);
+    }
+    /**
+     * IMAPS (Secure) (camel-mail)
+     * To send or receive emails using imap/pop3 or smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>imaps:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     */
+    default MailEndpointBuilder imaps(String path) {
+        return imap("imaps", path);
+    }
+    /**
+     * POP3 (camel-mail)
+     * To send or receive emails using imap/pop3 or smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>pop3:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     */
+    default MailEndpointBuilder pop3(String path) {
+        return imap("pop3", path);
+    }
+    /**
+     * POP3S (camel-mail)
+     * To send or receive emails using imap/pop3 or smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>pop3s:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     */
+    default MailEndpointBuilder pop3s(String path) {
+        return imap("pop3s", path);
+    }
+    /**
+     * SMTP (camel-mail)
+     * To send or receive emails using imap/pop3 or smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>smtp:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     */
+    default MailEndpointBuilder smtp(String path) {
+        return imap("smtp", path);
+    }
+    /**
+     * SMTPS (camel-mail)
+     * To send or receive emails using imap/pop3 or smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     * 
+     * Syntax: <code>smtps:host:port</code>
+     * 
+     * Path parameter: host (required)
+     * The mail server host name
+     * 
+     * Path parameter: port
+     * The port number of the mail server
+     */
+    default MailEndpointBuilder smtps(String path) {
+        return imap("smtps", path);
+    }
+    /**
+     * IMAP (camel-mail)
+     * To send or receive emails using imap/pop3 or smtp protocols.
+     * 
+     * Category: mail
+     * Since: 1.0
+     * Maven coordinates: org.apache.camel:camel-mail
+     */
+    default MailEndpointBuilder imap(String scheme, String path) {
         class MailEndpointBuilderImpl extends AbstractEndpointBuilder implements MailEndpointBuilder, AdvancedMailEndpointBuilder {
-            public MailEndpointBuilderImpl(String path) {
-                super("imap", path);
+            public MailEndpointBuilderImpl(String scheme, String path) {
+                super(scheme, path);
             }
         }
-        return new MailEndpointBuilderImpl(path);
+        return new MailEndpointBuilderImpl(scheme, path);
     }
 }

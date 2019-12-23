@@ -47,10 +47,11 @@ public class MailDisconnectTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://jones@localhost?password=secret&disconnect=true&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("pop3://jones@localhost?password=secret&disconnect=true&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

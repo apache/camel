@@ -20,12 +20,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import facebook4j.Facebook;
-
 import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.junit.Test;
 
@@ -33,27 +30,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-
 /**
  * Test {@link FacebookMethodsTypeHelper}.
  */
 public class FacebookMethodsTypeHelperTest {
 
-    private Set<String> names = new HashSet<>();
-    private final List<String> getExcludes;
     private final List<String> searchIncludes;
 
     public FacebookMethodsTypeHelperTest() {
-        // get all method names
-        for (Class<?> aClass : Facebook.class.getInterfaces()) {
-            if (aClass.getName().endsWith("Methods")) {
-                for (Method method : aClass.getDeclaredMethods()) {
-                    names.add(getShortName(method.getName()));
-                }
-            }
-        }
-
-        getExcludes = Arrays.asList("places");
         searchIncludes = Arrays.asList("checkins", "events", "groups", "locations", "places", "posts", "users");
     }
 
@@ -97,7 +81,7 @@ public class FacebookMethodsTypeHelperTest {
         final Class<?>[] interfaces = Facebook.class.getInterfaces();
         for (Class<?> clazz : interfaces) {
             if (clazz.getName().endsWith("Methods")) {
-                // check all methods of this *Methods interface
+                // check all methods of this Methods interface
                 for (Method method : clazz.getDeclaredMethods()) {
                     // will throw an exception if can't be found
                     final List<Object> arguments = FacebookMethodsTypeHelper.getArguments(method.getName());

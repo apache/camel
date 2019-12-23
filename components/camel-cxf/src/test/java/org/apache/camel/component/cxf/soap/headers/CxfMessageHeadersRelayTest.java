@@ -692,6 +692,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
 
     public static class InsertRequestOutHeaderProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             List<SoapHeader> soapHeaders = CastUtils.cast((List<?>)exchange.getIn().getHeader(Header.HEADER_LIST));
    
@@ -716,6 +717,7 @@ public class CxfMessageHeadersRelayTest extends AbstractJUnit4SpringContextTests
     
     public static class InsertResponseOutHeaderProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             // You should be able to get the header if exchange is routed from camel-cxf endpoint
             List<SoapHeader> soapHeaders = CastUtils.cast((List<?>)exchange.getIn().getHeader(Header.HEADER_LIST));

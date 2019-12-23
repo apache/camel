@@ -123,6 +123,7 @@ public class JmsPollingConsumerTest extends CamelTestSupport {
     }
 
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

@@ -29,7 +29,8 @@ public class StopRouteShouldNotStopContextScopedErrorHandlerIssueTest extends Co
     public void testIssue() throws Exception {
         getMockEndpoint("mock:error").expectedMessageCount(1);
 
-        // stopping foo route, which should not stop context scoped error handler
+        // stopping foo route, which should not stop context scoped error
+        // handler
         context.getRouteController().stopRoute("foo");
 
         template.sendBody("direct:start", "Hello World");
@@ -45,16 +46,11 @@ public class StopRouteShouldNotStopContextScopedErrorHandlerIssueTest extends Co
                 // use context scoped
                 errorHandler(deadLetterChannel("mock:error").maximumRedeliveries(0));
 
-                from("direct:start").routeId("start")
-                    .to("log:start")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:start").routeId("start").to("log:start").throwException(new IllegalArgumentException("Forced"));
 
-                from("direct:foo").routeId("foo")
-                    .to("log:foo")
-                    .to("mock:foo");
+                from("direct:foo").routeId("foo").to("log:foo").to("mock:foo");
             }
         };
     }
 
 }
-

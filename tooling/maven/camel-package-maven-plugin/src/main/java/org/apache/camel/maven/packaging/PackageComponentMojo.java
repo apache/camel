@@ -60,6 +60,7 @@ public class PackageComponentMojo extends AbstractGeneratorMojo {
      *                 threads it generated failed.
      * @throws MojoFailureException something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         prepareComponent(getLog(), project, projectHelper, buildDir, componentOutDir, buildContext);
     }

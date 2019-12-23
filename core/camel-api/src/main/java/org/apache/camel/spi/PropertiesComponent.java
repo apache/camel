@@ -19,42 +19,25 @@ package org.apache.camel.spi;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.function.Predicate;
 
-import org.apache.camel.Component;
 import org.apache.camel.StaticService;
 
 /**
  * Component for property placeholders and loading properties from sources
  * (such as .properties file from classpath or file system)
  */
-public interface PropertiesComponent extends Component, StaticService {
+public interface PropertiesComponent extends StaticService {
 
     /**
-     * The default prefix token.
+     * The prefix token.
      */
-    String DEFAULT_PREFIX_TOKEN = "{{";
+    String PREFIX_TOKEN = "{{";
 
     /**
-     * The default suffix token.
+     * The suffix token.
      */
-    String DEFAULT_SUFFIX_TOKEN = "}}";
-
-    /**
-     * Has the component been created as a default by {@link org.apache.camel.CamelContext} during starting up Camel.
-     */
-    String DEFAULT_CREATED = "PropertiesComponentDefaultCreated";
-
-    /**
-     * The value of the prefix token used to identify properties to replace.
-     * Is default {@link #DEFAULT_PREFIX_TOKEN}
-     */
-    String getPrefixToken();
-
-    /**
-     * The value of the suffix token used to identify properties to replace.
-     * Is default {@link #DEFAULT_SUFFIX_TOKEN}
-     */
-    String getSuffixToken();
+    String SUFFIX_TOKEN = "}}";
 
     /**
      * Parses the input text and resolve all property placeholders from within the text.
@@ -74,11 +57,24 @@ public interface PropertiesComponent extends Component, StaticService {
     Optional<String> resolveProperty(String key);
 
     /**
-     * Loads the properties from the default locations.
+     * Loads the properties from the default locations and sources.
      *
      * @return the properties loaded.
      */
     Properties loadProperties();
+
+    /**
+     * Loads the properties from the default locations and sources filtering them out according to a predicate.
+     * </p>
+     * <pre>{@code
+     *     PropertiesComponent pc = getPropertiesComponent();
+     *     Properties props = pc.loadProperties(key -> key.startsWith("camel.component.seda"));
+     * }</pre>
+     *
+     * @param filter the predicate used to filter out properties based on the key.
+     * @return the properties loaded.
+     */
+    Properties loadProperties(Predicate<String> filter);
 
     /**
      * Gets the configured properties locations.
@@ -118,5 +114,15 @@ public interface PropertiesComponent extends Component, StaticService {
      * and will use first, if a property exist.
      */
     void setOverrideProperties(Properties overrideProperties);
+
+    /**
+     * Encoding to use when loading properties file from the file system or classpath.
+     * <p/>
+     * If no encoding has been set, then the properties files is loaded using ISO-8859-1 encoding (latin-1)
+     * as documented by {@link java.util.Properties#load(java.io.InputStream)}
+     * <p/>
+     * Important you must set encoding before setting locations.
+     */
+    void setEncoding(String encoding);
 
 }

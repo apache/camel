@@ -59,5 +59,4 @@ public class StartStopAndShutdownRouteTest extends ContextTestSupport {
 
     }
 
-
 }

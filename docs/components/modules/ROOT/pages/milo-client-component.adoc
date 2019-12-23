@@ -1,7 +1,12 @@
 [[milo-client-component]]
-== OPC UA Client Component
+= OPC UA Client Component
+:page-source: components/camel-milo/src/main/docs/milo-client-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Milo Client component provides access to OPC UA servers using the
 http://eclipse.org/milo[Eclipse Milo™] implementation.
@@ -22,7 +27,7 @@ for this component:
 
 
 // component options: START
-The OPC UA Client component supports 7 options, which are listed below.
+The OPC UA Client component supports 8 options, which are listed below.
 
 
 
@@ -34,14 +39,15 @@ The OPC UA Client component supports 7 options, which are listed below.
 | *applicationUri* (common) | Default application URI |  | String
 | *productUri* (common) | Default product URI |  | String
 | *reconnectTimeout* (common) | Default reconnect timeout |  | Long
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
 
 
-=== URI format
+== URI format
 
 The URI syntax of the endpoint is: 
 
@@ -58,7 +64,7 @@ milo-client:tcp://[user:password@]host:port?node=RAW(nsu=urn:foo:bar;s=item-1)
 
 If no user credentials are provided the client will switch to anonymous mode.
 
-=== URI options
+== URI options
 
 All configuration options in the group +client+ are applicable to the shared client instance. Endpoints
 will share client instances for each endpoint URI. So the first time a request for that endpoint URI is
@@ -88,7 +94,7 @@ milo-client:endpointUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -98,7 +104,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (29 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -108,8 +114,8 @@ with the following path and query parameters:
 | *defaultAwaitWrites* (common) | Default await setting for writes | false | boolean
 | *discoveryEndpointSuffix* (common) | A suffix for endpoint URI when discovering |  | String
 | *discoveryEndpointUri* (common) | An alternative discovery URI |  | String
-| *method* (common) | The method definition (see Method ID) |  | ExpandedNodeId
-| *node* (common) | The node definition (see Node ID) |  | ExpandedNodeId
+| *method* (common) | The method definition (see Method ID) |  | String
+| *node* (common) | The node definition (see Node ID) |  | String
 | *samplingInterval* (common) | The sampling interval in milliseconds |  | Double
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
@@ -125,7 +131,7 @@ with the following path and query parameters:
 | *keyPassword* (client) | The key password |  | String
 | *keyStorePassword* (client) | The keystore password |  | String
 | *keyStoreType* (client) | The key store type |  | String
-| *keyStoreUrl* (client) | The URL where the key should be loaded from |  | URL
+| *keyStoreUrl* (client) | The URL where the key should be loaded from |  | String
 | *maxPendingPublishRequests* (client) | The maximum number of pending publish requests |  | Long
 | *maxResponseMessageSize* (client) | The maximum number of bytes a response message may have |  | Long
 | *overrideHost* (client) | Override the server reported endpoint host with the host from the endpoint URI. | false | boolean
@@ -136,14 +142,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-milo-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -151,7 +157,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 26 options, which are listed below.
+The component supports 27 options, which are listed below.
 
 
 
@@ -161,6 +167,7 @@ The component supports 26 options, which are listed below.
 | *camel.component.milo-client.application-name* | Default application name |  | String
 | *camel.component.milo-client.application-uri* | Default application URI |  | String
 | *camel.component.milo-client.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.milo-client.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.milo-client.default-configuration.allowed-security-policies* | A set of allowed security policy URIs. Default is to accept all and use the highest. |  | Set
 | *camel.component.milo-client.default-configuration.application-name* | The application name | Apache Camel adapter for Eclipse Milo | String
 | *camel.component.milo-client.default-configuration.application-uri* | The application URI | http://camel.apache.org/EclipseMilo/Client | String
@@ -180,10 +187,10 @@ The component supports 26 options, which are listed below.
 | *camel.component.milo-client.default-configuration.request-timeout* | Request timeout in milliseconds |  | Long
 | *camel.component.milo-client.default-configuration.session-name* | Session name |  | String
 | *camel.component.milo-client.default-configuration.session-timeout* | Session timeout in milliseconds |  | Long
-| *camel.component.milo-client.enabled* | Enable milo-client component | true | Boolean
+| *camel.component.milo-client.enabled* | Whether to enable auto configuration of the milo-client component. This is enabled by default. |  | Boolean
+| *camel.component.milo-client.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.milo-client.product-uri* | Default product URI |  | String
 | *camel.component.milo-client.reconnect-timeout* | Default reconnect timeout |  | Long
-| *camel.component.milo-client.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -191,13 +198,13 @@ The component supports 26 options, which are listed below.
 
 
 
-==== Discovery
+=== Discovery
 
 If the server uses a dedicated discovery endpoint (e.g. `/discovery`), which may support different (less secure) security policies,
 then you can make use of this via the parameter `discoveryEndpointSuffix`, which will be appended to the `endpointUri`. Or by using
 an explicit `discoveryEndpointUri`.
 
-==== Overriding the host name
+=== Overriding the host name
 
 The client uses the host information from the endpoint information, queried from the server. However in some situations this endpoint URI
 might be different, and wrong from the point of view of the connecting client (e.g. an internal hostname).
@@ -205,7 +212,7 @@ might be different, and wrong from the point of view of the connecting client (e
 In this case it is possible to set the parameter `overrideHost` to `true`, which will take the discovered endpoint information,
 but override the host information with the value of the original URI.
 
-==== Node ID
+=== Node ID
 
 
 In order to define a target node a namespace and node id is required. In previous versions this was possible by
@@ -236,7 +243,7 @@ However Camel allows to wrap the actual value inside `RAW(…)`, which makes esc
 milo-client:tcp://user:password@localhost:12345?node=RAW(nsu=http://foo.bar;s=foo/bar)
 ------------------------
 
-==== Method ID
+=== Method ID
 
 It is possible to perform methods calls on OPC UA nodes. If the parameter `method` is set to the Node ID of a method call (the node ID must be set to the parent object in this case),
 then a method call will be performed instead of a write operation.
@@ -248,7 +255,7 @@ Input parameters are taken from the body:
 * If the body is a `Variant`, then it will be wrapped in a `Variant[]` array
 * Otherwise the body will be converted into a `Variant` and wrapped in an array of `Variant[]`
 
-==== Security policies
+=== Security policies
 
 When setting the allowing security policies is it possible to use the well known OPC UA URIs (e.g. `\http://opcfoundation.org/UA/SecurityPolicy#Basic128Rsa15`)
 or to use the Milo enum literals (e.g. `None`). Specifying an unknown security policy URI or enum is an error.
@@ -257,9 +264,3 @@ The known security policy URIs and enum literals are can be seen here: https://g
 
 **Note:** In any case security policies are considered case sensitive.
 
-=== See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

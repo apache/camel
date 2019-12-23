@@ -31,7 +31,7 @@ public interface FlinkEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the Apache Flink component.
+     * Builder for endpoint for the Flink component.
      */
     public interface FlinkEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedFlinkEndpointBuilder advanced() {
@@ -45,7 +45,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder collect(boolean collect) {
-            setProperty("collect", collect);
+            doSetProperty("collect", collect);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder collect(String collect) {
-            setProperty("collect", collect);
+            doSetProperty("collect", collect);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataSet(Object dataSet) {
-            setProperty("dataSet", dataSet);
+            doSetProperty("dataSet", dataSet);
             return this;
         }
         /**
@@ -79,7 +79,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataSet(String dataSet) {
-            setProperty("dataSet", dataSet);
+            doSetProperty("dataSet", dataSet);
             return this;
         }
         /**
@@ -91,7 +91,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataSetCallback(Object dataSetCallback) {
-            setProperty("dataSetCallback", dataSetCallback);
+            doSetProperty("dataSetCallback", dataSetCallback);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataSetCallback(String dataSetCallback) {
-            setProperty("dataSetCallback", dataSetCallback);
+            doSetProperty("dataSetCallback", dataSetCallback);
             return this;
         }
         /**
@@ -116,7 +116,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataStream(Object dataStream) {
-            setProperty("dataStream", dataStream);
+            doSetProperty("dataStream", dataStream);
             return this;
         }
         /**
@@ -129,7 +129,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: producer
          */
         default FlinkEndpointBuilder dataStream(String dataStream) {
-            setProperty("dataStream", dataStream);
+            doSetProperty("dataStream", dataStream);
             return this;
         }
         /**
@@ -143,7 +143,7 @@ public interface FlinkEndpointBuilderFactory {
          */
         default FlinkEndpointBuilder dataStreamCallback(
                 Object dataStreamCallback) {
-            setProperty("dataStreamCallback", dataStreamCallback);
+            doSetProperty("dataStreamCallback", dataStreamCallback);
             return this;
         }
         /**
@@ -157,13 +157,51 @@ public interface FlinkEndpointBuilderFactory {
          */
         default FlinkEndpointBuilder dataStreamCallback(
                 String dataStreamCallback) {
-            setProperty("dataStreamCallback", dataStreamCallback);
+            doSetProperty("dataStreamCallback", dataStreamCallback);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default FlinkEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default FlinkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint for the Apache Flink component.
+     * Advanced builder for endpoint for the Flink component.
      */
     public interface AdvancedFlinkEndpointBuilder
             extends
@@ -181,7 +219,7 @@ public interface FlinkEndpointBuilderFactory {
          */
         default AdvancedFlinkEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -194,7 +232,7 @@ public interface FlinkEndpointBuilderFactory {
          */
         default AdvancedFlinkEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -206,7 +244,7 @@ public interface FlinkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -218,17 +256,17 @@ public interface FlinkEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
     /**
-     * Apache Flink (camel-flink)
+     * Flink (camel-flink)
      * The flink component can be used to send DataSet jobs to Apache Flink
      * cluster.
      * 
      * Category: hadoop
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-flink
      * 
      * Syntax: <code>flink:endpointType</code>

@@ -51,7 +51,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder sendToAll(
                 boolean sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -63,7 +63,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder sendToAll(
                 String sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -75,7 +75,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder useStreaming(
                 boolean useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -87,7 +87,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder useStreaming(
                 String useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -103,10 +103,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http/http4 producer will by default cache the
-         * response body stream. If setting this option to true, then the
-         * producers will not cache the response body stream but use the
-         * response stream as-is as the message body.
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -114,7 +114,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -130,10 +130,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http/http4 producer will by default cache the
-         * response body stream. If setting this option to true, then the
-         * producers will not cache the response body stream but use the
-         * response stream as-is as the message body.
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -141,7 +141,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -155,7 +155,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -169,7 +169,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -180,7 +180,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder async(boolean async) {
-            setProperty("async", async);
+            doSetProperty("async", async);
             return this;
         }
         /**
@@ -191,7 +191,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder async(String async) {
-            setProperty("async", async);
+            doSetProperty("async", async);
             return this;
         }
         /**
@@ -209,7 +209,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -227,7 +227,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -240,7 +240,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder chunked(
                 boolean chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -253,7 +253,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder chunked(
                 String chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -267,7 +267,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder httpMethodRestrict(
                 String httpMethodRestrict) {
-            setProperty("httpMethodRestrict", httpMethodRestrict);
+            doSetProperty("httpMethodRestrict", httpMethodRestrict);
             return this;
         }
         /**
@@ -280,7 +280,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder matchOnUriPrefix(
                 boolean matchOnUriPrefix) {
-            setProperty("matchOnUriPrefix", matchOnUriPrefix);
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
             return this;
         }
         /**
@@ -293,7 +293,33 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder matchOnUriPrefix(
                 String matchOnUriPrefix) {
-            setProperty("matchOnUriPrefix", matchOnUriPrefix);
+            doSetProperty("matchOnUriPrefix", matchOnUriPrefix);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default AtmosphereWebsocketEndpointConsumerBuilder muteException(
+                boolean muteException) {
+            doSetProperty("muteException", muteException);
+            return this;
+        }
+        /**
+         * If enabled and an Exchange failed processing on the consumer side the
+         * response's body won't contain the exception's stack trace.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default AtmosphereWebsocketEndpointConsumerBuilder muteException(
+                String muteException) {
+            doSetProperty("muteException", muteException);
             return this;
         }
         /**
@@ -305,7 +331,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder responseBufferSize(
                 Integer responseBufferSize) {
-            setProperty("responseBufferSize", responseBufferSize);
+            doSetProperty("responseBufferSize", responseBufferSize);
             return this;
         }
         /**
@@ -318,7 +344,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder responseBufferSize(
                 String responseBufferSize) {
-            setProperty("responseBufferSize", responseBufferSize);
+            doSetProperty("responseBufferSize", responseBufferSize);
             return this;
         }
         /**
@@ -330,7 +356,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder servletName(
                 String servletName) {
-            setProperty("servletName", servletName);
+            doSetProperty("servletName", servletName);
             return this;
         }
         /**
@@ -350,7 +376,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -370,7 +396,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointConsumerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
     }
@@ -396,7 +422,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder httpBinding(
                 Object httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -410,7 +436,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder httpBinding(
                 String httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -427,7 +453,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder attachmentMultipartBinding(
                 boolean attachmentMultipartBinding) {
-            setProperty("attachmentMultipartBinding", attachmentMultipartBinding);
+            doSetProperty("attachmentMultipartBinding", attachmentMultipartBinding);
             return this;
         }
         /**
@@ -444,7 +470,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder attachmentMultipartBinding(
                 String attachmentMultipartBinding) {
-            setProperty("attachmentMultipartBinding", attachmentMultipartBinding);
+            doSetProperty("attachmentMultipartBinding", attachmentMultipartBinding);
             return this;
         }
         /**
@@ -458,7 +484,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder eagerCheckContentAvailable(
                 boolean eagerCheckContentAvailable) {
-            setProperty("eagerCheckContentAvailable", eagerCheckContentAvailable);
+            doSetProperty("eagerCheckContentAvailable", eagerCheckContentAvailable);
             return this;
         }
         /**
@@ -472,7 +498,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder eagerCheckContentAvailable(
                 String eagerCheckContentAvailable) {
-            setProperty("eagerCheckContentAvailable", eagerCheckContentAvailable);
+            doSetProperty("eagerCheckContentAvailable", eagerCheckContentAvailable);
             return this;
         }
         /**
@@ -488,7 +514,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -504,7 +530,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -516,7 +542,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -529,7 +555,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -543,7 +569,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder fileNameExtWhitelist(
                 String fileNameExtWhitelist) {
-            setProperty("fileNameExtWhitelist", fileNameExtWhitelist);
+            doSetProperty("fileNameExtWhitelist", fileNameExtWhitelist);
             return this;
         }
         /**
@@ -556,7 +582,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder optionsEnabled(
                 boolean optionsEnabled) {
-            setProperty("optionsEnabled", optionsEnabled);
+            doSetProperty("optionsEnabled", optionsEnabled);
             return this;
         }
         /**
@@ -569,7 +595,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder optionsEnabled(
                 String optionsEnabled) {
-            setProperty("optionsEnabled", optionsEnabled);
+            doSetProperty("optionsEnabled", optionsEnabled);
             return this;
         }
         /**
@@ -582,7 +608,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder traceEnabled(
                 boolean traceEnabled) {
-            setProperty("traceEnabled", traceEnabled);
+            doSetProperty("traceEnabled", traceEnabled);
             return this;
         }
         /**
@@ -595,7 +621,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder traceEnabled(
                 String traceEnabled) {
-            setProperty("traceEnabled", traceEnabled);
+            doSetProperty("traceEnabled", traceEnabled);
             return this;
         }
         /**
@@ -608,7 +634,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -621,7 +647,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -635,7 +661,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -649,7 +675,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -663,7 +689,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -677,7 +703,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -691,7 +717,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -705,7 +731,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -718,7 +744,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -731,7 +757,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -754,7 +780,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder sendToAll(
                 boolean sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -766,7 +792,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder sendToAll(
                 String sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -778,7 +804,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder useStreaming(
                 boolean useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -790,7 +816,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder useStreaming(
                 String useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -806,10 +832,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http/http4 producer will by default cache the
-         * response body stream. If setting this option to true, then the
-         * producers will not cache the response body stream but use the
-         * response stream as-is as the message body.
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -817,7 +843,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -833,10 +859,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http/http4 producer will by default cache the
-         * response body stream. If setting this option to true, then the
-         * producers will not cache the response body stream but use the
-         * response stream as-is as the message body.
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -844,7 +870,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -858,7 +884,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -872,7 +898,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -885,7 +911,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder chunked(
                 boolean chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -898,7 +924,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder chunked(
                 String chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -918,7 +944,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -938,7 +964,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointProducerBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
     }
@@ -964,7 +990,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder httpBinding(
                 Object httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -978,7 +1004,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder httpBinding(
                 String httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -991,7 +1017,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1004,7 +1030,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1018,7 +1044,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -1032,7 +1058,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -1046,7 +1072,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -1060,7 +1086,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -1074,7 +1100,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -1088,7 +1114,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -1101,7 +1127,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1114,7 +1140,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1136,7 +1162,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Group: common
          */
         default AtmosphereWebsocketEndpointBuilder sendToAll(boolean sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -1147,7 +1173,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Group: common
          */
         default AtmosphereWebsocketEndpointBuilder sendToAll(String sendToAll) {
-            setProperty("sendToAll", sendToAll);
+            doSetProperty("sendToAll", sendToAll);
             return this;
         }
         /**
@@ -1159,7 +1185,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointBuilder useStreaming(
                 boolean useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -1171,7 +1197,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointBuilder useStreaming(
                 String useStreaming) {
-            setProperty("useStreaming", useStreaming);
+            doSetProperty("useStreaming", useStreaming);
             return this;
         }
         /**
@@ -1187,10 +1213,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http/http4 producer will by default cache the
-         * response body stream. If setting this option to true, then the
-         * producers will not cache the response body stream but use the
-         * response stream as-is as the message body.
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -1198,7 +1224,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -1214,10 +1240,10 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http/http4 producer will by default cache the
-         * response body stream. If setting this option to true, then the
-         * producers will not cache the response body stream but use the
-         * response stream as-is as the message body.
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
@@ -1225,7 +1251,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointBuilder disableStreamCache(
                 String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -1239,7 +1265,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1253,7 +1279,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -1265,7 +1291,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointBuilder chunked(boolean chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -1277,7 +1303,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointBuilder chunked(String chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -1297,7 +1323,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointBuilder transferException(
                 boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -1317,7 +1343,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AtmosphereWebsocketEndpointBuilder transferException(
                 String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
     }
@@ -1342,7 +1368,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(
                 Object httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -1356,7 +1382,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder httpBinding(
                 String httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -1369,7 +1395,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1382,7 +1408,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1396,7 +1422,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -1410,7 +1436,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -1424,7 +1450,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -1438,7 +1464,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -1452,7 +1478,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -1466,7 +1492,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -1479,7 +1505,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1492,7 +1518,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1501,7 +1527,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
      * To exchange data with external Websocket clients using Atmosphere.
      * 
      * Category: websocket
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-atmosphere-websocket
      * 
      * Syntax: <code>atmosphere-websocket:servicePath</code>

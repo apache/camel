@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -109,7 +110,7 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         Iterator<?> propIter = collectionProperty.iterator();
         Object propValueObj = propIter.next();
         assertIsInstanceOf(ClientComplexValue.class, propValueObj);
-        ClientComplexValue propValue = (ClientComplexValue) propValueObj;
+        ClientComplexValue propValue = (ClientComplexValue)propValueObj;
         assertEquals("Boise", propValue.get("City").getComplexValue().get("Name").getValue().toString());
 
         final ClientEntity entity = (ClientEntity)requestBodyAndHeaders("direct:readentitybyid", null, headers);
@@ -156,7 +157,8 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         try {
             requestBody("direct:read-deleted-entity", null);
         } catch (CamelExecutionException e) {
-            assertEquals("Resource Not Found [HTTP/1.1 404 Not Found]", e.getCause().getMessage());
+            String causeMsg = e.getCause().getMessage();
+            assertTrue(causeMsg.contains("[HTTP/1.1 404 Not Found]"));
         }
     }
 
@@ -185,7 +187,8 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         try {
             requestBody("direct:read-deleted-entity", null);
         } catch (CamelExecutionException e) {
-            assertEquals("Resource Not Found [HTTP/1.1 404 Not Found]", e.getCause().getMessage());
+            String causeMsg = e.getCause().getMessage();
+            assertTrue(causeMsg.contains("[HTTP/1.1 404 Not Found]"));
         }
     }
 
@@ -271,6 +274,22 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         final ODataError error = (ODataError)responseParts.get(7).getBody();
         assertNotNull(error);
         LOG.info("Read deleted entity error: {}", error.getMessage());
+    }
+
+    @Test
+    public void testUnboundActionRequest() throws Exception {
+        final HttpStatusCode status = requestBody("direct:unbound-action-ResetDataSource", null);
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
+    }
+
+    @Test
+    public void testBoundActionRequest() throws Exception {
+        final ClientEntity clientEntity = objFactory.newEntity(null);
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("userName", objFactory.newPrimitiveValueBuilder().buildString("scottketchum")));
+        clientEntity.getProperties().add(objFactory.newPrimitiveProperty("tripId", objFactory.newPrimitiveValueBuilder().buildInt32(0)));
+
+        final HttpStatusCode status = requestBody("direct:bound-action-people", clientEntity);
+        assertEquals(HttpStatusCode.NO_CONTENT.getStatusCode(), status.getStatusCode());
     }
 
     @SuppressWarnings("unchecked")
@@ -375,7 +394,6 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
         }
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -425,6 +443,11 @@ public class Olingo4ComponentProducerTest extends AbstractOlingo4TestSupport {
                 from("direct:read-people-nofilterseen").to("olingo4://read/" + PEOPLE).to("mock:producer-noalreadyseen");
 
                 from("direct:read-people-filterseen").to("olingo4://read/" + PEOPLE + "?filterAlreadySeen=true").to("mock:producer-alreadyseen");
+
+                // test routes action's
+                from("direct:unbound-action-ResetDataSource").to("olingo4://action/ResetDataSource");
+
+                from("direct:bound-action-people").to("olingo4://action/" + TEST_PEOPLE + "/Microsoft.OData.Service.Sample.TrippinInMemory.Models.ShareTrip");
             }
         };
     }

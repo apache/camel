@@ -21,11 +21,11 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http4.HttpMethods;
+import org.apache.camel.component.http.HttpMethods;
 import org.junit.Test;
 
 public class PreservePostFormUrlEncodedBodyTest extends BaseUndertowTest {
-    
+
     @Test
     public void testSendToUndertow() throws Exception {
         Exchange exchange = template.request("http://localhost:{{port}}/myapp/myservice?query1=a&query2=b", new Processor() {
@@ -35,7 +35,7 @@ public class PreservePostFormUrlEncodedBodyTest extends BaseUndertowTest {
                 exchange.getIn().setHeader("content-type", "application/x-www-form-urlencoded");
                 exchange.getIn().setHeader(Exchange.HTTP_METHOD, HttpMethods.POST);
             }
-                                        
+
         });
         // convert the response to a String
         String body = exchange.getOut().getBody(String.class);
@@ -49,7 +49,7 @@ public class PreservePostFormUrlEncodedBodyTest extends BaseUndertowTest {
                 from("undertow:http://localhost:{{port}}/myapp/myservice?map").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         Map body = exchange.getIn().getBody(Map.class);
-                        
+
                         // for unit testing make sure we got right message
                         assertNotNull(body);
                         assertEquals("x", body.get("b1"));
@@ -58,7 +58,7 @@ public class PreservePostFormUrlEncodedBodyTest extends BaseUndertowTest {
                         assertEquals("b", exchange.getIn().getHeader("query2"));
                         assertEquals("x", exchange.getIn().getHeader("b1"));
                         assertEquals("y", exchange.getIn().getHeader("b2"));
-                        
+
                         // send a response
                         exchange.getOut().setBody("Request message is OK");
                     }

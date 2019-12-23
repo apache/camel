@@ -28,7 +28,6 @@ import com.pubnub.api.models.consumer.presence.PNGetStateResult;
 import com.pubnub.api.models.consumer.presence.PNHereNowResult;
 import com.pubnub.api.models.consumer.presence.PNSetStateResult;
 import com.pubnub.api.models.consumer.presence.PNWhereNowResult;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
@@ -170,7 +169,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
                 public void onResponse(PNSetStateResult result, PNStatus status) {
                     log.debug("Got setState responsee [{}]", result);
                     processMessage(exchange, callback, status, result);
-                };
+                }
             });
     }
 
@@ -212,7 +211,7 @@ public class PubNubProducer extends DefaultAsyncProducer {
                 public void onResponse(PNWhereNowResult result, PNStatus status) {
                     log.debug("Got whereNow message [{}]", result.getChannels());
                     processMessage(exchange, callback, status, result.getChannels());
-                };
+                }
             });
     }
 

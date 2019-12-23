@@ -21,7 +21,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.wsdl_first.UnknownPersonFault;
 
-
 // SET the fault message directly on the out message
 public class CxfConsumerFaultTest extends CxfConsumerPayloadFaultTest {
     
@@ -40,7 +39,6 @@ public class CxfConsumerFaultTest extends CxfConsumerPayloadFaultTest {
                         faultDetail.setPersonId("");
                         UnknownPersonFault fault = new UnknownPersonFault("Get the null value of person name", faultDetail);
                         exchange.getOut().setBody(fault);
-                        exchange.getOut().setFault(true);
                     }
                 });
                 

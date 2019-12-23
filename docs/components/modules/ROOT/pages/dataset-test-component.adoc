@@ -1,14 +1,19 @@
 [[dataset-test-component]]
-== DataSet Test Component
+= DataSet Test Component
+:page-source: components/camel-dataset/src/main/docs/dataset-test-component.adoc
 
-*Available as of Camel version 1.3*
+*Since Camel 1.3*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The xref:mock-component,Mock>>, <<mock-component.adoc[Test]
+notoriously difficult. The xref:mock-component.adoc[Mock], xref:mock-component.adoc[Test]
 and xref:dataset-component.adoc[DataSet] endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:manual::enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's large range of Components
 together with the powerful Bean Integration.
 
@@ -24,10 +29,10 @@ This will then set up a properly configured xref:mock-component.adoc[Mock]
 endpoint, which is only valid if the received messages match the number
 of expected messages and their message payloads are equal.
 
-The xref:test-component.adoc[Test] component is provided
+The xref:test.adoc[Test] component is provided
 directly in the camel-core.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -38,18 +43,19 @@ Where *expectedMessagesEndpointUri* refers to some other
 Component URI that the expected message bodies are
 pulled from before starting the test.
 
-=== URI Options
+== URI Options
 
 // component options: START
-The DataSet Test component supports 2 options, which are listed below.
+The DataSet Test component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -63,7 +69,7 @@ dataset-test:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -73,7 +79,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (16 parameters):
+=== Query Parameters (17 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,6 +91,7 @@ with the following path and query parameters:
 | *timeout* (producer) | The timeout to use when polling for message bodies from the URI | 2000 | long
 | *assertPeriod* (producer) | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if expectedMessageCount(int) was set to 5, then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives, then you would need to wait a little period to ensure no further message arrives. This is what you can use this method for. By default this period is disabled. | 0 | long
 | *expectedCount* (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use setAssertPeriod(long). An alternative is to use NotifyBuilder, and use the notifier to know when Camel is done routing some messages, before you call the assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period, to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint, then see also the setAssertPeriod(long) method for further details. | -1 | int
+| *failFast* (producer) | Sets whether assertIsSatisfied() should fail fast at the first detected failed expectation while it may otherwise wait for all expected messages to arrive before performing expectations verifications. Is by default true. Set to false to use behavior as in Camel 2.x. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *reportGroup* (producer) | A number that is used to turn on throughput logging based on groups of the size. |  | int
 | *resultMinimumWaitTime* (producer) | Sets the minimum expected amount of time (in millis) the assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
@@ -98,14 +105,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-dataset-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -113,7 +120,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -121,13 +128,14 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.dataset-test.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.dataset-test.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.dataset-test.enabled* | Whether to enable auto configuration of the dataset-test component. This is enabled by default. |  | Boolean
-| *camel.component.dataset-test.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.dataset-test.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-=== Example
+== Example
 
 For example, you could write a test case as follows:
 
@@ -144,6 +152,3 @@ method], your test case will perform the necessary assertions.
 To see how you can set other expectations on the test endpoint, see the
 xref:mock-component.adoc[Mock] component.
 
-=== See Also
-
-* Spring Testing

@@ -50,7 +50,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -64,7 +64,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
-            setProperty("bridgeEndpoint", bridgeEndpoint);
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -76,7 +76,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder bufferSize(int bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
             return this;
         }
         /**
@@ -88,7 +88,55 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder bufferSize(String bufferSize) {
-            setProperty("bufferSize", bufferSize);
+            doSetProperty("bufferSize", bufferSize);
+            return this;
+        }
+        /**
+         * Define if the Connection Close header has to be added to HTTP
+         * Request. This parameter is false by default.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder connectionClose(boolean connectionClose) {
+            doSetProperty("connectionClose", connectionClose);
+            return this;
+        }
+        /**
+         * Define if the Connection Close header has to be added to HTTP
+         * Request. This parameter is false by default.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder connectionClose(String connectionClose) {
+            doSetProperty("connectionClose", connectionClose);
+            return this;
+        }
+        /**
+         * Configure a cookie handler to maintain a HTTP session.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder cookieHandler(Object cookieHandler) {
+            doSetProperty("cookieHandler", cookieHandler);
+            return this;
+        }
+        /**
+         * Configure a cookie handler to maintain a HTTP session.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder cookieHandler(String cookieHandler) {
+            doSetProperty("cookieHandler", cookieHandler);
             return this;
         }
         /**
@@ -102,7 +150,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -116,7 +164,45 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default AhcEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -130,7 +216,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
                 boolean throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -144,7 +230,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
                 String throwExceptionOnFailure) {
-            setProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -163,7 +249,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder transferException(boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -182,7 +268,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: producer
          */
         default AhcEndpointBuilder transferException(String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -200,7 +286,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -218,7 +304,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AhcEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
     }
@@ -242,7 +328,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -255,7 +341,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -268,7 +354,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder binding(Object binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -281,7 +367,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder binding(String binding) {
-            setProperty("binding", binding);
+            doSetProperty("binding", binding);
             return this;
         }
         /**
@@ -294,7 +380,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfig(Object clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -307,7 +393,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder clientConfig(String clientConfig) {
-            setProperty("clientConfig", clientConfig);
+            doSetProperty("clientConfig", clientConfig);
             return this;
         }
         /**
@@ -321,7 +407,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(
                 Map<String, Object> clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -336,7 +422,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder clientConfigOptions(
                 String clientConfigOptions) {
-            setProperty("clientConfigOptions", clientConfigOptions);
+            doSetProperty("clientConfigOptions", clientConfigOptions);
             return this;
         }
         /**
@@ -348,7 +434,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -360,7 +446,7 @@ public interface AhcEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -374,7 +460,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
                 Map<String, Object> clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
         /**
@@ -389,7 +475,7 @@ public interface AhcEndpointBuilderFactory {
          */
         default AdvancedAhcEndpointBuilder clientConfigRealmOptions(
                 String clientConfigRealmOptions) {
-            setProperty("clientConfigRealmOptions", clientConfigRealmOptions);
+            doSetProperty("clientConfigRealmOptions", clientConfigRealmOptions);
             return this;
         }
     }
@@ -398,7 +484,7 @@ public interface AhcEndpointBuilderFactory {
      * To call external HTTP services using Async Http Client.
      * 
      * Category: http
-     * Available as of version: 2.8
+     * Since: 2.8
      * Maven coordinates: org.apache.camel:camel-ahc
      * 
      * Syntax: <code>ahc:httpUri</code>

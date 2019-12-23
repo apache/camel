@@ -1,0 +1,172 @@
+[[delay-eip]]
+= Delay EIP
+The Delayer Pattern allows you to delay the delivery of messages to some destination.
+
+== Options
+
+// eip options: START
+The Delay EIP supports 3 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *executorServiceRef* | Refers to a custom Thread Pool if asyncDelay has been enabled. |  | String
+| *asyncDelayed* | Enables asynchronous delay which means the thread will not block while delaying. | true | Boolean
+| *callerRunsWhenRejected* | Whether or not the caller should run the task when it was rejected by the thread pool. Is by default true | true | Boolean
+|===
+// eip options: END
+
+[NOTE]
+====
+The expression is a value in millis to wait from the current time, so the expression should just be 3000.
+
+However you can use a long value for a fixed value to indicate the delay in millis.
+
+See the Spring DSL samples for Delayer.
+====
+
+[CAUTION]
+.Using Delayer in Java DSL
+===
+See this ticket: https://issues.apache.org/jira/browse/CAMEL-2654[https://issues.apache.org/jira/browse/CAMEL-2654]
+===
+
+== Samples
+
+The example below will delay all messages received on *seda:b* 1 second before sending them to *mock:result*.
+
+[source,java]
+----
+from("seda:b")
+  .delay(1000)
+  .to("mock:result");
+----
+
+You can just delay things a fixed amount of time from the point at which the delayer receives the message. For example to delay things 2 seconds
+
+[source,java]
+----
+delayer(2000)
+----
+
+The above assume that the delivery order is maintained and that the messages are delivered in delay order. If you want to reorder the messages based on delivery time, you can use the Resequencer with this pattern. For example
+
+[source,java]
+----
+from("activemq:someQueue")
+  .resequencer(header("MyDeliveryTime"))
+  .delay("MyRedeliveryTime")
+  .to("activemq:aDelayedQueue");
+----
+
+You can of course use many different Expression languages such as XPath, XQuery, SQL or various Scripting Languages. For example to delay the message for the time period specified in the header, use the following syntax:
+
+[source,java]
+----
+from("activemq:someQueue")
+  .delay(header("delayValue"))
+  .to("activemq:aDelayedQueue");
+----
+
+And to delay processing using the Simple language you can use the following DSL:
+
+[source,java]
+----
+from("activemq:someQueue")
+  .delay(simple("${body.delayProperty}"))
+  .to("activemq:aDelayedQueue");
+----
+
+=== Spring DSL
+The sample below demonstrates the delay in Spring DSL:
+
+[source,xml]
+----
+<bean id="myDelayBean" class="org.apache.camel.processor.MyDelayCalcBean"/>
+<bean id="exchangeAwareBean" class="org.apache.camel.processor.ExchangeAwareDelayCalcBean"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route>
+        <from uri="seda:a"/>
+        <delay>
+            <header>MyDelay</header>
+        </delay>
+        <to uri="mock:result"/>
+    </route>
+    <route>
+        <from uri="seda:b"/>
+        <delay>
+            <constant>1000</constant>
+        </delay>
+        <to uri="mock:result"/>
+    </route>
+    <route>
+        <from uri="seda:c"/>
+        <delay>
+            <method ref="myDelayBean" method="delayMe"/>
+        </delay>
+        <to uri="mock:result"/>
+    </route>
+    <route>
+        <from uri="seda:d"/>
+        <delay>
+            <method ref="exchangeAwareBean" method="delayMe"/>
+        </delay>
+        <to uri="mock:result"/>
+    </route>
+</camelContext>
+----
+
+== Asynchronous delaying
+
+You can let the Delayer use non blocking asynchronous delaying, which means Camel will use a scheduler to schedule a task to be executed in the future. The task will then continue routing. This allows the caller thread to not block and be able to service other messages etc.
+
+=== From Java DSL
+You use the `asyncDelayed()` to enable the async behavior.
+
+[source,java]
+----
+from("activemq:queue:foo")
+  .delay(1000).asyncDelayed()
+  .to("activemq:aDelayedQueue");
+----
+
+=== From Spring XML
+
+You use the `asyncDelayed="true"` attribute to enable the async behavior.
+
+[source,xml]
+----
+<route>
+   <from uri="activemq:queue:foo"/>
+   <delay asyncDelayed="true">
+       <constant>1000</constant>
+   </delay>
+   <to uri="activemq:aDealyedQueue"/>
+</route>
+----
+
+== Creating a custom delay
+
+You can use an expression, such as calling a method on a bean, to determine when to send a message using something like this
+
+[source,java]
+----
+from("activemq:foo").
+  delay().method("someBean", "computeDelay").
+  to("activemq:bar");
+----
+
+then the bean would look like this...
+
+[source,java]
+----
+public class SomeBean {
+  public long computeDelay() {
+     long delay = 0;
+     // use java code to compute a delay value in millis
+     return delay;
+ }
+}
+----
+

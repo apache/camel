@@ -103,10 +103,12 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         return queue.size();
     }
 
+    @Override
     public Exchange receiveNoWait() {
         return receive(0);
     }
 
+    @Override
     public Exchange receive() {
         // must be started
         if (!isRunAllowed() || !isStarted()) {
@@ -131,6 +133,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         return null;
     }
 
+    @Override
     public Exchange receive(long timeout) {
         // must be started
         if (!isRunAllowed() || !isStarted()) {
@@ -152,6 +155,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         if (isBlockWhenFull()) {
             try {
@@ -219,6 +223,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         return getEndpoint().createConsumer(this);
     }
 
+    @Override
     protected void doStart() throws Exception {
         // lets add ourselves as a consumer
         consumer = createConsumer();
@@ -232,10 +237,12 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         }
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(consumer);
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(consumer);
         queue.clear();

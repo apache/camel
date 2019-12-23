@@ -52,12 +52,13 @@ public class CxfClientCallback extends ClientCallback {
         this.endpoint = endpoint;
     }
     
+    @Override
     public void handleResponse(Map<String, Object> ctx, Object[] res) {
         try {
             super.handleResponse(ctx, res);            
         } finally {
             // add cookies to the cookie store
-            if (endpoint.getCookieHandler() != null) {
+            if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
                 try {
                     Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfExchange.getInMessage().get(Message.PROTOCOL_HEADERS));
                     endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);
@@ -79,6 +80,7 @@ public class CxfClientCallback extends ClientCallback {
         }
     }
     
+    @Override
     public void handleException(Map<String, Object> ctx, Throwable ex) {
         try {
             super.handleException(ctx, ex);
@@ -98,7 +100,7 @@ public class CxfClientCallback extends ClientCallback {
             }
         } finally {
             // add cookies to the cookie store
-            if (endpoint.getCookieHandler() != null) {
+            if (endpoint.getCookieHandler() != null && cxfExchange.getInMessage() != null) {
                 try {
                     Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfExchange.getInMessage().get(Message.PROTOCOL_HEADERS));
                     endpoint.getCookieHandler().storeCookies(camelExchange, endpoint.getRequestUri(camelExchange), cxfHeaders);

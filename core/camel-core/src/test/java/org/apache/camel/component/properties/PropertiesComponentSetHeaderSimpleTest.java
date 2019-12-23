@@ -22,7 +22,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
-    
+
     @Test
     public void testPropertiesAndSimple() throws Exception {
         getMockEndpoint("mock:result").expectedHeaderReceived("foo", "http://mycoolserver/myapp");
@@ -35,11 +35,7 @@ public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
-        context.addComponent("properties", pc);
-
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/cheese.properties");
         return context;
     }
 
@@ -48,9 +44,7 @@ public class PropertiesComponentSetHeaderSimpleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader("foo").simple("{{cheese.server}}/${header.app}")
-                    .to("mock:result");
+                from("direct:start").setHeader("foo").simple("{{cheese.server}}/${header.app}").to("mock:result");
             }
         };
     }

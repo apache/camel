@@ -623,7 +623,7 @@
       "javaType": "org.apache.camel.spi.ScheduledPollConsumerScheduler",
       "enum": [
         "spring",
-        "quartz2"
+        "quartz"
       ],
       "deprecated": "false"
     },

@@ -18,8 +18,11 @@ package org.apache.camel.dataformat.xstream;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.security.ForbiddenClassException;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class XStreamDataFormatPermissionsTest extends CamelTestSupport {
     protected static final String XML_PURCHASE_ORDER = 

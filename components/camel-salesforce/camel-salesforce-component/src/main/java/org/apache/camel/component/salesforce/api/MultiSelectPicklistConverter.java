@@ -46,16 +46,14 @@ public class MultiSelectPicklistConverter implements Converter {
             // construct a string of form value1;value2;...
             final StringBuilder buffer = new StringBuilder();
             for (int i = 0; i < length; i++) {
-                buffer.append((String) getterMethod.invoke(Array.get(o, i)));
+                buffer.append((String)getterMethod.invoke(Array.get(o, i)));
                 if (i < (length - 1)) {
                     buffer.append(';');
                 }
             }
             writer.setValue(buffer.toString());
         } catch (Exception e) {
-            throw new ConversionException(
-                    String.format("Exception writing pick list value %s of type %s: %s",
-                            o, o.getClass().getName(), e.getMessage()), e);
+            throw new ConversionException(String.format("Exception writing pick list value %s of type %s: %s", o, o.getClass().getName(), e.getMessage()), e);
         }
     }
 
@@ -79,9 +77,7 @@ public class MultiSelectPicklistConverter implements Converter {
             }
             return resultArray;
         } catch (Exception e) {
-            throw new ConversionException(
-                    String.format("Exception reading pick list value %s of type %s: %s",
-                            listValue, requiredArrayType.getName(), e.getMessage()), e);
+            throw new ConversionException(String.format("Exception reading pick list value %s of type %s: %s", listValue, requiredArrayType.getName(), e.getMessage()), e);
         }
     }
 
@@ -89,10 +85,10 @@ public class MultiSelectPicklistConverter implements Converter {
     @SuppressWarnings("unchecked")
     public boolean canConvert(Class aClass) {
         try {
-            // check whether the Class is an array, and whether the array elment is a Picklist enum class
+            // check whether the Class is an array, and whether the array elment
+            // is a Picklist enum class
             final Class componentType = aClass.getComponentType();
-            return componentType != null && Enum.class.isAssignableFrom(componentType)
-                && componentType.getMethod(FACTORY_METHOD, String.class) != null;
+            return componentType != null && Enum.class.isAssignableFrom(componentType) && componentType.getMethod(FACTORY_METHOD, String.class) != null;
         } catch (NoSuchMethodException e) {
             return false;
         }

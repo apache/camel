@@ -50,7 +50,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default GoogleBigQuerySQLEndpointBuilder connectionFactory(
                 Object connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
             return this;
         }
         /**
@@ -64,7 +64,47 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default GoogleBigQuerySQLEndpointBuilder connectionFactory(
                 String connectionFactory) {
-            setProperty("connectionFactory", connectionFactory);
+            doSetProperty("connectionFactory", connectionFactory);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default GoogleBigQuerySQLEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default GoogleBigQuerySQLEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -89,7 +129,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -102,7 +142,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -115,7 +155,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -128,7 +168,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -137,18 +177,18 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
      * Google BigQuery data warehouse for analytics (using SQL queries).
      * 
      * Category: cloud,messaging
-     * Available as of version: 2.23
+     * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-google-bigquery
      * 
-     * Syntax: <code>google-bigquery-sql:query</code>
-     * 
-     * Path parameter: projectId (required)
-     * Google Cloud Project Id
+     * Syntax: <code>google-bigquery-sql:projectId:query</code>
      * 
      * Path parameter: query (required)
      * BigQuery standard SQL query
+     * 
+     * Path parameter: projectId (required)
+     * Google Cloud Project Id
      */
-    default GoogleBigQuerySQLEndpointBuilder googleBigQuerySQL(String path) {
+    default GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String path) {
         class GoogleBigQuerySQLEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQuerySQLEndpointBuilder, AdvancedGoogleBigQuerySQLEndpointBuilder {
             public GoogleBigQuerySQLEndpointBuilderImpl(String path) {
                 super("google-bigquery-sql", path);

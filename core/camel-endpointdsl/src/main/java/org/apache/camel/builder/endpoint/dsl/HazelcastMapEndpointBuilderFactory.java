@@ -53,7 +53,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -110,29 +110,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMapEndpointConsumerBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMapEndpointConsumerBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -150,7 +128,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -168,211 +146,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Define the polling timeout of the Queue consumer in Poll mode.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastMapEndpointConsumerBuilder pollingTimeout(
-                long pollingTimeout) {
-            setProperty("pollingTimeout", pollingTimeout);
-            return this;
-        }
-        /**
-         * Define the polling timeout of the Queue consumer in Poll mode.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastMapEndpointConsumerBuilder pollingTimeout(
-                String pollingTimeout) {
-            setProperty("pollingTimeout", pollingTimeout);
-            return this;
-        }
-        /**
-         * Define the Pool size for Queue Consumer Executor.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastMapEndpointConsumerBuilder poolSize(int poolSize) {
-            setProperty("poolSize", poolSize);
-            return this;
-        }
-        /**
-         * Define the Pool size for Queue Consumer Executor.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastMapEndpointConsumerBuilder poolSize(String poolSize) {
-            setProperty("poolSize", poolSize);
-            return this;
-        }
-        /**
-         * Define the Queue Consumer mode: Listen or Poll.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastMapEndpointConsumerBuilder queueConsumerMode(
-                HazelcastQueueConsumerMode queueConsumerMode) {
-            setProperty("queueConsumerMode", queueConsumerMode);
-            return this;
-        }
-        /**
-         * Define the Queue Consumer mode: Listen or Poll.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastMapEndpointConsumerBuilder queueConsumerMode(
-                String queueConsumerMode) {
-            setProperty("queueConsumerMode", queueConsumerMode);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder onErrorDelay(
-                int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder onErrorDelay(
-                String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder pollTimeout(
-                String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder transacted(
-                boolean transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder transferExchange(
-                boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointConsumerBuilder transferExchange(
-                String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -399,7 +173,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -415,7 +189,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -427,7 +201,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -440,7 +214,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -453,7 +227,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -466,7 +240,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -479,7 +253,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -492,7 +266,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -518,7 +292,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -533,7 +307,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -547,7 +321,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -561,7 +335,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -575,29 +349,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMapEndpointProducerBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMapEndpointProducerBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -617,7 +369,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -637,139 +389,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder onErrorDelay(
-                int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder onErrorDelay(
-                String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder pollTimeout(
-                String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder transacted(
-                boolean transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder transferExchange(
-                boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointProducerBuilder transferExchange(
-                String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -793,7 +413,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -806,7 +426,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -819,7 +439,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -832,7 +452,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -858,7 +478,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -873,7 +493,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -887,7 +507,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -901,7 +521,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -915,157 +535,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default HazelcastMapEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMapEndpointBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastMapEndpointBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder concurrentConsumers(
-                int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * To use concurrent consumers polling from the SEDA queue.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder concurrentConsumers(
-                String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder onErrorDelay(int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * Milliseconds before consumer continues polling after an error has
-         * occurred.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder onErrorDelay(String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * The timeout used when consuming from the SEDA queue. When a timeout
-         * occurs, the consumer can check whether it is allowed to continue
-         * running. Setting a lower value allows the consumer to react more
-         * quickly upon shutdown.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder pollTimeout(String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true then the consumer runs in transaction mode, where the
-         * messages in the seda queue will only be removed if the transaction
-         * commits, which happens when the processing is complete.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder transferExchange(
-                boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
-            return this;
-        }
-        /**
-         * If set to true the whole Exchange will be transfered. If header or
-         * body contains not serializable objects, they will be skipped.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: seda
-         */
-        default HazelcastMapEndpointBuilder transferExchange(
-                String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
     }
@@ -1089,7 +559,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1102,7 +572,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1115,7 +585,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1128,7 +598,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          */
         default AdvancedHazelcastMapEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1176,21 +646,12 @@ public interface HazelcastMapEndpointBuilderFactory {
         readOnceTail,
         capacity;
     }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> enum.
-     */
-    enum HazelcastQueueConsumerMode {
-        listen,
-        poll;
-    }
     /**
      * Hazelcast Map (camel-hazelcast)
      * The hazelcast-map component is used to access Hazelcast distributed map.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-map:cacheName</code>

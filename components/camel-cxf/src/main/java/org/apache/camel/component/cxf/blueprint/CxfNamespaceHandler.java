@@ -31,11 +31,10 @@ import org.osgi.service.blueprint.reflect.Metadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-
 public class CxfNamespaceHandler extends BaseNamespaceHandler {
     private static final Logger LOG = LoggerFactory.getLogger(CxfNamespaceHandler.class);
 
+    @Override
     public URL getSchemaLocation(String s) {
         if ("http://camel.apache.org/schema/blueprint/cxf".equals(s)) {
             return getClass().getClassLoader().getResource("schema/blueprint/camel-cxf.xsd");
@@ -43,11 +42,13 @@ public class CxfNamespaceHandler extends BaseNamespaceHandler {
         return super.findCoreSchemaLocation(s);
     }
 
+    @Override
     @SuppressWarnings({"rawtypes"})
     public Set<Class> getManagedClasses() {
         return new HashSet<>(Arrays.asList(CxfNamespaceHandler.class));
     }
 
+    @Override
     public Metadata parse(Element element, ParserContext context) {
         Metadata answer = null;
         String s = element.getLocalName();
@@ -67,6 +68,7 @@ public class CxfNamespaceHandler extends BaseNamespaceHandler {
         return answer;
     }
 
+    @Override
     public ComponentMetadata decorate(Node node, ComponentMetadata componentMetadata, ParserContext parserContext) {
         return null;
     }

@@ -38,8 +38,7 @@ public class RecipientListParallelTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .recipientList(header("foo")).parallelProcessing();
+                from("direct:start").recipientList(header("foo")).parallelProcessing();
 
                 from("direct:a").delay(1000).transform(constant("a")).to("mock:result");
                 from("direct:b").delay(500).transform(constant("b")).to("mock:result");

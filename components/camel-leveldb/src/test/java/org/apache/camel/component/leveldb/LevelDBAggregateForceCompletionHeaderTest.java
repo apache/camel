@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -104,6 +105,7 @@ public class LevelDBAggregateForceCompletionHeaderTest extends CamelTestSupport 
 
     public static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

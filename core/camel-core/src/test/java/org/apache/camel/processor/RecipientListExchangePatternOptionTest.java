@@ -25,12 +25,9 @@ public class RecipientListExchangePatternOptionTest extends SendExchangePatternO
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .recipientList(constant("stub:foo?exchangePattern=InOnly"))
-                    .to("mock:result");
+                from("direct:start").recipientList(constant("stub:foo?exchangePattern=InOnly")).to("mock:result");
 
-                from("stub:foo")
-                    .to("mock:stub");
+                from("stub:foo").to("mock:stub");
             }
         };
     }

@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Integration test for Salesforce analytics API endpoints. 
+ * Integration test for Salesforce analytics API endpoints.
  */
 @RunWith(Theories.class)
 public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
@@ -50,11 +50,8 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(AnalyticsApiIntegrationTest.class);
     private static final int RETRY_DELAY = 5000;
     private static final int REPORT_RESULT_RETRIES = 5;
-    private static final String[] REPORT_OPTIONS = new String[]{
-        SalesforceReportResultsToListConverter.INCLUDE_HEADERS,
-        SalesforceReportResultsToListConverter.INCLUDE_DETAILS,
-        SalesforceReportResultsToListConverter.INCLUDE_SUMMARY
-    };
+    private static final String[] REPORT_OPTIONS = new String[] {SalesforceReportResultsToListConverter.INCLUDE_HEADERS, SalesforceReportResultsToListConverter.INCLUDE_DETAILS,
+                                                                 SalesforceReportResultsToListConverter.INCLUDE_SUMMARY};
     private static final int NUM_OPTIONS = REPORT_OPTIONS.length;
     private static final int[] POWERS = new int[] {4, 2, 1};
 
@@ -63,6 +60,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
 
     /**
      * Get test report developer names as data points.
+     * 
      * @return test report developer names in test-salesforce-login.properties
      * @throws Exception
      */
@@ -87,8 +85,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         log.info("Testing report {}...", reportName);
 
         // get Report Id
-        final QueryRecordsReport reports = template().requestBody("direct:queryReport",
-            "SELECT Id FROM Report WHERE DeveloperName='" + reportName + "'", QueryRecordsReport.class);
+        final QueryRecordsReport reports = template().requestBody("direct:queryReport", "SELECT Id FROM Report WHERE DeveloperName='" + reportName + "'", QueryRecordsReport.class);
 
         assertNotNull("query", reports);
         final List<Report> reportsRecords = reports.getRecords();
@@ -97,8 +94,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         assertNotNull(testReportId);
 
         // 1. getReportDescription
-        final ReportDescription reportDescription = template().requestBody("direct:getReportDescription", testReportId,
-            ReportDescription.class);
+        final ReportDescription reportDescription = template().requestBody("direct:getReportDescription", testReportId, ReportDescription.class);
 
         assertNotNull("getReportDescriptions", reportDescription);
         LOG.debug("getReportDescriptions: {}", reportDescription);
@@ -106,8 +102,8 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // 2. executeSyncReport
         // execute with no metadata
-        SyncReportResults reportResults = template().requestBodyAndHeader("direct:executeSyncReport",
-            testReportId, SalesforceEndpointConfig.INCLUDE_DETAILS, Boolean.TRUE, SyncReportResults.class);
+        SyncReportResults reportResults = template().requestBodyAndHeader("direct:executeSyncReport", testReportId, SalesforceEndpointConfig.INCLUDE_DETAILS, Boolean.TRUE,
+                                                                          SyncReportResults.class);
 
         assertNotNull("executeSyncReport", reportResults);
         LOG.debug("executeSyncReport: {}", reportResults);
@@ -122,16 +118,15 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         } else {
             body = testReportMetadata;
         }
-        reportResults = template().requestBodyAndHeaders("direct:executeSyncReport",
-            body, headers, SyncReportResults.class);
+        reportResults = template().requestBodyAndHeaders("direct:executeSyncReport", body, headers, SyncReportResults.class);
 
         assertNotNull("executeSyncReport with metadata", reportResults);
         LOG.debug("executeSyncReport with metadata: {}", reportResults);
 
         // 3. executeAsyncReport
         // execute with no metadata
-        ReportInstance reportInstance = template().requestBodyAndHeader("direct:executeAsyncReport",
-            testReportId, SalesforceEndpointConfig.INCLUDE_DETAILS, true, ReportInstance.class);
+        ReportInstance reportInstance = template().requestBodyAndHeader("direct:executeAsyncReport", testReportId, SalesforceEndpointConfig.INCLUDE_DETAILS, true,
+                                                                        ReportInstance.class);
 
         assertNotNull("executeAsyncReport", reportInstance);
         LOG.debug("executeAsyncReport: {}", reportInstance);
@@ -147,8 +142,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
             body = testReportMetadata;
             bodyMetadata = false;
         }
-        reportInstance = template().requestBodyAndHeaders("direct:executeAsyncReport",
-            body, headers, ReportInstance.class);
+        reportInstance = template().requestBodyAndHeaders("direct:executeAsyncReport", body, headers, ReportInstance.class);
 
         assertNotNull("executeAsyncReport with metadata", reportInstance);
         LOG.debug("executeAsyncReport with metadata: {}", reportInstance);
@@ -167,11 +161,10 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         int tries = 0;
         AsyncReportResults asyncReportResults = null;
         while (!done) {
-            asyncReportResults = template().requestBodyAndHeader("direct:getReportResults",
-                testReportId, SalesforceEndpointConfig.INSTANCE_ID, testReportInstanceId, AsyncReportResults.class);
+            asyncReportResults = template().requestBodyAndHeader("direct:getReportResults", testReportId, SalesforceEndpointConfig.INSTANCE_ID, testReportInstanceId,
+                                                                 AsyncReportResults.class);
             done = asyncReportResults != null
-                && (asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Success
-                    || asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Error);
+                   && (asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Success || asyncReportResults.getAttributes().getStatus() == ReportStatusEnum.Error);
             if (!done) {
                 // avoid flooding calls
                 Thread.sleep(RETRY_DELAY);
@@ -183,8 +176,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
         }
 
         assertNotNull("getReportResults", asyncReportResults);
-        assertEquals("getReportResults status", ReportStatusEnum.Success,
-            asyncReportResults.getAttributes().getStatus());
+        assertEquals("getReportResults status", ReportStatusEnum.Success, asyncReportResults.getAttributes().getStatus());
         LOG.debug("getReportResults: {}", asyncReportResults);
 
         // 6. SalesforceReportResultsConverter tests
@@ -196,7 +188,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
 
         // permutations of include details, include headers, include summary
         final boolean[] values = new boolean[NUM_OPTIONS];
-        final int nIterations = (int) Math.pow(2, NUM_OPTIONS);
+        final int nIterations = (int)Math.pow(2, NUM_OPTIONS);
 
         for (int i = 0; i < nIterations; i++) {
 
@@ -212,8 +204,7 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
             for (int j = 0; j < REPORT_OPTIONS.length; j++) {
                 headers.put(REPORT_OPTIONS[j], values[j]);
             }
-            convertResults = template.requestBodyAndHeaders("direct:convertResults", asyncReportResults,
-                headers, String.class);
+            convertResults = template.requestBodyAndHeaders("direct:convertResults", asyncReportResults, headers, String.class);
 
             assertNotNull("convertResults", convertResults);
             LOG.debug("{}", convertResults);
@@ -227,33 +218,24 @@ public class AnalyticsApiIntegrationTest extends AbstractSalesforceTestBase {
             public void configure() throws Exception {
 
                 // get Report SObject by DeveloperName
-                from("direct:queryReport")
-                    .to("salesforce:query?sObjectClass=" + QueryRecordsReport.class.getName());
-                
-                from("direct:getRecentReports")
-                    .to("salesforce:getRecentReports");
+                from("direct:queryReport").to("salesforce:query?sObjectClass=" + QueryRecordsReport.class.getName());
 
-                from("direct:getReportDescription")
-                    .to("salesforce:getReportDescription");
-                
-                from("direct:executeSyncReport")
-                    .to("salesforce:executeSyncReport");
-                
-                from("direct:executeAsyncReport")
-                    .to("salesforce:executeAsyncReport?includeDetails=true");
-                
-                from("direct:getReportInstances")
-                    .to("salesforce:getReportInstances");
-                
-                from("direct:getReportResults")
-                    .to("salesforce:getReportResults");
+                from("direct:getRecentReports").to("salesforce:getRecentReports");
+
+                from("direct:getReportDescription").to("salesforce:getReportDescription");
+
+                from("direct:executeSyncReport").to("salesforce:executeSyncReport");
+
+                from("direct:executeAsyncReport").to("salesforce:executeAsyncReport?includeDetails=true");
+
+                from("direct:getReportInstances").to("salesforce:getReportInstances");
+
+                from("direct:getReportResults").to("salesforce:getReportResults");
 
                 CsvDataFormat csv = new CsvDataFormat(CSVFormat.EXCEL);
 
                 // type converter test
-                from("direct:convertResults")
-                    .convertBodyTo(List.class)
-                    .marshal(csv);
+                from("direct:convertResults").convertBodyTo(List.class).marshal(csv);
             }
         };
     }

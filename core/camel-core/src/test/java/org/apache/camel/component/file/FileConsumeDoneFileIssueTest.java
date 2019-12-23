@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -62,7 +63,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         // the done file should be deleted
         assertFalse("Done file should be deleted", new File("target/data/done/foo.done").exists());
     }
-    
+
     @Test
     public void testFileConsumeDynamicDoneFileName() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
@@ -73,7 +74,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done2", "a", Exchange.FILE_NAME, "a.txt.done");
         template.sendBodyAndHeader("file:target/data/done2", "b", Exchange.FILE_NAME, "b.txt.done");
         template.sendBodyAndHeader("file:target/data/done2", "c", Exchange.FILE_NAME, "c.txt.done");
-        
+
         assertTrue("Done file should exists", new File("target/data/done2/a.txt.done").exists());
         assertTrue("Done file should exists", new File("target/data/done2/b.txt.done").exists());
         assertTrue("Done file should exists", new File("target/data/done2/c.txt.done").exists());
@@ -91,9 +92,9 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         assertFalse("Done file should be deleted", new File("target/data/done2/a.txt.done").exists());
         assertFalse("Done file should be deleted", new File("target/data/done2/b.txt.done").exists());
         assertFalse("Done file should be deleted", new File("target/data/done2/c.txt.done").exists());
-        
+
     }
-    
+
     @Test
     public void testFileDoneFileNameContainingDollarSign() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(3).create();
@@ -104,7 +105,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         template.sendBodyAndHeader("file:target/data/done2", "a", Exchange.FILE_NAME, "$a$.txt.done");
         template.sendBodyAndHeader("file:target/data/done2", "b", Exchange.FILE_NAME, "$b.txt.done");
         template.sendBodyAndHeader("file:target/data/done2", "c", Exchange.FILE_NAME, "c$.txt.done");
-        
+
         assertTrue("Done file should exists", new File("target/data/done2/$a$.txt.done").exists());
         assertTrue("Done file should exists", new File("target/data/done2/$b.txt.done").exists());
         assertTrue("Done file should exists", new File("target/data/done2/c$.txt.done").exists());
@@ -122,7 +123,7 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         assertFalse("Done file should be deleted", new File("target/data/done2/$a$.txt.done").exists());
         assertFalse("Done file should be deleted", new File("target/data/done2/$b.txt.done").exists());
         assertFalse("Done file should be deleted", new File("target/data/done2/c$.txt.done").exists());
-        
+
     }
 
     @Override
@@ -130,14 +131,9 @@ public class FileConsumeDoneFileIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/done?doneFileName=foo.done&initialDelay=0&delay=10").routeId("foo").noAutoStartup()
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
-                
-                from("file:target/data/done2?doneFileName=${file:name}.done&initialDelay=0&delay=10")
-                    .routeId("bar").noAutoStartup()
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file:target/data/done?doneFileName=foo.done&initialDelay=0&delay=10").routeId("foo").noAutoStartup().convertBodyTo(String.class).to("mock:result");
+
+                from("file:target/data/done2?doneFileName=${file:name}.done&initialDelay=0&delay=10").routeId("bar").noAutoStartup().convertBodyTo(String.class).to("mock:result");
             }
         };
     }

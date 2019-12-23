@@ -49,15 +49,12 @@ public class JettyContentBasedRouteTest extends BaseJettyTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("jetty:" + serverUri)
-                    .choice()
-                    .when().simple("${header.one}").to("mock:one")
-                    .otherwise()
-                    .to("mock:other");
+                from("jetty:" + serverUri).choice().when().simple("${header.one}").to("mock:one").otherwise().to("mock:other");
                 // END SNIPPET: e1
             }
         };

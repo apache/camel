@@ -27,34 +27,35 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static java.util.Objects.requireNonNull;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
 import com.thoughtworks.xstream.annotations.XStreamOmitField;
-
 import org.apache.camel.component.salesforce.api.dto.AbstractDescribedSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.api.dto.RestError;
 import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
 import org.apache.camel.util.ObjectHelper;
 
+import static java.util.Objects.requireNonNull;
+
 /**
- * Represents one node in the SObject tree request. SObject trees ({@link SObjectTree}) are composed from instances of
- * {@link SObjectNode}s. Each {@link SObjectNode} contains {@link Attributes}, the SObject ({@link AbstractSObjectBase})
- * and any child records linked to it. SObjects at root level are added to {@link SObjectTree} using
- * {@link SObjectTree#addObject(AbstractSObjectBase)}, then you can add child records on the {@link SObjectNode}
- * returned by using {@link #addChild(AbstractDescribedSObjectBase)},
- * {@link #addChildren(AbstractDescribedSObjectBase, AbstractDescribedSObjectBase...)} or
- * {@link #addChild(String, AbstractSObjectBase)} and
+ * Represents one node in the SObject tree request. SObject trees
+ * ({@link SObjectTree}) are composed from instances of {@link SObjectNode}s.
+ * Each {@link SObjectNode} contains the SObject ({@link AbstractSObjectBase})
+ * and any child records linked to it. SObjects at root level are added to
+ * {@link SObjectTree} using {@link SObjectTree#addObject(AbstractSObjectBase)},
+ * then you can add child records on the {@link SObjectNode} returned by using
+ * {@link #addChild(AbstractDescribedSObjectBase)},
+ * {@link #addChildren(AbstractDescribedSObjectBase, AbstractDescribedSObjectBase...)}
+ * or {@link #addChild(String, AbstractSObjectBase)} and
  * {@link #addChildren(String, AbstractSObjectBase, AbstractSObjectBase...)}.
  * <p/>
- * Upon submission to the Salesforce Composite API the {@link SObjectTree} and the {@link SObjectNode}s in it might
- * contain errors that you need to fetch using {@link #getErrors()} method.
+ * Upon submission to the Salesforce Composite API the {@link SObjectTree} and
+ * the {@link SObjectNode}s in it might contain errors that you need to fetch
+ * using {@link #getErrors()} method.
  *
  * @see SObjectTree
  * @see RestError
@@ -68,9 +69,6 @@ public final class SObjectNode implements Serializable {
     private static final String SOBJECT_TYPE_PARAM = "type";
 
     private static final long serialVersionUID = 1L;
-
-    @JsonProperty
-    final Attributes attributes;
 
     @JsonUnwrapped
     final AbstractSObjectBase object;
@@ -86,12 +84,10 @@ public final class SObjectNode implements Serializable {
         this(tree.referenceGenerator, typeOf(object), object);
     }
 
-    private SObjectNode(final ReferenceGenerator referenceGenerator, final String type,
-            final AbstractSObjectBase object) {
+    private SObjectNode(final ReferenceGenerator referenceGenerator, final String type, final AbstractSObjectBase object) {
         this.referenceGenerator = requireNonNull(referenceGenerator, "ReferenceGenerator cannot be null");
         this.object = requireNonNull(object, "Root SObject cannot be null");
-        attributes = new Attributes(referenceGenerator.nextReferenceFor(object),
-            requireNonNull(type, "Object type cannot be null"));
+        object.getAttributes().setReferenceId(referenceGenerator.nextReferenceFor(object));
     }
 
     static String pluralOf(final AbstractDescribedSObjectBase object) {
@@ -110,11 +106,12 @@ public final class SObjectNode implements Serializable {
     }
 
     /**
-     * Add a described child with the metadata needed already present within it to the this node.
+     * Add a described child with the metadata needed already present within it
+     * to the this node.
      *
-     * @param child
-     *            to add
-     * @return the newly created node, used in builder fashion to add more child objects to it (on the next level)
+     * @param child to add
+     * @return the newly created node, used in builder fashion to add more child
+     *         objects to it (on the next level)
      */
     public SObjectNode addChild(final AbstractDescribedSObjectBase child) {
         ObjectHelper.notNull(child, CHILD_PARAM);
@@ -123,14 +120,14 @@ public final class SObjectNode implements Serializable {
     }
 
     /**
-     * Add a child that does not contain the required metadata to the this node. You need to specify the plural form of
-     * the child (e.g. `Account` its `Accounts`).
+     * Add a child that does not contain the required metadata to the this node.
+     * You need to specify the plural form of the child (e.g. `Account` its
+     * `Accounts`).
      *
-     * @param labelPlural
-     *            plural form
-     * @param child
-     *            to add
-     * @return the newly created node, used in builder fashion to add more child objects to it (on the next level)
+     * @param labelPlural plural form
+     * @param child to add
+     * @return the newly created node, used in builder fashion to add more child
+     *         objects to it (on the next level)
      */
     public SObjectNode addChild(final String labelPlural, final AbstractSObjectBase child) {
         ObjectHelper.notNull(labelPlural, "labelPlural");
@@ -142,12 +139,11 @@ public final class SObjectNode implements Serializable {
     }
 
     /**
-     * Add multiple described children with the metadata needed already present within them to the this node..
+     * Add multiple described children with the metadata needed already present
+     * within them to the this node..
      *
-     * @param first
-     *            first child to add
-     * @param others
-     *            any other children to add
+     * @param first first child to add
+     * @param others any other children to add
      */
     public void addChildren(final AbstractDescribedSObjectBase first, final AbstractDescribedSObjectBase... others) {
         ObjectHelper.notNull(first, "first");
@@ -159,18 +155,15 @@ public final class SObjectNode implements Serializable {
     }
 
     /**
-     * Add a child that does not contain the required metadata to the this node. You need to specify the plural form of
-     * the child (e.g. `Account` its `Accounts`).
+     * Add a child that does not contain the required metadata to the this node.
+     * You need to specify the plural form of the child (e.g. `Account` its
+     * `Accounts`).
      *
-     * @param labelPlural
-     *            plural form
-     * @param first
-     *            first child to add
-     * @param others
-     *            any other children to add
+     * @param labelPlural plural form
+     * @param first first child to add
+     * @param others any other children to add
      */
-    public void addChildren(final String labelPlural, final AbstractSObjectBase first,
-        final AbstractSObjectBase... others) {
+    public void addChildren(final String labelPlural, final AbstractSObjectBase first, final AbstractSObjectBase... others) {
         ObjectHelper.notNull(labelPlural, "labelPlural");
         ObjectHelper.notNull(first, "first");
         ObjectHelper.notNull(others, "others");
@@ -191,10 +184,11 @@ public final class SObjectNode implements Serializable {
     }
 
     /**
-     * Returns all children of this node (one level deep) of certain type (in plural form).
+     * Returns all children of this node (one level deep) of certain type (in
+     * plural form).
      *
-     * @param type
-     *            type of child requested in plural form (e.g for `Account` is `Accounts`)
+     * @param type type of child requested in plural form (e.g for `Account` is
+     *            `Accounts`)
      * @return children of this node of specified type
      */
     public Stream<SObjectNode> getChildNodesOfType(final String type) {
@@ -214,10 +208,11 @@ public final class SObjectNode implements Serializable {
     }
 
     /**
-     * Returns child SObjects of this node (one level deep) of certain type (in plural form)
+     * Returns child SObjects of this node (one level deep) of certain type (in
+     * plural form)
      *
-     * @param type
-     *            type of child requested in plural form (e.g for `Account` is `Accounts`)
+     * @param type type of child requested in plural form (e.g for `Account` is
+     *            `Accounts`)
      * @return child SObjects of this node
      */
     public Stream<AbstractSObjectBase> getChildrenOfType(final String type) {
@@ -227,7 +222,8 @@ public final class SObjectNode implements Serializable {
     }
 
     /**
-     * Errors reported against this this node received in response to the SObject tree being submitted.
+     * Errors reported against this this node received in response to the
+     * SObject tree being submitted.
      *
      * @return errors for this node
      */
@@ -283,21 +279,16 @@ public final class SObjectNode implements Serializable {
 
     @JsonAnyGetter
     Map<String, Map<String, List<SObjectNode>>> children() {
-        return records.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, e -> Collections.singletonMap("records", e.getValue())));
-    }
-
-    Attributes getAttributes() {
-        return attributes;
+        return records.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, e -> Collections.singletonMap("records", e.getValue())));
     }
 
     @JsonIgnore
     String getObjectType() {
-        return attributes.type;
+        return object.getAttributes().getType();
     }
 
     Stream<Class> objectTypes() {
-        return Stream.concat(Stream.of((Class) object.getClass()), getChildNodes().flatMap(SObjectNode::objectTypes));
+        return Stream.concat(Stream.of((Class)object.getClass()), getChildNodes().flatMap(SObjectNode::objectTypes));
     }
 
     void setErrors(final List<RestError> errors) {

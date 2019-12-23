@@ -110,6 +110,7 @@ public class DefaultAttachment implements Attachment {
         return new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
     }
 
+    @Override
     public boolean equals(Object other) {
         if (other instanceof Attachment) {
             DataHandler otherDh = ((Attachment)other).getDataHandler();
@@ -118,6 +119,7 @@ public class DefaultAttachment implements Attachment {
         return false;
     }
 
+    @Override
     public int hashCode() {
         return dataHandler.hashCode();
     }

@@ -65,14 +65,17 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         return "sendTo(" + getExpression() + ")";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
             exchange.setException(new IllegalStateException("SendProcessor has not been started: " + this));
@@ -235,6 +238,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         return exchange;
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (producerCache == null) {
             producerCache = new DefaultProducerCache(this, camelContext, cacheSize);
@@ -269,6 +273,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         ServiceHelper.startService(producerCache);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(producerCache);
     }
@@ -277,10 +282,12 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
         return producerCache.getEndpointUtilizationStatistics();
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

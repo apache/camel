@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.aws.ddb;
 
+import com.amazonaws.Protocol;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -47,6 +47,8 @@ public class DdbConfiguration implements Cloneable {
     private String keyAttributeName;
     @UriParam
     private String keyAttributeType;
+    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam
     private String proxyHost;
     @UriParam
@@ -162,6 +164,17 @@ public class DdbConfiguration implements Cloneable {
      */
     public void setKeyAttributeType(String keyAttributeType) {
         this.keyAttributeType = keyAttributeType;
+    }
+    
+    public Protocol getProxyProtocol() {
+        return proxyProtocol;
+    }
+
+    /**
+     * To define a proxy protocol when instantiating the DDB client
+     */
+    public void setProxyProtocol(Protocol proxyProtocol) {
+        this.proxyProtocol = proxyProtocol;
     }
     
     public String getProxyHost() {

@@ -17,32 +17,68 @@
 package org.apache.camel.issues;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
 import org.junit.Test;
 
 public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
 
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
+    }
+
     @Test
-    public void testAdviceWithOnException() throws Exception {
-        RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                weaveById("removeMe").remove();
-            }
-        });
-        context.start();
+    public void testAdviceOnExceptionRemove() throws Exception {
+        context.addRoutes(createRouteBuilder());
 
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedMessageCount(0);
-        getMockEndpoint("mock:handled").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:c").expectedMessageCount(0);
+        getMockEndpoint("mock:d").expectedMessageCount(0);
+        getMockEndpoint("mock:dead").expectedMessageCount(0);
 
-        template.sendBody("direct:start", "Hello World");
+        RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                weaveById("myException").remove();
+            }
+        });
+
+        context.start();
+
+        try {
+            template.sendBody("direct:foo", "Hello World");
+            fail("Should throw exception");
+        } catch (Exception e) {
+            assertEquals("Forced", e.getCause().getMessage());
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testAdviceOnExceptionReplace() throws Exception {
+        context.addRoutes(createRouteBuilder());
+
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:b").expectedMessageCount(0);
+        getMockEndpoint("mock:c").expectedMessageCount(0);
+        getMockEndpoint("mock:d").expectedMessageCount(0);
+        getMockEndpoint("mock:dead").expectedMessageCount(0);
+        getMockEndpoint("mock:dead2").expectedMessageCount(1);
+
+        RouteReifier.adviceWith(context.getRouteDefinition("foo"), context, new AdviceWithRouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                weaveById("myException").replace().onException(Exception.class).handled(true).to("mock:dead2");
+            }
+        });
+
+        context.start();
+
+        template.sendBody("direct:foo", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -52,19 +88,12 @@ public class AdviceWithOnExceptionRemoveTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().setBody("I changed this");
-                        }
-                    }).id("removeMe")
-                    .handled(true).to("mock:handled");
+                onException(Exception.class).id("myException").handled(true).transform(constant("Bye World")).to("mock:dead");
 
-                from("direct:start")
-                    .to("mock:a").id("a")
-                    .throwException(new IllegalArgumentException("Forced"))
-                    .to("mock:b").id("b");
+                from("direct:bar").routeId("bar").to("mock:c").to("mock:d");
+
+                from("direct:foo").routeId("foo").to("mock:a").throwException(new IllegalArgumentException("Forced")).to("mock:b");
+
             }
         };
     }

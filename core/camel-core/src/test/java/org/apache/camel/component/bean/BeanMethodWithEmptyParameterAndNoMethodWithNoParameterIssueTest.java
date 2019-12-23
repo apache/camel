@@ -71,13 +71,9 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:myBean?method=doSomething()")
-                    .to("mock:result");
+                from("direct:start").to("bean:myBean?method=doSomething()").to("mock:result");
 
-                from("direct:other")
-                    .to("bean:myOtherBean?method=doSomething()")
-                    .to("mock:result");
+                from("direct:other").to("bean:myOtherBean?method=doSomething()").to("mock:result");
             }
         };
     }

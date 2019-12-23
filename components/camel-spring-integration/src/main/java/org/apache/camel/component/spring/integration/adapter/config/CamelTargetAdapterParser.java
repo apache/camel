@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.integration.adapter.config;
 
 import org.w3c.dom.Element;
+
 import org.apache.camel.component.spring.integration.adapter.CamelTargetAdapter;
 
 /**

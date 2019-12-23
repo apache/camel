@@ -1,0 +1,277 @@
+[[ParameterBindingAnnotations-ParameterBindingAnnotations]]
+= Parameter Binding Annotations
+
+**camel-core**
+
+The annotations below are all part of *camel-core* and thus does not
+require *camel-spring* or xref:spring.adoc[Spring]. These annotations
+can be used with the xref:components::bean-component.adoc[Bean] component or when invoking
+beans in the xref:dsl.adoc[DSL]
+
+Annotations can be used to define an xref:expression.adoc[Expression] or
+to extract various headers, properties or payloads from a
+xref:message.adoc[Message] when invoking a bean method (see
+xref:bean-integration.adoc[Bean Integration] for more detail of how to
+invoke bean methods) together with being useful to help disambiguate
+which method to invoke.
+
+If no annotations are used then Camel assumes that a single parameter is
+the body of the message. Camel will then use the
+xref:type-converter.adoc[Type Converter] mechanism to convert from the
+expression value to the actual type of the parameter.
+
+The core annotations are as follows
+
+[width="100%",cols="34%,33%,33%",options="header",]
+|=======================================================================
+|Annotation |Meaning |Parameter
+|`org.apache.camel.Body`
+|To bind to an inbound message body | 
+
+|`org.apache.camel.ExchangeException`
+|To bind to an Exception set on the exchange | 
+
+|`org.apache.camel.Header`
+|To bind to an inbound message header |String name of the header
+
+|`org.apache.camel.Headers`
+|To bind to the Map of the inbound message headers | 
+
+|`org.apache.camel.OutHeaders`
+|To bind to the Map of the outbound message headers | 
+
+|`org.apache.camel.Property`
+|To bind to a named property on the exchange |String name of the
+property
+
+|`org.apache.camel.Properties`
+|To bind to the property map on the exchange | 
+
+|`org.apache.camel.Handler`
+|Not part as a type parameter but stated in this table anyway to spread
+the good word that we have this annotation in Camel now. See more at
+xref:bean-binding.adoc[Bean Binding]. | 
+|=======================================================================
+
+The follow annotations `@Headers`, `@OutHeaders` and `@Properties` binds
+to the backing `java.util.Map` so you can alter the content of these
+maps directly, for instance using the `put` method to add a new entry.
+See the OrderService class at xref:exception-clause.adoc[Exception
+Clause] for such an example. You can use `@Header("myHeader")` and
+`@Property("myProperty")` to access the backing `java.util.Map`.
+
+[[ParameterBindingAnnotations-Example]]
+== Example
+
+In this example below we have a @Consume consumer (like message driven)
+that consumes JMS messages from the activemq queue. We use the @Header
+and @Body parameter binding annotations to bind from the JMSMessage to
+the method parameters.
+
+[source,syntaxhighlighter-pre]
+----
+public class Foo {
+    
+    @Consume(uri = "activemq:my.queue")
+    public void doSomething(@Header("JMSCorrelationID") String correlationID, @Body String body) {
+        // process the inbound message here
+    }
+
+}
+----
+
+In the above Camel will extract the value of
+Message.getJMSCorrelationID(), then using the
+xref:type-converter.adoc[Type Converter] to adapt the value to the type
+of the parameter if required - it will inject the parameter value for
+the *correlationID* parameter. Then the payload of the message will be
+converted to a String and injected into the *body* parameter.
+
+You don't necessarily need to use the @Consume annotation if you don't
+want to as you could also make use of the Camel xref:dsl.adoc[DSL] to
+route to the bean's method as well.
+
+[[ParameterBindingAnnotations-UsingtheDSLtoinvokethebeanmethod]]
+=== Using the DSL to invoke the bean method
+
+Here is another example which does not use xref:pojo-consuming.adoc[POJO
+Consuming] annotations but instead uses the xref:dsl.adoc[DSL] to route
+messages to the bean method
+
+[source,syntaxhighlighter-pre]
+----
+public class Foo {
+    public void doSomething(@Header("JMSCorrelationID") String correlationID, @Body String body) {
+        // process the inbound message here
+    }
+
+}
+----
+
+The routing DSL then looks like this
+
+[source,syntaxhighlighter-pre]
+----
+from("activemq:someQueue").
+  to("bean:myBean");
+----
+
+Here *myBean* would be looked up in the xref:registry.adoc[Registry]
+(such as JNDI or the Spring ApplicationContext), then the body of the
+message would be used to try figure out what method to call.
+
+If you want to be explicit you can use
+
+[source,syntaxhighlighter-pre]
+----
+from("activemq:someQueue").
+  to("bean:myBean?methodName=doSomething");
+----
+
+And here we have a nifty example for you to show some great power in
+Camel. You can mix and match the annotations with the normal parameters,
+so we can have this example with annotations and the Exchange also:
+
+[source,syntaxhighlighter-pre]
+----
+    public void doSomething(@Header("user") String user, @Body String body, Exchange exchange) {
+        exchange.getIn().setBody(body + "MyBean");
+    }
+----
+
+[[ParameterBindingAnnotations-AnnotationBasedExpressionLanguage]]
+=== Annotation Based Expression Language
+
+You can also use any of the xref:languages.adoc[Languages] supported in
+Camel to bind expressions to method parameters when using
+xref:bean-integration.adoc[Bean Integration]. For example you can use
+any of these annotations:
+
+[width="100%",cols="50%,50%",options="header",]
+|=======================================================================
+|Annotation |Description
+|`org.apache.camel.language.Bean`
+|Inject a xref:components::bean-language.adoc[Bean] expression
+
+|`org.apache.camel.language.Constant`
+|Inject a xref:constant-language.adoc[Constant] expression
+
+|`org.apache.camel.builder.script.Groovy`
+|Inject a  xref:components::groovy-language.adoc[Groovy] expression
+
+|`org.apache.camel.Header`
+|Inject a xref:header-language.adoc[Header] expression
+
+|`org.apache.camel.language.mvel.MVEL`
+|Inject a xref:components::mvel-language.adoc[MVEL] expression
+
+|`org.apache.camel.language.ognl.OGNL`
+|Inject an xref:components::ognl-language.adoc[OGNL] expression
+
+|`org.apache.camel.language.Simple`
+|Inject an xref:simple-language.adoc[Simple] expression
+
+|`org.apache.camel.language.XPath`
+|Inject an xref:components::xpath-language.adoc[XPath] expression
+
+|`org.apache.camel.component.xquery.XQuery`
+|Inject an xref:components::xquery-language.adoc[XQuery] expression
+|=======================================================================
+
+[[ParameterBindingAnnotations-Example:]]
+==== Example
+
+[source,syntaxhighlighter-pre]
+----
+public class Foo {
+    
+    @MessageDriven(uri = "activemq:my.queue")
+    public void doSomething(@XPath("/foo/bar/text()") String correlationID, @Body String body) {
+        // process the inbound message here
+    }
+}
+----
+
+[[ParameterBindingAnnotations-Advancedexampleusing@Bean]]
+==== Advanced example using @Bean
+
+And an example of using the the
+org.apache.camel.language/Bean.adoc[@Bean]
+binding annotation, where you can use a xref:components::bean-component.adoc[POJO] where you
+can do whatever java code you like:
+
+[source,syntaxhighlighter-pre]
+----
+public class Foo {
+    
+    @MessageDriven(uri = "activemq:my.queue")
+    public void doSomething(@Bean("myCorrelationIdGenerator") String correlationID, @Body String body) {
+        // process the inbound message here
+    }
+}
+----
+
+And then we can have a spring bean with the id
+*myCorrelationIdGenerator* where we can compute the id.
+
+[source,syntaxhighlighter-pre]
+----
+public class MyIdGenerator {
+
+    private UserManager userManager;
+
+    public String generate(@Header(name = "user") String user, @Body String payload) throws Exception {
+       User user = userManager.lookupUser(user);
+       String userId = user.getPrimaryId();
+       String id = userId + generateHashCodeForPayload(payload);
+       return id;
+   }
+}
+----
+
+The xref:components::bean-component.adoc[POJO] MyIdGenerator has one public method that
+accepts two parameters. However we have also annotated this one with the
+@Header and @Body annotation to help Camel know what to bind here from
+the Message from the Exchange being processed.
+
+Of course this could be simplified a lot if you for instance just have a
+simple id generator. But we wanted to demonstrate that you can use the
+xref:bean-binding.adoc[Bean Binding] annotations anywhere.
+
+[source,syntaxhighlighter-pre]
+----
+public class MySimpleIdGenerator {
+
+    public static int generate()  {
+       // generate a unique id
+       return 123;
+   }
+}
+----
+
+And finally we just need to remember to have our bean registered in the
+Spring xref:registry.adoc[Registry]:
+
+[source,syntaxhighlighter-pre]
+----
+   <bean id="myCorrelationIdGenerator" class="com.mycompany.MySimpleIdGenerator"/>
+----
+
+[[ParameterBindingAnnotations-Exampleusing]]
+==== Example using xref:components::groovy-language.adoc[Groovy]
+
+In this example we have an Exchange that has a User object stored in the
+in header. This User object has methods to get some user information. We
+want to use xref:components::groovy-language.adoc[Groovy] to inject an expression that
+extracts and concats the fullname of the user into the fullName
+parameter.
+
+[source,syntaxhighlighter-pre]
+----
+    public void doSomething(@Groovy("$request.header['user'].firstName $request.header['user'].familyName) String fullName, @Body String body) {
+        // process the inbound message here
+    }
+----
+
+Groovy supports GStrings that is like a template where we can insert $
+placeholders that will be evaluated by Groovy.

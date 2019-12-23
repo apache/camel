@@ -111,7 +111,7 @@ public class MailRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("pop3://route-test-james@localhost?consumer.initialDelay=100&consumer.delay=100").to("direct:a");
+                from("pop3://route-test-james@localhost?initialDelay=100&delay=100").to("direct:a");
 
                 // must use fixed to option to send the mail to the given
                 // reciever, as we have polled
@@ -124,7 +124,7 @@ public class MailRouteTest extends CamelTestSupport {
                     .setHeader("to", constant("route-test-result@localhost; route-test-copy@localhost"))
                     .to("smtp://localhost");
 
-                from("pop3://route-test-result@localhost?consumer.initialDelay=100&consumer.delay=100").convertBodyTo(String.class)
+                from("pop3://route-test-result@localhost?initialDelay=100&delay=100").convertBodyTo(String.class)
                     .to("mock:result");
             }
         };

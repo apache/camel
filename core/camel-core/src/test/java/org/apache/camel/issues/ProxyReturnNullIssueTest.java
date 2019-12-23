@@ -35,7 +35,6 @@ public class ProxyReturnNullIssueTest extends ContextTestSupport {
         assertEquals(null, service.echo(null));
     }
 
-
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -52,6 +51,7 @@ public class ProxyReturnNullIssueTest extends ContextTestSupport {
 
     public static class MyEchoBean implements Echo {
 
+        @Override
         public String echo(String text) {
             return text;
         }

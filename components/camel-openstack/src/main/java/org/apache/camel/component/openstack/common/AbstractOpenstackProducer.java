@@ -73,10 +73,9 @@ public abstract class AbstractOpenstackProducer extends DefaultProducer {
         return operation;
     }
 
-    protected void checkFailure(ActionResponse response, Message msg, String operation) {
-        msg.setFault(!response.isSuccess());
+    protected void checkFailure(ActionResponse response, Exchange exchange, String operation) {
         if (!response.isSuccess()) {
-            msg.setBody(String.format(" %s was not successful: %s", operation, response.getFault()));
+            exchange.setException(new OpenstackOperationException(operation, response.getFault(), response.getCode()));
         }
     }
 }

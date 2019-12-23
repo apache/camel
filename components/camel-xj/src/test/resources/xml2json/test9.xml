@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+         http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+
+-->
+<object xmlns:xj="http://camel.apache.org/component/xj">
+   <object>
+      <object xj:name="&#9;">&#9;</object>
+      <object xj:name="&#10;">&#10;</object>
+      <object xj:name="&#13;">&#13;</object>
+      <object xj:name=" "> </object>
+      <object xj:name="!">!</object>
+      <object xj:name="&quot;">"</object>
+      <object xj:name="#">#</object>
+      <object xj:name="$">$</object>
+      <object xj:name="%">%</object>
+      <object xj:name="&amp;">&amp;</object>
+      <object xj:name="'">'</object>
+      <object xj:name="(">(</object>
+      <object xj:name=")">)</object>
+      <object xj:name="*">*</object>
+      <object xj:name="+">+</object>
+      <object xj:name=",">,</object>
+      <object xj:name="-">-</object>
+      <object xj:name=".">.</object>
+      <object xj:name="/">/</object>
+      <object xj:name="0">0</object>
+      <object xj:name="1">1</object>
+      <object xj:name="2">2</object>
+      <object xj:name="3">3</object>
+      <object xj:name="4">4</object>
+      <object xj:name="5">5</object>
+      <object xj:name="6">6</object>
+      <object xj:name="7">7</object>
+      <object xj:name="8">8</object>
+      <object xj:name="9">9</object>
+      <object xj:name=":">:</object>
+      <object xj:name=";">;</object>
+      <object xj:name="&lt;">&lt;</object>
+      <object xj:name="=">=</object>
+      <object xj:name="&gt;">&gt;</object>
+      <object xj:name="?">?</object>
+      <object xj:name="@">@</object>
+      <object xj:name="A">A</object>
+      <object xj:name="B">B</object>
+      <object xj:name="C">C</object>
+      <object xj:name="D">D</object>
+      <object xj:name="E">E</object>
+      <object xj:name="F">F</object>
+      <object xj:name="G">G</object>
+      <object xj:name="H">H</object>
+      <object xj:name="I">I</object>
+      <object xj:name="J">J</object>
+      <object xj:name="K">K</object>
+      <object xj:name="L">L</object>
+      <object xj:name="M">M</object>
+      <object xj:name="N">N</object>
+      <object xj:name="O">O</object>
+      <object xj:name="P">P</object>
+      <object xj:name="Q">Q</object>
+      <object xj:name="R">R</object>
+      <object xj:name="S">S</object>
+      <object xj:name="T">T</object>
+      <object xj:name="U">U</object>
+      <object xj:name="V">V</object>
+      <object xj:name="W">W</object>
+      <object xj:name="X">X</object>
+      <object xj:name="Y">Y</object>
+      <object xj:name="Z">Z</object>
+      <object xj:name="[">[</object>
+      <object xj:name="\">\</object>
+      <object xj:name="]">]</object>
+      <object xj:name="^">^</object>
+      <object xj:name="_">_</object>
+      <object xj:name="`">`</object>
+      <object xj:name="a">a</object>
+      <object xj:name="b">b</object>
+      <object xj:name="c">c</object>
+      <object xj:name="d">d</object>
+      <object xj:name="e">e</object>
+      <object xj:name="f">f</object>
+      <object xj:name="g">g</object>
+      <object xj:name="h">h</object>
+      <object xj:name="i">i</object>
+      <object xj:name="j">j</object>
+      <object xj:name="k">k</object>
+      <object xj:name="l">l</object>
+      <object xj:name="m">m</object>
+      <object xj:name="n">n</object>
+      <object xj:name="o">o</object>
+      <object xj:name="p">p</object>
+      <object xj:name="q">q</object>
+      <object xj:name="r">r</object>
+      <object xj:name="s">s</object>
+      <object xj:name="t">t</object>
+      <object xj:name="u">u</object>
+      <object xj:name="v">v</object>
+      <object xj:name="w">w</object>
+      <object xj:name="x">x</object>
+      <object xj:name="y">y</object>
+      <object xj:name="z">z</object>
+      <object xj:name="{">{</object>
+      <object xj:name="|">|</object>
+      <object xj:name="}">}</object>
+      <object xj:name="~">~</object>
+      <object xj:name="">&#127;</object>
+      <object xj:name="">&#128;</object>
+      <object xj:name="">&#129;</object>
+      <object xj:name="">&#130;</object>
+      <object xj:name="">&#131;</object>
+      <object xj:name="">&#132;</object>
+      <object xj:name="">&#133;</object>
+      <object xj:name="">&#134;</object>
+      <object xj:name="">&#135;</object>
+      <object xj:name="">&#136;</object>
+      <object xj:name="">&#137;</object>
+      <object xj:name="">&#138;</object>
+      <object xj:name="">&#139;</object>
+      <object xj:name="">&#140;</object>
+      <object xj:name="">&#141;</object>
+      <object xj:name="">&#142;</object>
+      <object xj:name="">&#143;</object>
+      <object xj:name="">&#144;</object>
+      <object xj:name="">&#145;</object>
+      <object xj:name="">&#146;</object>
+      <object xj:name="">&#147;</object>
+      <object xj:name="">&#148;</object>
+      <object xj:name="">&#149;</object>
+      <object xj:name="">&#150;</object>
+      <object xj:name="">&#151;</object>
+      <object xj:name="">&#152;</object>
+      <object xj:name="">&#153;</object>
+      <object xj:name="">&#154;</object>
+      <object xj:name="">&#155;</object>
+      <object xj:name="">&#156;</object>
+      <object xj:name="">&#157;</object>
+      <object xj:name="">&#158;</object>
+      <object xj:name="">&#159;</object>
+      <object xj:name=" "> </object>
+      <object xj:name="¡">¡</object>
+      <object xj:name="¢">¢</object>
+      <object xj:name="£">£</object>
+      <object xj:name="¤">¤</object>
+      <object xj:name="¥">¥</object>
+      <object xj:name="¦">¦</object>
+      <object xj:name="§">§</object>
+      <object xj:name="¨">¨</object>
+      <object xj:name="©">©</object>
+      <object xj:name="ª">ª</object>
+      <object xj:name="«">«</object>
+      <object xj:name="¬">¬</object>
+      <object xj:name="­">­</object>
+      <object xj:name="®">®</object>
+      <object xj:name="¯">¯</object>
+      <object xj:name="°">°</object>
+      <object xj:name="±">±</object>
+      <object xj:name="²">²</object>
+      <object xj:name="³">³</object>
+      <object xj:name="´">´</object>
+      <object xj:name="µ">µ</object>
+      <object xj:name="¶">¶</object>
+      <object xj:name="·">·</object>
+      <object xj:name="¸">¸</object>
+      <object xj:name="¹">¹</object>
+      <object xj:name="º">º</object>
+      <object xj:name="»">»</object>
+      <object xj:name="¼">¼</object>
+      <object xj:name="½">½</object>
+      <object xj:name="¾">¾</object>
+      <object xj:name="¿">¿</object>
+      <object xj:name="À">À</object>
+      <object xj:name="Á">Á</object>
+      <object xj:name="Â">Â</object>
+      <object xj:name="Ã">Ã</object>
+      <object xj:name="Ä">Ä</object>
+      <object xj:name="Å">Å</object>
+      <object xj:name="Æ">Æ</object>
+      <object xj:name="Ç">Ç</object>
+      <object xj:name="È">È</object>
+      <object xj:name="É">É</object>
+      <object xj:name="Ê">Ê</object>
+      <object xj:name="Ë">Ë</object>
+      <object xj:name="Ì">Ì</object>
+      <object xj:name="Í">Í</object>
+      <object xj:name="Î">Î</object>
+      <object xj:name="Ï">Ï</object>
+      <object xj:name="Ð">Ð</object>
+      <object xj:name="Ñ">Ñ</object>
+      <object xj:name="Ò">Ò</object>
+      <object xj:name="Ó">Ó</object>
+      <object xj:name="Ô">Ô</object>
+      <object xj:name="Õ">Õ</object>
+      <object xj:name="Ö">Ö</object>
+      <object xj:name="×">×</object>
+      <object xj:name="Ø">Ø</object>
+      <object xj:name="Ù">Ù</object>
+      <object xj:name="Ú">Ú</object>
+      <object xj:name="Û">Û</object>
+      <object xj:name="Ü">Ü</object>
+      <object xj:name="Ý">Ý</object>
+      <object xj:name="Þ">Þ</object>
+      <object xj:name="ß">ß</object>
+      <object xj:name="à">à</object>
+      <object xj:name="á">á</object>
+      <object xj:name="â">â</object>
+      <object xj:name="ã">ã</object>
+      <object xj:name="ä">ä</object>
+      <object xj:name="å">å</object>
+      <object xj:name="æ">æ</object>
+      <object xj:name="ç">ç</object>
+      <object xj:name="è">è</object>
+      <object xj:name="é">é</object>
+      <object xj:name="ê">ê</object>
+      <object xj:name="ë">ë</object>
+      <object xj:name="ì">ì</object>
+      <object xj:name="í">í</object>
+      <object xj:name="î">î</object>
+      <object xj:name="ï">ï</object>
+      <object xj:name="ð">ð</object>
+      <object xj:name="ñ">ñ</object>
+      <object xj:name="ò">ò</object>
+      <object xj:name="ó">ó</object>
+      <object xj:name="ô">ô</object>
+      <object xj:name="õ">õ</object>
+      <object xj:name="ö">ö</object>
+      <object xj:name="÷">÷</object>
+      <object xj:name="ø">ø</object>
+      <object xj:name="ù">ù</object>
+      <object xj:name="ú">ú</object>
+      <object xj:name="û">û</object>
+      <object xj:name="ü">ü</object>
+      <object xj:name="ý">ý</object>
+      <object xj:name="þ">þ</object>
+      <object xj:name="ÿ">ÿ</object>
+   </object>
+</object>

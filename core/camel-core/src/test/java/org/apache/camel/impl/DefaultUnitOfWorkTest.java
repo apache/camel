@@ -24,15 +24,13 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
-
 public class DefaultUnitOfWorkTest extends Assert {
-    
+
     private DefaultUnitOfWork unitOfWork;
 
     @Before
     public void setUp() throws Exception {
 
-        
         CamelContext context = new DefaultCamelContext();
         context.setUuidGenerator(new SimpleUuidGenerator());
         unitOfWork = new DefaultUnitOfWork(new DefaultExchange(context));

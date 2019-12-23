@@ -102,7 +102,7 @@ public class RouterProducer extends AbstractOpenstackProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, msg.getHeader(NeutronConstants.ROUTER_ID, String.class), String.class);
         StringHelper.notEmpty(id, "Router ID");
         final ActionResponse response = os.networking().router().delete(id);
-        checkFailure(response, msg, "Delete router with ID " + id);
+        checkFailure(response, exchange, "Delete router with ID " + id);
     }
 
     private void doDetach(Exchange exchange) {

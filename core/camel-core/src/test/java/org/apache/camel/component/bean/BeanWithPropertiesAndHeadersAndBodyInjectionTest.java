@@ -70,6 +70,7 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -92,9 +93,9 @@ public class BeanWithPropertiesAndHeadersAndBodyInjectionTest extends ContextTes
             this.foo = foo;
             this.bar = bar;
             this.body = body;
-            
+
             assertNotNull(toString());
         }
     }
-    
+
 }

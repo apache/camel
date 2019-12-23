@@ -24,9 +24,9 @@ import org.apache.camel.component.spring.security.DefaultAuthenticationAdapter;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
-
 public class MyAuthenticationAdapter extends DefaultAuthenticationAdapter {
     
+    @Override
     protected Authentication convertToAuthentication(Subject subject) {
         Authentication answer = null;
         for (Principal principal : subject.getPrincipals()) {

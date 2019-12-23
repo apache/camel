@@ -19,7 +19,6 @@ package org.apache.camel.component.atom;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
 /**
  * Unit test for AtomProducer.
  */

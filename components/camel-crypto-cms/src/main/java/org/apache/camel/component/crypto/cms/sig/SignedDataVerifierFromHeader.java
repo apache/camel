@@ -68,7 +68,7 @@ public class SignedDataVerifierFromHeader extends SignedDataVerifier {
     protected void processSignedDataHeader(Exchange exchange, InputStream signature) throws Exception { // NOPMD
         // all exceptions must be caught and re-thrown in order to make a
         // clean-up, see code below
-        if (conf.isSignedDataHeaderBase64(exchange)) {
+        if (conf.isSignedDataHeaderBase64()) {
             signature = new Base64InputStream(signature);
         }
 
@@ -79,7 +79,7 @@ public class SignedDataVerifierFromHeader extends SignedDataVerifier {
             Message out = exchange.getOut();
             out.copyFrom(exchange.getIn());
 
-            if (conf.isFromBase64(exchange)) {
+            if (conf.isFromBase64()) {
                 stream = new Base64InputStream(stream);
             }
             unmarshalInternal(stream, signature, exchange);

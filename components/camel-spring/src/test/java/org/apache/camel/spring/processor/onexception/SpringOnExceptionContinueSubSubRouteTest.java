@@ -23,6 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringOnExceptionContinueSubSubRouteTest extends OnExceptionContinueSubSubRouteTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/onexception/OnExceptionContinueSubSubRouteTest.xml");
     }

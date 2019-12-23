@@ -47,14 +47,11 @@ public class ThreadsRejectedPolicyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .threads(5, 10).rejectedPolicy(DiscardOldest)
-                    .to("mock:result");
+                from("direct:start").threads(5, 10).rejectedPolicy(DiscardOldest).to("mock:result");
 
                 from("direct:foo")
                     // using the builder style
-                    .threads().poolSize(5).maxPoolSize(10).rejectedPolicy(DiscardOldest).threadName("myPool")
-                    .to("mock:result");
+                    .threads().poolSize(5).maxPoolSize(10).rejectedPolicy(DiscardOldest).threadName("myPool").to("mock:result");
             }
         };
     }

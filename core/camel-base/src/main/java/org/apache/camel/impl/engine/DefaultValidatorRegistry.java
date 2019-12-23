@@ -33,6 +33,7 @@ public class DefaultValidatorRegistry extends AbstractDynamicRegistry<ValidatorK
         super(context, CamelContextHelper.getMaximumValidatorCacheSize(context));
     }
 
+    @Override
     public Validator resolveValidator(ValidatorKey key) {
         Validator answer = get(key);
         if (answer == null && ObjectHelper.isNotEmpty(key.getType().getName())) {

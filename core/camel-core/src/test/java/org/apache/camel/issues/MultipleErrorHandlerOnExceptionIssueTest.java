@@ -59,22 +59,13 @@ public class MultipleErrorHandlerOnExceptionIssueTest extends ContextTestSupport
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(IllegalArgumentException.class)
-                    .handled(true)
-                    .to("mock:handled");
+                onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 from("seda:a")
-                    .errorHandler(deadLetterChannel("mock:dead.a")
-                            .maximumRedeliveries(3).redeliveryDelay(0)
-                            .retryAttemptedLogLevel(LoggingLevel.WARN).asyncDelayedRedelivery())
-                    .to("mock:a")
-                    .throwException(new IllegalArgumentException("Forced A"));
+                    .errorHandler(deadLetterChannel("mock:dead.a").maximumRedeliveries(3).redeliveryDelay(0).retryAttemptedLogLevel(LoggingLevel.WARN).asyncDelayedRedelivery())
+                    .to("mock:a").throwException(new IllegalArgumentException("Forced A"));
 
-                from("seda:b")
-                        .errorHandler(deadLetterChannel("mock:dead.b")
-                            .maximumRedeliveries(2).redeliveryDelay(0)
-                            .retryAttemptedLogLevel(LoggingLevel.WARN))
-                    .to("mock:b")
+                from("seda:b").errorHandler(deadLetterChannel("mock:dead.b").maximumRedeliveries(2).redeliveryDelay(0).retryAttemptedLogLevel(LoggingLevel.WARN)).to("mock:b")
                     .throwException(new IOException("Some IO error"));
             }
         };

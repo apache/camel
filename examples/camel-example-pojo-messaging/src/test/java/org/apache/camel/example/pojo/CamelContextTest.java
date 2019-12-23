@@ -26,6 +26,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelContextTest extends CamelSpringTestSupport {
 
+    @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory("target/messages");

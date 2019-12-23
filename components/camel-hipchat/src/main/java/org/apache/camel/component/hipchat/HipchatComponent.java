@@ -43,6 +43,7 @@ public class HipchatComponent extends DefaultComponent {
         super(context);
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         HipchatEndpoint endpoint = getHipchatEndpoint(uri);
         setProperties(endpoint.getConfiguration(), parameters);

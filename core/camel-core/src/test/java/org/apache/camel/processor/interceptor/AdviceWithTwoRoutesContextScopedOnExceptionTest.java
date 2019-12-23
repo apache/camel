@@ -25,17 +25,11 @@ public class AdviceWithTwoRoutesContextScopedOnExceptionTest extends AdviceWithT
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(true)
-                    .to("mock:error");
+                onException(Exception.class).handled(true).to("mock:error");
 
-                from("direct:a").routeId("a")
-                    .to("log:a")
-                    .to("mock:a");
+                from("direct:a").routeId("a").to("log:a").to("mock:a");
 
-                from("direct:b").routeId("b")
-                    .to("log:b")
-                    .to("mock:b");
+                from("direct:b").routeId("b").to("log:b").to("mock:b");
             }
         };
     }

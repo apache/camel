@@ -46,6 +46,7 @@ public class CoAPProducer extends DefaultProducer {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         CoapClient client = getClient(exchange);
         String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);

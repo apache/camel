@@ -50,7 +50,8 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExcepti
             @Override
             public void configure() throws Exception {
                 // global error handler
-                // as its based on a unit test we do not have any delays between and do not log the stack trace
+                // as its based on a unit test we do not have any delays between
+                // and do not log the stack trace
                 errorHandler(deadLetterChannel("mock:error").redeliveryDelay(0).logStackTrace(false));
 
                 // shared for both routes
@@ -58,32 +59,33 @@ public class OnExceptionComplexWithNestedErrorHandlerRouteTest extends OnExcepti
 
                 from("direct:start")
                     // route specific on exception for MyFunctionalException
-                    // we MUST use .end() to indicate that this sub block is ended
-                    .onException(MyFunctionalException.class).maximumRedeliveries(0).end()
-                    .to("bean:myServiceBean")
-                    .to("mock:result");
+                    // we MUST use .end() to indicate that this sub block is
+                    // ended
+                    .onException(MyFunctionalException.class).maximumRedeliveries(0).end().to("bean:myServiceBean").to("mock:result");
 
                 from("direct:start2")
-                    // route specific on exception for MyFunctionalException that is different than the previous route
-                    // here we marked it as handled and send it to a different destination mock:handled
-                    // we MUST use .end() to indicate that this sub block is ended
-                    .onException(MyFunctionalException.class).handled(true).maximumRedeliveries(0).to("mock:handled").end()
-                    .to("bean:myServiceBean")
-                    .to("mock:result");
+                    // route specific on exception for MyFunctionalException
+                    // that is different than the previous route
+                    // here we marked it as handled and send it to a different
+                    // destination mock:handled
+                    // we MUST use .end() to indicate that this sub block is
+                    // ended
+                    .onException(MyFunctionalException.class).handled(true).maximumRedeliveries(0).to("mock:handled").end().to("bean:myServiceBean").to("mock:result");
 
                 // START SNIPPET: e1
                 from("direct:start3")
-                    // route specific error handler that is different than the global error handler
-                    // here we do not redeliver and send errors to mock:error3 instead of the global endpoint
-                    .errorHandler(deadLetterChannel("mock:error3")
-                            .maximumRedeliveries(0))
+                    // route specific error handler that is different than the
+                    // global error handler
+                    // here we do not redeliver and send errors to mock:error3
+                    // instead of the global endpoint
+                    .errorHandler(deadLetterChannel("mock:error3").maximumRedeliveries(0))
 
-                    // route specific on exception to mark MyFunctionalException as being handled
+                    // route specific on exception to mark MyFunctionalException
+                    // as being handled
                     .onException(MyFunctionalException.class).handled(true).end()
-                    // however we want the IO exceptions to redeliver at most 3 times
-                    .onException(IOException.class).maximumRedeliveries(3).end()
-                    .to("bean:myServiceBean")
-                    .to("mock:result");
+                    // however we want the IO exceptions to redeliver at most 3
+                    // times
+                    .onException(IOException.class).maximumRedeliveries(3).end().to("bean:myServiceBean").to("mock:result");
                 // END SNIPPET: e1
             }
         };

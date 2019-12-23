@@ -36,16 +36,17 @@ public final class TestSupportJmxCleanup {
     }
 
     public static void removeMBeans(String domain) throws Exception {
-        MBeanServer mbsc =  ManagementFactory.getPlatformMBeanServer();
+        MBeanServer mbsc = ManagementFactory.getPlatformMBeanServer();
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(getDomainName(domain) + ":*"), null);
         for (ObjectName on : s) {
             mbsc.unregisterMBean(on);
         }
     }
 
-    // useful helper to invoke in TestSupport to figure out what test leave junk behind
+    // useful helper to invoke in TestSupport to figure out what test leave junk
+    // behind
     public static void traceMBeans(String domain) throws Exception {
-        MBeanServer mbsc =  ManagementFactory.getPlatformMBeanServer();
+        MBeanServer mbsc = ManagementFactory.getPlatformMBeanServer();
         String d = getDomainName(domain);
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(d + ":*"), null);
         if (s.size() > 0) {

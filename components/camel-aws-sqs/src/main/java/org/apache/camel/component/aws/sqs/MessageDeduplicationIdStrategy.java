@@ -19,7 +19,7 @@ package org.apache.camel.component.aws.sqs;
 import org.apache.camel.Exchange;
 
 public interface MessageDeduplicationIdStrategy {
-    
+
     String getMessageDeduplicationId(Exchange exchange);
 
 }

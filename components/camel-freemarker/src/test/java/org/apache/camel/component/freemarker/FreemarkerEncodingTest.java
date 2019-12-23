@@ -20,6 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 
 public class FreemarkerEncodingTest extends FreemarkerLetterTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

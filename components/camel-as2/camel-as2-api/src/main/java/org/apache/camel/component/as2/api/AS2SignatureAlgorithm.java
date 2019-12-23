@@ -29,40 +29,40 @@ import org.bouncycastle.asn1.x9.X9ObjectIdentifiers;
 
 interface AS2SignatureAlgorithmParams {
     
-    static AlgorithmIdentifier SHA1ALGID = new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1, DERNull.INSTANCE);
-    static RSASSAPSSparams SHA1ALGPARAMS = new RSASSAPSSparams(SHA1ALGID,
+    AlgorithmIdentifier SHA1ALGID = new AlgorithmIdentifier(OIWObjectIdentifiers.idSHA1, DERNull.INSTANCE);
+    RSASSAPSSparams SHA1ALGPARAMS = new RSASSAPSSparams(SHA1ALGID,
             new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, SHA1ALGID), new ASN1Integer(20), new ASN1Integer(1));
     
-    static AlgorithmIdentifier SHA224ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224, DERNull.INSTANCE);
-    static RSASSAPSSparams SHA224ALGPARAMS = new RSASSAPSSparams(SHA224ALGID,
+    AlgorithmIdentifier SHA224ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha224, DERNull.INSTANCE);
+    RSASSAPSSparams SHA224ALGPARAMS = new RSASSAPSSparams(SHA224ALGID,
             new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, SHA224ALGID), new ASN1Integer(28), new ASN1Integer(1));
     
-    static AlgorithmIdentifier SHA256ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE);
-    static RSASSAPSSparams SHA256ALGPARAMS = new RSASSAPSSparams(SHA256ALGID,
+    AlgorithmIdentifier SHA256ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha256, DERNull.INSTANCE);
+    RSASSAPSSparams SHA256ALGPARAMS = new RSASSAPSSparams(SHA256ALGID,
             new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, SHA256ALGID), new ASN1Integer(32), new ASN1Integer(1));
     
-    static AlgorithmIdentifier SHA384ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384, DERNull.INSTANCE);
-    static RSASSAPSSparams SHA384ALGPARAMS = new RSASSAPSSparams(SHA384ALGID,
+    AlgorithmIdentifier SHA384ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha384, DERNull.INSTANCE);
+    RSASSAPSSparams SHA384ALGPARAMS = new RSASSAPSSparams(SHA384ALGID,
             new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, SHA384ALGID), new ASN1Integer(48), new ASN1Integer(1));
     
-    static AlgorithmIdentifier SHA512ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512, DERNull.INSTANCE);
-    static RSASSAPSSparams SHA512ALGPARAMS = new RSASSAPSSparams(SHA512ALGID,
+    AlgorithmIdentifier SHA512ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha512, DERNull.INSTANCE);
+    RSASSAPSSparams SHA512ALGPARAMS = new RSASSAPSSparams(SHA512ALGID,
             new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, SHA512ALGID), new ASN1Integer(64), new ASN1Integer(1));
 
-    static AlgorithmIdentifier SHA3_224ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_224, DERNull.INSTANCE);
-    static RSASSAPSSparams SHA3_224ALGPARAMS = new RSASSAPSSparams(SHA3_224ALGID,
+    AlgorithmIdentifier SHA3_224ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_224, DERNull.INSTANCE);
+    RSASSAPSSparams SHA3_224ALGPARAMS = new RSASSAPSSparams(SHA3_224ALGID,
             new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, SHA3_224ALGID), new ASN1Integer(28), new ASN1Integer(1));
     
-    static AlgorithmIdentifier SHA3_256ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_256, DERNull.INSTANCE);
-    static RSASSAPSSparams SHA3_256ALGPARAMS = new RSASSAPSSparams(SHA3_256ALGID,
+    AlgorithmIdentifier SHA3_256ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_256, DERNull.INSTANCE);
+    RSASSAPSSparams SHA3_256ALGPARAMS = new RSASSAPSSparams(SHA3_256ALGID,
             new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, SHA3_256ALGID), new ASN1Integer(32), new ASN1Integer(1));
     
-    static AlgorithmIdentifier SHA3_384ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_384, DERNull.INSTANCE);
-    static RSASSAPSSparams SHA3_384ALGPARAMS = new RSASSAPSSparams(SHA3_384ALGID,
+    AlgorithmIdentifier SHA3_384ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_384, DERNull.INSTANCE);
+    RSASSAPSSparams SHA3_384ALGPARAMS = new RSASSAPSSparams(SHA3_384ALGID,
             new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, SHA3_384ALGID), new ASN1Integer(48), new ASN1Integer(1));
     
-    static AlgorithmIdentifier SHA3_512ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_512, DERNull.INSTANCE);
-    static RSASSAPSSparams SHA3_512ALGPARAMS = new RSASSAPSSparams(SHA3_512ALGID,
+    AlgorithmIdentifier SHA3_512ALGID = new AlgorithmIdentifier(NISTObjectIdentifiers.id_sha3_512, DERNull.INSTANCE);
+    RSASSAPSSparams SHA3_512ALGPARAMS = new RSASSAPSSparams(SHA3_512ALGID,
             new AlgorithmIdentifier(PKCSObjectIdentifiers.id_mgf1, SHA3_512ALGID), new ASN1Integer(64), new ASN1Integer(1));
     
 }

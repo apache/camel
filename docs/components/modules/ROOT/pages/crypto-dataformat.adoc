@@ -1,7 +1,8 @@
 [[crypto-dataformat]]
-== Crypto (Java Cryptographic Extension) DataFormat
+= Crypto (Java Cryptographic Extension) DataFormat
+:page-source: components/camel-crypto/src/main/docs/crypto-dataformat.adoc
 
-*Available as of Camel version 2.3*
+*Since Camel 2.3*
 
 The Crypto Data Format integrates the Java
 Cryptographic Extension into Camel, allowing simple and flexible
@@ -11,7 +12,7 @@ encryption to cyphertext and unmarshalling to mean decryption back to
 the original plaintext. This data format implements only symmetric
 (shared-key) encryption and decyption.
 
-### CryptoDataFormat Options
+== CryptoDataFormat Options
 
 // dataformat options: START
 The Crypto (Java Cryptographic Extension) dataformat supports 10 options, which are listed below.
@@ -21,7 +22,7 @@ The Crypto (Java Cryptographic Extension) dataformat supports 10 options, which 
 [width="100%",cols="2s,1m,1m,6",options="header"]
 |===
 | Name | Default | Java Type | Description
-| algorithm | DES/CBC/PKCS5Padding | String | The JCE algorithm name indicating the cryptographic algorithm that will be used. Is by default DES/CBC/PKCS5Padding.
+| algorithm |  | String | The JCE algorithm name indicating the cryptographic algorithm that will be used.
 | cryptoProvider |  | String | The name of the JCE Security Provider that should be used.
 | keyRef |  | String | Refers to the secret key to lookup from the register to use.
 | initVectorRef |  | String | Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher.
@@ -34,14 +35,14 @@ The Crypto (Java Cryptographic Extension) dataformat supports 10 options, which 
 |===
 // dataformat options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-crypto-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -49,7 +50,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 34 options, which are listed below.
+The component supports 35 options, which are listed below.
 
 
 
@@ -57,7 +58,8 @@ The component supports 34 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.crypto.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.crypto.configuration.algorithm* | Sets the JCE name of the Algorithm that should be used for the signer. | SHA1WithDSA | String
+| *camel.component.crypto.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.crypto.configuration.algorithm* | Sets the JCE name of the Algorithm that should be used for the signer. | SHA256withRSA | String
 | *camel.component.crypto.configuration.alias* | Sets the alias used to query the KeyStore for keys and {@link java.security.cert.Certificate Certificates} to be used in signing and verifying exchanges. This value can be provided at runtime via the message header {@link org.apache.camel.component.crypto.DigitalSignatureConstants#KEYSTORE_ALIAS} |  | String
 | *camel.component.crypto.configuration.buffer-size* | Set the size of the buffer used to read in the Exchange payload data. | 2048 | Integer
 | *camel.component.crypto.configuration.certificate* | Set the Certificate that should be used to verify the signature in the exchange based on its payload. |  | Certificate
@@ -68,7 +70,7 @@ The component supports 34 options, which are listed below.
 | *camel.component.crypto.configuration.keystore* | Sets the KeyStore that can contain keys and Certficates for use in signing and verifying exchanges. A {@link KeyStore} is typically used with an alias, either one supplied in the Route definition or dynamically via the message header "CamelSignatureKeyStoreAlias". If no alias is supplied and there is only a single entry in the Keystore, then this single entry will be used. |  | KeyStore
 | *camel.component.crypto.configuration.keystore-name* | Sets the reference name for a Keystore that can be found in the registry. |  | String
 | *camel.component.crypto.configuration.name* | The logical name of this operation. |  | String
-| *camel.component.crypto.configuration.password* | Sets the password used to access an aliased {@link PrivateKey} in the KeyStore. |  | Character[]
+| *camel.component.crypto.configuration.password* | Sets the password used to access an aliased {@link PrivateKey} in the KeyStore. |  | String
 | *camel.component.crypto.configuration.private-key* | Set the PrivateKey that should be used to sign the exchange |  | PrivateKey
 | *camel.component.crypto.configuration.private-key-name* | Sets the reference name for a PrivateKey that can be found in the registry. |  | String
 | *camel.component.crypto.configuration.provider* | Set the id of the security provider that provides the configured {@link Signature} algorithm. |  | String
@@ -77,14 +79,14 @@ The component supports 34 options, which are listed below.
 | *camel.component.crypto.configuration.secure-random* | Set the SecureRandom used to initialize the Signature service |  | SecureRandom
 | *camel.component.crypto.configuration.secure-random-name* | Sets the reference name for a SecureRandom that can be found in the registry. |  | String
 | *camel.component.crypto.configuration.signature-header-name* | Set the name of the message header that should be used to store the base64 encoded signature. This defaults to 'CamelDigitalSignature' |  | String
-| *camel.component.crypto.enabled* | Enable crypto component | true | Boolean
-| *camel.component.crypto.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
-| *camel.dataformat.crypto.algorithm* | The JCE algorithm name indicating the cryptographic algorithm that will be used. Is by default DES/CBC/PKCS5Padding. | DES/CBC/PKCS5Padding | String
+| *camel.component.crypto.enabled* | Whether to enable auto configuration of the crypto component. This is enabled by default. |  | Boolean
+| *camel.component.crypto.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+| *camel.dataformat.crypto.algorithm* | The JCE algorithm name indicating the cryptographic algorithm that will be used. |  | String
 | *camel.dataformat.crypto.algorithm-parameter-ref* | A JCE AlgorithmParameterSpec used to initialize the Cipher. Will lookup the type using the given name as a java.security.spec.AlgorithmParameterSpec type. |  | String
 | *camel.dataformat.crypto.buffersize* | The size of the buffer used in the signature process. |  | Integer
 | *camel.dataformat.crypto.content-type-header* | Whether the data format should set the Content-Type header with the type from the data format if the data format is capable of doing so. For example application/xml for data formats marshalling to XML, or application/json for data formats marshalling to JSon etc. | false | Boolean
 | *camel.dataformat.crypto.crypto-provider* | The name of the JCE Security Provider that should be used. |  | String
-| *camel.dataformat.crypto.enabled* | Enable crypto dataformat | true | Boolean
+| *camel.dataformat.crypto.enabled* | Whether to enable auto configuration of the crypto data format. This is enabled by default. |  | Boolean
 | *camel.dataformat.crypto.init-vector-ref* | Refers to a byte array containing the Initialization Vector that will be used to initialize the Cipher. |  | String
 | *camel.dataformat.crypto.inline* | Flag indicating that the configured IV should be inlined into the encrypted data stream. Is by default false. | false | Boolean
 | *camel.dataformat.crypto.key-ref* | Refers to the secret key to lookup from the register to use. |  | String
@@ -95,7 +97,7 @@ The component supports 34 options, which are listed below.
 ND
 
 
-### Basic Usage
+== Basic Usage
 
 At its most basic all that is required to encrypt/decrypt an exchange is a shared secret key.
 If one or more instances of the Crypto data format are configured with this key the format can
@@ -136,7 +138,7 @@ In Spring the dataformat is configured first and then used in routes
 ----------------------------------------------------------
 
 
-### Specifying the Encryption Algorithm
+== Specifying the Encryption Algorithm
 
 Changing the algorithm is a matter of supplying the JCE algorithm name. If you change the algorithm you will need to use a compatible key.
 
@@ -158,7 +160,7 @@ from("direct:hmac-algorithm")
 A list of the available algorithms in Java 7 is available via the Java Cryptography Architecture Standard Algorithm Name Documentation.
 
 
-### Specifying an Initialization Vector
+== Specifying an Initialization Vector
 
 Some crypto algorithms, particularly block algorithms, require configuration with an initial block of data known as an Initialization Vector.
 In the JCE this is passed as an AlgorithmParameterSpec when the Cipher is initialized.
@@ -226,7 +228,7 @@ For more information of the use of Initialization Vectors, consult
 * http://en.wikipedia.org/wiki/Block_cipher_modes_of_operation
 
 
-### Hashed Message Authentication Codes (HMAC)
+== Hashed Message Authentication Codes (HMAC)
 To avoid attacks against the encrypted data while it is in transit the CryptoDataFormat can also calculate a Message Authentication
 Code for the encrypted exchange contents based on a configurable MAC algorithm. The calculated HMAC is appended to the stream after encryption.
 It is separated from the stream in the decryption phase. The MAC is recalculated and verified against the transmitted version to insure nothing
@@ -279,7 +281,7 @@ or with spring.
 ----------------------------------------------------------
 
 
-### Supplying Keys Dynamically
+== Supplying Keys Dynamically
 
 When using a Recipient list or similar EIP the recipient of an exchange can vary dynamically.
 Using the same key across all recipients may neither be feasible or desirable. It would be useful to be able to specify
@@ -320,7 +322,7 @@ or with spring.
 ----------------------------------------------------------
 
 
-### Dependencies
+== Dependencies
 
 To use the xref:crypto-component.adoc[Crypto] dataformat in your camel routes you
 need to add the following dependency to your pom.
@@ -335,8 +337,3 @@ need to add the following dependency to your pom.
 </dependency>
 ----------------------------------------------------------
 
-### See Also
-
-* Data Format
-* Crypto (Digital Signatures)
-* http://www.bouncycastle.org/java.html[http://www.bouncycastle.org/java.html]

@@ -50,6 +50,7 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
         this.otherwise = otherwise;
     }
 
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         Iterator<Processor> processors = next().iterator();
 
@@ -134,6 +135,7 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
         return builder.toString();
     }
 
+    @Override
     public String getTraceLabel() {
         return "choice";
     }
@@ -163,6 +165,7 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
         notFiltered = 0;
     }
 
+    @Override
     public List<Processor> next() {
         if (!hasNext()) {
             return null;
@@ -177,22 +180,27 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
         return answer;
     }
 
+    @Override
     public boolean hasNext() {
         return otherwise != null || (filters != null && !filters.isEmpty());
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }
 
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(filters, otherwise);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(otherwise, filters);
     }

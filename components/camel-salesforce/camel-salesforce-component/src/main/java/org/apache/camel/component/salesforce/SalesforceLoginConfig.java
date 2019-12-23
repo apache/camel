@@ -35,7 +35,8 @@ public class SalesforceLoginConfig {
     private String userName;
     private String password;
     // allow lazy login into Salesforce
-    // note that login issues may not surface until a message needs to be processed
+    // note that login issues may not surface until a message needs to be
+    // processed
     private boolean lazyLogin;
 
     private KeyStoreParameters keystore;
@@ -45,8 +46,8 @@ public class SalesforceLoginConfig {
         lazyLogin = false;
     }
 
-    private SalesforceLoginConfig(AuthenticationType type, String loginUrl, String clientId, String clientSecret, String refreshToken,
-        String userName, String password, boolean lazyLogin, KeyStoreParameters keystore) {
+    private SalesforceLoginConfig(AuthenticationType type, String loginUrl, String clientId, String clientSecret, String refreshToken, String userName, String password,
+                                  boolean lazyLogin, KeyStoreParameters keystore) {
         this.type = type;
         this.loginUrl = loginUrl;
         this.clientId = clientId;
@@ -58,13 +59,11 @@ public class SalesforceLoginConfig {
         this.keystore = keystore;
     }
 
-    public SalesforceLoginConfig(String loginUrl, String clientId, String clientSecret, String userName,
-        String password, boolean lazyLogin) {
+    public SalesforceLoginConfig(String loginUrl, String clientId, String clientSecret, String userName, String password, boolean lazyLogin) {
         this(AuthenticationType.USERNAME_PASSWORD, loginUrl, clientId, clientSecret, null, userName, password, lazyLogin, null);
     }
 
-    public SalesforceLoginConfig(String loginUrl, String clientId, String clientSecret, String refreshToken,
-        boolean lazyLogin) {
+    public SalesforceLoginConfig(String loginUrl, String clientId, String clientSecret, String refreshToken, boolean lazyLogin) {
         this(AuthenticationType.REFRESH_TOKEN, loginUrl, clientId, clientSecret, refreshToken, null, null, lazyLogin, null);
     }
 
@@ -114,8 +113,8 @@ public class SalesforceLoginConfig {
     }
 
     /**
-     * Keystore parameters for keystore containing certificate and private key needed for OAuth 2.0 JWT Bearer Token
-     * Flow.
+     * Keystore parameters for keystore containing certificate and private key
+     * needed for OAuth 2.0 JWT Bearer Token Flow.
      */
     public void setKeystore(final KeyStoreParameters keystore) {
         this.keystore = keystore;
@@ -160,16 +159,14 @@ public class SalesforceLoginConfig {
 
         if (hasPassword && hasRefreshToken || hasPassword && hasKeystore || hasRefreshToken && hasKeystore) {
             throw new IllegalArgumentException("The provided authentication configuration can be used in multiple ways"
-                + " for instance both with username/password and refresh_token. Either remove some of the configuration"
-                + " options, so that authentication method can be auto-determined or explicitly set the authentication"
-                + " type.");
+                                               + " for instance both with username/password and refresh_token. Either remove some of the configuration"
+                                               + " options, so that authentication method can be auto-determined or explicitly set the authentication" + " type.");
         }
 
-        throw new IllegalArgumentException(
-            "You must specify parameters aligned with one of the supported authentication methods:"
-                + " for username and password authentication: userName, password, clientSecret;"
-                + " for refresh token authentication: refreshToken, clientSecret;"
-                + " for JWT: userName, keystore. And for every one of those loginUrl and clientId must be specified also.");
+        throw new IllegalArgumentException("You must specify parameters aligned with one of the supported authentication methods:"
+                                           + " for username and password authentication: userName, password, clientSecret;"
+                                           + " for refresh token authentication: refreshToken, clientSecret;"
+                                           + " for JWT: userName, keystore. And for every one of those loginUrl and clientId must be specified also.");
     }
 
     public void setType(AuthenticationType type) {
@@ -203,8 +200,8 @@ public class SalesforceLoginConfig {
     }
 
     /**
-     * Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth token retrieval or generation is not
-     * done until the first API call
+     * Flag to enable/disable lazy OAuth, default is false. When enabled, OAuth
+     * token retrieval or generation is not done until the first API call
      */
     public void setLazyLogin(boolean lazyLogin) {
         this.lazyLogin = lazyLogin;
@@ -214,7 +211,7 @@ public class SalesforceLoginConfig {
         ObjectHelper.notNull(loginUrl, "loginUrl");
         ObjectHelper.notNull(clientId, "clientId");
 
-        final AuthenticationType type = getType(); 
+        final AuthenticationType type = getType();
 
         switch (type) {
         case USERNAME_PASSWORD:
@@ -237,9 +234,8 @@ public class SalesforceLoginConfig {
 
     @Override
     public String toString() {
-        return "SalesforceLoginConfig[" + "instanceUrl= '" + instanceUrl + "', loginUrl='" + loginUrl + '\'' + ","
-            + "clientId='" + clientId + '\'' + ", clientSecret='********'" + ", refreshToken='" + refreshToken + '\''
-            + ", userName='" + userName + '\'' + ", password=********'" + password + '\'' + ", keystore=********'"
-            + keystore + '\'' + ", lazyLogin=" + lazyLogin + ']';
+        return "SalesforceLoginConfig[" + "instanceUrl= '" + instanceUrl + "', loginUrl='" + loginUrl + '\'' + "," + "clientId='" + clientId + '\'' + ", clientSecret='********'"
+               + ", refreshToken='" + refreshToken + '\'' + ", userName='" + userName + '\'' + ", password=********'" + password + '\'' + ", keystore=********'" + keystore + '\''
+               + ", lazyLogin=" + lazyLogin + ']';
     }
 }

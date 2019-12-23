@@ -39,6 +39,45 @@ public interface LambdaEndpointBuilderFactory {
             return (AdvancedLambdaEndpointBuilder) this;
         }
         /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LambdaEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default LambdaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * The operation to perform. It can be listFunctions, getFunction,
          * createFunction, deleteFunction or invokeFunction.
          * 
@@ -50,7 +89,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: producer
          */
         default LambdaEndpointBuilder operation(LambdaOperations operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -65,7 +104,43 @@ public interface LambdaEndpointBuilderFactory {
          * Group: producer
          */
         default LambdaEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Lambda client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: producer
+         */
+        default LambdaEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Lambda client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default LambdaEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * Amazon AWS Region. When using this parameter, the configuration will
+         * expect the capitalized name of the region (for example AP_EAST_1)
+         * You'll need to use the name Regions.EU_WEST_1.name().
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default LambdaEndpointBuilder region(String region) {
+            doSetProperty("region", region);
             return this;
         }
         /**
@@ -76,7 +151,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -87,7 +162,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -99,7 +174,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -110,7 +185,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: security
          */
         default LambdaEndpointBuilder accessKey(String accessKey) {
-            setProperty("accessKey", accessKey);
+            doSetProperty("accessKey", accessKey);
             return this;
         }
         /**
@@ -121,7 +196,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: security
          */
         default LambdaEndpointBuilder secretKey(String secretKey) {
-            setProperty("secretKey", secretKey);
+            doSetProperty("secretKey", secretKey);
             return this;
         }
     }
@@ -145,7 +220,7 @@ public interface LambdaEndpointBuilderFactory {
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 Object awsLambdaClient) {
-            setProperty("awsLambdaClient", awsLambdaClient);
+            doSetProperty("awsLambdaClient", awsLambdaClient);
             return this;
         }
         /**
@@ -158,7 +233,7 @@ public interface LambdaEndpointBuilderFactory {
          */
         default AdvancedLambdaEndpointBuilder awsLambdaClient(
                 String awsLambdaClient) {
-            setProperty("awsLambdaClient", awsLambdaClient);
+            doSetProperty("awsLambdaClient", awsLambdaClient);
             return this;
         }
         /**
@@ -171,7 +246,7 @@ public interface LambdaEndpointBuilderFactory {
          */
         default AdvancedLambdaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -184,7 +259,7 @@ public interface LambdaEndpointBuilderFactory {
          */
         default AdvancedLambdaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -196,7 +271,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -208,7 +283,7 @@ public interface LambdaEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -233,13 +308,21 @@ public interface LambdaEndpointBuilderFactory {
         publishVersion,
         listVersions;
     }
+
+    /**
+     * Proxy enum for <code>com.amazonaws.Protocol</code> enum.
+     */
+    enum Protocol {
+        http,
+        https;
+    }
     /**
      * AWS Lambda (camel-aws-lambda)
      * The aws-lambda is used for managing and invoking functions from Amazon
      * Lambda.
      * 
      * Category: cloud,computing,serverless
-     * Available as of version: 2.20
+     * Since: 2.20
      * Maven coordinates: org.apache.camel:camel-aws-lambda
      * 
      * Syntax: <code>aws-lambda:function</code>
@@ -247,7 +330,7 @@ public interface LambdaEndpointBuilderFactory {
      * Path parameter: function (required)
      * Name of the Lambda function.
      */
-    default LambdaEndpointBuilder lambda(String path) {
+    default LambdaEndpointBuilder awsLambda(String path) {
         class LambdaEndpointBuilderImpl extends AbstractEndpointBuilder implements LambdaEndpointBuilder, AdvancedLambdaEndpointBuilder {
             public LambdaEndpointBuilderImpl(String path) {
                 super("aws-lambda", path);

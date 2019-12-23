@@ -52,11 +52,13 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         return (SpringIntegrationEndpoint) super.getEndpoint();
     }
 
+    @Override
     protected void doStop() throws Exception {
         inputChannel.unsubscribe(this);
         super.doStop();
     }
 
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
 
@@ -90,6 +92,7 @@ public class SpringIntegrationConsumer  extends DefaultConsumer implements Messa
         inputChannel.subscribe(this);
     }
 
+    @Override
     public void handleMessage(org.springframework.messaging.Message<?> siInMessage) {
         // we received a message from spring integration
         // wrap that in a Camel Exchange and process it

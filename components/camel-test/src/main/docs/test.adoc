@@ -1,12 +1,12 @@
 [[Test]]
-== Test Module
+= Test Module
 
 The `camel-test` module is used for unit testing Camel.
 
 The class `org.apache.camel.test.junit4.CamelTestSupport` provides a base JUnit class which you would extend
 and implement your Camel unit test.
 
-=== Simple unit test example
+== Simple unit test example
 
 As shown below is a basic junit test which uses `camel-test`. The `createRouteBuilder` method is used
 for build the routes to be tested. Then the methods with `@Test` annotations are JUnit test methods which

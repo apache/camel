@@ -21,19 +21,20 @@ import java.util.Map;
 
 import javax.net.ssl.SSLHandshakeException;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mail.MailTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Test of integration between the mail component and JSSE Configuration Utility.
- * This test does not easily automate.  This test is therefore ignored and the
- * source is maintained here for easier development in the future.
+ * Test of integration between the mail component and JSSE Configuration
+ * Utility. This test does not easily automate. This test is therefore ignored
+ * and the source is maintained here for easier development in the future.
  */
 @Ignore
 public class SslContextParametersMailRouteTest extends CamelTestSupport {
@@ -43,22 +44,23 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
     private String imapHost = "imap.gmail.com";
     private String smtpHost = "smtp.gmail.com";
     private String password = "PASSWORD";
-    
+
+    @BindToRegistry("sslContextParameters")
+    private SSLContextParameters params = MailTestHelper.createSslContextParameters();
+
     @Test
     public void testSendAndReceiveMails() throws Exception {
-        
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                
+
                 from("imaps://" + imapHost + "?username=" + username + "&password=" + password
-                        + "&delete=false&unseen=true&fetchSize=1&consumer.useFixedDelay=true&consumer.initialDelay=100&consumer.delay=100")
-                     .to("mock:in");
-                
-                from("direct:in")
-                    .to("smtps://" + smtpHost + "?username=" + username + "&password=" + password);
+                     + "&delete=false&unseen=true&fetchSize=1&useFixedDelay=true&initialDelay=100&delay=100").to("mock:in");
+
+                from("direct:in").to("smtps://" + smtpHost + "?username=" + username + "&password=" + password);
             }
         });
-        
+
         context.start();
 
         MockEndpoint resultEndpoint = getMockEndpoint("mock:in");
@@ -69,24 +71,22 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         headers.put("From", email);
         headers.put("Reply-to", email);
         headers.put("Subject", "SSL/TLS Test");
-        
+
         template.sendBodyAndHeaders("direct:in", "Test Email Body", headers);
 
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     @Test
     public void testSendAndReceiveMailsWithCustomTrustStore() throws Exception {
-        
+
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                
-                from("direct:in")
-                    .to("smtps://" + smtpHost + "?username=" + username + "&password=" + password
-                        + "&sslContextParameters=#sslContextParameters");
+
+                from("direct:in").to("smtps://" + smtpHost + "?username=" + username + "&password=" + password + "&sslContextParameters=#sslContextParameters");
             }
         });
-        
+
         context.start();
 
         Map<String, Object> headers = new HashMap<>();
@@ -94,30 +94,16 @@ public class SslContextParametersMailRouteTest extends CamelTestSupport {
         headers.put("From", email);
         headers.put("Reply-to", email);
         headers.put("Subject", "SSL/TLS Test");
-        
+
         try {
             template.sendBodyAndHeaders("direct:in", "Test Email Body", headers);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             assertTrue(e.getCause().getCause() instanceof SSLHandshakeException);
-            assertTrue(e.getCause().getCause().getMessage().contains(
-                    "unable to find valid certification path to requested target"));
+            assertTrue(e.getCause().getCause().getMessage().contains("unable to find valid certification path to requested target"));
         }
     }
-    
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-        
-        addSslContextParametersToRegistry(reg);
-    
-        return reg;
-    }
-    
-    protected void addSslContextParametersToRegistry(JndiRegistry registry) {
-        registry.bind("sslContextParameters", MailTestHelper.createSslContextParameters());
-    }
-    
+
     /**
      * Stop Camel startup.
      */

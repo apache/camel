@@ -17,7 +17,7 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.List;
-import java.util.Properties;
+import java.util.Map;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.EndpointConsumerBuilder;
@@ -54,7 +54,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder cacheConfiguration(
                 Object cacheConfiguration) {
-            setProperty("cacheConfiguration", cacheConfiguration);
+            doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
         }
         /**
@@ -67,34 +67,33 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder cacheConfiguration(
                 String cacheConfiguration) {
-            setProperty("cacheConfiguration", cacheConfiguration);
+            doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
         }
         /**
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: <code>java.util.Map</code> type.
          * 
          * Group: common
          */
         default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
-                Properties cacheConfigurationProperties) {
-            setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
+                Map cacheConfigurationProperties) {
+            doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
         /**
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a <code>java.util.Map</code> type.
          * 
          * Group: common
          */
         default JCacheEndpointConsumerBuilder cacheConfigurationProperties(
                 String cacheConfigurationProperties) {
-            setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
+            doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
         /**
@@ -107,7 +106,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder cachingProvider(
                 String cachingProvider) {
-            setProperty("cachingProvider", cachingProvider);
+            doSetProperty("cachingProvider", cachingProvider);
             return this;
         }
         /**
@@ -119,7 +118,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -131,7 +130,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder managementEnabled(
                 boolean managementEnabled) {
-            setProperty("managementEnabled", managementEnabled);
+            doSetProperty("managementEnabled", managementEnabled);
             return this;
         }
         /**
@@ -143,7 +142,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder managementEnabled(
                 String managementEnabled) {
-            setProperty("managementEnabled", managementEnabled);
+            doSetProperty("managementEnabled", managementEnabled);
             return this;
         }
         /**
@@ -154,7 +153,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointConsumerBuilder readThrough(boolean readThrough) {
-            setProperty("readThrough", readThrough);
+            doSetProperty("readThrough", readThrough);
             return this;
         }
         /**
@@ -165,7 +164,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointConsumerBuilder readThrough(String readThrough) {
-            setProperty("readThrough", readThrough);
+            doSetProperty("readThrough", readThrough);
             return this;
         }
         /**
@@ -177,7 +176,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder statisticsEnabled(
                 boolean statisticsEnabled) {
-            setProperty("statisticsEnabled", statisticsEnabled);
+            doSetProperty("statisticsEnabled", statisticsEnabled);
             return this;
         }
         /**
@@ -189,7 +188,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder statisticsEnabled(
                 String statisticsEnabled) {
-            setProperty("statisticsEnabled", statisticsEnabled);
+            doSetProperty("statisticsEnabled", statisticsEnabled);
             return this;
         }
         /**
@@ -200,7 +199,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointConsumerBuilder storeByValue(boolean storeByValue) {
-            setProperty("storeByValue", storeByValue);
+            doSetProperty("storeByValue", storeByValue);
             return this;
         }
         /**
@@ -211,7 +210,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointConsumerBuilder storeByValue(String storeByValue) {
-            setProperty("storeByValue", storeByValue);
+            doSetProperty("storeByValue", storeByValue);
             return this;
         }
         /**
@@ -222,7 +221,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointConsumerBuilder writeThrough(boolean writeThrough) {
-            setProperty("writeThrough", writeThrough);
+            doSetProperty("writeThrough", writeThrough);
             return this;
         }
         /**
@@ -233,7 +232,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointConsumerBuilder writeThrough(String writeThrough) {
-            setProperty("writeThrough", writeThrough);
+            doSetProperty("writeThrough", writeThrough);
             return this;
         }
         /**
@@ -251,7 +250,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -269,35 +268,21 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
-         * Events a consumer should filter. If using filteredEvents option, then
-         * eventFilters one will be ignored.
+         * Events a consumer should filter (multiple events can be separated by
+         * comma). If using filteredEvents option, then eventFilters one will be
+         * ignored.
          * 
-         * The option is a:
-         * <code>java.util.List&lt;javax.cache.event.EventType&gt;</code> type.
-         * 
-         * Group: consumer
-         */
-        default JCacheEndpointConsumerBuilder filteredEvents(
-                List<EventType> filteredEvents) {
-            setProperty("filteredEvents", filteredEvents);
-            return this;
-        }
-        /**
-         * Events a consumer should filter. If using filteredEvents option, then
-         * eventFilters one will be ignored.
-         * 
-         * The option will be converted to a
-         * <code>java.util.List&lt;javax.cache.event.EventType&gt;</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: consumer
          */
         default JCacheEndpointConsumerBuilder filteredEvents(
                 String filteredEvents) {
-            setProperty("filteredEvents", filteredEvents);
+            doSetProperty("filteredEvents", filteredEvents);
             return this;
         }
         /**
@@ -309,7 +294,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder oldValueRequired(
                 boolean oldValueRequired) {
-            setProperty("oldValueRequired", oldValueRequired);
+            doSetProperty("oldValueRequired", oldValueRequired);
             return this;
         }
         /**
@@ -321,7 +306,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointConsumerBuilder oldValueRequired(
                 String oldValueRequired) {
-            setProperty("oldValueRequired", oldValueRequired);
+            doSetProperty("oldValueRequired", oldValueRequired);
             return this;
         }
         /**
@@ -332,7 +317,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: consumer
          */
         default JCacheEndpointConsumerBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -343,7 +328,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: consumer
          */
         default JCacheEndpointConsumerBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -368,7 +353,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder eventFilters(
                 List<Object> eventFilters) {
-            setProperty("eventFilters", eventFilters);
+            doSetProperty("eventFilters", eventFilters);
             return this;
         }
         /**
@@ -382,7 +367,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder eventFilters(
                 String eventFilters) {
-            setProperty("eventFilters", eventFilters);
+            doSetProperty("eventFilters", eventFilters);
             return this;
         }
         /**
@@ -398,7 +383,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -414,7 +399,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -426,7 +411,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -439,7 +424,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -452,7 +437,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -465,7 +450,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -478,7 +463,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheLoaderFactory(
                 Object cacheLoaderFactory) {
-            setProperty("cacheLoaderFactory", cacheLoaderFactory);
+            doSetProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
         }
         /**
@@ -491,7 +476,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheLoaderFactory(
                 String cacheLoaderFactory) {
-            setProperty("cacheLoaderFactory", cacheLoaderFactory);
+            doSetProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
         }
         /**
@@ -504,7 +489,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheWriterFactory(
                 Object cacheWriterFactory) {
-            setProperty("cacheWriterFactory", cacheWriterFactory);
+            doSetProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
         }
         /**
@@ -517,7 +502,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder cacheWriterFactory(
                 String cacheWriterFactory) {
-            setProperty("cacheWriterFactory", cacheWriterFactory);
+            doSetProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
         }
         /**
@@ -530,7 +515,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder createCacheIfNotExists(
                 boolean createCacheIfNotExists) {
-            setProperty("createCacheIfNotExists", createCacheIfNotExists);
+            doSetProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
         }
         /**
@@ -543,7 +528,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder createCacheIfNotExists(
                 String createCacheIfNotExists) {
-            setProperty("createCacheIfNotExists", createCacheIfNotExists);
+            doSetProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
         }
         /**
@@ -556,7 +541,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder expiryPolicyFactory(
                 Object expiryPolicyFactory) {
-            setProperty("expiryPolicyFactory", expiryPolicyFactory);
+            doSetProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
         }
         /**
@@ -569,7 +554,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder expiryPolicyFactory(
                 String expiryPolicyFactory) {
-            setProperty("expiryPolicyFactory", expiryPolicyFactory);
+            doSetProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
         }
         /**
@@ -582,7 +567,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder lookupProviders(
                 boolean lookupProviders) {
-            setProperty("lookupProviders", lookupProviders);
+            doSetProperty("lookupProviders", lookupProviders);
             return this;
         }
         /**
@@ -595,7 +580,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointConsumerBuilder lookupProviders(
                 String lookupProviders) {
-            setProperty("lookupProviders", lookupProviders);
+            doSetProperty("lookupProviders", lookupProviders);
             return this;
         }
     }
@@ -619,7 +604,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder cacheConfiguration(
                 Object cacheConfiguration) {
-            setProperty("cacheConfiguration", cacheConfiguration);
+            doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
         }
         /**
@@ -632,34 +617,33 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder cacheConfiguration(
                 String cacheConfiguration) {
-            setProperty("cacheConfiguration", cacheConfiguration);
+            doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
         }
         /**
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: <code>java.util.Map</code> type.
          * 
          * Group: common
          */
         default JCacheEndpointProducerBuilder cacheConfigurationProperties(
-                Properties cacheConfigurationProperties) {
-            setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
+                Map cacheConfigurationProperties) {
+            doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
         /**
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a <code>java.util.Map</code> type.
          * 
          * Group: common
          */
         default JCacheEndpointProducerBuilder cacheConfigurationProperties(
                 String cacheConfigurationProperties) {
-            setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
+            doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
         /**
@@ -672,7 +656,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder cachingProvider(
                 String cachingProvider) {
-            setProperty("cachingProvider", cachingProvider);
+            doSetProperty("cachingProvider", cachingProvider);
             return this;
         }
         /**
@@ -684,7 +668,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder configurationUri(
                 String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -696,7 +680,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder managementEnabled(
                 boolean managementEnabled) {
-            setProperty("managementEnabled", managementEnabled);
+            doSetProperty("managementEnabled", managementEnabled);
             return this;
         }
         /**
@@ -708,7 +692,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder managementEnabled(
                 String managementEnabled) {
-            setProperty("managementEnabled", managementEnabled);
+            doSetProperty("managementEnabled", managementEnabled);
             return this;
         }
         /**
@@ -719,7 +703,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointProducerBuilder readThrough(boolean readThrough) {
-            setProperty("readThrough", readThrough);
+            doSetProperty("readThrough", readThrough);
             return this;
         }
         /**
@@ -730,7 +714,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointProducerBuilder readThrough(String readThrough) {
-            setProperty("readThrough", readThrough);
+            doSetProperty("readThrough", readThrough);
             return this;
         }
         /**
@@ -742,7 +726,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder statisticsEnabled(
                 boolean statisticsEnabled) {
-            setProperty("statisticsEnabled", statisticsEnabled);
+            doSetProperty("statisticsEnabled", statisticsEnabled);
             return this;
         }
         /**
@@ -754,7 +738,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder statisticsEnabled(
                 String statisticsEnabled) {
-            setProperty("statisticsEnabled", statisticsEnabled);
+            doSetProperty("statisticsEnabled", statisticsEnabled);
             return this;
         }
         /**
@@ -765,7 +749,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointProducerBuilder storeByValue(boolean storeByValue) {
-            setProperty("storeByValue", storeByValue);
+            doSetProperty("storeByValue", storeByValue);
             return this;
         }
         /**
@@ -776,7 +760,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointProducerBuilder storeByValue(String storeByValue) {
-            setProperty("storeByValue", storeByValue);
+            doSetProperty("storeByValue", storeByValue);
             return this;
         }
         /**
@@ -787,7 +771,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointProducerBuilder writeThrough(boolean writeThrough) {
-            setProperty("writeThrough", writeThrough);
+            doSetProperty("writeThrough", writeThrough);
             return this;
         }
         /**
@@ -798,7 +782,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointProducerBuilder writeThrough(String writeThrough) {
-            setProperty("writeThrough", writeThrough);
+            doSetProperty("writeThrough", writeThrough);
             return this;
         }
         /**
@@ -811,7 +795,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: producer
          */
         default JCacheEndpointProducerBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -831,7 +815,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -851,7 +835,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -875,7 +859,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -888,7 +872,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -901,7 +885,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder cacheLoaderFactory(
                 Object cacheLoaderFactory) {
-            setProperty("cacheLoaderFactory", cacheLoaderFactory);
+            doSetProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
         }
         /**
@@ -914,7 +898,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder cacheLoaderFactory(
                 String cacheLoaderFactory) {
-            setProperty("cacheLoaderFactory", cacheLoaderFactory);
+            doSetProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
         }
         /**
@@ -927,7 +911,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder cacheWriterFactory(
                 Object cacheWriterFactory) {
-            setProperty("cacheWriterFactory", cacheWriterFactory);
+            doSetProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
         }
         /**
@@ -940,7 +924,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder cacheWriterFactory(
                 String cacheWriterFactory) {
-            setProperty("cacheWriterFactory", cacheWriterFactory);
+            doSetProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
         }
         /**
@@ -953,7 +937,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder createCacheIfNotExists(
                 boolean createCacheIfNotExists) {
-            setProperty("createCacheIfNotExists", createCacheIfNotExists);
+            doSetProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
         }
         /**
@@ -966,7 +950,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder createCacheIfNotExists(
                 String createCacheIfNotExists) {
-            setProperty("createCacheIfNotExists", createCacheIfNotExists);
+            doSetProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
         }
         /**
@@ -979,7 +963,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder expiryPolicyFactory(
                 Object expiryPolicyFactory) {
-            setProperty("expiryPolicyFactory", expiryPolicyFactory);
+            doSetProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
         }
         /**
@@ -992,7 +976,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder expiryPolicyFactory(
                 String expiryPolicyFactory) {
-            setProperty("expiryPolicyFactory", expiryPolicyFactory);
+            doSetProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
         }
         /**
@@ -1005,7 +989,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder lookupProviders(
                 boolean lookupProviders) {
-            setProperty("lookupProviders", lookupProviders);
+            doSetProperty("lookupProviders", lookupProviders);
             return this;
         }
         /**
@@ -1018,7 +1002,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointProducerBuilder lookupProviders(
                 String lookupProviders) {
-            setProperty("lookupProviders", lookupProviders);
+            doSetProperty("lookupProviders", lookupProviders);
             return this;
         }
     }
@@ -1042,7 +1026,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointBuilder cacheConfiguration(
                 Object cacheConfiguration) {
-            setProperty("cacheConfiguration", cacheConfiguration);
+            doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
         }
         /**
@@ -1055,34 +1039,33 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointBuilder cacheConfiguration(
                 String cacheConfiguration) {
-            setProperty("cacheConfiguration", cacheConfiguration);
+            doSetProperty("cacheConfiguration", cacheConfiguration);
             return this;
         }
         /**
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option is a: <code>java.util.Properties</code> type.
+         * The option is a: <code>java.util.Map</code> type.
          * 
          * Group: common
          */
         default JCacheEndpointBuilder cacheConfigurationProperties(
-                Properties cacheConfigurationProperties) {
-            setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
+                Map cacheConfigurationProperties) {
+            doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
         /**
          * The Properties for the javax.cache.spi.CachingProvider to create the
          * CacheManager.
          * 
-         * The option will be converted to a <code>java.util.Properties</code>
-         * type.
+         * The option will be converted to a <code>java.util.Map</code> type.
          * 
          * Group: common
          */
         default JCacheEndpointBuilder cacheConfigurationProperties(
                 String cacheConfigurationProperties) {
-            setProperty("cacheConfigurationProperties", cacheConfigurationProperties);
+            doSetProperty("cacheConfigurationProperties", cacheConfigurationProperties);
             return this;
         }
         /**
@@ -1094,7 +1077,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder cachingProvider(String cachingProvider) {
-            setProperty("cachingProvider", cachingProvider);
+            doSetProperty("cachingProvider", cachingProvider);
             return this;
         }
         /**
@@ -1105,7 +1088,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder configurationUri(String configurationUri) {
-            setProperty("configurationUri", configurationUri);
+            doSetProperty("configurationUri", configurationUri);
             return this;
         }
         /**
@@ -1117,7 +1100,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointBuilder managementEnabled(
                 boolean managementEnabled) {
-            setProperty("managementEnabled", managementEnabled);
+            doSetProperty("managementEnabled", managementEnabled);
             return this;
         }
         /**
@@ -1128,7 +1111,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder managementEnabled(String managementEnabled) {
-            setProperty("managementEnabled", managementEnabled);
+            doSetProperty("managementEnabled", managementEnabled);
             return this;
         }
         /**
@@ -1139,7 +1122,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder readThrough(boolean readThrough) {
-            setProperty("readThrough", readThrough);
+            doSetProperty("readThrough", readThrough);
             return this;
         }
         /**
@@ -1150,7 +1133,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder readThrough(String readThrough) {
-            setProperty("readThrough", readThrough);
+            doSetProperty("readThrough", readThrough);
             return this;
         }
         /**
@@ -1162,7 +1145,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default JCacheEndpointBuilder statisticsEnabled(
                 boolean statisticsEnabled) {
-            setProperty("statisticsEnabled", statisticsEnabled);
+            doSetProperty("statisticsEnabled", statisticsEnabled);
             return this;
         }
         /**
@@ -1173,7 +1156,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder statisticsEnabled(String statisticsEnabled) {
-            setProperty("statisticsEnabled", statisticsEnabled);
+            doSetProperty("statisticsEnabled", statisticsEnabled);
             return this;
         }
         /**
@@ -1184,7 +1167,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder storeByValue(boolean storeByValue) {
-            setProperty("storeByValue", storeByValue);
+            doSetProperty("storeByValue", storeByValue);
             return this;
         }
         /**
@@ -1195,7 +1178,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder storeByValue(String storeByValue) {
-            setProperty("storeByValue", storeByValue);
+            doSetProperty("storeByValue", storeByValue);
             return this;
         }
         /**
@@ -1206,7 +1189,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder writeThrough(boolean writeThrough) {
-            setProperty("writeThrough", writeThrough);
+            doSetProperty("writeThrough", writeThrough);
             return this;
         }
         /**
@@ -1217,7 +1200,7 @@ public interface JCacheEndpointBuilderFactory {
          * Group: common
          */
         default JCacheEndpointBuilder writeThrough(String writeThrough) {
-            setProperty("writeThrough", writeThrough);
+            doSetProperty("writeThrough", writeThrough);
             return this;
         }
     }
@@ -1241,7 +1224,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1254,7 +1237,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1267,7 +1250,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder cacheLoaderFactory(
                 Object cacheLoaderFactory) {
-            setProperty("cacheLoaderFactory", cacheLoaderFactory);
+            doSetProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
         }
         /**
@@ -1280,7 +1263,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder cacheLoaderFactory(
                 String cacheLoaderFactory) {
-            setProperty("cacheLoaderFactory", cacheLoaderFactory);
+            doSetProperty("cacheLoaderFactory", cacheLoaderFactory);
             return this;
         }
         /**
@@ -1293,7 +1276,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder cacheWriterFactory(
                 Object cacheWriterFactory) {
-            setProperty("cacheWriterFactory", cacheWriterFactory);
+            doSetProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
         }
         /**
@@ -1306,7 +1289,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder cacheWriterFactory(
                 String cacheWriterFactory) {
-            setProperty("cacheWriterFactory", cacheWriterFactory);
+            doSetProperty("cacheWriterFactory", cacheWriterFactory);
             return this;
         }
         /**
@@ -1319,7 +1302,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder createCacheIfNotExists(
                 boolean createCacheIfNotExists) {
-            setProperty("createCacheIfNotExists", createCacheIfNotExists);
+            doSetProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
         }
         /**
@@ -1332,7 +1315,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder createCacheIfNotExists(
                 String createCacheIfNotExists) {
-            setProperty("createCacheIfNotExists", createCacheIfNotExists);
+            doSetProperty("createCacheIfNotExists", createCacheIfNotExists);
             return this;
         }
         /**
@@ -1345,7 +1328,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder expiryPolicyFactory(
                 Object expiryPolicyFactory) {
-            setProperty("expiryPolicyFactory", expiryPolicyFactory);
+            doSetProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
         }
         /**
@@ -1358,7 +1341,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder expiryPolicyFactory(
                 String expiryPolicyFactory) {
-            setProperty("expiryPolicyFactory", expiryPolicyFactory);
+            doSetProperty("expiryPolicyFactory", expiryPolicyFactory);
             return this;
         }
         /**
@@ -1371,7 +1354,7 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder lookupProviders(
                 boolean lookupProviders) {
-            setProperty("lookupProviders", lookupProviders);
+            doSetProperty("lookupProviders", lookupProviders);
             return this;
         }
         /**
@@ -1384,19 +1367,9 @@ public interface JCacheEndpointBuilderFactory {
          */
         default AdvancedJCacheEndpointBuilder lookupProviders(
                 String lookupProviders) {
-            setProperty("lookupProviders", lookupProviders);
+            doSetProperty("lookupProviders", lookupProviders);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>javax.cache.event.EventType</code> enum.
-     */
-    enum EventType {
-        CREATED,
-        UPDATED,
-        REMOVED,
-        EXPIRED;
     }
     /**
      * JCache (camel-jcache)
@@ -1404,7 +1377,7 @@ public interface JCacheEndpointBuilderFactory {
      * JSR107/JCache as cache implementation.
      * 
      * Category: cache,datagrid,clustering
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-jcache
      * 
      * Syntax: <code>jcache:cacheName</code>
@@ -1412,7 +1385,7 @@ public interface JCacheEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default JCacheEndpointBuilder jCache(String path) {
+    default JCacheEndpointBuilder jcache(String path) {
         class JCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements JCacheEndpointBuilder, AdvancedJCacheEndpointBuilder {
             public JCacheEndpointBuilderImpl(String path) {
                 super("jcache", path);

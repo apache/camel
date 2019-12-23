@@ -1,10 +1,14 @@
 [[vm-component]]
-== VM Component
+= VM Component
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The VM component provides asynchronous
-http://www.eecs.harvard.edu/~mdw/proj/seda/[SEDA] behavior, exchanging
+https://en.wikipedia.org/wiki/Staged_event-driven_architecture[SEDA] behavior, exchanging
 messages on a
 http://java.sun.com/j2se/1.5.0/docs/api/java/util/concurrent/BlockingQueue.html[BlockingQueue]
 and invoking consumers in a separate thread pool.
@@ -16,7 +20,7 @@ this mechanism to communicate across web applications (provided that
 
 VM is an extension to the xref:seda-component.adoc[Seda] component.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -39,10 +43,10 @@ from("direct:foo").to("vm:bar");
 from("vm:bar?concurrentConsumers=5").to("file://output");
 ----
 
-=== Options
+== Options
 
 // component options: START
-The VM component supports 7 options, which are listed below.
+The VM component supports 9 options, which are listed below.
 
 
 
@@ -53,9 +57,11 @@ The VM component supports 7 options, which are listed below.
 | *concurrentConsumers* (consumer) | Sets the default number of concurrent threads processing exchanges. | 1 | int
 | *defaultQueueFactory* (advanced) | Sets the default queue factory. |  | BlockingQueueFactory
 | *defaultBlockWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | boolean
+| *defaultDiscardWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will be discarded. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will give up sending and continue, meaning that the message was not sent to the SEDA queue. | false | boolean
 | *defaultOfferTimeout* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue |  | long
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -69,7 +75,7 @@ vm:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +85,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (19 parameters):
+=== Query Parameters (20 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,6 +102,7 @@ with the following path and query parameters:
 | *purgeWhenStopping* (consumer) | Whether to purge the task queue when stopping the consumer/route. This allows to stop faster, as any pending messages on the queue is discarded. | false | boolean
 | *blockWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | boolean
 | *discardIfNoConsumers* (producer) | Whether the producer should discard the message (do not add the message to the queue), when sending to a queue with no active consumers. Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time. | false | boolean
+| *discardWhenFull* (producer) | Whether a thread that sends messages to a full SEDA queue will be discarded. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will give up sending and continue, meaning that the message was not sent to the SEDA queue. | false | boolean
 | *failIfNoConsumers* (producer) | Whether the producer should fail by throwing an exception, when sending to a queue with no active consumers. Only one of the options discardIfNoConsumers and failIfNoConsumers can be enabled at the same time. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *offerTimeout* (producer) | offerTimeout (in milliseconds) can be added to the block case when queue is full. You can disable timeout by using 0 or a negative value. |  | long
@@ -108,14 +115,14 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-vm-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -123,7 +130,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 8 options, which are listed below.
+The component supports 10 options, which are listed below.
 
 
 
@@ -131,20 +138,22 @@ The component supports 8 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.vm.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.vm.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.vm.concurrent-consumers* | Sets the default number of concurrent threads processing exchanges. | 1 | Integer
 | *camel.component.vm.default-block-when-full* | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will instead block and wait until the message can be accepted. | false | Boolean
+| *camel.component.vm.default-discard-when-full* | Whether a thread that sends messages to a full SEDA queue will be discarded. By default, an exception will be thrown stating that the queue is full. By enabling this option, the calling thread will give up sending and continue, meaning that the message was not sent to the SEDA queue. | false | Boolean
 | *camel.component.vm.default-offer-timeout* | Whether a thread that sends messages to a full SEDA queue will block until the queue's capacity is no longer exhausted. By default, an exception will be thrown stating that the queue is full. By enabling this option, where a configured timeout can be added to the block case. Utilizing the .offer(timeout) method of the underlining java queue |  | Long
 | *camel.component.vm.default-queue-factory* | Sets the default queue factory. The option is a org.apache.camel.component.seda.BlockingQueueFactory<org.apache.camel.Exchange> type. |  | String
 | *camel.component.vm.enabled* | Whether to enable auto configuration of the vm component. This is enabled by default. |  | Boolean
+| *camel.component.vm.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.vm.queue-size* | Sets the default maximum capacity of the SEDA queue (i.e., the number of messages it can hold). | 1000 | Integer
-| *camel.component.vm.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 See the xref:seda-component.adoc[Seda] component for options and other important
 usage details as the same rules apply to the xref:vm-component.adoc[Vm] component.
 
-=== Samples
+== Samples
 
 In the route below we send exchanges across CamelContext instances to a
 VM queue named `order.email`:
@@ -162,6 +171,3 @@ deployed in another `.war` application):
 from("vm:order.email").bean(MyOrderEmailSender.class);
 ----
 
-=== See Also
-
-* xref:seda-component.adoc[Seda]

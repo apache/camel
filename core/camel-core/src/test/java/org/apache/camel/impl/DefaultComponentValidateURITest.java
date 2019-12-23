@@ -51,7 +51,7 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
             // ok
         }
     }
-    
+
     @Test
     public void testTrailingAmpersand() throws Exception {
         try {
@@ -66,28 +66,13 @@ public class DefaultComponentValidateURITest extends ContextTestSupport {
     public void testScheduledPollConsumerOptions() throws Exception {
         // test that we support both notations of scheduled polling consumer options
 
-        // with consumer. prefix
-        Endpoint endpint = context.getEndpoint("file://target/data/foo?consumer.delay=1000");
-        assertNotNull(endpint);
-
-        endpint = context.getEndpoint("file://target/data/foo?consumer.delay=1000&consumer.initialDelay=5000");
-        assertNotNull(endpint);
-
-        endpint = context.getEndpoint("file://target/data/foo?consumer.delay=1000&consumer.initialDelay=5000&consumer.useFixedDelay=false");
-        assertNotNull(endpint);
-
-        // without consumer. prefix
-        endpint = context.getEndpoint("file://foo2?delay=1000");
+        Endpoint endpint = context.getEndpoint("file://foo2?delay=1000");
         assertNotNull(endpint);
 
         endpint = context.getEndpoint("file://foo2?delay=1000&initialDelay=5000");
         assertNotNull(endpint);
 
         endpint = context.getEndpoint("file://foo2?delay=1000&initialDelay=5000&useFixedDelay=false");
-        assertNotNull(endpint);
-
-        // combined with and without consumer. prefix
-        endpint = context.getEndpoint("file://foo3?delay=1000&consumer.initialDelay=5000&useFixedDelay=false");
         assertNotNull(endpint);
     }
 

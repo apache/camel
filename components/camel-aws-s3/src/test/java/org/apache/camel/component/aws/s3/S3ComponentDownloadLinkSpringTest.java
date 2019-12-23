@@ -35,7 +35,7 @@ public class S3ComponentDownloadLinkSpringTest extends CamelSpringTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint result;
-    
+
     @Test
     public void sendIn() throws Exception {
         result.expectedMessageCount(1);

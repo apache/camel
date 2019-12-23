@@ -97,6 +97,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected boolean allowNullBody;
     @UriParam(label = "producer", defaultValue = "true")
     protected boolean jailStartingDirectory = true;
+    @UriParam(label = "producer")
+    protected String appendChars;
 
     // consumer options
 
@@ -206,8 +208,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         super(endpointUri, component);
     }
 
+    @Override
     public abstract GenericFileConsumer<T> createConsumer(Processor processor) throws Exception;
 
+    @Override
     public abstract GenericFileProducer<T> createProducer() throws Exception;
 
     public abstract Exchange createExchange(GenericFile<T> file);
@@ -273,9 +277,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         try {
             FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder("META-INF/services/org/apache/camel/component/");
             log.trace("Using FactoryFinder: {}", finder);
-            factory = finder.findClass(getScheme(), "strategy.factory.", CamelContext.class);
-        } catch (ClassNotFoundException e) {
-            log.trace("'strategy.factory.class' not found", e);
+            factory = finder.findClass(getScheme(), "strategy.factory.", CamelContext.class).orElse(null);
         } catch (IOException e) {
             log.trace("No strategy factory defined in 'META-INF/services/org/apache/camel/component/'", e);
         }
@@ -659,6 +661,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         return idempotent != null;
     }
 
+    public Boolean getIdempotent() {
+        return idempotent;
+    }
+
     /**
      * Option to use the Idempotent Consumer EIP pattern to let Camel skip already processed files.
      * Will by default use a memory based LRUCache that holds 1000 entries. If noop=true then idempotent will be enabled
@@ -831,25 +837,23 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     /**
      * Used by consumer, to only poll the files if it has exclusive read-lock on the file (i.e. the file is not in-progress or being written).
      * Camel will wait until the file lock is granted.
-     * <p/>
-     * This option provides the build in strategies:
-     * <ul>
-     *     <li>none - No read lock is in use
-     *     <li>markerFile - Camel creates a marker file (fileName.camelLock) and then holds a lock on it. This option is not available for the FTP component
-     *     <li>changed - Changed is using file length/modification timestamp to detect whether the file is currently being copied or not. Will at least use 1 sec
+     *
+     * This option provides the build in strategies:\n\n
+     *     - none - No read lock is in use\n
+     *     - markerFile - Camel creates a marker file (fileName.camelLock) and then holds a lock on it. This option is not available for the FTP component\n
+     *     - changed - Changed is using file length/modification timestamp to detect whether the file is currently being copied or not. Will at least use 1 sec
      *     to determine this, so this option cannot consume files as fast as the others, but can be more reliable as the JDK IO API cannot
-     *     always determine whether a file is currently being used by another process. The option readLockCheckInterval can be used to set the check frequency.</li>
-     *     <li>fileLock - is for using java.nio.channels.FileLock. This option is not avail for Windows OS and the FTP component. This approach should be avoided when accessing
-     *     a remote file system via a mount/share unless that file system supports distributed file locks.</li>
-     *     <li>rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock.</li>
-     *     <li>idempotent - (only for file component) idempotent is for using a idempotentRepository as the read-lock.
-     *     This allows to use read locks that supports clustering if the idempotent repository implementation supports that.</li>
-     *     <li>idempotent-changed - (only for file component) idempotent-changed is for using a idempotentRepository and changed as the combined read-lock.
-     *     This allows to use read locks that supports clustering if the idempotent repository implementation supports that.</li>
-     *     <li>idempotent-rename - (only for file component) idempotent-rename is for using a idempotentRepository and rename as the combined read-lock.
-     *     This allows to use read locks that supports clustering if the idempotent repository implementation supports that.</li>
-     * </ul>
-     * Notice: The various read locks is not all suited to work in clustered mode, where concurrent consumers on different nodes is competing
+     *     always determine whether a file is currently being used by another process. The option readLockCheckInterval can be used to set the check frequency.\n
+     *     - fileLock - is for using java.nio.channels.FileLock. This option is not avail for Windows OS and the FTP component. This approach should be avoided when accessing
+     *     a remote file system via a mount/share unless that file system supports distributed file locks.\n
+     *     - rename - rename is for using a try to rename the file as a test if we can get exclusive read-lock.\n
+     *     - idempotent - (only for file component) idempotent is for using a idempotentRepository as the read-lock.
+     *     This allows to use read locks that supports clustering if the idempotent repository implementation supports that.\n
+     *     - idempotent-changed - (only for file component) idempotent-changed is for using a idempotentRepository and changed as the combined read-lock.
+     *     This allows to use read locks that supports clustering if the idempotent repository implementation supports that.\n
+     *     - idempotent-rename - (only for file component) idempotent-rename is for using a idempotentRepository and rename as the combined read-lock.
+     *     This allows to use read locks that supports clustering if the idempotent repository implementation supports that.\n
+     * \nNotice: The various read locks is not all suited to work in clustered mode, where concurrent consumers on different nodes is competing
      * for the same files on a shared file system. The markerFile using a close to atomic operation to create the empty marker file,
      * but its not guaranteed to work in a cluster. The fileLock may work better but then the file system need to support distributed file locks, and so on.
      * Using the idempotent read lock can support clustering if the idempotent repository supports clustering, such as Hazelcast Component or Infinispan.
@@ -1001,6 +1005,10 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockRemoveOnCommit = readLockRemoveOnCommit;
     }
 
+    public int getReadLockIdempotentReleaseDelay() {
+        return readLockIdempotentReleaseDelay;
+    }
+
     /**
      * Whether to delay the release task for a period of millis.
      * <p/>
@@ -1060,7 +1068,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     }
 
     /**
-     * Write buffer sized in bytes.
+     * Buffer size in bytes used for writing files (or in case of FTP for downloading and uploading files).
      */
     public void setBufferSize(int bufferSize) {
         if (bufferSize <= 0) {
@@ -1077,17 +1085,16 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      * What to do if a file already exists with the same name.
      *
      * Override, which is the default, replaces the existing file.
-     * <ul>
-     *   <li>Append - adds content to the existing file.</li>
-     *   <li>Fail - throws a GenericFileOperationException, indicating that there is already an existing file.</li>
-     *   <li>Ignore - silently ignores the problem and does not override the existing file, but assumes everything is okay.</li>
-     *   <li>Move - option requires to use the moveExisting option to be configured as well.
+     * \n\n
+     *   - Append - adds content to the existing file.\n
+     *   - Fail - throws a GenericFileOperationException, indicating that there is already an existing file.\n
+     *   - Ignore - silently ignores the problem and does not override the existing file, but assumes everything is okay.\n
+     *   - Move - option requires to use the moveExisting option to be configured as well.
      *   The option eagerDeleteTargetFile can be used to control what to do if an moving the file, and there exists already an existing file,
      *   otherwise causing the move operation to fail.
-     *   The Move option will move any existing files, before writing the target file.</li>
-     *   <li>TryRename is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name,
-     *   without doing any exists check. This check may be faster on some file systems and especially FTP servers.</li>
-     * </ul>
+     *   The Move option will move any existing files, before writing the target file.\n
+     *   - TryRename is only applicable if tempFileName option is in use. This allows to try renaming the file from the temporary name to the actual name,
+     *   without doing any exists check. This check may be faster on some file systems and especially FTP servers.
      */
     public void setFileExist(GenericFileExist fileExist) {
         this.fileExist = fileExist;
@@ -1235,6 +1242,45 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
      */
     public void setJailStartingDirectory(boolean jailStartingDirectory) {
         this.jailStartingDirectory = jailStartingDirectory;
+    }
+
+    public String getAppendChars() {
+        return appendChars;
+    }
+
+    /**
+     * Used to append characters (text) after writing files. This can for example be used to add new lines or other
+     * separators when writing and appending to existing files.
+     * <p/>
+     * To specify new-line (slash-n or slash-r) or tab (slash-t) characters then escape with an extra slash, eg slash-slash-n
+     */
+    public void setAppendChars(String appendChars) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < appendChars.length(); i++) {
+            char ch = appendChars.charAt(i);
+            boolean escaped = '\\' == ch;
+            if (escaped && i < appendChars.length() - 1) {
+                // grab next character to escape
+                char next = appendChars.charAt(i + 1);
+                // special for new line, tabs and carriage return
+                if ('n' == next) {
+                    sb.append("\n");
+                    i++;
+                    continue;
+                } else if ('t' == next) {
+                    sb.append("\t");
+                    i++;
+                    continue;
+                } else if ('r' == next) {
+                    sb.append("\r");
+                    i++;
+                    continue;
+                }
+            }
+            // not special just a regular character
+            sb.append(ch);
+        }
+        this.appendChars = sb.toString();
     }
 
     public ExceptionHandler getOnCompletionExceptionHandler() {

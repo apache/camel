@@ -31,9 +31,7 @@ public class AdviceWithTwoRoutesTest extends ContextTestSupport {
         RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://a")
-                    .skipSendToOriginalEndpoint()
-                    .to("mock:detour");
+                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint().to("mock:detour");
             }
         });
 
@@ -51,9 +49,7 @@ public class AdviceWithTwoRoutesTest extends ContextTestSupport {
         RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://b")
-                    .skipSendToOriginalEndpoint()
-                    .to("mock:detour");
+                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint().to("mock:detour");
             }
         });
 
@@ -71,9 +67,7 @@ public class AdviceWithTwoRoutesTest extends ContextTestSupport {
         RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://a")
-                    .skipSendToOriginalEndpoint()
-                    .to("mock:detour");
+                interceptSendToEndpoint("mock://a").skipSendToOriginalEndpoint().to("mock:detour");
             }
         });
 
@@ -81,9 +75,7 @@ public class AdviceWithTwoRoutesTest extends ContextTestSupport {
         RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("mock://b")
-                    .skipSendToOriginalEndpoint()
-                    .to("mock:detour");
+                interceptSendToEndpoint("mock://b").skipSendToOriginalEndpoint().to("mock:detour");
             }
         });
 
@@ -102,14 +94,9 @@ public class AdviceWithTwoRoutesTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a").routeId("a")
-                    .to("log:a")
-                    .setBody(body().regexReplaceAll("\n", ""))
-                    .to("mock:a");
+                from("direct:a").routeId("a").to("log:a").setBody(body().regexReplaceAll("\n", "")).to("mock:a");
 
-                from("direct:b").routeId("b")
-                    .to("log:b")
-                    .to("mock:b");
+                from("direct:b").routeId("b").to("log:b").to("mock:b");
             }
         };
     }

@@ -47,6 +47,7 @@ public class OgnlExpression extends ExpressionSupport {
         return new OgnlExpression(new OgnlLanguage(), expression, Object.class);
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         OgnlContext oglContext = new OgnlContext();
         // setup the class resolver from camel
@@ -63,6 +64,7 @@ public class OgnlExpression extends ExpressionSupport {
         return type;
     }
 
+    @Override
     protected String assertionFailureMessage(Exchange exchange) {
         return expressionString;
     }

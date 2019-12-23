@@ -55,7 +55,7 @@ public class FileConsumeCharsetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new EndpointRouteBuilder() {
             public void configure() throws Exception {
-                from(file("target/data/files/").initialDelay(0).delay(10).fileName(constant("report.txt")).delete(true).charset("UTF-8"))
+                from(file("target/data/files/").initialDelay(0).delay(10).fileName("report.txt").delete(true).charset("UTF-8"))
                     .convertBodyTo(String.class)
                     .to(mock("result"));
             }

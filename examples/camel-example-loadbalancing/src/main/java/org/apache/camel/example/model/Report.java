@@ -59,6 +59,7 @@ public class Report implements Serializable {
         this.reply = reply;
     }
 
+    @Override
     public String toString() {
         StringBuilder result = new StringBuilder();
         result.append("\n>> ***********************************************\n");

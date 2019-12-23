@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.impl.verifier;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.ehcache;
 
-import java.util.EnumSet;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,19 +49,19 @@ public class EhcacheConfiguration implements Cloneable {
     @UriParam
     private String configurationUri;
     @UriParam(label = "advanced")
-    private CacheConfiguration<?, ?> configuration;
+    private CacheConfiguration configuration;
     @UriParam(label = "advanced")
-    private Map<String, CacheConfiguration<?, ?>> configurations;
-    @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> keyType;
-    @UriParam(label = "advanced", javaType = "java.lang.String", defaultValue = "java.lang.Object")
-    private Class<?> valueType;
+    private Map<String, CacheConfiguration> configurations;
+    @UriParam(label = "advanced")
+    private String keyType;
+    @UriParam(label = "advanced")
+    private String valueType;
     @UriParam(label = "consumer", defaultValue = "ORDERED")
     private EventOrdering eventOrdering = EventOrdering.ORDERED;
     @UriParam(label = "consumer", defaultValue = "ASYNCHRONOUS")
     private EventFiring eventFiring = EventFiring.ASYNCHRONOUS;
-    @UriParam(label = "consumer", enums = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED", defaultValue = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED")
-    private Set<EventType> eventTypes = EnumSet.of(EventType.values()[0], EventType.values());
+    @UriParam(label = "consumer", enums = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED")
+    private String eventTypes;
 
     public EhcacheConfiguration() {
     }
@@ -197,25 +196,30 @@ public class EhcacheConfiguration implements Cloneable {
         this.eventFiring = eventFiring;
     }
 
-    public Set<EventType> getEventTypes() {
+    public String getEventTypes() {
         return eventTypes;
     }
 
-    /**
-     * Set the type of events to listen for
-     */
-    public void setEventTypes(String eventTypesString) {
-        Set<EventType> eventTypes = new HashSet<>();
-        String[] events = eventTypesString.split(",");
-        for (String event : events) {
-            eventTypes.add(EventType.valueOf(event));
-        }
+    public Set<EventType> getEventTypesSet() {
+        Set<EventType> answer = new LinkedHashSet<>();
 
-        setEventTypes(eventTypes);
+        String types = eventTypes;
+        if (types == null) {
+            types = "EVICTED,EXPIRED,REMOVED,CREATED,UPDATED";
+        }
+        String[] arr = types.split(",");
+        for (String s : arr) {
+            answer.add(EventType.valueOf(s));
+        }
+        return answer;
     }
 
-    public void setEventTypes(Set<EventType> eventTypes) {
-        this.eventTypes = new HashSet<>(eventTypes);
+    /**
+     * Set the type of events to listen for (EVICTED,EXPIRED,REMOVED,CREATED,UPDATED).
+     * You can specify multiple entries separated by comma.
+     */
+    public void setEventTypes(String eventTypes) {
+        this.eventTypes = eventTypes;
     }
 
     // ****************************
@@ -244,15 +248,15 @@ public class EhcacheConfiguration implements Cloneable {
     /**
      * A map of cache configuration to be used to create caches.
      */
-    public Map<String, CacheConfiguration<?, ?>> getConfigurations() {
+    public Map<String, CacheConfiguration> getConfigurations() {
         return configurations;
     }
 
-    public void setConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+    public void setConfigurations(Map<String, CacheConfiguration> configurations) {
         this.configurations = Map.class.cast(configurations);
     }
 
-    public void addConfigurations(Map<String, CacheConfiguration<?, ?>> configurations) {
+    public void addConfigurations(Map<String, CacheConfiguration> configurations) {
         if (this.configurations == null) {
             this.configurations = new HashMap<>();
         }
@@ -260,25 +264,25 @@ public class EhcacheConfiguration implements Cloneable {
         this.configurations.putAll(configurations);
     }
 
-    public Class<?> getKeyType() {
+    public String getKeyType() {
         return keyType;
     }
 
     /**
      * The cache key type, default "java.lang.Object"
      */
-    public void setKeyType(Class<?> keyType) {
+    public void setKeyType(String keyType) {
         this.keyType = keyType;
     }
 
-    public Class<?> getValueType() {
+    public String getValueType() {
         return valueType;
     }
 
     /**
      * The cache value type, default "java.lang.Object"
      */
-    public void setValueType(Class<?> valueType) {
+    public void setValueType(String valueType) {
         this.valueType = valueType;
     }
 

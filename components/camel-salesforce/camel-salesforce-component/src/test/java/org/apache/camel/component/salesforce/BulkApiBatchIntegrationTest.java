@@ -71,8 +71,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
         Map<String, Object> headers = new HashMap<>();
         headers.put(SalesforceEndpointConfig.JOB_ID, jobInfo.getId());
         headers.put(SalesforceEndpointConfig.CONTENT_TYPE, jobInfo.getContentType());
-        BatchInfo batchInfo  = template().requestBodyAndHeaders("direct:createBatch",
-            request.stream, headers, BatchInfo.class);
+        BatchInfo batchInfo = template().requestBodyAndHeaders("direct:createBatch", request.stream, headers, BatchInfo.class);
         assertNotNull("Null batch", batchInfo);
         assertNotNull("Null batch id", batchInfo.getId());
 
@@ -87,7 +86,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
         batchInfo = getBatchInfo(batchInfo);
 
         // test getRequest
-        InputStream requestStream  = template().requestBody("direct:getRequest", batchInfo, InputStream.class);
+        InputStream requestStream = template().requestBody("direct:getRequest", batchInfo, InputStream.class);
         assertNotNull("Null batch request", requestStream);
 
         // wait for batch to finish
@@ -102,7 +101,7 @@ public class BulkApiBatchIntegrationTest extends AbstractBulkApiTestBase {
         assertEquals("Batch did not succeed", BatchStateEnum.COMPLETED, batchInfo.getState());
 
         // test getResults
-        InputStream results  = template().requestBody("direct:getResults", batchInfo, InputStream.class);
+        InputStream results = template().requestBody("direct:getResults", batchInfo, InputStream.class);
         assertNotNull("Null batch results", results);
 
         // close the test job

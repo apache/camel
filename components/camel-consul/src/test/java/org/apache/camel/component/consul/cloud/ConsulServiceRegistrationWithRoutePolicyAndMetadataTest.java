@@ -26,13 +26,9 @@ public class ConsulServiceRegistrationWithRoutePolicyAndMetadataTest extends Con
     protected RoutesBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
-            public void configure() throws Exception {
-                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT)
-                    .routeId(SERVICE_ID)
-                    .routeProperty(ServiceDefinition.SERVICE_META_ID, SERVICE_ID)
-                    .routeProperty(ServiceDefinition.SERVICE_META_NAME, SERVICE_NAME)
-                    .routePolicy(new ServiceRegistrationRoutePolicy())
-                    .noAutoStartup()
+            public void configure() {
+                fromF("jetty:http://0.0.0.0:%d/service/endpoint", SERVICE_PORT).routeId(SERVICE_ID).routeProperty(ServiceDefinition.SERVICE_META_ID, SERVICE_ID)
+                    .routeProperty(ServiceDefinition.SERVICE_META_NAME, SERVICE_NAME).routePolicy(new ServiceRegistrationRoutePolicy()).noAutoStartup()
                     .to("log:service-registry?level=INFO");
             }
         };

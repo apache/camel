@@ -55,11 +55,6 @@ public @interface Consume {
     String property() default "";
 
     /**
-     * Id of {@link CamelContext} to use
-     */
-    String context() default "";
-
-    /**
      * Optional predicate (using simple language) to only consume if the predicate matches .
      * This can be used to filter messages.
      * <p/>

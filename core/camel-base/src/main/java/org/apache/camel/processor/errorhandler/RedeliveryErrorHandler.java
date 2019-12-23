@@ -40,7 +40,6 @@ import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ShutdownPrepared;
-import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncCallbackToCompletableFutureAdapter;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -77,6 +76,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final Predicate retryWhilePolicy;
     protected final CamelLogger logger;
     protected final boolean useOriginalMessagePolicy;
+    protected final boolean useOriginalBodyPolicy;
     protected boolean redeliveryEnabled;
     protected volatile boolean preparingShutdown;
     protected final ExchangeFormatter exchangeFormatter;
@@ -86,7 +86,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     public RedeliveryErrorHandler(CamelContext camelContext, Processor output, CamelLogger logger,
                                   Processor redeliveryProcessor, RedeliveryPolicy redeliveryPolicy, Processor deadLetter,
-                                  String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy,
+                                  String deadLetterUri, boolean deadLetterHandleNewException, boolean useOriginalMessagePolicy, boolean useOriginalBodyPolicy,
                                   Predicate retryWhile, ScheduledExecutorService executorService, Processor onPrepareProcessor, Processor onExceptionProcessor) {
 
         ObjectHelper.notNull(camelContext, "CamelContext", this);
@@ -103,6 +103,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.deadLetterUri = deadLetterUri;
         this.deadLetterHandleNewException = deadLetterHandleNewException;
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
+        this.useOriginalBodyPolicy = useOriginalBodyPolicy;
         this.retryWhilePolicy = retryWhile;
         this.executorService = executorService;
         this.onPrepareProcessor = onPrepareProcessor;
@@ -136,6 +137,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         }
     }
 
+    @Override
     public void process(Exchange exchange) {
         if (output == null) {
             // no output then just return
@@ -147,6 +149,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     /**
      * Process the exchange using redelivery error handling.
      */
+    @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // Create the redelivery state object for this exchange
         RedeliveryState state = new RedeliveryState(exchange, callback);
@@ -159,6 +162,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         return false;
     }
 
+    @Override
     public CompletableFuture<Exchange> processAsync(Exchange exchange) {
         AsyncCallbackToCompletableFutureAdapter<Exchange> callback = new AsyncCallbackToCompletableFutureAdapter<>(exchange);
         process(exchange, callback);
@@ -177,6 +181,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.outputAsync = AsyncProcessorConverterHelper.convert(output);
     }
 
+    @Override
     public boolean supportTransacted() {
         return false;
     }
@@ -295,6 +300,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     /**
      * Returns the output processor
      */
+    @Override
     public Processor getOutput() {
         return output;
     }
@@ -313,6 +319,10 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
     public boolean isUseOriginalMessagePolicy() {
         return useOriginalMessagePolicy;
+    }
+
+    public boolean isUseOriginalBodyPolicy() {
+        return useOriginalBodyPolicy;
     }
 
     public boolean isDeadLetterHandleNewException() {
@@ -353,6 +363,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         Predicate handledPredicate;
         Predicate continuedPredicate;
         boolean useOriginalInMessage;
+        boolean useOriginalInBody;
 
         public RedeliveryState(Exchange exchange, AsyncCallback callback) {
             // init with values from the error handler
@@ -360,6 +371,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             this.currentRedeliveryPolicy = redeliveryPolicy;
             this.handledPredicate = getDefaultHandledPredicate();
             this.useOriginalInMessage = useOriginalMessagePolicy;
+            this.useOriginalInBody = useOriginalBodyPolicy;
             this.onRedeliveryProcessor = redeliveryProcessor;
             this.onExceptionProcessor = RedeliveryErrorHandler.this.onExceptionProcessor;
 
@@ -370,6 +382,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             this.callback = callback;
         }
 
+        @Override
         public String toString() {
             return "Step[" + exchange.getExchangeId() + "," + RedeliveryErrorHandler.this + "]";
         }
@@ -377,6 +390,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         /**
          * Redelivery logic.
          */
+        @Override
         public void run() {
             // can we still run
             if (!isRunAllowed()) {
@@ -401,25 +415,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // if we are exhausted or redelivery is not allowed, then deliver to failure processor (eg such as DLC)
             if (!redeliverAllowed || exhausted) {
-                Processor target = null;
-                boolean deliver = true;
-
-                // the unit of work may have an optional callback associated we need to leverage
-                UnitOfWork uow = exchange.getUnitOfWork();
-                if (uow != null) {
-                    SubUnitOfWorkCallback uowCallback = uow.getSubUnitOfWorkCallback();
-                    if (uowCallback != null) {
-                        // signal to the callback we are exhausted
-                        uowCallback.onExhausted(exchange);
-                        // do not deliver to the failure processor as its been handled by the callback instead
-                        deliver = false;
-                    }
-                }
-
-                if (deliver) {
-                    // should deliver to failure processor (either from onException or the dead letter channel)
-                    target = failureProcessor != null ? failureProcessor : deadLetter;
-                }
+                Processor target = failureProcessor != null ? failureProcessor : deadLetter;
                 // we should always invoke the deliverToFailureProcessor as it prepares, logs and does a fair
                 // bit of work for exhausted exchanges (its only the target processor which may be null if handled by a savepoint)
                 boolean isDeadLetterChannel = isDeadLetterChannel() && target == deadLetter;
@@ -667,7 +663,8 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 handledPredicate = exceptionPolicy.getHandledPolicy();
                 continuedPredicate = exceptionPolicy.getContinuedPolicy();
                 retryWhilePredicate = exceptionPolicy.getRetryWhilePolicy();
-                useOriginalInMessage = exceptionPolicy.getUseOriginalInMessage();
+                useOriginalInMessage = exceptionPolicy.isUseOriginalInMessage();
+                useOriginalInBody = exceptionPolicy.isUseOriginalInBody();
 
                 // route specific failure handler?
                 Processor processor = null;
@@ -794,11 +791,16 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             if (allowFailureProcessor && processor != null) {
 
-                // prepare original IN body if it should be moved instead of current body
-                if (useOriginalInMessage) {
-                    log.trace("Using the original IN message instead of current");
+                // prepare original IN message/body if it should be moved instead of current message/body
+                if (useOriginalInMessage || useOriginalInBody) {
                     Message original = ExchangeHelper.getOriginalInMessage(exchange);
-                    exchange.setIn(original);
+                    if (useOriginalInMessage) {
+                        log.trace("Using the original IN message instead of current");
+                        exchange.setIn(original);
+                    } else {
+                        log.trace("Using the original IN message body instead of current");
+                        exchange.getIn().setBody(original.getBody());
+                    }
                     if (exchange.hasOut()) {
                         log.trace("Removing the out message to avoid some uncertain behavior");
                         exchange.setOut(null);

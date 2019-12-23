@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
@@ -22,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
@@ -72,12 +72,9 @@ public class FilerProducerDoneFileNameRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 myProp.put("myDir", "target/data/done");
 
-                PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
-                pc.setLocation("ref:myProp");
+                context.getPropertiesComponent().setLocation("ref:myProp");
 
-                from("direct:start")
-                    .to("file:{{myDir}}?doneFileName=done-${file:name}")
-                    .to("mock:result");
+                from("direct:start").to("file:{{myDir}}?doneFileName=done-${file:name}").to("mock:result");
             }
         };
     }

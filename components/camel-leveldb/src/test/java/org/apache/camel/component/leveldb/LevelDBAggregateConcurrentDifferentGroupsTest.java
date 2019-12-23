@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -90,6 +91,7 @@ public class LevelDBAggregateConcurrentDifferentGroupsTest extends CamelTestSupp
 
     private static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

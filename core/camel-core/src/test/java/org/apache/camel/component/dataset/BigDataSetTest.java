@@ -48,7 +48,8 @@ public class BigDataSetTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // start this first to make sure the "direct:foo" consumer is ready
+                // start this first to make sure the "direct:foo" consumer is
+                // ready
                 from("direct:foo").to("dataset:foo");
 
                 from("dataset:foo").to("direct:foo");

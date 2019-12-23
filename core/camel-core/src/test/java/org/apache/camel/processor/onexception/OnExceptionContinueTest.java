@@ -44,13 +44,11 @@ public class OnExceptionContinueTest extends ContextTestSupport {
             @Override
             // START SNIPPET: e1
             public void configure() throws Exception {
-                // tell Camel to handle and continue when this exception is thrown
+                // tell Camel to handle and continue when this exception is
+                // thrown
                 onException(IllegalArgumentException.class).continued(true);
 
-                from("direct:start")
-                    .to("mock:start")
-                    .throwException(new IllegalArgumentException("Forced"))
-                    .to("mock:result");
+                from("direct:start").to("mock:start").throwException(new IllegalArgumentException("Forced")).to("mock:result");
             }
             // END SNIPPET: e1
         };

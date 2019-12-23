@@ -27,11 +27,11 @@ import org.apache.camel.support.DefaultComponent;
 public class IPFSComponent extends DefaultComponent {
 
     @Override
-    protected Endpoint createEndpoint(String urispec, String remaining, Map<String, Object> params) throws Exception {
+    protected Endpoint createEndpoint(String urispec, String remaining, Map<String, Object> parameters) throws Exception {
 
-        // Init the configuration
-        IPFSConfiguration config = new IPFSConfiguration(this);
-        setProperties(config, params);
+        IPFSConfiguration config = new IPFSConfiguration();
+        IPFSEndpoint endpoint = new IPFSEndpoint(urispec, this, config);
+        setProperties(endpoint, parameters);
 
         // Derive host:port and cmd from the give uri
         URI uri = new URI(urispec);
@@ -50,6 +50,6 @@ public class IPFSComponent extends DefaultComponent {
         }
         config.setIpfsCmd(cmd);
 
-        return new IPFSEndpoint(urispec, this, config);
+        return endpoint;
     }
 }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.direct;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;

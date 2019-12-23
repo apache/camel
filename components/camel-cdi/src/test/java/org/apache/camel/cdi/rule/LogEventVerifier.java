@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 public class LogEventVerifier extends LogVerifier {
     private final List<LogEvent> events = new ArrayList<>();
 

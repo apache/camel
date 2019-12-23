@@ -43,6 +43,7 @@ public class JmxInstrumentationWithConnectorTest extends EndpointReferenceTest {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/jmxInstrumentationWithConnector.xml");
     }
 
+    @Override
     @Test
     public void testReferenceEndpointFromOtherCamelContext() throws Exception {
         // don't run the test in this method

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.issues;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.RoutingSlip;
@@ -50,8 +51,7 @@ public class RoutingSlipMemoryLeakTest extends ContextTestSupport {
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:dead"));
 
-                from("direct:start")
-                    .routingSlip(method(SlipProvider.class)).id("memory-leak");
+                from("direct:start").routingSlip(method(SlipProvider.class)).id("memory-leak");
             }
         };
     }

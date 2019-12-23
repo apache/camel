@@ -39,6 +39,7 @@ public class KeystorePasswordCallback implements CallbackHandler {
      * It attempts to get the password from the private 
      * alias/passwords map.
      */
+    @Override
     public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
         for (Callback callback : callbacks) {
             String pass = passwords.get(getIdentifier(callback));

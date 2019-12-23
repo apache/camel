@@ -17,6 +17,7 @@
 package org.apache.camel.zipkin;
 
 import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.RoutesBuilder;

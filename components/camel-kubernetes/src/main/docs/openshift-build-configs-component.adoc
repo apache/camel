@@ -1,29 +1,34 @@
 [[openshift-build-configs-component]]
-== Openshift Build Config Component
+= Openshift Build Config Component
 
-*Available as of Camel version 2.17*
+*Since Camel 2.17*
 
-The OpenShift Build Config component is one of xref:kubernetes.adoc[Kubernetes Components] which
+// HEADER START
+*Only producer is supported*
+// HEADER END
+
+The OpenShift Build Config component is one of xref:kubernetes.adoc[Kubernetes Components] which
 provides a producer to execute kubernetes build config operations. 
 
 
-### Component Options
+== Component Options
 
 // component options: START
-The Openshift Build Config component supports 2 options, which are listed below.
+The Openshift Build Config component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
 
-### Endpoint Options
+== Endpoint Options
 
 // endpoint options: START
 The Openshift Build Config endpoint is configured using URI syntax:
@@ -34,7 +39,7 @@ openshift-build-configs:masterUrl
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -44,7 +49,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (22 parameters):
+=== Query Parameters (22 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -74,3 +79,45 @@ with the following path and query parameters:
 | *username* (security) | Username to connect to Kubernetes |  | String
 |===
 // endpoint options: END
+
+// spring-boot-auto-configure options: START
+// spring-boot-auto-configure options: END
+
+== Supported producer operation
+
+- listBuildConfigs
+- listBuildConfigsByLabels
+- getBuildConfig
+
+== Openshift Build Configs Producer Examples
+
+- listBuilds: this operation list the Build Configs on an Openshift cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:list").
+    toF("openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=listBuildConfigs").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of Builds from your Openshift cluster
+
+- listBuildsByLabels: this operation list the build configs by labels on an Openshift cluster
+
+[source,java]
+--------------------------------------------------------------------------------
+from("direct:listByLabels").process(new Processor() {
+
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                Map<String, String> labels = new HashMap<>();
+                labels.put("key1", "value1");
+                labels.put("key2", "value2");
+                exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_BUILD_CONFIGS_LABELS, labels);
+            }
+        });
+    toF("openshift-build-configs:///?kubernetesClient=#kubernetesClient&operation=listBuildConfigsByLabels").
+    to("mock:result");
+--------------------------------------------------------------------------------
+
+This operation return a List of Build configs from your cluster, using a label selector (with key1 and key2, with value value1 and value2)

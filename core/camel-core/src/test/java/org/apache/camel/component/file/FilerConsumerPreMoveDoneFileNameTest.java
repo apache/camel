@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,7 +42,8 @@ public class FilerConsumerPreMoveDoneFileNameTest extends ContextTestSupport {
 
         template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        // wait a bit and it should not pickup the written file as there are no done file
+        // wait a bit and it should not pickup the written file as there are no
+        // done file
         Thread.sleep(250);
 
         assertMockEndpointsSatisfied();

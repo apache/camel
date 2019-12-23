@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.interceptor;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
@@ -74,9 +75,7 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
             public void configure() throws Exception {
                 getContext().adapt(ExtendedCamelContext.class).addInterceptStrategy(strategy);
 
-                onException(IllegalArgumentException.class)
-                        .handled(true)
-                        .to("mock:handled");
+                onException(IllegalArgumentException.class).handled(true).to("mock:handled");
 
                 errorHandler(deadLetterChannel("mock:dead").maximumRedeliveries(1));
 
@@ -90,6 +89,7 @@ public class AuditInterceptorAsyncDelegateIssueTest extends ContextTestSupport {
     private static final class MyIntercepStrategy implements InterceptStrategy {
         private volatile boolean invoked;
 
+        @Override
         public Processor wrapProcessorInInterceptors(CamelContext context, NamedNode definition, Processor target, Processor nextTarget) throws Exception {
             return new DelegateAsyncProcessor(target) {
                 public boolean process(Exchange exchange, AsyncCallback callback) {

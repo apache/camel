@@ -1,0 +1,37 @@
+[[from-eip]]
+= From EIP
+Starting point for a Camel route that starts a route with a given endpoint. The endpoint can be from one of the many Camel https://github.com/apache/camel/tree/master/components[Components]. The component creates Camel exchanges from their respective sources and puts them into the route.
+
+== Options
+
+// eip options: START
+The From EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *uri* | *Required* Sets the URI of the endpoint to use |  | String
+|===
+// eip options: END
+
+== Samples
+
+Start a route with the File endpoint. Each file in the directory creates an exchange that is put into the camel route.
+
+A camel route is started using from inside the configure method of the class *RouteBuilder*
+
+[source,java]
+----
+from("file:c:/in")
+----
+
+And examples in Spring XML Schema:
+
+The route is defined inside a CamelContext.
+
+[source,xml]
+----
+<route>
+  <from uri="file:c:/in" />
+</route>
+----

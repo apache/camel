@@ -17,8 +17,7 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -29,24 +28,21 @@
 
     <groupId>org.apache.camel</groupId>
     <artifactId>camel</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Camel</name>
-    <description>Camel build POM</description>
-    <url>http://camel.apache.org</url>
+    <description>Camel Root POM</description>
+    <url>https://camel.apache.org</url>
     <inceptionYear>2007</inceptionYear>
 
     <developers>
         <developer>
             <name>The Apache Camel Team</name>
             <email>dev@camel.apache.org</email>
-            <url>http://camel.apache.org</url>
+            <url>https://camel.apache.org</url>
             <organization>Apache Software Foundation</organization>
             <organizationUrl>http://apache.org/</organizationUrl>
-            <properties>
-                <picUrl>http://camel.apache.org/banner.data/apache-camel-7.png</picUrl>
-            </properties>
         </developer>
     </developers>
 
@@ -118,9 +114,9 @@
         <jdk.version>1.8</jdk.version>
         <compiler.fork>false</compiler.fork>
 
-        <maven-compiler-plugin-version>3.8.0</maven-compiler-plugin-version>
+        <maven-compiler-plugin-version>3.8.1</maven-compiler-plugin-version>
         <maven-javadoc-plugin-version>3.0.1</maven-javadoc-plugin-version>
-        <maven-surefire-plugin-version>2.22.1</maven-surefire-plugin-version>
+        <maven-surefire-plugin-version>3.0.0-M4</maven-surefire-plugin-version>
         <!-- we need to override the version inherited from Apache POM for modules that use this POM as parent -->
         <surefire.version>${maven-surefire-plugin-version}</surefire.version>
 
@@ -130,7 +126,7 @@
         <errorprone-version>2.5</errorprone-version>
         <mycila-license-version>3.0</mycila-license-version>
         <gmavenplus-plugin-version>1.6.2</gmavenplus-plugin-version>
-        <groovy-version>2.5.7</groovy-version>
+        <groovy-version>2.5.8</groovy-version>
     </properties>
 
     <!-- Comment out the snapshot repositories as we don't need them now -->
@@ -201,6 +197,8 @@
                     <configuration>
                         <excludeSubProjects>false</excludeSubProjects>
                         <excludes>
+                            <exclude>**/generated.txt</exclude>
+                            <exclude>**/*.json</exclude>
                             <exclude>**/README</exclude>
                             <exclude>**/README.txt</exclude>
                             <exclude>**/README.md</exclude>
@@ -229,13 +227,11 @@
                             <exclude>**/dataformat-options.mvel</exclude>
                             <exclude>**/eip-options.mvel</exclude>
                             <exclude>**/language-options.mvel</exclude>
-                            <exclude>**/readme-components.mvel</exclude>
-                            <exclude>**/readme-components.mvel</exclude>
-                            <exclude>**/readme-dataformats.mvel</exclude>
-                            <exclude>**/readme-eips.mvel</exclude>
+                            <exclude>**/website-components-list.mvel</exclude>
+                            <exclude>**/website-languages-list.mvel</exclude>
+                            <exclude>**/website-others-list.mvel</exclude>
+                            <exclude>**/website-dataformats-list.mvel</exclude>
                             <exclude>**/readme-examples.mvel</exclude>
-                            <exclude>**/readme-languages.mvel</exclude>
-                            <exclude>**/readme-others.mvel</exclude>
                             <exclude>**/spring-boot-auto-configure-options.mvel</exclude>
                             <exclude>**/camel-NOTICE.txt</exclude>
                             <exclude>**/spring-boot-starter-NOTICE.txt</exclude>
@@ -254,16 +250,13 @@
                             <!-- camel website and user-manual -->
                             <exclude>**/node/**</exclude>
                             <exclude>**/node_modules/**</exclude>
-                            <exclude>**/npm-shrinkwrap.json</exclude>
-                            <exclude>**/package.json</exclude>
                             <exclude>**/user-manual/**</exclude>
                             <exclude>**/yarn.lock</exclude>
                             <!-- examples -->
                             <exclude>**/fabric8/*.yaml</exclude>
-                            <exclude>**/src/main/resources/consul/services.json</exclude>
-                            <exclude>**/src/main/resources/data/*.json</exclude>
                             <exclude>**/src/main/data/*.patient</exclude>
                             <exclude>**/src/main/data/*.csv</exclude>
+                            <exclude>**/src/main/resources/avro/*.avsc</exclude>
                             <!-- generated files -->
                             <exclude>**/target/**/*</exclude>
                             <exclude>**/eclipse-classes/**/*</exclude>
@@ -278,14 +271,11 @@
                             <exlucde>**/*.log</exlucde>
                             <exclude>**/id_file</exclude>
                             <exclude>**/dependency-reduced-pom.xml</exclude>
-                            <exclude>**/grape.json</exclude>
                             <exclude>**/Dropbox_API_Terms_and_Conditions.txt</exclude>
                             <exclude>**/MerchandiseRestResource.apxc</exclude>
                             <exclude>**/file-sig-api.txt</exclude>
                             <exclude>**/Tasks__c.java</exclude>
-                            <exclude>**/additional-spring-configuration-metadata.json</exclude>
                             <exclude>**/*.proto</exclude>
-                            <exclude>**/src/revapi/ignore.json</exclude>
                             <exclude>
                                 **/src/main/resources/META-INF/services/org.kie.server.services.api.KieServerExtension
                             </exclude>
@@ -440,94 +430,67 @@
                                 <phase>validate</phase>
                                 <configuration>
                                     <target>
-                                        <path id="ecp.ws.path" location="${eclipse.workspace.dir}"/>
-                                        <property name="full.eclipse.workspace" refid="ecp.ws.path"/>
-                                        <path path="${basedir}/etc" id="etc.path"/>
+                                        <path id="ecp.ws.path" location="${eclipse.workspace.dir}" />
+                                        <property name="full.eclipse.workspace" refid="ecp.ws.path" />
+                                        <path path="${basedir}/etc" id="etc.path" />
 
                                         <path id="buildtools.classpath">
-                                            <fileset dir="${basedir}/buildingtools/target" includes="*.jar"/>
-                                            <pathelement location="${basedir}/buildingtools/target/classes"/>
-                                            <pathelement location="${basedir}/buildingtools/src/main/resources"/>
+                                            <fileset dir="${basedir}/buildingtools/target" includes="*.jar" />
+                                            <pathelement location="${basedir}/buildingtools/target/classes" />
+                                            <pathelement location="${basedir}/buildingtools/src/main/resources" />
                                         </path>
 
-                                        <whichresource resource="/camel-eclipse-pmd" property="pmd.url"
-                                                       classpathref="buildtools.classpath"/>
-                                        <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url"
-                                                       classpathref="buildtools.classpath"/>
-                                        <whichresource resource="/camel-eclipse-checkstyle"
-                                                       property="eclipse.checkstyle.url"
-                                                       classpathref="buildtools.classpath"/>
-                                        <whichresource resource="/camel-checkstyle.xml" property="checkstyle.url"
-                                                       classpathref="buildtools.classpath"/>
+                                        <whichresource resource="/camel-eclipse-pmd" property="pmd.url" classpathref="buildtools.classpath" />
+                                        <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url" classpathref="buildtools.classpath" />
+                                        <whichresource resource="/camel-eclipse-checkstyle" property="eclipse.checkstyle.url" classpathref="buildtools.classpath" />
+                                        <whichresource resource="/camel-checkstyle.xml" property="checkstyle.url" classpathref="buildtools.classpath" />
 
-                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings"/>
-                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core"/>
-                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse"/>
+                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings" />
+                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core" />
+                                        <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sourceforge.pmd.eclipse" />
 
-                                        <get src="${checkstyle.url}"
-                                             dest="${full.eclipse.workspace}/camel-checkstyle.xml"/>
+                                        <get src="${checkstyle.url}" dest="${full.eclipse.workspace}/camel-checkstyle.xml" />
 
                                         <!-- Add checkstyle config -->
-                                        <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml"
-                                              tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml"
-                                              overwrite="no">
+                                        <copy file="${basedir}/etc/eclipse/template.checkstyle-config.xml" tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" overwrite="no">
                                             <filterset>
-                                                <filter token="CHECKSTYLE_CONFIG_FILE"
-                                                        value="${full.eclipse.workspace}/camel-checkstyle.xml"/>
-                                                <filter token="APACHE_HEADER_FILE"
-                                                        value="${full.eclipse.workspace}/apache-header.txt"/>
+                                                <filter token="CHECKSTYLE_CONFIG_FILE" value="${full.eclipse.workspace}/camel-checkstyle.xml" />
+                                                <filter token="APACHE_HEADER_FILE" value="${full.eclipse.workspace}/apache-header.txt" />
                                             </filterset>
                                         </copy>
 
-                                        <xslt style="${basedir}/etc/eclipse/addcheckstyle.xsl"
-                                              in="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml"
-                                              out="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new">
-                                            <param name="checkstyleconfig"
-                                                   expression="${full.eclipse.workspace}/camel-checkstyle.xml"/>
+                                        <xslt style="${basedir}/etc/eclipse/addcheckstyle.xsl" in="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" out="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new">
+                                            <param name="checkstyleconfig" expression="${full.eclipse.workspace}/camel-checkstyle.xml" />
                                         </xslt>
-                                        <copy file="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new"
-                                              tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml"
-                                              overwrite="yes"/>
+                                        <copy file="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml.new" tofile="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core/checkstyle-config.xml" overwrite="yes" />
 
                                         <!-- Add code format rules -->
-                                        <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs"
-                                                append="true" fixlastline="true">
-                                            <filelist dir="${basedir}/etc/eclipse" files="org.eclipse.jdt.core.prefs"/>
+                                        <concat destfile="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.core.prefs" append="true" fixlastline="true">
+                                            <filelist dir="${basedir}/etc/eclipse" files="org.eclipse.jdt.core.prefs" />
                                         </concat>
-                                        <loadfile property="eclipse.code.format"
-                                                  srcFile="${basedir}/etc/eclipse/CamelCodeFormatter.xml"/>
-                                        <loadfile property="eclipse.code.templates"
-                                                  srcFile="${basedir}/etc/eclipse/codetemplates.xml"/>
-                                        <loadfile property="eclipse.camel.java.code.templates"
-                                                  srcFile="${basedir}/etc/eclipse/camel_java_templates.xml"/>
-                                        <loadfile property="eclipse.camel.xml.code.templates"
-                                                  srcFile="${basedir}/etc/eclipse/camel_xml_templates.xml"/>
-                                        <propertyfile
-                                                file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
-                                            <entry key="formatter_profile" value="Camel Java Conventions"/>
-                                            <entry key="org.eclipse.jdt.ui.formatterprofiles"
-                                                   value="${eclipse.code.format}"/>
-                                            <entry key="org.eclipse.jdt.ui.text.custom_code_templates"
-                                                   value="${eclipse.code.templates}"/>
+                                        <loadfile property="eclipse.code.format" srcFile="${basedir}/etc/eclipse/CamelCodeFormatter.xml" />
+                                        <loadfile property="eclipse.code.templates" srcFile="${basedir}/etc/eclipse/codetemplates.xml" />
+                                        <loadfile property="eclipse.camel.java.code.templates" srcFile="${basedir}/etc/eclipse/camel_java_templates.xml" />
+                                        <loadfile property="eclipse.camel.xml.code.templates" srcFile="${basedir}/etc/eclipse/camel_xml_templates.xml" />
+                                        <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.jdt.ui.prefs">
+                                            <entry key="formatter_profile" value="Camel Java Conventions" />
+                                            <entry key="org.eclipse.jdt.ui.formatterprofiles" value="${eclipse.code.format}" />
+                                            <entry key="org.eclipse.jdt.ui.text.custom_code_templates" value="${eclipse.code.templates}" />
 
                                             <!-- Add Camel templates for Java DSL -->
-                                            <entry key="org.eclipse.jdt.ui.text.custom_templates"
-                                                   value="${eclipse.camel.java.code.templates}"/>
+                                            <entry key="org.eclipse.jdt.ui.text.custom_templates" value="${eclipse.camel.java.code.templates}" />
 
                                             <!-- Add import order -->
-                                            <entry key="org.eclipse.jdt.ui.importorder"
-                                                   value="java;javax;org.w3c;org.xml;w3c;"/>
+                                            <entry key="org.eclipse.jdt.ui.importorder" value="java;javax;org.w3c;org.xml;w3c;" />
                                             <!-- Sort order -->
-                                            <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V,"/>
-                                            <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M,"/>
-                                            <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true"/>
+                                            <entry key="org.eclipse.jdt.ui.visibility.order" value="B,R,D,V," />
+                                            <entry key="outlinesortoption" value="T,SF,F,SI,I,C,SM,M," />
+                                            <entry key="org.eclipse.jdt.ui.enable.visibility.order" value="true" />
                                         </propertyfile>
-                                        <propertyfile
-                                                file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.xml.ui.prefs">
-                                            <entry key="eclipse.preferences.version" value="1"/>
+                                        <propertyfile file="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings/org.eclipse.wst.xml.ui.prefs">
+                                            <entry key="eclipse.preferences.version" value="1" />
                                             <!-- Add Camel templates for Spring DSL -->
-                                            <entry key="org.eclipse.wst.sse.ui.custom_templates"
-                                                   value="${eclipse.camel.xml.code.templates}"/>
+                                            <entry key="org.eclipse.wst.sse.ui.custom_templates" value="${eclipse.camel.xml.code.templates}" />
                                         </propertyfile>
                                     </target>
                                 </configuration>
@@ -789,6 +752,8 @@
                                 <exclude>**/cacerts</exclude>
                                 <exclude>**/*.p12</exclude>
                                 <exclude>**/*.txt</exclude>
+                                <exclude>**/*.mp3</exclude>
+                                <exclude>**/*.mp4</exclude>
                                 <exclude>.mvn/**</exclude>
                                 <exclude>mvnw*</exclude>
                                 <exclude>**/META-INF/persistence*.xsd</exclude>

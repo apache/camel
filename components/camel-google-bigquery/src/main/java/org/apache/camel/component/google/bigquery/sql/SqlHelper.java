@@ -30,7 +30,6 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.support.ResourceHelper;
 
-
 public final class SqlHelper {
 
     private static Pattern pattern = Pattern.compile("\\$\\{(\\w+)}");

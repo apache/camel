@@ -32,6 +32,10 @@ pipeline {
         jdk JDK_NAME
     }
 
+    environment {
+        MAVEN_SKIP_RC = true
+    }
+
     options {
         buildDiscarder(
             logRotator(artifactNumToKeepStr: '5', numToKeepStr: '10')
@@ -50,8 +54,20 @@ pipeline {
             }
         }
 
+        stage('Website update') {
+            when {
+                branch 'master'
+                changeset 'docs/**/*'
+            }
+
+            steps {
+                build job: 'Camel.website/master', wait: false
+            }
+        }
+
         stage('Checks') {
             steps {
+                sh "./mvnw $MAVEN_PARAMS -pl :camel-buildtools install"
                 sh "./mvnw $MAVEN_PARAMS -Psourcecheck -Dcheckstyle.failOnViolation=false checkstyle:check"
             }
             post {

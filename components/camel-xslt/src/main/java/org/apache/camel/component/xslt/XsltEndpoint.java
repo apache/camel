@@ -18,7 +18,6 @@ package org.apache.camel.component.xslt;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.transform.ErrorListener;
@@ -41,7 +40,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
-import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ProcessorEndpoint;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -52,8 +50,6 @@ import org.apache.camel.util.ObjectHelper;
 @ManagedResource(description = "Managed XsltEndpoint")
 @UriEndpoint(firstVersion = "1.3.0", scheme = "xslt", title = "XSLT", syntax = "xslt:resourceUri", producerOnly = true, label = "core,transformation")
 public class XsltEndpoint extends ProcessorEndpoint {
-    public static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
-
     private volatile boolean cacheCleared;
     private volatile XsltBuilder xslt;
     private Map<String, Object> parameters;
@@ -66,14 +62,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private String transformerFactoryClass;
     @UriParam(label = "advanced")
     private TransformerFactory transformerFactory;
-    @UriParam
-    private boolean saxon;
-    @UriParam(label = "advanced")
-    private Object saxonConfiguration;
-    @Metadata(label = "advanced")
-    private Map<String, Object> saxonConfigurationProperties = new HashMap<>();
-    @UriParam(label = "advanced", javaType = "java.lang.String")
-    private List<Object> saxonExtensionFunctions;
     @UriParam(label = "advanced")
     private ResultHandlerFactory resultHandlerFactory;
     @UriParam(defaultValue = "true")
@@ -86,12 +74,12 @@ public class XsltEndpoint extends ProcessorEndpoint {
     private ErrorListener errorListener;
     @UriParam(label = "advanced")
     private URIResolver uriResolver;
-    @UriParam(defaultValue = "true", displayName = "Allow StAX")
-    private boolean allowStAX = true;
     @UriParam
     private boolean deleteOutputFile;
     @UriParam(label = "advanced")
     private EntityResolver entityResolver;
+    @UriParam(label = "advanced")
+    private TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy;
 
     public XsltEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -116,7 +104,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         if (!contentCache || cacheCleared) {
-            loadResource(resourceUri);
+            loadResource(resourceUri, xslt);
         }
         super.onExchange(exchange);
     }
@@ -178,67 +166,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
      */
     public void setTransformerFactory(TransformerFactory transformerFactory) {
         this.transformerFactory = transformerFactory;
-    }
-
-    @ManagedAttribute(description = "Whether to use Saxon as the transformerFactoryClass")
-    public boolean isSaxon() {
-        return saxon;
-    }
-
-    /**
-     * Whether to use Saxon as the transformerFactoryClass.
-     * If enabled then the class net.sf.saxon.TransformerFactoryImpl. You would need to add Saxon to the classpath.
-     */
-    public void setSaxon(boolean saxon) {
-        this.saxon = saxon;
-    }
-
-    public List<Object> getSaxonExtensionFunctions() {
-        return saxonExtensionFunctions;
-    }
-
-    /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
-     */
-    public void setSaxonExtensionFunctions(List<Object> extensionFunctions) {
-        this.saxonExtensionFunctions = extensionFunctions;
-    }
-
-    /**
-     * Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition.
-     * You would need to add camel-saxon to the classpath.
-     * The function is looked up in the registry, where you can comma to separate multiple values to lookup.
-     */
-    public void setSaxonExtensionFunctions(String extensionFunctions) {
-        this.saxonExtensionFunctions = EndpointHelper.resolveReferenceListParameter(
-            getCamelContext(),
-            extensionFunctions,
-            Object.class
-        );
-    }
-
-    public Object getSaxonConfiguration() {
-        return saxonConfiguration;
-    }
-
-    /**
-     * To use a custom Saxon configuration
-     */
-    public void setSaxonConfiguration(Object saxonConfiguration) {
-        this.saxonConfiguration = saxonConfiguration;
-    }
-
-    public Map<String, Object> getSaxonConfigurationProperties() {
-        return saxonConfigurationProperties;
-    }
-
-    /**
-     * To set custom Saxon configuration properties
-     */
-    public void setSaxonConfigurationProperties(Map<String, Object> configurationProperties) {
-        this.saxonConfigurationProperties = configurationProperties;
     }
 
     public ResultHandlerFactory getResultHandlerFactory() {
@@ -329,18 +256,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.uriResolver = uriResolver;
     }
 
-    @ManagedAttribute(description = "Whether to allow using StAX as the javax.xml.transform.Source")
-    public boolean isAllowStAX() {
-        return allowStAX;
-    }
-
-    /**
-     * Whether to allow using StAX as the javax.xml.transform.Source.
-     */
-    public void setAllowStAX(boolean allowStAX) {
-        this.allowStAX = allowStAX;
-    }
-
     public boolean isDeleteOutputFile() {
         return deleteOutputFile;
     }
@@ -375,6 +290,18 @@ public class XsltEndpoint extends ProcessorEndpoint {
         this.parameters = parameters;
     }
 
+    public TransformerFactoryConfigurationStrategy getTransformerFactoryConfigurationStrategy() {
+        return transformerFactoryConfigurationStrategy;
+    }
+
+    /**
+     * A configuration strategy to apply on freshly created instances of TransformerFactory.
+     */
+    public void setTransformerFactoryConfigurationStrategy(
+            TransformerFactoryConfigurationStrategy transformerFactoryConfigurationStrategy) {
+        this.transformerFactoryConfigurationStrategy = transformerFactoryConfigurationStrategy;
+    }
+
     /**
      * Loads the resource.
      *
@@ -382,7 +309,7 @@ public class XsltEndpoint extends ProcessorEndpoint {
      * @throws TransformerException is thrown if error loading resource
      * @throws IOException is thrown if error loading resource
      */
-    protected void loadResource(String resourceUri) throws TransformerException, IOException {
+    protected void loadResource(String resourceUri, XsltBuilder xslt) throws TransformerException, IOException {
         log.trace("{} loading schema resource: {}", this, resourceUri);
         Source source = xslt.getUriResolver().resolve(resourceUri, null);
         if (source == null) {
@@ -398,31 +325,37 @@ public class XsltEndpoint extends ProcessorEndpoint {
     protected void doStart() throws Exception {
         super.doStart();
 
+        // the processor is the xslt builder
+        setXslt(createXsltBuilder());
+        setProcessor(getXslt());
+    }
+
+    protected XsltBuilder createXsltBuilder() throws Exception {
         final CamelContext ctx = getCamelContext();
         final ClassResolver resolver = ctx.getClassResolver();
         final Injector injector = ctx.getInjector();
 
         log.debug("{} using schema resource: {}", this, resourceUri);
 
-        this.xslt = injector.newInstance(XsltBuilder.class);
-
-        boolean useSaxon = false;
-        if (transformerFactoryClass == null && (saxon || saxonExtensionFunctions != null)) {
-            useSaxon = true;
-            transformerFactoryClass = SAXON_TRANSFORMER_FACTORY_CLASS_NAME;
-        }
+        final XsltBuilder xslt = injector.newInstance(XsltBuilder.class);
 
         TransformerFactory factory = transformerFactory;
-        if (factory == null && transformerFactoryClass != null) {
-            // provide the class loader of this component to work in OSGi environments
-            Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(transformerFactoryClass, TransformerFactory.class, XsltComponent.class.getClassLoader());
-            log.debug("Using TransformerFactoryClass {}", factoryClass);
-            factory = injector.newInstance(factoryClass);
+        if (factory == null) {
+            final String trFactoryClass = transformerFactoryClass != null
+                    ? transformerFactoryClass
+                    : ((XsltComponent) getComponent()).getTransformerFactoryClass();
+            if (trFactoryClass != null) {
+                // provide the class loader of this component to work in OSGi environments
+                Class<TransformerFactory> factoryClass = resolver.resolveMandatoryClass(trFactoryClass, TransformerFactory.class, XsltComponent.class.getClassLoader());
+                log.debug("Using TransformerFactoryClass {}", factoryClass);
+                factory = injector.newInstance(factoryClass);
 
-            if (useSaxon) {
-                XsltHelper.registerSaxonConfiguration(ctx, factoryClass, factory, saxonConfiguration);
-                XsltHelper.registerSaxonConfigurationProperties(ctx, factoryClass, factory, saxonConfigurationProperties);
-                XsltHelper.registerSaxonExtensionFunctions(ctx, factoryClass, factory, saxonExtensionFunctions);
+                final TransformerFactoryConfigurationStrategy tfConfigStrategy = transformerFactoryConfigurationStrategy != null
+                        ? transformerFactoryConfigurationStrategy
+                        : ((XsltComponent) getComponent()).getTransformerFactoryConfigurationStrategy();
+                if (tfConfigStrategy != null) {
+                    tfConfigStrategy.configure(factory, this);
+                }
             }
         }
 
@@ -440,7 +373,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
         xslt.transformerCacheSize(transformerCacheSize);
         xslt.setUriResolver(uriResolver);
         xslt.setEntityResolver(entityResolver);
-        xslt.setAllowStAX(allowStAX);
         xslt.setDeleteOutputFile(deleteOutputFile);
 
         configureOutput(xslt, output.name());
@@ -452,10 +384,9 @@ public class XsltEndpoint extends ProcessorEndpoint {
         }
 
         // must load resource first which sets a template and do a stylesheet compilation to catch errors early
-        loadResource(resourceUri);
+        loadResource(resourceUri, xslt);
 
-        // the processor is the xslt builder
-        setProcessor(xslt);
+        return xslt;
     }
 
     protected void configureOutput(XsltBuilder xslt, String output) throws Exception {
@@ -479,6 +410,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ServiceHelper.stopService(xslt);
+        ServiceHelper.stopService(getXslt());
     }
 }

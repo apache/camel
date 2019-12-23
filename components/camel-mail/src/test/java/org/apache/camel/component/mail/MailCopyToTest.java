@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -74,10 +75,11 @@ public class MailCopyToTest extends CamelTestSupport {
         folder.close(true);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&copyTo=backup&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("imap://jones@localhost?password=secret&copyTo=backup&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

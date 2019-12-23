@@ -53,6 +53,7 @@ public class EventRouteTest extends SpringTestSupport {
         assertEquals("Received event body", expectedBody, actualBody);
     }
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/event/camelContext.xml");
     }

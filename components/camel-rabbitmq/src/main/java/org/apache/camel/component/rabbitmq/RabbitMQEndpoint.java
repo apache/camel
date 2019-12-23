@@ -41,7 +41,7 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
-import org.apache.camel.support.IntrospectionSupport;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.component.rabbitmq.RabbitMQComponent.BINDING_ARG_PREFIX;
@@ -101,7 +101,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     @UriParam(label = "common")
     private boolean skipExchangeDeclare;
     @UriParam(label = "common")
-    private Address[] addresses;
+    private String addresses;
+    @UriParam(label = "common", defaultValue = "true")
+    private Boolean automaticRecoveryEnabled = Boolean.TRUE;
     @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT)
     private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
     @UriParam(label = "advanced", defaultValue = "" + ConnectionFactory.DEFAULT_CHANNEL_MAX)
@@ -116,8 +118,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     private TrustManager trustManager;
     @UriParam(label = "advanced")
     private Map<String, Object> clientProperties;
-    @UriParam(label = "advanced")
-    private Boolean automaticRecoveryEnabled;
     @UriParam(label = "advanced", defaultValue = "5000")
     private Integer networkRecoveryInterval = 5000;
     @UriParam(label = "advanced")
@@ -220,7 +220,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
         if (getAddresses() == null) {
             return getOrCreateConnectionFactory().newConnection(executor);
         } else {
-            return getOrCreateConnectionFactory().newConnection(executor, getAddresses());
+            return getOrCreateConnectionFactory().newConnection(executor, parseAddresses());
         }
     }
 
@@ -452,23 +452,19 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
      * looks like "server1:12345, server2:12345"
      */
     public void setAddresses(String addresses) {
-        Address[] addressArray = Address.parseAddresses(addresses);
-        if (addressArray.length > 0) {
-            this.addresses = addressArray;
-        }
-    }
-
-    /**
-     * If this option is set, camel-rabbitmq will try to create connection based
-     * on the setting of option addresses. The addresses value is a string which
-     * looks like "server1:12345, server2:12345"
-     */
-    public void setAddresses(Address[] addresses) {
         this.addresses = addresses;
     }
 
-    public Address[] getAddresses() {
+    public String getAddresses() {
         return addresses;
+    }
+
+    public Address[] parseAddresses() {
+        if (addresses != null) {
+            return Address.parseAddresses(getAddresses());
+        } else {
+            return null;
+        }
     }
 
     public int getConnectionTimeout() {
@@ -567,8 +563,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
 
     /**
      * Enables connection automatic recovery (uses connection implementation
-     * that performs automatic recovery when connection shutdown is not
-     * initiated by the application)
+     * that performs automatic recovery when existing connection has failures)
      */
     public void setAutomaticRecoveryEnabled(Boolean automaticRecoveryEnabled) {
         this.automaticRecoveryEnabled = automaticRecoveryEnabled;
@@ -795,15 +790,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint implements AsyncEndpoint {
     }
 
     public Map<String, Object> getExchangeArgs() {
-        return IntrospectionSupport.extractProperties(args, EXCHANGE_ARG_PREFIX);
+        return PropertiesHelper.extractProperties(args, EXCHANGE_ARG_PREFIX);
     }
 
     public Map<String, Object> getQueueArgs() {
-        return IntrospectionSupport.extractProperties(args, QUEUE_ARG_PREFIX);
+        return PropertiesHelper.extractProperties(args, QUEUE_ARG_PREFIX);
     }
 
     public Map<String, Object> getBindingArgs() {
-        return IntrospectionSupport.extractProperties(args, BINDING_ARG_PREFIX);
+        return PropertiesHelper.extractProperties(args, BINDING_ARG_PREFIX);
     }
 
      /**

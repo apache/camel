@@ -1,7 +1,12 @@
 [[splunk-component]]
-== Splunk Component
+= Splunk Component
+:page-source: components/camel-splunk/src/main/docs/splunk-component.adoc
 
-*Available as of Camel version 2.13*
+*Since Camel 2.13*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Splunk component provides access to
 http://docs.splunk.com/Documentation/Splunk/latest[Splunk] using the
@@ -20,14 +25,14 @@ for this component:
     </dependency>
 ---------------------------------------------
 
-### URI format
+== URI format
 
 [source,java]
 -------------------------------
   splunk://[endpoint]?[options]
 -------------------------------
 
-### Producer Endpoints:
+== Producer Endpoints:
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -46,7 +51,7 @@ in Splunk.
 |=======================================================================
 
 When publishing events the message body should contain a
-SplunkEvent.  See comment under message body.
+SplunkEvent.  See comment under message body.
 
 *Example*
 
@@ -59,7 +64,7 @@ SplunkEvent.  See comment under message body.
 In this example a converter is required to convert to a SplunkEvent
 class.
 
-### Consumer Endpoints:
+== Consumer Endpoints:
 
 [width="100%",cols="10%,90%",options="header",]
 |=======================================================================
@@ -82,21 +87,22 @@ name of the query in the savedSearch option.
 camel-splunk creates a route exchange per search result with a
 SplunkEvent in the body.
 
-### URI Options
+== URI Options
 
 
 
 // component options: START
-The Splunk component supports 3 options, which are listed below.
+The Splunk component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *splunkConfiguration Factory* (advanced) | To use the SplunkConfigurationFactory |  | SplunkConfiguration Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *splunkConfiguration Factory* (advanced) | To use the SplunkConfigurationFactory |  | SplunkConfigurationFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -112,7 +118,7 @@ splunk:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -122,7 +128,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (44 parameters):
+=== Query Parameters (45 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -142,10 +148,10 @@ with the following path and query parameters:
 | *savedSearch* (consumer) | The name of the query saved in Splunk to run |  | String
 | *search* (consumer) | The Splunk query to run |  | String
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
-| *streaming* (consumer) | Sets streaming mode. Streaming mode sends exchanges as they are received, rather than in a batch. |  | Boolean
+| *streaming* (consumer) | Sets streaming mode. Streaming mode sends exchanges as they are received, rather than in a batch. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *eventHost* (producer) | Override the default Splunk event host field |  | String
 | *index* (producer) | Splunk index to write to |  | String
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
@@ -161,10 +167,11 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
@@ -175,14 +182,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-splunk-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -190,7 +197,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -198,15 +205,16 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.splunk.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.splunk.enabled* | Enable splunk component | true | Boolean
-| *camel.component.splunk.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.splunk.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.splunk.enabled* | Whether to enable auto configuration of the splunk component. This is enabled by default. |  | Boolean
+| *camel.component.splunk.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.splunk.splunk-configuration-factory* | To use the SplunkConfigurationFactory. The option is a org.apache.camel.component.splunk.SplunkConfigurationFactory type. |  | String
 |===
 // spring-boot-auto-configure options: END
 
 
 
-### Message body
+== Message body
 
 Splunk operates on data in key/value pairs. The SplunkEvent class is a
 placeholder for such data, and should be in the message body for the producer. 
@@ -215,9 +223,9 @@ result for the consumer.
 
 You can send raw data to Splunk by setting the raw
 option on the producer endpoint. This is useful for eg. json/xml and
-other payloads where Splunk has build in support. 
+other payloads where Splunk has build in support. 
 
-### Use Cases
+== Use Cases
 
 Search Twitter for tweets with music and publish events to Splunk
 
@@ -266,16 +274,10 @@ Search Splunk for tweets
           .log("${body}");
 --------------------------------------------------------------------------------------------------------------------------------
 
-### Other comments
+== Other comments
 
 Splunk comes with a variety of options for leveraging machine generated
 data with prebuilt apps for analyzing and displaying this.  +
  For example the jmx app. could be used to publish jmx attributes, eg.
 route and jvm metrics to Splunk, and displaying this on a dashboard.
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

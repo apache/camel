@@ -1,22 +1,27 @@
 [[google-sheets-stream-component]]
-== Google Sheets Stream Component
+= Google Sheets Stream Component
+:page-source: components/camel-google-sheets/src/main/docs/google-sheets-stream-component.adoc
 
-*Available as of Camel version 2.23*
+*Since Camel 2.23*
+
+// HEADER START
+*Only consumer is supported*
+// HEADER END
 
 The Google Sheets component provides access
-to https://sheets.google.com/[Sheets] via
-the https://developers.google.com/sheets/api/reference/rest/[Google Sheets
+to https://sheets.google.com/[Sheets] via
+the https://developers.google.com/sheets/api/reference/rest/[Google Sheets
 Web APIs].
 
 Google Sheets uses
-the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
-protocol] for authenticating a Google account and authorizing access to
+the https://developers.google.com/accounts/docs/OAuth2[OAuth 2.0
+protocol] for authenticating a Google account and authorizing access to
 user data. Before you can use this component, you will need
-to https://developers.google.com/google-apps/sheets/auth[create an
+to https://developers.google.com/google-apps/sheets/auth[create an
 account and generate OAuth credentials]. Credentials comprise of a
 clientId, clientSecret, and a refreshToken. A handy resource for
-generating a long-lived refreshToken is
-the https://developers.google.com/oauthplayground[OAuth playground].
+generating a long-lived refreshToken is
+the https://developers.google.com/oauthplayground[OAuth playground].
 
 Maven users will need to add the following dependency to their pom.xml
 for this component:
@@ -31,7 +36,7 @@ for this component:
 
 ------------------------------------------------------
 
-### URI Format
+== URI Format
 
 The Google Sheets Component uses the following URI format:
 
@@ -40,21 +45,22 @@ The Google Sheets Component uses the following URI format:
 
 --------------------------------------------------------
 
-### GoogleSheetsStreamComponent
+== GoogleSheetsStreamComponent
 
 
 // component options: START
-The Google Sheets Stream component supports 4 options, which are listed below.
+The Google Sheets Stream component supports 5 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (consumer) | To use the shared configuration |  | GoogleSheetsStream Configuration
-| *clientFactory* (advanced) | To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use BatchGoogleSheetsClientFactory |  | GoogleSheetsClient Factory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *configuration* (consumer) | To use the shared configuration |  | GoogleSheetsStreamConfiguration
+| *clientFactory* (advanced) | To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use BatchGoogleSheetsClientFactory |  | GoogleSheetsClientFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -70,7 +76,7 @@ google-sheets-stream:apiName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -80,7 +86,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (33 parameters):
+=== Query Parameters (34 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,7 +109,7 @@ with the following path and query parameters:
 | *valueRenderOption* (consumer) | Determines how values should be rendered in the output. | FORMATTED_VALUE | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
@@ -112,24 +118,25 @@ with the following path and query parameters:
 | *delay* (scheduler) | Milliseconds before the next poll. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 500 | long
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-google-sheets-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -137,7 +144,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 18 options, which are listed below.
+The component supports 19 options, which are listed below.
 
 
 
@@ -145,6 +152,7 @@ The component supports 18 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.google-sheets-stream.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.google-sheets-stream.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.google-sheets-stream.client-factory* | To use the GoogleSheetsClientFactory as factory for creating the client. Will by default use BatchGoogleSheetsClientFactory. The option is a org.apache.camel.component.google.sheets.GoogleSheetsClientFactory type. |  | String
 | *camel.component.google-sheets-stream.configuration.access-token* | OAuth 2 access token. This typically expires after an hour so refreshToken is recommended for long term usage. |  | String
 | *camel.component.google-sheets-stream.configuration.api-name* | Sets the apiName. |  | String
@@ -161,12 +169,12 @@ The component supports 18 options, which are listed below.
 | *camel.component.google-sheets-stream.configuration.spreadsheet-id* | Specifies the spreadsheet identifier that is used to identify the target to obtain. |  | String
 | *camel.component.google-sheets-stream.configuration.value-render-option* | Determines how values should be rendered in the output. | FORMATTED_VALUE | String
 | *camel.component.google-sheets-stream.enabled* | Whether to enable auto configuration of the google-sheets-stream component. This is enabled by default. |  | Boolean
-| *camel.component.google-sheets-stream.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.google-sheets-stream.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
-### Consumer
+== Consumer
 
 The consumer will poll by default with maxResults equals to 5.
 
@@ -179,4 +187,4 @@ from("google-sheets-stream://data?range=A:B&delay=5000&maxResults=5").to("mock:r
 
 This route will consume the next ten events starting from the date of polling.
 
-   
+   

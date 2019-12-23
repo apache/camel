@@ -62,8 +62,8 @@ public class NettyHttpClientChunkedResponseTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port1 = AvailablePortFinder.getNextAvailable(8000);
-                port2 = AvailablePortFinder.getNextAvailable(9000);
+                port1 = AvailablePortFinder.getNextAvailable();
+                port2 = AvailablePortFinder.getNextAvailable();
 
                 // use jetty as server as it supports sending response as chunked encoding
                 from("jetty:http://localhost:" + port1 + "/test")

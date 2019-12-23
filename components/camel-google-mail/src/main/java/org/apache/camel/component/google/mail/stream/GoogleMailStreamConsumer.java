@@ -26,7 +26,6 @@ import com.google.api.services.gmail.Gmail;
 import com.google.api.services.gmail.model.ListMessagesResponse;
 import com.google.api.services.gmail.model.Message;
 import com.google.api.services.gmail.model.ModifyMessageRequest;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -45,9 +44,9 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(GoogleMailStreamConsumer.class);
     private String unreadLabelId;
-    private List labelsIds;
+    private List<String> labelsIds;
 
-    public GoogleMailStreamConsumer(Endpoint endpoint, Processor processor, String unreadLabelId, List labelsIds) {
+    public GoogleMailStreamConsumer(Endpoint endpoint, Processor processor, String unreadLabelId, List<String> labelsIds) {
         super(endpoint, processor);
         this.unreadLabelId = unreadLabelId;
         this.labelsIds = labelsIds;
@@ -94,7 +93,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
-    public int processBatch(Queue<Object> exchanges) throws Exception {
+    public int processBatch(Queue<Object> exchanges) {
         int total = exchanges.size();
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
@@ -124,12 +123,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
                 }
             });
 
-            getAsyncProcessor().process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    LOG.trace("Processing exchange done");
-                }
-            });
+            getAsyncProcessor().process(exchange, doneSync -> LOG.trace("Processing exchange done"));
         }
 
         return total;
@@ -169,7 +163,7 @@ public class GoogleMailStreamConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processRollback(Exchange exchange, String unreadLabelId) {
         try {
-            LOG.warn("Exchange failed, so rolling back mail {} to un {}", exchange);
+            LOG.warn("Exchange failed, so rolling back mail {} to un {}", exchange, unreadLabelId);
 
             List<String> add = new ArrayList<>();
             add.add(unreadLabelId);

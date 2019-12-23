@@ -69,9 +69,9 @@ public class AbstractSalesforceMojoIntegrationTest {
             mojo.loginUrl = properties.getProperty("salesforce.login.url");
             mojo.version = SalesforceEndpointConfig.DEFAULT_VERSION;
         } catch (final FileNotFoundException e) {
-            final FileNotFoundException exception = new FileNotFoundException("Create a properties file named "
-                + TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, password"
-                + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
+            final FileNotFoundException exception = new FileNotFoundException("Create a properties file named " + TEST_LOGIN_PROPERTIES
+                                                                              + " with clientId, clientSecret, userName, password"
+                                                                              + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
             exception.initCause(e);
 
             throw exception;

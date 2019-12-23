@@ -23,4 +23,9 @@ public class DirectSpanDecorator extends AbstractInternalSpanDecorator {
         return "direct";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.direct.DirectComponent";
+    }
+
 }

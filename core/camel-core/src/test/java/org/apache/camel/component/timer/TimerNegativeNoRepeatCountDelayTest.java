@@ -36,7 +36,7 @@ public class TimerNegativeNoRepeatCountDelayTest extends ContextTestSupport {
 
         List<Exchange> exchanges = mock.getExchanges();
         Iterator<Exchange> iter = exchanges.iterator();
-        
+
         while (iter.hasNext()) {
             Exchange exchange = iter.next();
             assertEquals("negativeDelay", exchange.getProperty(Exchange.TIMER_NAME));

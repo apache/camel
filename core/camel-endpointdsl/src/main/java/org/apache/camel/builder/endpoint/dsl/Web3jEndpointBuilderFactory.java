@@ -54,7 +54,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder addresses(List<String> addresses) {
-            setProperty("addresses", addresses);
+            doSetProperty("addresses", addresses);
             return this;
         }
         /**
@@ -66,7 +66,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder addresses(String addresses) {
-            setProperty("addresses", addresses);
+            doSetProperty("addresses", addresses);
             return this;
         }
         /**
@@ -77,33 +77,19 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder fromAddress(String fromAddress) {
-            setProperty("fromAddress", fromAddress);
+            doSetProperty("fromAddress", fromAddress);
             return this;
         }
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointConsumerBuilder fromBlock(Object fromBlock) {
-            setProperty("fromBlock", fromBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default Web3jEndpointConsumerBuilder fromBlock(String fromBlock) {
-            setProperty("fromBlock", fromBlock);
+            doSetProperty("fromBlock", fromBlock);
             return this;
         }
         /**
@@ -116,7 +102,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointConsumerBuilder fullTransactionObjects(
                 boolean fullTransactionObjects) {
-            setProperty("fullTransactionObjects", fullTransactionObjects);
+            doSetProperty("fullTransactionObjects", fullTransactionObjects);
             return this;
         }
         /**
@@ -129,7 +115,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointConsumerBuilder fullTransactionObjects(
                 String fullTransactionObjects) {
-            setProperty("fullTransactionObjects", fullTransactionObjects);
+            doSetProperty("fullTransactionObjects", fullTransactionObjects);
             return this;
         }
         /**
@@ -140,7 +126,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder gasLimit(BigInteger gasLimit) {
-            setProperty("gasLimit", gasLimit);
+            doSetProperty("gasLimit", gasLimit);
             return this;
         }
         /**
@@ -152,7 +138,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder gasLimit(String gasLimit) {
-            setProperty("gasLimit", gasLimit);
+            doSetProperty("gasLimit", gasLimit);
             return this;
         }
         /**
@@ -164,7 +150,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder privateFor(List<String> privateFor) {
-            setProperty("privateFor", privateFor);
+            doSetProperty("privateFor", privateFor);
             return this;
         }
         /**
@@ -176,7 +162,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder privateFor(String privateFor) {
-            setProperty("privateFor", privateFor);
+            doSetProperty("privateFor", privateFor);
             return this;
         }
         /**
@@ -187,7 +173,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder quorumAPI(boolean quorumAPI) {
-            setProperty("quorumAPI", quorumAPI);
+            doSetProperty("quorumAPI", quorumAPI);
             return this;
         }
         /**
@@ -198,7 +184,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder quorumAPI(String quorumAPI) {
-            setProperty("quorumAPI", quorumAPI);
+            doSetProperty("quorumAPI", quorumAPI);
             return this;
         }
         /**
@@ -209,33 +195,19 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder toAddress(String toAddress) {
-            setProperty("toAddress", toAddress);
+            doSetProperty("toAddress", toAddress);
             return this;
         }
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointConsumerBuilder toBlock(Object toBlock) {
-            setProperty("toBlock", toBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default Web3jEndpointConsumerBuilder toBlock(String toBlock) {
-            setProperty("toBlock", toBlock);
+            doSetProperty("toBlock", toBlock);
             return this;
         }
         /**
@@ -248,7 +220,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder topics(List<String> topics) {
-            setProperty("topics", topics);
+            doSetProperty("topics", topics);
             return this;
         }
         /**
@@ -261,7 +233,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder topics(String topics) {
-            setProperty("topics", topics);
+            doSetProperty("topics", topics);
             return this;
         }
         /**
@@ -272,7 +244,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder web3j(Object web3j) {
-            setProperty("web3j", web3j);
+            doSetProperty("web3j", web3j);
             return this;
         }
         /**
@@ -284,7 +256,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointConsumerBuilder web3j(String web3j) {
-            setProperty("web3j", web3j);
+            doSetProperty("web3j", web3j);
             return this;
         }
         /**
@@ -302,7 +274,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -320,7 +292,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
     }
@@ -348,7 +320,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -364,7 +336,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -376,7 +348,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -389,7 +361,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -402,7 +374,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -415,7 +387,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -428,7 +400,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -441,7 +413,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -465,7 +437,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder addresses(List<String> addresses) {
-            setProperty("addresses", addresses);
+            doSetProperty("addresses", addresses);
             return this;
         }
         /**
@@ -477,7 +449,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder addresses(String addresses) {
-            setProperty("addresses", addresses);
+            doSetProperty("addresses", addresses);
             return this;
         }
         /**
@@ -488,33 +460,19 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder fromAddress(String fromAddress) {
-            setProperty("fromAddress", fromAddress);
+            doSetProperty("fromAddress", fromAddress);
             return this;
         }
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointProducerBuilder fromBlock(Object fromBlock) {
-            setProperty("fromBlock", fromBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default Web3jEndpointProducerBuilder fromBlock(String fromBlock) {
-            setProperty("fromBlock", fromBlock);
+            doSetProperty("fromBlock", fromBlock);
             return this;
         }
         /**
@@ -527,7 +485,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointProducerBuilder fullTransactionObjects(
                 boolean fullTransactionObjects) {
-            setProperty("fullTransactionObjects", fullTransactionObjects);
+            doSetProperty("fullTransactionObjects", fullTransactionObjects);
             return this;
         }
         /**
@@ -540,7 +498,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointProducerBuilder fullTransactionObjects(
                 String fullTransactionObjects) {
-            setProperty("fullTransactionObjects", fullTransactionObjects);
+            doSetProperty("fullTransactionObjects", fullTransactionObjects);
             return this;
         }
         /**
@@ -551,7 +509,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder gasLimit(BigInteger gasLimit) {
-            setProperty("gasLimit", gasLimit);
+            doSetProperty("gasLimit", gasLimit);
             return this;
         }
         /**
@@ -563,7 +521,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder gasLimit(String gasLimit) {
-            setProperty("gasLimit", gasLimit);
+            doSetProperty("gasLimit", gasLimit);
             return this;
         }
         /**
@@ -575,7 +533,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder privateFor(List<String> privateFor) {
-            setProperty("privateFor", privateFor);
+            doSetProperty("privateFor", privateFor);
             return this;
         }
         /**
@@ -587,7 +545,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder privateFor(String privateFor) {
-            setProperty("privateFor", privateFor);
+            doSetProperty("privateFor", privateFor);
             return this;
         }
         /**
@@ -598,7 +556,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder quorumAPI(boolean quorumAPI) {
-            setProperty("quorumAPI", quorumAPI);
+            doSetProperty("quorumAPI", quorumAPI);
             return this;
         }
         /**
@@ -609,7 +567,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder quorumAPI(String quorumAPI) {
-            setProperty("quorumAPI", quorumAPI);
+            doSetProperty("quorumAPI", quorumAPI);
             return this;
         }
         /**
@@ -620,33 +578,19 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder toAddress(String toAddress) {
-            setProperty("toAddress", toAddress);
+            doSetProperty("toAddress", toAddress);
             return this;
         }
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointProducerBuilder toBlock(Object toBlock) {
-            setProperty("toBlock", toBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default Web3jEndpointProducerBuilder toBlock(String toBlock) {
-            setProperty("toBlock", toBlock);
+            doSetProperty("toBlock", toBlock);
             return this;
         }
         /**
@@ -659,7 +603,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder topics(List<String> topics) {
-            setProperty("topics", topics);
+            doSetProperty("topics", topics);
             return this;
         }
         /**
@@ -672,7 +616,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder topics(String topics) {
-            setProperty("topics", topics);
+            doSetProperty("topics", topics);
             return this;
         }
         /**
@@ -683,7 +627,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder web3j(Object web3j) {
-            setProperty("web3j", web3j);
+            doSetProperty("web3j", web3j);
             return this;
         }
         /**
@@ -695,7 +639,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointProducerBuilder web3j(String web3j) {
-            setProperty("web3j", web3j);
+            doSetProperty("web3j", web3j);
             return this;
         }
         /**
@@ -706,33 +650,19 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder address(String address) {
-            setProperty("address", address);
+            doSetProperty("address", address);
             return this;
         }
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: producer
-         */
-        default Web3jEndpointProducerBuilder atBlock(Object atBlock) {
-            setProperty("atBlock", atBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: producer
          */
         default Web3jEndpointProducerBuilder atBlock(String atBlock) {
-            setProperty("atBlock", atBlock);
+            doSetProperty("atBlock", atBlock);
             return this;
         }
         /**
@@ -743,7 +673,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder blockHash(String blockHash) {
-            setProperty("blockHash", blockHash);
+            doSetProperty("blockHash", blockHash);
             return this;
         }
         /**
@@ -754,7 +684,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -766,7 +696,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder data(String data) {
-            setProperty("data", data);
+            doSetProperty("data", data);
             return this;
         }
         /**
@@ -777,7 +707,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder databaseName(String databaseName) {
-            setProperty("databaseName", databaseName);
+            doSetProperty("databaseName", databaseName);
             return this;
         }
         /**
@@ -788,7 +718,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder filterId(BigInteger filterId) {
-            setProperty("filterId", filterId);
+            doSetProperty("filterId", filterId);
             return this;
         }
         /**
@@ -800,7 +730,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder filterId(String filterId) {
-            setProperty("filterId", filterId);
+            doSetProperty("filterId", filterId);
             return this;
         }
         /**
@@ -811,7 +741,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder gasPrice(BigInteger gasPrice) {
-            setProperty("gasPrice", gasPrice);
+            doSetProperty("gasPrice", gasPrice);
             return this;
         }
         /**
@@ -823,7 +753,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder gasPrice(String gasPrice) {
-            setProperty("gasPrice", gasPrice);
+            doSetProperty("gasPrice", gasPrice);
             return this;
         }
         /**
@@ -834,7 +764,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder hashrate(String hashrate) {
-            setProperty("hashrate", hashrate);
+            doSetProperty("hashrate", hashrate);
             return this;
         }
         /**
@@ -846,7 +776,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder headerPowHash(String headerPowHash) {
-            setProperty("headerPowHash", headerPowHash);
+            doSetProperty("headerPowHash", headerPowHash);
             return this;
         }
         /**
@@ -857,7 +787,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder index(BigInteger index) {
-            setProperty("index", index);
+            doSetProperty("index", index);
             return this;
         }
         /**
@@ -869,7 +799,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder index(String index) {
-            setProperty("index", index);
+            doSetProperty("index", index);
             return this;
         }
         /**
@@ -880,7 +810,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder keyName(String keyName) {
-            setProperty("keyName", keyName);
+            doSetProperty("keyName", keyName);
             return this;
         }
         /**
@@ -900,7 +830,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -920,7 +850,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -932,7 +862,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder mixDigest(String mixDigest) {
-            setProperty("mixDigest", mixDigest);
+            doSetProperty("mixDigest", mixDigest);
             return this;
         }
         /**
@@ -944,7 +874,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder nonce(String nonce) {
-            setProperty("nonce", nonce);
+            doSetProperty("nonce", nonce);
             return this;
         }
         /**
@@ -955,7 +885,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -966,7 +896,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder position(BigInteger position) {
-            setProperty("position", position);
+            doSetProperty("position", position);
             return this;
         }
         /**
@@ -978,7 +908,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder position(String position) {
-            setProperty("position", position);
+            doSetProperty("position", position);
             return this;
         }
         /**
@@ -989,7 +919,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder priority(BigInteger priority) {
-            setProperty("priority", priority);
+            doSetProperty("priority", priority);
             return this;
         }
         /**
@@ -1001,7 +931,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder priority(String priority) {
-            setProperty("priority", priority);
+            doSetProperty("priority", priority);
             return this;
         }
         /**
@@ -1013,7 +943,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointProducerBuilder sha3HashOfDataToSign(
                 String sha3HashOfDataToSign) {
-            setProperty("sha3HashOfDataToSign", sha3HashOfDataToSign);
+            doSetProperty("sha3HashOfDataToSign", sha3HashOfDataToSign);
             return this;
         }
         /**
@@ -1026,7 +956,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointProducerBuilder signedTransactionData(
                 String signedTransactionData) {
-            setProperty("signedTransactionData", signedTransactionData);
+            doSetProperty("signedTransactionData", signedTransactionData);
             return this;
         }
         /**
@@ -1037,7 +967,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder sourceCode(String sourceCode) {
-            setProperty("sourceCode", sourceCode);
+            doSetProperty("sourceCode", sourceCode);
             return this;
         }
         /**
@@ -1049,7 +979,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointProducerBuilder transactionHash(
                 String transactionHash) {
-            setProperty("transactionHash", transactionHash);
+            doSetProperty("transactionHash", transactionHash);
             return this;
         }
         /**
@@ -1060,7 +990,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder ttl(BigInteger ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -1072,7 +1002,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder ttl(String ttl) {
-            setProperty("ttl", ttl);
+            doSetProperty("ttl", ttl);
             return this;
         }
         /**
@@ -1083,7 +1013,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder value(BigInteger value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
         /**
@@ -1095,7 +1025,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: producer
          */
         default Web3jEndpointProducerBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
     }
@@ -1120,7 +1050,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1133,7 +1063,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1146,7 +1076,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1159,7 +1089,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1182,7 +1112,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder addresses(List<String> addresses) {
-            setProperty("addresses", addresses);
+            doSetProperty("addresses", addresses);
             return this;
         }
         /**
@@ -1194,7 +1124,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder addresses(String addresses) {
-            setProperty("addresses", addresses);
+            doSetProperty("addresses", addresses);
             return this;
         }
         /**
@@ -1205,33 +1135,19 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder fromAddress(String fromAddress) {
-            setProperty("fromAddress", fromAddress);
+            doSetProperty("fromAddress", fromAddress);
             return this;
         }
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointBuilder fromBlock(Object fromBlock) {
-            setProperty("fromBlock", fromBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default Web3jEndpointBuilder fromBlock(String fromBlock) {
-            setProperty("fromBlock", fromBlock);
+            doSetProperty("fromBlock", fromBlock);
             return this;
         }
         /**
@@ -1244,7 +1160,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointBuilder fullTransactionObjects(
                 boolean fullTransactionObjects) {
-            setProperty("fullTransactionObjects", fullTransactionObjects);
+            doSetProperty("fullTransactionObjects", fullTransactionObjects);
             return this;
         }
         /**
@@ -1257,7 +1173,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default Web3jEndpointBuilder fullTransactionObjects(
                 String fullTransactionObjects) {
-            setProperty("fullTransactionObjects", fullTransactionObjects);
+            doSetProperty("fullTransactionObjects", fullTransactionObjects);
             return this;
         }
         /**
@@ -1268,7 +1184,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder gasLimit(BigInteger gasLimit) {
-            setProperty("gasLimit", gasLimit);
+            doSetProperty("gasLimit", gasLimit);
             return this;
         }
         /**
@@ -1280,7 +1196,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder gasLimit(String gasLimit) {
-            setProperty("gasLimit", gasLimit);
+            doSetProperty("gasLimit", gasLimit);
             return this;
         }
         /**
@@ -1292,7 +1208,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder privateFor(List<String> privateFor) {
-            setProperty("privateFor", privateFor);
+            doSetProperty("privateFor", privateFor);
             return this;
         }
         /**
@@ -1304,7 +1220,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder privateFor(String privateFor) {
-            setProperty("privateFor", privateFor);
+            doSetProperty("privateFor", privateFor);
             return this;
         }
         /**
@@ -1315,7 +1231,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder quorumAPI(boolean quorumAPI) {
-            setProperty("quorumAPI", quorumAPI);
+            doSetProperty("quorumAPI", quorumAPI);
             return this;
         }
         /**
@@ -1326,7 +1242,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder quorumAPI(String quorumAPI) {
-            setProperty("quorumAPI", quorumAPI);
+            doSetProperty("quorumAPI", quorumAPI);
             return this;
         }
         /**
@@ -1337,33 +1253,19 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder toAddress(String toAddress) {
-            setProperty("toAddress", toAddress);
+            doSetProperty("toAddress", toAddress);
             return this;
         }
         /**
          * The block number, or the string latest for the last mined block or
          * pending, earliest for not yet mined transactions.
          * 
-         * The option is a:
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
-         * 
-         * Group: common
-         */
-        default Web3jEndpointBuilder toBlock(Object toBlock) {
-            setProperty("toBlock", toBlock);
-            return this;
-        }
-        /**
-         * The block number, or the string latest for the last mined block or
-         * pending, earliest for not yet mined transactions.
-         * 
-         * The option will be converted to a
-         * <code>org.web3j.protocol.core.DefaultBlockParameter</code> type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: common
          */
         default Web3jEndpointBuilder toBlock(String toBlock) {
-            setProperty("toBlock", toBlock);
+            doSetProperty("toBlock", toBlock);
             return this;
         }
         /**
@@ -1376,7 +1278,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder topics(List<String> topics) {
-            setProperty("topics", topics);
+            doSetProperty("topics", topics);
             return this;
         }
         /**
@@ -1389,7 +1291,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder topics(String topics) {
-            setProperty("topics", topics);
+            doSetProperty("topics", topics);
             return this;
         }
         /**
@@ -1400,7 +1302,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder web3j(Object web3j) {
-            setProperty("web3j", web3j);
+            doSetProperty("web3j", web3j);
             return this;
         }
         /**
@@ -1412,7 +1314,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: common
          */
         default Web3jEndpointBuilder web3j(String web3j) {
-            setProperty("web3j", web3j);
+            doSetProperty("web3j", web3j);
             return this;
         }
     }
@@ -1437,7 +1339,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1450,7 +1352,7 @@ public interface Web3jEndpointBuilderFactory {
          */
         default AdvancedWeb3jEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1462,7 +1364,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWeb3jEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1474,7 +1376,7 @@ public interface Web3jEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedWeb3jEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1484,7 +1386,7 @@ public interface Web3jEndpointBuilderFactory {
      * nodes to/from a web3j compliant content repositories.
      * 
      * Category: bitcoin,blockchain
-     * Available as of version: 2.22
+     * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-web3j
      * 
      * Syntax: <code>web3j:nodeAddress</code>

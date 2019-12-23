@@ -83,6 +83,7 @@ public class SpringManagedCustomProcessorTest extends SpringTestSupport {
             this.foo = foo;
         }
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             exchange.getIn().setHeader("foo", getFoo());
         }

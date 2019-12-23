@@ -24,7 +24,7 @@ import org.junit.Test;
  *
  */
 public class TimerMultipleConsumerTest extends ContextTestSupport {
-    
+
     @Test
     public void testMultipleConsumers() throws Exception {
         getMockEndpoint("mock:foo").expectedMinimumMessageCount(1);

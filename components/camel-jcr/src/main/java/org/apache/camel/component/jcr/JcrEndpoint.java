@@ -18,6 +18,7 @@ package org.apache.camel.component.jcr;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import javax.jcr.Credentials;
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
@@ -85,12 +86,14 @@ public class JcrEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         JcrConsumer answer = new JcrConsumer(this, processor);
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new JcrProducer(this);
     }

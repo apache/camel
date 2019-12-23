@@ -52,6 +52,7 @@ public class FilterIterator<T> implements Iterator<T>, Closeable {
         }
     }
 
+    @Override
     public boolean hasNext() {
         if (next == null) {
             next = checkNext();
@@ -59,6 +60,7 @@ public class FilterIterator<T> implements Iterator<T>, Closeable {
         return next != null;
     }
 
+    @Override
     public T next() {
         if (next == null) {
             next = checkNext();
@@ -71,6 +73,7 @@ public class FilterIterator<T> implements Iterator<T>, Closeable {
         throw new NoSuchElementException();
     }
 
+    @Override
     public void remove() {
         it.remove();
     }

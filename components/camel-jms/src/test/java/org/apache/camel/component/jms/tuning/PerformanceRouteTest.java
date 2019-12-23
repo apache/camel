@@ -27,7 +27,6 @@ import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
-
 @Ignore
 public class PerformanceRouteTest extends CamelTestSupport {
 
@@ -71,6 +70,7 @@ public class PerformanceRouteTest extends CamelTestSupport {
         return !os.toLowerCase().contains("hp-ux");
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

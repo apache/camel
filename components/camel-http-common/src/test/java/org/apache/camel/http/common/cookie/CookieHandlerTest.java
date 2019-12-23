@@ -72,6 +72,7 @@ public class CookieHandlerTest extends CamelTestSupport {
                                     {new ExchangeCookieHandler(), CookiePolicy.ACCEPT_ALL, "http://www.sub.example.com/acme/foo", 2, "ExchangeCookieHandler with ACCEPT_ALL"}});
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

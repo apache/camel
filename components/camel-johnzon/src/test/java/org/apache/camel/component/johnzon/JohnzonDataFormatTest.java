@@ -51,7 +51,7 @@ public class JohnzonDataFormatTest {
 
     @Test
     public void testArray() throws Exception {
-        testJson("{}", new ArrayList<>(), ArrayList.class, null);
+        testJson("{\"value\":123}", new ArrayList<String>(), ArrayList.class, null);
     }
 
     @Test

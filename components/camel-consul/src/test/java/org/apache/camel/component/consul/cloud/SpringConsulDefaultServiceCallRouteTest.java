@@ -20,8 +20,8 @@ import java.util.List;
 
 import org.apache.camel.component.ribbon.cloud.RibbonServiceLoadBalancer;
 import org.apache.camel.impl.cloud.DefaultServiceCallProcessor;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -32,12 +32,12 @@ public class SpringConsulDefaultServiceCallRouteTest extends SpringConsulService
     }
 
     @Test
-    public void testServiceCallConfiguration() throws Exception {
+    public void testServiceCallConfiguration() {
         List<DefaultServiceCallProcessor> processors = findServiceCallProcessors();
 
-        Assert.assertFalse(processors.isEmpty());
-        Assert.assertEquals(2, processors.size());
-        Assert.assertFalse(processors.get(0).getLoadBalancer() instanceof RibbonServiceLoadBalancer);
-        Assert.assertFalse(processors.get(1).getLoadBalancer() instanceof RibbonServiceLoadBalancer);
+        Assertions.assertFalse(processors.isEmpty());
+        Assertions.assertEquals(2, processors.size());
+        Assertions.assertFalse(processors.get(0).getLoadBalancer() instanceof RibbonServiceLoadBalancer);
+        Assertions.assertFalse(processors.get(1).getLoadBalancer() instanceof RibbonServiceLoadBalancer);
     }
 }

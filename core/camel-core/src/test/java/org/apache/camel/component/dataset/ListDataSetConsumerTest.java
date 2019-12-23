@@ -45,7 +45,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
     @Test
     public void testDefaultListDataSet() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
-        result.expectedMinimumMessageCount((int) dataSet.getSize());
+        result.expectedMinimumMessageCount((int)dataSet.getSize());
 
         result.assertIsSatisfied();
     }
@@ -54,7 +54,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
     public void testDefaultListDataSetWithSizeGreaterThanListSize() throws Exception {
         MockEndpoint result = getMockEndpoint(resultUri);
         dataSet.setSize(10);
-        result.expectedMinimumMessageCount((int) dataSet.getSize());
+        result.expectedMinimumMessageCount((int)dataSet.getSize());
 
         result.assertIsSatisfied();
     }
@@ -73,8 +73,7 @@ public class ListDataSetConsumerTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from(dataSetUri)
-                        .to("mock://result");
+                from(dataSetUri).to("mock://result");
             }
         };
     }

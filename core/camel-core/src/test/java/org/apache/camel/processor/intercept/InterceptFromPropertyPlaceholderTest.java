@@ -19,7 +19,6 @@ package org.apache.camel.processor.intercept;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.junit.Test;
 
 /**
@@ -52,11 +51,7 @@ public class InterceptFromPropertyPlaceholderTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/processor/intercept/myproperties.properties");
-        context.addComponent("properties", pc);
-
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/processor/intercept/myproperties.properties");
         return context;
     }
 

@@ -31,7 +31,7 @@ public class HttpsRouteAddSslConnectorPropertiesTest extends HttpsRouteTest {
             public void configure() throws URISyntaxException {
                 // START SNIPPET: e1
                 // keystore path
-                URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
+                URL keyStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.p12");
                 String path = keyStoreUrl.toURI().getPath();
 
                 JettyHttpComponent jetty = context.getComponent("jetty", JettyHttpComponent.class);

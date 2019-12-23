@@ -35,23 +35,20 @@ final class SalesforceClientTemplate {
         T invoke(RestClient client);
     }
 
-    static RestClientSupplier restClientSupplier = (camelContext, parameters) -> SalesforceComponent
-        .createRestClient(camelContext, parameters);
+    static RestClientSupplier restClientSupplier = (camelContext, parameters) -> SalesforceComponent.createRestClient(camelContext, parameters);
 
     private SalesforceClientTemplate() {
         // utility class
     }
 
-    static <T> T invoke(final CamelContext camelContext, final Map<String, Object> parameters,
-        final WithClient<T> performer) throws Exception {
+    static <T> T invoke(final CamelContext camelContext, final Map<String, Object> parameters, final WithClient<T> performer) throws Exception {
 
         final RestClient client = restClientSupplier.restClientWith(camelContext, parameters);
 
         return invokeInternal(client, performer);
     }
 
-    static <T> T invoke(final SalesforceComponent component, final Map<String, Object> parameters,
-        final WithClient<T> performer) throws Exception {
+    static <T> T invoke(final SalesforceComponent component, final Map<String, Object> parameters, final WithClient<T> performer) throws Exception {
 
         final RestClient client = component.createRestClient(parameters);
 
@@ -65,7 +62,7 @@ final class SalesforceClientTemplate {
         // SalesforceComponent could mean logging out any running endpoints also
         final boolean isHttpClientHolder = client instanceof HttpClientHolder;
         if (isHttpClientHolder) {
-            ((HttpClientHolder) client).getHttpClient().start();
+            ((HttpClientHolder)client).getHttpClient().start();
         }
 
         ServiceHelper.startService(client);
@@ -76,7 +73,7 @@ final class SalesforceClientTemplate {
             ServiceHelper.stopService(client);
 
             if (isHttpClientHolder) {
-                ((HttpClientHolder) client).getHttpClient().stop();
+                ((HttpClientHolder)client).getHttpClient().stop();
             }
         }
     }

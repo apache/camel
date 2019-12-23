@@ -245,6 +245,7 @@ public class SqlRouteTest extends CamelTestSupport {
         assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
     }
     
+    @Override
     @Before
     public void setUp() throws Exception {
         db = new EmbeddedDatabaseBuilder()
@@ -255,6 +256,7 @@ public class SqlRouteTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

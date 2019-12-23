@@ -35,10 +35,7 @@ public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(2).ignoreInvalidCorrelationKeys()
-                        .to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).ignoreInvalidCorrelationKeys().to("mock:result");
             }
         });
         context.start();
@@ -60,10 +57,7 @@ public class AggregateIgnoreInvalidCorrelationKeysTest extends ContextTestSuppor
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .completionSize(2)
-                        .to("mock:result");
+                from("direct:start").aggregate(header("id"), new BodyInAggregatingStrategy()).completionSize(2).to("mock:result");
             }
         });
         context.start();

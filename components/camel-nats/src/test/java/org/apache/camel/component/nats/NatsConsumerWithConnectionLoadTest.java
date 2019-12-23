@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.nats;
 
-import java.io.IOException;
-import java.util.concurrent.TimeoutException;
-
 import io.nats.client.Connection;
 import io.nats.client.Nats;
 import io.nats.client.Options;
 import io.nats.client.Options.Builder;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
@@ -41,18 +37,18 @@ public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
     private Connection connection;
     
     @BindToRegistry("connection")
-    public Connection connection() throws IllegalStateException, IOException, InterruptedException {
+    public Connection connection() throws Exception {
         Builder options = new Options.Builder();
-        options.server("nats://" + getNatsUrl());
+        options.server("nats://" + getNatsBrokerUrl());
         connection = Nats.connect(options.build());
         return connection;
     }
 
     @Test
-    public void testLoadConsumer() throws InterruptedException, IOException, TimeoutException {
+    public void testLoadConsumer() throws Exception {
         mockResultEndpoint.setExpectedMessageCount(100);
         mockResultEndpoint1.setExpectedMessageCount(0);
-        Options options = new Options.Builder().server("nats://" + getNatsUrl()).build();
+        Options options = new Options.Builder().server("nats://" + getNatsBrokerUrl()).build();
         Connection connection = Nats.connect(options);
 
         for (int i = 0; i < 100; i++) {
@@ -68,8 +64,8 @@ public class NatsConsumerWithConnectionLoadTest extends NatsTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("nats://thisismytest?topic=test&connection=#connection").to(mockResultEndpoint);
-                from("nats://thisismytest?topic=test1&connection=#connection").to(mockResultEndpoint1);
+                from("nats:test?connection=#connection").to(mockResultEndpoint);
+                from("nats:test1?connection=#connection").to(mockResultEndpoint1);
             }
         };
     }

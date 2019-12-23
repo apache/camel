@@ -33,6 +33,7 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
 
     private File file;
 
+    @Override
     protected String getLanguageName() {
         return "file";
     }
@@ -49,6 +50,7 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
         assertExpression("${file:onlyname.noext.single}", "bye.def");
     }
 
+    @Override
     public Exchange createExchange() {
         // create the file
         String uri = "file://target/data/filelanguage?fileExist=Override";
@@ -68,7 +70,7 @@ public class FileLanguageExtSingleTest extends LanguageTestSupport {
         answer.getIn().setHeader("birthday", cal.getTime());
 
         cal.set(2008, Calendar.AUGUST, 8);
-        answer.getOut().setHeader("special", cal.getTime());
+        answer.getMessage().setHeader("special", cal.getTime());
         return answer;
     }
 

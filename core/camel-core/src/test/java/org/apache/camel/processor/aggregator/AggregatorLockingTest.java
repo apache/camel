@@ -47,17 +47,18 @@ public class AggregatorLockingTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:a?concurrentConsumers=2")
-                    .aggregate(header("myId"), new UseLatestAggregationStrategy())
-                    .completionSize(1)
+                from("seda:a?concurrentConsumers=2").aggregate(header("myId"), new UseLatestAggregationStrategy()).completionSize(1)
                     // N.B. *no* parallelProcessing() nor optimisticLocking() !
-                    // each thread releases 1 permit and then blocks waiting for other threads.
-                    // if there are <THREAD_COUNT> threads running in parallel, then all N threads will release
-                    // and we will proceed. If the threads are prevented from running simultaneously due to the
-                    // lock in AggregateProcessor.doProcess() then only 1 thread will run and will not release
+                    // each thread releases 1 permit and then blocks waiting for
+                    // other threads.
+                    // if there are <THREAD_COUNT> threads running in parallel,
+                    // then all N threads will release
+                    // and we will proceed. If the threads are prevented from
+                    // running simultaneously due to the
+                    // lock in AggregateProcessor.doProcess() then only 1 thread
+                    // will run and will not release
                     // the current thread, causing the test to time out.
-                    .log("Before await with thread: ${threadName} and body: ${body}")
-                    .process(new Processor() {
+                    .log("Before await with thread: ${threadName} and body: ${body}").process(new Processor() {
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             latch.countDown();
@@ -66,9 +67,7 @@ public class AggregatorLockingTest extends ContextTestSupport {
                                 throw new RuntimeException("Took too long; assume threads are blocked and fail test");
                             }
                         }
-                    })
-                    .log("After await with thread: ${threadName} and body: ${body}")
-                    .to("mock:result");
+                    }).log("After await with thread: ${threadName} and body: ${body}").to("mock:result");
             }
         };
     }

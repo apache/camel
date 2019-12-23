@@ -29,19 +29,19 @@ import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.spec.IvParameterSpec;
 
-import static javax.crypto.Cipher.DECRYPT_MODE;
-import static javax.crypto.Cipher.ENCRYPT_MODE;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.stream.OutputStreamBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.DataFormatName;
 import org.apache.camel.spi.annotations.Dataformat;
 import org.apache.camel.support.ExchangeHelper;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static javax.crypto.Cipher.DECRYPT_MODE;
+import static javax.crypto.Cipher.ENCRYPT_MODE;
 
 /**
  * <code>CryptoDataFormat</code> uses a specified key and algorithm to encrypt,
@@ -77,7 +77,7 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
 
     private static final Logger LOG = LoggerFactory.getLogger(CryptoDataFormat.class);
     private static final String INIT_VECTOR = "CamelCryptoInitVector";
-    private String algorithm = "DES/CBC/PKCS5Padding";
+    private String algorithm;
     private String cryptoProvider;
     private Key configuredkey;
     private int bufferSize = 4096;
@@ -125,6 +125,7 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         return cipher;
     }
 
+    @Override
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         byte[] iv = getInitializationVector(exchange);
         Key key = getKey(exchange);
@@ -155,6 +156,7 @@ public class CryptoDataFormat extends ServiceSupport implements DataFormat, Data
         }
     }
 
+    @Override
     public Object unmarshal(final Exchange exchange, final InputStream encryptedStream) throws Exception {
         if (encryptedStream != null) {
             byte[] iv = getInlinedInitializationVector(exchange, encryptedStream);

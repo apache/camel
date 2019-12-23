@@ -59,6 +59,7 @@ public class SpringLdapProducerTest extends CamelTestSupport {
 
     private SpringLdapProducer ldapProducer;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

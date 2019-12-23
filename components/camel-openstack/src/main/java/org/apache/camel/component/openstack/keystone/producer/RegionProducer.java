@@ -91,7 +91,7 @@ public class RegionProducer extends AbstractKeystoneProducer {
         final String id = msg.getHeader(OpenstackConstants.ID, String.class);
         StringHelper.notEmpty(id, "Region ID");
         final ActionResponse response = osV3Client.identity().regions().delete(id);
-        checkFailure(response, msg, "Delete network" + id);
+        checkFailure(response, exchange, "Delete network" + id);
     }
 
     private Region messageToRegion(Message message) {

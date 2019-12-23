@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
+
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -67,6 +68,7 @@ public class LevelDBSpringAggregateRecoverWithRedeliveryPolicyTest extends Camel
 
     public static class MyFailProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             int count = counter.incrementAndGet();
             if (count <= 3) {
@@ -77,6 +79,7 @@ public class LevelDBSpringAggregateRecoverWithRedeliveryPolicyTest extends Camel
 
     public static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

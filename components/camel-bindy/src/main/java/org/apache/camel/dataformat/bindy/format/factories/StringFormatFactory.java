@@ -34,10 +34,12 @@ public class StringFormatFactory extends AbstractFormatFactory {
 
     private static class StringFormat implements Format<String> {
 
+        @Override
         public String format(String object) throws Exception {
             return object;
         }
 
+        @Override
         public String parse(String string) throws Exception {
             return string;
         }

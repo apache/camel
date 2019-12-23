@@ -18,6 +18,7 @@ package org.apache.camel.component.servlet.osgi;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+
 import javax.servlet.http.HttpServlet;
 
 import org.apache.camel.util.StringHelper;

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -41,43 +42,45 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
         y = getMockEndpoint("mock:y");
         z = getMockEndpoint("mock:z");
     }
-    
+
     public static class MyException extends Exception {
         private static final long serialVersionUID = 1L;
     }
-    
+
     public static class MyAnotherException extends Exception {
         private static final long serialVersionUID = 1L;
     }
-    
-    public static class MyExceptionProcessor implements Processor {        
+
+    public static class MyExceptionProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
-            throw new MyException();            
-        }        
-    }
-    
-    public static class MyAnotherExceptionProcessor implements Processor {
-        public void process(Exchange exchange) throws Exception {
-            throw new MyAnotherException();            
+            throw new MyException();
         }
     }
 
+    public static class MyAnotherExceptionProcessor implements Processor {
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            throw new MyAnotherException();
+        }
+    }
+
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:exception").loadBalance()
                     // catch all the exception here
                     .failover().to("direct:x", "direct:y", "direct:z");
-                
-                from("direct:customerException").loadBalance()
-                    .failover(MyException.class).to("direct:x", "direct:y", "direct:z");
-                
+
+                from("direct:customerException").loadBalance().failover(MyException.class).to("direct:x", "direct:y", "direct:z");
+
                 from("direct:x").process(new MyExceptionProcessor()).to("mock:x");
-                
+
                 from("direct:y").process(new MyAnotherExceptionProcessor()).to("mock:y");
-                
+
                 from("direct:z").to("mock:z");
-                
+
             }
         };
     }
@@ -90,7 +93,7 @@ public class FailOverLoadBalanceTest extends ContextTestSupport {
         sendMessage("direct:exception", "bar", body);
         assertMockEndpointsSatisfied();
     }
-    
+
     @Test
     public void testMyException() throws Exception {
         String body = "<two/>";

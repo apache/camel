@@ -57,8 +57,7 @@ public class BarSendDynamicAware implements SendDynamicAware {
     public Processor createPreProcessor(Exchange exchange, DynamicAwareEntry entry) throws Exception {
         if (entry.getProperties().containsKey("drink")) {
             Object value = entry.getProperties().get("drink");
-            return new SetHeaderProcessor(ExpressionBuilder.constantExpression(BarConstants.DRINK),
-                ExpressionBuilder.constantExpression(value));
+            return new SetHeaderProcessor(ExpressionBuilder.constantExpression(BarConstants.DRINK), ExpressionBuilder.constantExpression(value));
         } else {
             return null;
         }

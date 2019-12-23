@@ -91,7 +91,8 @@ public class FromRestGetTest extends ContextTestSupport {
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:bye", to.getUri());
 
-        // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
+        // the rest becomes routes and the input is a seda endpoint created by
+        // the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
         template.sendBody("seda:post-say-bye", "I was here");
         assertMockEndpointsSatisfied();
@@ -108,29 +109,18 @@ public class FromRestGetTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
-                rest("/say/hello")
-                    .get().to("direct:hello");
+                rest("/say/hello").get().to("direct:hello");
 
-                rest("/say/bye")
-                        .get().consumes("application/json")
-                        .param().type(RestParamType.header).description("header param description1").dataType("integer").allowableValues("1", "2", "3", "4")
-                        .defaultValue("1").name("header_count").required(true)
-                        .endParam()
-                        .param().type(RestParamType.query).description("header param description2").dataType("string").allowableValues("a", "b", "c", "d")
-                        .defaultValue("b").collectionFormat(CollectionFormat.multi).name("header_letter").required(false)
-                        .endParam()
-                        .responseMessage().code(300).message("test msg").responseModel(Integer.class)
-                            .header("rate").description("Rate limit").dataType("integer").endHeader()
-                        .endResponseMessage()
-                        .responseMessage().code("error").message("does not work").endResponseMessage()
-                        .to("direct:bye")
-                        .post().to("mock:update");
+                rest("/say/bye").get().consumes("application/json").param().type(RestParamType.header).description("header param description1").dataType("integer")
+                    .allowableValues("1", "2", "3", "4").defaultValue("1").name("header_count").required(true).endParam().param().type(RestParamType.query)
+                    .description("header param description2").dataType("string").allowableValues("a", "b", "c", "d").defaultValue("b").collectionFormat(CollectionFormat.multi)
+                    .name("header_letter").required(false).endParam().responseMessage().code(300).message("test msg").responseModel(Integer.class).header("rate")
+                    .description("Rate limit").dataType("integer").endHeader().endResponseMessage().responseMessage().code("error").message("does not work").endResponseMessage()
+                    .to("direct:bye").post().to("mock:update");
 
-                from("direct:hello")
-                    .transform().constant("Hello World");
+                from("direct:hello").transform().constant("Hello World");
 
-                from("direct:bye")
-                    .transform().constant("Bye World");
+                from("direct:bye").transform().constant("Bye World");
             }
         };
     }

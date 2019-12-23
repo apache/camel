@@ -60,14 +60,11 @@ public class ThrottlerDslTest extends ContextTestSupport {
         executor.shutdownNow();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .throttle()
-                        .message(m -> m.getHeader("ThrottleCount", Integer.class))
-                        .timePeriodMillis(INTERVAL)
-                    .to("log:result", "mock:result");
+                from("direct:start").throttle().message(m -> m.getHeader("ThrottleCount", Integer.class)).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
             }
         };
     }

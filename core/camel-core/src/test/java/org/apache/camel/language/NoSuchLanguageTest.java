@@ -33,6 +33,7 @@ public class NoSuchLanguageTest extends LanguageTestSupport {
         }
     }
 
+    @Override
     protected String getLanguageName() {
         return "unknown";
     }

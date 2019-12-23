@@ -19,19 +19,19 @@ package org.apache.camel.example.fhir;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.inject.Produces;
 import javax.inject.Named;
+
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v24.message.ORU_R01;
 import ca.uhn.hl7v2.model.v24.segment.PID;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.http.ProtocolException;
 import org.hl7.fhir.dstu3.model.Patient;
 
 public class Application {
 
-    @ContextName("camel-example-fhir-cdi")
+    @ApplicationScoped
     static class FhirRoute extends RouteBuilder {
 
         @Override

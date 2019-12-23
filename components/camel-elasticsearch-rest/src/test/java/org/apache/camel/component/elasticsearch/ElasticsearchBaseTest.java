@@ -40,15 +40,19 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
     public static RestClient client;
 
     protected static final int ES_BASE_TRANSPORT_PORT = AvailablePortFinder.getNextAvailable();
-    protected static final int ES_BASE_HTTP_PORT = AvailablePortFinder.getNextAvailable(ES_BASE_TRANSPORT_PORT + 1);
+    protected static final int ES_BASE_HTTP_PORT = AvailablePortFinder.getNextAvailable();
 
     @SuppressWarnings("resource")
     @BeforeClass
     public static void cleanupOnce() throws Exception {
         deleteDirectory("target/testcluster/");
+
         clusterName = "es-cl-run-" + System.currentTimeMillis();
 
         runner = new ElasticsearchClusterRunner();
+        runner.setMaxHttpPort(-1);
+        runner.setMaxTransportPort(-1);
+
         // create ES nodes
         runner.onBuild((number, settingsBuilder) -> {
             settingsBuilder.put("http.cors.enabled", true);
@@ -56,7 +60,8 @@ public class ElasticsearchBaseTest extends CamelTestSupport {
         }).build(newConfigs()
             .clusterName(clusterName)
             .numOfNode(1)
-            .baseHttpPort(ES_BASE_TRANSPORT_PORT)
+            .baseHttpPort(ES_BASE_HTTP_PORT - 1) // ElasticsearchClusterRunner add node id to port, so set it to ES_BASE_HTTP_PORT-1 to start node 1 exactly on ES_BASE_HTTP_PORT
+            .baseTransportPort(ES_BASE_TRANSPORT_PORT - 1) // ElasticsearchClusterRunner add node id to port, so set it to ES_BASE_TRANSPORT_PORT-1 to start node 1 exactly on ES_BASE_TRANSPORT_PORT
             .basePath("target/testcluster/"));
 
         // wait for green status

@@ -1,7 +1,12 @@
 [[yammer-component]]
-== Yammer Component
+= Yammer Component
+:page-source: components/camel-yammer/src/main/docs/yammer-component.adoc
 
-*Available as of Camel version 2.12*
+*Since Camel 2.12*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Yammer component allows you to interact with the
 https://www.yammer.com[Yammer] enterprise social network. Consuming
@@ -26,14 +31,14 @@ for this component:
 </dependency>
 ----
 
-=== URI format
+== URI format
 
 [source]
 ----
 yammer:[function]?[options]
 ----
 
-=== Component options
+== Component options
 
 The Yammer component can be configured with the Yammer account settings
 which are mandatory to configure before using.
@@ -42,7 +47,7 @@ which are mandatory to configure before using.
 
 
 // component options: START
-The Yammer component supports 6 options, which are listed below.
+The Yammer component supports 7 options, which are listed below.
 
 
 
@@ -53,8 +58,9 @@ The Yammer component supports 6 options, which are listed below.
 | *consumerSecret* (security) | The consumer secret |  | String
 | *accessToken* (security) | The access token |  | String
 | *config* (advanced) | To use a shared yammer configuration |  | YammerConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -63,7 +69,7 @@ The Yammer component supports 6 options, which are listed below.
 
 You can also configure these options directly in the endpoint.
 
-=== Endpoint options
+== Endpoint options
 
 
 
@@ -76,7 +82,7 @@ yammer:function
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -86,7 +92,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (30 parameters):
+=== Query Parameters (31 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -103,7 +109,7 @@ with the following path and query parameters:
 | *userId* (consumer) | The user id |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
-| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPoll Strategy
+| *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -112,10 +118,11 @@ with the following path and query parameters:
 | *backoffMultiplier* (scheduler) | To let the scheduled polling consumer backoff if there has been a number of subsequent idles/errors in a row. The multiplier is then the number of polls that will be skipped before the next actual attempt is happening again. When this option is in use then backoffIdleThreshold and/or backoffErrorThreshold must also be configured. |  | int
 | *greedy* (scheduler) | If greedy is enabled, then the ScheduledPollConsumer will run immediately again, if the previous run polled 1 or more messages. | false | boolean
 | *initialDelay* (scheduler) | Milliseconds before the first poll starts. You can also specify time values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30 seconds), and 1h (1 hour). | 1000 | long
+| *repeatCount* (scheduler) | Specifies a maximum limit of number of fires. So if you set it to 1, the scheduler will only fire once. If you set it to 5, it will only fire five times. A value of zero or negative means fire forever. | 0 | long
 | *runLoggingLevel* (scheduler) | The consumer logs a start/complete log line when it polls. This option allows you to configure the logging level for that. | TRACE | LoggingLevel
-| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutor Service
-| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz2 component | none | ScheduledPollConsumer Scheduler
-| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz2, Spring based scheduler. |  | Map
+| *scheduledExecutorService* (scheduler) | Allows for configuring a custom/shared thread pool to use for the consumer. By default each consumer has its own single threaded thread pool. |  | ScheduledExecutorService
+| *scheduler* (scheduler) | To use a cron scheduler from either camel-spring or camel-quartz component | none | String
+| *schedulerProperties* (scheduler) | To configure additional properties when using a custom scheduler or any of the Quartz, Spring based scheduler. |  | Map
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
@@ -125,14 +132,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-yammer-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -140,7 +147,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 19 options, which are listed below.
+The component supports 20 options, which are listed below.
 
 
 
@@ -149,6 +156,7 @@ The component supports 19 options, which are listed below.
 | Name | Description | Default | Type
 | *camel.component.yammer.access-token* | The access token |  | String
 | *camel.component.yammer.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.yammer.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.yammer.config.access-token* | The access token |  | String
 | *camel.component.yammer.config.consumer-key* | The consumer key |  | String
 | *camel.component.yammer.config.consumer-secret* | The consumer secret |  | String
@@ -164,14 +172,14 @@ The component supports 19 options, which are listed below.
 | *camel.component.yammer.config.user-id* | The user id |  | String
 | *camel.component.yammer.consumer-key* | The consumer key |  | String
 | *camel.component.yammer.consumer-secret* | The consumer secret |  | String
-| *camel.component.yammer.enabled* | Enable yammer component | true | Boolean
-| *camel.component.yammer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.yammer.enabled* | Whether to enable auto configuration of the yammer component. This is enabled by default. |  | Boolean
+| *camel.component.yammer.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
-=== Consuming messages
+== Consuming messages
 
 The Yammer component provides several endpoints for consuming
 messages:
@@ -202,7 +210,7 @@ and topics that the user is following.
 |=======================================================================
 
 
-==== Message format
+=== Message format
 
 All messages by default are converted to a POJO model provided in the
 `org.apache.camel.component.yammer.model` package. The original message
@@ -311,7 +319,7 @@ That said, marshaling this data into POJOs is not free so if you need
 you can switch back to using pure JSON by adding the `useJson=false`
 option to your URI.
 
-=== Creating messages
+== Creating messages
 
 To create a new message in the account of the current user, you can use
 the following URI:
@@ -357,7 +365,7 @@ assertEquals("Hi from Camel!", messages.getMessages().get(0).getBody().getPlain(
 ----
 
 
-=== Retrieving users
+== Retrieving users
 
 The Yammer component provides several endpoints for retrieving
 users:
@@ -372,7 +380,7 @@ users:
 |=====================================================
 
 
-=== Using an enricher
+== Using an enricher
 
 It is helpful sometimes (or maybe always in the case of users
 to use an enricher pattern rather than a route

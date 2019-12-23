@@ -62,18 +62,14 @@ public class SplitterNoAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(","))
-                        .process(new MyProcessor())
-                        .to("mock:split")
-                    .end()
-                    .to("mock:result");
+                from("direct:start").split(body().tokenize(",")).process(new MyProcessor()).to("mock:split").end().to("mock:result");
             }
         };
     }
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("Kaboom".equals(body)) {

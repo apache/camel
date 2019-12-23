@@ -53,13 +53,9 @@ public class MyCurrencyBeanTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:myCurrencyBean?method=display( ${body} )")
-                    .to("mock:result");
+                from("direct:start").to("bean:myCurrencyBean?method=display( ${body} )").to("mock:result");
 
-                from("direct:price")
-                    .to("bean:myCurrencyBean?method=displayPrice( ${body}, ${header.price} )")
-                    .to("mock:result");
+                from("direct:price").to("bean:myCurrencyBean?method=displayPrice( ${body}, ${header.price} )").to("mock:result");
             }
         };
     }

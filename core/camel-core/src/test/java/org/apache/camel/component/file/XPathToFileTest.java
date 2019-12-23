@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.w3c.dom.Document;
@@ -39,8 +40,7 @@ public class XPathToFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
 
-        String xml = "<foo><person id=\"1\">Claus<country>SE</country></person>"
-                + "<person id=\"2\">Jonathan<country>CA</country></person></foo>";
+        String xml = "<foo><person id=\"1\">Claus<country>SE</country></person>" + "<person id=\"2\">Jonathan<country>CA</country></person></foo>";
         Document doc = context.getTypeConverter().convertTo(Document.class, xml);
 
         template.sendBody("direct:start", doc);
@@ -61,11 +61,8 @@ public class XPathToFileTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(xpath("/foo/person"))
-                        .log("${bodyAs(String)}")
-                        .to("file://target/data/xpath?fileName=xpath-${exchangeProperty.CamelSplitIndex}.xml")
-                        .to("mock:result");
+                from("direct:start").split(xpath("/foo/person")).log("${bodyAs(String)}").to("file://target/data/xpath?fileName=xpath-${exchangeProperty.CamelSplitIndex}.xml")
+                    .to("mock:result");
             }
         };
     }

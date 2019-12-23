@@ -17,15 +17,14 @@
     limitations under the License.
 
 -->
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-olingo2-parent</artifactId>
-        <version>3.0.0-SNAPSHOT</version>
+        <version>3.1.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-olingo2</artifactId>
@@ -40,7 +39,7 @@
         <outPackage>org.apache.camel.component.olingo2.internal</outPackage>
 
         <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
-        <maven.exe.file.extension/>
+        <maven.exe.file.extension />
     </properties>
 
     <dependencies>
@@ -53,9 +52,9 @@
             <artifactId>camel-olingo2-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>commons-lang</groupId>
-            <artifactId>commons-lang</artifactId>
-            <version>${commons-lang-version}</version>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3-version}</version>
         </dependency>
 
         <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
@@ -121,6 +120,17 @@
             <artifactId>cxf-rt-frontend-jaxrs</artifactId>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>mockwebserver</artifactId>
+            <version>${okclient-version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -171,7 +181,7 @@
                         <configuration>
                             <apis>
                                 <api>
-                                    <apiName/>
+                                    <apiName />
                                     <proxyClass>org.apache.camel.component.olingo2.api.Olingo2App</proxyClass>
                                     <fromSignatureFile>src/signatures/olingo-api-signature.txt</fromSignatureFile>
                                     <extraOptions>

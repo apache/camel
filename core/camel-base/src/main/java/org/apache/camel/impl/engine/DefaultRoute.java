@@ -62,14 +62,17 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
         return "Route " + getId();
     }
 
+    @Override
     public String getId() {
         return (String) properties.get(Route.ID_PROPERTY);
     }
 
+    @Override
     public String getGroup() {
         return (String) properties.get(Route.GROUP_PROPERTY);
     }
 
+    @Override
     public String getUptime() {
         long delta = getUptimeMillis();
         if (delta == 0) {
@@ -78,6 +81,7 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
         return TimeUtils.printDuration(delta);
     }
 
+    @Override
     public long getUptimeMillis() {
         if (startDate == null) {
             return 0;
@@ -85,10 +89,12 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
         return new Date().getTime() - startDate.getTime();
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }
 
+    @Override
     public RouteContext getRouteContext() {
         return routeContext;
     }
@@ -98,29 +104,35 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
         return routeContext.getCamelContext();
     }
 
+    @Override
     public Map<String, Object> getProperties() {
         return properties;
     }
 
+    @Override
     public String getDescription() {
         Object value = properties.get(Route.DESCRIPTION_PROPERTY);
         return value != null ? value.toString() : null;
     }
 
+    @Override
     public void onStartingServices(List<Service> services) throws Exception {
         addServices(services);
     }
 
+    @Override
     public List<Service> getServices() {
         return services;
     }
 
+    @Override
     public void addService(Service service) {
         if (!services.contains(service)) {
             services.add(service);
         }
     }
 
+    @Override
     public void warmUp() {
         getServices().clear();
     }
@@ -147,10 +159,12 @@ public abstract class DefaultRoute extends ServiceSupport implements Route {
     protected void addServices(List<Service> services) throws Exception {
     }
 
+    @Override
     protected void doStart() throws Exception {
         startDate = new Date();
     }
 
+    @Override
     protected void doStop() throws Exception {
         // and clear start date
         startDate = null;

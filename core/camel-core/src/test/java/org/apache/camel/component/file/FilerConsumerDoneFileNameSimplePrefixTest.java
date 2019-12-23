@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
@@ -41,7 +42,8 @@ public class FilerConsumerDoneFileNameSimplePrefixTest extends ContextTestSuppor
 
         template.sendBodyAndHeader("file:target/data/done", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
-        // wait a bit and it should not pickup the written file as there are no done file
+        // wait a bit and it should not pickup the written file as there are no
+        // done file
         Thread.sleep(250);
 
         assertMockEndpointsSatisfied();
@@ -66,7 +68,8 @@ public class FilerConsumerDoneFileNameSimplePrefixTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // using $simple{ to avoid clash with spring property placeholder
+                // using $simple{ to avoid clash with spring property
+                // placeholder
                 from("file:target/data/done?doneFileName=done-$simple{file:name}&initialDelay=0&delay=10").to("mock:result");
             }
         };

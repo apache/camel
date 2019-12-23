@@ -18,7 +18,7 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the ftps component over TLS (explicit) with client authentication
@@ -26,8 +26,8 @@ import org.junit.Test;
 public class FileToFtpsExplicitTLSWithClientAuthTest extends FtpsServerExplicitTLSWithClientAuthTestSupport {
     
     protected String getFtpUrl() {
-        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&consumer.initialDelay=2000&disableSecureDataChannelDefaults=true"
-                + "&securityProtocol=TLSv1.2&isImplicit=false&ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.type=JKS"
+        return "ftps://admin@localhost:" + getPort() + "/tmp2/camel?password=admin&initialDelay=2000&disableSecureDataChannelDefaults=true"
+                + "&securityProtocol=TLSv1.2&implicit=false&ftpClient.keyStore.file=./src/test/resources/server.jks&ftpClient.keyStore.type=JKS"
                 + "&ftpClient.keyStore.algorithm=SunX509&ftpClient.keyStore.password=password&ftpClient.keyStore.keyPassword=password&delete=true";
     }
     
@@ -44,6 +44,7 @@ public class FileToFtpsExplicitTLSWithClientAuthTest extends FtpsServerExplicitT
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -22,6 +22,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import static org.mockito.Mockito.*;
 
 public class HazelcastCamelTestSupport extends CamelTestSupport {

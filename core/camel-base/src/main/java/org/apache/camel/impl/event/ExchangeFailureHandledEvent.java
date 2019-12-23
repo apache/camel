@@ -37,14 +37,17 @@ public class ExchangeFailureHandledEvent extends AbstractExchangeEvent implement
         this.handled = source.getProperty(Exchange.ERRORHANDLER_HANDLED, false, Boolean.class);
     }
 
+    @Override
     public Processor getFailureHandler() {
         return failureHandler;
     }
 
+    @Override
     public boolean isDeadLetterChannel() {
         return deadLetterChannel;
     }
 
+    @Override
     public String getDeadLetterUri() {
         return deadLetterUri;
     }

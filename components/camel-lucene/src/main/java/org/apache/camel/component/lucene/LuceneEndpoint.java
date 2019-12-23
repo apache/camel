@@ -45,15 +45,17 @@ public class LuceneEndpoint extends DefaultEndpoint {
         this(endpointUri, component);
         this.config = config;
         if (config.getOperation() == LuceneOperation.insert) {
-            this.indexer = new LuceneIndexer(config.getSourceDirectory(), config.getIndexDirectory(), config.getAnalyzer());  
+            this.indexer = new LuceneIndexer(config.getSrcDir(), config.getIndexDir(), config.getAnalyzer());
             insertFlag = true;
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported for Lucene endpoint");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (!insertFlag) {
             return new LuceneQueryProducer(this, this.config);

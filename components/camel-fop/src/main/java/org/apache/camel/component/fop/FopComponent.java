@@ -31,6 +31,7 @@ public class FopComponent extends DefaultComponent {
     public FopComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         FopOutputType type = FopOutputType.asFooOutputType(remaining);
         if (type == null) {

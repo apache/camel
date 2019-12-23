@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 import javax.naming.directory.DirContext;
@@ -61,6 +62,7 @@ public class LdapProducer extends DefaultProducer {
     }
 
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String filter = exchange.getIn().getBody(String.class);
         DirContext dirContext = getDirContext();
@@ -105,7 +107,7 @@ public class LdapProducer extends DefaultProducer {
         } else if (context instanceof DirContext) {
             answer = (DirContext) context;
         } else if (context != null) {
-            String msg = "Found bean: " + remaining + " in Registry of type: " + answer.getClass().getName() + " expected type was: " + DirContext.class.getName();
+            String msg = "Found bean: " + remaining + " in Registry of type: " + context.getClass().getName() + " expected type was: " + DirContext.class.getName();
             throw new NoSuchBeanException(msg);
         }
         return answer;

@@ -26,30 +26,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class PipelineTest extends ContextTestSupport {
-    
-    /**
-     * Simple processor the copies the in to the out and increments a counter.
-     * Used to verify that the pipeline actually takes the output of one stage of 
-     * the pipe and feeds it in as input into the next stage.
-     */
-    private static final class InToOut implements Processor {
-        public void process(Exchange exchange) throws Exception {            
-            exchange.getOut().copyFrom(exchange.getIn());
-            Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
-            if (counter == null) {
-                counter = 0;
-            }
-            exchange.getOut().setHeader("copy-counter", counter + 1);
-        }
-    }
 
     /**
-     * Simple processor the copies the in to the fault and increments a counter.
+     * Simple processor the copies the in to the out and increments a counter.
+     * Used to verify that the pipeline actually takes the output of one stage
+     * of the pipe and feeds it in as input into the next stage.
      */
-    private static final class InToFault implements Processor {
+    private static final class InToOut implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setFault(true);
-            exchange.getOut().setBody(exchange.getIn().getBody());
+            exchange.getOut().copyFrom(exchange.getIn());
             Integer counter = exchange.getIn().getHeader("copy-counter", Integer.class);
             if (counter == null) {
                 counter = 0;
@@ -75,10 +61,9 @@ public class PipelineTest extends ContextTestSupport {
 
         resultEndpoint.assertIsSatisfied();
 
-        assertEquals("Result body", 4, results.getOut().getBody());
+        assertEquals("Result body", 4, results.getMessage().getBody());
     }
 
-    
     @Test
     public void testResultsReturned() throws Exception {
         Exchange exchange = template.request("direct:b", new Processor() {
@@ -86,28 +71,9 @@ public class PipelineTest extends ContextTestSupport {
                 exchange.getIn().setBody("Hello World");
             }
         });
-        
-        assertEquals("Hello World", exchange.getOut().getBody());
-        assertEquals(3, exchange.getOut().getHeader("copy-counter"));        
-    }
 
-    /**
-     * Disabled for now until we figure out fault processing in the pipeline.
-     * 
-     * @throws Exception
-     */
-    @Test
-    public void testFaultStopsPipeline() throws Exception {
-        Exchange exchange = template.request("direct:c", new Processor() {
-            public void process(Exchange exchange) {
-                exchange.getIn().setBody("Fault Message");
-            }
-        });
-        
-        // Check the fault..
-        assertTrue(exchange.getOut() != null && exchange.getOut().isFault());
-        assertEquals("Fault Message", exchange.getOut().getBody());
-        assertEquals(2, exchange.getOut().getHeader("copy-counter"));        
+        assertEquals("Hello World", exchange.getMessage().getBody());
+        assertEquals(3, exchange.getMessage().getHeader("copy-counter"));
     }
 
     @Test
@@ -117,11 +83,11 @@ public class PipelineTest extends ContextTestSupport {
                 exchange.getIn().setHeader("header", "headerValue");
             }
         });
-        
-        assertEquals("headerValue", exchange.getOut().getHeader("header"));
-        assertEquals(3, exchange.getOut().getHeader("copy-counter"));  
+
+        assertEquals("headerValue", exchange.getMessage().getHeader("header"));
+        assertEquals(3, exchange.getMessage().getHeader("copy-counter"));
     }
-    
+
     @Override
     @Before
     public void setUp() throws Exception {
@@ -129,6 +95,7 @@ public class PipelineTest extends ContextTestSupport {
         resultEndpoint = getMockEndpoint("mock:result");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         final Processor processor = new Processor() {
             public void process(Exchange exchange) {
@@ -137,7 +104,7 @@ public class PipelineTest extends ContextTestSupport {
                     number = 0;
                 }
                 number = number + 1;
-                exchange.getOut().setBody(number);
+                exchange.getMessage().setBody(number);
             }
         };
 
@@ -150,11 +117,10 @@ public class PipelineTest extends ContextTestSupport {
                 from("direct:x").process(processor);
                 from("direct:y").process(processor);
                 from("direct:z").process(processor);
-                
-                // Create a route that uses the  InToOut processor 3 times. the copy-counter header should be == 3
+
+                // Create a route that uses the InToOut processor 3 times. the
+                // copy-counter header should be == 3
                 from("direct:b").process(new InToOut()).process(new InToOut()).process(new InToOut());
-                // Create a route that uses the  InToFault processor.. the last InToOut will not be called since the Fault occurs before.
-                from("direct:c").process(new InToOut()).process(new InToFault()).process(new InToOut());
             }
         };
     }

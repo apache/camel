@@ -40,7 +40,7 @@ public class RouteStartupOrderSuspendResumeTest extends ContextTestSupport {
         context.resume();
 
         // assert correct order
-        DefaultCamelContext dcc = (DefaultCamelContext) context;
+        DefaultCamelContext dcc = (DefaultCamelContext)context;
         List<RouteStartupOrder> order = dcc.getRouteStartupOrder();
 
         assertEquals(4, order.size());

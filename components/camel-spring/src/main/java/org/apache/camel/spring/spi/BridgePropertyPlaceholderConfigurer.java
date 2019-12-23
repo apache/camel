@@ -79,9 +79,9 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
     }
 
     @Override
-    public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken, boolean fallback) throws IllegalArgumentException {
+    public String parseUri(String text, PropertiesLookup properties, boolean fallback) throws IllegalArgumentException {
         // first let Camel parse the text as it may contain Camel placeholders
-        String answer = parser.parseUri(text, properties, prefixToken, suffixToken, fallback);
+        String answer = parser.parseUri(text, properties, fallback);
 
         // then let Spring parse it to resolve any Spring placeholders
         if (answer != null) {
@@ -141,6 +141,7 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
             this.properties = properties;
         }
 
+        @Override
         public String resolvePlaceholder(String placeholderName) {
             String propVal = null;
             if (systemPropertiesMode == SYSTEM_PROPERTIES_MODE_OVERRIDE) {
@@ -167,15 +168,15 @@ public class BridgePropertyPlaceholderConfigurer extends PropertyPlaceholderConf
         }
 
         @Override
-        public String parseUri(String text, PropertiesLookup properties, String prefixToken, String suffixToken, boolean fallback) throws IllegalArgumentException {
+        public String parseUri(String text, PropertiesLookup properties, boolean fallback) throws IllegalArgumentException {
             String answer = null;
             if (delegate != null) {
-                answer = delegate.parseUri(text, properties, prefixToken, suffixToken, fallback);
+                answer = delegate.parseUri(text, properties, fallback);
             }
             if (answer != null) {
                 text = answer;
             }
-            return parser.parseUri(text, properties, prefixToken, suffixToken, fallback);
+            return parser.parseUri(text, properties, fallback);
         }
 
         @Override

@@ -338,6 +338,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
         this.xstream = xstream;
     }
 
+    @Override
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         HierarchicalStreamWriter writer = createHierarchicalStreamWriter(exchange, body, stream);
         try {
@@ -347,6 +348,7 @@ public abstract class AbstractXStreamWrapper extends ServiceSupport implements C
         }
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         HierarchicalStreamReader reader = createHierarchicalStreamReader(exchange, stream);
         try {

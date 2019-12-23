@@ -17,7 +17,7 @@
 package org.apache.camel.component.irc.it;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -54,6 +54,7 @@ public class IrcMultiChannelRouteTest extends IrcIntegrationTestSupport {
         }
     }   
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -72,8 +73,8 @@ public class IrcMultiChannelRouteTest extends IrcIntegrationTestSupport {
      * Lets send messages once the consumer has joined
      */
     protected void sendMessages() {
-        template.sendBodyAndHeader(sendUri(), body1, "irc.target", properties.get("channel1"));
-        template.sendBodyAndHeader(sendUri(), body2, "irc.target", properties.get("channel2"));
+        template.sendBodyAndHeader(sendUri(), body1, "irc.sendTo", properties.get("channel1"));
+        template.sendBodyAndHeader(sendUri(), body2, "irc.sendTo", properties.get("channel2"));
         template.sendBody(sendUri(), body3);
     }
 

@@ -20,7 +20,6 @@ import com.google.api.services.bigquery.Bigquery;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.DefaultEndpoint;
@@ -41,7 +40,7 @@ import org.apache.camel.support.DefaultEndpoint;
  * Another consideration is that exceptions are not handled within the class. They are expected to bubble up and be handled
  * by Camel.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "google-bigquery-sql", title = "Google BigQuery Standard SQL", syntax = "google-bigquery-sql:query", label = "cloud,messaging", producerOnly = true)
+@UriEndpoint(firstVersion = "2.23.0", scheme = "google-bigquery-sql", title = "Google BigQuery Standard SQL", syntax = "google-bigquery-sql:projectId:query", label = "cloud,messaging", producerOnly = true)
 public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -59,6 +58,7 @@ public class GoogleBigQuerySQLEndpoint extends DefaultEndpoint {
         return producer;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Cannot consume from the BigQuery endpoint: " + getEndpointUri());
     }

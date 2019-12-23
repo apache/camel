@@ -1,0 +1,57 @@
+= What are the dependencies?
+
+Camel 2.6 or older can run on JDK 1.5 or better. +
+Camel 2.7 onwards requires JDK 1.6 or JDK 1.7. +
+Camel 2.14 onwards requires JDK 1.7 or better. +
+Camel 2.18 onwards requires JDK 1.8.
+
+== What are the runtime jar dependencies?
+
+Apache Camel is designed to require a minimum number of dependencies for
+us so it is ideal for embedding into smart clients, message brokers, SOA
+frameworks and ESBs.
+
+== Camel JAR Dependencies
+
+Camel core itself is lightweight and can run with a few .jars.
+
+== `camel-core` dependencies for Camel 2.0 or lower
+
+* `commons-logging-api.jar` - API for commons logging
+* JAXB 2.1.x - XML stuff - Is provided in the JDK core from Java 1.6
+* `activation.jar` - For Attachments support - Is provided in the JDK
+core from Java 1.6
+
+== `camel-core` dependencies for Camel 2.1 - 2.6
+
+* `commons-logging-api-1.1.jar` - API for commons logging
+* `commons-management-1.0.jar` - API for JMX
+* JAXB 2.1.x - XML stuff - Is provided in the JDK core from Java 1.6
+* `activation-1.1.jar` - For Attachments support - Is provided in the
+JDK core from Java 1.6
+
+== `camel-core` dependencies for Camel 2.7 - 2.8
+
+* `slf4j-api-1.5.11.jar` - API for slf4j logging
+* `commons-management-1.0.jar` - API for JMX
+
+== `camel-core` dependencies for Camel 2.9
+
+* `slf4j-api-1.6.1.jar` - API for slf4j logging
+
+== Optional Dependencies for JMX for Camel 1.x - 2.8
+
+* `spring-core.jar`, `spring-beans.jar`,
+`spring-context.jar`, `spring-aop.jar` - All 4 jars needed to use JMX
+with Camel (subject to change in the future).
+
+From *Camel 2.9*: the Spring JARs are no longer required for using JMX.
+
+== Other Components
+
+All the other xref:components::index.adoc[Components] have a range of 3rd party
+.jars they depend on. They are listed in the maven pom files which files
+they require.
+
+Other modules require other dependencies; such as camel-jms requires a
+JMS provider.

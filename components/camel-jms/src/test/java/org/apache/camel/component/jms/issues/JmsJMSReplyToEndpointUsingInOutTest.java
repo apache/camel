@@ -98,6 +98,7 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
         executor.shutdownNow();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
 
@@ -116,6 +117,7 @@ public class JmsJMSReplyToEndpointUsingInOutTest extends CamelTestSupport {
         };
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

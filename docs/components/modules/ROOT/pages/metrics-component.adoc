@@ -1,25 +1,21 @@
 [[metrics-component]]
-== Metrics Component
-ifdef::env-github[]
-*Available as of Camel version 2.14.0*
+= Metrics Component
+:page-source: components/camel-metrics/src/main/docs/metrics-component.adoc
 
-:caution-caption: :boom:
-:important-caption: :exclamation:
-:note-caption: :information_source:
-:tip-caption: :bulb:
-:warning-caption: :warning:
-endif::[]
+*Since Camel 2.14*
 
-### Metrics Component
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
-The Metrics component allows to collect various metrics directly
+The Metrics component allows to collect various metrics directly
 from Camel routes. Supported metric types
-are xref:#MetricsComponent-counter[counter], xref:#MetricsComponent-histogram[histogram],
-xref:#MetricsComponent-meter[meter], xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge]. http://metrics.dropwizard.io[Metrics] provides
+are xref:#MetricsComponent-counter[counter], xref:#MetricsComponent-histogram[histogram],
+xref:#MetricsComponent-meter[meter], xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge]. http://metrics.dropwizard.io[Metrics] provides
 simple way to measure behaviour of application. Configurable
-reporting backend is enabling different integration options for
+reporting backend is enabling different integration options for
 collecting and visualizing statistics. The component also provides
-a `MetricsRoutePolicyFactory` which allows to expose route statistics
+a `MetricsRoutePolicyFactory` which allows to expose route statistics
 using Dropwizard Metrics, see bottom of page for details.
 
 Maven users will need to add the following dependency to their `pom.xml`
@@ -35,17 +31,17 @@ for this component:
 </dependency>
 ----
 
-### URI format
+== URI format
 
 [source]
 ----
 metrics:[ meter | counter | histogram | timer | gauge ]:metricname[?options]
 ----
 
-### Options
+== Options
 
 // component options: START
-The Metrics component supports 3 options, which are listed below.
+The Metrics component supports 4 options, which are listed below.
 
 
 
@@ -53,8 +49,9 @@ The Metrics component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *metricRegistry* (advanced) | To use a custom configured MetricRegistry. |  | MetricRegistry
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -68,7 +65,7 @@ metrics:metricsType:metricsName
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -79,7 +76,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (9 parameters):
+=== Query Parameters (9 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -97,14 +94,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-metrics-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -112,7 +109,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -120,16 +117,18 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.metrics.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.metrics.enabled* | Enable metrics component | true | Boolean
+| *camel.component.metrics.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.metrics.enabled* | Whether to enable auto configuration of the metrics component. This is enabled by default. |  | Boolean
+| *camel.component.metrics.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.metrics.metric-registry* | To use a custom configured MetricRegistry. The option is a com.codahale.metrics.MetricRegistry type. |  | String
-| *camel.component.metrics.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
 |===
 // spring-boot-auto-configure options: END
 
 
 
 
-### [[MetricsComponent-registry]]Metric Registry
+[[MetricsComponent-registry]]
+== Metric Registry
 
 Camel Metrics component uses by default a `MetricRegistry` instance with
 a `Slf4jReporter` that has a 60 second reporting interval.
@@ -186,15 +185,15 @@ class MyBean extends RouteBuilder {
 }
 ----
 
-### Usage
+== Usage
 
 Each metric has type and name. Supported types are
 xref:#MetricsComponent-counter[counter],
-xref:#MetricsComponent-histogram[histogram], xref:#MetricsComponent-meter[meter],
+xref:#MetricsComponent-histogram[histogram], xref:#MetricsComponent-meter[meter],
 xref:#MetricsComponent-timer[timer] and xref:#MetricsComponent-gauge[gauge].
 Metric name is simple string. If metric type is not provided then type meter is used by default.
 
-#### Headers
+=== Headers
 
 Metric name defined in URI can be overridden by using header with name
 `CamelMetricsName`.
@@ -216,31 +215,32 @@ endpoint finishes processing of exchange. While processing exchange
 Metrics endpoint will catch all exceptions and write log entry using
 level `warn`.
 
-### [[MetricsComponent-counter]]Metrics type counter
+[[MetricsComponent-counter]]
+== Metrics type counter
 
 [source]
 ----
 metrics:counter:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",options="header"]
 |=====================================================
 |Name |Default |Description
-|increment  |- |Long value to add to the counter
+|increment  |- |Long value to add to the counter
 |decrement |- |Long value to subtract from the counter
 |=====================================================
 
 If neither `increment` or `decrement` is defined then counter value will
 be incremented by one. If `increment` and `decrement` are both defined
-only increment operation is called. 
+only increment operation is called.
 
 [source,java]
 ----
 // update counter simple.counter by 7
 from("direct:in")
-    .to("metric:counter:simple.counter?increment=7")
+    .to("metrics:counter:simple.counter?increment=7")
     .to("direct:out");
 ----
 
@@ -248,7 +248,7 @@ from("direct:in")
 ----
 // increment counter simple.counter by 1
 from("direct:in")
-    .to("metric:counter:simple.counter")
+    .to("metrics:counter:simple.counter")
     .to("direct:out");
 ----
 
@@ -260,7 +260,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-#### Headers
+=== Headers
 
 Message headers can be used to override `increment` and `decrement`
 values specified in Metrics component URI.
@@ -268,8 +268,8 @@ values specified in Metrics component URI.
 [width="100%",cols="10%,80%,10%",options="header",]
 |====================================================================
 |Name |Description |Expected type
-|CamelMetricsCounterIncrement  |Override increment value in URI |Long
-|CamelMetricsCounterDecrement  |Override decrement value in URI |Long
+|CamelMetricsCounterIncrement  |Override increment value in URI |Long
+|CamelMetricsCounterDecrement  |Override decrement value in URI |Long
 |====================================================================
 
 [source,java]
@@ -291,14 +291,15 @@ from("direct:in")
 
 ----
 
-### [[MetricsComponent-histogram]]Metric type histogram
+[[MetricsComponent-histogram]]
+== Metric type histogram
 
 [source]
 ----
 metrics:histogram:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",options="header"]
 |===================================
@@ -313,7 +314,7 @@ logged.
 ----
 // adds value 9923 to simple.histogram
 from("direct:in")
-    .to("metric:histogram:simple.histogram?value=9923")
+    .to("metrics:histogram:simple.histogram?value=9923")
     .to("direct:out");
 ----
 
@@ -321,12 +322,12 @@ from("direct:in")
 ----
 // nothing is added to simple.histogram; warning is logged
 from("direct:in")
-    .to("metric:histogram:simple.histogram")
+    .to("metrics:histogram:simple.histogram")
     .to("direct:out");
 
 ----
 
-#### Headers
+=== Headers
 
 Message header can be used to override value specified in Metrics
 component URI.
@@ -347,28 +348,29 @@ from("direct:in")
 
 ----
 
-### [[MetricsComponent-meter]]Metric type meter
+[[MetricsComponent-meter]]
+== Metric type meter
 
 [source]
 ----
 metrics:meter:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",options="header"]
 |===================================
 |Name |Default |Description
-|mark  |- |Long value to use as mark
+|mark  |- |Long value to use as mark
 |===================================
 
-If `mark` is not set then `meter.mark()` is called without argument.
+If `mark` is not set then `meter.mark()` is called without argument.
 
 [source,java]
 ----
 // marks simple.meter without value
 from("direct:in")
-    .to("metric:simple.meter")
+    .to("metrics:simple.meter")
     .to("direct:out");
 ----
 
@@ -376,11 +378,11 @@ from("direct:in")
 ----
 // marks simple.meter with value 81
 from("direct:in")
-    .to("metric:meter:simple.meter?mark=81")
+    .to("metrics:meter:simple.meter?mark=81")
     .to("direct:out");
 ----
 
-#### Headers
+=== Headers
 
 Message header can be used to override `mark` value specified in Metrics
 component URI.
@@ -400,14 +402,15 @@ from("direct:in")
     .to("direct:out");
 ----
 
-### [[MetricsComponent-timer]]Metrics type timer
+[[MetricsComponent-timer]]
+== Metrics type timer
 
 [source]
 ----
 metrics:timer:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",options="header"]
 |==========================
@@ -432,7 +435,7 @@ from("direct:in")
 `TimerContext` objects are stored as Exchange properties between
 different Metrics component calls.
 
-#### Headers
+=== Headers
 
 Message header can be used to override action value specified in Metrics
 component URI.
@@ -441,31 +444,32 @@ component URI.
 |=======================================================================
 |Name |Description |Expected type
 |CamelMetricsTimerAction |Override timer action in URI
-|`org.apache.camel.component.metrics.timer.TimerEndpoint.TimerAction`
+|`org.apache.camel.component.metrics.MetricsTimerAction`
 |=======================================================================
 
 [source,java]
 ----
 // sets timer action using header
 from("direct:in")
-    .setHeader(MetricsConstants.HEADER_TIMER_ACTION, TimerAction.start)
+    .setHeader(MetricsConstants.HEADER_TIMER_ACTION, MetricsTimerAction.start)
     .to("metrics:timer:simple.timer")
     .to("direct:out");
 ----
 
-### [[MetricsComponent-gauge]]Metric type gauge
+[[MetricsComponent-gauge]]
+== Metric type gauge
 
 [source]
 ----
 metrics:gauge:metricname[?options]
 ----
 
-#### Options
+=== Options
 
 [width="100%",options="header"]
 |=====================================================
 |Name |Default |Description
-|subject  |- |Any object to be observed by the gauge
+|subject  |- |Any object to be observed by the gauge
 |=====================================================
 
 If `subject` is not defined it's simply ignored, i.e. the gauge is not registered.
@@ -478,7 +482,7 @@ from("direct:in")
     .to("direct:out");
 ----
 
-#### Headers
+=== Headers
 
 Message headers can be used to override `subject` values specified in Metrics component URI.
 Note: if `CamelMetricsName` header is specified, then new gauge is registered in addition to
@@ -487,7 +491,7 @@ default one specified in a URI.
 [width="100%",cols="10%,80%,10%",options="header",]
 |====================================================================
 |Name |Description |Expected type
-|CamelMetricsGaugeSubject  |Override subject value in URI |Object
+|CamelMetricsGaugeSubject  |Override subject value in URI |Object
 |====================================================================
 
 [source,java]
@@ -499,18 +503,18 @@ from("direct:in")
     .to("direct:out");
 ----
 
-### MetricsRoutePolicyFactory
+== MetricsRoutePolicyFactory
 
-This factory allows to add a RoutePolicy for each
+This factory allows to add a RoutePolicy for each
 route which exposes route utilization statistics using Dropwizard metrics.
 This factory can be used in Java and XML as the examples below
-demonstrates. 
+demonstrates.
 
 NOTE: Instead of using the MetricsRoutePolicyFactory you can define a
 MetricsRoutePolicy per route you want to instrument, in case you only
 want to instrument a few selected routes.
 
-From Java you just add the factory to the `CamelContext` as shown below:
+From Java you just add the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -525,7 +529,7 @@ And from XML DSL you define a <bean> as follows:
   <bean id="metricsRoutePolicyFactory" class="org.apache.camel.component.metrics.routepolicy.MetricsRoutePolicyFactory"/>
 ----
 
-The `MetricsRoutePolicyFactory` and `MetricsRoutePolicy` supports the
+The `MetricsRoutePolicyFactory` and `MetricsRoutePolicy` supports the
 following options:
 
 [width="100%",options="header"]
@@ -544,7 +548,7 @@ want fine grained mbeans per statistics type.
 |prettyPrint |false |Whether to use pretty print when outputting
 statistics in json format
 
-|metricsRegistry |  |Allow to use a shared
+|metricsRegistry |  |Allow to use a shared
 `com.codahale.metrics.MetricRegistry`. If none is provided then Camel
 will create a shared instance used by the this CamelContext.
 
@@ -561,10 +565,10 @@ value. Where `###name###` is the name of the CamelContext. `###routeId###`
 is the name of the route. And `###type###` is the value of responses.
 |=======================================================================
 
- 
+
 
 From Java code you can get hold of
-the `com.codahale.metrics.MetricRegistry` from the
+the `com.codahale.metrics.MetricRegistry` from the
 `org.apache.camel.component.metrics.routepolicy.MetricsRegistryService`
 as shown below:
 
@@ -577,17 +581,17 @@ if (registryService != null) {
 }
 ----
 
-### MetricsMessageHistoryFactory
+== MetricsMessageHistoryFactory
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 This factory allows to use metrics to
-capture Message History performance
+capture Message History performance
 statistics while routing messages. It works by using a metrics Timer for
-each node in all the routes. This factory can be used in Java and XML as
-the examples below demonstrates. 
+each node in all the routes. This factory can be used in Java and XML as
+the examples below demonstrates.
 
-From Java you just set the factory to the `CamelContext` as shown below:
+From Java you just set the factory to the `CamelContext` as shown below:
 
 [source,java]
 ----
@@ -620,7 +624,7 @@ want fine grained mbeans per statistics type.
 |prettyPrint |false |Whether to use pretty print when outputting
 statistics in json format
 
-|metricsRegistry |  |Allow to use a shared
+|metricsRegistry |  |Allow to use a shared
 `com.codahale.metrics.MetricRegistry`. If none is provided then Camel
 will create a shared instance used by the this CamelContext.
 
@@ -650,19 +654,13 @@ MetricsMessageHistoryService service = context.hasService(MetricsMessageHistoryS
 String json = service.dumpStatisticsAsJson();
 ----
 
-And the JMX API the MBean is registered in the `type=services` tree
-with `name=MetricsMessageHistoryService`.
+And the JMX API the MBean is registered in the `type=services` tree
+with `name=MetricsMessageHistoryService`.
 
-### InstrumentedThreadPoolFactory
+== InstrumentedThreadPoolFactory
 
-*Available as of Camel 2.18*
+*Since Camel 2.18*
 
 This factory allows you to gather performance information about Camel Thread Pools by injecting a InstrumentedThreadPoolFactory
 which collects information from inside of Camel.
 See more details at Advanced configuration of CamelContext using Spring
-
-
-### See Also
-
-* The `camel-example-cdi-metrics` example that illustrates the integration
-  between Camel, Metrics and CDI.

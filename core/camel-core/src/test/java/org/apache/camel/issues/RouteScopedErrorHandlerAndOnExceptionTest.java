@@ -22,6 +22,7 @@ import java.net.ConnectException;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
@@ -35,12 +36,10 @@ public class RouteScopedErrorHandlerAndOnExceptionTest extends ContextTestSuppor
     @Test
     public void testOnException() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new RouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("seda:*")
-                    .skipSendToOriginalEndpoint()
-                    .throwException(new ConnectException("Forced"));
+                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().throwException(new ConnectException("Forced"));
             }
         });
 
@@ -63,12 +62,10 @@ public class RouteScopedErrorHandlerAndOnExceptionTest extends ContextTestSuppor
     @Test
     public void testErrorHandler() throws Exception {
         RouteDefinition route = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(route, context, new RouteBuilder() {
+        RouteReifier.adviceWith(route, context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                interceptSendToEndpoint("seda:*")
-                    .skipSendToOriginalEndpoint()
-                    .throwException(new FileNotFoundException("Forced"));
+                interceptSendToEndpoint("seda:*").skipSendToOriginalEndpoint().throwException(new FileNotFoundException("Forced"));
             }
         });
 
@@ -87,17 +84,11 @@ public class RouteScopedErrorHandlerAndOnExceptionTest extends ContextTestSuppor
             @Override
             public void configure() throws Exception {
 
-                from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:local")
-                        .maximumRedeliveries(2)
-                        .redeliveryDelay(0))
+                from("direct:start").errorHandler(deadLetterChannel("mock:local").maximumRedeliveries(2).redeliveryDelay(0))
                     // no redelivery delay for faster unit tests
-                    .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0)
-                        .logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.WARN)
-                        // send to mock when we are exhausted
-                        .to("mock:exhausted")
-                    .end()
-                    .to("seda:foo");
+                    .onException(ConnectException.class).maximumRedeliveries(5).redeliveryDelay(0).logRetryAttempted(true).retryAttemptedLogLevel(LoggingLevel.WARN)
+                    // send to mock when we are exhausted
+                    .to("mock:exhausted").end().to("seda:foo");
             }
         };
     }

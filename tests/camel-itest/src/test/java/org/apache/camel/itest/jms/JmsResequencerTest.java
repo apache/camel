@@ -17,6 +17,7 @@
 package org.apache.camel.itest.jms;
 
 import java.util.List;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.Body;
@@ -101,6 +102,7 @@ public class JmsResequencerTest extends CamelTestSupport  {
        
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

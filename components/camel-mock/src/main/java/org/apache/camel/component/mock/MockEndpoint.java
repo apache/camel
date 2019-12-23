@@ -43,7 +43,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.InterceptSendToEndpoint;
 import org.apache.camel.spi.Metadata;
@@ -102,6 +102,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile List<Throwable> failures;
     private volatile List<Runnable> tests;
     private volatile CountDownLatch latch;
+    private volatile AssertionError failFastAssertionError;
     private volatile int expectedMinimumCount;
     private volatile List<?> expectedBodyValues;
     private volatile List<Object> actualBodyValues;
@@ -130,6 +131,8 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private int retainLast;
     @UriParam(label = "producer")
     private int reportGroup;
+    @UriParam(label = "producer")
+    private boolean failFast = true;
     @UriParam(label = "producer,advanced", defaultValue = "true")
     private boolean copyOnExchange = true;
 
@@ -180,7 +183,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             endpoint.assertIsSatisfied();
         }
     }
-
 
     /**
      * Asserts that all the expectations on any {@link MockEndpoint} instances registered
@@ -277,14 +279,17 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
+    @Override
     public List<Exchange> getExchanges() {
         return getReceivedExchanges();
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("You cannot consume from this endpoint");
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new DefaultAsyncProducer(this) {
             public boolean process(Exchange exchange, AsyncCallback callback) {
@@ -298,7 +303,6 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     public void reset() {
         doInit();
     }
-
 
     // Testing API
     // -------------------------------------------------------------------------
@@ -399,9 +403,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             if (expectedCount != getReceivedCounter()) {
                 waitForCompleteLatch();
             }
-            assertEquals("Received message count", expectedCount, getReceivedCounter());
+            if (failFastAssertionError == null) {
+                assertEquals("Received message count", expectedCount, getReceivedCounter());
+            }
         } else if (expectedMinimumCount > 0 && getReceivedCounter() < expectedMinimumCount) {
             waitForCompleteLatch();
+        }
+
+        if (failFastAssertionError != null) {
+            throw failFastAssertionError;
         }
 
         if (expectedMinimumCount >= 0) {
@@ -410,13 +420,17 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
 
         for (Runnable test : tests) {
-            test.run();
+            // skip tasks which we have already been running in fail fast mode
+            boolean skip = failFast && test instanceof AssertionTask;
+            if (!skip) {
+                test.run();
+            }
         }
 
         for (Throwable failure : failures) {
             if (failure != null) {
-                log.error("Caught on " + getEndpointUri() + " Exception: " + failure, failure);
-                fail("Failed due to caught exception: " + failure);
+                log.error("Caught exception on " + getEndpointUri() + " due to: " + failure.getMessage(), failure);
+                fail(failure);
             }
         }
     }
@@ -485,6 +499,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         setExpectedMessageCount(expectedCount);
     }
 
+    public long getAssertPeriod() {
+        return assertPeriod;
+    }
+
     /**
      * Sets a grace period after which the mock endpoint will re-assert
      * to ensure the preliminary assertion is still valid.
@@ -528,26 +546,31 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         if (expectedHeaderValues == null) {
             expectedHeaderValues = getCamelContext().getHeadersMapFactory().newMap();
             // we just wants to expects to be called once
-            expects(new Runnable() {
+            expects(new AssertionTask() {
+                @Override
+                public void assertOnIndex(int i) {
+                    Exchange exchange = getReceivedExchange(i);
+                    for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
+                        String key = entry.getKey();
+                        Object expectedValue = entry.getValue();
+
+                        // we accept that an expectedValue of null also means that the header may be absent
+                        if (expectedValue != null) {
+                            assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
+                            boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
+                            assertTrue("No header with name " + key + " found for message: " + i, hasKey);
+                        }
+
+                        Object actualValue = exchange.getIn().getHeader(key);
+                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
+
+                        assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
+                    }
+                }
+
                 public void run() {
                     for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                        Exchange exchange = getReceivedExchange(i);
-                        for (Map.Entry<String, Object> entry : expectedHeaderValues.entrySet()) {
-                            String key = entry.getKey();
-                            Object expectedValue = entry.getValue();
-
-                            // we accept that an expectedValue of null also means that the header may be absent
-                            if (expectedValue != null) {
-                                assertTrue("Exchange " + i + " has no headers", exchange.getIn().hasHeaders());
-                                boolean hasKey = exchange.getIn().getHeaders().containsKey(key);
-                                assertTrue("No header with name " + key + " found for message: " + i, hasKey);
-                            }
-
-                            Object actualValue = exchange.getIn().getHeader(key);
-                            actualValue = extractActualValue(exchange, actualValue, expectedValue);
-
-                            assertEquals("Header with name " + key + " for message: " + i, expectedValue, actualValue);
-                        }
+                        assertOnIndex(i);
                     }
                 }
             });
@@ -617,26 +640,31 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
         expectedPropertyValues.put(name, value);
 
-        expects(new Runnable() {
+        expects(new AssertionTask() {
+            @Override
+            public void assertOnIndex(int i) {
+                Exchange exchange = getReceivedExchange(i);
+                for (Map.Entry<String, Object> entry : expectedPropertyValues.entrySet()) {
+                    String key = entry.getKey();
+                    Object expectedValue = entry.getValue();
+
+                    // we accept that an expectedValue of null also means that the property may be absent
+                    if (expectedValue != null) {
+                        assertTrue("Exchange " + i + " has no properties", !exchange.getProperties().isEmpty());
+                        boolean hasKey = exchange.getProperties().containsKey(key);
+                        assertTrue("No property with name " + key + " found for message: " + i, hasKey);
+                    }
+
+                    Object actualValue = exchange.getProperty(key);
+                    actualValue = extractActualValue(exchange, actualValue, expectedValue);
+
+                    assertEquals("Property with name " + key + " for message: " + i, expectedValue, actualValue);
+                }
+            }
+
             public void run() {
                 for (int i = 0; i < getReceivedExchanges().size(); i++) {
-                    Exchange exchange = getReceivedExchange(i);
-                    for (Map.Entry<String, Object> entry : expectedPropertyValues.entrySet()) {
-                        String key = entry.getKey();
-                        Object expectedValue = entry.getValue();
-
-                        // we accept that an expectedValue of null also means that the property may be absent
-                        if (expectedValue != null) {
-                            assertTrue("Exchange " + i + " has no properties", !exchange.getProperties().isEmpty());
-                            boolean hasKey = exchange.getProperties().containsKey(key);
-                            assertTrue("No property with name " + key + " found for message: " + i, hasKey);
-                        }
-
-                        Object actualValue = exchange.getProperty(key);
-                        actualValue = extractActualValue(exchange, actualValue, expectedValue);
-
-                        assertEquals("Property with name " + key + " for message: " + i, expectedValue, actualValue);
-                    }
+                    assertOnIndex(i);
                 }
             }
         });
@@ -706,20 +734,25 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.expectedBodyValues = bodies;
         this.actualBodyValues = new ArrayList<>();
 
-        expects(new Runnable() {
+        expects(new AssertionTask() {
+            @Override
+            public void assertOnIndex(int i) {
+                Exchange exchange = getReceivedExchange(i);
+                assertTrue("No exchange received for counter: " + i, exchange != null);
+
+                Object expectedBody = expectedBodyValues.get(i);
+                Object actualBody = null;
+                if (i < actualBodyValues.size()) {
+                    actualBody = actualBodyValues.get(i);
+                }
+                actualBody = extractActualValue(exchange, actualBody, expectedBody);
+
+                assertEquals("Body of message: " + i, expectedBody, actualBody);
+            }
+
             public void run() {
                 for (int i = 0; i < expectedBodyValues.size(); i++) {
-                    Exchange exchange = getReceivedExchange(i);
-                    assertTrue("No exchange received for counter: " + i, exchange != null);
-
-                    Object expectedBody = expectedBodyValues.get(i);
-                    Object actualBody = null;
-                    if (i < actualBodyValues.size()) {
-                        actualBody = actualBodyValues.get(i);
-                    }
-                    actualBody = extractActualValue(exchange, actualBody, expectedBody);
-
-                    assertEquals("Body of message: " + i, expectedBody, actualBody);
+                    assertOnIndex(i);
                 }
             }
         });
@@ -754,10 +787,19 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         for (int i = 0; i < predicates.length; i++) {
             final int messageIndex = i;
             final Predicate predicate = predicates[i];
-            final AssertionClause clause = new AssertionClause(this) {
+            final AssertionClause clause = new AssertionClauseTask(this) {
+                @Override
+                public void assertOnIndex(int index) {
+                    if (messageIndex == index) {
+                        addPredicate(predicate);
+                        applyAssertionOn(MockEndpoint.this, index, assertExchangeReceived(index));
+                    }
+                }
+
                 public void run() {
-                    addPredicate(predicate);
-                    applyAssertionOn(MockEndpoint.this, messageIndex, assertExchangeReceived(messageIndex));
+                    for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                        assertOnIndex(i);
+                    }
                 }
             };
             expects(clause);
@@ -783,16 +825,23 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public AssertionClause expectedBodyReceived() {
         expectedMessageCount(1);
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            @Override
+            public void assertOnIndex(int index) {
+                if (index == 0) {
+                    Exchange exchange = getReceivedExchange(index);
+                    assertTrue("No exchange received for counter: " + index, exchange != null);
+
+                    Object actualBody = exchange.getIn().getBody();
+                    Expression exp = createExpression(getCamelContext());
+                    Object expectedBody = exp.evaluate(exchange, Object.class);
+
+                    assertEquals("Body of message: " + index, expectedBody, actualBody);
+                }
+            }
+
             public void run() {
-                Exchange exchange = getReceivedExchange(0);
-                assertTrue("No exchange received for counter: " + 0, exchange != null);
-
-                Object actualBody = exchange.getIn().getBody();
-                Expression exp = createExpression(getCamelContext());
-                Object expectedBody = exp.evaluate(exchange, Object.class);
-
-                assertEquals("Body of message: " + 0, expectedBody, actualBody);
+                assertOnIndex(0);
             }
         };
         expects(clause);
@@ -903,7 +952,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * of the given expression such as a user generated counter value
      */
     public void expectsAscending(final Expression expression) {
-        expects(new Runnable() {
+        expects(new AssertionTask() {
+            @Override
+            public void assertOnIndex(int index) {
+                assertMessagesSorted(expression, true, index);
+            }
+
             public void run() {
                 assertMessagesAscending(expression);
             }
@@ -915,7 +969,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * of the given expression such as a user generated counter value
      */
     public AssertionClause expectsAscending() {
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            @Override
+            public void assertOnIndex(int index) {
+                assertMessagesSorted(createExpression(getCamelContext()), true, index);
+            }
+
             public void run() {
                 assertMessagesAscending(createExpression(getCamelContext()));
             }
@@ -929,7 +988,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * of the given expression such as a user generated counter value
      */
     public void expectsDescending(final Expression expression) {
-        expects(new Runnable() {
+        expects(new AssertionTask() {
+            @Override
+            public void assertOnIndex(int index) {
+                assertMessagesSorted(expression, false, index);
+            }
+
             public void run() {
                 assertMessagesDescending(expression);
             }
@@ -941,7 +1005,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * of the given expression such as a user generated counter value
      */
     public AssertionClause expectsDescending() {
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            @Override
+            public void assertOnIndex(int index) {
+                assertMessagesSorted(createExpression(getCamelContext()), false, index);
+            }
+
             public void run() {
                 assertMessagesDescending(createExpression(getCamelContext()));
             }
@@ -961,9 +1030,26 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      *                {@link Object#hashCode()}
      */
     public void expectsNoDuplicates(final Expression expression) {
-        expects(new Runnable() {
+        expects(new AssertionTask() {
+            private Map<Object, Exchange> map = new HashMap<>();
+
+            @Override
+            public void assertOnIndex(int index) {
+                List<Exchange> list = getReceivedExchanges();
+                Exchange e2 = list.get(index);
+                Object key = expression.evaluate(e2, Object.class);
+                Exchange e1 = map.get(key);
+                if (e1 != null) {
+                    fail("Duplicate message found on message " + index + " has value: " + key + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
+                } else {
+                    map.put(key, e2);
+                }
+            }
+
             public void run() {
-                assertNoDuplicates(expression);
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                    assertOnIndex(i);
+                }
             }
         });
     }
@@ -973,9 +1059,30 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * the expression to determine the message ID
      */
     public AssertionClause expectsNoDuplicates() {
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            private Map<Object, Exchange> map = new HashMap<>();
+            private Expression exp;
+
+            @Override
+            public void assertOnIndex(int index) {
+                if (exp == null) {
+                    exp = createExpression(getCamelContext());
+                }
+                List<Exchange> list = getReceivedExchanges();
+                Exchange e2 = list.get(index);
+                Object key = exp.evaluate(e2, Object.class);
+                Exchange e1 = map.get(key);
+                if (e1 != null) {
+                    fail("Duplicate message found on message " + index + " has value: " + key + " for expression: " + exp + ". Exchanges: " + e1 + " and " + e2);
+                } else {
+                    map.put(key, e2);
+                }
+            }
+
             public void run() {
-                assertNoDuplicates(createExpression(getCamelContext()));
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                    assertOnIndex(i);
+                }
             }
         };
         expects(clause);
@@ -997,30 +1104,44 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     protected void assertMessagesSorted(Expression expression, boolean ascending) {
+        List<Exchange> list = getReceivedExchanges();
+        for (int i = 0; i < list.size(); i++) {
+            assertMessagesSorted(expression, ascending, i);
+        }
+    }
+
+    protected void assertMessagesSorted(Expression expression, boolean ascending, int index) {
         String type = ascending ? "ascending" : "descending";
         ExpressionComparator comparator = new ExpressionComparator(expression);
-        List<Exchange> list = getReceivedExchanges();
-        for (int i = 1; i < list.size(); i++) {
-            int j = i - 1;
-            Exchange e1 = list.get(j);
-            Exchange e2 = list.get(i);
+
+        int prev = index - 1;
+        if (prev > 0) {
+            List<Exchange> list = getReceivedExchanges();
+            Exchange e1 = list.get(prev);
+            Exchange e2 = list.get(index);
             int result = comparator.compare(e1, e2);
             if (result == 0) {
-                fail("Messages not " + type + ". Messages" + j + " and " + i + " are equal with value: "
-                    + expression.evaluate(e1, Object.class) + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
+                fail("Messages not " + type + ". Messages" + prev + " and " + index + " are equal with value: "
+                        + expression.evaluate(e1, Object.class) + " for expression: " + expression + ". Exchanges: " + e1 + " and " + e2);
             } else {
                 if (!ascending) {
                     result = result * -1;
                 }
                 if (result > 0) {
-                    fail("Messages not " + type + ". Message " + j + " has value: " + expression.evaluate(e1, Object.class)
-                        + " and message " + i + " has value: " + expression.evaluate(e2, Object.class) + " for expression: "
-                        + expression + ". Exchanges: " + e1 + " and " + e2);
+                    fail("Messages not " + type + ". Message " + prev + " has value: " + expression.evaluate(e1, Object.class)
+                            + " and message " + index + " has value: " + expression.evaluate(e2, Object.class) + " for expression: "
+                            + expression + ". Exchanges: " + e1 + " and " + e2);
                 }
             }
         }
     }
 
+
+    /**
+     * Asserts among all the current received exchanges that there are no duplicate message
+     *
+     * @param expression  the expression to use for duplication check
+     */
     public void assertNoDuplicates(Expression expression) {
         Map<Object, Exchange> map = new HashMap<>();
         List<Exchange> list = getReceivedExchanges();
@@ -1050,9 +1171,16 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @return the assertion clause
      */
     public AssertionClause message(final int messageIndex) {
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            @Override
+            public void assertOnIndex(int index) {
+                if (index == messageIndex) {
+                    applyAssertionOn(MockEndpoint.this, index, assertExchangeReceived(index));
+                }
+            }
+
             public void run() {
-                applyAssertionOn(MockEndpoint.this, messageIndex, assertExchangeReceived(messageIndex));
+                assertOnIndex(messageIndex);
             }
         };
         expects(clause);
@@ -1065,12 +1193,17 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      * @return the assertion clause
      */
     public AssertionClause allMessages() {
-        final AssertionClause clause = new AssertionClause(this) {
+        final AssertionClause clause = new AssertionClauseTask(this) {
+            @Override
+            public void assertOnIndex(int index) {
+                if (index < getReceivedExchanges().size()) {
+                    applyAssertionOn(MockEndpoint.this, index, assertExchangeReceived(index));
+                }
+            }
+
             public void run() {
-                List<Exchange> list = getReceivedExchanges();
-                int index = 0;
-                for (Exchange exchange : list) {
-                    applyAssertionOn(MockEndpoint.this, index++, exchange);
+                for (int i = 0; i < getReceivedExchanges().size(); i++) {
+                    assertOnIndex(i);
                 }
             }
         };
@@ -1103,7 +1236,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             try {
                 return latch.await(0, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
-                throw RuntimeExchangeException.wrapRuntimeException(e);
+                throw RuntimeCamelException.wrapRuntimeException(e);
             }
         } else {
             return true;
@@ -1162,6 +1295,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public void setResultWaitTime(long resultWaitTime) {
         this.resultWaitTime = resultWaitTime;
+    }
+
+    public long getResultMinimumWaitTime() {
+        return resultMinimumWaitTime;
     }
 
     /**
@@ -1234,6 +1371,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.reporter = reporter;
     }
 
+    public int getRetainFirst() {
+        return retainFirst;
+    }
+
     /**
      * Specifies to only retain the first n'th number of received {@link Exchange}s.
      * <p/>
@@ -1260,6 +1401,10 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     public void setRetainFirst(int retainFirst) {
         this.retainFirst = retainFirst;
+    }
+
+    public int getRetainLast() {
+        return retainLast;
     }
 
     /**
@@ -1290,7 +1435,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.retainLast = retainLast;
     }
 
-    public int isReportGroup() {
+    public int getReportGroup() {
         return reportGroup;
     }
 
@@ -1314,8 +1459,24 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.copyOnExchange = copyOnExchange;
     }
 
+    public boolean isFailFast() {
+        return failFast;
+    }
+
+    /**
+     * Sets whether {@link #assertIsSatisfied()} should fail fast
+     * at the first detected failed expectation while it may otherwise wait for all expected
+     * messages to arrive before performing expectations verifications.
+     *
+     * Is by default <tt>true</tt>. Set to <tt>false</tt> to use behavior as in Camel 2.x.
+     */
+    public void setFailFast(boolean failFast) {
+        this.failFast = failFast;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
+    @Override
     protected void doInit() {
         expectedCount = -1;
         counter = 0;
@@ -1325,6 +1486,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         failures = new CopyOnWriteArrayList<>();
         tests = new CopyOnWriteArrayList<>();
         latch = null;
+        failFastAssertionError = null;
         sleepForEmptyTest = 0;
         resultWaitTime = 0;
         resultMinimumWaitTime = 0L;
@@ -1351,6 +1513,30 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 copy = ExchangeHelper.createCopy(exchange, true);
             }
             performAssertions(exchange, copy);
+
+            if (failFast) {
+                // fail fast mode so check n'th expectations as soon as possible
+                int index = getReceivedCounter() - 1;
+                for (Runnable test : tests) {
+                    // only assertion tasks can support fail fast mode
+                    if (test instanceof AssertionTask) {
+                        AssertionTask task = (AssertionTask) test;
+                        try {
+                            log.debug("Running assertOnIndex({}) on task: {}", index, task);
+                            task.assertOnIndex(index);
+                        } catch (AssertionError e) {
+                            failFastAssertionError = e;
+                            // signal latch we are done as we are failing fast
+                            log.debug("Assertion failed fast on " + index + " received exchange due to " + e.getMessage());
+                            while (latch != null && latch.getCount() > 0) {
+                                latch.countDown();
+                            }
+                            // we are failing fast
+                            break;
+                        }
+                    }
+                }
+            }
         } catch (Throwable e) {
             // must catch java.lang.Throwable as AssertionError extends java.lang.Error
             failures.add(e);
@@ -1514,7 +1700,13 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
                 log.debug("{} failed and received[{}]: {}", getEndpointUri(), ++index, exchange);
             }
         }
-        throw new AssertionError(getEndpointUri() + " " + message);
+        if (message instanceof Throwable) {
+            Throwable cause = (Throwable) message;
+            String msg = "Caught exception on " + getEndpointUri() + " due to: " + cause.getMessage();
+            throw new AssertionError(msg, cause);
+        } else {
+            throw new AssertionError(getEndpointUri() + " " + message);
+        }
     }
 
     public int getExpectedMinimumCount() {
@@ -1534,6 +1726,7 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return true;
     }
 
+    @Override
     public boolean isLenientProperties() {
         return true;
     }

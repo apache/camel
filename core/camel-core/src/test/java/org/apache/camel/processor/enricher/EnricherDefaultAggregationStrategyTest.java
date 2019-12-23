@@ -49,9 +49,7 @@ public class EnricherDefaultAggregationStrategyTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .enrich("direct:foo")
-                    .to("mock:result");
+                from("direct:start").enrich("direct:foo").to("mock:result");
 
                 from("direct:foo").transform(body().prepend("Bye "));
             }

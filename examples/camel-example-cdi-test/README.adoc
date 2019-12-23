@@ -1,0 +1,75 @@
+== Testing Example - CDI
+
+=== Introduction
+
+This example demonstrates the testing features that are provided as part
+of the integration between Camel and CDI.
+
+The example is implemented in Java with CDI dependency injection. It
+uses JBoss Weld as the minimal CDI container to run the application,
+though you can run the application in any CDI compliant container.
+
+This example comes with a series of test classes that each demonstrates
+particular features provided by the `+camel-test-cdi+` module:
+
+[width="100%",cols="33%,67%",options="header",]
+|===
+|Test class |Description
+|link:src/test/java/org/apache/camel/example/cdi/test/AdviceTest.java[`+AdviceTest+`]
+|Adds a test route using Camel advice API
+
+|link:src/test/java/org/apache/camel/example/cdi/test/AlternativeTest.java[`+AlternativeTest+`]
+|Mocks a bean used in a Camel route with a CDI alternative
+
+|link:src/test/java/org/apache/camel/example/cdi/test/ApplicationScopedTest.java[`+ApplicationScopedTest+`]
+|A stateful `+@ApplicationScoped+` test class
+
+|link:src/test/java/org/apache/camel/example/cdi/test/CustomContextTest.java[`+CustomContextTest+`]
+|Declares a custom Camel context bean for test purpose
+
+|link:src/test/java/org/apache/camel/example/cdi/test/OrderTest.java[`+OrderTest+`]
+|Orders the test methods execution with `+@Order+`
+|===
+
+=== Build
+
+You can build this example using:
+
+[source,sh]
+----
+$ mvn package
+----
+
+=== Run
+
+You can run this example using:
+
+[source,sh]
+----
+$ mvn camel:run
+----
+
+When the Camel application runs, you should see the following message
+being logged to the console, e.g.:
+
+....
+2016-03-04 17:54:04,147 [cdi.Main.main()] INFO  route - Hello from camel-test-cdi
+....
+
+The Camel application can be stopped pressing ctrl+c in the shell.
+
+You should see the following message being logged to the console:
+
+....
+2016-03-04 17:54:18,725 [Thread-1       ] INFO  route - Bye from camel-test-cdi
+....
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

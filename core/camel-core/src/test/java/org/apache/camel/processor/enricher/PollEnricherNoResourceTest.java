@@ -63,16 +63,13 @@ public class PollEnricherNoResourceTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                    .pollEnrich("seda:foo", 1000)
-                    .to("mock:result");
+                from("direct:a").pollEnrich("seda:foo", 1000).to("mock:result");
 
-                from("direct:b")
-                    .pollEnrich("seda:bar")
-                    .to("mock:result");
+                from("direct:b").pollEnrich("seda:bar").to("mock:result");
             }
         };
     }

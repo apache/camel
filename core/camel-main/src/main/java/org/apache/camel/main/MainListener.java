@@ -35,26 +35,26 @@ public interface MainListener {
      *
      * @param main  the main instance
      */
-    void beforeStart(MainSupport main);
+    void beforeStart(BaseMainSupport main);
 
     /**
      * Callback after the CamelContext has been started.
      *
      * @param main  the main instance
      */
-    void afterStart(MainSupport main);
+    void afterStart(BaseMainSupport main);
 
     /**
      * Callback before the CamelContext is being stopped.
      *
      * @param main  the main instance
      */
-    void beforeStop(MainSupport main);
+    void beforeStop(BaseMainSupport main);
 
     /**
      * Callback after the CamelContext has been stopped.
      *
      * @param main  the main instance
      */
-    void afterStop(MainSupport main);
+    void afterStop(BaseMainSupport main);
 }

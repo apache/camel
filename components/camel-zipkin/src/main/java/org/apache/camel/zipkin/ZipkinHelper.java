@@ -34,7 +34,7 @@ public final class ZipkinHelper {
             return null;
         }
 
-        Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+        Message message = exchange.getMessage();
         // check if body is already cached
         Object body = message.getBody();
         if (body == null) {

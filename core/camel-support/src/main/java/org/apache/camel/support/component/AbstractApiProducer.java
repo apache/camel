@@ -85,9 +85,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
                     Object result = doInvokeMethod(method, properties);
 
                     // producer returns a single response, even for methods with List return types
-                    exchange.getOut().setBody(result);
-                    // copy headers
-                    exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                    exchange.getMessage().setBody(result);
 
                     interceptResult(result, exchange);
 

@@ -29,7 +29,6 @@ import org.apache.camel.support.component.ApiMethodParser;
 import org.apache.camel.support.component.ArgumentSubstitutionParser;
 import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.velocity.VelocityContext;
 

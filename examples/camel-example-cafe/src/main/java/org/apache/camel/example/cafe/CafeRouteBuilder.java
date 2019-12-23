@@ -76,6 +76,7 @@ public class CafeRouteBuilder extends RouteBuilder {
         
     }
     //START SNIPPET: RouteConfig
+    @Override
     public void configure() {
         
         from("direct:cafe")

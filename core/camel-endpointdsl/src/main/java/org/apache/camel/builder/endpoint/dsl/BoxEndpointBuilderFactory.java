@@ -17,12 +17,16 @@
 package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 /**
  * For uploading downloading and managing files folders groups collaborations
@@ -51,7 +55,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointConsumerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -62,7 +66,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointConsumerBuilder enterpriseId(String enterpriseId) {
-            setProperty("enterpriseId", enterpriseId);
+            doSetProperty("enterpriseId", enterpriseId);
             return this;
         }
         /**
@@ -73,7 +77,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointConsumerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -84,7 +88,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointConsumerBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -102,7 +106,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -120,7 +124,314 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default BoxEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                boolean sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * If the polling consumer did not poll any files, you can enable this
+         * option to send an empty message (no body) instead.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: consumer
+         */
+        default BoxEndpointConsumerBuilder sendEmptyMessageWhenIdle(
+                String sendEmptyMessageWhenIdle) {
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder backoffErrorThreshold(
+                int backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent error polls (failed due some error) that
+         * should happen before the backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder backoffErrorThreshold(
+                String backoffErrorThreshold) {
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder backoffIdleThreshold(
+                int backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * The number of subsequent idle polls that should happen before the
+         * backoffMultipler should kick-in.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder backoffIdleThreshold(
+                String backoffIdleThreshold) {
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder backoffMultiplier(
+                int backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * To let the scheduled polling consumer backoff if there has been a
+         * number of subsequent idles/errors in a row. The multiplier is then
+         * the number of polls that will be skipped before the next actual
+         * attempt is happening again. When this option is in use then
+         * backoffIdleThreshold and/or backoffErrorThreshold must also be
+         * configured.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder backoffMultiplier(
+                String backoffMultiplier) {
+            doSetProperty("backoffMultiplier", backoffMultiplier);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder greedy(boolean greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * If greedy is enabled, then the ScheduledPollConsumer will run
+         * immediately again, if the previous run polled 1 or more messages.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder greedy(String greedy) {
+            doSetProperty("greedy", greedy);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder runLoggingLevel(
+                LoggingLevel runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * The consumer logs a start/complete log line when it polls. This
+         * option allows you to configure the logging level for that.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.LoggingLevel</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder runLoggingLevel(
+                String runLoggingLevel) {
+            doSetProperty("runLoggingLevel", runLoggingLevel);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option is a:
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder scheduledExecutorService(
+                ScheduledExecutorService scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * Allows for configuring a custom/shared thread pool to use for the
+         * consumer. By default each consumer has its own single threaded thread
+         * pool.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.ScheduledExecutorService</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder scheduledExecutorService(
+                String scheduledExecutorService) {
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
+            return this;
+        }
+        /**
+         * To use a cron scheduler from either camel-spring or camel-quartz
+         * component.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder scheduler(String scheduler) {
+            doSetProperty("scheduler", scheduler);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder schedulerProperties(
+                Map<String, Object> schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * To configure additional properties when using a custom scheduler or
+         * any of the Quartz, Spring based scheduler.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder schedulerProperties(
+                String schedulerProperties) {
+            doSetProperty("schedulerProperties", schedulerProperties);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Time unit for initialDelay and delay options.
+         * 
+         * The option will be converted to a
+         * <code>java.util.concurrent.TimeUnit</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder timeUnit(String timeUnit) {
+            doSetProperty("timeUnit", timeUnit);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
+            return this;
+        }
+        /**
+         * Controls if fixed delay or fixed rate is used. See
+         * ScheduledExecutorService in JDK for details.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -131,7 +442,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -145,7 +456,81 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder authenticationType(
                 String authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder delay(long delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the next poll. You can also specify time values
+         * using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder delay(String delay) {
+            doSetProperty("delay", delay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder initialDelay(long initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Milliseconds before the first poll starts. You can also specify time
+         * values using units, such as 60s (60 seconds), 5m30s (5 minutes and 30
+         * seconds), and 1h (1 hour).
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder initialDelay(String initialDelay) {
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder startScheduler(boolean startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
+            return this;
+        }
+        /**
+         * Whether the scheduler should be auto started.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: scheduler
+         */
+        default BoxEndpointConsumerBuilder startScheduler(String startScheduler) {
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -156,7 +541,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -168,7 +553,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder privateKeyPassword(
                 String privateKeyPassword) {
-            setProperty("privateKeyPassword", privateKeyPassword);
+            doSetProperty("privateKeyPassword", privateKeyPassword);
             return this;
         }
         /**
@@ -179,7 +564,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder publicKeyId(String publicKeyId) {
-            setProperty("publicKeyId", publicKeyId);
+            doSetProperty("publicKeyId", publicKeyId);
             return this;
         }
         /**
@@ -192,7 +577,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -205,7 +590,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointConsumerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -216,7 +601,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -228,7 +613,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointConsumerBuilder userPassword(String userPassword) {
-            setProperty("userPassword", userPassword);
+            doSetProperty("userPassword", userPassword);
             return this;
         }
     }
@@ -255,7 +640,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -271,7 +656,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -283,7 +668,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -296,7 +681,39 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedBoxEndpointConsumerBuilder pollStrategy(
+                PollingConsumerPollStrategy pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
+            return this;
+        }
+        /**
+         * A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing
+         * you to provide your custom implementation to control error handling
+         * usually occurred during the poll operation before an Exchange have
+         * been created and being routed in Camel.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.spi.PollingConsumerPollStrategy</code> type.
+         * 
+         * Group: consumer (advanced)
+         */
+        default AdvancedBoxEndpointConsumerBuilder pollStrategy(
+                String pollStrategy) {
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -309,7 +726,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -322,7 +739,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -335,7 +752,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(
                 Map<String, Object> httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -348,7 +765,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder httpParams(String httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -361,7 +778,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -374,7 +791,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -386,7 +803,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 Object accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -399,7 +816,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder accessTokenCache(
                 String accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -412,7 +829,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -426,7 +843,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -438,7 +855,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 int maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
         /**
@@ -450,7 +867,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
                 String maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
     }
@@ -472,7 +889,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointProducerBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -483,7 +900,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointProducerBuilder enterpriseId(String enterpriseId) {
-            setProperty("enterpriseId", enterpriseId);
+            doSetProperty("enterpriseId", enterpriseId);
             return this;
         }
         /**
@@ -494,7 +911,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointProducerBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -505,7 +922,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointProducerBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -525,7 +942,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -545,7 +962,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -556,7 +973,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -570,7 +987,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder authenticationType(
                 String authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -581,7 +998,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -593,7 +1010,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder privateKeyPassword(
                 String privateKeyPassword) {
-            setProperty("privateKeyPassword", privateKeyPassword);
+            doSetProperty("privateKeyPassword", privateKeyPassword);
             return this;
         }
         /**
@@ -604,7 +1021,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder publicKeyId(String publicKeyId) {
-            setProperty("publicKeyId", publicKeyId);
+            doSetProperty("publicKeyId", publicKeyId);
             return this;
         }
         /**
@@ -617,7 +1034,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -630,7 +1047,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointProducerBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -641,7 +1058,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -653,7 +1070,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointProducerBuilder userPassword(String userPassword) {
-            setProperty("userPassword", userPassword);
+            doSetProperty("userPassword", userPassword);
             return this;
         }
     }
@@ -677,7 +1094,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -690,7 +1107,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -703,7 +1120,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(
                 Map<String, Object> httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -716,7 +1133,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder httpParams(String httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -729,7 +1146,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -742,7 +1159,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -754,7 +1171,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 Object accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -767,7 +1184,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder accessTokenCache(
                 String accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -780,7 +1197,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -794,7 +1211,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -806,7 +1223,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 int maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
         /**
@@ -818,7 +1235,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
                 String maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
     }
@@ -840,7 +1257,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -851,7 +1268,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointBuilder enterpriseId(String enterpriseId) {
-            setProperty("enterpriseId", enterpriseId);
+            doSetProperty("enterpriseId", enterpriseId);
             return this;
         }
         /**
@@ -862,7 +1279,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointBuilder inBody(String inBody) {
-            setProperty("inBody", inBody);
+            doSetProperty("inBody", inBody);
             return this;
         }
         /**
@@ -873,7 +1290,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: common
          */
         default BoxEndpointBuilder userId(String userId) {
-            setProperty("userId", userId);
+            doSetProperty("userId", userId);
             return this;
         }
         /**
@@ -884,7 +1301,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder clientSecret(String clientSecret) {
-            setProperty("clientSecret", clientSecret);
+            doSetProperty("clientSecret", clientSecret);
             return this;
         }
         /**
@@ -897,7 +1314,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: authentication
          */
         default BoxEndpointBuilder authenticationType(String authenticationType) {
-            setProperty("authenticationType", authenticationType);
+            doSetProperty("authenticationType", authenticationType);
             return this;
         }
         /**
@@ -908,7 +1325,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder privateKeyFile(String privateKeyFile) {
-            setProperty("privateKeyFile", privateKeyFile);
+            doSetProperty("privateKeyFile", privateKeyFile);
             return this;
         }
         /**
@@ -919,7 +1336,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder privateKeyPassword(String privateKeyPassword) {
-            setProperty("privateKeyPassword", privateKeyPassword);
+            doSetProperty("privateKeyPassword", privateKeyPassword);
             return this;
         }
         /**
@@ -930,7 +1347,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder publicKeyId(String publicKeyId) {
-            setProperty("publicKeyId", publicKeyId);
+            doSetProperty("publicKeyId", publicKeyId);
             return this;
         }
         /**
@@ -943,7 +1360,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -956,7 +1373,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default BoxEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -967,7 +1384,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder userName(String userName) {
-            setProperty("userName", userName);
+            doSetProperty("userName", userName);
             return this;
         }
         /**
@@ -979,7 +1396,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default BoxEndpointBuilder userPassword(String userPassword) {
-            setProperty("userPassword", userPassword);
+            doSetProperty("userPassword", userPassword);
             return this;
         }
     }
@@ -1003,7 +1420,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1016,7 +1433,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1029,7 +1446,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder httpParams(
                 Map<String, Object> httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -1042,7 +1459,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder httpParams(String httpParams) {
-            setProperty("httpParams", httpParams);
+            doSetProperty("httpParams", httpParams);
             return this;
         }
         /**
@@ -1054,7 +1471,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1066,7 +1483,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1078,7 +1495,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
                 Object accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -1091,7 +1508,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder accessTokenCache(
                 String accessTokenCache) {
-            setProperty("accessTokenCache", accessTokenCache);
+            doSetProperty("accessTokenCache", accessTokenCache);
             return this;
         }
         /**
@@ -1104,7 +1521,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 EncryptionAlgorithm encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -1118,7 +1535,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
                 String encryptionAlgorithm) {
-            setProperty("encryptionAlgorithm", encryptionAlgorithm);
+            doSetProperty("encryptionAlgorithm", encryptionAlgorithm);
             return this;
         }
         /**
@@ -1129,7 +1546,7 @@ public interface BoxEndpointBuilderFactory {
          * Group: security
          */
         default AdvancedBoxEndpointBuilder maxCacheEntries(int maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
         /**
@@ -1141,7 +1558,7 @@ public interface BoxEndpointBuilderFactory {
          */
         default AdvancedBoxEndpointBuilder maxCacheEntries(
                 String maxCacheEntries) {
-            setProperty("maxCacheEntries", maxCacheEntries);
+            doSetProperty("maxCacheEntries", maxCacheEntries);
             return this;
         }
     }
@@ -1160,7 +1577,7 @@ public interface BoxEndpointBuilderFactory {
      * collaborations etc on box DOT com.
      * 
      * Category: api,file,cloud
-     * Available as of version: 2.14
+     * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-box
      * 
      * Syntax: <code>box:apiName/methodName</code>

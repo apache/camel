@@ -18,7 +18,6 @@ package org.apache.camel.component.splunk;
 
 import com.splunk.SSLSecurityProtocol;
 import com.splunk.Service;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
@@ -79,7 +78,7 @@ public class SplunkConfiguration {
     @UriParam(label = "consumer")
     private String initEarliestTime;
     @UriParam(label = "consumer")
-    private Boolean streaming;
+    private boolean streaming;
 
     public String getName() {
         return name;
@@ -301,7 +300,7 @@ public class SplunkConfiguration {
     }
 
     public boolean isStreaming() {
-        return streaming != null ? streaming : false;
+        return streaming;
     }
 
     /**

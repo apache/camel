@@ -17,7 +17,6 @@
 package org.apache.camel.component.kubernetes;
 
 import io.fabric8.kubernetes.client.KubernetesClient;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
@@ -81,13 +80,13 @@ public class KubernetesConfiguration implements Cloneable {
 
     @UriParam(label = "consumer")
     private String namespace;
-    
+
     @UriParam(label = "consumer")
     private String labelKey;
-    
+
     @UriParam(label = "consumer")
     private String labelValue;
-    
+
     @UriParam(label = "consumer")
     private String resourceName;
 
@@ -99,7 +98,7 @@ public class KubernetesConfiguration implements Cloneable {
 
     @UriParam
     private String dnsDomain;
-    
+
     @UriParam(label = "consumer", defaultValue = "1")
     private int poolSize = 1;
 
@@ -363,7 +362,7 @@ public class KubernetesConfiguration implements Cloneable {
     public void setPoolSize(int poolSize) {
         this.poolSize = poolSize;
     }
-   
+
     /**
      * The Consumer Label key when watching at some resources
      */
@@ -385,7 +384,6 @@ public class KubernetesConfiguration implements Cloneable {
     public void setLabelValue(String labelValue) {
         this.labelValue = labelValue;
     }
-    
 
     /**
      * The Consumer Resource Name we would like to watch
@@ -403,7 +401,8 @@ public class KubernetesConfiguration implements Cloneable {
     }
 
     /**
-     * Connection timeout in milliseconds to use when making requests to the Kubernetes API server.
+     * Connection timeout in milliseconds to use when making requests to the
+     * Kubernetes API server.
      */
     public void setConnectionTimeout(Integer connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
@@ -415,7 +414,7 @@ public class KubernetesConfiguration implements Cloneable {
 
     public KubernetesConfiguration copy() {
         try {
-            return (KubernetesConfiguration) super.clone();
+            return (KubernetesConfiguration)super.clone();
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
@@ -423,15 +422,12 @@ public class KubernetesConfiguration implements Cloneable {
 
     @Override
     public String toString() {
-        return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient="
-                + kubernetesClient + ", username=" + username + ", password=" + password + ", operation=" + operation
-                + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData + ", caCertFile=" + caCertFile
-                + ", clientCertData=" + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo="
-                + clientKeyAlgo + ", clientKeyData=" + clientKeyData + ", clientKeyFile=" + clientKeyFile
-                + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts="
-                + trustCerts + ", namespace=" + namespace + ", labelKey=" + labelKey + ", labelValue=" + labelValue
-                + ", resourceName=" + resourceName + ", portName=" + portName + ", dnsDomain=" + dnsDomain
-                + ", poolSize=" + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
+        return "KubernetesConfiguration [masterUrl=" + masterUrl + ", category=" + category + ", kubernetesClient=" + kubernetesClient + ", username=" + username + ", password="
+               + password + ", operation=" + operation + ", apiVersion=" + apiVersion + ", caCertData=" + caCertData + ", caCertFile=" + caCertFile + ", clientCertData="
+               + clientCertData + ", clientCertFile=" + clientCertFile + ", clientKeyAlgo=" + clientKeyAlgo + ", clientKeyData=" + clientKeyData + ", clientKeyFile="
+               + clientKeyFile + ", clientKeyPassphrase=" + clientKeyPassphrase + ", oauthToken=" + oauthToken + ", trustCerts=" + trustCerts + ", namespace=" + namespace
+               + ", labelKey=" + labelKey + ", labelValue=" + labelValue + ", resourceName=" + resourceName + ", portName=" + portName + ", dnsDomain=" + dnsDomain + ", poolSize="
+               + poolSize + ", connectionTimeout=" + connectionTimeout + "]";
     }
 
 }

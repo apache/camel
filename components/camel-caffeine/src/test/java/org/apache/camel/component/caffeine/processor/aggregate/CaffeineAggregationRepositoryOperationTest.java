@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.caffeine.processor.aggregate;
+
 import java.util.Set;
 
 import org.apache.camel.Exchange;

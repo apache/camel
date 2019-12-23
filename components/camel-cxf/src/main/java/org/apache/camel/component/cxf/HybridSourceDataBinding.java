@@ -34,7 +34,6 @@ import org.apache.cxf.databinding.source.XMLStreamDataWriter;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.service.model.MessagePartInfo;
 
-
 /**
  * This is a hybrid DataBinding of {@link JAXBDataBinding} and {@link org.apache.cxf.databinding.source.SourceDataBinding}.
  * Like the SourceDataBinding, this DataBinding de/serializes parameters as DOMSource objects.  And like the JAXBDataBinding, the 

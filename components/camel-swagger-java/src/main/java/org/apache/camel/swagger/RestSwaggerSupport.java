@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -66,7 +67,7 @@ import static org.apache.camel.swagger.SwaggerHelper.clearVendorExtensions;
 /**
  * A support class for that allows SPI to plugin
  * and offer Swagger API service listings as part of the Camel component. This allows rest-dsl components
- * such as servlet/jetty/netty4-http to offer Swagger API listings with minimal effort.
+ * such as servlet/jetty/netty-http to offer Swagger API listings with minimal effort.
  */
 public class RestSwaggerSupport {
 

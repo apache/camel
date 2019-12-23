@@ -98,6 +98,7 @@ public class AbstractCamelContextBeanDefinitionParaser extends AbstractSingleBea
         }
     }
 
+    @Override
     protected void doParse(Element element, ParserContext ctx, BeanDefinitionBuilder bean) {
         parseAttributes(element, ctx, bean);
         parseCamelContext(element, ctx, bean);

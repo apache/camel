@@ -81,9 +81,7 @@ public class ConsulHealthCheckRepository implements HealthCheckRepository, Camel
         final Set<String> ids = configuration.getChecks();
 
         if (ObjectHelper.isNotEmpty(ids)) {
-            return ids.stream()
-                .map(checkId -> checks.computeIfAbsent(checkId, ConsulHealthCheck::new))
-                .filter(check -> check.getConfiguration().isEnabled());
+            return ids.stream().map(checkId -> checks.computeIfAbsent(checkId, ConsulHealthCheck::new)).filter(check -> check.getConfiguration().isEnabled());
         }
 
         return Stream.empty();
@@ -113,9 +111,7 @@ public class ConsulHealthCheckRepository implements HealthCheckRepository, Camel
 
             HealthCheckConfiguration conf = configuration.getConfigurations().get(getId());
             if (conf == null) {
-                conf = HealthCheckConfiguration.builder()
-                    .complete(configuration.getDefaultConfiguration())
-                    .build();
+                conf = HealthCheckConfiguration.builder().complete(configuration.getDefaultConfiguration()).build();
             }
 
             setConfiguration(conf);
@@ -134,13 +130,13 @@ public class ConsulHealthCheckRepository implements HealthCheckRepository, Camel
                 // States are:
                 //
                 // const (
-                //     HealthAny is special, and is used as a wild card,
-                //     not as a specific state.
-                //     HealthAny      = "any"
-                //     HealthPassing  = "passing"
-                //     HealthWarning  = "warning"
-                //     HealthCritical = "critical"
-                //     HealthMaint    = "maintenance"
+                // HealthAny is special, and is used as a wild card,
+                // not as a specific state.
+                // HealthAny = "any"
+                // HealthPassing = "passing"
+                // HealthWarning = "warning"
+                // HealthCritical = "critical"
+                // HealthMaint = "maintenance"
                 // )
                 if (ObjectHelper.equalIgnoreCase(check.getStatus(), "passing")) {
                     builder.up();
@@ -159,8 +155,6 @@ public class ConsulHealthCheckRepository implements HealthCheckRepository, Camel
             }
         }
     }
-
-
 
     // ****************************************
     // Builder

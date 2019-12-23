@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.sjms.consumer;
 
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
@@ -39,6 +38,7 @@ public class InOnlyConsumerTempQueueTest extends JmsTestSupport {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

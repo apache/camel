@@ -16,6 +16,7 @@
  */
 package org.apache.camel.example.cdi.test;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -23,7 +24,6 @@ import javax.inject.Named;
 import org.apache.camel.Body;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.ContextName;
 import org.apache.camel.cdi.Uri;
 import org.apache.camel.spi.CamelEvent.CamelContextStartedEvent;
 import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
@@ -33,7 +33,7 @@ import org.apache.camel.spi.CamelEvent.CamelContextStoppingEvent;
  */
 public class Application {
 
-    @ContextName("camel-test-cdi")
+    @ApplicationScoped
     static class Hello extends RouteBuilder {
 
         @Override
@@ -42,7 +42,7 @@ public class Application {
                 .routeId("route")
                 .log("${body} from ${camelContext.name}");
 
-            from("direct:in").routeId("in»out").bean("bean").to("direct:out");
+            from("direct:in").routeId("in-to-out").bean("bean").to("direct:out");
         }
     }
 

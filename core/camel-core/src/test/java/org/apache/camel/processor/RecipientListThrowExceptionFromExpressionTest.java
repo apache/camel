@@ -44,15 +44,9 @@ public class RecipientListThrowExceptionFromExpressionTest extends ContextTestSu
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(ExpressionEvaluationException.class)
-                    .handled(true)
-                    .to("mock://error");
+                onException(ExpressionEvaluationException.class).handled(true).to("mock://error");
 
-                from("direct://start")
-                    .to("log:foo")
-                    .recipientList().method(RecipientListThrowExceptionFromExpressionTest.class, "sendTo")
-                        .to("mock://result")
-                    .end();
+                from("direct://start").to("log:foo").recipientList().method(RecipientListThrowExceptionFromExpressionTest.class, "sendTo").to("mock://result").end();
             }
         };
     }

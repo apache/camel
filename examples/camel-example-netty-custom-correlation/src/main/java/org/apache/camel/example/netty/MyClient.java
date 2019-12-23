@@ -82,7 +82,7 @@ public final class MyClient {
                 .log("Request:  ${id}:${body}")
                 // call netty server using a single shared connection and using custom correlation manager
                 // to ensure we can correltly map the request and response pairs
-                .to("netty4:tcp://localhost:4444?sync=true&encoders=#myEncoder&decoders=#myDecoder"
+                .to("netty:tcp://localhost:4444?sync=true&encoders=#myEncoder&decoders=#myDecoder"
                     + "&producerPoolEnabled=false&correlationManager=#myManager")
                 // log response after
                 .log("Response: ${id}:${body}");

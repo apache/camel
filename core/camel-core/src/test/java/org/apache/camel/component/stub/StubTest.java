@@ -28,15 +28,9 @@ public class StubTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:InOnly")
-                    .setExchangePattern(ExchangePattern.InOnly)
-                    .to("stub:foo")
-                    .to("mock:result");
+                from("direct:InOnly").setExchangePattern(ExchangePattern.InOnly).to("stub:foo").to("mock:result");
 
-                from("direct:InOut")
-                    .setExchangePattern(ExchangePattern.InOut)
-                    .to("stub:foo")
-                    .to("mock:result");
+                from("direct:InOut").setExchangePattern(ExchangePattern.InOut).to("stub:foo").to("mock:result");
             }
         };
     }

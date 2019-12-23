@@ -27,6 +27,7 @@ import org.junit.Test;
 public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
     static final String PROCESSED_FILES_HEADER_NAME = "processedFiles";
     
+    @Override
     @Test
     public void testSplitter() throws InterruptedException {
         MockEndpoint processTarEntry = getMockEndpoint("mock:processTarEntry");
@@ -47,7 +48,7 @@ public class TarFileMultipleFilesSplitterTest extends TarSplitterRouteTest {
                 // Untar file and Split it according to FileEntry
                 TarFileDataFormat tarFile = new TarFileDataFormat();
                 tarFile.setUsingIterator(true);
-                from("file:src/test/resources/org/apache/camel/dataformat/tarfile/data/?consumer.delay=1000&noop=true")
+                from("file:src/test/resources/org/apache/camel/dataformat/tarfile/data/?delay=1000&noop=true")
                     .unmarshal(tarFile)
                     .split(bodyAs(Iterator.class))
                         .streaming()

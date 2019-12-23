@@ -40,14 +40,17 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
         this.camelContext = camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public Class<?> resolveClass(String name) {
         Class<?> answer = loadClass(name, DefaultClassResolver.class.getClassLoader());
         if (answer == null && getApplicationContextClassLoader() != null) {
@@ -57,6 +60,7 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
         return answer;
     }
 
+    @Override
     public <T> Class<T> resolveClass(String name, Class<T> type) {
         Class<T> answer = CastUtils.cast(loadClass(name, DefaultClassResolver.class.getClassLoader()));
         if (answer == null && getApplicationContextClassLoader() != null) {
@@ -66,14 +70,17 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
         return answer;
     }
 
+    @Override
     public Class<?> resolveClass(String name, ClassLoader loader) {
         return loadClass(name, loader);
     }
 
+    @Override
     public <T> Class<T> resolveClass(String name, Class<T> type, ClassLoader loader) {
         return CastUtils.cast(loadClass(name, loader));
     }
 
+    @Override
     public Class<?> resolveMandatoryClass(String name) throws ClassNotFoundException {
         Class<?> answer = resolveClass(name);
         if (answer == null) {
@@ -82,6 +89,7 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
         return answer;
     }
 
+    @Override
     public <T> Class<T> resolveMandatoryClass(String name, Class<T> type) throws ClassNotFoundException {
         Class<T> answer = resolveClass(name, type);
         if (answer == null) {
@@ -90,6 +98,7 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
         return answer;
     }
 
+    @Override
     public Class<?> resolveMandatoryClass(String name, ClassLoader loader) throws ClassNotFoundException {
         Class<?> answer = resolveClass(name, loader);
         if (answer == null) {
@@ -98,6 +107,7 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
         return answer;
     }
 
+    @Override
     public <T> Class<T> resolveMandatoryClass(String name, Class<T> type, ClassLoader loader) throws ClassNotFoundException {
         Class<T> answer = resolveClass(name, type, loader);
         if (answer == null) {
@@ -106,18 +116,22 @@ public class DefaultClassResolver implements ClassResolver, CamelContextAware {
         return answer;
     }
 
+    @Override
     public InputStream loadResourceAsStream(String uri) {
         return ObjectHelper.loadResourceAsStream(uri, getApplicationContextClassLoader());
     }
 
+    @Override
     public URL loadResourceAsURL(String uri) {
         return ObjectHelper.loadResourceAsURL(uri, getApplicationContextClassLoader());
     }
 
+    @Override
     public Enumeration<URL> loadResourcesAsURL(String uri) {
         return loadAllResourcesAsURL(uri);
     }
 
+    @Override
     public Enumeration<URL> loadAllResourcesAsURL(String uri) {
         return ObjectHelper.loadResourcesAsURL(uri);
     }

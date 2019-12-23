@@ -30,6 +30,7 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
         super(SpringSecurityAuthorizationPolicy.class, true);
     }
     
+    @Override
     protected boolean isEligibleAttribute(String attributeName) {
         if ("access".equals(attributeName) || "accessDecisionManager".equals(attributeName)
             || "authenticationManager".equals(attributeName)) {
@@ -39,6 +40,7 @@ public class SpringSecurityAuthorizationPolicyParser extends BeanDefinitionParse
         }
     }
     
+    @Override
     protected void postProcess(BeanDefinitionBuilder builder, Element element) {
         setReferenceIfAttributeDefine(builder, element, "accessDecisionManager");
         setReferenceIfAttributeDefine(builder, element, "authenticationManager");

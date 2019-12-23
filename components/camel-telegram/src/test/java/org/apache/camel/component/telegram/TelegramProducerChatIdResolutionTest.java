@@ -22,12 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes;
+import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Mockito;
+import org.apache.camel.component.telegram.util.TelegramTestUtil;
+import org.junit.jupiter.api.Test;
 
-import static org.mockito.ArgumentMatchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Tests a producer route with a fixed destination.
@@ -39,47 +41,55 @@ public class TelegramProducerChatIdResolutionTest extends TelegramTestSupport {
 
     @Test
     public void testRouteWithFixedChatId() throws Exception {
+        final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
+        mockProcessor.clearRecordedMessages();
 
-        TelegramService api = mockTelegramService();
+        template.sendBody(endpoint, "Hello");
 
-        context().createProducerTemplate().sendBody(endpoint, "Hello");
-
-        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
-
-        Mockito.verify(api).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-id", captor.getValue().getChatId());
-        assertEquals("Hello", captor.getValue().getText());
-        assertNull(captor.getValue().getParseMode());
+        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertEquals("my-id", message.getChatId());
+        assertEquals("Hello", message.getText());
+        assertNull(message.getParseMode());
     }
 
     @Test
     public void testRouteWithOverridenChatId() throws Exception {
-
-        TelegramService api = mockTelegramService();
+        final MockProcessor<OutgoingTextMessage> mockProcessor = getMockRoutes().getMock("sendMessage");
+        mockProcessor.clearRecordedMessages();
 
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody("Hello 2");
         exchange.getIn().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, "my-second-id");
 
-        context().createProducerTemplate().send(endpoint, exchange);
+        template.send(endpoint, exchange);
 
-        ArgumentCaptor<OutgoingTextMessage> captor = ArgumentCaptor.forClass(OutgoingTextMessage.class);
-
-        Mockito.verify(api).sendMessage(eq("mock-token"), captor.capture());
-        assertEquals("my-second-id", captor.getValue().getChatId());
-        assertEquals("Hello 2", captor.getValue().getText());
-        assertNull(captor.getValue().getParseMode());
+        final OutgoingTextMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertEquals("my-second-id", message.getChatId());
+        assertEquals("Hello 2", message.getText());
+        assertNull(message.getParseMode());
 
     }
 
     @Override
-    protected RoutesBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:telegram").to("telegram:bots/mock-token?chatId=my-id");
-            }
-        };
+    protected RoutesBuilder[] createRouteBuilders() throws Exception {
+        return new RoutesBuilder[] {
+            getMockRoutes(),
+            new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("direct:telegram")
+                            .to("telegram:bots?authorizationToken=mock-token&chatId=my-id");
+                }
+            }};
     }
 
+    @Override
+    protected TelegramMockRoutes createMockRoutes() {
+        return new TelegramMockRoutes(port)
+                .addEndpoint(
+                        "sendMessage",
+                        "POST",
+                        OutgoingTextMessage.class,
+                        TelegramTestUtil.stringResource("messages/send-message.json"));
+    }
 }

@@ -50,11 +50,11 @@ import static org.apache.camel.utils.cassandra.CassandraUtils.generateInsert;
 import static org.apache.camel.utils.cassandra.CassandraUtils.generateSelect;
 
 /**
- * Implementation of {@link AggregationRepository} using Cassandra table to store
- * exchanges.
- * Advice: use LeveledCompaction for this table and tune read/write consistency levels.
- * Warning: Cassandra is not the best tool for queuing use cases
- * See: http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
+ * Implementation of {@link AggregationRepository} using Cassandra table to
+ * store exchanges. Advice: use LeveledCompaction for this table and tune
+ * read/write consistency levels. Warning: Cassandra is not the best tool for
+ * queuing use cases See:
+ * http://www.datastax.com/dev/blog/cassandra-anti-patterns-queues-and-queue-like-datasets
  */
 public class CassandraAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
     /**
@@ -121,7 +121,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     private String deadLetterUri;
 
     private int maximumRedeliveries;
-    
+
     private boolean allowSerializedHeaders;
 
     public CassandraAggregationRepository() {
@@ -152,7 +152,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     private String[] getAllColumns() {
         return append(pkColumns, exchangeIdColumn, exchangeColumn);
     }
-    //--------------------------------------------------------------------------
+    // --------------------------------------------------------------------------
     // Service support
 
     @Override
@@ -174,9 +174,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     // Add exchange to repository
 
     private void initInsertStatement() {
-        Insert insert = generateInsert(table,
-                getAllColumns(),
-                false, ttl);
+        Insert insert = generateInsert(table, getAllColumns(), false, ttl);
         insert = applyConsistencyLevel(insert, writeConsistencyLevel);
         LOGGER.debug("Generated Insert {}", insert);
         insertStatement = getSession().prepare(insert);
@@ -191,7 +189,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         LOGGER.debug("Inserting key {} exchange {}", idValues, exchange);
         try {
             ByteBuffer marshalledExchange = exchangeCodec.marshallExchange(camelContext, exchange, allowSerializedHeaders);
-            Object[] cqlParams = concat(idValues, new Object[]{exchange.getExchangeId(), marshalledExchange});
+            Object[] cqlParams = concat(idValues, new Object[] {exchange.getExchangeId(), marshalledExchange});
             getSession().execute(insertStatement.bind(cqlParams));
             return exchange;
         } catch (IOException iOException) {
@@ -203,9 +201,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     // Get exchange from repository
 
     protected void initSelectStatement() {
-        Select select = generateSelect(table,
-                getAllColumns(),
-                pkColumns);
+        Select select = generateSelect(table, getAllColumns(), pkColumns);
         select = applyConsistencyLevel(select, readConsistencyLevel);
         LOGGER.debug("Generated Select {}", select);
         selectStatement = getSession().prepare(select);
@@ -276,15 +272,21 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         Object[] idValues = getPKValues(key);
-        LOGGER.debug("Deleting key {}", (Object) idValues);
+        LOGGER.debug("Deleting key {}", (Object)idValues);
         getSession().execute(deleteStatement.bind(idValues));
     }
 
     // -------------------------------------------------------------------------
     private void initSelectKeyIdStatement() {
-        Select select = generateSelect(table,
-                new String[]{getKeyColumn(), exchangeIdColumn}, // Key + Exchange Id columns
-                pkColumns, pkColumns.length - 1); // Where fixed PK columns
+        Select select = generateSelect(table, new String[] {getKeyColumn(), exchangeIdColumn}, // Key
+                                                                                               // +
+                                                                                               // Exchange
+                                                                                               // Id
+                                                                                               // columns
+                                       pkColumns, pkColumns.length - 1); // Where
+                                                                         // fixed
+                                                                         // PK
+                                                                         // columns
         select = applyConsistencyLevel(select, readConsistencyLevel);
         LOGGER.debug("Generated Select keys {}", select);
         selectKeyIdStatement = getSession().prepare(select);
@@ -309,7 +311,6 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         return keys;
     }
 
-
     /**
      * Get exchange IDs to be recovered
      *
@@ -326,8 +327,7 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
     }
 
     /**
-     * Get exchange by exchange ID.
-     * This is far from optimal.
+     * Get exchange by exchange ID. This is far from optimal.
      */
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
@@ -343,7 +343,6 @@ public class CassandraAggregationRepository extends ServiceSupport implements Re
         }
         return lKey == null ? null : get(camelContext, lKey);
     }
-
 
     // -------------------------------------------------------------------------
     // Getters and Setters

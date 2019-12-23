@@ -1,0 +1,81 @@
+[[customLoadBalancer-eip]]
+= Custom Load Balancer EIP
+
+This EIP allows you to use your own Load Balancer implementation
+
+// eip options: START
+The Custom Load Balancer EIP supports 1 options which are listed below:
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *ref* | *Required* Refers to the custom load balancer to lookup from the registry |  | String
+|===
+// eip options: END
+
+
+An example using Java DSL:
+[source,java]
+----
+from("direct:start")
+    // using our custom load balancer
+    .loadBalance(new MyLoadBalancer())
+    .to("mock:x", "mock:y", "mock:z");
+----
+
+And the same example using XML DSL:
+[source,xml]
+----
+<!-- this is the implementation of our custom load balancer -->
+<bean id="myBalancer" class="org.apache.camel.processor.CustomLoadBalanceTest$MyLoadBalancer"/>
+
+<camelContext xmlns="http://camel.apache.org/schema/spring">
+  <route>
+    <from uri="direct:start"/>
+    <loadBalance>
+      <!-- refer to my custom load balancer -->
+      <custom ref="myBalancer"/>
+      <!-- these are the endpoints to balancer -->
+      <to uri="mock:x"/>
+      <to uri="mock:y"/>
+      <to uri="mock:z"/>
+    </loadBalance>
+  </route>
+</camelContext>
+----
+
+Notice in the XML DSL above we use `<custom>` which is only available in *Camel 2.8* onwards. In older releases you would have to do as follows instead:
+[source,xml]
+----
+<loadBalance ref="myBalancer">
+  <!-- these are the endpoints to balancer -->
+  <to uri="mock:x"/>
+  <to uri="mock:y"/>
+  <to uri="mock:z"/>
+</loadBalance>
+----
+
+To implement a custom load balancer you can extend some support classes such as `LoadBalancerSupport` and `SimpleLoadBalancerSupport`.
+The former supports the asynchronous routing engine, and the latter does not. Here is an example of a custom load balancer implementation:
+[source,java]
+----
+public static class MyLoadBalancer extends LoadBalancerSupport {
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        String body = exchange.getIn().getBody(String.class);
+        try {
+            if ("x".equals(body)) {
+                getProcessors().get(0).process(exchange);
+            } else if ("y".equals(body)) {
+                getProcessors().get(1).process(exchange);
+            } else {
+                getProcessors().get(2).process(exchange);
+            }
+        } catch (Throwable e) {
+            exchange.setException(e);
+        }
+        callback.done(true);
+        return true;
+    }
+}
+----

@@ -36,6 +36,7 @@ public class SedaQueueTest extends ContextTestSupport {
         template.sendBody("seda:foo?concurrentConsumers=5", "Goodday World");
         template.sendBody("seda:bar", "Bar");
     }
+
     @Test
     public void testQueueRef() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -43,8 +44,7 @@ public class SedaQueueTest extends ContextTestSupport {
 
         template.sendBody("seda:array?queue=#arrayQueue", "Hello World");
 
-        SedaEndpoint sedaEndpoint = resolveMandatoryEndpoint("seda:array?queue=#arrayQueue",
-                                                             SedaEndpoint.class);
+        SedaEndpoint sedaEndpoint = resolveMandatoryEndpoint("seda:array?queue=#arrayQueue", SedaEndpoint.class);
         assertTrue(sedaEndpoint.getQueue() instanceof ArrayBlockingQueue);
     }
 

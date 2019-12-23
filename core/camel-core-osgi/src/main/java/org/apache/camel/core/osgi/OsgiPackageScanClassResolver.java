@@ -42,6 +42,7 @@ public class OsgiPackageScanClassResolver extends DefaultPackageScanClassResolve
         addClassLoader(new BundleDelegatingClassLoader(bundle));
     }
 
+    @Override
     public void find(PackageScanFilter test, String packageName, Set<Class<?>> classes) {
         packageName = packageName.replace('.', '/');
         // remember the number of classes found so far

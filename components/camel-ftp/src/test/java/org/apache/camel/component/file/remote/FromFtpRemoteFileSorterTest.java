@@ -18,35 +18,31 @@ package org.apache.camel.component.file.remote;
 
 import java.util.Comparator;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test to verify remotefile sorter option.
  */
 public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
 
+    @BindToRegistry("mySorter")
+    private MyRemoteFileSorter sorter = new MyRemoteFileSorter();
+    
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/sorter?password=admin&sorter=#mySorter";
     }
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("mySorter", new MyRemoteFileSorter());
-        return jndi;
-    }
-
-    @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
     }
-    
+
     @Test
     public void testFtpSorter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -56,13 +52,15 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
     }
 
     private void prepareFtpServer() throws Exception {
-        // prepares the FTP Server by creating files on the server that we want to unit
-        // test that we can pool        
+        // prepares the FTP Server by creating files on the server that we want
+        // to unit
+        // test that we can pool
         sendFile(getFtpUrl(), "Hello Paris", "paris.txt");
         sendFile(getFtpUrl(), "Hello London", "london.txt");
         sendFile(getFtpUrl(), "Hello Copenhagen", "copenhagen.txt");
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -74,6 +72,7 @@ public class FromFtpRemoteFileSorterTest extends FtpServerTestSupport {
     // START SNIPPET: e1
     public class MyRemoteFileSorter implements Comparator<RemoteFile<?>> {
 
+        @Override
         public int compare(RemoteFile<?> o1, RemoteFile<?> o2) {
             return o1.getFileNameOnly().compareToIgnoreCase(o2.getFileNameOnly());
         }

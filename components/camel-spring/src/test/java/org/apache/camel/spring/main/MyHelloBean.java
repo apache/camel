@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class MyHelloBean {
 
+    @Override
     public String toString() {
         return "I am hello bean";
     }

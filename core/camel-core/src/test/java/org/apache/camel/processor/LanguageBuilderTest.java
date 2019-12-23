@@ -39,8 +39,7 @@ public class LanguageBuilderTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .filter(language("simple", "${body} contains 'Camel'")).to("mock:camel");
+                from("direct:start").filter(language("simple", "${body} contains 'Camel'")).to("mock:camel");
             }
         };
     }

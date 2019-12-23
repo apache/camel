@@ -33,7 +33,7 @@ public interface HttpEndpointBuilderFactory {
 
 
     /**
-     * Builder for endpoint for the HTTP4 component.
+     * Builder for endpoint for the HTTP component.
      */
     public interface HttpEndpointBuilder extends EndpointProducerBuilder {
         default AdvancedHttpEndpointBuilder advanced() {
@@ -52,10 +52,10 @@ public interface HttpEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http/http4 producer will by default cache the
-         * response body stream. If setting this option to true, then the
-         * producers will not cache the response body stream but use the
-         * response stream as-is as the message body.
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
          * 
          * The option is a: <code>boolean</code> type.
          * 
@@ -63,7 +63,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder disableStreamCache(
                 boolean disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -79,17 +79,17 @@ public interface HttpEndpointBuilderFactory {
          * reading the stream multiple times. If you use Servlet to bridge/proxy
          * an endpoint then consider enabling this option to improve
          * performance, in case you do not need to read the message payload
-         * multiple times. The http/http4 producer will by default cache the
-         * response body stream. If setting this option to true, then the
-         * producers will not cache the response body stream but use the
-         * response stream as-is as the message body.
+         * multiple times. The http producer will by default cache the response
+         * body stream. If setting this option to true, then the producers will
+         * not cache the response body stream but use the response stream as-is
+         * as the message body.
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
          * Group: common
          */
         default HttpEndpointBuilder disableStreamCache(String disableStreamCache) {
-            setProperty("disableStreamCache", disableStreamCache);
+            doSetProperty("disableStreamCache", disableStreamCache);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder headerFilterStrategy(
                 HeaderFilterStrategy headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
             return this;
         }
         /**
@@ -117,7 +117,35 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder headerFilterStrategy(
                 String headerFilterStrategy) {
-            setProperty("headerFilterStrategy", headerFilterStrategy);
+            doSetProperty("headerFilterStrategy", headerFilterStrategy);
+            return this;
+        }
+        /**
+         * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI
+         * header, and use the endpoint's URI for request. You may also set the
+         * option throwExceptionOnFailure to be false to let the HttpProducer
+         * send all the fault response back.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
+            return this;
+        }
+        /**
+         * If the option is true, HttpProducer will ignore the Exchange.HTTP_URI
+         * header, and use the endpoint's URI for request. You may also set the
+         * option throwExceptionOnFailure to be false to let the HttpProducer
+         * send all the fault response back.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
+            doSetProperty("bridgeEndpoint", bridgeEndpoint);
             return this;
         }
         /**
@@ -129,7 +157,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: producer
          */
         default HttpEndpointBuilder chunked(boolean chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
             return this;
         }
         /**
@@ -141,7 +169,250 @@ public interface HttpEndpointBuilderFactory {
          * Group: producer
          */
         default HttpEndpointBuilder chunked(String chunked) {
-            setProperty("chunked", chunked);
+            doSetProperty("chunked", chunked);
+            return this;
+        }
+        /**
+         * Whether to clear expired cookies before sending the HTTP request.
+         * This ensures the cookies store does not keep growing by adding new
+         * cookies which is newer removed when they are expired.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder clearExpiredCookies(
+                boolean clearExpiredCookies) {
+            doSetProperty("clearExpiredCookies", clearExpiredCookies);
+            return this;
+        }
+        /**
+         * Whether to clear expired cookies before sending the HTTP request.
+         * This ensures the cookies store does not keep growing by adding new
+         * cookies which is newer removed when they are expired.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder clearExpiredCookies(
+                String clearExpiredCookies) {
+            doSetProperty("clearExpiredCookies", clearExpiredCookies);
+            return this;
+        }
+        /**
+         * Specifies whether a Connection Close header must be added to HTTP
+         * Request. By default connectionClose is false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder connectionClose(boolean connectionClose) {
+            doSetProperty("connectionClose", connectionClose);
+            return this;
+        }
+        /**
+         * Specifies whether a Connection Close header must be added to HTTP
+         * Request. By default connectionClose is false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder connectionClose(String connectionClose) {
+            doSetProperty("connectionClose", connectionClose);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange headers will be copied to OUT
+         * exchange headers according to copy strategy. Setting this to false,
+         * allows to only include the headers from the HTTP response (not
+         * propagating IN headers).
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder copyHeaders(boolean copyHeaders) {
+            doSetProperty("copyHeaders", copyHeaders);
+            return this;
+        }
+        /**
+         * If this option is true then IN exchange headers will be copied to OUT
+         * exchange headers according to copy strategy. Setting this to false,
+         * allows to only include the headers from the HTTP response (not
+         * propagating IN headers).
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder copyHeaders(String copyHeaders) {
+            doSetProperty("copyHeaders", copyHeaders);
+            return this;
+        }
+        /**
+         * Defines a custom host header which will be sent when producing http
+         * request. When not set in query will be ignored. When set will
+         * override host header derived from url. Default: null.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder customHostHeader(String customHostHeader) {
+            doSetProperty("customHostHeader", customHostHeader);
+            return this;
+        }
+        /**
+         * Configure the HTTP method to use. The HttpMethod header cannot
+         * override this option if set.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.http.common.HttpMethods</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder httpMethod(HttpMethods httpMethod) {
+            doSetProperty("httpMethod", httpMethod);
+            return this;
+        }
+        /**
+         * Configure the HTTP method to use. The HttpMethod header cannot
+         * override this option if set.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.http.common.HttpMethods</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder httpMethod(String httpMethod) {
+            doSetProperty("httpMethod", httpMethod);
+            return this;
+        }
+        /**
+         * If this option is true, The http producer won't read response body
+         * and cache the input stream.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder ignoreResponseBody(
+                boolean ignoreResponseBody) {
+            doSetProperty("ignoreResponseBody", ignoreResponseBody);
+            return this;
+        }
+        /**
+         * If this option is true, The http producer won't read response body
+         * and cache the input stream.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder ignoreResponseBody(String ignoreResponseBody) {
+            doSetProperty("ignoreResponseBody", ignoreResponseBody);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder lazyStartProducer(String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * If the option is true, HttpProducer will set the Host header to the
+         * value contained in the current exchange Host header, useful in
+         * reverse proxy applications where you want the Host header received by
+         * the downstream server to reflect the URL called by the upstream
+         * client, this allows applications which use the Host header to
+         * generate accurate URL's for a proxied service.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder preserveHostHeader(
+                boolean preserveHostHeader) {
+            doSetProperty("preserveHostHeader", preserveHostHeader);
+            return this;
+        }
+        /**
+         * If the option is true, HttpProducer will set the Host header to the
+         * value contained in the current exchange Host header, useful in
+         * reverse proxy applications where you want the Host header received by
+         * the downstream server to reflect the URL called by the upstream
+         * client, this allows applications which use the Host header to
+         * generate accurate URL's for a proxied service.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder preserveHostHeader(String preserveHostHeader) {
+            doSetProperty("preserveHostHeader", preserveHostHeader);
+            return this;
+        }
+        /**
+         * Option to disable throwing the HttpOperationFailedException in case
+         * of failed responses from the remote server. This allows you to get
+         * all responses regardless of the HTTP status code.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder throwExceptionOnFailure(
+                boolean throwExceptionOnFailure) {
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
+            return this;
+        }
+        /**
+         * Option to disable throwing the HttpOperationFailedException in case
+         * of failed responses from the remote server. This allows you to get
+         * all responses regardless of the HTTP status code.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default HttpEndpointBuilder throwExceptionOnFailure(
+                String throwExceptionOnFailure) {
+            doSetProperty("throwExceptionOnFailure", throwExceptionOnFailure);
             return this;
         }
         /**
@@ -160,7 +431,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: producer
          */
         default HttpEndpointBuilder transferException(boolean transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
             return this;
         }
         /**
@@ -179,7 +450,222 @@ public interface HttpEndpointBuilderFactory {
          * Group: producer
          */
         default HttpEndpointBuilder transferException(String transferException) {
-            setProperty("transferException", transferException);
+            doSetProperty("transferException", transferException);
+            return this;
+        }
+        /**
+         * Proxy authentication domain to use with NTML.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
+            doSetProperty("proxyAuthDomain", proxyAuthDomain);
+            return this;
+        }
+        /**
+         * Proxy authentication host.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyAuthHost(String proxyAuthHost) {
+            doSetProperty("proxyAuthHost", proxyAuthHost);
+            return this;
+        }
+        /**
+         * Proxy authentication method to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
+            doSetProperty("proxyAuthMethod", proxyAuthMethod);
+            return this;
+        }
+        /**
+         * Proxy authentication password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyAuthPassword(String proxyAuthPassword) {
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
+            return this;
+        }
+        /**
+         * Proxy authentication port.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyAuthPort(int proxyAuthPort) {
+            doSetProperty("proxyAuthPort", proxyAuthPort);
+            return this;
+        }
+        /**
+         * Proxy authentication port.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyAuthPort(String proxyAuthPort) {
+            doSetProperty("proxyAuthPort", proxyAuthPort);
+            return this;
+        }
+        /**
+         * Proxy authentication scheme to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyAuthScheme(String proxyAuthScheme) {
+            doSetProperty("proxyAuthScheme", proxyAuthScheme);
+            return this;
+        }
+        /**
+         * Proxy authentication username.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyAuthUsername(String proxyAuthUsername) {
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
+            return this;
+        }
+        /**
+         * Proxy hostname to use.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyHost(String proxyHost) {
+            doSetProperty("proxyHost", proxyHost);
+            return this;
+        }
+        /**
+         * Proxy port to use.
+         * 
+         * The option is a: <code>int</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyPort(int proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Proxy port to use.
+         * 
+         * The option will be converted to a <code>int</code> type.
+         * 
+         * Group: proxy
+         */
+        default HttpEndpointBuilder proxyPort(String proxyPort) {
+            doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * Authentication domain to use with NTML.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default HttpEndpointBuilder authDomain(String authDomain) {
+            doSetProperty("authDomain", authDomain);
+            return this;
+        }
+        /**
+         * If this option is true, camel-http sends preemptive basic
+         * authentication to the server.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: security
+         */
+        default HttpEndpointBuilder authenticationPreemptive(
+                boolean authenticationPreemptive) {
+            doSetProperty("authenticationPreemptive", authenticationPreemptive);
+            return this;
+        }
+        /**
+         * If this option is true, camel-http sends preemptive basic
+         * authentication to the server.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: security
+         */
+        default HttpEndpointBuilder authenticationPreemptive(
+                String authenticationPreemptive) {
+            doSetProperty("authenticationPreemptive", authenticationPreemptive);
+            return this;
+        }
+        /**
+         * Authentication host to use with NTML.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default HttpEndpointBuilder authHost(String authHost) {
+            doSetProperty("authHost", authHost);
+            return this;
+        }
+        /**
+         * Authentication methods allowed to use as a comma separated list of
+         * values Basic, Digest or NTLM.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default HttpEndpointBuilder authMethod(String authMethod) {
+            doSetProperty("authMethod", authMethod);
+            return this;
+        }
+        /**
+         * Which authentication method to prioritize to use, either as Basic,
+         * Digest or NTLM.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default HttpEndpointBuilder authMethodPriority(String authMethodPriority) {
+            doSetProperty("authMethodPriority", authMethodPriority);
+            return this;
+        }
+        /**
+         * Authentication password.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default HttpEndpointBuilder authPassword(String authPassword) {
+            doSetProperty("authPassword", authPassword);
+            return this;
+        }
+        /**
+         * Authentication username.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default HttpEndpointBuilder authUsername(String authUsername) {
+            doSetProperty("authUsername", authUsername);
             return this;
         }
         /**
@@ -196,7 +682,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder sslContextParameters(
                 Object sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -213,7 +699,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder sslContextParameters(
                 String sslContextParameters) {
-            setProperty("sslContextParameters", sslContextParameters);
+            doSetProperty("sslContextParameters", sslContextParameters);
             return this;
         }
         /**
@@ -226,7 +712,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder x509HostnameVerifier(
                 Object x509HostnameVerifier) {
-            setProperty("x509HostnameVerifier", x509HostnameVerifier);
+            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
         /**
@@ -240,13 +726,13 @@ public interface HttpEndpointBuilderFactory {
          */
         default HttpEndpointBuilder x509HostnameVerifier(
                 String x509HostnameVerifier) {
-            setProperty("x509HostnameVerifier", x509HostnameVerifier);
+            doSetProperty("x509HostnameVerifier", x509HostnameVerifier);
             return this;
         }
     }
 
     /**
-     * Advanced builder for endpoint for the HTTP4 component.
+     * Advanced builder for endpoint for the HTTP component.
      */
     public interface AdvancedHttpEndpointBuilder
             extends
@@ -264,7 +750,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedHttpEndpointBuilder httpBinding(Object httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
             return this;
         }
         /**
@@ -277,7 +763,135 @@ public interface HttpEndpointBuilderFactory {
          * Group: common (advanced)
          */
         default AdvancedHttpEndpointBuilder httpBinding(String httpBinding) {
-            setProperty("httpBinding", httpBinding);
+            doSetProperty("httpBinding", httpBinding);
+            return this;
+        }
+        /**
+         * Configure a cookie handler to maintain a HTTP session.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedHttpEndpointBuilder cookieHandler(Object cookieHandler) {
+            doSetProperty("cookieHandler", cookieHandler);
+            return this;
+        }
+        /**
+         * Configure a cookie handler to maintain a HTTP session.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedHttpEndpointBuilder cookieHandler(String cookieHandler) {
+            doSetProperty("cookieHandler", cookieHandler);
+            return this;
+        }
+        /**
+         * To use a custom CookieStore. By default the BasicCookieStore is used
+         * which is an in-memory only cookie store. Notice if
+         * bridgeEndpoint=true then the cookie store is forced to be a noop
+         * cookie store as cookie shouldn't be stored as we are just bridging
+         * (eg acting as a proxy). If a cookieHandler is set then the cookie
+         * store is also forced to be a noop cookie store as cookie handling is
+         * then performed by the cookieHandler.
+         * 
+         * The option is a: <code>org.apache.http.client.CookieStore</code>
+         * type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedHttpEndpointBuilder cookieStore(Object cookieStore) {
+            doSetProperty("cookieStore", cookieStore);
+            return this;
+        }
+        /**
+         * To use a custom CookieStore. By default the BasicCookieStore is used
+         * which is an in-memory only cookie store. Notice if
+         * bridgeEndpoint=true then the cookie store is forced to be a noop
+         * cookie store as cookie shouldn't be stored as we are just bridging
+         * (eg acting as a proxy). If a cookieHandler is set then the cookie
+         * store is also forced to be a noop cookie store as cookie handling is
+         * then performed by the cookieHandler.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.http.client.CookieStore</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedHttpEndpointBuilder cookieStore(String cookieStore) {
+            doSetProperty("cookieStore", cookieStore);
+            return this;
+        }
+        /**
+         * Whether the HTTP DELETE should include the message body or not. By
+         * default HTTP DELETE do not include any HTTP body. However in some
+         * rare cases users may need to be able to include the message body.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedHttpEndpointBuilder deleteWithBody(
+                boolean deleteWithBody) {
+            doSetProperty("deleteWithBody", deleteWithBody);
+            return this;
+        }
+        /**
+         * Whether the HTTP DELETE should include the message body or not. By
+         * default HTTP DELETE do not include any HTTP body. However in some
+         * rare cases users may need to be able to include the message body.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedHttpEndpointBuilder deleteWithBody(String deleteWithBody) {
+            doSetProperty("deleteWithBody", deleteWithBody);
+            return this;
+        }
+        /**
+         * Whether the HTTP GET should include the message body or not. By
+         * default HTTP GET do not include any HTTP body. However in some rare
+         * cases users may need to be able to include the message body.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedHttpEndpointBuilder getWithBody(boolean getWithBody) {
+            doSetProperty("getWithBody", getWithBody);
+            return this;
+        }
+        /**
+         * Whether the HTTP GET should include the message body or not. By
+         * default HTTP GET do not include any HTTP body. However in some rare
+         * cases users may need to be able to include the message body.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedHttpEndpointBuilder getWithBody(String getWithBody) {
+            doSetProperty("getWithBody", getWithBody);
+            return this;
+        }
+        /**
+         * The status codes which are considered a success response. The values
+         * are inclusive. Multiple ranges can be defined, separated by comma,
+         * e.g. 200-204,209,301-304. Each range must be a single number or
+         * from-to with the dash included.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer (advanced)
+         */
+        default AdvancedHttpEndpointBuilder okStatusCodeRange(
+                String okStatusCodeRange) {
+            doSetProperty("okStatusCodeRange", okStatusCodeRange);
             return this;
         }
         /**
@@ -290,7 +904,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -303,7 +917,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -317,7 +931,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientBuilder(Object clientBuilder) {
-            setProperty("clientBuilder", clientBuilder);
+            doSetProperty("clientBuilder", clientBuilder);
             return this;
         }
         /**
@@ -331,7 +945,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder clientBuilder(String clientBuilder) {
-            setProperty("clientBuilder", clientBuilder);
+            doSetProperty("clientBuilder", clientBuilder);
             return this;
         }
         /**
@@ -344,7 +958,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
                 Object clientConnectionManager) {
-            setProperty("clientConnectionManager", clientConnectionManager);
+            doSetProperty("clientConnectionManager", clientConnectionManager);
             return this;
         }
         /**
@@ -357,7 +971,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder clientConnectionManager(
                 String clientConnectionManager) {
-            setProperty("clientConnectionManager", clientConnectionManager);
+            doSetProperty("clientConnectionManager", clientConnectionManager);
             return this;
         }
         /**
@@ -369,7 +983,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 int connectionsPerRoute) {
-            setProperty("connectionsPerRoute", connectionsPerRoute);
+            doSetProperty("connectionsPerRoute", connectionsPerRoute);
             return this;
         }
         /**
@@ -381,7 +995,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
                 String connectionsPerRoute) {
-            setProperty("connectionsPerRoute", connectionsPerRoute);
+            doSetProperty("connectionsPerRoute", connectionsPerRoute);
             return this;
         }
         /**
@@ -392,7 +1006,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClient(Object httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -404,7 +1018,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClient(String httpClient) {
-            setProperty("httpClient", httpClient);
+            doSetProperty("httpClient", httpClient);
             return this;
         }
         /**
@@ -413,14 +1027,14 @@ public interface HttpEndpointBuilderFactory {
          * mechanisms etc.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.http4.HttpClientConfigurer</code>
+         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
          * type.
          * 
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 Object httpClientConfigurer) {
-            setProperty("httpClientConfigurer", httpClientConfigurer);
+            doSetProperty("httpClientConfigurer", httpClientConfigurer);
             return this;
         }
         /**
@@ -429,14 +1043,14 @@ public interface HttpEndpointBuilderFactory {
          * mechanisms etc.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.http4.HttpClientConfigurer</code>
+         * <code>org.apache.camel.component.http.HttpClientConfigurer</code>
          * type.
          * 
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpClientConfigurer(
                 String httpClientConfigurer) {
-            setProperty("httpClientConfigurer", httpClientConfigurer);
+            doSetProperty("httpClientConfigurer", httpClientConfigurer);
             return this;
         }
         /**
@@ -449,7 +1063,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(
                 Map<String, Object> httpClientOptions) {
-            setProperty("httpClientOptions", httpClientOptions);
+            doSetProperty("httpClientOptions", httpClientOptions);
             return this;
         }
         /**
@@ -463,7 +1077,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder httpClientOptions(
                 String httpClientOptions) {
-            setProperty("httpClientOptions", httpClientOptions);
+            doSetProperty("httpClientOptions", httpClientOptions);
             return this;
         }
         /**
@@ -475,7 +1089,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpContext(Object httpContext) {
-            setProperty("httpContext", httpContext);
+            doSetProperty("httpContext", httpContext);
             return this;
         }
         /**
@@ -487,7 +1101,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder httpContext(String httpContext) {
-            setProperty("httpContext", httpContext);
+            doSetProperty("httpContext", httpContext);
             return this;
         }
         /**
@@ -501,7 +1115,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 boolean mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -515,7 +1129,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
                 String mapHttpMessageBody) {
-            setProperty("mapHttpMessageBody", mapHttpMessageBody);
+            doSetProperty("mapHttpMessageBody", mapHttpMessageBody);
             return this;
         }
         /**
@@ -529,7 +1143,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 boolean mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -543,7 +1157,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
                 String mapHttpMessageFormUrlEncodedBody) {
-            setProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
+            doSetProperty("mapHttpMessageFormUrlEncodedBody", mapHttpMessageFormUrlEncodedBody);
             return this;
         }
         /**
@@ -557,7 +1171,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 boolean mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -571,7 +1185,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
                 String mapHttpMessageHeaders) {
-            setProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
+            doSetProperty("mapHttpMessageHeaders", mapHttpMessageHeaders);
             return this;
         }
         /**
@@ -583,7 +1197,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
                 int maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -595,7 +1209,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
                 String maxTotalConnections) {
-            setProperty("maxTotalConnections", maxTotalConnections);
+            doSetProperty("maxTotalConnections", maxTotalConnections);
             return this;
         }
         /**
@@ -607,7 +1221,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -619,7 +1233,7 @@ public interface HttpEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -631,7 +1245,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(
                 boolean useSystemProperties) {
-            setProperty("useSystemProperties", useSystemProperties);
+            doSetProperty("useSystemProperties", useSystemProperties);
             return this;
         }
         /**
@@ -643,7 +1257,7 @@ public interface HttpEndpointBuilderFactory {
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(
                 String useSystemProperties) {
-            setProperty("useSystemProperties", useSystemProperties);
+            doSetProperty("useSystemProperties", useSystemProperties);
             return this;
         }
     }
@@ -663,12 +1277,12 @@ public interface HttpEndpointBuilderFactory {
         PATCH;
     }
     /**
-     * HTTP4 (camel-http4)
+     * HTTP (camel-http)
      * For calling out to external HTTP servers using Apache HTTP Client 4.x.
      * 
      * Category: http
-     * Available as of version: 2.3
-     * Maven coordinates: org.apache.camel:camel-http4
+     * Since: 2.3
+     * Maven coordinates: org.apache.camel:camel-http
      * 
      * Syntax: <code>http:httpUri</code>
      * 
@@ -676,11 +1290,38 @@ public interface HttpEndpointBuilderFactory {
      * The url of the HTTP endpoint to call.
      */
     default HttpEndpointBuilder http(String path) {
+        return http("http", path);
+    }
+    /**
+     * HTTPS (Secure) (camel-http)
+     * For calling out to external HTTP servers using Apache HTTP Client 4.x.
+     * 
+     * Category: http
+     * Since: 2.3
+     * Maven coordinates: org.apache.camel:camel-http
+     * 
+     * Syntax: <code>https:httpUri</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The url of the HTTP endpoint to call.
+     */
+    default HttpEndpointBuilder https(String path) {
+        return http("https", path);
+    }
+    /**
+     * HTTP (camel-http)
+     * For calling out to external HTTP servers using Apache HTTP Client 4.x.
+     * 
+     * Category: http
+     * Since: 2.3
+     * Maven coordinates: org.apache.camel:camel-http
+     */
+    default HttpEndpointBuilder http(String scheme, String path) {
         class HttpEndpointBuilderImpl extends AbstractEndpointBuilder implements HttpEndpointBuilder, AdvancedHttpEndpointBuilder {
-            public HttpEndpointBuilderImpl(String path) {
-                super("http", path);
+            public HttpEndpointBuilderImpl(String scheme, String path) {
+                super(scheme, path);
             }
         }
-        return new HttpEndpointBuilderImpl(path);
+        return new HttpEndpointBuilderImpl(scheme, path);
     }
 }

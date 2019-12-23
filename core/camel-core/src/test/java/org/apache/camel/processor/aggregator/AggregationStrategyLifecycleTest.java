@@ -55,9 +55,7 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), strategy).completionSize(3)
-                    .to("mock:aggregated");
+                from("direct:start").aggregate(header("id"), strategy).completionSize(3).to("mock:aggregated");
             }
         };
     }
@@ -73,8 +71,7 @@ public class AggregationStrategyLifecycleTest extends ContextTestSupport {
                 return newExchange;
             }
 
-            String body = oldExchange.getIn().getBody(String.class) + separator
-                + newExchange.getIn().getBody(String.class);
+            String body = oldExchange.getIn().getBody(String.class) + separator + newExchange.getIn().getBody(String.class);
             oldExchange.getIn().setBody(body);
             return oldExchange;
         }

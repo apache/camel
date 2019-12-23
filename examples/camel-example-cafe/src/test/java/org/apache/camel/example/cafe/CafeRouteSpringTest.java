@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CafeRouteSpringTest extends CafeRouteBuilderTest {
     private AbstractApplicationContext applicationContext;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("META-INF/camel-routes.xml");
@@ -36,6 +37,7 @@ public class CafeRouteSpringTest extends CafeRouteBuilderTest {
         driverRouter = applicationContext.getBean("drinkRouter", TestDrinkRouter.class);
     }
     
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
@@ -44,6 +46,7 @@ public class CafeRouteSpringTest extends CafeRouteBuilderTest {
         }
     }
     
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return applicationContext.getBean("camel", CamelContext.class);
     }

@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.microprofile.config;
 
-import java.util.Optional;
+import java.util.Properties;
+import java.util.function.Predicate;
 
-import org.apache.camel.spi.PropertiesSource;
-import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.spi.LoadablePropertiesSource;
 import org.eclipse.microprofile.config.Config;
 import org.eclipse.microprofile.config.ConfigProvider;
 
@@ -27,10 +27,7 @@ import org.eclipse.microprofile.config.ConfigProvider;
  * The microprofile-config component is used for bridging the Eclipse MicroProfile Config with Camels
  * properties component. This allows to use configuration management from Eclipse MicroProfile with Camel.
  */
-public class CamelMicroProfilePropertiesSource extends ServiceSupport implements PropertiesSource {
-
-    private Config config;
-
+public class CamelMicroProfilePropertiesSource implements LoadablePropertiesSource {
     @Override
     public String getName() {
         return "CamelMicroProfilePropertiesSource";
@@ -38,20 +35,32 @@ public class CamelMicroProfilePropertiesSource extends ServiceSupport implements
 
     @Override
     public String getProperty(String name) {
-        if (config == null) {
-            config = ConfigProvider.getConfig();
+        return ConfigProvider.getConfig().getOptionalValue(name, String.class).orElse(null);
+    }
+
+    @Override
+    public Properties loadProperties() {
+        final Properties answer = new Properties();
+        final Config config = ConfigProvider.getConfig();
+
+        for (String key: config.getPropertyNames()) {
+            answer.put(key, config.getValue(key, String.class));
         }
-        Optional<String> value = config.getOptionalValue(name, String.class);
-        return value.orElse(null);
+
+        return answer;
     }
 
     @Override
-    protected void doStart() throws Exception {
-        config = ConfigProvider.getConfig();
-    }
+    public Properties loadProperties(Predicate<String> filter) {
+        final Properties answer = new Properties();
+        final Config config = ConfigProvider.getConfig();
 
-    @Override
-    protected void doStop() throws Exception {
-        // noop
+        for (String name: config.getPropertyNames()) {
+            if (filter.test(name)) {
+                config.getOptionalValue(name, String.class).ifPresent(v -> answer.put(name, v));
+            }
+        }
+
+        return answer;
     }
 }

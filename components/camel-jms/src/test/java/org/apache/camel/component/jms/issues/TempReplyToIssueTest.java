@@ -70,6 +70,7 @@ public class TempReplyToIssueTest extends CamelTestSupport {
         return "Hello " + body;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();

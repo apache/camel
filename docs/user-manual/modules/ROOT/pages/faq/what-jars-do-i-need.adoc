@@ -1,5 +1,5 @@
 [[WhatjarsdoIneed-WhatjarsdoIneed]]
-=== What jars do I need?
+= What jars do I need?
 
 Camel is designed to be small lightweight and extremely modular so that
 you only pay for what you use. The core of camel, *camel-core.jar* is
@@ -16,13 +16,13 @@ implementation which typically involves *jaxb-api.jar*, *jaxb-impl.jar*
 and a StAX API which may be *stax-api.jar* and *woodstox.jar*.
 
 [[WhatjarsdoIneed-UsingSpring]]
-==== Using Spring
+== Using Spring
 
 If you wish to work with Spring, you will also need *camel-spring.jar*
 along with the *spring.jar* or the individual spring jars if you prefer.
 
 [[WhatjarsdoIneed-Othercomponents]]
-==== Other components
+== Other components
 
 For other components you may want to look at the
 http://activemq.apache.org/camel/maven/[Maven reports] to see the exact

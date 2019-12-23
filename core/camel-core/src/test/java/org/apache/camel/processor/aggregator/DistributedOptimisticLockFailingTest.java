@@ -47,9 +47,11 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
 
     private static final class EverySecondOneFailsRepository extends MemoryAggregationRepository {
         private AtomicInteger counter = new AtomicInteger();
+
         private EverySecondOneFailsRepository() {
             super(true);
         }
+
         @Override
         public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
             int count = counter.incrementAndGet();
@@ -60,6 +62,7 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
             }
         }
     }
+
     private EverySecondOneFailsRepository sharedRepository = new EverySecondOneFailsRepository();
 
     @Test
@@ -129,21 +132,12 @@ public class DistributedOptimisticLockFailingTest extends AbstractDistributedTes
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:fails")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .aggregationRepository(new AlwaysFailingRepository())
-                        .optimisticLocking()
-                        // do not use retry delay to speedup test
-                        .optimisticLockRetryPolicy(new OptimisticLockRetryPolicy().maximumRetries(5).retryDelay(0))
-                        .completionSize(2)
-                        .to("mock:result");
+                from("direct:fails").aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(new AlwaysFailingRepository()).optimisticLocking()
+                    // do not use retry delay to speedup test
+                    .optimisticLockRetryPolicy(new OptimisticLockRetryPolicy().maximumRetries(5).retryDelay(0)).completionSize(2).to("mock:result");
 
-                from("direct:everysecondone")
-                    .aggregate(header("id"), new BodyInAggregatingStrategy())
-                        .aggregationRepository(sharedRepository)
-                        .optimisticLocking()
-                        .completionSize(8)
-                        .to("mock:result");
+                from("direct:everysecondone").aggregate(header("id"), new BodyInAggregatingStrategy()).aggregationRepository(sharedRepository).optimisticLocking().completionSize(8)
+                    .to("mock:result");
             }
         };
     }

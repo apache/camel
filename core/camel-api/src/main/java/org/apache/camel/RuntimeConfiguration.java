@@ -37,7 +37,7 @@ public interface RuntimeConfiguration {
     Boolean isStreamCaching();
 
     /**
-     * Sets whether tracing is enabled or not (default is enabled).
+     * Sets whether tracing is enabled or not (default is disabled).
      *
      * @param tracing whether to enable tracing.
      */
@@ -46,21 +46,59 @@ public interface RuntimeConfiguration {
     /**
      * Returns whether tracing enabled
      *
+     * To use tracing then this must be enabled on startup to be installed in the CamelContext.
+     *
      * @return <tt>true</tt> if tracing is enabled
      */
     Boolean isTracing();
 
     /**
-     * Sets whether debugging is enabled or not (default is enabled).
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    String getTracingPattern();
+
+    /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    void setTracingPattern(String tracePattern);
+
+    /**
+     * Sets whether backlog tracing is enabled or not (default is disabled).
+     *
+     * To use backlog tracing then this must be enabled on startup to be installed in the CamelContext.
+     *
+     * @param backlogTrace whether to enable backlog tracing.
+     * @see #setTracing(Boolean)
+     */
+    void setBacklogTracing(Boolean backlogTrace);
+
+    /**
+     * Returns whether backlog tracing is enabled.
+     *
+     * @return <tt>true</tt> if backlog tracing is enabled
+     */
+    Boolean isBacklogTracing();
+
+    /**
+     * Sets whether debugging (will use backlog if no custom debugger has been configured)
+     * is enabled or not (default is disabled).
+     *
+     * To use debugging then this must be enabled on startup to be installed in the CamelContext.
      *
      * @param debugging whether to enable debugging.
      */
     void setDebugging(Boolean debugging);
 
     /**
-     * Returns whether debugging enabled
+     * Returns whether debugging is enabled.
      *
-     * @return <tt>true</tt> if tracing is enabled
+     * @return <tt>true</tt> if debugging is enabled
      */
     Boolean isDebugging();
 
@@ -105,20 +143,6 @@ public interface RuntimeConfiguration {
      * @return <tt>true</tt> if logging of message body is enabled
      */
     Boolean isLogExhaustedMessageBody();
-
-    /**
-     * Sets whether fault handling is enabled or not (default is disabled).
-     *
-     * @param handleFault whether to enable fault handling.
-     */
-    void setHandleFault(Boolean handleFault);
-
-    /**
-     * Returns whether fault handling enabled
-     *
-     * @return <tt>true</tt> if fault handling is enabled
-     */
-    Boolean isHandleFault();
 
     /**
      * Sets a delay value in millis that a message is delayed at every step it takes in the route path,

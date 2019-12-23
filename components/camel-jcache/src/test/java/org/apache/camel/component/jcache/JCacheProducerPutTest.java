@@ -18,6 +18,7 @@ package org.apache.camel.component.jcache;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.cache.Cache;
 
 import org.apache.camel.Exchange;

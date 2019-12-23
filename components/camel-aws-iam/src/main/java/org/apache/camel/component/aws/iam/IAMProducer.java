@@ -42,7 +42,6 @@ import com.amazonaws.services.identitymanagement.model.RemoveUserFromGroupResult
 import com.amazonaws.services.identitymanagement.model.StatusType;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyRequest;
 import com.amazonaws.services.identitymanagement.model.UpdateAccessKeyResult;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -62,6 +61,7 @@ public class IAMProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         switch (determineOperation(exchange)) {
         case listAccessKeys:

@@ -22,7 +22,6 @@ import java.util.TimeZone;
 
 import com.rometools.rome.feed.synd.SyndEntry;
 import com.rometools.rome.feed.synd.SyndFeed;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -50,10 +49,11 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
         registry.bind("myBean", new MyBean(cal.getTime()));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("rss:file:src/test/data/rss20.xml?splitEntries=true&consumer.delay=100").
+                from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100").
                         filter().method("myBean", "isAfterDate").to("mock:result");
             }
         };

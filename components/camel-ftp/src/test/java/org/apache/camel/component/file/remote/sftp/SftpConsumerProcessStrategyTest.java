@@ -16,25 +16,22 @@
  */
 package org.apache.camel.component.file.remote.sftp;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
-import org.apache.camel.impl.JndiRegistry;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
-    private MyStrategy myStrategy;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        myStrategy = new MyStrategy();
-        jndi.bind("myStrategy", myStrategy);
-        return jndi;
-    }
+    @BindToRegistry("myStrategy")
+    private MyStrategy myStrategy = new MyStrategy();
 
     @Test
     public void testSftpConsume() throws Exception {
@@ -49,7 +46,7 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
         assertNotNull(out);
         // Apache SSHD appends \u0000 at last byte in retrieved file
         assertTrue(out.startsWith("Hello World"));
-        assertEquals("CustomProcessStrategy should have been invoked 1 times", 1, myStrategy.getInvoked());
+        assertEquals(1, myStrategy.getInvoked(), "CustomProcessStrategy should have been invoked 1 times");
     }
 
     private static class MyStrategy implements GenericFileProcessStrategy {
@@ -58,7 +55,7 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
         @Override
         public void prepareOnStartup(GenericFileOperations operations, GenericFileEndpoint endpoint) throws Exception {
-            //noop
+            // noop
         }
 
         @Override
@@ -68,7 +65,7 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
         @Override
         public void abort(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
-            //noop
+            // noop
         }
 
         @Override
@@ -78,7 +75,7 @@ public class SftpConsumerProcessStrategyTest extends SftpServerTestSupport {
 
         @Override
         public void rollback(GenericFileOperations operations, GenericFileEndpoint endpoint, Exchange exchange, GenericFile file) throws Exception {
-            //noop
+            // noop
         }
 
         int getInvoked() {

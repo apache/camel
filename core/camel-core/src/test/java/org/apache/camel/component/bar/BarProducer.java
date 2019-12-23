@@ -27,7 +27,7 @@ public class BarProducer extends DefaultProducer {
 
     @Override
     public BarEndpoint getEndpoint() {
-        return (BarEndpoint) super.getEndpoint();
+        return (BarEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -37,7 +37,7 @@ public class BarProducer extends DefaultProducer {
         if (drink == null) {
             drink = getEndpoint().getDrink();
         }
-        
+
         String order = exchange.getIn().getBody(String.class) + " ordered " + drink;
         exchange.getIn().setBody(order);
     }

@@ -34,7 +34,7 @@ public class RestJettyMethodNotAllowedTest extends BaseJettyTest {
             assertEquals(405, hofe.getStatusCode());
         }
     }
-    
+
     @Test
     public void testMethodAllowed() {
         try {
@@ -53,14 +53,10 @@ public class RestJettyMethodNotAllowedTest extends BaseJettyTest {
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
-                rest("/users/")
-                        .get("{id}/basic")
-                        .route()
-                        .to("mock:input")
-                        .process(exchange -> {
-                            String id = exchange.getIn().getHeader("id", String.class);
-                            exchange.getOut().setBody(id + ";Donald Duck");
-                        });
+                rest("/users/").get("{id}/basic").route().to("mock:input").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getOut().setBody(id + ";Donald Duck");
+                });
             }
         };
     }

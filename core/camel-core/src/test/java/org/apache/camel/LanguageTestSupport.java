@@ -26,24 +26,24 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
     protected abstract String getLanguageName();
 
     /**
-     * Asserts that the given predicate expression evaluated on the current language and message
-     * exchange evaluates to true
+     * Asserts that the given predicate expression evaluated on the current
+     * language and message exchange evaluates to true
      */
     protected void assertPredicate(String expression) {
         assertPredicate(exchange, expression, true);
     }
 
     /**
-     * Asserts that the given predicate expression evaluated on the current language and message
-     * exchange evaluates to false
+     * Asserts that the given predicate expression evaluated on the current
+     * language and message exchange evaluates to false
      */
     protected void assertPredicateFails(String expression) {
         assertPredicate(exchange, expression, false);
     }
 
     /**
-     * Asserts that the given predicate expression evaluated on the current language and message
-     * exchange evaluates to the expected value
+     * Asserts that the given predicate expression evaluated on the current
+     * language and message exchange evaluates to the expected value
      */
     protected void assertPredicate(String expression, boolean expected) {
         assertPredicate(exchange, expression, expected);
@@ -53,16 +53,17 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
         assertPredicate(getLanguageName(), expression, exchange, expected);
     }
 
-
     /**
-     * Asserts that this language expression evaluates to the given value on the given exchange
+     * Asserts that this language expression evaluates to the given value on the
+     * given exchange
      */
     protected void assertExpression(Exchange exchange, String expressionText, Object expectedValue) {
         assertExpression(exchange, getLanguageName(), expressionText, expectedValue);
     }
 
     /**
-     * Asserts that this language expression evaluates to the given value on the current exchange
+     * Asserts that this language expression evaluates to the given value on the
+     * current exchange
      */
     protected void assertExpression(String expressionText, Object expectedValue) {
         assertExpression(exchange, expressionText, expectedValue);
@@ -74,8 +75,7 @@ public abstract class LanguageTestSupport extends ExchangeTestSupport {
     protected void assertExpression(String expressionText, String expectedValue, String orThisExpectedValue) {
         Object value = evaluateExpression(expressionText, expectedValue);
 
-        assertTrue("Expression: " + expressionText + " on Exchange: " + exchange,
-                   expectedValue.equals(value) || orThisExpectedValue.equals(value));
+        assertTrue("Expression: " + expressionText + " on Exchange: " + exchange, expectedValue.equals(value) || orThisExpectedValue.equals(value));
     }
 
     /**

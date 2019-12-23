@@ -23,10 +23,11 @@ import javax.persistence.Query;
  * A Strategy to create a query to search for objects in a database
  */
 public interface QueryFactory {
+
     /**
      * Creates a new query to find objects to be processed
      *
-     * @param entityManager
+     * @param entityManager the enity manager
      * @return the query configured with any parameters etc
      */
     Query createQuery(EntityManager entityManager);

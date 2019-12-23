@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.pubsub.integration;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -41,9 +42,7 @@ public class AckModeNoneTest extends PubsubTestSupport {
     @EndpointInject("google-pubsub:{{project.id}}:" + TOPIC_NAME)
     private Endpoint pubsubTopic;
 
-    @EndpointInject("google-pubsub:{{project.id}}:"
-            + SUBSCRIPTION_NAME
-            + "?ackMode=NONE")
+    @EndpointInject("google-pubsub:{{project.id}}:" + SUBSCRIPTION_NAME + "?ackMode=NONE")
     private Endpoint pubsubSub;
 
     @EndpointInject("mock:receiveResult")
@@ -61,22 +60,19 @@ public class AckModeNoneTest extends PubsubTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from(directIn)
-                    .routeId("AckNONE_SEND")
-                    .to(pubsubTopic);
+                from(directIn).routeId("AckNONE_SEND").to(pubsubTopic);
 
-                from(pubsubSub)
-                    .routeId("AckNONE_RECV")
-                    .autoStartup(true)
-                    .to(receiveResult);
+                from(pubsubSub).routeId("AckNONE_RECV").autoStartup(true).to(receiveResult);
             }
         };
     }
+
     /**
-     * Expecting two messages received for the one sent.
-     * With Ack mode set to NONE the same message will be delivered again and again,
-     * after the deadline expiration.
-     * Setting deadline to 1 second and waiting for more than 2 to ensure the message has been resent.
+     * Expecting two messages received for the one sent. With Ack mode set to
+     * NONE the same message will be delivered again and again, after the
+     * deadline expiration. Setting deadline to 1 second and waiting for more
+     * than 2 to ensure the message has been resent.
+     * 
      * @throws Exception
      */
     @Test

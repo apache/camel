@@ -108,13 +108,12 @@ public class SentExchangeEventNotifierIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getIn().setBody("I was here");
-                        }
-                    });
+                from("direct:start").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getIn().setBody("I was here");
+                    }
+                });
             }
         };
     }

@@ -29,10 +29,12 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContextManagedTest {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/dualCamelContextManagedAutoAssignedNameTest.xml");
     }
 
+    @Override
     @Test
     public void testDualCamelContextManaged() throws Exception {
 

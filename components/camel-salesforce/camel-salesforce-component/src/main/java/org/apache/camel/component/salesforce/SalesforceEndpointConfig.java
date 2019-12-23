@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportMetadata;
 import org.apache.camel.component.salesforce.api.dto.approval.ApprovalRequest;
@@ -86,7 +85,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     // parameters for Approval API
     public static final String APPROVAL = "approval";
 
-    // default maximum authentication retries on failed authentication or expired session
+    // default maximum authentication retries on failed authentication or
+    // expired session
     public static final int DEFAULT_MAX_AUTHENTICATION_RETRIES = 4;
 
     // default increment and limit for Streaming connection restart attempts
@@ -94,8 +94,6 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final long DEFAULT_MAX_BACKOFF = 30000L;
 
     public static final String NOT_FOUND_BEHAVIOUR = "notFoundBehaviour";
-
-    public static final String SERIALIZE_NULLS = "serializeNulls";
 
     // general properties
     @UriParam
@@ -124,8 +122,6 @@ public class SalesforceEndpointConfig implements Cloneable {
     private String sObjectQuery;
     @UriParam(displayName = "SObject Search")
     private String sObjectSearch;
-    @UriParam(displayName = "Serialize NULL values")
-    private boolean serializeNulls;
     @UriParam
     private String apexMethod;
     @UriParam
@@ -202,8 +198,9 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public SalesforceEndpointConfig copy() {
         try {
-            final SalesforceEndpointConfig copy = (SalesforceEndpointConfig) super.clone();
-            // nothing to deep copy, getApexQueryParams() is readonly, so no need to deep copy
+            final SalesforceEndpointConfig copy = (SalesforceEndpointConfig)super.clone();
+            // nothing to deep copy, getApexQueryParams() is readonly, so no
+            // need to deep copy
             return copy;
         } catch (CloneNotSupportedException ex) {
             throw new RuntimeCamelException(ex);
@@ -215,19 +212,20 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Payload format to use for Salesforce API calls, either JSON or XML, defaults to JSON
+     * Payload format to use for Salesforce API calls, either JSON or XML,
+     * defaults to JSON
      */
     public void setFormat(PayloadFormat format) {
         this.format = format;
     }
 
-    public boolean getRawPayload() {
+    public boolean isRawPayload() {
         return rawPayload;
     }
 
     /**
-     * Use raw payload {@link String} for request and response (either JSON or XML depending on {@code format}),
-     * instead of DTOs, false by default
+     * Use raw payload {@link String} for request and response (either JSON or
+     * XML depending on {@code format}), instead of DTOs, false by default
      */
     public void setRawPayload(boolean rawPayload) {
         this.rawPayload = rawPayload;
@@ -238,7 +236,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Salesforce API version, defaults to SalesforceEndpointConfig.DEFAULT_VERSION
+     * Salesforce API version, defaults to
+     * SalesforceEndpointConfig.DEFAULT_VERSION
      */
     public void setApiVersion(String apiVersion) {
         this.apiVersion = apiVersion;
@@ -315,7 +314,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Fully qualified SObject class name, usually generated using camel-salesforce-maven-plugin
+     * Fully qualified SObject class name, usually generated using
+     * camel-salesforce-maven-plugin
      */
     public void setSObjectClass(String sObjectClass) {
         this.sObjectClass = sObjectClass;
@@ -341,18 +341,6 @@ public class SalesforceEndpointConfig implements Cloneable {
      */
     public void setSObjectSearch(String sObjectSearch) {
         this.sObjectSearch = sObjectSearch;
-    }
-
-    /**
-     * Should the NULL values of given DTO be serialized with
-     * empty (NULL) values. This affects only JSON data format.
-     */
-    public void setSerializeNulls(boolean serializeNulls) {
-        this.serializeNulls = serializeNulls;
-    }
-
-    public boolean isSerializeNulls() {
-        return serializeNulls;
     }
 
     public String getApexMethod() {
@@ -452,7 +440,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Whether to update an existing Push Topic when using the Streaming API, defaults to false
+     * Whether to update an existing Push Topic when using the Streaming API,
+     * defaults to false
      */
     public void setUpdateTopic(boolean updateTopic) {
         this.updateTopic = updateTopic;
@@ -474,7 +463,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API version < 29.0)
+     * Notify for operations, options are ALL, CREATE, EXTENDED, UPDATE (API
+     * version < 29.0)
      */
     public void setNotifyForOperations(NotifyForOperationsEnum notifyForOperations) {
         this.notifyForOperations = notifyForOperations;
@@ -588,7 +578,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Backoff interval increment for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
+     * Backoff interval increment for Streaming connection restart attempts for
+     * failures beyond CometD auto-reconnect.
      */
     public void setBackoffIncrement(long backoffIncrement) {
         this.backoffIncrement = backoffIncrement;
@@ -599,14 +590,16 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Maximum backoff interval for Streaming connection restart attempts for failures beyond CometD auto-reconnect.
+     * Maximum backoff interval for Streaming connection restart attempts for
+     * failures beyond CometD auto-reconnect.
      */
     public void setMaxBackoff(long maxBackoff) {
         this.maxBackoff = maxBackoff;
     }
 
     /**
-     * Custom Jackson ObjectMapper to use when serializing/deserializing Salesforce objects.
+     * Custom Jackson ObjectMapper to use when serializing/deserializing
+     * Salesforce objects.
      */
     public void setObjectMapper(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
@@ -627,7 +620,6 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_CLASS, sObjectClass);
         valueMap.put(SOBJECT_QUERY, sObjectQuery);
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
-        valueMap.put(SERIALIZE_NULLS, serializeNulls);
         valueMap.put(APEX_METHOD, apexMethod);
         valueMap.put(APEX_URL, apexUrl);
         valueMap.put(LIMIT, limit);
@@ -662,7 +654,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Default replayId setting if no value is found in {@link #initialReplayIdMap}
+     * Default replayId setting if no value is found in
+     * {@link #initialReplayIdMap}
      * 
      * @param defaultReplayId
      */
@@ -686,7 +679,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Limit on number of returned records. Applicable to some of the API, check the Salesforce documentation.
+     * Limit on number of returned records. Applicable to some of the API, check
+     * the Salesforce documentation.
      * 
      * @param limit
      */
@@ -777,7 +771,7 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * The ID of the submitter who’s requesting the approval record. 
+     * The ID of the submitter who’s requesting the approval record.
      *
      * @param contextActorId
      */
@@ -803,7 +797,8 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * If the process requires specification of the next approval, the ID of the user to be assigned the next request.
+     * If the process requires specification of the next approval, the ID of the
+     * user to be assigned the next request.
      *
      * @param nextApproverIds
      */
@@ -816,9 +811,10 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * If the process requires specification of the next approval, the ID of the user to be assigned the next request.
+     * If the process requires specification of the next approval, the ID of the
+     * user to be assigned the next request.
      *
-     * @param nextApproverIds
+     * @param nextApproverId
      */
     public void setApprovalNextApproverIds(String nextApproverId) {
         if (approval == null) {
@@ -842,10 +838,11 @@ public class SalesforceEndpointConfig implements Cloneable {
     }
 
     /**
-     * Determines whether to evaluate the entry criteria for the process (true) or not (false) if the process definition
-     * name or ID isn’t null. If the process definition name or ID isn’t specified, this argument is ignored, and 
-     * standard evaluation is followed based on process order. By default, the entry criteria isn’t skipped if it’s not
-     * set by this request.
+     * Determines whether to evaluate the entry criteria for the process (true)
+     * or not (false) if the process definition name or ID isn’t null. If the
+     * process definition name or ID isn’t specified, this argument is ignored,
+     * and standard evaluation is followed based on process order. By default,
+     * the entry criteria isn’t skipped if it’s not set by this request.
      *
      * @param skipEntryCriteria
      */

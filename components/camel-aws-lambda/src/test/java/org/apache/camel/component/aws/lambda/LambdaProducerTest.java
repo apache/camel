@@ -37,7 +37,6 @@ import com.amazonaws.services.lambda.model.TagResourceResult;
 import com.amazonaws.services.lambda.model.UntagResourceResult;
 import com.amazonaws.services.lambda.model.UpdateFunctionCodeResult;
 import com.amazonaws.util.IOUtils;
-
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -231,7 +230,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         Exchange exchange = template.send("direct:tagResource", ExchangePattern.InOut, new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                Map<String, String> tags = new HashMap<String, String>();
+                Map<String, String> tags = new HashMap<>();
                 tags.put("test", "added-tag");
                 exchange.getIn().setHeader(LambdaConstants.RESOURCE_ARN, "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
                 exchange.getIn().setHeader(LambdaConstants.RESOURCE_TAGS, tags);
@@ -249,7 +248,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         Exchange exchange = template.send("direct:untagResource", ExchangePattern.InOut, new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                List<String> tagKeys = new ArrayList<String>();
+                List<String> tagKeys = new ArrayList<>();
                 tagKeys.add("test");
                 exchange.getIn().setHeader(LambdaConstants.RESOURCE_ARN, "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
                 exchange.getIn().setHeader(LambdaConstants.RESOURCE_TAG_KEYS, tagKeys);

@@ -41,7 +41,7 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
             template.requestBody("direct:start", "Hello World");
             fail("Expected the exception");
         } catch (Exception ex) {
-            // expect the exception here; 
+            // expect the exception here;
         }
         assertEquals(1, invoked);
     }
@@ -60,6 +60,7 @@ public class DefaultErrorHandlerExchangeFormatterRefTest extends ContextTestSupp
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new MyFunctionalException("Sorry you cannot do this");
         }

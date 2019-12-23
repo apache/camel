@@ -22,10 +22,10 @@ import javax.jms.Message;
 import javax.jms.Session;
 import javax.jms.TextMessage;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.jms.support.converter.MessageConversionException;
@@ -35,13 +35,10 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 public class ProduceMessageConverterTest extends CamelTestSupport {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myMessageConverter", new MyMessageConverter());
-        return jndi;
-    }
+    @BindToRegistry("myMessageConverter")
+    private MyMessageConverter conv = new MyMessageConverter();
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -61,6 +58,7 @@ public class ProduceMessageConverterTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -71,15 +69,17 @@ public class ProduceMessageConverterTest extends CamelTestSupport {
 
     private static class MyMessageConverter implements MessageConverter {
 
+        @Override
         public Message toMessage(Object object, Session session) throws JMSException, MessageConversionException {
             TextMessage txt = session.createTextMessage();
             txt.setText("Hello " + object);
             return txt;
         }
 
+        @Override
         public Object fromMessage(Message message) throws JMSException, MessageConversionException {
             return null;
         }
     }
-    
+
 }

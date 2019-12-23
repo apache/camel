@@ -41,7 +41,14 @@ import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.apache.camel.util.BufferCaster.cast;
+
 public final class Scanner implements Iterator<String>, Closeable {
+  
+    static {
+        WHITESPACE_PATTERN = Pattern.compile("\\s+");
+        FIND_ANY_PATTERN = Pattern.compile("(?s).*");
+    }
 
     private static final Map<String, Pattern> CACHE = new LinkedHashMap<String, Pattern>() {
         @Override
@@ -49,10 +56,10 @@ public final class Scanner implements Iterator<String>, Closeable {
             return size() >= 7;
         }
     };
+    
+    private static final Pattern WHITESPACE_PATTERN;
 
-    private static final String WHITESPACE_PATTERN = "\\s+";
-
-    private static final String FIND_ANY_PATTERN = "(?s).*";
+    private static final Pattern FIND_ANY_PATTERN;
 
     private static final int BUFFER_SIZE = 1024;
 
@@ -79,6 +86,10 @@ public final class Scanner implements Iterator<String>, Closeable {
     public Scanner(String source, String pattern) {
         this(new StringReader(Objects.requireNonNull(source, "source")), cachePattern(pattern));
     }
+    
+    public Scanner(String source, Pattern pattern) {
+        this(new StringReader(Objects.requireNonNull(source, "source")), pattern);
+    }
 
     public Scanner(ReadableByteChannel source, String charsetName, String pattern) {
         this(Channels.newReader(Objects.requireNonNull(source, "source"), toDecoder(charsetName), -1), cachePattern(pattern));
@@ -90,9 +101,9 @@ public final class Scanner implements Iterator<String>, Closeable {
 
     private Scanner(Readable source, Pattern pattern) {
         this.source = source;
-        delimPattern = pattern != null ? pattern : cachePattern(WHITESPACE_PATTERN);
+        delimPattern = pattern != null ? pattern : WHITESPACE_PATTERN;
         buf = CharBuffer.allocate(BUFFER_SIZE);
-        buf.limit(0);
+        cast(buf).limit(0);
         matcher = delimPattern.matcher(buf);
         matcher.useTransparentBounds(true);
         matcher.useAnchoringBounds(false);
@@ -107,6 +118,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         }
     }
 
+    @Override
     public boolean hasNext() {
         checkClosed();
         saveState();
@@ -122,6 +134,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         return result;
     }
 
+    @Override
     public String next() {
         checkClosed();
         while (true) {
@@ -153,8 +166,8 @@ public final class Scanner implements Iterator<String>, Closeable {
             expandBuffer();
         }
         int p = buf.position();
-        buf.position(buf.limit());
-        buf.limit(buf.capacity());
+        cast(buf).position(buf.limit());
+        cast(buf).limit(buf.capacity());
         int n;
         try {
             n = source.read(buf);
@@ -168,23 +181,23 @@ public final class Scanner implements Iterator<String>, Closeable {
         } else if (n > 0) {
             needInput = false;
         }
-        buf.limit(buf.position());
-        buf.position(p);
+        cast(buf).limit(buf.position());
+        cast(buf).position(p);
     }
 
     private void expandBuffer() {
         int offset = savedPosition == -1 ? position : savedPosition;
-        buf.position(offset);
+        cast(buf).position(offset);
         if (offset > 0) {
             buf.compact();
             translateSavedIndexes(offset);
             position -= offset;
-            buf.flip();
+            cast(buf).flip();
         } else {
             int newSize = buf.capacity() * 2;
             CharBuffer newBuf = CharBuffer.allocate(newSize);
             newBuf.put(buf);
-            newBuf.flip();
+            cast(newBuf).flip();
             translateSavedIndexes(offset);
             position -= offset;
             buf = newBuf;
@@ -247,7 +260,7 @@ public final class Scanner implements Iterator<String>, Closeable {
                 return null;
             }
             int tokenEnd = matcher.start();
-            matcher.usePattern(cachePattern(FIND_ANY_PATTERN));
+            matcher.usePattern(FIND_ANY_PATTERN);
             matcher.region(position, tokenEnd);
             if (matcher.matches()) {
                 String s = matcher.group();
@@ -258,7 +271,7 @@ public final class Scanner implements Iterator<String>, Closeable {
             }
         }
         if (inputExhausted) {
-            matcher.usePattern(cachePattern(FIND_ANY_PATTERN));
+            matcher.usePattern(FIND_ANY_PATTERN);
             matcher.region(position, buf.limit());
             if (matcher.matches()) {
                 String s = matcher.group();
@@ -277,6 +290,7 @@ public final class Scanner implements Iterator<String>, Closeable {
         }
     }
 
+    @Override
     public void close() throws IOException {
         if (!closed) {
             closed = true;
@@ -297,7 +311,9 @@ public final class Scanner implements Iterator<String>, Closeable {
         if (pattern == null) {
             return null;
         }
-        return CACHE.computeIfAbsent(pattern, Pattern::compile);
+        synchronized (CACHE) {
+            return CACHE.computeIfAbsent(pattern, Pattern::compile);
+        }
     }
 
 }

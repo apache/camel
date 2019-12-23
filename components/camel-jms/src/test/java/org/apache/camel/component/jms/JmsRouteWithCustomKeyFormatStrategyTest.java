@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.jms;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.StringHelper;
 
 /**
@@ -25,15 +25,12 @@ import org.apache.camel.util.StringHelper;
  */
 public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefaultKeyFormatStrategyTest {
 
-    protected String getUri() {
-        return "activemq:queue:foo?jmsKeyFormatStrategy=#myJmsKeyStrategy";
-    }
+    @BindToRegistry("myJmsKeyStrategy")
+    private MyCustomKeyFormatStrategy strategy = new MyCustomKeyFormatStrategy();
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myJmsKeyStrategy", new MyCustomKeyFormatStrategy());
-        return jndi;
+    protected String getUri() {
+        return "activemq:queue:foo?jmsKeyFormatStrategy=#myJmsKeyStrategy";
     }
 
     @Override
@@ -50,10 +47,12 @@ public class JmsRouteWithCustomKeyFormatStrategyTest extends JmsRouteWithDefault
 
     private static class MyCustomKeyFormatStrategy implements JmsKeyFormatStrategy {
 
+        @Override
         public String encodeKey(String key) {
             return "FOO" + key + "BAR";
         }
 
+        @Override
         public String decodeKey(String key) {
             return StringHelper.between(key, "FOO", "BAR");
         }

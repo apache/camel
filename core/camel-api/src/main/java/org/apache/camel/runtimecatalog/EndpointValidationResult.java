@@ -18,42 +18,21 @@ package org.apache.camel.runtimecatalog;
 
 import java.io.Serializable;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * Details result of validating endpoint uri.
  */
-public class EndpointValidationResult implements Serializable {
+public class EndpointValidationResult extends PropertiesValidationResult implements Serializable {
 
     private final String uri;
-    private int errors;
 
-    // general
-    private String syntaxError;
-    private String unknownComponent;
-    private String incapable;
-
-    // options
-    private Set<String> unknown;
-    private Map<String, String[]> unknownSuggestions;
     private Set<String> lenient;
     private Set<String> notConsumerOnly;
     private Set<String> notProducerOnly;
-    private Set<String> required;
-    private Set<String> deprecated;
-    private Map<String, String> invalidEnum;
-    private Map<String, String[]> invalidEnumChoices;
-    private Map<String, String[]> invalidEnumSuggestions;
-    private Map<String, String> invalidReference;
-    private Map<String, String> invalidBoolean;
-    private Map<String, String> invalidInteger;
-    private Map<String, String> invalidNumber;
-    private Map<String, String> defaultValues;
 
     public EndpointValidationResult() {
         this(null);
@@ -67,57 +46,12 @@ public class EndpointValidationResult implements Serializable {
         return uri;
     }
 
-    public boolean hasErrors() {
-        return errors > 0;
-    }
-
-    public int getNumberOfErrors() {
-        return errors;
-    }
-
     public boolean isSuccess() {
-        boolean ok = syntaxError == null && unknownComponent == null && incapable == null
-                && unknown == null && required == null;
+        boolean ok = super.isSuccess();
         if (ok) {
             ok = notConsumerOnly == null && notProducerOnly == null;
         }
-        if (ok) {
-            ok = invalidEnum == null && invalidEnumChoices == null && invalidReference == null
-                && invalidBoolean == null && invalidInteger == null && invalidNumber == null;
-        }
         return ok;
-    }
-
-    public void addSyntaxError(String syntaxError) {
-        this.syntaxError = syntaxError;
-        errors++;
-    }
-
-    public void addIncapable(String uri) {
-        this.incapable = uri;
-        errors++;
-    }
-
-    public void addUnknownComponent(String name) {
-        this.unknownComponent = name;
-        errors++;
-    }
-
-    public void addUnknown(String name) {
-        if (unknown == null) {
-            unknown = new LinkedHashSet<>();
-        }
-        if (!unknown.contains(name)) {
-            unknown.add(name);
-            errors++;
-        }
-    }
-
-    public void addUnknownSuggestions(String name, String[] suggestions) {
-        if (unknownSuggestions == null) {
-            unknownSuggestions = new LinkedHashMap<>();
-        }
-        unknownSuggestions.put(name, suggestions);
     }
 
     public void addLenient(String name) {
@@ -127,96 +61,6 @@ public class EndpointValidationResult implements Serializable {
         if (!lenient.contains(name)) {
             lenient.add(name);
         }
-    }
-
-    public void addRequired(String name) {
-        if (required == null) {
-            required = new LinkedHashSet<>();
-        }
-        if (!required.contains(name)) {
-            required.add(name);
-            errors++;
-        }
-    }
-
-    public void addDeprecated(String name) {
-        if (deprecated == null) {
-            deprecated = new LinkedHashSet<>();
-        }
-        if (!deprecated.contains(name)) {
-            deprecated.add(name);
-        }
-    }
-
-    public void addInvalidEnum(String name, String value) {
-        if (invalidEnum == null) {
-            invalidEnum = new LinkedHashMap<>();
-        }
-        if (!invalidEnum.containsKey(name)) {
-            invalidEnum.put(name, value);
-            errors++;
-        }
-    }
-
-    public void addInvalidEnumChoices(String name, String[] choices) {
-        if (invalidEnumChoices == null) {
-            invalidEnumChoices = new LinkedHashMap<>();
-        }
-        invalidEnumChoices.put(name, choices);
-    }
-
-    public void addInvalidEnumSuggestions(String name, String[] suggestions) {
-        if (invalidEnumSuggestions == null) {
-            invalidEnumSuggestions = new LinkedHashMap<>();
-        }
-        invalidEnumSuggestions.put(name, suggestions);
-    }
-
-    public void addInvalidReference(String name, String value) {
-        if (invalidReference == null) {
-            invalidReference = new LinkedHashMap<>();
-        }
-        if (!invalidReference.containsKey(name)) {
-            invalidReference.put(name, value);
-            errors++;
-        }
-    }
-
-    public void addInvalidBoolean(String name, String value) {
-        if (invalidBoolean == null) {
-            invalidBoolean = new LinkedHashMap<>();
-        }
-        if (!invalidBoolean.containsKey(name)) {
-            invalidBoolean.put(name, value);
-            errors++;
-        }
-    }
-
-    public void addInvalidInteger(String name, String value) {
-        if (invalidInteger == null) {
-            invalidInteger = new LinkedHashMap<>();
-        }
-        if (!invalidInteger.containsKey(name)) {
-            invalidInteger.put(name, value);
-            errors++;
-        }
-    }
-
-    public void addInvalidNumber(String name, String value) {
-        if (invalidNumber == null) {
-            invalidNumber = new LinkedHashMap<>();
-        }
-        if (!invalidNumber.containsKey(name)) {
-            invalidNumber.put(name, value);
-            errors++;
-        }
-    }
-
-    public void addDefaultValue(String name, String value)  {
-        if (defaultValues == null) {
-            defaultValues = new LinkedHashMap<>();
-        }
-        defaultValues.put(name, value);
     }
 
     public void addNotConsumerOnly(String name) {
@@ -239,83 +83,16 @@ public class EndpointValidationResult implements Serializable {
         }
     }
 
-    public String getSyntaxError() {
-        return syntaxError;
-    }
-
-    public String getIncapable() {
-        return incapable;
-    }
-
-    public Set<String> getUnknown() {
-        return unknown;
-    }
-
-    public Set<String> getLenient() {
-        return lenient;
-    }
-
-    public Map<String, String[]> getUnknownSuggestions() {
-        return unknownSuggestions;
-    }
-
-    public String getUnknownComponent() {
-        return unknownComponent;
-    }
-
-    public Set<String> getRequired() {
-        return required;
-    }
-
-    public Set<String> getDeprecated() {
-        return deprecated;
-    }
-
-    public Map<String, String> getInvalidEnum() {
-        return invalidEnum;
-    }
-
-    public Map<String, String[]> getInvalidEnumChoices() {
-        return invalidEnumChoices;
-    }
-
-    public List<String> getEnumChoices(String optionName) {
-        if (invalidEnumChoices != null) {
-            String[] enums = invalidEnumChoices.get(optionName);
-            if (enums != null) {
-                return Arrays.asList(enums);
-            }
-        }
-
-        return Collections.emptyList();
-    }
-
-    public Map<String, String> getInvalidReference() {
-        return invalidReference;
-    }
-
-    public Map<String, String> getInvalidBoolean() {
-        return invalidBoolean;
-    }
-
-    public Map<String, String> getInvalidInteger() {
-        return invalidInteger;
-    }
-
-    public Map<String, String> getInvalidNumber() {
-        return invalidNumber;
-    }
-
-    public Map<String, String> getDefaultValues() {
-        return defaultValues;
-    }
-
     public Set<String> getNotConsumerOnly() {
         return notConsumerOnly;
     }
 
     public Set<String> getNotProducerOnly() {
         return notProducerOnly;
+    }
+
+    public Set<String> getLenient() {
+        return lenient;
     }
 
     /**
@@ -325,7 +102,7 @@ public class EndpointValidationResult implements Serializable {
      * @return the summary, or <tt>null</tt> if no validation errors
      */
     public String summaryErrorMessage(boolean includeHeader) {
-        return summaryErrorMessage(includeHeader, true);
+        return summaryErrorMessage(includeHeader, true, false);
     }
 
     /**
@@ -333,9 +110,10 @@ public class EndpointValidationResult implements Serializable {
      *
      * @param includeHeader    whether to include a header
      * @param ignoreDeprecated whether to ignore deprecated options in use as an error or not
+     * @param includeWarnings  whether to include warnings as an error or not
      * @return the summary, or <tt>null</tt> if no validation errors
      */
-    public String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated) {
+    public String summaryErrorMessage(boolean includeHeader, boolean ignoreDeprecated, boolean includeWarnings) {
         boolean ok = isSuccess();
 
         // special check if we should ignore deprecated options being used
@@ -343,16 +121,18 @@ public class EndpointValidationResult implements Serializable {
             ok = deprecated == null;
         }
 
-        if (ok) {
-            return null;
+        if (includeWarnings) {
+            if (incapable != null) {
+                return "\tIncapable of parsing uri: " + incapable;
+            } else if (syntaxError != null) {
+                return "\tSyntax error: " + syntaxError;
+            } else if (unknownComponent != null) {
+                return "\tUnknown component: " + unknownComponent;
+            }
         }
 
-        if (incapable != null) {
-            return "\tIncapable of parsing uri: " + incapable;
-        } else if (syntaxError != null) {
-            return "\tSyntax error: " + syntaxError;
-        } else if (unknownComponent != null) {
-            return "\tUnknown component: " + unknownComponent;
+        if (ok) {
+            return null;
         }
 
         // for each invalid option build a reason message
@@ -484,7 +264,4 @@ public class EndpointValidationResult implements Serializable {
         return sb.toString();
     }
 
-    private static boolean isEmpty(String value) {
-        return value == null || value.isEmpty() || value.trim().isEmpty();
-    }
 }

@@ -42,7 +42,7 @@ public class CamelSpringActiveProfileTest {
     @Autowired
     protected CamelContext camelContext;
 
-    @Produce(value = "direct:start", context = "camelContext")
+    @Produce(value = "direct:start")
     protected ProducerTemplate start;
 
     @Test

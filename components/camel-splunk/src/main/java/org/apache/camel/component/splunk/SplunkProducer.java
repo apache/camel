@@ -17,7 +17,6 @@
 package org.apache.camel.component.splunk;
 
 import com.splunk.Args;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.apache.camel.component.splunk.support.DataWriter;
@@ -42,6 +41,7 @@ public class SplunkProducer extends DefaultProducer {
         createWriter(producerType);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         try {
             if (!dataWriter.isConnected()) {

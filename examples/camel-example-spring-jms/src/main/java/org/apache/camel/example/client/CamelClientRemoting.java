@@ -18,6 +18,8 @@ package org.apache.camel.example.client;
 
 import org.apache.camel.example.server.Multiplier;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -27,13 +29,16 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * Requires that the JMS broker is running, as well as CamelServer
  */
 public final class CamelClientRemoting {
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelClientRemoting.class);
+
     private CamelClientRemoting() {
         //Helper class
     }
 
     // START SNIPPET: e1
     public static void main(final String[] args) {
-        System.out.println("Notice this client requires that the CamelServer is already running!");
+        LOG.info("Notice this client requires that the CamelServer is already running!");
 
         AbstractApplicationContext context = new ClassPathXmlApplicationContext("camel-client-remoting.xml");
         // just get the proxy to the service and we as the client can use the "proxy" as it was
@@ -41,9 +46,11 @@ public final class CamelClientRemoting {
         // to the remote ActiveMQ server and fetch the response.
         Multiplier multiplier = context.getBean("multiplierProxy", Multiplier.class);
 
-        System.out.println("Invoking the multiply with 33");
+        LOG.info("Invoking the multiply with 33");
+
         int response = multiplier.multiply(33);
-        System.out.println("... the result is: " + response);
+
+        LOG.info("... the result is: {}", response);
 
         // we're done so let's properly close the application context
         IOHelper.close(context);

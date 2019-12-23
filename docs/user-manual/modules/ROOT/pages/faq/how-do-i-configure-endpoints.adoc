@@ -1,17 +1,17 @@
 [[HowdoIconfigureendpoints-HowdoIconfigureendpoints]]
-=== How do I configure endpoints?
+= How do I configure endpoints?
 
 There are a few different approaches to configuring components and
 endpoints.
 
 [[HowdoIconfigureendpoints-UsingJavaCode]]
-==== Using Java Code
+== Using Java Code
 
 You can explicitly configure a Component using Java
 code as shown in this example
 
 Or you can explicitly get hold of an Endpoint and
-configure it using Java code as shown in the xref:mock-component.adoc[Mock endpoint examples].
+configure it using Java code as shown in the xref:components::mock-component.adoc[Mock endpoint examples].
 
 [source,java]
 ----
@@ -20,7 +20,7 @@ endpoint.setSomething("aValue");
 ----
 
 [[HowdoIconfigureendpoints-UsingCDI]]
-==== Using CDI
+== Using CDI
 
 You can use CDI as dependency injection framework to configure
 your Component or Endpoint instances.
@@ -74,16 +74,8 @@ class MyCdiBean {
 }
 ----
 
-
-[[HowdoIconfigureendpoints-UsingGuice]]
-==== Using Guice
-
-You can also use Guice as the dependency injection
-framework. For example see the xref:../guice-jms-example.adoc[Guice JMS
-Example].
-
 [[HowdoIconfigureendpoints-UsingSpringXML]]
-==== Using Spring XML
+== Using Spring XML
 
 You can configure your Component or
 Endpoint instances in your Spring
@@ -112,10 +104,10 @@ for the scheme name you use for Endpoint
 URIs
 
 [[HowdoIconfigureendpoints-UsingEndpointURIs]]
-==== Using Endpoint URIs
+== Using Endpoint URIs
 
 Another approach is to use the URI syntax. The URI syntax supports the
-query notation. So for example with the xref:mail-component.adoc[Mail] component
+query notation. So for example with the xref:components::mail-component.adoc[Mail] component
 you can configure the password property via the URI
 
 [source]
@@ -124,9 +116,9 @@ pop3://host:port?password=foo
 ----
 
 [[HowdoIconfigureendpoints-ReferringbeansfromEndpointURIs]]
-===== Referring beans from Endpoint URIs
+=== Referring beans from Endpoint URIs
 
-*Available as of Camel 2.0*
+*Since Camel 2.0*
 
 When configuring endpoints using URI syntax you can now refer to beans
 in the Registry using the `#` notation.
@@ -144,9 +136,9 @@ Will lookup a bean with the id `mySpecialFileSorter` in the
 Registry.
 
 [[HowdoIconfigureendpoints-Configuringparametervaluesusingrawvalues,egsuchaspasswords]]
-===== Configuring parameter values using raw values, eg such as passwords
+=== Configuring parameter values using raw values, eg such as passwords
 
-*Available as of Camel 2.11*
+*Since Camel 2.11*
 
 When configuring endpoint options using URI syntax, then the values is
 by default URI encoded. This can be a problem if you want to configure
@@ -168,7 +160,7 @@ In the above example, we have declare the password value as raw, and the
 actual password would be as typed, eg `se+re?t&23`.
 
 [[HowdoIconfigureendpoints-Usingpropertyplaceholders]]
-===== Using property placeholders
+=== Using property placeholders
 
 Camel have extensive support for using property placeholders, which you
 can read more about here. For
@@ -188,7 +180,7 @@ documentation for more details.
 </camelContext>
 ----
 
-And the Camel route now refers to the placeholder using the `{{key}}`
+And the Camel route now refers to the placeholder using the `{\{key\}}`
 notation:
 
 [source,java]
@@ -222,28 +214,28 @@ To understand more about property placeholders, read the
 documentation.
 
 [[HowdoIconfigureendpoints-Configuringurisusingendpointwithbeanpropertystyle]]
-==== Configuring URIs using endpoint with bean property style
+== Configuring URIs using endpoint with bean property style
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 Sometimes configuring endpoint URIs may have many options, and therefore
 the URI can become long. In Java DSL you can break the URIs into new
 lines as its just Java code, e.g. just concat the `String`. When using XML
 DSL then the URI is an attribute, e.g. `<from uri="bla bla"/>`. From Camel
 2.15 onwards you can configure the endpoint separately, and from the
-routes refer to the endpoints using their shorthand ids. 
+routes refer to the endpoints using their shorthand ids. 
 
 [source,xml]
 ----
 <camelContext ...>
- 
+ 
   <endpoint id="foo" uri="ftp://foo@myserver">
     <property key="password" value="secret"/>
     <property key="recursive" value="true"/>
     <property key="ftpClient.dataTimeout" value="30000"/>
-    <property key="ftpClient.serverLanguageCode" value="fr"/> 
+    <property key="ftpClient.serverLanguageCode" value="fr"/> 
   </endpoint>
- 
+ 
   <route>
     <from uri="ref:foo"/>
     ...
@@ -251,7 +243,7 @@ routes refer to the endpoints using their shorthand ids. 
 </camelContext>
 ----
 
- 
+ 
 
 In the example above, the endpoint with id `foo`, is defined using
 `<endpoint>` which under the covers assembles this as an URI, with all the
@@ -269,12 +261,12 @@ as:
 </endpoint>
 ----
 
- 
+ 
 
 [[HowdoIconfigureendpoints-Configuringlongurisusingnewlines]]
-==== Configuring long URIs using new lines
+== Configuring long URIs using new lines
 
-*Available as of Camel 2.15*
+*Since Camel 2.15*
 
 Sometimes configuring endpoint URIs may have many options, and therefore
 the URI can become long. In Java DSL you can break the URIs into new
@@ -294,7 +286,7 @@ shown below:
 </route>
 ----
 
-Notice that it still requires to use escape `&` as `&ampl;` in XML. Also you
+Notice that it still requires to use escape `&` as `&amp;` in XML. Also you
 can have multiple options in one line, eg this is the same:
 
 [source,xml]
@@ -307,11 +299,3 @@ can have multiple options in one line, eg this is the same:
 </route>
 ----
 
-[[HowdoIconfigureendpoints-SeeAlso]]
-==== See Also
-
-* xref:../configuring-camel.adoc[How do I add a component?]
-* xref:cdi-component.adoc[CDI]
-* xref:../spring.adoc[Spring]
-* xref:../uris.adoc[URIs]
-* xref:../using-propertyplaceholder.adoc[Using `PropertyPlaceholder`]

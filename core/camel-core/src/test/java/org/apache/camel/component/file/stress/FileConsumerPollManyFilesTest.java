@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file.stress;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -60,9 +61,7 @@ public class FileConsumerPollManyFilesTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file:target/data/manyfiles?delete=true")
-                    .convertBodyTo(String.class)
-                    .to("mock:result");
+                from("file:target/data/manyfiles?delete=true").convertBodyTo(String.class).to("mock:result");
             }
         });
         context.start();

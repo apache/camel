@@ -63,12 +63,6 @@ public class PrepareParentPomMojo extends AbstractMojo {
     protected File componentsDir;
 
     /**
-     * The directory for spring boot starters
-     */
-    @Parameter(defaultValue = "${project.build.directory}/../../../platforms/spring-boot/components-starter")
-    protected File startersDir;
-
-    /**
      * Maven ProjectHelper.
      */
     @Component
@@ -81,12 +75,12 @@ public class PrepareParentPomMojo extends AbstractMojo {
      *                                                        threads it generated failed.
      * @throws MojoFailureException   something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
-        updateParentPom(componentsDir, "camel components");
-        updateParentPom(startersDir, "camel starters");
+        updateParentPom("org.apache.camel", componentsDir, "camel components");
     }
 
-    protected void updateParentPom(File dir, String token) throws MojoExecutionException, MojoFailureException {
+    protected void updateParentPom(String groupId, File dir, String token) throws MojoExecutionException, MojoFailureException {
         SortedSet<String> artifactIds = new TreeSet<>();
 
         try {
@@ -107,7 +101,7 @@ public class PrepareParentPomMojo extends AbstractMojo {
         StringBuilder sb = new StringBuilder();
         for (String aid : artifactIds) {
             sb.append("      <dependency>\n");
-            sb.append("        <groupId>org.apache.camel</groupId>\n");
+            sb.append("        <groupId>" + groupId + "</groupId>\n");
             sb.append("        <artifactId>" + aid + "</artifactId>\n");
             sb.append("        <version>${project.version}</version>\n");
             sb.append("      </dependency>\n");

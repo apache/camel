@@ -35,6 +35,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
     private EmbeddedDatabase db;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         // Only HSQLDB seem to handle:
@@ -46,6 +47,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

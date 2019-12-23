@@ -21,24 +21,9 @@ import org.apache.camel.Processor;
 
 public class FailureProcessor implements Processor {
 
-    private boolean error;
-    
-    public FailureProcessor() {
-        this(false);
-    }
-    
-    public FailureProcessor(boolean error) {
-        this.error = error;
-    }
-    
+    @Override
     public void process(Exchange exchange) throws Exception {
-        if (error) {
-            throw new RuntimeException("failed");
-        } else {
-            exchange.getOut().setFault(true);
-            exchange.getOut().setBody("failed");
-        }
+        throw new RuntimeException("failed");
     }
 
 }
-

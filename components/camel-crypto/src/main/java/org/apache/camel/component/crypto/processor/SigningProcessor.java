@@ -20,7 +20,6 @@ import java.security.KeyStore;
 import java.security.PrivateKey;
 import java.security.SecureRandom;
 import java.security.Signature;
-import static java.lang.String.format;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -28,6 +27,7 @@ import org.apache.camel.component.crypto.DigitalSignatureConfiguration;
 import org.apache.camel.component.crypto.DigitalSignatureConstants;
 import org.apache.commons.codec.binary.Base64;
 
+import static java.lang.String.format;
 
 public class SigningProcessor extends DigitalSignatureProcessor {
 
@@ -35,6 +35,7 @@ public class SigningProcessor extends DigitalSignatureProcessor {
         super(configuration);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Signature service = initSignatureService(exchange);
         calculateSignature(exchange, service);
@@ -79,7 +80,7 @@ public class SigningProcessor extends DigitalSignatureProcessor {
         if (keystore != null) {
             password = exchange.getIn().getHeader(DigitalSignatureConstants.KEYSTORE_PASSWORD, char[].class);
             if (password == null) {
-                password = config.getPassword();
+                password = config.getPassword() != null ? config.getPassword().toCharArray() : null;
             }
         }
         return password;

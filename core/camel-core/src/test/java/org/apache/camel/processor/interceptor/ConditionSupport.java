@@ -23,14 +23,17 @@ import org.apache.camel.spi.CamelEvent.ExchangeEvent;
 import org.apache.camel.spi.Condition;
 
 /**
- * A support class for {@link org.apache.camel.spi.Condition} implementations to use as base class.
+ * A support class for {@link org.apache.camel.spi.Condition} implementations to
+ * use as base class.
  */
 public class ConditionSupport implements Condition {
 
+    @Override
     public boolean matchProcess(Exchange exchange, Processor processor, NamedNode definition) {
         return false;
     }
 
+    @Override
     public boolean matchEvent(Exchange exchange, ExchangeEvent event) {
         return false;
     }

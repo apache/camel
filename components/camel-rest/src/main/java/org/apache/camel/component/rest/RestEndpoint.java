@@ -47,8 +47,8 @@ import static org.apache.camel.support.RestProducerFactoryHelper.setupComponent;
 @UriEndpoint(firstVersion = "2.14.0", scheme = "rest", title = "REST", syntax = "rest:method:path:uriTemplate", label = "core,rest", lenientProperties = true)
 public class RestEndpoint extends DefaultEndpoint {
 
-    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"coap", "netty4-http", "jetty", "restlet", "servlet", "spark-java", "undertow"};
-    public static final String[] DEFAULT_REST_PRODUCER_COMPONENTS = new String[]{"http", "netty4-http", "restlet", "undertow"};
+    public static final String[] DEFAULT_REST_CONSUMER_COMPONENTS = new String[]{"coap", "netty-http", "jetty", "servlet", "spark-java", "undertow"};
+    public static final String[] DEFAULT_REST_PRODUCER_COMPONENTS = new String[]{"http", "netty-http", "undertow"};
     public static final String DEFAULT_API_COMPONENT_NAME = "swagger";
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/rest/";
 
@@ -302,11 +302,7 @@ public class RestEndpoint extends DefaultEndpoint {
             // lookup on classpath using factory finder to automatic find it (just add camel-swagger-java to classpath etc)
             try {
                 FactoryFinder finder = getCamelContext().adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
-                Object instance = finder.newInstance(DEFAULT_API_COMPONENT_NAME);
-                if (instance instanceof RestProducerFactory) {
-                    // this factory from camel-swagger-java will facade the http component in use
-                    apiDocFactory = (RestProducerFactory) instance;
-                }
+                apiDocFactory = finder.newInstance(DEFAULT_API_COMPONENT_NAME, RestProducerFactory.class).orElse(null);
                 parameters.put("apiDoc", apiDoc);
             } catch (NoFactoryAvailableException e) {
                 throw new IllegalStateException("Cannot find camel-swagger-java on classpath to use with api-doc: " + apiDoc);
@@ -381,11 +377,13 @@ public class RestEndpoint extends DefaultEndpoint {
 
         if (factory != null) {
             log.debug("Using RestProducerFactory: {}", factory);
-            
+
             RestConfiguration config = getCamelContext().getRestConfiguration(pname, false);
             if (config == null) {
-                // fallback to default
                 config = getCamelContext().getRestConfiguration();
+            }
+            if (config == null) {
+                config = getCamelContext().getRestConfiguration(pname, true);
             }
 
             Producer producer;
@@ -396,7 +394,7 @@ public class RestEndpoint extends DefaultEndpoint {
             } else {
                 producer = factory.createProducer(getCamelContext(), host, method, path, uriTemplate, queryParameters, consumes, produces, config, parameters);
             }
-            
+
             RestProducer answer = new RestProducer(this, producer, config);
             answer.setOutType(outType);
             answer.setType(inType);

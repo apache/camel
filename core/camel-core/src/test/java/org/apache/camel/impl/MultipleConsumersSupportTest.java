@@ -69,25 +69,30 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
                 from(my).to("mock:b");
             }
         });
-        // this one is allowing multiple consumers on the same endpoint so no problem starting
+        // this one is allowing multiple consumers on the same endpoint so no
+        // problem starting
         context.start();
         context.stop();
     }
 
     private static class MyEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
+        @Override
         public boolean isSingleton() {
             return true;
         }
 
+        @Override
         public boolean isMultipleConsumersSupported() {
             return false;
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             return null;
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             return new DefaultConsumer(this, processor);
         }
@@ -100,18 +105,22 @@ public class MultipleConsumersSupportTest extends ContextTestSupport {
 
     private static class MyOtherEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
 
+        @Override
         public boolean isSingleton() {
             return true;
         }
 
+        @Override
         public boolean isMultipleConsumersSupported() {
             return true;
         }
 
+        @Override
         public Producer createProducer() throws Exception {
             return null;
         }
 
+        @Override
         public Consumer createConsumer(Processor processor) throws Exception {
             return new DefaultConsumer(this, processor);
         }

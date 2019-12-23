@@ -21,6 +21,7 @@ public class ExampleBean {
     private String name;
     private double price;
 
+    @Override
     public String toString() {
         return "ExampleBean[name: " + name + " price: " + price + " id: " + id + "]";
     }
@@ -40,7 +41,7 @@ public class ExampleBean {
     public void setPrice(double price) {
         this.price = price;
     }
-    
+
     public String getId() {
         return id;
     }

@@ -30,6 +30,7 @@ public class DigitalOceanAccountProducer extends DigitalOceanProducer {
         super(endpoint, configuration);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         Account accountInfo = getEndpoint().getDigitalOceanClient().getAccountInfo();
         LOG.trace("Account [{}] ", accountInfo);

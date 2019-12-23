@@ -29,7 +29,7 @@ import org.apache.camel.support.DefaultEndpoint;
 /**
  * Used for communicating with a remote Bonita BPM process engine.
  */
-@UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", consumerOnly = true, label = "process")
+@UriEndpoint(firstVersion = "2.19.0", scheme = "bonita", title = "Bonita", syntax = "bonita:operation", producerOnly = true, label = "process")
 public class BonitaEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -44,6 +44,7 @@ public class BonitaEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         if (configuration.getOperation() == BonitaOperation.startCase) {
             return new BonitaStartProducer(this, configuration);
@@ -52,6 +53,7 @@ public class BonitaEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         throw new UnsupportedOperationException("Consumer not supported");
     }

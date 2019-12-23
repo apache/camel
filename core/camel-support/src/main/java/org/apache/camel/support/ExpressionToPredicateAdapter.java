@@ -33,6 +33,7 @@ public final class ExpressionToPredicateAdapter implements Predicate, CamelConte
         this.expression = expression;
     }
 
+    @Override
     public boolean matches(Exchange exchange) {
         if (expression instanceof Predicate) {
             return ((Predicate) expression).matches(exchange);

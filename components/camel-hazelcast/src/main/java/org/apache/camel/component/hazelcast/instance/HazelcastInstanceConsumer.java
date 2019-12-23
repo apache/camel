@@ -39,14 +39,17 @@ public class HazelcastInstanceConsumer extends DefaultConsumer {
 
     class HazelcastMembershipListener implements MembershipListener {
 
+        @Override
         public void memberAdded(MembershipEvent event) {
             this.sendExchange(event, HazelcastConstants.ADDED);
         }
 
+        @Override
         public void memberRemoved(MembershipEvent event) {
             this.sendExchange(event, HazelcastConstants.REMOVED);
         }
 
+        @Override
         public void memberAttributeChanged(MemberAttributeEvent event) {
             this.sendExchange(event, HazelcastConstants.UPDATED);
         }

@@ -56,6 +56,7 @@ public class PackageOtherMojo extends AbstractGeneratorMojo {
      *                 threads it generated failed.
      * @throws MojoFailureException something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         File f = new File(project.getBasedir(), "target/classes");
         File comp = new File(f, "META-INF/services/org/apache/camel/component");

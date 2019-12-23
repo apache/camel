@@ -15,11 +15,9 @@
  * limitations under the License.
  */
 package org.apache.camel.dataformat.tarfile;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
-
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.singletonList;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.NotifyBuilder;
@@ -29,6 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static java.util.Collections.singletonList;
 import static org.apache.camel.Exchange.FILE_NAME;
 import static org.apache.camel.dataformat.tarfile.TarUtils.TEXT;
 import static org.apache.camel.dataformat.tarfile.TarUtils.getBytes;

@@ -61,8 +61,10 @@ public class OnExceptionWrappedExceptionTest extends ContextTestSupport {
 
     private static class MyLocalDateTimeConverter extends TypeConverterSupport {
 
+        @Override
         public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-            // simulate @Converter where we wrap thrown exception in RuntimeCamelException
+            // simulate @Converter where we wrap thrown exception in
+            // RuntimeCamelException
             throw wrapRuntimeCamelException(new IllegalArgumentException("Bad Data"));
         }
 

@@ -95,7 +95,7 @@ public class LogDebugBodyStreamsTest extends ContextTestSupport {
     @Test
     public void testLogBodyStreamDisabled() throws Exception {
         context.getGlobalOptions().put(Exchange.LOG_DEBUG_BODY_STREAMS, "false");
-        
+
         InputStream body = new ByteArrayInputStream("Hello World".getBytes());
 
         MockEndpoint mock = getMockEndpoint("mock:result");

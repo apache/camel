@@ -22,11 +22,16 @@
   <parent>
     <groupId>org.apache.camel.example</groupId>
     <artifactId>examples</artifactId>
-    <version>3.0.0-SNAPSHOT</version>
+    <version>3.1.0-SNAPSHOT</version>
   </parent>
   <artifactId>camel-example-as2</artifactId>
   <name>Camel :: Example :: AS2</name>
   <description>An example which demonstrates the use of the Camel AS2 component</description>
+
+  <properties>
+     <category>Beginner</category>
+     <title>AS2 Example</title>
+  </properties>
   
     <dependencies>
 

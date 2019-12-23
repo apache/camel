@@ -33,8 +33,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Manage an AWS s3 client for all users to use.
- * This implementation is for local instances to use a static and solid credential set.
+ * Manage an AWS s3 client for all users to use. This implementation is for
+ * local instances to use a static and solid credential set.
  */
 public class S3ClientStandardImpl implements S3Client {
     private static final Logger LOG = LoggerFactory.getLogger(S3ClientStandardImpl.class);
@@ -52,43 +52,35 @@ public class S3ClientStandardImpl implements S3Client {
 
     /**
      * Getting the s3 aws client that is used.
+     * 
      * @return Amazon S3 Client.
      */
+    @Override
     public AmazonS3 getS3Client() {
-        AmazonS3 client = null;
+        AmazonS3 client;
         AmazonS3ClientBuilder clientBuilder = null;
         AmazonS3EncryptionClientBuilder encClientBuilder = null;
-        ClientConfiguration clientConfiguration = null;
+
+        ClientConfiguration clientConfiguration = new ClientConfiguration();
+        clientConfiguration.setMaxConnections(maxConnections);
 
         if (configuration.hasProxyConfiguration()) {
-            clientConfiguration = new ClientConfiguration();
+            clientConfiguration.setProxyProtocol(configuration.getProxyProtocol());
             clientConfiguration.setProxyHost(configuration.getProxyHost());
             clientConfiguration.setProxyPort(configuration.getProxyPort());
-            clientConfiguration.setMaxConnections(maxConnections);
-        } else {
-            clientConfiguration = new ClientConfiguration();
-            clientConfiguration.setMaxConnections(maxConnections);
         }
 
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
             AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
             AWSCredentialsProvider credentialsProvider = new AWSStaticCredentialsProvider(credentials);
             if (!configuration.isUseEncryption()) {
-                clientBuilder = AmazonS3ClientBuilder
-                                        .standard()
-                                        .withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
+                clientBuilder = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider);
             } else if (configuration.isUseEncryption()) {
-                StaticEncryptionMaterialsProvider encryptionMaterialsProvider
-                        = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
-                encClientBuilder = AmazonS3EncryptionClientBuilder
-                                        .standard()
-                                        .withClientConfiguration(clientConfiguration)
-                                        .withCredentials(credentialsProvider)
-                                        .withEncryptionMaterials(encryptionMaterialsProvider);
+                StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
+                encClientBuilder = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration).withCredentials(credentialsProvider)
+                    .withEncryptionMaterials(encryptionMaterialsProvider);
             } else {
-                clientBuilder = AmazonS3ClientBuilder
-                                        .standard()
-                                        .withCredentials(credentialsProvider);
+                clientBuilder = AmazonS3ClientBuilder.standard().withCredentials(credentialsProvider);
             }
 
             if (!configuration.isUseEncryption()) {
@@ -108,16 +100,10 @@ public class S3ClientStandardImpl implements S3Client {
             if (!configuration.isUseEncryption()) {
                 clientBuilder = AmazonS3ClientBuilder.standard();
             } else if (configuration.isUseEncryption()) {
-                StaticEncryptionMaterialsProvider encryptionMaterialsProvider
-                        = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
-                encClientBuilder = AmazonS3EncryptionClientBuilder
-                                        .standard()
-                                        .withClientConfiguration(clientConfiguration)
-                                        .withEncryptionMaterials(encryptionMaterialsProvider);
+                StaticEncryptionMaterialsProvider encryptionMaterialsProvider = new StaticEncryptionMaterialsProvider(configuration.getEncryptionMaterials());
+                encClientBuilder = AmazonS3EncryptionClientBuilder.standard().withClientConfiguration(clientConfiguration).withEncryptionMaterials(encryptionMaterialsProvider);
             } else {
-                clientBuilder = AmazonS3ClientBuilder
-                                        .standard()
-                                        .withClientConfiguration(clientConfiguration);
+                clientBuilder = AmazonS3ClientBuilder.standard().withClientConfiguration(clientConfiguration);
             }
 
             if (!configuration.isUseEncryption()) {

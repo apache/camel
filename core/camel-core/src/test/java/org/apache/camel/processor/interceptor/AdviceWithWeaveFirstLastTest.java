@@ -33,7 +33,8 @@ public class AdviceWithWeaveFirstLastTest extends ContextTestSupport {
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // insert at first the given piece of route to the existing route
+                // insert at first the given piece of route to the existing
+                // route
                 weaveAddFirst().to("mock:a").transform(constant("Bye World"));
             }
         });
@@ -55,7 +56,8 @@ public class AdviceWithWeaveFirstLastTest extends ContextTestSupport {
         RouteReifier.adviceWith(context.getRouteDefinitions().get(0), context, new AdviceWithRouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // insert at the end of the existing route, the given piece of route
+                // insert at the end of the existing route, the given piece of
+                // route
                 weaveAddLast().to("mock:a").transform(constant("Bye World"));
             }
         });
@@ -78,10 +80,7 @@ public class AdviceWithWeaveFirstLastTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e5
-                from("direct:start")
-                    .to("mock:foo")
-                    .to("mock:bar").id("bar")
-                    .to("mock:result");
+                from("direct:start").to("mock:foo").to("mock:bar").id("bar").to("mock:result");
                 // END SNIPPET: e5
             }
         };

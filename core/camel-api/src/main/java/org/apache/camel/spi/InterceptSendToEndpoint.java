@@ -20,7 +20,8 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 
 /**
- * This is an endpoint when sending to it, is intercepted and is routed in a detour
+ * This is an endpoint when sending to it, is intercepted and is routed in a detour, with the following flow:
+ * before, send to original endpoint (can be skipped), after (optional).
  */
 public interface InterceptSendToEndpoint extends Endpoint {
 
@@ -30,12 +31,17 @@ public interface InterceptSendToEndpoint extends Endpoint {
     Endpoint getOriginalEndpoint();
 
     /**
-     * The processor for routing in a detour
+     * The processor for routing in a detour before sending to the original endpoint.
      */
-    Processor getDetour();
+    Processor getBefore();
 
     /**
-     * Whether to skip sending after the detour to the original endpoint.
+     * The processor (optional) for routing after sending to the original endpoint.
+     */
+    Processor getAfter();
+
+    /**
+     * Whether to skip sending to the original endpoint.
      */
     boolean isSkip();
 

@@ -36,6 +36,7 @@ public class MailProducer extends DefaultProducer {
         this.sender = sender;
     }
 
+    @Override
     public void process(final Exchange exchange) {
         ClassLoader tccl = Thread.currentThread().getContextClassLoader();
         try {

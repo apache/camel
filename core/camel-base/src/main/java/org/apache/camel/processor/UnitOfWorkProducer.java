@@ -46,6 +46,7 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
         this.processor = internal;
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return producer.getEndpoint();
     }
@@ -67,6 +68,7 @@ public final class UnitOfWorkProducer extends DefaultAsyncProducer {
         ServiceHelper.stopService(processor);
     }
 
+    @Override
     public boolean isSingleton() {
         return producer.isSingleton();
     }

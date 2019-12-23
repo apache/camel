@@ -46,9 +46,7 @@ public class ProxyBuilderSkipJavaLangObjectMethodsTest extends ContextTestSuppor
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("mock:start")
-                    .transform(body().prepend("Hello "));
+                from("direct:start").to("mock:start").transform(body().prepend("Hello "));
             }
         };
     }

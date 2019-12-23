@@ -33,23 +33,21 @@ public class MulticastThreadPoolProfileTest extends MulticastParallelTest {
                 ThreadPoolProfile profile = new ThreadPoolProfileBuilder("myProfile").poolSize(5).maxPoolSize(10).maxQueueSize(20).build();
                 context.getExecutorServiceManager().registerThreadPoolProfile(profile);
 
-                from("direct:start")
-                    .multicast(new AggregationStrategy() {
-                            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-                                if (oldExchange == null) {
-                                    return newExchange;
-                                }
+                from("direct:start").multicast(new AggregationStrategy() {
+                    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                        if (oldExchange == null) {
+                            return newExchange;
+                        }
 
-                                String body = oldExchange.getIn().getBody(String.class);
-                                oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
-                                return oldExchange;
-                            }
-                        })
-                        // and refer to the profile here
-                        .parallelProcessing().executorServiceRef("myProfile").to("direct:a", "direct:b")
+                        String body = oldExchange.getIn().getBody(String.class);
+                        oldExchange.getIn().setBody(body + newExchange.getIn().getBody(String.class));
+                        return oldExchange;
+                    }
+                })
+                    // and refer to the profile here
+                    .parallelProcessing().executorServiceRef("myProfile").to("direct:a", "direct:b")
                     // use end to indicate end of multicast route
-                    .end()
-                    .to("mock:result");
+                    .end().to("mock:result");
 
                 from("direct:a").delay(100).setBody(constant("A"));
 

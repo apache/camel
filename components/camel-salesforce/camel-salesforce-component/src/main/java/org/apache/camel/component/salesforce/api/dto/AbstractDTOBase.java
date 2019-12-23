@@ -20,13 +20,9 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.camel.component.salesforce.api.utils.JsonUtils;
 
-// disable null values in json output
-@JsonInclude(JsonInclude.Include.NON_NULL)
 // avoid running into Salesforce backward compatibility breaks
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class AbstractDTOBase {

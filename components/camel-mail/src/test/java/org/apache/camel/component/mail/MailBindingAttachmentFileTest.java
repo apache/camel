@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.activation.DataHandler;
 import javax.mail.Message;
 import javax.mail.MessagingException;

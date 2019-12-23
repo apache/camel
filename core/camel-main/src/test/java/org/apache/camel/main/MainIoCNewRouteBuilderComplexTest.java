@@ -29,7 +29,7 @@ public class MainIoCNewRouteBuilderComplexTest extends Assert {
     @Test
     public void testMainIoC() throws Exception {
         Main main = new Main();
-        main.addRouteBuilder(new MyRouteBuilder());
+        main.addRoutesBuilder(new MyRouteBuilder());
         main.start();
 
         CamelContext camelContext = main.getCamelContext();

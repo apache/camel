@@ -26,17 +26,19 @@ public class ExpressionSupportTest extends ContextTestSupport {
 
     private static class MyExpression extends ExpressionSupport {
 
+        @Override
         protected String assertionFailureMessage(Exchange exchange) {
             return "foo";
         }
 
+        @Override
         @SuppressWarnings("unchecked")
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             String in = exchange.getIn().getBody(String.class);
             if ("Kabom".equals(in)) {
                 return null;
             }
-            return (T) in;
+            return (T)in;
         }
     }
 

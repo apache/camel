@@ -47,18 +47,18 @@ public class BeanExchangeAsReturnTypeNotAllowedTest extends ContextTestSupport {
         result.assertIsSatisfied();
     }
 
+    @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
         answer.bind("myBean", new MyBean());
         return answer;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:in")
-                    .to("bean:myBean")
-                    .to("mock:result");
+                from("direct:in").to("bean:myBean").to("mock:result");
             }
         };
     }

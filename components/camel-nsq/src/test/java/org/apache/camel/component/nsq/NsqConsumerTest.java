@@ -20,7 +20,6 @@ import java.util.concurrent.TimeoutException;
 
 import com.github.brainlag.nsq.NSQProducer;
 import com.github.brainlag.nsq.exceptions.NSQException;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -87,7 +86,7 @@ public class NsqConsumerTest extends NsqTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("nsq://%s?topic=%s&lookupInterval=2s&autoFinish=false&requeueInterval=1s", getNsqConsumerUrl(), TOPIC).process(new Processor() {
+                fromF("nsq://%s?servers=%s&lookupInterval=2s&autoFinish=false&requeueInterval=1s", TOPIC, getNsqConsumerUrl()).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         String messageText = exchange.getIn().getBody(String.class);

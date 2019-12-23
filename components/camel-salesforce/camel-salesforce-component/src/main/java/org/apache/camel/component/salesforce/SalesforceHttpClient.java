@@ -21,8 +21,6 @@ import java.net.URI;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import static java.util.Optional.ofNullable;
-
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.client.SalesforceHttpRequest;
 import org.apache.camel.component.salesforce.internal.client.SalesforceSecurityHandler;
@@ -35,8 +33,11 @@ import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.http.HttpClientTransportOverHTTP;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 
+import static java.util.Optional.ofNullable;
+
 /**
- * Custom Salesforce HTTP Client that creates {@link SalesforceHttpRequest} requests.
+ * Custom Salesforce HTTP Client that creates {@link SalesforceHttpRequest}
+ * requests.
  */
 public class SalesforceHttpClient extends HttpClient {
 

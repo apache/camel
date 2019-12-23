@@ -20,6 +20,7 @@ import org.apache.camel.support.jsse.SSLContextParameters;
 
 public class AhcComponentClientConfigSslContextParametersTest extends AhcComponentClientConfigTest {
 
+    @Override
     public void configureComponent() {
         super.configureComponent();
         
@@ -27,10 +28,12 @@ public class AhcComponentClientConfigSslContextParametersTest extends AhcCompone
         component.setSslContextParameters(context.getRegistry().lookupByNameAndType("sslContextParameters", SSLContextParameters.class));
     }
 
+    @Override
     protected String getTestServerEndpointUri() {
         return super.getTestServerEndpointUri() + "?sslContextParameters=#sslContextParameters";
     }
     
+    @Override
     protected String getTestServerEndpointTwoUri() {
         return super.getTestServerEndpointTwoUri() + "?sslContextParameters=#sslContextParameters";
     }

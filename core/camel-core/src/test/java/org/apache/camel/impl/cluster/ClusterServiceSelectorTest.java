@@ -35,7 +35,6 @@ import org.junit.Test;
 import static org.apache.camel.support.cluster.ClusterServiceHelper.lookupService;
 import static org.apache.camel.support.cluster.ClusterServiceHelper.mandatoryLookupService;
 
-
 public class ClusterServiceSelectorTest {
 
     @Test
@@ -176,7 +175,6 @@ public class ClusterServiceSelectorTest {
             context.addService(service2);
 
             Optional<CamelClusterService> lookup;
-
 
             lookup = lookupService(context, ClusterServiceSelectors.attribute("service.type", "zookeeper"));
             Assert.assertTrue(lookup.isPresent());

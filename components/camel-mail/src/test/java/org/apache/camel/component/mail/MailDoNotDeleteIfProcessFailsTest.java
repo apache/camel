@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Flags;
 import javax.mail.Folder;
 import javax.mail.Message;
@@ -79,13 +80,14 @@ public class MailDoNotDeleteIfProcessFailsTest extends CamelTestSupport {
         folder.close(true);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // no redelivery for unit test as we want it to be polled next time
                 onException(IllegalArgumentException.class).to("mock:error");
 
-                from("imap://localhost?username=claus&password=secret&unseen=true&consumer.initialDelay=100&consumer.delay=100")
+                from("imap://localhost?username=claus&password=secret&unseen=true&initialDelay=100&delay=100")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 counter++;

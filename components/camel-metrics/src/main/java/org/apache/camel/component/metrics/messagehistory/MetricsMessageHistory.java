@@ -40,6 +40,7 @@ public class MetricsMessageHistory extends DefaultMessageHistory {
         context.stop();
     }
 
+    @Override
     public String toString() {
         return "MetricsMessageHistory[routeId=" + getRouteId() + ", node=" + getNode().getId() + ']';
     }

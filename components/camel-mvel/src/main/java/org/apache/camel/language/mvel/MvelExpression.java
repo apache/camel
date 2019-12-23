@@ -44,6 +44,7 @@ public class MvelExpression extends ExpressionSupport {
         return new MvelExpression(new MvelLanguage(), expression, Object.class);
     }
 
+    @Override
     public <T> T evaluate(Exchange exchange, Class<T> tClass) {
         try {
             Object value = org.mvel2.MVEL.executeExpression(compiled, new RootObject(exchange));
@@ -53,6 +54,7 @@ public class MvelExpression extends ExpressionSupport {
         }
     }
 
+    @Override
     public Object evaluate(Exchange exchange) {
         try {
             return org.mvel2.MVEL.executeExpression(compiled, new RootObject(exchange));
@@ -65,6 +67,7 @@ public class MvelExpression extends ExpressionSupport {
         return type;
     }
 
+    @Override
     protected String assertionFailureMessage(Exchange exchange) {
         return expressionString;
     }

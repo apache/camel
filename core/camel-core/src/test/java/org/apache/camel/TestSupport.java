@@ -25,6 +25,8 @@ import org.apache.camel.builder.Builder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.ValueBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.engine.AbstractCamelContext;
+import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.errorhandler.ErrorHandlerSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.PredicateAssertHelper;
@@ -61,8 +63,8 @@ public abstract class TestSupport extends Assert {
 
     @Before
     public void setUp() throws Exception {
-        //start with a clean slate
-        DefaultCamelContext.setContextCounter(0);
+        // start with a clean slate
+        AbstractCamelContext.setContextCounter(0);
         TestSupportNodeIdFactory.resetCounters();
         Assume.assumeTrue(canRunOnThisPlatform());
     }
@@ -128,8 +130,7 @@ public abstract class TestSupport extends Assert {
 
     public static <T> T assertIsInstanceOf(Class<T> expectedType, Object value) {
         assertNotNull("Expected an instance of type: " + expectedType.getName() + " but was null", value);
-        assertTrue("object should be a " + expectedType.getName() + " but was: " + value + " with type: "
-                + value.getClass().getName(), expectedType.isInstance(value));
+        assertTrue("object should be a " + expectedType.getName() + " but was: " + value + " with type: " + value.getClass().getName(), expectedType.isInstance(value));
         return expectedType.cast(value);
     }
 
@@ -148,16 +149,19 @@ public abstract class TestSupport extends Assert {
     /**
      * Asserts the Out message on the exchange contains the expected value
      */
+    @Deprecated
     public static Object assertOutMessageHeader(Exchange exchange, String name, Object expected) {
         return assertMessageHeader(exchange.getOut(), name, expected);
     }
 
     /**
-     * Asserts that the given exchange has an OUT message of the given body value
+     * Asserts that the given exchange has an OUT message of the given body
+     * value
      *
      * @param exchange the exchange which should have an OUT message
      * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException is thrown if the payload is not the expected class type
+     * @throws InvalidPayloadException is thrown if the payload is not the
+     *             expected class type
      */
     public static void assertInMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
         assertNotNull("Should have a response exchange!", exchange);
@@ -175,12 +179,15 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
-     * Asserts that the given exchange has an OUT message of the given body value
+     * Asserts that the given exchange has an OUT message of the given body
+     * value
      *
      * @param exchange the exchange which should have an OUT message
      * @param expected the expected value of the OUT message
-     * @throws InvalidPayloadException is thrown if the payload is not the expected class type
+     * @throws InvalidPayloadException is thrown if the payload is not the
+     *             expected class type
      */
+    @Deprecated
     public static void assertOutMessageBodyEquals(Exchange exchange, Object expected) throws InvalidPayloadException {
         assertNotNull("Should have a response exchange!", exchange);
 
@@ -273,8 +280,7 @@ public abstract class TestSupport extends Assert {
     /**
      * Resolves an endpoint and asserts that it is found
      */
-    public static <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri,
-                                                                  Class<T> endpointType) {
+    public static <T extends Endpoint> T resolveMandatoryEndpoint(CamelContext context, String uri, Class<T> endpointType) {
         T endpoint = context.getEndpoint(uri, endpointType);
 
         assertNotNull("No endpoint found for URI: " + uri, endpoint);
@@ -310,8 +316,7 @@ public abstract class TestSupport extends Assert {
      * Asserts that a list is of the given size
      */
     public static <T> List<T> assertListSize(String message, List<T> list, int size) {
-        assertEquals(message + " should be of size: "
-                + size + " but is: " + list, size, list.size());
+        assertEquals(message + " should be of size: " + size + " but is: " + list, size, list.size());
         return list;
     }
 
@@ -326,13 +331,13 @@ public abstract class TestSupport extends Assert {
      * Asserts that a list is of the given size
      */
     public static <T> Collection<T> assertCollectionSize(String message, Collection<T> list, int size) {
-        assertEquals(message + " should be of size: "
-                + size + " but is: " + list, size, list.size());
+        assertEquals(message + " should be of size: " + size + " but is: " + list, size, list.size());
         return list;
     }
 
     /**
-     * A helper method to create a list of Route objects for a given route builder
+     * A helper method to create a list of Route objects for a given route
+     * builder
      */
     public static List<Route> getRouteList(RouteBuilder builder) throws Exception {
         CamelContext context = new DefaultCamelContext();
@@ -346,8 +351,9 @@ public abstract class TestSupport extends Assert {
     /**
      * Asserts that the text contains the given string
      *
-     * @param text          the text to compare
-     * @param containedText the text which must be contained inside the other text parameter
+     * @param text the text to compare
+     * @param containedText the text which must be contained inside the other
+     *            text parameter
      */
     public static void assertStringContains(String text, String containedText) {
         assertNotNull("Text should not be null!", text);
@@ -355,13 +361,14 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
-     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
-     * this call will drill through them and return the wrapped Processor.
+     * If a processor is wrapped with a bunch of DelegateProcessor or
+     * DelegateAsyncProcessor objects this call will drill through them and
+     * return the wrapped Processor.
      */
     public static Processor unwrap(Processor processor) {
         while (true) {
             if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor) processor).getProcessor();
+                processor = ((DelegateProcessor)processor).getProcessor();
             } else {
                 return processor;
             }
@@ -369,19 +376,23 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
-     * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
-     * this call will drill through them and return the Channel.
+     * If a processor is wrapped with a bunch of DelegateProcessor or
+     * DelegateAsyncProcessor objects this call will drill through them and
+     * return the Channel.
      * <p/>
      * Returns null if no channel is found.
      */
     public static Channel unwrapChannel(Processor processor) {
         while (true) {
+            if (processor instanceof Pipeline) {
+                processor = ((Pipeline)processor).getProcessors().get(0);
+            }
             if (processor instanceof Channel) {
-                return (Channel) processor;
+                return (Channel)processor;
             } else if (processor instanceof DelegateProcessor) {
-                processor = ((DelegateProcessor) processor).getProcessor();
+                processor = ((DelegateProcessor)processor).getProcessor();
             } else if (processor instanceof ErrorHandlerSupport) {
-                processor = ((ErrorHandlerSupport) processor).getOutput();
+                processor = ((ErrorHandlerSupport)processor).getOutput();
             } else {
                 return null;
             }
@@ -424,16 +435,16 @@ public abstract class TestSupport extends Assert {
     }
 
     /**
-     * To be used for folder/directory comparison that works across different platforms such
-     * as Window, Mac and Linux.
+     * To be used for folder/directory comparison that works across different
+     * platforms such as Window, Mac and Linux.
      */
     public static void assertDirectoryEquals(String expected, String actual) {
         assertDirectoryEquals(null, expected, actual);
     }
 
     /**
-     * To be used for folder/directory comparison that works across different platforms such
-     * as Window, Mac and Linux.
+     * To be used for folder/directory comparison that works across different
+     * platforms such as Window, Mac and Linux.
      */
     public static void assertDirectoryEquals(String message, String expected, String actual) {
         // must use single / as path separators
@@ -489,7 +500,8 @@ public abstract class TestSupport extends Assert {
     /**
      * Is this Java by the given vendor.
      * <p/>
-     * Uses <tt>java.vendor</tt> from the system properties to determine the vendor.
+     * Uses <tt>java.vendor</tt> from the system properties to determine the
+     * vendor.
      *
      * @param vendor such as IBM
      * @return <tt>true</tt> if its that vendor.
@@ -502,13 +514,14 @@ public abstract class TestSupport extends Assert {
     /**
      * Is this version the given Java version.
      * <p/>
-     * Uses <tt>java.version</tt> from the system properties to determine the version.
+     * Uses <tt>java.version</tt> from the system properties to determine the
+     * version.
      *
      * @param version such as 1.6 or 6
      * @return <tt>true</tt> if its that vendor.
      */
     public static boolean isJavaVersion(String version) {
-        if (version.contains(".")) { //before jdk 9
+        if (version.contains(".")) { // before jdk 9
             return Integer.parseInt(version.split("\\.")[1]) == getJavaMajorVersion();
         } else {
             return Integer.parseInt(version) == getJavaMajorVersion();
@@ -518,13 +531,14 @@ public abstract class TestSupport extends Assert {
     /**
      * Returns the current major Java version e.g 8.
      * <p/>
-     * Uses <tt>java.specification.version</tt> from the system properties to determine the major version.
-
+     * Uses <tt>java.specification.version</tt> from the system properties to
+     * determine the major version.
+     * 
      * @return the current major Java version.
      */
     public static int getJavaMajorVersion() {
         String javaSpecVersion = System.getProperty("java.specification.version");
-        if (javaSpecVersion.contains(".")) { //before jdk 9
+        if (javaSpecVersion.contains(".")) { // before jdk 9
             return Integer.parseInt(javaSpecVersion.split("\\.")[1]);
         } else {
             return Integer.parseInt(javaSpecVersion);
@@ -534,13 +548,15 @@ public abstract class TestSupport extends Assert {
     /**
      * Used for registering a sysetem property.
      * <p/>
-     * if the property already contains the passed value nothing will happen.
-     * If the system property has already a value, the passed value will be appended separated by <tt>separator</tt>
+     * if the property already contains the passed value nothing will happen. If
+     * the system property has already a value, the passed value will be
+     * appended separated by <tt>separator</tt>
      *
-     * @param sysPropertyName   the name of the system property to be set
-     * @param sysPropertyValue  the value to be set for the system property passed as sysPropertyName
-     * @param separator         the property separator to be used to append sysPropertyValue
-     *
+     * @param sysPropertyName the name of the system property to be set
+     * @param sysPropertyValue the value to be set for the system property
+     *            passed as sysPropertyName
+     * @param separator the property separator to be used to append
+     *            sysPropertyValue
      */
     public static void registerSystemProperty(String sysPropertyName, String sysPropertyValue, String separator) {
         synchronized (System.getProperties()) {

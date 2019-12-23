@@ -17,11 +17,11 @@
 package org.apache.camel.component.irc.it;
 
 import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 public class IrcOnReplyTest extends IrcIntegrationTestSupport {
@@ -41,6 +41,7 @@ public class IrcOnReplyTest extends IrcIntegrationTestSupport {
         }
     }   
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -58,6 +59,7 @@ public class IrcOnReplyTest extends IrcIntegrationTestSupport {
         };
     }
 
+    @Override
     protected String fromUri() {
         StringBuilder sb = new StringBuilder(super.fromUri());
         return sb.append("&onReply=true").toString();

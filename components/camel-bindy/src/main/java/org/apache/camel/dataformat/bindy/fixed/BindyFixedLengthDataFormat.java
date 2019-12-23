@@ -68,6 +68,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         return "bindy-fixed";
     }
 
+    @Override
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
@@ -175,6 +176,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         return false;
     }
 
+    @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
         org.apache.camel.util.ObjectHelper.notNull(factory, "not instantiated");
@@ -246,7 +248,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
             // BigIntegerFormatFactory if models list is empty or not
             // If this is the case (correspond to an empty stream, ...)
-            if (models.size() == 0) {
+            if (models.isEmpty() && !isAllowEmptyStream()) {
                 throw new java.lang.IllegalArgumentException("No records have been defined in the file");
             } else {
                 return extractUnmarshalResult(models);

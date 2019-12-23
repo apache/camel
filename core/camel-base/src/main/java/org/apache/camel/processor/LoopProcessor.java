@@ -127,6 +127,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
             }
         }
 
+        @Override
         public String toString() {
             return "LoopState[" + exchange.getExchangeId() + "]";
         }
@@ -162,6 +163,7 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
         return copy;
     }
 
+    @Override
     public String getTraceLabel() {
         if (predicate != null) {
             return "loopWhile[" + predicate + "]";
@@ -170,10 +172,12 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
         }
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

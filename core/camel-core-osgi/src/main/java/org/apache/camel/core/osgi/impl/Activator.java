@@ -93,6 +93,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
     // Map from package name to the capability we export for this package
     private final Map<String, BundleCapability> packageCapabilities = new HashMap<>();
 
+    @Override
     public void start(BundleContext context) throws Exception {
         LOG.info("Camel activator starting");
         cachePackageCapabilities(context);
@@ -103,6 +104,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
         LOG.info("Camel activator started");
     }
 
+    @Override
     public void stop(BundleContext context) throws Exception {
         LOG.info("Camel activator stopping");
         tracker.close();
@@ -127,6 +129,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
         }
     }
 
+    @Override
     public Object addingBundle(Bundle bundle, BundleEvent event) {
         LOG.debug("Bundle started: {}", bundle.getSymbolicName());
         if (extenderCapabilityWired(bundle)) {
@@ -164,9 +167,11 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
         return true;
     }
 
+    @Override
     public void modifiedBundle(Bundle bundle, BundleEvent event, Object object) {
     }
 
+    @Override
     public void removedBundle(Bundle bundle, BundleEvent event, Object object) {
         LOG.debug("Bundle stopped: {}", bundle.getSymbolicName());
         List<BaseService> r = resolvers.remove(bundle.getBundleId());
@@ -326,10 +331,12 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             this.components = components;
         }
 
+        @Override
         public Component resolveComponent(String name, CamelContext context) throws Exception {
             return createInstance(name, components.get(name), context);
         }
 
+        @Override
         public void register() {
             doRegister(ComponentResolver.class, "component", components.keySet());
         }
@@ -344,10 +351,12 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             this.languages = languages;
         }
 
+        @Override
         public Language resolveLanguage(String name, CamelContext context) {
             return createInstance(name, languages.get(name), context);
         }
 
+        @Override
         public void register() {
             doRegister(LanguageResolver.class, "language", languages.keySet());
         }
@@ -364,11 +373,13 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             this.path = path;
         }
 
+        @Override
         public Language resolveLanguage(String name, CamelContext context) {
             LanguageResolver resolver = createInstance(this.name, path, context);
             return resolver.resolveLanguage(name, context);
         }
 
+        @Override
         public void register() {
             doRegister(LanguageResolver.class, "resolver", name);
         }
@@ -425,6 +436,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             this.loader = typeConverterloader;
         }
 
+        @Override
         public synchronized void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
             // must be synchronized to ensure we don't load type converters concurrently
             // which cause Camel apps to fails in OSGi thereafter
@@ -435,6 +447,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
             }
         }
 
+        @Override
         public void register() {
             if (hasFallbackTypeConverter) {
                 // The FallbackTypeConverter should have a higher ranking
@@ -451,6 +464,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer<Objec
                 super(null);
             }
 
+            @Override
             public void load(TypeConverterRegistry registry) throws TypeConverterLoaderException {
                 PackageScanFilter test = new AnnotatedWithPackageScanFilter(Converter.class, true);
                 Set<Class<?>> classes = new LinkedHashSet<>();

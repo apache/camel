@@ -125,6 +125,7 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
     }
 
     // START SNIPPET: payload
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

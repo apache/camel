@@ -26,7 +26,7 @@ public class S3ComponentClientRegistryTest extends CamelTestSupport {
 
         AmazonS3ClientMock clientMock = new AmazonS3ClientMock();
         context.getRegistry().bind("amazonS3Client", clientMock);
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket");
 
         assertEquals("MyBucket", endpoint.getConfiguration().getBucketName());
@@ -38,11 +38,11 @@ public class S3ComponentClientRegistryTest extends CamelTestSupport {
         assertNull(endpoint.getConfiguration().getPrefix());
         assertTrue(endpoint.getConfiguration().isIncludeBody());
     }
-    
+
     @Test(expected = IllegalArgumentException.class)
     public void createEndpointWithMinimalS3ClientMisconfiguration() throws Exception {
 
-        S3Component component = new S3Component(context);
+        S3Component component = context.getComponent("aws-s3", S3Component.class);
         S3Endpoint endpoint = (S3Endpoint)component.createEndpoint("aws-s3://MyBucket");
     }
 }

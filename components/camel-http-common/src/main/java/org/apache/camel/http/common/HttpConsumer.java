@@ -82,6 +82,7 @@ public class HttpConsumer extends DefaultConsumer implements Suspendable {
         super.doResume();
     }
 
+    @Override
     public boolean isSuspended() {
         return suspended;
     }

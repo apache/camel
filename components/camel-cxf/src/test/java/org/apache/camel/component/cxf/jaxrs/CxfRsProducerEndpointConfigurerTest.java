@@ -34,6 +34,7 @@ import org.junit.Test;
 
 public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -42,7 +43,7 @@ public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
                 endpoint.setCamelContext(context);
                 endpoint.setResourceClasses(CustomerService.class);
                 endpoint.setEndpointUriIfNotSpecified("cxfrs:simple");
-                endpoint.setCxfRsEndpointConfigurer(new MyCxfRsEndpointConfigurer());
+                endpoint.setCxfRsConfigurer(new MyCxfRsConfigurer());
 
                 from("direct:start")
                         .to(endpoint)
@@ -86,7 +87,7 @@ public class CxfRsProducerEndpointConfigurerTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public static class MyCxfRsEndpointConfigurer implements CxfRsEndpointConfigurer {
+    public static class MyCxfRsConfigurer implements CxfRsConfigurer {
 
         @Override
         public void configure(AbstractJAXRSFactoryBean factoryBean) {

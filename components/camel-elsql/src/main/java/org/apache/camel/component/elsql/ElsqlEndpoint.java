@@ -19,6 +19,7 @@ package org.apache.camel.component.elsql;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.sql.DataSource;
 
 import com.opengamma.elsql.ElSql;
@@ -169,6 +170,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
         this.resourceUri = resourceUri;
     }
 
+    @Override
     public DataSource getDataSource() {
         return dataSource;
     }
@@ -176,6 +178,7 @@ public class ElsqlEndpoint extends DefaultSqlEndpoint {
     /**
      * Sets the DataSource to use to communicate with the database.
      */
+    @Override
     public void setDataSource(final DataSource dataSource) {
         this.dataSource = dataSource;
     }

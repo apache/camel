@@ -35,6 +35,7 @@ public class InterceptFromSimpleLogTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -44,7 +45,7 @@ public class InterceptFromSimpleLogTest extends ContextTestSupport {
 
                 // and here we have a couple of routes
                 from("direct:start").to("mock:first").to("seda:bar");
-                
+
                 from("seda:bar").to("mock:result");
                 // END SNIPPET: e1
             }

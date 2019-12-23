@@ -48,7 +48,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: producer
          */
         default MicrometerEndpointBuilder action(String action) {
-            setProperty("action", action);
+            doSetProperty("action", action);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: producer
          */
         default MicrometerEndpointBuilder decrement(String decrement) {
-            setProperty("decrement", decrement);
+            doSetProperty("decrement", decrement);
             return this;
         }
         /**
@@ -70,7 +70,47 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: producer
          */
         default MicrometerEndpointBuilder increment(String increment) {
-            setProperty("increment", increment);
+            doSetProperty("increment", increment);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default MicrometerEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default MicrometerEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -81,7 +121,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: producer
          */
         default MicrometerEndpointBuilder value(String value) {
-            setProperty("value", value);
+            doSetProperty("value", value);
             return this;
         }
     }
@@ -105,7 +145,7 @@ public interface MicrometerEndpointBuilderFactory {
          */
         default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -118,7 +158,7 @@ public interface MicrometerEndpointBuilderFactory {
          */
         default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -131,7 +171,7 @@ public interface MicrometerEndpointBuilderFactory {
          */
         default AdvancedMicrometerEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -143,7 +183,7 @@ public interface MicrometerEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedMicrometerEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -153,7 +193,7 @@ public interface MicrometerEndpointBuilderFactory {
      * Micrometer library.
      * 
      * Category: monitoring
-     * Available as of version: 2.22
+     * Since: 2.22
      * Maven coordinates: org.apache.camel:camel-micrometer
      * 
      * Syntax: <code>micrometer:metricsType:metricsName</code>

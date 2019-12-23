@@ -71,6 +71,7 @@ public class JmsRouteTest extends CamelTestSupport {
         resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -80,6 +81,7 @@ public class JmsRouteTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

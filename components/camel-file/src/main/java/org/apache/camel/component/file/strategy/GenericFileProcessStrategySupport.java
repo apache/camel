@@ -49,12 +49,14 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         this.camelContext = camelContext;
     }
 
+    @Override
     public void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception {
         if (exclusiveReadLockStrategy != null) {
             exclusiveReadLockStrategy.prepareOnStartup(operations, endpoint);
         }
     }
 
+    @Override
     public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         // if we use exclusive read then acquire the exclusive read (waiting until we got it)
         if (exclusiveReadLockStrategy != null) {
@@ -68,6 +70,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         return true;
     }
 
+    @Override
     public void abort(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         deleteLocalWorkFile(exchange);
         operations.releaseRetrievedFileResources(exchange);
@@ -78,6 +81,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         }
     }
 
+    @Override
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         deleteLocalWorkFile(exchange);
         operations.releaseRetrievedFileResources(exchange);
@@ -88,6 +92,7 @@ public abstract class GenericFileProcessStrategySupport<T> extends ServiceSuppor
         }
     }
 
+    @Override
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
         deleteLocalWorkFile(exchange);
         operations.releaseRetrievedFileResources(exchange);

@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
+
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
@@ -45,7 +46,8 @@ public class AbstractEndpointBuilder {
 
     public Endpoint resolve(CamelContext context) throws NoSuchEndpointException {
         Map<String, Object> remaining = new HashMap<>();
-        String uri = computeUri(remaining);
+        // we should not bind complex objects to registry as we create the endpoint via the properties as-is
+        String uri = computeUri(remaining, context, false);
         Endpoint endpoint = context.getEndpoint(uri, properties);
         if (endpoint == null) {
             throw new NoSuchEndpointException(uri);
@@ -54,16 +56,20 @@ public class AbstractEndpointBuilder {
     }
 
     public String getUri() {
-        return computeUri(new HashMap<>());
+        return computeUri(new HashMap<>(), null, false);
     }
 
-    protected String computeUri(Map<String, Object> remaining) {
+    protected String computeUri(Map<String, Object> remaining, CamelContext camelContext, boolean bindToRegistry) {
         Map<String, Object> params = new TreeMap<>();
         for (Map.Entry<String, Object> entry : properties.entrySet()) {
             String key = entry.getKey();
             Object val = entry.getValue();
             if (val instanceof String || val instanceof Number || val instanceof Boolean || val instanceof Enum<?>) {
                 params.put(key, val.toString());
+            } else if (camelContext != null && bindToRegistry) {
+                String hash = Integer.toHexString(val.hashCode());
+                params.put(key, "#" + hash);
+                camelContext.getRegistry().bind(hash, val);
             } else {
                 remaining.put(key, val);
             }
@@ -83,15 +89,24 @@ public class AbstractEndpointBuilder {
         }
     }
 
+    @Override
     public String toString() {
         return getUri();
     }
 
-    public void setProperty(String key, Object value) {
+    public void doSetProperty(String key, Object value) {
         this.properties.put(key, value);
     }
 
     public Expression expr() {
         return SimpleBuilder.simple(getUri());
     }
+
+    public Expression expr(CamelContext camelContext) {
+        // need to bind complex properties so we can return an uri that includes these parameters too
+        String uri = computeUri(new HashMap<>(), camelContext, true);
+        return SimpleBuilder.simple(uri);
+    }
+
+
 }

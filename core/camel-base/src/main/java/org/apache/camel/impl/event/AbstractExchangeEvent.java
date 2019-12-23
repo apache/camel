@@ -33,6 +33,7 @@ public abstract class AbstractExchangeEvent extends EventObject implements Excha
         this.exchange = source;
     }
 
+    @Override
     public Exchange getExchange() {
         return exchange;
     }

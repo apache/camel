@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.runtimecatalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.runtimecatalog.EndpointValidationResult;
 import org.apache.camel.runtimecatalog.LanguageValidationResult;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
@@ -28,10 +29,8 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 
 public class RuntimeCamelCatalogTest {
 
@@ -197,9 +196,11 @@ public class RuntimeCamelCatalogTest {
 
         // unknown component
         result = catalog.validateEndpointProperties("foo:bar?me=you");
-        assertFalse(result.isSuccess());
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
         assertTrue(result.getUnknownComponent().equals("foo"));
-        assertEquals(1, result.getNumberOfErrors());
+        assertEquals(0, result.getNumberOfErrors());
+        assertEquals(1, result.getNumberOfWarnings());
 
         // invalid boolean but default value
         result = catalog.validateEndpointProperties("log:output?showAll=ggg");
@@ -215,16 +216,8 @@ public class RuntimeCamelCatalogTest {
         result = catalog.validateEndpointProperties("timer://foo?fixedRate=#fixed&delay=#myDelay");
         assertTrue(result.isSuccess());
 
-        // optional consumer. prefix
-        result = catalog.validateEndpointProperties("file:inbox?consumer.delay=5000&consumer.greedy=true");
-        assertTrue(result.isSuccess());
-
         // optional without consumer. prefix
         result = catalog.validateEndpointProperties("file:inbox?delay=5000&greedy=true");
-        assertTrue(result.isSuccess());
-
-        // mixed optional without consumer. prefix
-        result = catalog.validateEndpointProperties("file:inbox?delay=5000&consumer.greedy=true");
         assertTrue(result.isSuccess());
 
         // prefix
@@ -237,20 +230,26 @@ public class RuntimeCamelCatalogTest {
 
         // incapable to parse
         result = catalog.validateEndpointProperties("{{getFtpUrl}}?recursive=true");
-        assertFalse(result.isSuccess());
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
         assertTrue(result.getIncapable() != null);
     }
 
     @Test
-    public void validatePropertiesSummary() throws Exception {
-        EndpointValidationResult result = catalog.validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
-        assertFalse(result.isSuccess());
-        String reason = result.summaryErrorMessage(true);
+    public void validatePropertiesSummaryUnknown() throws Exception {
+        // unknown component yammer
+        EndpointValidationResult result = catalog
+            .validateEndpointProperties("yammer:MESSAGES?blah=yada&accessToken=aaa&consumerKey=&useJson=no&initialDelay=five&pollStrategy=myStrategy");
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
+        String reason = result.summaryErrorMessage(true, true, true);
         LOG.info(reason);
 
+        // unknown component jms
         result = catalog.validateEndpointProperties("jms:unknown:myqueue");
-        assertFalse(result.isSuccess());
-        reason = result.summaryErrorMessage(false);
+        assertTrue(result.isSuccess());
+        assertTrue(result.hasWarnings());
+        reason = result.summaryErrorMessage(false, false, true);
         LOG.info(reason);
     }
 
@@ -374,6 +373,52 @@ public class RuntimeCamelCatalogTest {
         assertFalse(result.isSuccess());
 
         assertEquals("delete", result.getNotProducerOnly().iterator().next());
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyComponent() throws Exception {
+        String text = "camel.component.seda.queueSize=1234";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.seda.queue-size=1234";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.seda.queuesize=1234";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.component.seda.queueSize=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidInteger().get("camel.component.seda.queueSize"));
+
+        text = "camel.component.seda.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.component.seda.foo"));
+    }
+
+    @Test
+    public void testValidateConfigurationPropertyLanguage() throws Exception {
+        String text = "camel.language.tokenize.token=;";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.language.tokenize.regex=true";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
+
+        text = "camel.language.tokenize.regex=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertEquals("abc", result.getInvalidBoolean().get("camel.language.tokenize.regex"));
+
+        text = "camel.language.tokenize.foo=abc";
+        result = catalog.validateConfigurationProperty(text);
+        assertFalse(result.isSuccess());
+        assertTrue(result.getUnknown().contains("camel.language.tokenize.foo"));
     }
 
 }

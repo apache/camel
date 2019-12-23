@@ -20,9 +20,9 @@ import io.atomix.group.DistributedGroup;
 import io.atomix.group.GroupMember;
 import io.atomix.group.messaging.MessageProducer;
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.InvokeOnHeader;
 import org.apache.camel.Message;
 import org.apache.camel.component.atomix.client.AbstractAtomixClientProducer;
+import org.apache.camel.spi.InvokeOnHeader;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.atomix.client.AtomixClientConstants.BROADCAST_TYPE;
@@ -35,7 +35,7 @@ import static org.apache.camel.component.atomix.client.messaging.AtomixMessaging
 import static org.apache.camel.component.atomix.client.messaging.AtomixMessaging.OPTIONS_BROADCAST_RANDOM;
 import static org.apache.camel.component.atomix.client.messaging.AtomixMessaging.OPTIONS_DIRECT;
 
-final class AtomixMessagingProducer extends AbstractAtomixClientProducer<AtomixMessagingEndpoint, DistributedGroup> {
+public final class AtomixMessagingProducer extends AbstractAtomixClientProducer<AtomixMessagingEndpoint, DistributedGroup> {
     private final AtomixMessagingConfiguration configuration;
 
     protected AtomixMessagingProducer(AtomixMessagingEndpoint endpoint) {

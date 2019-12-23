@@ -25,9 +25,9 @@ import org.apache.camel.SSLContextParametersAware;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
-import org.apache.camel.support.IntrospectionSupport;
 import org.apache.camel.support.jsse.SSLContextParameters;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PropertiesHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.asynchttpclient.AsyncHttpClient;
@@ -83,7 +83,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
         
         setProperties(endpoint, parameters);
 
-        if (IntrospectionSupport.hasProperties(parameters, CLIENT_CONFIG_PREFIX)) {
+        if (PropertiesHelper.hasProperties(parameters, CLIENT_CONFIG_PREFIX)) {
             DefaultAsyncHttpClientConfig.Builder builder = endpoint.getClientConfig() == null
                     ? new DefaultAsyncHttpClientConfig.Builder() : AhcComponent.cloneConfig(endpoint.getClientConfig());
             
@@ -103,10 +103,10 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
 
             // special for realm builder
             Builder realmBuilder = null;
-            if (IntrospectionSupport.hasProperties(parameters, CLIENT_REALM_CONFIG_PREFIX)) {
+            if (PropertiesHelper.hasProperties(parameters, CLIENT_REALM_CONFIG_PREFIX)) {
 
                 // set and validate additional parameters on client config
-                Map<String, Object> realmParams = IntrospectionSupport.extractProperties(parameters, CLIENT_REALM_CONFIG_PREFIX);
+                Map<String, Object> realmParams = PropertiesHelper.extractProperties(parameters, CLIENT_REALM_CONFIG_PREFIX);
 
                 // copy the parameters for the endpoint to have
                 endpoint.setClientConfigRealmOptions(new LinkedHashMap<>(realmParams));
@@ -127,7 +127,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent implements SSLCo
             }
             
             // set and validate additional parameters on client config
-            Map<String, Object> clientParams = IntrospectionSupport.extractProperties(parameters, CLIENT_CONFIG_PREFIX);
+            Map<String, Object> clientParams = PropertiesHelper.extractProperties(parameters, CLIENT_CONFIG_PREFIX);
 
             // copy the parameters for the endpoint to have
             endpoint.setClientConfigOptions(new LinkedHashMap<>(clientParams));

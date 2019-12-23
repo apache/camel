@@ -24,7 +24,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**
- * Unit test for try .. handle routing where it should handle wrapped exceptions as well.
+ * Unit test for try .. handle routing where it should handle wrapped exceptions
+ * as well.
  */
 public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
 
@@ -43,29 +44,25 @@ public class TryProcessorHandleWrappedExceptionTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start")
-                    .doTry()
-                        .process(new ProcessorFail())
-                        .to("mock:result")
-                    .doCatch(IllegalStateException.class)
-                         .process(new ProcessorHandle())
-                    .doFinally()
-                        .to("mock:finally")
-                    .end();
+                from("direct:start").doTry().process(new ProcessorFail()).to("mock:result").doCatch(IllegalStateException.class).process(new ProcessorHandle()).doFinally()
+                    .to("mock:finally").end();
             }
         };
     }
 
     private class ProcessorFail implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new IllegalStateException("Force to fail");
         }
     }
 
     private class ProcessorHandle implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             handled = true;
 

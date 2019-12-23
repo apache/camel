@@ -19,6 +19,7 @@ package org.apache.camel.component.splunk;
 import java.net.ConnectException;
 import java.net.SocketException;
 import java.util.regex.Pattern;
+
 import javax.net.ssl.SSLException;
 
 import com.splunk.Service;
@@ -50,6 +51,7 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         String[] uriSplit = splitUri(getEndpointUri());
         if (uriSplit.length > 0) {
@@ -59,6 +61,7 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
         throw new IllegalArgumentException("Cannot create any producer with uri " + getEndpointUri() + ". A producer type was not provided (or an incorrect pairing was used).");
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         if (configuration.getInitEarliestTime() == null) {
             throw new IllegalArgumentException("Required initialEarliestTime option could not be found");

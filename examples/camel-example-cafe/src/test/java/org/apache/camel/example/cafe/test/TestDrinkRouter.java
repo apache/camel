@@ -26,6 +26,7 @@ public class TestDrinkRouter extends DrinkRouter {
         this.testModel = testModel; 
     }
     
+    @Override
     public String resolveOrderItemChannel(OrderItem orderItem) {
         if (testModel) {
             return (orderItem.isIced()) ? "mock:coldDrinks" : "mock:hotDrinks";

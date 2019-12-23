@@ -46,6 +46,11 @@ public class AbstractHttpSpanDecoratorTest {
             public String getComponent() {
                 return null;
             }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
         };
 
         assertEquals("PUT", decorator.getOperationName(exchange, null));
@@ -132,6 +137,11 @@ public class AbstractHttpSpanDecoratorTest {
             public String getComponent() {
                 return null;
             }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
         };
 
         MockTracer tracer = new MockTracer();
@@ -159,6 +169,11 @@ public class AbstractHttpSpanDecoratorTest {
             public String getComponent() {
                 return null;
             }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
         };
 
         assertEquals(TEST_URI, decorator.getHttpURL(exchange, endpoint));
@@ -177,6 +192,11 @@ public class AbstractHttpSpanDecoratorTest {
         AbstractHttpSpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
             public String getComponent() {
+                return null;
+            }
+
+            @Override
+            public String getComponentClassName() {
                 return null;
             }
         };
@@ -198,6 +218,11 @@ public class AbstractHttpSpanDecoratorTest {
             public String getComponent() {
                 return null;
             }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
         };
 
         assertEquals(TEST_URI, decorator.getHttpURL(exchange, endpoint));
@@ -217,6 +242,11 @@ public class AbstractHttpSpanDecoratorTest {
             public String getComponent() {
                 return null;
             }
+
+            @Override
+            public String getComponentClassName() {
+                return null;
+            }
         };
 
         assertEquals(TEST_URI, decorator.getHttpURL(exchange, endpoint));
@@ -227,13 +257,17 @@ public class AbstractHttpSpanDecoratorTest {
         Exchange exchange = Mockito.mock(Exchange.class);
         Message message = Mockito.mock(Message.class);
 
-        Mockito.when(exchange.hasOut()).thenReturn(true);
-        Mockito.when(exchange.getOut()).thenReturn(message);
-        Mockito.when(message.getHeader(Exchange.HTTP_RESPONSE_CODE)).thenReturn(200);
+        Mockito.when(exchange.getMessage()).thenReturn(message);
+        Mockito.when(message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class)).thenReturn(200);
         
         SpanDecorator decorator = new AbstractHttpSpanDecorator() {
             @Override
             public String getComponent() {
+                return null;
+            }
+
+            @Override
+            public String getComponentClassName() {
                 return null;
             }
         };

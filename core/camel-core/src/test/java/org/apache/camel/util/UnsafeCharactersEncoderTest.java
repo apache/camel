@@ -25,7 +25,7 @@ public class UnsafeCharactersEncoderTest extends Assert {
         String result = UnsafeUriCharactersEncoder.encode(before);
         assertEquals("Get the wrong encoding result", after, result);
     }
-    
+
     @Test
     public void testQnameEncoder() {
         String afterEncoding = "%7Bhttp://www.example.com/test%7DServiceName";
@@ -38,7 +38,7 @@ public class UnsafeCharactersEncoderTest extends Assert {
         String noEncoding = "http://www.example.com";
         testEncoding(noEncoding, noEncoding);
     }
-    
+
     @Test
     public void testUnicodes() {
         String noEncoding = "http://test.com/\uFD04";

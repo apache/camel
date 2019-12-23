@@ -21,7 +21,6 @@ import java.util.Map;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
@@ -42,6 +41,7 @@ public class HazelcastListProducer extends HazelcastDefaultProducer {
         this.list = hazelcastInstance.getList(listName);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         Map<String, Object> headers = exchange.getIn().getHeaders();

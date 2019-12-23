@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf;
 
-
 import java.net.URL;
 import java.util.ResourceBundle;
 
@@ -44,8 +43,6 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-
-
 /**
  * Unit test to verify CxfConsumer to generate SOAP fault in PAYLOAD mode with the exception cause returned
  */
@@ -55,6 +52,7 @@ public class CxfConsumerPayloadFaultCauseEnabledTest extends CamelTestSupport {
         + "/" + getClass().getSimpleName() + "/PersonService";
     protected AbstractXmlApplicationContext applicationContext;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();

@@ -22,12 +22,12 @@ import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.http4.HttpComponent;
+import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.http.common.HttpConfiguration;
-import org.apache.camel.impl.JndiRegistry;
 import org.eclipse.jetty.security.ConstraintMapping;
 import org.eclipse.jetty.security.ConstraintSecurityHandler;
 import org.eclipse.jetty.security.HashLoginService;
@@ -38,14 +38,8 @@ import org.junit.Test;
 
 public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myAuthHandler", getSecurityHandler());
-        return jndi;
-    }
-
-    private SecurityHandler getSecurityHandler() throws IOException {
+    @BindToRegistry("myAuthHandler")
+    public SecurityHandler getSecurityHandler() throws IOException {
         Constraint constraint = new Constraint(Constraint.__BASIC_AUTH, "user");
         constraint.setAuthenticate(true);
 
@@ -59,7 +53,7 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
 
         HashLoginService loginService = new HashLoginService("MyRealm", "src/test/resources/myRealm.properties");
         sh.setLoginService(loginService);
-        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[]{cm}));
+        sh.setConstraintMappings(Arrays.asList(new ConstraintMapping[] {cm}));
 
         return sh;
     }
@@ -68,7 +62,7 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
     public void testHttpBasicAuth() throws Exception {
         String out = template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
         assertEquals("Bye World", out);
-        
+
         out = template.requestBody("http://localhost:{{port}}/anotherTest", "Hello World", String.class);
         assertEquals("See you later", out);
     }
@@ -86,20 +80,17 @@ public class HttpBasicAuthComponentConfiguredTest extends BaseJettyTest {
                 HttpComponent http = context.getComponent("http", HttpComponent.class);
                 http.setHttpConfiguration(config);
 
-                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
-                            assertNotNull(req);
-                            Principal user = req.getUserPrincipal();
-                            assertNotNull(user);
-                            assertEquals("donald", user.getName());
-                        }
-                    })
-                    .transform(constant("Bye World"));
-                
-                from("jetty://http://localhost:{{port}}/anotherTest?handlers=myAuthHandler")
-                    .transform(constant("See you later"));
+                from("jetty://http://localhost:{{port}}/test?handlers=myAuthHandler").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        HttpServletRequest req = exchange.getIn().getBody(HttpServletRequest.class);
+                        assertNotNull(req);
+                        Principal user = req.getUserPrincipal();
+                        assertNotNull(user);
+                        assertEquals("donald", user.getName());
+                    }
+                }).transform(constant("Bye World"));
+
+                from("jetty://http://localhost:{{port}}/anotherTest?handlers=myAuthHandler").transform(constant("See you later"));
             }
         };
     }

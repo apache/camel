@@ -20,12 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
-import static java.lang.Boolean.parseBoolean;
-import static java.util.Arrays.asList;
-
 import com.google.common.truth.Truth;
 import org.apache.camel.component.spark.annotations.RddCallback;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.Registry;
+import org.apache.camel.support.SimpleRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.JavaRDDLike;
@@ -36,6 +34,8 @@ import org.apache.spark.sql.hive.HiveContext;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
+import static java.lang.Boolean.parseBoolean;
+import static java.util.Arrays.asList;
 import static org.apache.camel.component.spark.SparkConstants.SPARK_DATAFRAME_CALLBACK_HEADER;
 import static org.apache.camel.component.spark.SparkConstants.SPARK_RDD_CALLBACK_HEADER;
 import static org.apache.camel.component.spark.Sparks.createLocalSparkContext;
@@ -70,8 +70,8 @@ public class SparkProducerTest extends CamelTestSupport {
     // Routes fixtures
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
+    protected Registry createCamelRegistry() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
 
         registry.bind("testFileRdd", sparkContext.textFile("src/test/resources/testrdd.txt"));
 

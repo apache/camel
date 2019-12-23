@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.leveldb;
+
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AggregationStrategy;
@@ -99,6 +100,7 @@ public class LevelDBAggregateRecoverDeadLetterChannelFailedTest extends CamelTes
 
     public static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

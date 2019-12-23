@@ -27,7 +27,6 @@ import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
-import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * The ironmq provides integration with IronMQ an elastic and durable hosted
@@ -56,7 +55,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointConsumerBuilder client(Object client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -68,7 +67,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointConsumerBuilder client(String client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -81,7 +80,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointConsumerBuilder ironMQCloud(String ironMQCloud) {
-            setProperty("ironMQCloud", ironMQCloud);
+            doSetProperty("ironMQCloud", ironMQCloud);
             return this;
         }
         /**
@@ -96,7 +95,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder preserveHeaders(
                 boolean preserveHeaders) {
-            setProperty("preserveHeaders", preserveHeaders);
+            doSetProperty("preserveHeaders", preserveHeaders);
             return this;
         }
         /**
@@ -111,7 +110,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder preserveHeaders(
                 String preserveHeaders) {
-            setProperty("preserveHeaders", preserveHeaders);
+            doSetProperty("preserveHeaders", preserveHeaders);
             return this;
         }
         /**
@@ -122,7 +121,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointConsumerBuilder projectId(String projectId) {
-            setProperty("projectId", projectId);
+            doSetProperty("projectId", projectId);
             return this;
         }
         /**
@@ -133,7 +132,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointConsumerBuilder token(String token) {
-            setProperty("token", token);
+            doSetProperty("token", token);
             return this;
         }
         /**
@@ -147,7 +146,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder batchDelete(boolean batchDelete) {
-            setProperty("batchDelete", batchDelete);
+            doSetProperty("batchDelete", batchDelete);
             return this;
         }
         /**
@@ -161,7 +160,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder batchDelete(String batchDelete) {
-            setProperty("batchDelete", batchDelete);
+            doSetProperty("batchDelete", batchDelete);
             return this;
         }
         /**
@@ -179,7 +178,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -197,7 +196,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -209,7 +208,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -221,7 +220,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -233,7 +232,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
                 int maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -245,7 +244,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
                 String maxMessagesPerPoll) {
-            setProperty("maxMessagesPerPoll", maxMessagesPerPoll);
+            doSetProperty("maxMessagesPerPoll", maxMessagesPerPoll);
             return this;
         }
         /**
@@ -258,7 +257,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 boolean sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -271,7 +270,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
                 String sendEmptyMessageWhenIdle) {
-            setProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            doSetProperty("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
             return this;
         }
         /**
@@ -282,7 +281,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder timeout(int timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -293,7 +292,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -305,7 +304,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder wait(int wait) {
-            setProperty("wait", wait);
+            doSetProperty("wait", wait);
             return this;
         }
         /**
@@ -317,7 +316,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder wait(String wait) {
-            setProperty("wait", wait);
+            doSetProperty("wait", wait);
             return this;
         }
         /**
@@ -330,7 +329,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder backoffErrorThreshold(
                 int backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -343,7 +342,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder backoffErrorThreshold(
                 String backoffErrorThreshold) {
-            setProperty("backoffErrorThreshold", backoffErrorThreshold);
+            doSetProperty("backoffErrorThreshold", backoffErrorThreshold);
             return this;
         }
         /**
@@ -356,7 +355,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder backoffIdleThreshold(
                 int backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -369,7 +368,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder backoffIdleThreshold(
                 String backoffIdleThreshold) {
-            setProperty("backoffIdleThreshold", backoffIdleThreshold);
+            doSetProperty("backoffIdleThreshold", backoffIdleThreshold);
             return this;
         }
         /**
@@ -386,7 +385,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder backoffMultiplier(
                 int backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -403,7 +402,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder backoffMultiplier(
                 String backoffMultiplier) {
-            setProperty("backoffMultiplier", backoffMultiplier);
+            doSetProperty("backoffMultiplier", backoffMultiplier);
             return this;
         }
         /**
@@ -416,7 +415,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder delay(long delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -429,7 +428,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder delay(String delay) {
-            setProperty("delay", delay);
+            doSetProperty("delay", delay);
             return this;
         }
         /**
@@ -441,7 +440,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder greedy(boolean greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -453,7 +452,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder greedy(String greedy) {
-            setProperty("greedy", greedy);
+            doSetProperty("greedy", greedy);
             return this;
         }
         /**
@@ -466,7 +465,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder initialDelay(long initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
             return this;
         }
         /**
@@ -479,7 +478,33 @@ public interface IronMQEndpointBuilderFactory {
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder initialDelay(String initialDelay) {
-            setProperty("initialDelay", initialDelay);
+            doSetProperty("initialDelay", initialDelay);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option is a: <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default IronMQEndpointConsumerBuilder repeatCount(long repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
+            return this;
+        }
+        /**
+         * Specifies a maximum limit of number of fires. So if you set it to 1,
+         * the scheduler will only fire once. If you set it to 5, it will only
+         * fire five times. A value of zero or negative means fire forever.
+         * 
+         * The option will be converted to a <code>long</code> type.
+         * 
+         * Group: scheduler
+         */
+        default IronMQEndpointConsumerBuilder repeatCount(String repeatCount) {
+            doSetProperty("repeatCount", repeatCount);
             return this;
         }
         /**
@@ -492,7 +517,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder runLoggingLevel(
                 LoggingLevel runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -506,7 +531,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder runLoggingLevel(
                 String runLoggingLevel) {
-            setProperty("runLoggingLevel", runLoggingLevel);
+            doSetProperty("runLoggingLevel", runLoggingLevel);
             return this;
         }
         /**
@@ -521,7 +546,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder scheduledExecutorService(
                 ScheduledExecutorService scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
@@ -536,41 +561,24 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder scheduledExecutorService(
                 String scheduledExecutorService) {
-            setProperty("scheduledExecutorService", scheduledExecutorService);
+            doSetProperty("scheduledExecutorService", scheduledExecutorService);
             return this;
         }
         /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
+         * To use a cron scheduler from either camel-spring or camel-quartz
          * component.
          * 
-         * The option is a:
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
-         * 
-         * Group: scheduler
-         */
-        default IronMQEndpointConsumerBuilder scheduler(
-                ScheduledPollConsumerScheduler scheduler) {
-            setProperty("scheduler", scheduler);
-            return this;
-        }
-        /**
-         * To use a cron scheduler from either camel-spring or camel-quartz2
-         * component.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.spi.ScheduledPollConsumerScheduler</code>
-         * type.
+         * The option is a: <code>java.lang.String</code> type.
          * 
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder scheduler(String scheduler) {
-            setProperty("scheduler", scheduler);
+            doSetProperty("scheduler", scheduler);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option is a: <code>java.util.Map&lt;java.lang.String,
          * java.lang.Object&gt;</code> type.
@@ -579,12 +587,12 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder schedulerProperties(
                 Map<String, Object> schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
          * To configure additional properties when using a custom scheduler or
-         * any of the Quartz2, Spring based scheduler.
+         * any of the Quartz, Spring based scheduler.
          * 
          * The option will be converted to a
          * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
@@ -594,7 +602,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder schedulerProperties(
                 String schedulerProperties) {
-            setProperty("schedulerProperties", schedulerProperties);
+            doSetProperty("schedulerProperties", schedulerProperties);
             return this;
         }
         /**
@@ -606,7 +614,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder startScheduler(
                 boolean startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -618,7 +626,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder startScheduler(
                 String startScheduler) {
-            setProperty("startScheduler", startScheduler);
+            doSetProperty("startScheduler", startScheduler);
             return this;
         }
         /**
@@ -629,7 +637,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -641,7 +649,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder timeUnit(String timeUnit) {
-            setProperty("timeUnit", timeUnit);
+            doSetProperty("timeUnit", timeUnit);
             return this;
         }
         /**
@@ -654,7 +662,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointConsumerBuilder useFixedDelay(
                 boolean useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
         /**
@@ -666,7 +674,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
-            setProperty("useFixedDelay", useFixedDelay);
+            doSetProperty("useFixedDelay", useFixedDelay);
             return this;
         }
     }
@@ -693,7 +701,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -709,7 +717,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -721,7 +729,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -734,7 +742,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -750,7 +758,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
                 PollingConsumerPollStrategy pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -766,7 +774,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder pollStrategy(
                 String pollStrategy) {
-            setProperty("pollStrategy", pollStrategy);
+            doSetProperty("pollStrategy", pollStrategy);
             return this;
         }
         /**
@@ -779,7 +787,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -792,7 +800,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -805,7 +813,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -818,7 +826,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -840,7 +848,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointProducerBuilder client(Object client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -852,7 +860,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointProducerBuilder client(String client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -865,7 +873,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointProducerBuilder ironMQCloud(String ironMQCloud) {
-            setProperty("ironMQCloud", ironMQCloud);
+            doSetProperty("ironMQCloud", ironMQCloud);
             return this;
         }
         /**
@@ -880,7 +888,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointProducerBuilder preserveHeaders(
                 boolean preserveHeaders) {
-            setProperty("preserveHeaders", preserveHeaders);
+            doSetProperty("preserveHeaders", preserveHeaders);
             return this;
         }
         /**
@@ -895,7 +903,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointProducerBuilder preserveHeaders(
                 String preserveHeaders) {
-            setProperty("preserveHeaders", preserveHeaders);
+            doSetProperty("preserveHeaders", preserveHeaders);
             return this;
         }
         /**
@@ -906,7 +914,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointProducerBuilder projectId(String projectId) {
-            setProperty("projectId", projectId);
+            doSetProperty("projectId", projectId);
             return this;
         }
         /**
@@ -917,7 +925,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointProducerBuilder token(String token) {
-            setProperty("token", token);
+            doSetProperty("token", token);
             return this;
         }
         /**
@@ -937,7 +945,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -957,7 +965,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -970,7 +978,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointProducerBuilder visibilityDelay(
                 int visibilityDelay) {
-            setProperty("visibilityDelay", visibilityDelay);
+            doSetProperty("visibilityDelay", visibilityDelay);
             return this;
         }
         /**
@@ -983,7 +991,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default IronMQEndpointProducerBuilder visibilityDelay(
                 String visibilityDelay) {
-            setProperty("visibilityDelay", visibilityDelay);
+            doSetProperty("visibilityDelay", visibilityDelay);
             return this;
         }
     }
@@ -1007,7 +1015,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1020,7 +1028,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1033,7 +1041,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1046,7 +1054,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1068,7 +1076,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointBuilder client(Object client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -1080,7 +1088,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointBuilder client(String client) {
-            setProperty("client", client);
+            doSetProperty("client", client);
             return this;
         }
         /**
@@ -1093,7 +1101,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointBuilder ironMQCloud(String ironMQCloud) {
-            setProperty("ironMQCloud", ironMQCloud);
+            doSetProperty("ironMQCloud", ironMQCloud);
             return this;
         }
         /**
@@ -1107,7 +1115,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointBuilder preserveHeaders(boolean preserveHeaders) {
-            setProperty("preserveHeaders", preserveHeaders);
+            doSetProperty("preserveHeaders", preserveHeaders);
             return this;
         }
         /**
@@ -1121,7 +1129,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointBuilder preserveHeaders(String preserveHeaders) {
-            setProperty("preserveHeaders", preserveHeaders);
+            doSetProperty("preserveHeaders", preserveHeaders);
             return this;
         }
         /**
@@ -1132,7 +1140,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointBuilder projectId(String projectId) {
-            setProperty("projectId", projectId);
+            doSetProperty("projectId", projectId);
             return this;
         }
         /**
@@ -1143,7 +1151,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: common
          */
         default IronMQEndpointBuilder token(String token) {
-            setProperty("token", token);
+            doSetProperty("token", token);
             return this;
         }
     }
@@ -1167,7 +1175,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1180,7 +1188,7 @@ public interface IronMQEndpointBuilderFactory {
          */
         default AdvancedIronMQEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1192,7 +1200,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIronMQEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1204,7 +1212,7 @@ public interface IronMQEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIronMQEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1214,7 +1222,7 @@ public interface IronMQEndpointBuilderFactory {
      * message queue as a service.
      * 
      * Category: cloud,messaging
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ironmq
      * 
      * Syntax: <code>ironmq:queueName</code>
@@ -1222,7 +1230,7 @@ public interface IronMQEndpointBuilderFactory {
      * Path parameter: queueName (required)
      * The name of the IronMQ queue
      */
-    default IronMQEndpointBuilder ironMQ(String path) {
+    default IronMQEndpointBuilder ironmq(String path) {
         class IronMQEndpointBuilderImpl extends AbstractEndpointBuilder implements IronMQEndpointBuilder, AdvancedIronMQEndpointBuilder {
             public IronMQEndpointBuilderImpl(String path) {
                 super("ironmq", path);

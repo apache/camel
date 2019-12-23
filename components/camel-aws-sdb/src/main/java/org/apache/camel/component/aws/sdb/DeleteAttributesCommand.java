@@ -21,7 +21,6 @@ import java.util.Collection;
 import com.amazonaws.services.simpledb.AmazonSimpleDB;
 import com.amazonaws.services.simpledb.model.Attribute;
 import com.amazonaws.services.simpledb.model.DeleteAttributesRequest;
-
 import org.apache.camel.Exchange;
 
 public class DeleteAttributesCommand extends AbstractSdbCommand {
@@ -30,6 +29,7 @@ public class DeleteAttributesCommand extends AbstractSdbCommand {
         super(sdbClient, configuration, exchange);
     }
 
+    @Override
     public void execute() {
         DeleteAttributesRequest request = new DeleteAttributesRequest()
             .withDomainName(determineDomainName())

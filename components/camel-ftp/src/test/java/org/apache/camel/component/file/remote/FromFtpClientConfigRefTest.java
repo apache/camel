@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.file.remote;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.commons.net.ftp.FTPClientConfig;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class FromFtpClientConfigRefTest extends FtpServerTestSupport {
 
@@ -32,20 +32,18 @@ public class FromFtpClientConfigRefTest extends FtpServerTestSupport {
         return "ftp://admin@localhost:" + getPort() + "/timeout/?password=admin&ftpClientConfig=#myConfig";
     }
 
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
+    @BindToRegistry("myConfig")
+    public FTPClientConfig addFtpConfig() throws Exception {
 
         FTPClientConfig config = new FTPClientConfig();
         config.setServerLanguageCode("fr");
         config.setLenientFutureDates(true);
 
-        jndi.bind("myConfig", config);
-        return jndi;
+        return config;
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -71,6 +69,7 @@ public class FromFtpClientConfigRefTest extends FtpServerTestSupport {
         producer.stop();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

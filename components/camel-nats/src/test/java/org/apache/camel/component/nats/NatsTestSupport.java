@@ -16,13 +16,14 @@
  */
 package org.apache.camel.component.nats;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.test.testcontainers.ContainerAwareTestSupport;
 import org.apache.camel.test.testcontainers.Wait;
 import org.testcontainers.containers.GenericContainer;
 
 public class NatsTestSupport extends ContainerAwareTestSupport {
 
-    public static final String CONTAINER_IMAGE = "nats:2.0.0";
+    public static final String CONTAINER_IMAGE = "nats:2.1.2";
     public static final String CONTAINER_NAME = "nats";
     
     @Override
@@ -36,11 +37,19 @@ public class NatsTestSupport extends ContainerAwareTestSupport {
             .waitingFor(Wait.forLogMessageContaining("Listening for route connections", 1));
     }
     
-    public String getNatsUrl() {
+    public String getNatsBrokerUrl() {
         return String.format(
             "%s:%d",
             getContainerHost(CONTAINER_NAME),
             getContainerPort(CONTAINER_NAME, 4222)
         );
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        NatsComponent nats = context.getComponent("nats", NatsComponent.class);
+        nats.setServers(getNatsBrokerUrl());
+        return context;
     }
 }

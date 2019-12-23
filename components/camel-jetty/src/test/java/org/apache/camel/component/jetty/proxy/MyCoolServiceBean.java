@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty.proxy;
 
 public class MyCoolServiceBean implements MyCoolService {
 
+    @Override
     public String hello(String name) throws MyAppException {
         if ("Kaboom".equals(name)) {
             throw new MyAppException("Invalid name", "Kaboom");

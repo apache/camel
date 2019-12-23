@@ -24,6 +24,7 @@ import org.junit.Test;
 
 public class CurrentWeatherMadridProducerTest extends BaseWeatherConsumerTest {
 
+    @Override
     @Test
     public void testGrabbingListOfEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

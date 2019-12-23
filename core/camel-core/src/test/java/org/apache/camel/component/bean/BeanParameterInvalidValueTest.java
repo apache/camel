@@ -102,21 +102,13 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .to("bean:foo?method=echo(*, 'A')")
-                    .to("mock:result");
+                from("direct:a").to("bean:foo?method=echo(*, 'A')").to("mock:result");
 
-                from("direct:b")
-                    .to("bean:foo?method=echo(*, true)")
-                    .to("mock:result");
+                from("direct:b").to("bean:foo?method=echo(*, true)").to("mock:result");
 
-                from("direct:c")
-                    .to("bean:foo?method=echo(null, 2)")
-                    .to("mock:result");
+                from("direct:c").to("bean:foo?method=echo(null, 2)").to("mock:result");
 
-                from("direct:d")
-                    .to("bean:foo?method=echo(${xxx}, 2)")
-                    .to("mock:result");
+                from("direct:d").to("bean:foo?method=echo(${xxx}, 2)").to("mock:result");
             }
         };
     }

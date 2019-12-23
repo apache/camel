@@ -157,7 +157,7 @@ public class BomGeneratorMojo extends AbstractMojo {
     private List<Dependency> enhance(List<Dependency> dependencyList) {
 
         for (Dependency dep : dependencyList) {
-            if (dep.getGroupId().startsWith(project.getGroupId()) && project.getVersion().equals(dep.getVersion())) {
+            if (dep.getGroupId().startsWith("org.apache.camel") && project.getVersion().equals(dep.getVersion())) {
                 dep.setVersion("${project.version}");
             }
         }
@@ -175,16 +175,13 @@ public class BomGeneratorMojo extends AbstractMojo {
             boolean accept = inclusions.matches(dep) && !exclusions.matches(dep);
             getLog().debug(dep + (accept ? " included in the BOM" : " excluded from BOM"));
 
-            // skip all camel-catalog and other tooling JARs as they should not be in the BOM
-            boolean catalog = dep.getArtifactId().startsWith("camel-catalog");
-            boolean parser = dep.getArtifactId().startsWith("camel-route-parser");
-            if (catalog || parser) {
-                getLog().debug("Skipping dependency: " + dep.getArtifactId());
-                accept = false;
-            }
-
             if (accept) {
                 outDependencies.add(dep);
+            } else {
+                // lets log a WARN if some Camel JARs was excluded
+                if (dep.getGroupId().startsWith("org.apache.camel")) {
+                    getLog().warn(dep + " excluded from BOM");
+                }
             }
         }
 
@@ -196,6 +193,7 @@ public class BomGeneratorMojo extends AbstractMojo {
     private Document loadBasePom() throws Exception {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, Boolean.TRUE);
+        dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         DocumentBuilder builder = dbf.newDocumentBuilder();
         Document pom = builder.parse(sourcePom);
 
@@ -257,10 +255,10 @@ public class BomGeneratorMojo extends AbstractMojo {
             try (FileReader fr = new FileReader(file)) {
                 String oldContent = IOUtils.toString(fr);
                 if (!content.equals(oldContent)) {
-                    getLog().debug("Writing new file " + file.getAbsolutePath());
+                    getLog().info("File: " + file.getAbsolutePath() + " is updated");
                     fr.close();
                 } else {
-                    getLog().debug("File " + file.getAbsolutePath() + " left unchanged");
+                    getLog().info("File " + file.getAbsolutePath() + " is not changed");
                     write = false;
                 }
             }

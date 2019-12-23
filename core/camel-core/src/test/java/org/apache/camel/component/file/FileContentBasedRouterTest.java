@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -40,7 +41,8 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
     public void testRouteLondon() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:london");
         mock.expectedMessageCount(1);
-        // should not load the content of the body into memory unless demand for it
+        // should not load the content of the body into memory unless demand for
+        // it
         // so the type received should be a GenericFile (holder for the file)
         mock.message(0).body().isInstanceOf(GenericFile.class);
 
@@ -53,7 +55,8 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
     public void testRouteParis() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:paris");
         mock.expectedMessageCount(1);
-        // should not load the content of the body into memory unless demand for it
+        // should not load the content of the body into memory unless demand for
+        // it
         // so the type received should be a GenericFile (holder for the file)
         mock.message(0).body().isInstanceOf(GenericFile.class);
 
@@ -68,7 +71,8 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:other");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived("CamelFileName", "copenhagen.txt");
-        // should not load the content of the body into memory unless demand for it
+        // should not load the content of the body into memory unless demand for
+        // it
         // so the type received should be a GenericFile (holder for the file)
         mock.message(0).body().isInstanceOf(GenericFile.class);
 
@@ -82,11 +86,8 @@ public class FileContentBasedRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/cbr?noop=true&initialDelay=0&delay=10")
-                    .choice()
-                        .when(header("CamelFileName").isEqualTo("london.txt")).to("mock:london")
-                        .when(header("CamelFileName").isEqualTo("paris.txt")).to("mock:paris")
-                        .otherwise().to("mock:other");
+                from("file://target/data/cbr?noop=true&initialDelay=0&delay=10").choice().when(header("CamelFileName").isEqualTo("london.txt")).to("mock:london")
+                    .when(header("CamelFileName").isEqualTo("paris.txt")).to("mock:paris").otherwise().to("mock:other");
             }
         };
     }

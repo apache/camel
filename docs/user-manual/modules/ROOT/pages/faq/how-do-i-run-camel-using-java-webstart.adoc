@@ -1,5 +1,5 @@
 [[HowdoIrunCamelusingJavaWebStart-HowdoIrunCamelusingJavaWebStart]]
-=== How do I run Camel using Java WebStart?
+= How do I run Camel using Java WebStart?
 
 Camel 1.5 has support for starting using Java WebStart.
 
@@ -17,7 +17,7 @@ Therefore the http URLs in the .jnlp file must be complete in the *href*
 tag.
 
 [[HowdoIrunCamelusingJavaWebStart-Mavenconfiguration]]
-==== Maven configuration
+== Maven configuration
 
 If you use Maven to generate your *.jnlp* file then check out these
 links: http://mojo.codehaus.org/webstart/webstart-maven-plugin/

@@ -58,16 +58,14 @@ public class SplitterOnCompletionTest extends ContextTestSupport {
             public void configure() throws Exception {
                 onCompletion().to("log:done", "mock:done");
 
-                from("direct:start")
-                    .split(body().tokenize(","))
-                        .process(new MyProcessor())
-                        .to("mock:split");
+                from("direct:start").split(body().tokenize(",")).process(new MyProcessor()).to("mock:split");
             }
         };
     }
 
     public static class MyProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             if ("Kaboom".equals(body)) {

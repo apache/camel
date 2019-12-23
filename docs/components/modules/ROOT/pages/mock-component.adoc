@@ -1,14 +1,19 @@
 [[mock-component]]
-== Mock Component
+= Mock Component
+:page-source: components/camel-mock/src/main/docs/mock-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 Testing of distributed and asynchronous processing is
-notoriously difficult. The xref:mock-component,Mock>>, <<mock-component.adoc[Test]
+notoriously difficult. The xref:mock-component.adoc[Mock], xref:mock-component.adoc[Test]
 and xref:dataset-component.adoc[DataSet] endpoints work great with the
 Camel Testing Framework to simplify your unit and
 integration testing using
-xref:enterprise-integration-patterns.adoc[Enterprise Integration
+xref:manual::enterprise-integration-patterns.adoc[Enterprise Integration
 Patterns] and Camel's large range of Components
 together with the powerful Bean Integration.
 
@@ -28,11 +33,11 @@ Expression to create an order testing function,
 * Messages arrive match some kind of Predicate such
 as that specific headers have certain values, or that parts of the
 messages match some predicate, such as by evaluating an
-xref:xpath-language,XPath>> or <<xpath-language.adoc[XQuery]
+xref:xpath-language.adoc[XPath] or xref:xpath-language.adoc[XQuery]
 Expression.
 
 [NOTE]
-There is also the xref:test-component.adoc[Test endpoint] which is a
+There is also the xref:test.adoc[Test endpoint] which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets
@@ -57,7 +62,7 @@ There are two new options `retainFirst`, and
 endpoints keep in memory.
 
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -70,21 +75,22 @@ endpoint.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Options
+== Options
 
 
 
 
 // component options: START
-The Mock component supports 2 options, which are listed below.
+The Mock component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -102,7 +108,7 @@ mock:name
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -112,7 +118,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -120,6 +126,7 @@ with the following path and query parameters:
 | Name | Description | Default | Type
 | *assertPeriod* (producer) | Sets a grace period after which the mock endpoint will re-assert to ensure the preliminary assertion is still valid. This is used for example to assert that exactly a number of messages arrives. For example if expectedMessageCount(int) was set to 5, then the assertion is satisfied when 5 or more message arrives. To ensure that exactly 5 messages arrives, then you would need to wait a little period to ensure no further message arrives. This is what you can use this method for. By default this period is disabled. | 0 | long
 | *expectedCount* (producer) | Specifies the expected number of message exchanges that should be received by this endpoint. Beware: If you want to expect that 0 messages, then take extra care, as 0 matches when the tests starts, so you need to set a assert period time to let the test run for a while to make sure there are still no messages arrived; for that use setAssertPeriod(long). An alternative is to use NotifyBuilder, and use the notifier to know when Camel is done routing some messages, before you call the assertIsSatisfied() method on the mocks. This allows you to not use a fixed assert period, to speedup testing times. If you want to assert that exactly n'th message arrives to this mock endpoint, then see also the setAssertPeriod(long) method for further details. | -1 | int
+| *failFast* (producer) | Sets whether assertIsSatisfied() should fail fast at the first detected failed expectation while it may otherwise wait for all expected messages to arrive before performing expectations verifications. Is by default true. Set to false to use behavior as in Camel 2.x. | false | boolean
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
 | *reportGroup* (producer) | A number that is used to turn on throughput logging based on groups of the size. |  | int
 | *resultMinimumWaitTime* (producer) | Sets the minimum expected amount of time (in millis) the assertIsSatisfied() will wait on a latch until it is satisfied | 0 | long
@@ -133,9 +140,37 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.springboot</groupId>
+  <artifactId>camel-mock-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
 
 
-=== Simple Example
+The component supports 4 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.mock.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.mock.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.mock.enabled* | Whether to enable auto configuration of the mock component. This is enabled by default. |  | Boolean
+| *camel.component.mock.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+|===
+// spring-boot-auto-configure options: END
+
+== Simple Example
 
 Here's a simple example of Mock endpoint in use. First, the endpoint is
 resolved on the context. Then we set an expectation, and then, after the
@@ -162,9 +197,8 @@ Camel will by default wait 10 seconds when the `assertIsSatisfied()` is
 invoked. This can be configured by setting the
 `setResultWaitTime(millis)` method.
 
-=== Using assertPeriod
+== Using assertPeriod
 
-*Available as of Camel 2.7* +
 When the assertion is satisfied then Camel will stop waiting and
 continue from the `assertIsSatisfied` method. That means if a new
 message arrives on the mock endpoint, just a bit later, that arrival
@@ -184,7 +218,7 @@ resultEndpoint.expectedMessageCount(2);
 resultEndpoint.assertIsSatisfied();
 ----
 
-=== Setting expectations
+== Setting expectations
 
 You can see from the Javadoc of
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html[MockEndpoint]
@@ -228,7 +262,7 @@ Here's another example:
 resultEndpoint.expectedBodiesReceived("firstMessageBody", "secondMessageBody", "thirdMessageBody");
 ----
 
-=== Adding expectations to specific messages
+== Adding expectations to specific messages
 
 In addition, you can use the
 http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/component/mock/MockEndpoint.html#message(int)[`message(int
@@ -248,9 +282,7 @@ There are some examples of the Mock endpoint in use in the
 https://github.com/apache/camel/tree/master/camel-core/src/test/java/org/apache/camel/processor/[`camel-core`
 processor tests].
 
-=== Mocking existing endpoints
-
-*Available as of Camel 2.7*
+== Mocking existing endpoints
 
 Camel now allows you to automatically mock existing endpoints in your
 Camel routes.
@@ -266,7 +298,7 @@ Suppose you have the given route below:
 [source,java]
 .*Route*
 ----
-include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=route]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=route]
 ----
 
 You can then use the `adviceWith` feature in Camel to mock all the
@@ -275,7 +307,7 @@ endpoints in a given route from your unit test, as shown below:
 [source,java]
 .*`adviceWith` mocking all endpoints*
 ----
-include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e1]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e1]
 ----
 
 Notice that the mock endpoints is given the URI `mock:<endpoint>`, for
@@ -300,7 +332,7 @@ example to mock all `log` endpoints you do as shown:
 [source,java]
 .*`adviceWith` mocking only log endpoints using a pattern*
 ----
-include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e2]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/interceptor/AdviceWithMockEndpointsTest.java[tags=e2]
 ----
 
 The pattern supported can be a wildcard or a regular expression. See
@@ -314,7 +346,7 @@ That means Camel will use more memory. This may not be suitable when you
 send in a lot of messages.
 
 
-=== Mocking existing endpoints using the `camel-test` component
+== Mocking existing endpoints using the `camel-test` component
 
 Instead of using the `adviceWith` to instruct Camel to mock endpoints,
 you can easily enable this behavior when using the `camel-test` Test
@@ -330,11 +362,11 @@ instead.
 [source,java]
 .*`isMockEndpoints` using camel-test kit*
 ----
-include::../../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsJUnit4Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsJUnit4Test.java[tags=e1]
 ----
 
 
-=== Mocking existing endpoints with XML DSL
+== Mocking existing endpoints with XML DSL
 
 If you do not use the `camel-test` component for unit testing (as shown
 above) you can use a different approach when using XML files for
@@ -347,7 +379,7 @@ Suppose we have the route in the `camel-route.xml` file:
 [source,xml]
 .*camel-route.xml*
 ----
-include::../../../../components/camel-spring/src/test/resources/org/apache/camel/spring/mock/camel-route.xml[tags=e1]
+include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/camel-route.xml[tags=e1]
 ----
 
 Then we create a new XML file as follows, where we include the
@@ -358,7 +390,7 @@ Camel to mock all endpoints:
 [source,xml]
 .*test-camel-route.xml*
 ----
-include::../../../../components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[tags=e1]
+include::{examplesdir}/components/camel-spring/src/test/resources/org/apache/camel/spring/mock/InterceptSendToMockEndpointStrategyTest.xml[tags=e1]
 ----
 
 Then in your unit test you load the new XML file
@@ -374,22 +406,18 @@ in the constructor for the bean:
 </bean>
 ----
 
-=== Mocking endpoints and skip sending to original endpoint
-
-*Available as of Camel 2.10*
+== Mocking endpoints and skip sending to original endpoint
 
 Sometimes you want to easily mock and skip sending to a certain
 endpoints. So the message is detoured and send to the mock endpoint
 only. You can now use the `mockEndpointsAndSkip`
-method using AdviceWith or the
-https://cwiki.apache.org/confluence/pages/createpage.action?spaceKey=CAMEL&title=Test+Kit&linkCreation=true&fromPageId=52081[Test
-Kit]. The example below will skip sending to the two endpoints
+method using AdviceWith. The example below will skip sending to the two endpoints
 `"direct:foo"`, and `"direct:bar"`.
 
 [source,java]
 .*adviceWith mock and skip sending to endpoints*
 ----
-include::../../test/java/org/apache/camel/processor/interceptor/AdviceWithMockMultipleEndpointsWithSkipTest.java[tags=e1]
+include::{examplesdir}/core/camel-core/src/test/java/org/apache/camel/processor/interceptor/AdviceWithMockMultipleEndpointsWithSkipTest.java[tags=e1]
 ----
 
 The same example using the Test Kit
@@ -397,12 +425,10 @@ The same example using the Test Kit
 [source,java]
 .*isMockEndpointsAndSkip using camel-test kit*
 ----
-include::../../../../components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
+include::{examplesdir}/components/camel-test/src/test/java/org/apache/camel/test/patterns/IsMockEndpointsAndSkipJUnit4Test.java[tags=e1]
 ----
 
-=== Limiting the number of messages to keep
-
-*Available as of Camel 2.10*
+== Limiting the number of messages to keep
 
 The xref:mock-component.adoc[Mock] endpoints will by default keep a copy of every
 Exchange that it received. So if you test with a lot
@@ -435,9 +461,7 @@ methods that work on message bodies, headers, etc. will only operate on
 the retained messages. In the example above they can test only the
 expectations on the 10 retained messages.
 
-=== Testing with arrival times
-
-*Available as of Camel 2.7*
+== Testing with arrival times
 
 The xref:mock-component.adoc[Mock] endpoint stores the arrival time of the message
 as a property on the Exchange.
@@ -491,7 +515,3 @@ In the example above we use `seconds` as the time unit, but Camel offers
 `milliseconds`, and `minutes` as well.
 
 
-=== See Also
-
-* Spring Testing
-* Testing

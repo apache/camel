@@ -30,10 +30,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.jms.JmsBinding;
 
-/**
- * 
- */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public class ActiveMQMessageConverter {
     private JmsBinding binding = new JmsBinding();
 

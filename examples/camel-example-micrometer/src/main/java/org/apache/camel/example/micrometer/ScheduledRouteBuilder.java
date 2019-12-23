@@ -17,6 +17,7 @@
 package org.apache.camel.example.micrometer;
 
 import java.util.Random;
+
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.springframework.stereotype.Component;

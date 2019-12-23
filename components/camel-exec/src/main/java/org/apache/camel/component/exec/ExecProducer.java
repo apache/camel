@@ -18,6 +18,7 @@ package org.apache.camel.component.exec;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.exec.impl.DefaultExecCommandExecutor;
+import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -32,14 +33,18 @@ public class ExecProducer extends DefaultProducer {
 
     private final Logger log;
 
+    private final CamelLogger logger;
+
     private final ExecEndpoint endpoint;
 
     public ExecProducer(ExecEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
         this.log = LoggerFactory.getLogger(ExecProducer.class);
+        this.logger = new CamelLogger(log);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         ExecCommand execCommand = getBinding().readInput(exchange, endpoint);
 
@@ -49,11 +54,13 @@ public class ExecProducer extends DefaultProducer {
             executor = new DefaultExecCommandExecutor();
         }
 
-        log.info("Executing {}", execCommand);
+
+        logger.log(String.format("Executing %s", execCommand), execCommand.getCommandLogLevel());
+
         ExecResult result = executor.execute(execCommand);
 
         ObjectHelper.notNull(result, "The command executor must return a not-null result");
-        log.info("The command {} had exit value {}", execCommand, result.getExitValue());
+        logger.log(String.format("The command %s had exit value %s", execCommand, result.getExitValue()), execCommand.getCommandLogLevel());
         if (result.getExitValue() != 0) {
             log.error("The command {} returned exit value {}", execCommand, result.getExitValue());
         }

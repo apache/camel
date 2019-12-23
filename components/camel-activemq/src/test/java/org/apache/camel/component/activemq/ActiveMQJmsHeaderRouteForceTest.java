@@ -26,6 +26,7 @@ import org.apache.camel.component.jms.JmsMessage;
  */
 public class ActiveMQJmsHeaderRouteForceTest extends ActiveMQJmsHeaderRouteTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

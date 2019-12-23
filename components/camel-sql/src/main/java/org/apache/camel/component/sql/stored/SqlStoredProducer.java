@@ -38,6 +38,7 @@ public class SqlStoredProducer extends DefaultProducer {
         return (SqlStoredEndpoint) super.getEndpoint();
     }
 
+    @Override
     public void process(final Exchange exchange) throws Exception {
         StatementWrapper statementWrapper = createStatement(exchange);
         statementWrapper.call(new WrapperExecuteCallback() {

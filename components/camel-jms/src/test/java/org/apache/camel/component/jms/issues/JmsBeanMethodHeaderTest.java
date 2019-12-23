@@ -18,6 +18,7 @@ package org.apache.camel.component.jms.issues;
 
 import javax.jms.ConnectionFactory;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.Body;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -25,16 +26,19 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
- * Unit test for sending the bean method name as a key over the JMS wire, that we now support this.
+ * Unit test for sending the bean method name as a key over the JMS wire, that
+ * we now support this.
  */
 public class JmsBeanMethodHeaderTest extends CamelTestSupport {
+
+    @BindToRegistry("approveService")
+    private ApproveService service = new ApproveService();
 
     @Test
     public void testPlainHeader() throws Exception {
@@ -63,8 +67,7 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("Yes");
 
-        template.sendBodyAndHeader("direct:approve", ExchangePattern.InOut, "James",
-            Exchange.BEAN_METHOD_NAME, "approveLoan");
+        template.sendBodyAndHeader("direct:approve", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME, "approveLoan");
 
         mock.assertIsSatisfied();
     }
@@ -74,24 +77,24 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("Yes");
 
-        template.sendBodyAndHeader("activemq:approve", ExchangePattern.InOut, "James",
-            Exchange.BEAN_METHOD_NAME, "approveLoan");
+        template.sendBodyAndHeader("activemq:approve", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME, "approveLoan");
 
         mock.assertIsSatisfied();
     }
 
     @Test
     public void testUsingJMStoJMStoBean() throws Exception {
-        // the big one from jms to jms to test that we do not lost the bean method name
+        // the big one from jms to jms to test that we do not lost the bean
+        // method name
         MockEndpoint mock = getMockEndpoint("mock:approve");
         mock.expectedBodiesReceived("No");
 
-        template.sendBodyAndHeader("activemq:queue", ExchangePattern.InOut, "James",
-            Exchange.BEAN_METHOD_NAME, "approveSuperLoan");
+        template.sendBodyAndHeader("activemq:queue", ExchangePattern.InOut, "James", Exchange.BEAN_METHOD_NAME, "approveSuperLoan");
 
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -101,12 +104,7 @@ public class JmsBeanMethodHeaderTest extends CamelTestSupport {
         return camelContext;
     }
 
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry reg = super.createRegistry();
-        reg.bind("approveService", new ApproveService());
-        return reg;
-    }
-
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

@@ -22,7 +22,6 @@ import org.apache.camel.component.twitter.TwitterConstants;
 import org.apache.camel.component.twitter.TwitterEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
-
 import twitter4j.User;
 
 /**
@@ -39,6 +38,7 @@ public class DirectMessageProducer extends DefaultProducer {
         this.user = user;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         // send direct message
         String toUsername = user;

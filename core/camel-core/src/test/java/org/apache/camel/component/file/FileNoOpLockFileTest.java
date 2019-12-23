@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 
@@ -45,8 +46,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Locked");
 
-        template.sendBodyAndHeader("file:target/data/reports/locked", "Hello Locked",
-            Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file:target/data/reports/locked", "Hello Locked", Exchange.FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
 
@@ -62,8 +62,7 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:report");
         mock.expectedBodiesReceived("Hello Not Locked");
 
-        template.sendBodyAndHeader("file:target/data/reports/notlocked", "Hello Not Locked",
-            Exchange.FILE_NAME, "report.txt");
+        template.sendBodyAndHeader("file:target/data/reports/notlocked", "Hello Not Locked", Exchange.FILE_NAME, "report.txt");
 
         mock.assertIsSatisfied();
 
@@ -92,21 +91,21 @@ public class FileNoOpLockFileTest extends ContextTestSupport {
         assertEquals("Lock file should " + (expected ? "exists" : "not exists"), expected, file.exists());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // for locks
-                from("file://target/data/reports/locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile").process(new MyNoopProcessor()).
-                    to("mock:report");
+                from("file://target/data/reports/locked/?initialDelay=0&delay=10&noop=true&readLock=markerFile").process(new MyNoopProcessor()).to("mock:report");
 
                 // for no locks
-                from("file://target/data/reports/notlocked/?initialDelay=0&delay=10&noop=true&readLock=none").process(new MyNoopProcessor()).
-                    to("mock:report");
+                from("file://target/data/reports/notlocked/?initialDelay=0&delay=10&noop=true&readLock=none").process(new MyNoopProcessor()).to("mock:report");
             }
         };
     }
 
     private static class MyNoopProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             String body = exchange.getIn().getBody(String.class);
             boolean locked = "Hello Locked".equals(body);

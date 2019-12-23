@@ -34,8 +34,8 @@ import org.apache.camel.component.jmx.beans.SimpleBean;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.SimpleRegistry;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * MBean that is registered for the unit tests. The fixture will register a bean
@@ -69,7 +69,7 @@ public class SimpleBeanFixture {
     private MockEndpointFixture mMockEndpoint;
 
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         initServer();
         initBean();
@@ -82,7 +82,7 @@ public class SimpleBeanFixture {
         mContext.start();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (!mContext.isStopped()) {
             mContext.stop();

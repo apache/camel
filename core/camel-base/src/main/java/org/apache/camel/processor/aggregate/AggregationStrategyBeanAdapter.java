@@ -96,10 +96,12 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
         this.methodName = methodName;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

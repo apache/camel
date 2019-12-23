@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.google.pubsub.integration;
+
 import java.util.List;
 
 import org.apache.camel.Endpoint;
@@ -63,18 +64,10 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from(aggregator)
-                        .routeId("Group_Send")
-                        .aggregate(new GroupedExchangeAggregationStrategy())
-                        .constant(true)
-                        .completionSize(2)
-                        .completionTimeout(5000L)
-                        .to(topic)
-                        .to(sendResult);
+                from(aggregator).routeId("Group_Send").aggregate(new GroupedExchangeAggregationStrategy()).constant(true).completionSize(2).completionTimeout(5000L).to(topic)
+                    .to(sendResult);
 
-                from(pubsubSubscription)
-                        .routeId("Group_Receive")
-                        .to(receiveResult);
+                from(pubsubSubscription).routeId("Group_Receive").to(receiveResult);
 
             }
         };
@@ -110,9 +103,7 @@ public class GroupedExchangeRoundtripTest extends PubsubTestSupport {
         List<Exchange> results = sendResult.getExchanges();
         assertEquals("Received exchanges", 1, results.size());
 
-        List exchangeGrouped = (List) results
-                .get(0)
-                .getProperty(Exchange.GROUPED_EXCHANGE);
+        List exchangeGrouped = (List)results.get(0).getProperty(Exchange.GROUPED_EXCHANGE);
         assertEquals("Received messages within the exchange", 2, exchangeGrouped.size());
     }
 }

@@ -50,19 +50,17 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean showProperties;
     @UriParam(label = "formatting", description = "Show the message headers.")
     private boolean showHeaders;
-    @UriParam(label = "formatting", defaultValue = "true", description = "Whether to skip line separators when logging the message body." 
-    + "This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
+    @UriParam(label = "formatting", defaultValue = "true", description = "Whether to skip line separators when logging the message body."
+    + " This allows to log the message body in one line, setting this option to false will preserve any line separators from the body, which then will log the body as is.")
     private boolean skipBodyLineSeparator = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the message body.")
     private boolean showBody = true;
     @UriParam(label = "formatting", defaultValue = "true", description = "Show the body Java type.")
     private boolean showBodyType = true;
-    @UriParam(label = "formatting", description = "If the exchange has an out message, show the out message.")
-    private boolean showOut;
     @UriParam(label = "formatting", description = "If the exchange has an exception, show the exception message (no stacktrace)")
     private boolean showException;
-    @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace)." 
-    + "A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT and for instance a doCatch can catch exceptions.")
+    @UriParam(label = "formatting", description = "f the exchange has a caught exception, show the exception message (no stack trace)."
+    + " A caught exception is stored as a property on the exchange (using the key org.apache.camel.Exchange#EXCEPTION_CAUGHT) and for instance a doCatch can catch exceptions.")
     private boolean showCaughtException;
     @UriParam(label = "formatting", description = "Show the stack trace, if an exchange has an exception. Only effective if one of showAll, showException or showCaughtException are enabled.")
     private boolean showStackTrace;
@@ -84,15 +82,19 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     private String style(String label) {
         if (style == OutputStyle.Default) {
-            return String.format(", %s: ", label);
-        } 
-        if (style == OutputStyle.Tab) {
+            if (multiline) {
+                return String.format("  %s: ", label);
+            } else {
+                return String.format(", %s: ", label);
+            }
+        } else if (style == OutputStyle.Tab) {
             return String.format("\t%s: ", label);
         } else {
             return String.format("\t%-20s", label);
         }
     }
 
+    @Override
     public String format(Exchange exchange) {
         Message in = exchange.getIn();
 
@@ -166,39 +168,6 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                     exception.printStackTrace(new PrintWriter(sw));
                     sb.append(style("StackTrace")).append(sw.toString());
                 }
-            }
-        }
-
-        if (showAll || showOut) {
-            if (exchange.hasOut()) {
-                Message out = exchange.getOut();
-                if (showAll || showHeaders) {
-                    if (multiline) {
-                        sb.append(SEPARATOR);
-                    }
-                    sb.append(style("OutHeaders")).append(sortMap(filterHeaderAndProperties(out.getHeaders())));
-                }
-                if (showAll || showBodyType) {
-                    if (multiline) {
-                        sb.append(SEPARATOR);
-                    }
-                    sb.append(style("OutBodyType")).append(getBodyTypeAsString(out));
-                }
-                if (showAll || showBody) {
-                    if (multiline) {
-                        sb.append(SEPARATOR);
-                    }
-                    String body = getBodyAsString(out);
-                    if (skipBodyLineSeparator) {
-                        body = StringHelper.replaceAll(body, LS, "");
-                    }
-                    sb.append(style("OutBody")).append(body);
-                }
-            } else {
-                if (multiline) {
-                    sb.append(SEPARATOR);
-                }
-                sb.append(style("Out: null"));
             }
         }
 
@@ -311,17 +280,6 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
      */
     public void setShowBody(boolean showBody) {
         this.showBody = showBody;
-    }
-
-    public boolean isShowOut() {
-        return showOut;
-    }
-
-    /**
-     * If the exchange has an out message, show the out message.
-     */
-    public void setShowOut(boolean showOut) {
-        this.showOut = showOut;
     }
 
     public boolean isShowAll() {

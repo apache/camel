@@ -52,9 +52,8 @@ public abstract class AbstractApprovalIntegrationTest extends AbstractSalesforce
             return account;
         }).collect(Collectors.toList());
 
-        accountIds = accountsToCreate.stream().map(account -> template
-                .requestBody("salesforce:createSObject?sObjectName=Account", account, CreateSObjectResult.class))
-                .map(CreateSObjectResult::getId).collect(Collectors.toList());
+        accountIds = accountsToCreate.stream().map(account -> template.requestBody("salesforce:createSObject?sObjectName=Account", account, CreateSObjectResult.class))
+            .map(CreateSObjectResult::getId).collect(Collectors.toList());
     }
 
     @After
@@ -75,10 +74,9 @@ public abstract class AbstractApprovalIntegrationTest extends AbstractSalesforce
         // case where '+' is not used as a part of the username.
         final String wildcardUsername = userName.replace('+', '%');
 
-        final QueryRecordsReport results = template.requestBody(
-                "salesforce:query?sObjectClass=" + QueryRecordsReport.class.getName()//
-                    + "&sObjectQuery=SELECT Id FROM User WHERE Username LIKE '" + wildcardUsername + "'",
-                NOT_USED, QueryRecordsReport.class);
+        final QueryRecordsReport results = template.requestBody("salesforce:query?sObjectClass=" + QueryRecordsReport.class.getName()//
+                                                                + "&sObjectQuery=SELECT Id FROM User WHERE Username LIKE '" + wildcardUsername + "'", NOT_USED,
+                                                                QueryRecordsReport.class);
 
         userId = results.getRecords().get(0).getId();
     }

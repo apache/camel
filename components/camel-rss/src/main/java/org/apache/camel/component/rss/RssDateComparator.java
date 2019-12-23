@@ -23,6 +23,7 @@ import com.rometools.rome.feed.synd.SyndEntry;
 
 public class RssDateComparator implements Comparator<SyndEntry> {
 
+    @Override
     public int compare(SyndEntry s1, SyndEntry s2) {
         Date d1 = getUpdatedDate(s1);
         Date d2 = getUpdatedDate(s2);

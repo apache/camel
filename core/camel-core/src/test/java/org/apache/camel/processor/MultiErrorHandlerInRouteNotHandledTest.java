@@ -81,15 +81,9 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("direct:start")
-                    .errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).redeliveryDelay(0))
-                    .process(outer)
-                    .to("direct:outer");
+                from("direct:start").errorHandler(deadLetterChannel("mock:outer").maximumRedeliveries(1).redeliveryDelay(0)).process(outer).to("direct:outer");
 
-                from("direct:outer")
-                    .errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).redeliveryDelay(0))
-                    .process(inner)
-                    .to("mock:end");
+                from("direct:outer").errorHandler(deadLetterChannel("mock:inner").maximumRedeliveries(2).redeliveryDelay(0)).process(inner).to("mock:end");
             }
         };
     }
@@ -98,6 +92,7 @@ public class MultiErrorHandlerInRouteNotHandledTest extends ContextTestSupport {
 
         private String name;
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             if (name.equals("Error")) {
                 throw new IllegalArgumentException("Forced exception by unit test");

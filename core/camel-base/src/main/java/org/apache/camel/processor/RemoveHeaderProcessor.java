@@ -18,7 +18,6 @@ package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -37,8 +36,7 @@ public class RemoveHeaderProcessor extends AsyncProcessorSupport implements Trac
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            Message message = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
-            message.removeHeader(headerName);
+            exchange.getMessage().removeHeader(headerName);
         } catch (Exception e) {
             exchange.setException(e);
         }
@@ -52,14 +50,17 @@ public class RemoveHeaderProcessor extends AsyncProcessorSupport implements Trac
         return "RemoveHeader(" + headerName + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "removeHeader[" + headerName + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

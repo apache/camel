@@ -20,7 +20,7 @@ import com.twilio.type.PhoneNumber;
 import com.twilio.type.Sip;
 import org.apache.camel.Converter;
 
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class TwilioConverter {
 
     private TwilioConverter() {

@@ -28,7 +28,8 @@ public class SendingToAlotOfDifferentDirectEndpointTest extends ContextTestSuppo
 
         template.sendBody("seda:start", "Hello World");
 
-        // now create 1000 other endpoints to cause the first direct endpoint to vanish from the LRUCache
+        // now create 1000 other endpoints to cause the first direct endpoint to
+        // vanish from the LRUCache
         for (int i = 0; i < 1200; i++) {
             context.getEndpoint("direct:bar-" + i);
         }

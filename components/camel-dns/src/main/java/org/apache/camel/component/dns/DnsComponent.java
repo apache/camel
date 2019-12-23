@@ -74,6 +74,7 @@ public class DnsComponent extends DefaultComponent {
     public DnsComponent() {
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DnsType type = DnsType.valueOf(remaining);
         DnsEndpoint endpoint = new DnsEndpoint(uri, this);

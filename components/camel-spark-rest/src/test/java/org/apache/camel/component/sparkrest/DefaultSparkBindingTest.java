@@ -21,9 +21,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyMap;
-
 import javax.servlet.http.HttpServletRequest;
 
 import com.google.common.collect.ImmutableMap;
@@ -38,6 +35,8 @@ import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
 import spark.Request;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.emptyMap;
 import static org.apache.camel.Exchange.CONTENT_TYPE;
 import static org.apache.camel.Exchange.HTTP_METHOD;
 import static org.apache.camel.Exchange.HTTP_QUERY;
@@ -46,7 +45,6 @@ import static org.apache.camel.Exchange.HTTP_URL;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
 
 @RunWith(Theories.class)
 public class DefaultSparkBindingTest {
@@ -112,7 +110,6 @@ public class DefaultSparkBindingTest {
         String expectedHeaderValue;
         
         ExchangeHeaderScenario(Map<String, Object> headers, String expectedHeaderName, String expectedHeaderValue) {
-            super();
             this.expectedHeaderName = expectedHeaderName;
             this.expectedHeaderValue = expectedHeaderValue;
             

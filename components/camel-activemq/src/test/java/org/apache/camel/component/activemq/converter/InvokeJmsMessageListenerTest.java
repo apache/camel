@@ -53,6 +53,7 @@ public class InvokeJmsMessageListenerTest extends CamelTestSupport {
     protected static class MyMessageListener implements MessageListener {
         public Message message;
 
+        @Override
         public void onMessage(Message message) {
             this.message = message;
         }

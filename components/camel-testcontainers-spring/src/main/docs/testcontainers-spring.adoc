@@ -1,4 +1,4 @@
-== Testcontainers Spring
+= Testcontainers Spring
 
 *Available since 2.22.0*
 

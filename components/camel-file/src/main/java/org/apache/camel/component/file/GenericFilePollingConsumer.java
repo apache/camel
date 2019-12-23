@@ -115,7 +115,7 @@ public class GenericFilePollingConsumer extends EventDrivenPollingConsumer {
         Throwable cause = null;
         int polledMessages = 0;
         PollingConsumerPollStrategy pollStrategy = getConsumer().getPollStrategy();
-        boolean sendEmptyMessageWhenIdle = getConsumer() instanceof ScheduledBatchPollingConsumer && getConsumer().isSendEmptyMessageWhenIdle();
+        boolean sendEmptyMessageWhenIdle = getConsumer().isSendEmptyMessageWhenIdle();
         StopWatch watch = new StopWatch();
 
         while (!done) {

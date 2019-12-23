@@ -109,6 +109,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         }
     }
 
+    @Override
     protected HierarchicalStreamWriter createHierarchicalStreamWriter(Exchange exchange, Object body, OutputStream stream) throws XMLStreamException {
         updateCharactorEncodingInfo(exchange);
         if (getXstreamDriver() != null) {
@@ -118,6 +119,7 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         return new StaxWriter(new QNameMap(), xmlWriter);
     }
 
+    @Override
     protected HierarchicalStreamReader createHierarchicalStreamReader(Exchange exchange, InputStream stream) throws XMLStreamException {
         updateCharactorEncodingInfo(exchange);
         if (getXstreamDriver() != null) {

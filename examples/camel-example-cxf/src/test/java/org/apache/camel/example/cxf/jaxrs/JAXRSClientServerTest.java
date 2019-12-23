@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.example.cxf.jaxrs;
+
 import org.apache.camel.example.cxf.jaxrs.resources.Book;
 import org.apache.camel.example.cxf.jaxrs.resources.BookNotFoundFault;
 import org.apache.camel.example.cxf.jaxrs.resources.BookStore;
@@ -75,6 +76,7 @@ public class JAXRSClientServerTest extends CamelSpringTestSupport {
         return new ClassPathXmlApplicationContext(new String[]{"/META-INF/spring/JAXRSCamelContext.xml"});
     }
     
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();

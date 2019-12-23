@@ -18,8 +18,8 @@ package org.apache.camel.component.file.remote;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test to verify remotefile sort by option.
@@ -27,11 +27,11 @@ import org.junit.Test;
 public class FromFtpRemoteFileSortByNestedExpressionTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
-        return "ftp://admin@localhost:" + getPort() + "/sortbynested?password=admin&consumer.delay=5000";
+        return "ftp://admin@localhost:" + getPort() + "/sortbynested?password=admin&delay=5000";
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();

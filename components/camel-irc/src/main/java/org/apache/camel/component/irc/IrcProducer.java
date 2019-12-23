@@ -40,9 +40,10 @@ public class IrcProducer extends DefaultProducer {
         this.configuration = endpoint.getConfiguration();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         final String msg = exchange.getIn().getBody(String.class);
-        final String targetChannel = exchange.getIn().getHeader(IrcConstants.IRC_TARGET, String.class);
+        final String sendTo = exchange.getIn().getHeader(IrcConstants.IRC_SEND_TO, String.class);
 
         if (!connection.isConnected()) {
             throw new RuntimeCamelException("Lost connection to " + connection.getHost());
@@ -52,9 +53,9 @@ public class IrcProducer extends DefaultProducer {
             if (isMessageACommand(msg)) {
                 log.debug("Sending command: {}", msg);
                 connection.send(msg);
-            } else if (targetChannel != null) {
-                log.debug("Sending to: {} message: {}", targetChannel, msg);
-                connection.doPrivmsg(targetChannel, msg);
+            } else if (sendTo != null) {
+                log.debug("Sending to: {} message: {}", sendTo, msg);
+                connection.doPrivmsg(sendTo, msg);
             } else {
                 for (IrcChannel channel : endpoint.getConfiguration().getChannels()) {
                     log.debug("Sending to: {} message: {}", channel, msg);

@@ -23,4 +23,9 @@ public class SedaSpanDecorator extends AbstractInternalSpanDecorator {
         return "seda";
     }
 
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.seda.SedaComponent";
+    }
+
 }

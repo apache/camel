@@ -17,6 +17,7 @@
 package org.apache.camel.component.jms;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import javax.jms.ConnectionFactory;
@@ -31,9 +32,6 @@ import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.HeaderFilterStrategyComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.beans.BeansException;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.ApplicationContextAware;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.jms.connection.JmsTransactionManager;
 import org.springframework.jms.connection.UserCredentialsConnectionFactoryAdapter;
@@ -46,15 +44,14 @@ import org.springframework.util.ErrorHandler;
 import static org.apache.camel.util.StringHelper.removeStartingCharacters;
 
 /**
- * A <a href="http://activemq.apache.org/jms.html">JMS Component</a>
+ * JMS component which uses Spring JMS.
  */
 @Component("jms")
-public class JmsComponent extends HeaderFilterStrategyComponent implements ApplicationContextAware {
+public class JmsComponent extends HeaderFilterStrategyComponent {
 
     private static final String KEY_FORMAT_STRATEGY_PARAM = "jmsKeyFormatStrategy";
 
     private ExecutorService asyncStartStopExecutorService;
-    private ApplicationContext applicationContext;
 
     @Metadata(label = "advanced", description = "To use a shared JMS configuration")
     private JmsConfiguration configuration;
@@ -63,16 +60,23 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     @Metadata(label = "advanced", description = "To use the given MessageCreatedStrategy which are invoked when Camel creates new instances"
             + " of javax.jms.Message objects when Camel is sending a JMS message.")
     private MessageCreatedStrategy messageCreatedStrategy;
+    @Metadata(label = "advanced", description = "Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured."
+            + " If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.")
+    private boolean allowAutoWiredConnectionFactory = true;
+    @Metadata(label = "advanced", description = "Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured."
+            + " If only one instance of DestinationResolver is found then it will be used. This is enabled by default.")
+    private boolean allowAutoWiredDestinationResolver = true;
 
     public JmsComponent() {
+        this.configuration = createConfiguration();
     }
 
     public JmsComponent(CamelContext context) {
         super(context);
+        this.configuration = createConfiguration();
     }
 
     public JmsComponent(JmsConfiguration configuration) {
-        this();
         this.configuration = configuration;
     }
 
@@ -101,18 +105,18 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
      * Static builder method
      */
     public static JmsComponent jmsComponentClientAcknowledge(ConnectionFactory connectionFactory) {
-        JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setAcknowledgementMode(Session.CLIENT_ACKNOWLEDGE);
-        return jmsComponent(template);
+        JmsConfiguration configuration = new JmsConfiguration(connectionFactory);
+        configuration.setAcknowledgementMode(Session.CLIENT_ACKNOWLEDGE);
+        return jmsComponent(configuration);
     }
 
     /**
      * Static builder method
      */
     public static JmsComponent jmsComponentAutoAcknowledge(ConnectionFactory connectionFactory) {
-        JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);
-        return jmsComponent(template);
+        JmsConfiguration configuration = new JmsConfiguration(connectionFactory);
+        configuration.setAcknowledgementMode(Session.AUTO_ACKNOWLEDGE);
+        return jmsComponent(configuration);
     }
 
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory) {
@@ -123,62 +127,41 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
 
     public static JmsComponent jmsComponentTransacted(ConnectionFactory connectionFactory,
                                                       PlatformTransactionManager transactionManager) {
-        JmsConfiguration template = new JmsConfiguration(connectionFactory);
-        template.setTransactionManager(transactionManager);
-        template.setTransacted(true);
-        return jmsComponent(template);
+        JmsConfiguration configuration = new JmsConfiguration(connectionFactory);
+        configuration.setTransactionManager(transactionManager);
+        configuration.setTransacted(true);
+        return jmsComponent(configuration);
     }
 
     // Properties
     // -------------------------------------------------------------------------
 
     public JmsConfiguration getConfiguration() {
-        if (configuration == null) {
-            configuration = createConfiguration();
-
-            // If we are being configured with spring...
-            if (applicationContext != null) {
-
-                if (isAllowAutoWiredConnectionFactory()) {
-                    Map<String, ConnectionFactory> beansOfTypeConnectionFactory = applicationContext.getBeansOfType(ConnectionFactory.class);
-                    if (!beansOfTypeConnectionFactory.isEmpty()) {
-                        ConnectionFactory cf = beansOfTypeConnectionFactory.values().iterator().next();
-                        configuration.setConnectionFactory(cf);
-                    }
-                }
-
-                if (isAllowAutoWiredDestinationResolver()) {
-                    Map<String, DestinationResolver> beansOfTypeDestinationResolver = applicationContext.getBeansOfType(DestinationResolver.class);
-                    if (!beansOfTypeDestinationResolver.isEmpty()) {
-                        DestinationResolver destinationResolver = beansOfTypeDestinationResolver.values().iterator().next();
-                        configuration.setDestinationResolver(destinationResolver);
-                    }
-                }
-            }
-        }
         return configuration;
     }
 
     /**
-     * Subclasses can override to prevent the jms configuration from being
-     * setup to use an auto-wired the connection factory that's found in the spring
-     * application context.
-     *
-     * @return true by default
+     * Whether to auto-discover ConnectionFactory from the registry, if no connection factory has been configured.
+     * If only one instance of ConnectionFactory is found then it will be used. This is enabled by default.
      */
     public boolean isAllowAutoWiredConnectionFactory() {
-        return true;
+        return allowAutoWiredConnectionFactory;
+    }
+
+    public void setAllowAutoWiredConnectionFactory(boolean allowAutoWiredConnectionFactory) {
+        this.allowAutoWiredConnectionFactory = allowAutoWiredConnectionFactory;
     }
 
     /**
-     * Subclasses can override to prevent the jms configuration from being
-     * setup to use an auto-wired the destination resolved that's found in the spring
-     * application context.
-     *
-     * @return true by default
+     * Whether to auto-discover DestinationResolver from the registry, if no destination resolver has been configured.
+     * If only one instance of DestinationResolver is found then it will be used. This is enabled by default.
      */
     public boolean isAllowAutoWiredDestinationResolver() {
-        return true;
+        return allowAutoWiredDestinationResolver;
+    }
+
+    public void setAllowAutoWiredDestinationResolver(boolean allowAutoWiredDestinationResolver) {
+        this.allowAutoWiredDestinationResolver = allowAutoWiredDestinationResolver;
     }
 
     /**
@@ -233,16 +216,33 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
     }
 
     /**
+     * If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) (cannot be read/mapped),
+     * then set this text as the message body instead so the message can be processed
+     * (the cause of the poison are already stored as exception on the Exchange).
+     + This can be turned off by setting eagerPoisonBody=false.
+     * See also the option eagerLoadingOfProperties.
+     */
+    @Metadata(label = "consumer,advanced", defaultValue = "Poison JMS message due to ${exception.message}",
+            description = "If eagerLoadingOfProperties is enabled and the JMS message payload (JMS body or JMS properties) is poison (cannot be read/mapped),"
+                    + " then set this text as the message body instead so the message can be processed"
+                    + " (the cause of the poison are already stored as exception on the Exchange)."
+                    + " This can be turned off by setting eagerPoisonBody=false."
+                    + " See also the option eagerLoadingOfProperties.")
+    public void setEagerPoisonBody(String eagerPoisonBody) {
+        getConfiguration().setEagerPoisonBody(eagerPoisonBody);
+    }
+
+    /**
      * Enables eager loading of JMS properties as soon as a message is loaded
      * which generally is inefficient as the JMS properties may not be required
      * but sometimes can catch early any issues with the underlying JMS provider
-     * and the use of JMS properties
+     * and the use of JMS properties. See also the option eagerLoadingOfBody.
      */
     @Metadata(label = "consumer,advanced",
             description = "Enables eager loading of JMS properties as soon as a message is loaded"
                     + " which generally is inefficient as the JMS properties may not be required"
                     + " but sometimes can catch early any issues with the underlying JMS provider"
-                    + " and the use of JMS properties")
+                    + " and the use of JMS properties. See also the option eagerLoadingOfBody.")
     public void setEagerLoadingOfProperties(boolean eagerLoadingOfProperties) {
         getConfiguration().setEagerLoadingOfProperties(eagerLoadingOfProperties);
     }
@@ -817,7 +817,9 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
                     + " The following fields are transferred: In body, Out body, Fault body, In headers, Out headers, Fault headers,"
                     + " exchange properties, exchange exception."
                     + " This requires that the objects are serializable. Camel will exclude any non-serializable objects and log it at WARN level."
-                    + " You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload.")
+                    + " You must enable this option on both the producer and consumer side, so Camel knows the payloads is an Exchange and not a regular payload."
+                    + " Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level, "
+                    + " which forces a strong coupling between the producers and consumer having to use compatible Camel versions!")
     public void setTransferExchange(boolean transferExchange) {
         getConfiguration().setTransferExchange(transferExchange);
     }
@@ -831,6 +833,9 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
      * The caught exception is required to be serializable.
      * The original Exception on the consumer side can be wrapped in an outer exception
      * such as org.apache.camel.RuntimeCamelException when returned to the producer.
+     * Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level,
+     * which forces a strong coupling between the producers and consumer!
+     *
      */
     @Metadata(label = "advanced",
             description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed on the consumer side,"
@@ -840,27 +845,11 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
                     + " Notice that if you also have transferExchange enabled, this option takes precedence."
                     + " The caught exception is required to be serializable."
                     + " The original Exception on the consumer side can be wrapped in an outer exception"
-                    + " such as org.apache.camel.RuntimeCamelException when returned to the producer.")
+                    + " such as org.apache.camel.RuntimeCamelException when returned to the producer."
+                    + " Use this with caution as the data is using Java Object serialization and requires the received to be able to deserialize the data at Class level, "
+                    + " which forces a strong coupling between the producers and consumer!")
     public void setTransferException(boolean transferException) {
         getConfiguration().setTransferException(transferException);
-    }
-
-    /**
-     * If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,
-     * then the fault flag on {@link org.apache.camel.Message#isFault()} will be send back in the response as a JMS header with the key
-     * {@link JmsConstants#JMS_TRANSFER_FAULT}.
-     * If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}.
-     * <p/>
-     * You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.
-     */
-    @Metadata(label = "advanced",
-            description = "If enabled and you are using Request Reply messaging (InOut) and an Exchange failed with a SOAP fault (not exception) on the consumer side,"
-                    + " then the fault flag on Message#isFault() will be send back in the response as a JMS header with the key"
-                    + " org.apache.camel.component.jms.JmsConstants#JMS_TRANSFER_FAULT#JMS_TRANSFER_FAULT."
-                    + " If the client is Camel, the returned fault flag will be set on the {@link org.apache.camel.Message#setFault(boolean)}."
-                    + " You may want to enable this when using Camel components that support faults such as SOAP based such as cxf or spring-ws.")
-    public void setTransferFault(boolean transferFault) {
-        getConfiguration().setTransferFault(transferFault);
     }
 
     /**
@@ -1047,13 +1036,6 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
             + " You can specify multiple header names separated by comma, and use * as suffix for wildcard matching.")
     public void setAllowAdditionalHeaders(String allowAdditionalHeaders) {
         getConfiguration().setAllowAdditionalHeaders(allowAdditionalHeaders);
-    }
-
-    /**
-     * Sets the Spring ApplicationContext to use
-     */
-    public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
     }
 
     public QueueBrowseStrategy getQueueBrowseStrategy() {
@@ -1249,8 +1231,29 @@ public class JmsComponent extends HeaderFilterStrategyComponent implements Appli
 
     @Override
     protected void doStart() throws Exception {
+        // only attempt to set connection factory if there is no transaction manager
+        if (configuration.getConnectionFactory() == null && configuration.getOrCreateTransactionManager() == null && isAllowAutoWiredConnectionFactory()) {
+            Set<ConnectionFactory> beans = getCamelContext().getRegistry().findByType(ConnectionFactory.class);
+            if (beans.size() == 1) {
+                ConnectionFactory cf = beans.iterator().next();
+                configuration.setConnectionFactory(cf);
+            } else if (beans.size() > 1) {
+                log.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
+            }
+        }
+
+        if (configuration.getDestinationResolver() == null && isAllowAutoWiredDestinationResolver()) {
+            Set<DestinationResolver> beans = getCamelContext().getRegistry().findByType(DestinationResolver.class);
+            if (beans.size() == 1) {
+                DestinationResolver destinationResolver = beans.iterator().next();
+                configuration.setDestinationResolver(destinationResolver);
+            } else if (beans.size() > 1) {
+                log.debug("Cannot autowire ConnectionFactory as " + beans.size() + " instances found in registry.");
+            }
+        }
+
         if (getHeaderFilterStrategy() == null) {
-            setHeaderFilterStrategy(new JmsHeaderFilterStrategy(getConfiguration().isIncludeAllJMSXProperties()));
+            setHeaderFilterStrategy(new JmsHeaderFilterStrategy(configuration.isIncludeAllJMSXProperties()));
         }
     }
 

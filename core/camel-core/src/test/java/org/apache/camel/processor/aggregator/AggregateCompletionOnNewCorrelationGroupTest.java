@@ -44,17 +44,15 @@ public class AggregateCompletionOnNewCorrelationGroupTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .aggregate(header("id"), new MyAggregationStrategy())
-                        .completionOnNewCorrelationGroup()
-                        .completionSize(3)
-                    .to("log:aggregated", "mock:aggregated");
+                from("direct:start").aggregate(header("id"), new MyAggregationStrategy()).completionOnNewCorrelationGroup().completionSize(3).to("log:aggregated",
+                                                                                                                                                 "mock:aggregated");
             }
         };
     }
 
     public static class MyAggregationStrategy implements AggregationStrategy {
 
+        @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
             if (oldExchange == null) {
                 return newExchange;

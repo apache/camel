@@ -38,6 +38,7 @@ public class NagiosProducer extends DefaultProducer {
         this.sender = sender;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         String message = exchange.getIn().getBody(String.class);
 

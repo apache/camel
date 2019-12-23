@@ -75,7 +75,8 @@ public class DataFormatServiceTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                // marshal using our custom data format. (my is an instance of MyDataFormat)
+                // marshal using our custom data format. (my is an instance of
+                // MyDataFormat)
                 from("direct:a").marshal(my).to("mock:a");
 
                 // unmarshal using our custom data format.
@@ -90,18 +91,22 @@ public class DataFormatServiceTest extends ContextTestSupport {
 
         private CamelContext camelContext;
 
+        @Override
         public CamelContext getCamelContext() {
             return camelContext;
         }
 
+        @Override
         public void setCamelContext(CamelContext camelContext) {
             this.camelContext = camelContext;
         }
 
+        @Override
         public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
             stream.write("Hi Camel".getBytes());
         }
 
+        @Override
         public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
             return "Bye World";
         }

@@ -73,13 +73,15 @@ public class DynamicRouterExchangePropertiesTest extends ContextTestSupport {
      * Use this method to compute dynamic where we should route next.
      *
      * @param body the message body
-     * @param properties the exchange properties where we can store state between invocations
+     * @param properties the exchange properties where we can store state
+     *            between invocations
      * @return endpoints to go, or <tt>null</tt> to indicate the end
      */
     public String slip(String body, @ExchangeProperties Map<String, Object> properties) {
         bodies.add(body);
 
-        // get the state from the exchange properties and keep track how many times
+        // get the state from the exchange properties and keep track how many
+        // times
         // we have been invoked
         int invoked = 0;
         Object current = properties.get("invoked");

@@ -35,7 +35,6 @@ import org.openstack4j.model.identity.v3.Region;
 import org.openstack4j.model.network.Network;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -149,14 +148,6 @@ public class RegionProducerTest extends KeystoneProducerTestSupport {
 
         verify(regionService).delete(regionIdCaptor.capture());
         assertEquals(networkID, regionIdCaptor.getValue());
-        assertFalse(msg.isFault());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(regionService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failureMessage));
     }
 
     private void assertEqualsRegion(Region old, Region newRegion) {

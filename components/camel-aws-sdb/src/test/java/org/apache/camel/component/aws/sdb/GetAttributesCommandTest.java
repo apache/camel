@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.amazonaws.services.simpledb.model.Attribute;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;

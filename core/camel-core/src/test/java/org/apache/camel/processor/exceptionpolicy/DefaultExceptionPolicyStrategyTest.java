@@ -37,7 +37,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 /**
- * Unit test for DefaultExceptionPolicy 
+ * Unit test for DefaultExceptionPolicy
  */
 public class DefaultExceptionPolicyStrategyTest extends Assert {
 
@@ -82,7 +82,7 @@ public class DefaultExceptionPolicyStrategyTest extends Assert {
         policies.put(new ExceptionPolicyKey(null, IOException.class, null), type2);
         policies.put(new ExceptionPolicyKey(null, ConnectException.class, null), type3);
     }
-    
+
     private ExceptionPolicy findPolicy(Exception exception) {
         ExceptionPolicyKey key = strategy.getExceptionPolicy(policies.keySet(), null, exception);
         return policies.get(key);

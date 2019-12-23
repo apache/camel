@@ -23,7 +23,6 @@ import com.github.dockerjava.api.model.ExposedPort;
 import com.github.dockerjava.api.model.ExposedPorts;
 import com.github.dockerjava.api.model.Volume;
 import com.github.dockerjava.api.model.Volumes;
-
 import org.apache.camel.component.docker.DockerConstants;
 import org.apache.camel.component.docker.DockerOperation;
 import org.junit.Test;

@@ -160,23 +160,28 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         }
     }
 
+    @Override
     public void setTimeout(long timeout) {
         changed.setTimeout(timeout);
     }
 
+    @Override
     public void setCheckInterval(long checkInterval) {
         changed.setCheckInterval(checkInterval);
     }
 
+    @Override
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
         changed.setReadLockLoggingLevel(readLockLoggingLevel);
     }
 
+    @Override
     public void setMarkerFiler(boolean markerFile) {
         // we do not use marker files
     }
 
+    @Override
     public void setDeleteOrphanLockFiles(boolean deleteOrphanLockFiles) {
         // we do not use marker files
     }
@@ -189,10 +194,12 @@ public class FileIdempotentChangedRepositoryReadLockStrategy extends ServiceSupp
         changed.setMinAge(minAge);
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }

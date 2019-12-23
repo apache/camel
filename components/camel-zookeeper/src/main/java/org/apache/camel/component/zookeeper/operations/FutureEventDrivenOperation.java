@@ -22,12 +22,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
-import static java.lang.String.format;
-
 import org.apache.zookeeper.WatchedEvent;
 import org.apache.zookeeper.Watcher;
 import org.apache.zookeeper.Watcher.Event.EventType;
 import org.apache.zookeeper.ZooKeeper;
+
+import static java.lang.String.format;
 
 /**
  * <code>FutureEventDrivenOperation</code> uses ZooKeepers {@link Watcher}
@@ -47,6 +47,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         this.awaitedTypes = awaitedTypes;
     }
 
+    @Override
     public void process(WatchedEvent event) {
         this.event = event;
         EventType received = event.getType();
@@ -74,6 +75,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         }
     }
 
+    @Override
     public OperationResult<ResultType> get() throws InterruptedException, ExecutionException {
         installWatch();
         waitingThreads.add(Thread.currentThread());
@@ -81,6 +83,7 @@ public abstract class FutureEventDrivenOperation<ResultType> extends ZooKeeperOp
         return result;
     }
 
+    @Override
     public OperationResult<ResultType> get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
         installWatch();
         waitingThreads.add(Thread.currentThread());

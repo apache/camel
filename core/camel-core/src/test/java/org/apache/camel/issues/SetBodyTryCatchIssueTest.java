@@ -41,17 +41,10 @@ public class SetBodyTryCatchIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .setHeader("foo", constant("123"))
-                    .doTry()
-                        .setHeader("bar", constant("456"))
-                        .to("mock:bar")
-                        .bean(SetBodyTryCatchIssueTest.class, "doSomething")
+                from("direct:start").setHeader("foo", constant("123")).doTry().setHeader("bar", constant("456")).to("mock:bar").bean(SetBodyTryCatchIssueTest.class, "doSomething")
                     .doCatch(IllegalArgumentException.class)
-                        // empty block
-                    .end()
-                    .setBody(header("foo"))
-                    .to("mock:result");
+                    // empty block
+                    .end().setBody(header("foo")).to("mock:result");
             }
         };
     }
@@ -60,9 +53,11 @@ public class SetBodyTryCatchIssueTest extends ContextTestSupport {
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
         exchange.getOut().setBody("Bye World");
-        // we copy the headers by mistake by setting it as a reference from the IN
+        // we copy the headers by mistake by setting it as a reference from the
+        // IN
         // but we should ideally do as below instead
-        // but we want to let Camel handle this situation as well, otherwise headers may appear as lost
+        // but we want to let Camel handle this situation as well, otherwise
+        // headers may appear as lost
         // exchange.getOut().getHeaders().putAll(headers);
         exchange.getOut().setHeaders(headers);
 

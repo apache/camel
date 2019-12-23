@@ -60,10 +60,10 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     private String maximumRedeliveryDelay;
     @XmlAttribute
     @Metadata(defaultValue = "ERROR", description = "Sets the logging level to use for log messages when retries have been exhausted.")
-    private LoggingLevel retriesExhaustedLogLevel;
+    private String retriesExhaustedLogLevel;
     @XmlAttribute
     @Metadata(defaultValue = "DEBUG", description = "Sets the logging level to use for log messages when retries are attempted.")
-    private LoggingLevel retryAttemptedLogLevel;
+    private String retryAttemptedLogLevel;
     @XmlAttribute
     @Metadata(defaultValue = "0", description = "Sets the interval for log messages when retries are attempted.")
     private String retryAttemptedLogInterval;
@@ -107,6 +107,7 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
     @Metadata(description = "Sets the reference of the instance of {@link org.apache.camel.spi.ExchangeFormatter} to generate the log message from exchange.")
     private String exchangeFormatterRef;
 
+    @Override
     public RedeliveryPolicy getObject() throws Exception {
         RedeliveryPolicy answer = new RedeliveryPolicy();
         CamelContext context = getCamelContext();
@@ -124,10 +125,10 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
             }
         }
         if (retriesExhaustedLogLevel != null) {
-            answer.setRetriesExhaustedLogLevel(retriesExhaustedLogLevel);
+            answer.setRetriesExhaustedLogLevel(LoggingLevel.valueOf(retriesExhaustedLogLevel));
         }
         if (retryAttemptedLogLevel != null) {
-            answer.setRetryAttemptedLogLevel(retryAttemptedLogLevel);
+            answer.setRetryAttemptedLogLevel(LoggingLevel.valueOf(retryAttemptedLogLevel));
         }
         if (retryAttemptedLogInterval != null) {
             answer.setRetryAttemptedLogInterval(CamelContextHelper.parseInteger(context, retryAttemptedLogInterval));
@@ -192,6 +193,7 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         return answer;
     }
 
+    @Override
     public Class<RedeliveryPolicy> getObjectType() {
         return RedeliveryPolicy.class;
     }
@@ -260,19 +262,19 @@ public abstract class AbstractCamelRedeliveryPolicyFactoryBean extends AbstractC
         this.maximumRedeliveryDelay = maximumRedeliveryDelay;
     }
 
-    public LoggingLevel getRetriesExhaustedLogLevel() {
+    public String getRetriesExhaustedLogLevel() {
         return retriesExhaustedLogLevel;
     }
 
-    public void setRetriesExhaustedLogLevel(LoggingLevel retriesExhaustedLogLevel) {
+    public void setRetriesExhaustedLogLevel(String retriesExhaustedLogLevel) {
         this.retriesExhaustedLogLevel = retriesExhaustedLogLevel;
     }
 
-    public LoggingLevel getRetryAttemptedLogLevel() {
+    public String getRetryAttemptedLogLevel() {
         return retryAttemptedLogLevel;
     }
 
-    public void setRetryAttemptedLogLevel(LoggingLevel retryAttemptedLogLevel) {
+    public void setRetryAttemptedLogLevel(String retryAttemptedLogLevel) {
         this.retryAttemptedLogLevel = retryAttemptedLogLevel;
     }
 

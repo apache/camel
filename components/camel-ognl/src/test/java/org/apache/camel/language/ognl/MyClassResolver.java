@@ -25,6 +25,7 @@ public class MyClassResolver extends DefaultClassResolver {
         super(camelContext);
     }
 
+    @Override
     public Class<?> resolveClass(String name) {
         if (name.equals("org.apache.camel.language.ognl.Animal1")) {
             name = "org.apache.camel.language.ognl.Animal";

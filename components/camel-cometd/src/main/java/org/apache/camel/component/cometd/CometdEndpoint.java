@@ -86,12 +86,14 @@ public class CometdEndpoint extends DefaultEndpoint {
         }
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(component, "component");
         CometdProducer producer = new CometdProducer(this);
         return producer;
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         ObjectHelper.notNull(component, "component");
         CometdConsumer consumer = new CometdConsumer(this, processor);
@@ -107,6 +109,7 @@ public class CometdEndpoint extends DefaultEndpoint {
         component.disconnect(prodcons);
     }
 
+    @Override
     public CometdComponent getComponent() {
         return component;
     }

@@ -28,6 +28,7 @@ public class SpringManagedStatisticsLevelRoutesOnlyTest extends ManagedStatistic
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/ManagedStatisticsLevelRoutesOnlyTest.xml");
     }

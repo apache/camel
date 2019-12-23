@@ -69,6 +69,7 @@ public class RegistryBean implements BeanHolder {
         return new ConstantBeanHolder(bean, info);
     }
 
+    @Override
     public Object getBean() throws NoSuchBeanException {
         // must always lookup bean first
         Object value = lookupBean();
@@ -96,14 +97,17 @@ public class RegistryBean implements BeanHolder {
         return context.getInjector().newInstance(clazz);
     }
 
+    @Override
     public Processor getProcessor() {
         return null;
     }
 
+    @Override
     public boolean supportProcessor() {
         return false;
     }
 
+    @Override
     public BeanInfo getBeanInfo() {
         if (beanInfo == null) {
             Object bean = getBean();
@@ -112,6 +116,7 @@ public class RegistryBean implements BeanHolder {
         return beanInfo;
     }
 
+    @Override
     public BeanInfo getBeanInfo(Object bean) {
         return createBeanInfo(bean);
     }

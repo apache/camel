@@ -16,6 +16,7 @@
  */
 package org.apache.camel.main;
 
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.support.PatternHelper;
 
@@ -49,23 +50,35 @@ public abstract class DefaultConfigurationProperties<T> {
     private int streamCachingBufferSize;
     private boolean streamCachingRemoveSpoolDirectoryWhenStopping = true;
     private boolean streamCachingStatisticsEnabled;
+    private boolean backlogTracing;
     private boolean tracing;
+    private String tracingPattern;
     private boolean messageHistory = true;
     private boolean logMask;
     private boolean logExhaustedMessageBody;
-    private boolean handleFault;
     private boolean autoStartup = true;
     private boolean allowUseOriginalMessage;
     private boolean endpointRuntimeStatisticsEnabled;
+    private boolean endpointLazyStartProducer;
+    private boolean endpointBridgeErrorHandler;
+    private boolean endpointBasicPropertyBinding;
     private boolean useDataType;
     private boolean useBreadcrumb;
     private ManagementStatisticsLevel jmxManagementStatisticsLevel = ManagementStatisticsLevel.Default;
     private String jmxManagementNamePattern = "#name#";
     private boolean jmxCreateConnector;
     private boolean useMdcLogging;
+    private String mdcLoggingKeysPattern;
     private String threadNamePattern;
     private String routeFilterIncludePattern;
     private String routeFilterExcludePattern;
+    private boolean beanIntrospectionExtendedStatistics;
+    private LoggingLevel beanIntrospectionLoggingLevel;
+    private boolean routesCollectorEnabled = true;
+    private String javaRoutesIncludePattern;
+    private String javaRoutesExcludePattern;
+    private String xmlRoutes = "classpath:camel/*.xml";
+    private String xmlRests = "classpath:camel-rest/*.xml";
 
     // getter and setters
     // --------------------------------------------------------------
@@ -399,6 +412,33 @@ public abstract class DefaultConfigurationProperties<T> {
         this.tracing = tracing;
     }
 
+    public String getTracingPattern() {
+        return tracingPattern;
+    }
+
+    /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    public void setTracingPattern(String tracingPattern) {
+        this.tracingPattern = tracingPattern;
+    }
+
+    public boolean isBacklogTracing() {
+        return backlogTracing;
+    }
+
+    /**
+     * Sets whether backlog tracing is enabled or not.
+     *
+     * Default is false.
+     */
+    public void setBacklogTracing(boolean backlogTracing) {
+        this.backlogTracing = backlogTracing;
+    }
+
     public boolean isMessageHistory() {
         return messageHistory;
     }
@@ -436,19 +476,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
-    }
-
-    public boolean isHandleFault() {
-        return handleFault;
-    }
-
-    /**
-     * Sets whether fault handling is enabled or not.
-     *
-     * Default is false.
-     */
-    public void setHandleFault(boolean handleFault) {
-        this.handleFault = handleFault;
     }
 
     public boolean isAutoStartup() {
@@ -495,6 +522,53 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+    }
+
+    public boolean isEndpointLazyStartProducer() {
+        return endpointLazyStartProducer;
+    }
+
+    /**
+     * Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup
+     * in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then
+     * the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed
+     * then creating and starting the producer may take a little time and prolong the total processing time of the processing.
+     *
+     * The default value is false.
+     */
+    public void setEndpointLazyStartProducer(boolean endpointLazyStartProducer) {
+        this.endpointLazyStartProducer = endpointLazyStartProducer;
+    }
+
+    public boolean isEndpointBridgeErrorHandler() {
+        return endpointBridgeErrorHandler;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and
+     * handled by the routing Error Handler.
+     * <p/>
+     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,
+     * that will be logged at WARN/ERROR level and ignored.
+     *
+     * The default value is false.
+     */
+    public void setEndpointBridgeErrorHandler(boolean endpointBridgeErrorHandler) {
+        this.endpointBridgeErrorHandler = endpointBridgeErrorHandler;
+    }
+
+    public boolean isEndpointBasicPropertyBinding() {
+        return endpointBasicPropertyBinding;
+    }
+
+    /**
+     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities.
+     *
+     * The default value is false.
+     */
+    public void setEndpointBasicPropertyBinding(boolean endpointBasicPropertyBinding) {
+        this.endpointBasicPropertyBinding = endpointBasicPropertyBinding;
     }
 
     public boolean isUseDataType() {
@@ -574,6 +648,28 @@ public abstract class DefaultConfigurationProperties<T> {
         this.useMdcLogging = useMdcLogging;
     }
 
+    public String getMdcLoggingKeysPattern() {
+        return mdcLoggingKeysPattern;
+    }
+
+    /**
+     * Sets the pattern used for determine which custom MDC keys to propagate during message routing when
+     * the routing engine continues routing asynchronously for the given message. Setting this pattern to * will
+     * propagate all custom keys. Or setting the pattern to foo*,bar* will propagate any keys starting with
+     * either foo or bar.
+     * Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name.
+     *
+     * The match rules are applied in this order (case insensitive):
+     *
+     * 1. exact match, returns true
+     * 2. wildcard match (pattern ends with a * and the name starts with the pattern), returns true
+     * 3. regular expression match, returns true
+     * 4. otherwise returns false
+     */
+    public void setMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
+        this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
+    }
+
     public String getThreadNamePattern() {
         return threadNamePattern;
     }
@@ -637,6 +733,126 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public void setRouteFilterExcludePattern(String exclude) {
         this.routeFilterExcludePattern = exclude;
+    }
+
+    public boolean isBeanIntrospectionExtendedStatistics() {
+        return beanIntrospectionExtendedStatistics;
+    }
+
+    /**
+     * Sets whether bean introspection uses extended statistics.
+     * The default is false.
+     */
+    public void setBeanIntrospectionExtendedStatistics(boolean beanIntrospectionExtendedStatistics) {
+        this.beanIntrospectionExtendedStatistics = beanIntrospectionExtendedStatistics;
+    }
+
+    public LoggingLevel getBeanIntrospectionLoggingLevel() {
+        return beanIntrospectionLoggingLevel;
+    }
+
+    /**
+     * Sets the logging level used by bean introspection, logging activity of its usage.
+     * The default is TRACE.
+     */
+    public void setBeanIntrospectionLoggingLevel(LoggingLevel beanIntrospectionLoggingLevel) {
+        this.beanIntrospectionLoggingLevel = beanIntrospectionLoggingLevel;
+    }
+
+    public boolean isRoutesCollectorEnabled() {
+        return routesCollectorEnabled;
+    }
+
+    /**
+     * Whether the routes collector is enabled or not.
+     * 
+     * When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and
+     * also load additional XML routes from the file system.
+     *
+     * The routes collector is default enabled.
+     */
+    public void setRoutesCollectorEnabled(boolean routesCollectorEnabled) {
+        this.routesCollectorEnabled = routesCollectorEnabled;
+    }
+
+    public String getJavaRoutesIncludePattern() {
+        return javaRoutesIncludePattern;
+    }
+
+    /**
+     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     *
+     * Multiple patterns can be specified separated by comma.
+     * For example to include all classes starting with Foo use: &#42;&#42;/Foo*
+     * To include all routes form a specific package use: com/mycompany/foo/&#42;
+     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
+     * And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42;
+     */
+    public void setJavaRoutesIncludePattern(String javaRoutesIncludePattern) {
+        this.javaRoutesIncludePattern = javaRoutesIncludePattern;
+    }
+
+    public String getJavaRoutesExcludePattern() {
+        return javaRoutesExcludePattern;
+    }
+
+    /**
+     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     * Multiple patterns can be specified separated by comma.
+     *
+     * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42;
+     * To exclude all routes form a specific package use: com/mycompany/bar/&#42;
+     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
+     * And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42;
+     */
+    public void setJavaRoutesExcludePattern(String javaRoutesExcludePattern) {
+        this.javaRoutesExcludePattern = javaRoutesExcludePattern;
+    }
+
+    public String getXmlRoutes() {
+        return xmlRoutes;
+    }
+
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
+     * as if you specific the exact name for each XML file is faster as no classpath scanning is needed.
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public void setXmlRoutes(String xmlRoutes) {
+        this.xmlRoutes = xmlRoutes;
+    }
+
+    public String getXmlRests() {
+        return xmlRests;
+    }
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
+     * as if you specific the exact name for each XML file is faster as no classpath scanning is needed.
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public void setXmlRests(String xmlRests) {
+        this.xmlRests = xmlRests;
     }
 
     // fluent builders
@@ -894,6 +1110,16 @@ public abstract class DefaultConfigurationProperties<T> {
     }
 
     /**
+     * Sets whether backlog tracing is enabled or not.
+     *
+     * Default is false.
+     */
+    public T withBacklogTracing(boolean backlogTracing) {
+        this.backlogTracing = backlogTracing;
+        return (T) this;
+    }
+
+    /**
      * Sets whether message history is enabled or not.
      *
      * Default is true.
@@ -920,16 +1146,6 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withLogExhaustedMessageBody(boolean logExhaustedMessageBody) {
         this.logExhaustedMessageBody = logExhaustedMessageBody;
-        return (T) this;
-    }
-
-    /**
-     * Sets whether fault handling is enabled or not.
-     *
-     * Default is false.
-     */
-    public T withHandleFault(boolean handleFault) {
-        this.handleFault = handleFault;
         return (T) this;
     }
 
@@ -967,6 +1183,44 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withEndpointRuntimeStatisticsEnabled(boolean endpointRuntimeStatisticsEnabled) {
         this.endpointRuntimeStatisticsEnabled = endpointRuntimeStatisticsEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup
+     * in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then
+     * the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed
+     * then creating and starting the producer may take a little time and prolong the total processing time of the processing.
+     *
+     * The default value is false.
+     */
+    public T withEndpointLazyStartProducer(boolean endpointLazyStartProducer) {
+        this.endpointLazyStartProducer = endpointLazyStartProducer;
+        return (T) this;
+    }
+
+    /**
+     * Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while
+     * the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and
+     * handled by the routing Error Handler.
+     * <p/>
+     * By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions,
+     * that will be logged at WARN/ERROR level and ignored.
+     *
+     * The default value is false.
+     */
+    public T withEndpointBridgeErrorHandler(boolean endpointBridgeErrorHandler) {
+        this.endpointBridgeErrorHandler = endpointBridgeErrorHandler;
+        return (T) this;
+    }
+
+    /**
+     * Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities.
+     *
+     * The default value is false.
+     */
+    public T withEndpointBasicPropertyBinding(boolean endpointBasicPropertyBinding) {
+        this.endpointBasicPropertyBinding = endpointBasicPropertyBinding;
         return (T) this;
     }
 
@@ -1082,6 +1336,135 @@ public abstract class DefaultConfigurationProperties<T> {
      */
     public T withRouteFilterExcludePattern(String routeFilterExcludePattern) {
         this.routeFilterExcludePattern = routeFilterExcludePattern;
+        return (T) this;
+    }
+
+    /**
+     * Sets whether bean introspection uses extended statistics.
+     * The default is false.
+     */
+    public T withBeanIntrospectionExtendedStatistics(boolean beanIntrospectionExtendedStatistics) {
+        this.beanIntrospectionExtendedStatistics = beanIntrospectionExtendedStatistics;
+        return (T) this;
+    }
+
+    /**
+     * Sets the logging level used by bean introspection, logging activity of its usage.
+     * The default is TRACE.
+     */
+    public T withBeanIntrospectionLoggingLevel(LoggingLevel beanIntrospectionLoggingLevel) {
+        this.beanIntrospectionLoggingLevel = beanIntrospectionLoggingLevel;
+        return (T) this;
+    }
+
+    /**
+     * Tracing pattern to match which node EIPs to trace.
+     * For example to match all To EIP nodes, use to*.
+     * The pattern matches by node and route id's
+     * Multiple patterns can be separated by comma.
+     */
+    public T withTracingPattern(String tracingPattern) {
+        this.tracingPattern = tracingPattern;
+        return (T) this;
+    }
+
+    /**
+     * Sets the pattern used for determine which custom MDC keys to propagate during message routing when
+     * the routing engine continues routing asynchronously for the given message. Setting this pattern to * will
+     * propagate all custom keys. Or setting the pattern to foo*,bar* will propagate any keys starting with
+     * either foo or bar.
+     * Notice that a set of standard Camel MDC keys are always propagated which starts with camel. as key name.
+     *
+     * The match rules are applied in this order (case insensitive):
+     *
+     * 1. exact match, returns true
+     * 2. wildcard match (pattern ends with a * and the name starts with the pattern), returns true
+     * 3. regular expression match, returns true
+     * 4. otherwise returns false
+     */
+    public T withMdcLoggingKeysPattern(String mdcLoggingKeysPattern) {
+        this.mdcLoggingKeysPattern = mdcLoggingKeysPattern;
+        return (T) this;
+    }
+
+    /**
+     * Whether the routes collector is enabled or not.
+     *
+     * When enabled Camel will auto-discover routes (RouteBuilder instances from the registry and
+     * also load additional XML routes from the file system.
+     *
+     * The routes collector is default enabled.
+     */
+    public T withRoutesCollectorEnabled(boolean routesCollectorEnabled) {
+        this.routesCollectorEnabled = routesCollectorEnabled;
+        return (T) this;
+    }
+
+    /**
+     * Used for inclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     *
+     * Multiple patterns can be specified separated by comma.
+     * For example to include all classes starting with Foo use: &#42;&#42;/Foo*
+     * To include all routes form a specific package use: com/mycompany/foo/&#42;
+     * To include all routes form a specific package and its sub-packages use double wildcards: com/mycompany/foo/&#42;&#42;
+     * And to include all routes from two specific packages use: com/mycompany/foo/&#42;,com/mycompany/stuff/&#42;
+     */
+    public T withJavaRoutesIncludePattern(String javaRoutesIncludePattern) {
+        this.javaRoutesIncludePattern = javaRoutesIncludePattern;
+        return (T) this;
+    }
+
+    /**
+     * Used for exclusive filtering component scanning of RouteBuilder classes with @Component annotation.
+     * The exclusive filtering takes precedence over inclusive filtering.
+     * The pattern is using Ant-path style pattern.
+     * Multiple patterns can be specified separated by comma.
+     *
+     * For example to exclude all classes starting with Bar use: &#42;&#42;/Bar&#42;
+     * To exclude all routes form a specific package use: com/mycompany/bar/&#42;
+     * To exclude all routes form a specific package and its sub-packages use double wildcards: com/mycompany/bar/&#42;&#42;
+     * And to exclude all routes from two specific packages use: com/mycompany/bar/&#42;,com/mycompany/stuff/&#42;
+     */
+    public T withJavaRoutesExcludePattern(String javaRoutesExcludePattern) {
+        this.javaRoutesExcludePattern = javaRoutesExcludePattern;
+        return (T) this;
+    }
+
+    /**
+     * Directory to scan for adding additional XML routes.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
+     * as if you specific the exact name for each XML file is faster as no classpath scanning is needed.
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public T withXmlRoutes(String xmlRoutes) {
+        this.xmlRoutes = xmlRoutes;
+        return (T) this;
+    }
+
+    /**
+     * Directory to scan for adding additional XML rests.
+     * You can turn this off by setting the value to false.
+     *
+     * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
+     *
+     * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
+     * as if you specific the exact name for each XML file is faster as no classpath scanning is needed.
+     *
+     * Multiple directories can be specified and separated by comma, such as:
+     * file:/myapp/mycamel/&#42;.xml,file:/myapp/myothercamel/&#42;.xml
+     */
+    public T withXmlRests(String xmlRests) {
+        this.xmlRests = xmlRests;
         return (T) this;
     }
 }

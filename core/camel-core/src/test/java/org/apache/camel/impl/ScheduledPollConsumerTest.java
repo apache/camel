@@ -58,7 +58,8 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
 
         assertEquals("Should have rollback", true, rollback);
 
-        // prepare for 2nd run but this time it should not thrown an exception on poll
+        // prepare for 2nd run but this time it should not thrown an exception
+        // on poll
         rollback = false;
         consumer.setExceptionToThrowOnPoll(null);
         // start it again and we should be able to run
@@ -69,7 +70,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
 
         assertEquals("Should not have rollback", false, rollback);
     }
-    
+
     @Test
     public void testRetryAtMostThreeTimes() throws Exception {
         counter = 0;
@@ -115,7 +116,7 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         final Endpoint endpoint = getMockEndpoint("mock:foo");
         MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, null);
         consumer.start();
-        consumer.run(); 
+        consumer.run();
         consumer.stop();
     }
 

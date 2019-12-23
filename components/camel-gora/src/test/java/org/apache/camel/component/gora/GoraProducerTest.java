@@ -70,6 +70,7 @@ public class GoraProducerTest extends GoraTestSupport {
     @Mock
     private DataStore<Object, Persistent> mockDatastore;
 
+    @Override
     @Before
     public void setUp()  {
         //setup mocks

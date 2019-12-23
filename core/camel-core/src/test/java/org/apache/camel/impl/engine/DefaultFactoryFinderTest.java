@@ -19,19 +19,16 @@ package org.apache.camel.impl.engine;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.List;
 
-import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.Injector;
 import org.junit.Test;
 
-import static org.hamcrest.Matchers.matchesPattern;
-import static org.hamcrest.core.IsCollectionContaining.hasItem;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -57,20 +54,13 @@ public class DefaultFactoryFinderTest {
 
         final String properties = "class=" + TestImplA.class.getName();
 
-        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA"))
-                .thenReturn(new ByteArrayInputStream(properties.getBytes()));
+        when(classResolver.loadResourceAsStream("/org/apache/camel/impl/TestImplA")).thenReturn(new ByteArrayInputStream(properties.getBytes()));
 
         when(classResolver.resolveClass(TestImplA.class.getName())).thenReturn(null);
 
         final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(classResolver, TEST_RESOURCE_PATH);
 
-        try {
-            factoryFinder.findClass("TestImplA", null);
-            fail("Should have thrown ClassNotFoundException");
-        } catch (final ClassNotFoundException e) {
-            assertEquals(TestImplA.class.getName(), e.getMessage());
-        }
-
+        assertFalse(factoryFinder.findClass("TestImplA", null).isPresent());
     }
 
     @Test
@@ -81,24 +71,16 @@ public class DefaultFactoryFinderTest {
         when(injector.newInstance(TestImplA.class, false)).thenReturn(expected);
 
         try {
-            factoryFinder.newInstances("TestImplA", injector, TestImplB.class);
-            fail("ClassCastException should have been thrown");
-        } catch (final ClassCastException e) {
-            final String message = e.getMessage();
-            assertThat(message,
-                    matchesPattern("Not instanceof org\\.apache\\.camel\\.impl\\.engine\\.DefaultFactoryFinderTest\\$TestImplB "
-                        + "value: org\\.apache\\.camel\\.impl\\.engine\\.DefaultFactoryFinderTest\\$TestImplA.*"));
+            factoryFinder.newInstance("TestImplA", TestImplB.class);
+            fail("Exception should have been thrown");
+        } catch (Exception e) {
+            assertTrue(e instanceof ClassCastException);
         }
     }
 
     @Test
     public void shouldComplainIfUnableToCreateNewInstances() throws ClassNotFoundException, IOException {
-        try {
-            factoryFinder.newInstance("TestImplX");
-            fail("NoFactoryAvailableException should have been thrown");
-        } catch (final NoFactoryAvailableException e) {
-            assertEquals("Cannot find factory class for resource: TestImplX", e.getMessage());
-        }
+        assertFalse(factoryFinder.newInstance("TestImplX").isPresent());
     }
 
     @Test
@@ -106,36 +88,21 @@ public class DefaultFactoryFinderTest {
         try {
             factoryFinder.findClass("TestImplNoProperty");
             fail("NoFactoryAvailableException should have been thrown");
-        } catch (final IOException e) {
-            assertEquals("Expected property is missing: class", e.getMessage());
+        } catch (Exception e) {
+            assertEquals("Expected property is missing: class", e.getCause().getMessage());
         }
     }
 
     @Test
     public void shouldCreateNewInstances() throws ClassNotFoundException, IOException {
-        final Object instance = factoryFinder.newInstance("TestImplA");
+        final Object instance = factoryFinder.newInstance("TestImplA").get();
 
         assertThat(instance, instanceOf(TestImplA.class));
     }
 
     @Test
-    public void shouldCreateNewInstancesWithInjector() throws ClassNotFoundException, IOException {
-        final Injector injector = mock(Injector.class);
-
-        final TestImplA expected = new TestImplA();
-        when(injector.newInstance(TestImplA.class, false)).thenReturn(expected);
-
-        final List<TestType> instances = factoryFinder.newInstances("TestImplA", injector, TestType.class);
-
-        assertEquals(1, instances.size());
-        assertThat(instances, hasItem(expected));
-
-        assertSame(expected, instances.get(0));
-    }
-
-    @Test
     public void shouldFindSingleClass() throws ClassNotFoundException, IOException {
-        final Class<?> clazz = factoryFinder.findClass("TestImplA");
+        final Class<?> clazz = factoryFinder.findClass("TestImplA").orElse(null);
 
         assertEquals(TestImplA.class, clazz);
     }
@@ -145,28 +112,27 @@ public class DefaultFactoryFinderTest {
         final DefaultFactoryFinder factoryFinder = new DefaultFactoryFinder(null, null);
         factoryFinder.addToClassMap("prefixkey", () -> TestImplA.class);
 
-        final Class<?> clazz = factoryFinder.findClass("key", "prefix");
+        final Class<?> clazz = factoryFinder.findClass("key", "prefix").orElse(null);
 
         assertEquals(TestImplA.class, clazz);
     }
 
     @Test
     public void shouldFindSingleClassWithPropertyPrefix() throws ClassNotFoundException, IOException {
-        final Class<?> clazz = factoryFinder.findClass("TestImplA", "prefix.");
+        final Class<?> clazz = factoryFinder.findClass("TestImplA", "prefix.").orElse(null);
 
         assertEquals(TestImplA.class, clazz);
     }
 
     @Test
     public void shouldFindSingleClassWithPropertyPrefixAndExpectedType() throws ClassNotFoundException, IOException {
-        final Class<?> clazz = factoryFinder.findClass("TestImplA", "prefix.", TestType.class);
+        final Class<?> clazz = factoryFinder.findClass("TestImplA", "prefix.", TestType.class).orElse(null);
 
         assertEquals(TestImplA.class, clazz);
     }
 
     URL urlFor(final Class<?> clazz) {
-        final String resourceName = clazz.getPackage().getName().replace('.', '/') + "/" + clazz.getSimpleName()
-            + ".properties";
+        final String resourceName = clazz.getPackage().getName().replace('.', '/') + "/" + clazz.getSimpleName() + ".properties";
         final ClassLoader classLoader = clazz.getClassLoader();
 
         return classLoader.getResource(resourceName);

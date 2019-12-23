@@ -24,18 +24,19 @@ import org.junit.Test;
 public class RegExRouteTest extends ContextTestSupport {
     String orignalBody = "Foo and another Foo";
     String expectedBody = "Bar and another Bar";
-    
+
     @Test
     public void testSendingMessage() throws Exception {
         MockEndpoint result = getMockEndpoint("mock:result");
-        
+
         result.expectedBodiesReceived(expectedBody);
-        
+
         template.sendBody("direct:start", orignalBody);
-        
+
         result.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

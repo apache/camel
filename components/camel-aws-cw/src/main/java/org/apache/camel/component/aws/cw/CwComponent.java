@@ -20,13 +20,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.amazonaws.services.cloudwatch.AmazonCloudWatch;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 @Component("aws-cw")
 public class CwComponent extends DefaultComponent {
@@ -46,38 +44,33 @@ public class CwComponent extends DefaultComponent {
 
     public CwComponent(CamelContext context) {
         super(context);
-        
-        this.configuration = new CwConfiguration();
         registerExtension(new CwComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        CwConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
-
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("Metric namespace must be specified.");
         }
+
+        CwConfiguration configuration = this.configuration != null ? this.configuration.copy() : new CwConfiguration();
         configuration.setNamespace(remaining);
 
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        CwEndpoint endpoint = new CwEndpoint(uri, this, configuration);
+        // set component level options before overriding from endpoint parameters
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
+
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonCwClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonCwClient or accessKey and secretKey must be specified");
         }
 
-        CwEndpoint endpoint = new CwEndpoint(uri, this, configuration);
         return endpoint;
     }
-    
+
     public CwConfiguration getConfiguration() {
         return configuration;
     }
@@ -90,36 +83,36 @@ public class CwComponent extends DefaultComponent {
     }
 
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
-    
+
+    public String getRegion() {
+        return region;
+    }
+
     /**
      * The region in which CW client needs to work
      */
-    public String getRegion() {
-        return configuration.getRegion();
-    }
-
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
     
     private void checkAndSetRegistryClient(CwConfiguration configuration) {

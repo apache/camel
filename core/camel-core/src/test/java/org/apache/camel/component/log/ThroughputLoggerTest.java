@@ -36,7 +36,7 @@ public class ThroughputLoggerTest extends ContextTestSupport {
             }
         });
         context.start();
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(4);
 
@@ -63,7 +63,7 @@ public class ThroughputLoggerTest extends ContextTestSupport {
         for (int i = 0; i < 20; i++) {
             template.sendBody("seda:in", "Hello World");
         }
-        
+
         assertMockEndpointsSatisfied();
     }
 }

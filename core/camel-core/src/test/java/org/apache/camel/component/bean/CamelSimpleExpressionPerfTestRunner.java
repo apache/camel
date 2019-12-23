@@ -27,9 +27,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 public final class CamelSimpleExpressionPerfTestRunner {
     private static final int MESSAGE_LOOP_COUNT = 1000;
     private static final int TEST_EXECUTION_COUNT = 5;
-    
+
     private CamelSimpleExpressionPerfTestRunner() {
-        //Utils class
+        // Utils class
     }
 
     public static void main(String[] args) throws Exception {

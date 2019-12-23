@@ -28,6 +28,7 @@ public class SpringManagedRouteRemoveRouteScopedErrorHandlerTest extends Managed
         return true;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/management/SpringManagedRouteRemoveRouteScopedErrorHandlerTest.xml");
     }

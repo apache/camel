@@ -35,6 +35,7 @@ public final class ReflectionHelper {
     /**
      * Callback interface invoked on each field in the hierarchy.
      */
+    @FunctionalInterface
     public interface FieldCallback {
 
         /**
@@ -48,6 +49,7 @@ public final class ReflectionHelper {
     /**
      * Action to take on each method.
      */
+    @FunctionalInterface
     public interface MethodCallback {
 
         /**
@@ -61,6 +63,7 @@ public final class ReflectionHelper {
     /**
      * Action to take on each class.
      */
+    @FunctionalInterface
     public interface ClassCallback {
 
         /**

@@ -18,6 +18,7 @@ package org.apache.camel.spring.remoting;
 
 public class EchoService implements Echo {
 
+    @Override
     public String echo(String name) {
         if (name.startsWith("Kabom")) {
             throw new MyEchoRuntimeException("Damn something went wrong");

@@ -58,14 +58,17 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         this.camelContext = camelContext;
     }
 
+    @Override
     public void setScheduledExecutorService(ScheduledExecutorService executorService) {
         this.executorService = executorService;
     }
 
+    @Override
     public void setEndpoint(RabbitMQEndpoint endpoint) {
         this.endpoint = endpoint;
     }
 
+    @Override
     public void setReplyTo(String replyTo) {
         log.debug("ReplyTo destination: {}", replyTo);
         this.replyTo = replyTo;
@@ -73,6 +76,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         replyToLatch.countDown();
     }
 
+    @Override
     public String getReplyTo() {
         if (replyTo != null) {
             return replyTo;
@@ -94,6 +98,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         return replyTo;
     }
 
+    @Override
     public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout) {
         // add to correlation map
@@ -112,6 +117,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                                                        String originalCorrelationId, String correlationId, long requestTimeout);
     
 
+    @Override
     public void cancelCorrelationId(String correlationId) {
         ReplyHandler handler = correlation.get(correlationId);
         if (handler != null) {
@@ -134,6 +140,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         handleReplyMessage(correlationID, properties, message);
     }
 
+    @Override
     public void processReply(ReplyHolder holder) {
         if (holder != null && isRunAllowed()) {
             try {

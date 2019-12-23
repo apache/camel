@@ -19,8 +19,8 @@ package org.apache.camel.component.redis;
 import java.util.Collection;
 import java.util.Iterator;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,19 +40,13 @@ import static org.mockito.Mockito.verify;
 public class RedisConsumerTest extends CamelTestSupport {
 
     @Mock
+    @BindToRegistry("listenerContainer")
     private RedisMessageListenerContainer listenerContainer;
 
     @Captor
     private ArgumentCaptor<Collection<ChannelTopic>> collectionCaptor;
     @Captor
     private ArgumentCaptor<MessageListener> messageListenerCaptor;
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("listenerContainer", listenerContainer);
-        return registry;
-    }
 
     @Test
     public void registerConsumerForTwoChannelTopics() throws Exception {
@@ -68,6 +62,7 @@ public class RedisConsumerTest extends CamelTestSupport {
         assertEquals("two", twoTopic.getTopic());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

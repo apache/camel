@@ -46,18 +46,6 @@ public enum ExchangePattern {
         }
     }
 
-    /**
-     * Return true if there can be a FAULT message
-     */
-    public boolean isFaultCapable() {
-        switch (this) {
-        case InOnly:
-            return false;
-        default:
-            return true;
-        }
-    }
-
     public static ExchangePattern asEnum(String value) {
         try {
             return valueOf(value);

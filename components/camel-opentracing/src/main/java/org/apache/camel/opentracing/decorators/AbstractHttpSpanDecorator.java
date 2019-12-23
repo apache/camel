@@ -20,6 +20,7 @@ import io.opentracing.Span;
 import io.opentracing.tag.Tags;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 
 public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
 
@@ -93,12 +94,12 @@ public abstract class AbstractHttpSpanDecorator extends AbstractSpanDecorator {
     public void post(Span span, Exchange exchange, Endpoint endpoint) {
         super.post(span, exchange, endpoint);
 
-        if (exchange.hasOut()) {
-            Object responseCode = exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE);
-            if (responseCode instanceof Integer) {
-                span.setTag(Tags.HTTP_STATUS.getKey(), (Integer) responseCode);
+        Message message = exchange.getMessage();
+        if (message != null) {
+            Integer responseCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+            if (responseCode != null) {
+                span.setTag(Tags.HTTP_STATUS.getKey(), responseCode);
             }
         }
     }
-
 }

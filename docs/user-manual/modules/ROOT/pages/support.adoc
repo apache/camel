@@ -1,5 +1,5 @@
 [[Support-GettingHelp]]
-=== Getting Help
+= Getting Help
 
 If you are experiencing problems using Camel then please report your
 problem to our mailing list. This allows the entire community to help
@@ -9,8 +9,7 @@ http://issues.apache.org/jira/browse/CAMEL[Issue Tracker]. Please
 refrain from immediately opening a ticket in the issue tracker unless
 you are certain it's a problem in the Camel software. If you are in
 doubt, we appreciate asking the
-xref:mailing-lists.adoc[mailing list],
-xref:irc-room.adoc[IRC chat], or
+xref:mailing-lists.adoc[mailing list], or
 https://gitter.im/apache/apache-camel[Gitter chat] first.
 
 [TIP]
@@ -24,8 +23,7 @@ bullets advised there first.
 *Reporting bugs - Please read this first*
 
 We prefer people to get in touch first using the
-xref:mailing-lists.adoc[mailing list],
-xref:irc-room.adoc[IRC chat] or
+xref:mailing-lists.adoc[mailing list], or
 https://gitter.im/apache/apache-camel[Gitter chat]. Or take time to read
 xref:faq.adoc[FAQs], or search in the mailing list archives to find answers.
 Unfortunately some people create a JIRA ticket as first thing. *Please
@@ -40,11 +38,11 @@ Also on the mailing lists there are more people active to help you better.
 * xref:faq.adoc[FAQ]
 
 [[Support-Alternativediscussionforums]]
-==== Alternative discussion forums
+== Alternative discussion forums
 
 There are a number of sites outside Apache that offer discussion forums on
 Camel. For example, http://stackoverflow.com/[Stack Overflow] is a
-popular Q & A site with a
+popular Q & A site with a
 http://stackoverflow.com/questions/tagged/apache-camel[dedicated Apache
 Camel forum]. You are also likely to find helpful discussions on
 technical blogs, on
@@ -52,16 +50,16 @@ https://www.google.com/search?q=apache+camel[Google], or even on
 https://twitter.com/search?q=apache%20camel[Twitter].
 
 [[Support-Usingdeprecatedcomponents]]
-==== Using deprecated components
+== Using deprecated components
 
-Deprecated components are *not* supported and issues such as bugs may
+Deprecated components are *not* supported and issues such as bugs may
 not be fixed. We encourage users to migrate away from using any
 deprecated component. A list of deprecated components is on the
 github page at:
 https://github.com/apache/camel/tree/master/components#components
 
 [[Support-Howtogethelp]]
-==== How to get help
+== How to get help
 
 Before you report a problem, you may wish to read the
 xref:faq.adoc[FAQ].
@@ -99,18 +97,18 @@ tracker] to see if the issue has already been reported
 * do *not* send private emails to Camel xref:team.adoc[Team] members to
 ask them to help you faster, or in the private only. Help on Apache
 Camel is volunteer based and *must* happen in the *open* on the public
-xref:mailing-lists.adoc[Mailing Lists]. If you want to get help faster
+xref:mailing-lists.adoc[Mailing Lists]. If you want to get help faster
 or in private, then see further below.
 
 [[Support-Howtogethelpfaster]]
-==== How to get help faster
+== How to get help faster
 
 We can help you much quicker if you try the following:
 
 * provide us with a JUnit test case that demonstrates your issue. e.g.
 if you think you've found a bug, can you create a test case to
 demonstrate the bug?
-* xref:../../../CONTRIBUTING.md[submit a patch] fixing the
+* xref:contributing.adoc[submit a patch] fixing the
 bug! (We also buy you beer when we meet you if you submit bug fixes
 :smile:)
 * for memory leak or performance related issues, if you can run a
@@ -124,7 +122,7 @@ leaks it's quicker to resolve if you can tell us what classes are taking
 up all of the RAM; we can normally figure out what's wrong from that.
 
 [[Support-CommercialSupport]]
-==== Commercial Support
+== Commercial Support
 
 This is an open source project, so the amount of time we have available
 to help resolve your issue is often limited as all help is provided on a

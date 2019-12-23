@@ -31,7 +31,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 
-
 public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
         
     protected static final String ECHO_RESPONSE = "<ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
@@ -59,6 +58,7 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
     }
 
     // START SNIPPET: payload
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

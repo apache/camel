@@ -30,8 +30,6 @@ import org.apache.camel.wsdl_first.types.UnknownPersonFault;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.staxutils.StaxUtils;
 
-
-
 public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultTest {
     
     protected static final String DETAILS = "<detail></detail>";
@@ -51,7 +49,6 @@ public class CxfConsumerPayLoadMarshalFaultTest extends CxfConsumerPayloadFaultT
                         context.createMarshaller().marshal(unknowPersonFault, details);
                         fault.setDetail(details);
                         exchange.getOut().setBody(fault);
-                        exchange.getOut().setFault(true);
                     }
                 });
                 

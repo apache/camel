@@ -24,7 +24,7 @@ import org.junit.Test;
  *
  */
 public class SplitterPropertyContinuedTest extends ContextTestSupport {
-    
+
     @Test
     public void testSplitterPropertyContinued() throws Exception {
         getMockEndpoint("mock:end").expectedBodiesReceived("A,Kaboom,B,C");
@@ -33,9 +33,9 @@ public class SplitterPropertyContinuedTest extends ContextTestSupport {
         getMockEndpoint("mock:error").message(0).exchangeProperty("errorCode").isEqualTo("ERR-1");
         getMockEndpoint("mock:split").expectedBodiesReceived("A", "B", "C");
         getMockEndpoint("mock:split").allMessages().exchangeProperty("errorCode").isNull();
-        
+
         template.sendBody("direct:start", "A,Kaboom,B,C");
-        
+
         assertMockEndpointsSatisfied();
     }
 
@@ -44,26 +44,11 @@ public class SplitterPropertyContinuedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .continued(true)
-                    .setProperty("errorCode", constant("ERR-1"));
+                onException(Exception.class).continued(true).setProperty("errorCode", constant("ERR-1"));
 
-                from("direct:start")
-                    .split(body())
-                        .log("Step #1 - Body: ${body} with error code: ${exchangeProperty.errorCode}")
-                        .choice()
-                            .when(body().contains("Kaboom"))
-                                .throwException(new IllegalArgumentException("Damn"))
-                        .end()
-                        .log("Step #2 - Body: ${body} with error code: ${exchangeProperty.errorCode}")
-                        .choice()
-                            .when(simple("${exchangeProperty.errorCode} != null"))
-                                .to("mock:error")
-                            .otherwise()
-                                .to("mock:split")
-                        .end()
-                    .end()
-                    .to("mock:end");
+                from("direct:start").split(body()).log("Step #1 - Body: ${body} with error code: ${exchangeProperty.errorCode}").choice().when(body().contains("Kaboom"))
+                    .throwException(new IllegalArgumentException("Damn")).end().log("Step #2 - Body: ${body} with error code: ${exchangeProperty.errorCode}").choice()
+                    .when(simple("${exchangeProperty.errorCode} != null")).to("mock:error").otherwise().to("mock:split").end().end().to("mock:end");
             }
         };
     }

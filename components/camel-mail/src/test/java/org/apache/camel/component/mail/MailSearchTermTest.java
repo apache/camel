@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
@@ -22,9 +23,9 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.mail.search.SearchTerm;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,9 @@ import org.jvnet.mock_javamail.Mailbox;
 import static org.apache.camel.component.mail.SearchTermBuilder.Op;
 
 public class MailSearchTermTest extends CamelTestSupport {
+
+    @BindToRegistry("myTerm")
+    private SearchTerm term = createSearchTerm();
 
     @Override
     @Before
@@ -47,13 +51,6 @@ public class MailSearchTermTest extends CamelTestSupport {
         build.unseen().subject("Camel").body(Op.or, "Camel");
 
         return build.build();
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myTerm", createSearchTerm());
-        return jndi;
     }
 
     @Test
@@ -119,10 +116,11 @@ public class MailSearchTermTest extends CamelTestSupport {
         folder.close(true);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("pop3://bill@localhost?password=secret&searchTerm=#myTerm&consumer.initialDelay=100&consumer.delay=100").to("mock:result");
+                from("pop3://bill@localhost?password=secret&searchTerm=#myTerm&initialDelay=100&delay=100").to("mock:result");
             }
         };
     }

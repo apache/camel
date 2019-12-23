@@ -38,10 +38,12 @@ public class QNameStrategy implements ElementNameStrategy {
     /**
      * @return preset element name
      */
+    @Override
     public QName findQNameForSoapActionOrType(String soapAction, Class<?> type) {
         return elementName;
     }
 
+    @Override
     public Class<? extends Exception> findExceptionForFaultName(QName faultName) {
         throw new UnsupportedOperationException("Exception lookup is not supported for QNameStrategy");
     }

@@ -59,10 +59,11 @@ public class StompConsumerTest extends StompBaseTest {
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("stomp:test")
+                fromF("stomp:test?brokerURL=tcp://localhost:%s", getPort())
                         .transform(body().convertToString())
                         .to("mock:result");
             }

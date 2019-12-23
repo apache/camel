@@ -224,6 +224,7 @@ public class JavaClass {
         return properties;
     }
 
+    @Override
     public String toString() {
         return "JavaClass[" + getCanonicalName() + "]";
     }
@@ -418,9 +419,14 @@ public class JavaClass {
         sb2.append(indent);
         if (method.isPublic) {
             sb2.append("public ");
+        } else if (method.isProtected) {
+            sb2.append("protected ");
         }
         if (method.isDefault) {
             sb2.append("default ");
+        }
+        if (method.isStatic) {
+            sb2.append("static ");
         }
         if (!method.isConstructor) {
             sb2.append(method.returnType != null ? shortName(method.returnType) : "void");

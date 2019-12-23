@@ -1,7 +1,12 @@
 [[fop-component]]
-== FOP Component
+= FOP Component
+:page-source: components/camel-fop/src/main/docs/fop-component.adoc
 
-*Available as of Camel version 2.10*
+*Since Camel 2.10*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The FOP component allows you to render a message into different output
 formats using http://xmlgraphics.apache.org/fop/index.html[Apache FOP].
@@ -19,14 +24,14 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### URI format
+== URI format
 
-[source,java]
+[source,text]
 ----------------------------
 fop://outputFormat?[options]
 ----------------------------
 
-### Output Formats
+== Output Formats
 
 The primary output format is PDF but other output
 http://xmlgraphics.apache.org/fop/0.95/output.html[formats] are also
@@ -57,21 +62,21 @@ supported:
 |TXT |text/plain |Text
 |=======================================================================
 
-The complete list of valid output formats can be found
-http://svn.apache.org/repos/asf/xmlgraphics/commons/trunk/src/java/org/apache/xmlgraphics/util/MimeConstants.java[here]
+The complete list of valid output formats can be found in the `MimeConstants.java` source file.
 
-### Endpoint Options
+== Endpoint Options
 
 // component options: START
-The FOP component supports 2 options, which are listed below.
+The FOP component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -86,7 +91,7 @@ fop:outputType
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -96,7 +101,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (5 parameters):
+=== Query Parameters (5 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -110,14 +115,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-fop-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -125,7 +130,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -133,8 +138,9 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.fop.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
-| *camel.component.fop.enabled* | Enable fop component | true | Boolean
-| *camel.component.fop.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.fop.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.fop.enabled* | Whether to enable auto configuration of the fop component. This is enabled by default. |  | Boolean
+| *camel.component.fop.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -147,14 +153,7 @@ default. You can use `file:`, or `classpath:` as prefix to load the
 resource from file or classpath. In previous releases the file is always
 loaded from file system.
 
-fopFactory
-
- 
-
-Allows to use a custom configured or implementation of
-`org.apache.fop.apps.FopFactory`.
-
-### Message Operations
+== Message Operations
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -189,7 +188,7 @@ Allows to use a custom configured or implementation of
 |CamelFop.Render.keywords |  | Set of keywords applicable to this document
 |=======================================================================
 
-### Example
+== Example
 
 Below is an example route that renders PDFs from xml data and xslt
 template and saves the PDF files in target folder:
@@ -202,11 +201,3 @@ from("file:source/data/xml")
     .to("file:target/data");
 ---------------------------------
 
-For more information, see these resources...
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

@@ -34,6 +34,7 @@ import org.junit.Test;
 
 public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
 
+    @Override
     protected String[] getApplicationContextFiles() {
         CXFTestSupport.getPort1();
         return new String[]{"org/apache/camel/component/cxf/spring/CxfEndpointBeansRouter.xml"};
@@ -97,9 +98,9 @@ public class CxfEndpointBeansRouterTest extends AbstractSpringBeanTestSupport {
         assertEquals("Got a wrong address", "http://localhost:9000/testEndpoint", testEndpoint.getAddress());
         assertEquals("Got a wrong bindingId", "http://schemas.xmlsoap.org/wsdl/soap12/", testEndpoint.getBindingId());
         assertEquals("Got a wrong transportId", "http://cxf.apache.org/transports/http", testEndpoint.getTransportId());
-        assertEquals("Got a wrong endpointName", endpointName, testEndpoint.getPortName());
+        assertEquals("Got a wrong endpointName", endpointName, testEndpoint.getPortNameAsQName());
         assertEquals("Got a wrong WsdlURL", "wsdl/test.wsdl", testEndpoint.getWsdlURL());
-        assertEquals("Got a wrong serviceName", serviceName, testEndpoint.getServiceName());
+        assertEquals("Got a wrong serviceName", serviceName, testEndpoint.getServiceNameAsQName());
     }
    
 }

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -46,16 +47,15 @@ public class FileConsumerPreMoveLastModifiedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10&keepLastModified=true")
-                        .process(new LastModifiedCheckerProcessor())
-                        .log("Got file ${file:name} modified=${file:modified}")
-                        .to("mock:result");
+                from("file://target/data/premove?preMove=work/work-${file:name}&initialDelay=0&delay=10&keepLastModified=true").process(new LastModifiedCheckerProcessor())
+                    .log("Got file ${file:name} modified=${file:modified}").to("mock:result");
             }
         };
     }
 
     private static class LastModifiedCheckerProcessor implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             assertTrue(exchange.getIn().getHeader(Exchange.FILE_LAST_MODIFIED, Long.class) > 0L);
             assertTrue(exchange.getIn().getHeader(Exchange.FILE_LENGTH, Long.class) > 0L);

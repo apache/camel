@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.snmp;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
 import java.util.concurrent.TimeoutException;
 
 import org.apache.camel.Exchange;
@@ -42,19 +45,21 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
  * A snmp producer
  */
 public class SnmpProducer extends DefaultProducer {
-   
+
     private SnmpEndpoint endpoint;
-    
+
     private Address targetAddress;
     private USM usm;
     private CommunityTarget target;
+    private SnmpActionType actionType;
     private PDU pdu;
-    
-    public SnmpProducer(SnmpEndpoint endpoint) {
+
+    public SnmpProducer(SnmpEndpoint endpoint, SnmpActionType actionType) {
         super(endpoint);
         this.endpoint = endpoint;
+        this.actionType = actionType;
     }
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
@@ -64,7 +69,7 @@ public class SnmpProducer extends DefaultProducer {
 
         this.usm = new USM(SecurityProtocols.getInstance(), new OctetString(MPv3.createLocalEngineID()), 0);
         SecurityModels.getInstance().addSecurityModel(this.usm);
-        
+
         // setting up target
         this.target = new CommunityTarget();
         this.target.setCommunity(new OctetString(endpoint.getSnmpCommunity()));
@@ -74,16 +79,23 @@ public class SnmpProducer extends DefaultProducer {
         this.target.setVersion(this.endpoint.getSnmpVersion());
 
         this.pdu = new PDU();
-        for (OID oid : this.endpoint.getOids()) {
-            this.pdu.add(new VariableBinding(oid));
+        // in here,only POLL do set the oids
+        if (this.actionType == SnmpActionType.POLL) {
+            for (OID oid : this.endpoint.getOids()) {
+                this.pdu.add(new VariableBinding(oid));
+            }
         }
         this.pdu.setErrorIndex(0);
         this.pdu.setErrorStatus(0);
         this.pdu.setMaxRepetitions(0);
-        this.pdu.setType(PDU.GET);
-        
+        // support POLL and GET_NEXT
+        if (this.actionType == SnmpActionType.GET_NEXT) {
+            this.pdu.setType(PDU.GETNEXT);
+        } else {
+            this.pdu.setType(PDU.GET);
+        }
     }
-    
+
     @Override
     protected void doStop() throws Exception {
         super.doStop();
@@ -97,7 +109,7 @@ public class SnmpProducer extends DefaultProducer {
             this.pdu = null;
         }
     }
-    
+
     @Override
     public void process(final Exchange exchange) throws Exception {
         // load connection data only if the endpoint is enabled
@@ -106,7 +118,7 @@ public class SnmpProducer extends DefaultProducer {
 
         try {
             log.debug("Starting SNMP producer on {}", this.endpoint.getAddress());
-            
+
             // either tcp or udp
             if ("tcp".equals(this.endpoint.getProtocol())) {
                 transport = new DefaultTcpTransportMapping();
@@ -115,28 +127,67 @@ public class SnmpProducer extends DefaultProducer {
             } else {
                 throw new IllegalArgumentException("Unknown protocol: " + this.endpoint.getProtocol());
             }
-    
+
             snmp = new Snmp(transport);
-            
+
             log.debug("Snmp: i am sending");
-    
+
             snmp.listen();
-            ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
-            
-            log.debug("Snmp: sended");
-    
-            if (responseEvent.getResponse() != null) {
-                exchange.getIn().setBody(new SnmpMessage(getEndpoint().getCamelContext(), responseEvent.getResponse()));
+
+            if (this.actionType == SnmpActionType.GET_NEXT) {
+                // snmp walk
+                List<SnmpMessage> smLst = new ArrayList<>();
+                for (OID oid : this.endpoint.getOids()) {
+                    this.pdu.clear();
+                    this.pdu.add(new VariableBinding(oid));
+
+                    boolean matched = true;
+                    while (matched) {
+                        ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
+                        if (responseEvent == null || responseEvent.getResponse() == null) {
+                            break;
+                        }
+                        PDU response = responseEvent.getResponse();
+                        String nextOid = null;
+                        Vector<? extends VariableBinding> variableBindings = response.getVariableBindings();
+                        for (int i = 0; i < variableBindings.size(); i++) {
+                            VariableBinding variableBinding = variableBindings.elementAt(i);
+                            nextOid = variableBinding.getOid().toDottedString();
+                            if (!nextOid.startsWith(oid.toDottedString())) {
+                                matched = false;
+                                break;
+                            }
+                        }
+                        if (!matched) {
+                            break;
+                        }
+                        this.pdu.clear();
+                        pdu.add(new VariableBinding(new OID(nextOid)));
+                        smLst.add(new SnmpMessage(getEndpoint().getCamelContext(), response));
+                    }
+                }
+                exchange.getIn().setBody(smLst);
             } else {
-                throw new TimeoutException("SNMP Producer Timeout");
+                // snmp get
+                ResponseEvent responseEvent = snmp.send(this.pdu, this.target);
+
+                log.debug("Snmp: sended");
+
+                if (responseEvent.getResponse() != null) {
+                    exchange.getIn().setBody(new SnmpMessage(getEndpoint().getCamelContext(), responseEvent.getResponse()));
+                } else {
+                    throw new TimeoutException("SNMP Producer Timeout");
+                }
             }
         } finally {
             try {
-                transport.close(); 
-            } catch (Exception e) { }
+                transport.close();
+            } catch (Exception e) {
+            }
             try {
-                snmp.close(); 
-            } catch (Exception e) { }
+                snmp.close();
+            } catch (Exception e) {
+            }
         }
     } //end process
 }

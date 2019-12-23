@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.bean;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -64,11 +65,7 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         MockEndpoint mock = getMockEndpoint("mock:queue:order");
         mock.expectedBodiesReceived("77889,667,457");
 
-        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" 
-                + "<order id=\"77889\">" 
-                +    "<customer id=\"667\"/>" 
-                +    "<confirm>457</confirm>" 
-                + "</order>";
+        String xml = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + "<order id=\"77889\">" + "<customer id=\"667\"/>" + "<confirm>457</confirm>" + "</order>";
         template.sendBody("seda:xml", xml);
 
         assertMockEndpointsSatisfied();
@@ -79,13 +76,9 @@ public class BeanChoseMethodWithMatchingTypeAndSkipSettersTest extends ContextTe
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/data/file/order?initialDelay=0&delay=10")
-                    .bean("orderService")
-                    .to("mock:queue:order");
+                from("file://target/data/file/order?initialDelay=0&delay=10").bean("orderService").to("mock:queue:order");
 
-                from("seda:xml")
-                    .bean("orderService")
-                    .to("mock:queue:order");
+                from("seda:xml").bean("orderService").to("mock:queue:order");
             }
         };
     }

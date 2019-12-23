@@ -40,14 +40,66 @@ public interface ChatScriptEndpointBuilderFactory {
             return (AdvancedChatScriptEndpointBuilder) this;
         }
         /**
+         * Username who initializes the CS conversation. To be set when chat is
+         * initialized from camel route.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: producer
+         */
+        default ChatScriptEndpointBuilder chatUserName(String chatUserName) {
+            doSetProperty("chatUserName", chatUserName);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ChatScriptEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ChatScriptEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
          * Issues :reset command to start a new conversation everytime.
          * 
          * The option is a: <code>boolean</code> type.
          * 
-         * Group: reset
+         * Group: producer
          */
-        default ChatScriptEndpointBuilder resetchat(boolean resetchat) {
-            setProperty("resetchat", resetchat);
+        default ChatScriptEndpointBuilder resetChat(boolean resetChat) {
+            doSetProperty("resetChat", resetChat);
             return this;
         }
         /**
@@ -55,22 +107,10 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
-         * Group: reset
+         * Group: producer
          */
-        default ChatScriptEndpointBuilder resetchat(String resetchat) {
-            setProperty("resetchat", resetchat);
-            return this;
-        }
-        /**
-         * Username who initializes the CS conversation. To be set when chat is
-         * initialized from camel route.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: username
-         */
-        default ChatScriptEndpointBuilder chatUserName(String chatUserName) {
-            setProperty("chatUserName", chatUserName);
+        default ChatScriptEndpointBuilder resetChat(String resetChat) {
+            doSetProperty("resetChat", resetChat);
             return this;
         }
     }
@@ -94,7 +134,7 @@ public interface ChatScriptEndpointBuilderFactory {
          */
         default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -107,7 +147,7 @@ public interface ChatScriptEndpointBuilderFactory {
          */
         default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -120,7 +160,7 @@ public interface ChatScriptEndpointBuilderFactory {
          */
         default AdvancedChatScriptEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -132,7 +172,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -141,10 +181,10 @@ public interface ChatScriptEndpointBuilderFactory {
      * Represents a ChatScript endpoint.
      * 
      * Category: ai,chatscript
-     * Available as of version: 3.0
+     * Since: 3.0
      * Maven coordinates: org.apache.camel:camel-chatscript
      * 
-     * Syntax: <code>chatscript:host:port/botname</code>
+     * Syntax: <code>chatscript:host:port/botName</code>
      * 
      * Path parameter: host (required)
      * Hostname or IP of the server on which CS server is running
@@ -156,7 +196,7 @@ public interface ChatScriptEndpointBuilderFactory {
      * Path parameter: botName (required)
      * Name of the Bot in CS to converse with
      */
-    default ChatScriptEndpointBuilder chatScript(String path) {
+    default ChatScriptEndpointBuilder chatscript(String path) {
         class ChatScriptEndpointBuilderImpl extends AbstractEndpointBuilder implements ChatScriptEndpointBuilder, AdvancedChatScriptEndpointBuilder {
             public ChatScriptEndpointBuilderImpl(String path) {
                 super("chatscript", path);

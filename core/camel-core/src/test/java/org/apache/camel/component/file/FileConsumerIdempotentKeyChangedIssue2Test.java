@@ -42,7 +42,8 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
         resetMocks();
         getMockEndpoint("mock:file").expectedBodiesReceived("Hello World Again");
 
-        // wait a bit to allow the consumer to poll once and see a non-changed file
+        // wait a bit to allow the consumer to poll once and see a non-changed
+        // file
         Thread.sleep(50);
 
         template.sendBodyAndHeader(endpoint, "Hello World Again", Exchange.FILE_NAME, "hello.txt");
@@ -55,13 +56,9 @@ public class FileConsumerIdempotentKeyChangedIssue2Test extends ContextTestSuppo
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                endpoint = endpoint("file:target/data/changed?noop=true&initialDelay=0&delay=10"
-                        + "&idempotentKey=${file:name}-${file:size}-${file:modified}");
+                endpoint = endpoint("file:target/data/changed?noop=true&initialDelay=0&delay=10" + "&idempotentKey=${file:name}-${file:size}-${file:modified}");
 
-                from(endpoint).noAutoStartup()
-                    .convertBodyTo(String.class)
-                    .to("log:file")
-                    .to("mock:file");
+                from(endpoint).noAutoStartup().convertBodyTo(String.class).to("log:file").to("mock:file");
             }
         };
     }

@@ -43,10 +43,12 @@ public class IntegerFormatFactory extends AbstractFormatFactory {
 
     private static class IntegerFormat extends AbstractNumberFormat<Integer> {
 
+        @Override
         public String format(Integer object) throws Exception {
             return object.toString();
         }
 
+        @Override
         public Integer parse(String string) throws Exception {
             return new Integer(string);
         }

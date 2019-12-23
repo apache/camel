@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.cometd;
 
-import java.io.File;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -58,7 +58,7 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
 
     private RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
-            public void configure() {
+            public void configure() throws URISyntaxException {
                 CometdComponent component = (CometdComponent) context.getComponent("cometds");
                 component.setSslPassword(pwd);
                 component.setSslKeyPassword(pwd);
@@ -68,8 +68,7 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
                 component2.setSecurityPolicy(bayeuxAuthenticator);
                 component2.addExtension(bayeuxAuthenticator);
 
-                File file = new File("./src/test/resources/jsse/localhost.ks");
-                URI keyStoreUrl = file.toURI();
+                URI keyStoreUrl = CometdProducerConsumerInteractiveAuthenticatedMain.class.getResource("/jsse/localhost.p12").toURI();
                 component.setSslKeystore(keyStoreUrl.getPath());
 
                 from("stream:in").to(URI).to(URIS);
@@ -122,6 +121,7 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
             return "OK";
         }
 
+        @Override
         public boolean sendMeta(ServerSession to, ServerMessage.Mutable message) {
             if (Channel.META_HANDSHAKE.equals(message.getChannel())) {
                 if (!message.isSuccessful()) {
@@ -138,18 +138,22 @@ public class CometdProducerConsumerInteractiveAuthenticatedMain {
             return true;
         }
 
+        @Override
         public void removed(ServerSession session, boolean timeout) {
             // Remove authentication data
         }
 
+        @Override
         public boolean rcv(ServerSession from, ServerMessage.Mutable message) {
             return true;
         }
 
+        @Override
         public boolean rcvMeta(ServerSession from, ServerMessage.Mutable message) {
             return true;
         }
 
+        @Override
         public boolean send(ServerSession from, ServerSession to, ServerMessage.Mutable message) {
             return true;
         }

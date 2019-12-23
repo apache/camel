@@ -53,7 +53,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -82,7 +82,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -96,7 +96,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -110,29 +110,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastSedaEndpointConsumerBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastSedaEndpointConsumerBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -150,7 +128,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -168,79 +146,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
-            return this;
-        }
-        /**
-         * Define the polling timeout of the Queue consumer in Poll mode.
-         * 
-         * The option is a: <code>long</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastSedaEndpointConsumerBuilder pollingTimeout(
-                long pollingTimeout) {
-            setProperty("pollingTimeout", pollingTimeout);
-            return this;
-        }
-        /**
-         * Define the polling timeout of the Queue consumer in Poll mode.
-         * 
-         * The option will be converted to a <code>long</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastSedaEndpointConsumerBuilder pollingTimeout(
-                String pollingTimeout) {
-            setProperty("pollingTimeout", pollingTimeout);
-            return this;
-        }
-        /**
-         * Define the Pool size for Queue Consumer Executor.
-         * 
-         * The option is a: <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastSedaEndpointConsumerBuilder poolSize(int poolSize) {
-            setProperty("poolSize", poolSize);
-            return this;
-        }
-        /**
-         * Define the Pool size for Queue Consumer Executor.
-         * 
-         * The option will be converted to a <code>int</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastSedaEndpointConsumerBuilder poolSize(String poolSize) {
-            setProperty("poolSize", poolSize);
-            return this;
-        }
-        /**
-         * Define the Queue Consumer mode: Listen or Poll.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastSedaEndpointConsumerBuilder queueConsumerMode(
-                HazelcastQueueConsumerMode queueConsumerMode) {
-            setProperty("queueConsumerMode", queueConsumerMode);
-            return this;
-        }
-        /**
-         * Define the Queue Consumer mode: Listen or Poll.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
-         * 
-         * Group: consumer
-         */
-        default HazelcastSedaEndpointConsumerBuilder queueConsumerMode(
-                String queueConsumerMode) {
-            setProperty("queueConsumerMode", queueConsumerMode);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -252,7 +158,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -264,7 +170,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -277,7 +183,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder onErrorDelay(
                 int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
+            doSetProperty("onErrorDelay", onErrorDelay);
             return this;
         }
         /**
@@ -290,7 +196,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder onErrorDelay(
                 String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
+            doSetProperty("onErrorDelay", onErrorDelay);
             return this;
         }
         /**
@@ -304,7 +210,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Group: seda
          */
         default HazelcastSedaEndpointConsumerBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -319,7 +225,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -333,7 +239,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder transacted(
                 boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -347,7 +253,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder transacted(
                 String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -360,7 +266,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -373,7 +279,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointConsumerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
     }
@@ -400,7 +306,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -416,7 +322,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -428,7 +334,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -441,7 +347,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -454,7 +360,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -467,7 +373,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -480,7 +386,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -493,7 +399,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -519,7 +425,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -534,7 +440,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -548,7 +454,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -562,7 +468,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -576,29 +482,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastSedaEndpointProducerBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastSedaEndpointProducerBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -618,7 +502,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -638,7 +522,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -650,7 +534,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -662,7 +546,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -675,7 +559,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder onErrorDelay(
                 int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
+            doSetProperty("onErrorDelay", onErrorDelay);
             return this;
         }
         /**
@@ -688,7 +572,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder onErrorDelay(
                 String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
+            doSetProperty("onErrorDelay", onErrorDelay);
             return this;
         }
         /**
@@ -702,7 +586,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Group: seda
          */
         default HazelcastSedaEndpointProducerBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -717,7 +601,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder pollTimeout(
                 String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -731,7 +615,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder transacted(
                 boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -745,7 +629,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder transacted(
                 String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -758,7 +642,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -771,7 +655,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointProducerBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
     }
@@ -795,7 +679,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -808,7 +692,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -821,7 +705,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -834,7 +718,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -860,7 +744,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointBuilder defaultOperation(
                 HazelcastOperation defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -875,7 +759,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointBuilder defaultOperation(
                 String defaultOperation) {
-            setProperty("defaultOperation", defaultOperation);
+            doSetProperty("defaultOperation", defaultOperation);
             return this;
         }
         /**
@@ -889,7 +773,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointBuilder hazelcastInstance(
                 Object hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -903,7 +787,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointBuilder hazelcastInstance(
                 String hazelcastInstance) {
-            setProperty("hazelcastInstance", hazelcastInstance);
+            doSetProperty("hazelcastInstance", hazelcastInstance);
             return this;
         }
         /**
@@ -917,29 +801,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointBuilder hazelcastInstanceName(
                 String hazelcastInstanceName) {
-            setProperty("hazelcastInstanceName", hazelcastInstanceName);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option is a: <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastSedaEndpointBuilder reliable(boolean reliable) {
-            setProperty("reliable", reliable);
-            return this;
-        }
-        /**
-         * Define if the endpoint will use a reliable Topic struct or not.
-         * 
-         * The option will be converted to a <code>boolean</code> type.
-         * 
-         * Group: common
-         */
-        default HazelcastSedaEndpointBuilder reliable(String reliable) {
-            setProperty("reliable", reliable);
+            doSetProperty("hazelcastInstanceName", hazelcastInstanceName);
             return this;
         }
         /**
@@ -951,7 +813,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -963,7 +825,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -975,7 +837,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder onErrorDelay(int onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
+            doSetProperty("onErrorDelay", onErrorDelay);
             return this;
         }
         /**
@@ -987,7 +849,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder onErrorDelay(String onErrorDelay) {
-            setProperty("onErrorDelay", onErrorDelay);
+            doSetProperty("onErrorDelay", onErrorDelay);
             return this;
         }
         /**
@@ -1001,7 +863,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -1015,7 +877,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder pollTimeout(String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -1028,7 +890,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder transacted(boolean transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -1041,7 +903,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder transacted(String transacted) {
-            setProperty("transacted", transacted);
+            doSetProperty("transacted", transacted);
             return this;
         }
         /**
@@ -1054,7 +916,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointBuilder transferExchange(
                 boolean transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
         /**
@@ -1067,7 +929,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default HazelcastSedaEndpointBuilder transferExchange(
                 String transferExchange) {
-            setProperty("transferExchange", transferExchange);
+            doSetProperty("transferExchange", transferExchange);
             return this;
         }
     }
@@ -1091,7 +953,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1104,7 +966,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -1117,7 +979,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -1130,7 +992,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          */
         default AdvancedHazelcastSedaEndpointBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -1178,21 +1040,12 @@ public interface HazelcastSedaEndpointBuilderFactory {
         readOnceTail,
         capacity;
     }
-
-    /**
-     * Proxy enum for
-     * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> enum.
-     */
-    enum HazelcastQueueConsumerMode {
-        listen,
-        poll;
-    }
     /**
      * Hazelcast SEDA (camel-hazelcast)
      * The hazelcast-seda component is used to access Hazelcast BlockingQueue.
      * 
      * Category: cache,datagrid
-     * Available as of version: 2.7
+     * Since: 2.7
      * Maven coordinates: org.apache.camel:camel-hazelcast
      * 
      * Syntax: <code>hazelcast-seda:cacheName</code>

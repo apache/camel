@@ -38,24 +38,17 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .log("Error due ${exception.message}")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
-                            assertEquals("bar", routeId);
-                        }
-                    });
+                onException(Exception.class).log("Error due ${exception.message}").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        assertEquals("bar", routeId);
+                    }
+                });
 
-                from("direct:start").routeId("foo")
-                    .to("mock:foo")
-                    .to("direct:bar")
-                    .to("mock:result");
+                from("direct:start").routeId("foo").to("mock:foo").to("direct:bar").to("mock:result");
 
-                from("direct:bar").routeId("bar")
-                    .to("mock:bar")
-                    .throwException(new IllegalArgumentException("Forced bar error"));
+                from("direct:bar").routeId("bar").to("mock:bar").throwException(new IllegalArgumentException("Forced bar error"));
             }
         });
         context.start();
@@ -63,7 +56,7 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
         getMockEndpoint("mock:foo").expectedMessageCount(1);
         getMockEndpoint("mock:bar").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedMessageCount(0);
-        
+
         try {
             template.sendBody("direct:start", "Hello World");
             fail("Should have thrown exception");
@@ -80,27 +73,19 @@ public class ContextScopedOnExceptionCorrectRouteContextTest extends ContextTest
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .log("Error due ${exception.message}")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
-                            assertEquals("foo", routeId);
-                        }
-                    });
+                onException(Exception.class).log("Error due ${exception.message}").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String routeId = exchange.getUnitOfWork().getRouteContext().getRouteId();
+                        assertEquals("foo", routeId);
+                    }
+                });
 
-                from("direct:start").routeId("foo")
-                    .to("mock:foo")
-                    .throwException(new IllegalArgumentException("Forced foo error"))
-                    .to("direct:bar")
-                    .to("mock:result");
+                from("direct:start").routeId("foo").to("mock:foo").throwException(new IllegalArgumentException("Forced foo error")).to("direct:bar").to("mock:result");
 
-                from("direct:bar").routeId("bar")
-                    .to("mock:bar");
+                from("direct:bar").routeId("bar").to("mock:bar");
 
-                from("direct:killer").routeId("killer")
-                    .to("mock:killer");
+                from("direct:killer").routeId("killer").to("mock:killer");
             }
         });
         context.start();

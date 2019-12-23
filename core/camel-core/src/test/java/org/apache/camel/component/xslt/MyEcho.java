@@ -22,7 +22,7 @@ package org.apache.camel.component.xslt;
 public final class MyEcho {
 
     private MyEcho() {
-        //Helper class
+        // Helper class
     }
 
     public static String echoString(String str) {

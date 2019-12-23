@@ -35,15 +35,15 @@ public class RestEndpointTest {
 
     public static class MockRest extends DefaultComponent implements RestProducerFactory {
         @Override
-        public Producer createProducer(final CamelContext camelContext, final String host, final String verb,
-            final String basePath, final String uriTemplate, final String queryParameters, final String consumes,
-            final String produces, RestConfiguration configuration, final Map<String, Object> parameters) throws Exception {
+        public Producer createProducer(final CamelContext camelContext, final String host, final String verb, final String basePath, final String uriTemplate,
+                                       final String queryParameters, final String consumes, final String produces, RestConfiguration configuration,
+                                       final Map<String, Object> parameters)
+            throws Exception {
             return null;
         }
 
         @Override
-        protected Endpoint createEndpoint(final String uri, final String remaining,
-            final Map<String, Object> parameters) throws Exception {
+        protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
             return null;
         }
     }
@@ -69,7 +69,7 @@ public class RestEndpointTest {
 
         restEndpoint.setBindingMode("json");
 
-        final RestProducer producer = (RestProducer) restEndpoint.createProducer();
+        final RestProducer producer = (RestProducer)restEndpoint.createProducer();
 
         Assert.assertEquals(producer.getBindingMode().name(), "json");
     }
@@ -81,8 +81,7 @@ public class RestEndpointTest {
         parameters.put("bindingMode", "json");
         parameters.put("foo", "bar");
 
-        final RestEndpoint endpoint = (RestEndpoint) restComponent
-            .createEndpoint("rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar", "GET:/path", parameters);
+        final RestEndpoint endpoint = (RestEndpoint)restComponent.createEndpoint("rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar", "GET:/path", parameters);
 
         assertEquals("http://localhost", endpoint.getHost());
         assertEquals("json", endpoint.getBindingMode().name());
@@ -93,8 +92,8 @@ public class RestEndpointTest {
 
     @Test
     public void shouldSupportQueryParametersSetViaEndpointUri() throws Exception {
-        RestEndpoint endpoint = (RestEndpoint) context.getComponent("rest").createEndpoint(
-            "rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar&queryParameters=RAW(a%3Db%26c%3Dd)");
+        RestEndpoint endpoint = (RestEndpoint)context.getComponent("rest")
+            .createEndpoint("rest:GET:/path?host=http://localhost&bindingMode=json&foo=bar&queryParameters=RAW(a%3Db%26c%3Dd)");
 
         assertEquals("http://localhost", endpoint.getHost());
         assertEquals("json", endpoint.getBindingMode().name());

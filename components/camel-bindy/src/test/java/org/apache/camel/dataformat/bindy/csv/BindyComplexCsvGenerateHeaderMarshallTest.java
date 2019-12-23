@@ -96,6 +96,7 @@ public class BindyComplexCsvGenerateHeaderMarshallTest extends AbstractJUnit4Spr
 
     public static class ContextConfig extends RouteBuilder {
 
+        @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = 
                 new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.complex.generateheader.Order.class);

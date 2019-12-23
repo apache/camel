@@ -19,7 +19,7 @@ package org.apache.camel.component.file.remote.sftp;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class SftpKeyUriConsumeTest extends SftpServerTestSupport {
 
@@ -50,7 +50,7 @@ public class SftpKeyUriConsumeTest extends SftpServerTestSupport {
             @Override
             public void configure() throws Exception {
                 from("sftp://localhost:" + getPort() + "/" + FTP_ROOT_DIR
-                        + "?username=admin&knownHostsUri=file:./src/test/resources/known_hosts&privateKeyUri=file:./src/test/resources/id_rsa&privateKeyPassphrase=secret&delay=10s&disconnect=true")
+                        + "?username=admin&knownHostsUri=file:" + getKnownHostsFile() + "&privateKeyUri=file:./src/test/resources/id_rsa&privateKeyPassphrase=secret&delay=10s&disconnect=true")
                     .routeId("foo").noAutoStartup()
                     .to("mock:result");
             }

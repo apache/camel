@@ -42,10 +42,10 @@ import org.junit.Test;
  * Test cases for {@link MessageHelper}
  */
 public class MessageHelperTest extends Assert {
-    
+
     private Message message;
     private CamelContext camelContext = new DefaultCamelContext();
-    
+
     @Before
     public void setUp() throws Exception {
         message = new DefaultMessage(camelContext);
@@ -59,7 +59,7 @@ public class MessageHelperTest extends Assert {
         // should not throw exceptions when Message or message body is null
         MessageHelper.resetStreamCache(null);
         MessageHelper.resetStreamCache(message);
-        
+
         // handle StreamCache
         final AtomicBoolean reset = new AtomicBoolean();
         message.setBody(new StreamCache() {
@@ -129,26 +129,26 @@ public class MessageHelperTest extends Assert {
         assertEquals(123, target.getHeader("foo"));
         assertEquals(456, target.getHeader("bar"));
     }
-    
+
     @Test
     public void testCopyHeadersWithHeaderFilterStrategy() throws Exception {
         CamelContext context = new DefaultCamelContext();
         context.start();
 
         message = new DefaultExchange(context).getIn();
-        
+
         Message source = message;
         Message target = message.getExchange().getOut();
-        
+
         DefaultHeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
         headerFilterStrategy.setInFilterPattern("foo");
-        
+
         source.setHeader("foo", 123);
         source.setHeader("bar", 456);
         target.setHeader("bar", "yes");
-        
+
         MessageHelper.copyHeaders(source, target, headerFilterStrategy, true);
-        
+
         assertEquals(null, target.getHeader("foo"));
         assertEquals(456, target.getHeader("bar"));
         context.stop();
@@ -203,7 +203,7 @@ public class MessageHelperTest extends Assert {
         String out = MessageHelper.dumpAsXml(message, false);
 
         assertEquals("<message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
-                + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>", out);
+                     + "\n  <headers>\n    <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n  </headers>\n</message>", out);
 
         context.stop();
     }
@@ -222,7 +222,7 @@ public class MessageHelperTest extends Assert {
         String out = MessageHelper.dumpAsXml(message, false, 2);
 
         assertEquals("  <message exchangeId=\"" + message.getExchange().getExchangeId() + "\">"
-                + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>", out);
+                     + "\n    <headers>\n      <header key=\"foo\" type=\"java.lang.Integer\">123</header>\n    </headers>\n  </message>", out);
 
         context.stop();
     }
@@ -243,7 +243,7 @@ public class MessageHelperTest extends Assert {
 
         String out = MessageHelper.dumpAsXml(message, true);
 
-        MessageDump dump = (MessageDump) unmarshaller.unmarshal(new StringReader(out));
+        MessageDump dump = (MessageDump)unmarshaller.unmarshal(new StringReader(out));
         assertNotNull(dump);
 
         assertEquals("java.lang.String", dump.getBody().getType());
@@ -254,7 +254,5 @@ public class MessageHelperTest extends Assert {
         assertEquals("java.lang.Integer", dump.getHeaders().get(0).getType());
         assertEquals("123", dump.getHeaders().get(0).getValue());
     }
-    
-   
 
 }

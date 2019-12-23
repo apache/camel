@@ -45,20 +45,13 @@ public class RecipientListShareUnitOfWorkOnExceptionHandledFalseIssueTest extend
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class)
-                    .handled(false)
-                    .to("mock:a");
+                onException(Exception.class).handled(false).to("mock:a");
 
-                from("direct:start")
-                    .recipientList(header("foo")).shareUnitOfWork().stopOnException()
-                    .to("mock:result");
+                from("direct:start").recipientList(header("foo")).shareUnitOfWork().stopOnException().to("mock:result");
 
-                from("direct:b")
-                    .to("mock:b");
+                from("direct:b").to("mock:b");
 
-                from("direct:c")
-                    .to("mock:c")
-                    .throwException(new IllegalArgumentException("Forced"));
+                from("direct:c").to("mock:c").throwException(new IllegalArgumentException("Forced"));
             }
         };
     }

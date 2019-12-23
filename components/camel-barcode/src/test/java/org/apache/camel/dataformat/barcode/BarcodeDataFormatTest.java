@@ -21,7 +21,6 @@ import java.util.Map;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
-
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

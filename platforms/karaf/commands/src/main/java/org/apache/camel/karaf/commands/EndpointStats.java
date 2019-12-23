@@ -42,6 +42,7 @@ public class EndpointStats extends CamelControllerImpl implements Action {
             required = false, multiValued = false, valueToShowInHelp = "true")
     boolean decode = true;
 
+    @Override
     public Object execute() throws Exception {
         EndpointStatisticCommand command = new EndpointStatisticCommand(name, decode, filter);
         return command.execute(this, System.out, System.err);

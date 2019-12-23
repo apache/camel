@@ -22,6 +22,7 @@ import java.sql.SQLException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.reifier.RouteReifier;
@@ -37,24 +38,17 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
         return false;
     }
 
-    class AdviceWithRouteBuilder extends RouteBuilder {
+    class MyAdviceWithRouteBuilder extends AdviceWithRouteBuilder {
         @Override
         public void configure() {
-            onException(SQLException.class)
-                .handled(true)
-                .transform(constant("Intercepted SQL!"))
-                .log("sending ${body}")
-                .to("mock:b");
+            onException(SQLException.class).handled(true).transform(constant("Intercepted SQL!")).log("sending ${body}").to("mock:b");
 
-            interceptSendToEndpoint("mock:a")
-                .skipSendToOriginalEndpoint()
-                .log("intercepted message")
-                .bean(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        throw new SQLException();
-                    }
-                });
+            interceptSendToEndpoint("mock:a").skipSendToOriginalEndpoint().log("intercepted message").bean(new Processor() {
+                @Override
+                public void process(Exchange exchange) throws Exception {
+                    throw new SQLException();
+                }
+            });
         }
     }
 
@@ -63,16 +57,12 @@ public class AdviceWithOnExceptionAndInterceptTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:a")
-                    .loadBalance().failover(IOException.class)
-                        .to("mock:a")
-                        .to("mock:b")
-                    .end();
+                from("direct:a").loadBalance().failover(IOException.class).to("mock:a").to("mock:b").end();
             }
         });
 
         RouteDefinition routeDefinition = context.getRouteDefinitions().get(0);
-        RouteReifier.adviceWith(routeDefinition, context, new AdviceWithRouteBuilder());
+        RouteReifier.adviceWith(routeDefinition, context, new MyAdviceWithRouteBuilder());
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(0);

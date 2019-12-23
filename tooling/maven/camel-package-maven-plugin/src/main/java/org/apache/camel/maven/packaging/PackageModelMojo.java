@@ -54,6 +54,7 @@ public class PackageModelMojo extends AbstractGeneratorMojo {
      *                 threads it generated failed.
      * @throws org.apache.maven.plugin.MojoFailureException something bad happened...
      */
+    @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         File camelMetaDir = new File(outDir, "META-INF/services/org/apache/camel/");
         camelMetaDir.mkdirs();

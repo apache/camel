@@ -36,7 +36,6 @@ import org.openstack4j.model.network.Network;
 import org.openstack4j.model.network.NetworkType;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -133,14 +132,6 @@ public class NetworkProducerTest extends NeutronProducerTestSupport {
 
         verify(networkService).delete(networkIdCaptor.capture());
         assertEquals(networkID, networkIdCaptor.getValue());
-        assertFalse(msg.isFault());
-
-        //in case of failure
-        final String failureMessage = "fail";
-        when(networkService.delete(anyString())).thenReturn(ActionResponse.actionFailed(failureMessage, 404));
-        producer.process(exchange);
-        assertTrue(msg.isFault());
-        assertTrue(msg.getBody(String.class).contains(failureMessage));
     }
 
     private Network createNetwork() {

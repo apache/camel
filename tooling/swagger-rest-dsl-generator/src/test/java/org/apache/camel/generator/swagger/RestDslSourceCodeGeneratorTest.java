@@ -18,7 +18,6 @@ package org.apache.camel.generator.swagger;
 
 import io.swagger.models.Info;
 import io.swagger.models.Swagger;
-
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

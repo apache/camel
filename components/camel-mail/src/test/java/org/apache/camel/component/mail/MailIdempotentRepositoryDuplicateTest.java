@@ -15,14 +15,15 @@
  * limitations under the License.
  */
 package org.apache.camel.component.mail;
+
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.Store;
 import javax.mail.internet.MimeMessage;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.support.processor.idempotent.MemoryIdempotentRepository;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
@@ -34,14 +35,8 @@ import org.jvnet.mock_javamail.Mailbox;
  */
 public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
 
+    @BindToRegistry("myRepo")
     MemoryIdempotentRepository myRepo = new MemoryIdempotentRepository();
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myRepo", myRepo);
-        return jndi;
-    }
 
     @Override
     @Before
@@ -95,11 +90,12 @@ public class MailIdempotentRepositoryDuplicateTest extends CamelTestSupport {
         folder.close(true);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&consumer.initialDelay=100&consumer.delay=100").routeId("foo").noAutoStartup()
-                        .to("mock:result");
+                from("imap://jones@localhost?password=secret&idempotentRepository=#myRepo&initialDelay=100&delay=100").routeId("foo").noAutoStartup()
+                    .to("mock:result");
             }
         };
     }

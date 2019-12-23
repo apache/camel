@@ -25,6 +25,7 @@ import org.apache.camel.support.service.ServiceSupport;
 import org.infinispan.client.hotrod.RemoteCacheManager;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
+import org.infinispan.configuration.global.GlobalConfigurationBuilder;
 import org.infinispan.manager.DefaultCacheManager;
 
 @ManagedResource(description = "Infinispan based message id repository")
@@ -41,7 +42,7 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
     }
 
     public InfinispanIdempotentRepository(String cacheName) {
-        this.cacheContainer = new DefaultCacheManager();
+        this.cacheContainer = new DefaultCacheManager(new GlobalConfigurationBuilder().defaultCacheName("default").build());
         this.cacheName = cacheName;
         this.isManagedCacheContainer = true;
     }

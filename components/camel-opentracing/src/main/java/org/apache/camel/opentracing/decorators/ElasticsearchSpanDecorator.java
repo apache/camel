@@ -20,7 +20,6 @@ import java.util.Map;
 
 import io.opentracing.Span;
 import io.opentracing.tag.Tags;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 
@@ -32,7 +31,12 @@ public class ElasticsearchSpanDecorator extends AbstractSpanDecorator {
 
     @Override
     public String getComponent() {
-        return "elasticsearch";
+        return "elasticsearch-rest";
+    }
+
+    @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.elasticsearch.ElasticsearchComponent";
     }
 
     @Override

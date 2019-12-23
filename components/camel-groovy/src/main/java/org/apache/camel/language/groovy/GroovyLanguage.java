@@ -54,10 +54,12 @@ public class GroovyLanguage extends LanguageSupport {
         return new GroovyLanguage().createExpression(expression);
     }
 
+    @Override
     public GroovyExpression createPredicate(String expression) {
         return createExpression(expression);
     }
 
+    @Override
     public GroovyExpression createExpression(String expression) {
         expression = loadResource(expression);
         return new GroovyExpression(expression);

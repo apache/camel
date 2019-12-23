@@ -37,6 +37,7 @@ public class ConsumerEndpointMappingByBeanNameRouteTest extends CamelSpringTestS
     private String expectedResponse;
     private WebServiceTemplate webServiceTemplate;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();

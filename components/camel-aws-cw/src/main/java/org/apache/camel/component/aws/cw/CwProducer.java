@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.aws.cw;
 
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -45,6 +44,7 @@ public class CwProducer extends DefaultProducer {
         super(endpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         List<MetricDatum> metricData = getMetricData(exchange);
 

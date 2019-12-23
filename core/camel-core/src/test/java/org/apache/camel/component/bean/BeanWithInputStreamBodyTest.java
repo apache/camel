@@ -44,9 +44,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .bean(MyCoolBean.class)
-                        .to("mock:result");
+                from("direct:start").bean(MyCoolBean.class).to("mock:result");
             }
         });
         context.start();
@@ -65,9 +63,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .bean(MyCoolBean.class, "doSomething")
-                        .to("mock:result");
+                from("direct:start").bean(MyCoolBean.class, "doSomething").to("mock:result");
             }
         });
         context.start();
@@ -86,9 +82,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:myBean")
-                    .to("mock:result");
+                from("direct:start").to("bean:myBean").to("mock:result");
             }
         });
         context.start();
@@ -107,9 +101,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:myBean?method=doSomething")
-                    .to("mock:result");
+                from("direct:start").to("bean:myBean?method=doSomething").to("mock:result");
             }
         });
         context.start();
@@ -128,9 +120,7 @@ public class BeanWithInputStreamBodyTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("bean:myBean?method=doSomething(${body})")
-                    .to("mock:result");
+                from("direct:start").to("bean:myBean?method=doSomething(${body})").to("mock:result");
             }
         });
         context.start();

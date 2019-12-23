@@ -16,7 +16,6 @@
  */
 package org.apache.camel.spring.processor;
 
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.processor.intercept.InterceptSimpleRouteStopTest;
 
@@ -29,6 +28,7 @@ public class SpringInterceptSimpleRouteStopTest extends InterceptSimpleRouteStop
         return false;
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringInterceptSimpleRouteStopTest.xml");
     }

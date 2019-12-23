@@ -47,7 +47,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: producer
          */
         default SchematronEndpointBuilder abort(boolean abort) {
-            setProperty("abort", abort);
+            doSetProperty("abort", abort);
             return this;
         }
         /**
@@ -58,7 +58,47 @@ public interface SchematronEndpointBuilderFactory {
          * Group: producer
          */
         default SchematronEndpointBuilder abort(String abort) {
-            setProperty("abort", abort);
+            doSetProperty("abort", abort);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SchematronEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default SchematronEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -69,7 +109,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: producer
          */
         default SchematronEndpointBuilder rules(Object rules) {
-            setProperty("rules", rules);
+            doSetProperty("rules", rules);
             return this;
         }
         /**
@@ -81,7 +121,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: producer
          */
         default SchematronEndpointBuilder rules(String rules) {
-            setProperty("rules", rules);
+            doSetProperty("rules", rules);
             return this;
         }
     }
@@ -105,7 +145,7 @@ public interface SchematronEndpointBuilderFactory {
          */
         default AdvancedSchematronEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -118,7 +158,7 @@ public interface SchematronEndpointBuilderFactory {
          */
         default AdvancedSchematronEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -131,7 +171,7 @@ public interface SchematronEndpointBuilderFactory {
          */
         default AdvancedSchematronEndpointBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -143,7 +183,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -155,7 +195,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder uriResolver(Object uriResolver) {
-            setProperty("uriResolver", uriResolver);
+            doSetProperty("uriResolver", uriResolver);
             return this;
         }
         /**
@@ -168,7 +208,7 @@ public interface SchematronEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder uriResolver(String uriResolver) {
-            setProperty("uriResolver", uriResolver);
+            doSetProperty("uriResolver", uriResolver);
             return this;
         }
     }
@@ -177,7 +217,7 @@ public interface SchematronEndpointBuilderFactory {
      * Validates the payload of a message using the Schematron Library.
      * 
      * Category: validation
-     * Available as of version: 2.15
+     * Since: 2.15
      * Maven coordinates: org.apache.camel:camel-schematron
      * 
      * Syntax: <code>schematron:path</code>

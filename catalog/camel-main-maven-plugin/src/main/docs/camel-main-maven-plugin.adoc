@@ -78,7 +78,7 @@ and 1 mapping was created in the `autowire.properties` file
 [INFO] --- camel-main-maven-plugin:3.0.0-SNAPSHOT:generate (generate) @ camel-example-main-artemis ---
 [INFO] Detected Camel version used in project: 3.0.0-SNAPSHOT
 [INFO] Pre-scanning using Camel version: 3.0.0-SNAPSHOT
-[INFO] Discovered 29 Camel components from classpath: [bean, browse, class, controlbus, dataformat, dataset, dataset-test, direct, direct-vm, file, jms, language, log, mock, properties, quartz, quartz2, ref, rest, rest-api, saga, scheduler, seda, spring-event, stub, timer, validator, vm, xslt]
+[INFO] Discovered 29 Camel components from classpath: [bean, browse, class, controlbus, dataformat, dataset, dataset-test, direct, direct-vm, file, jms, language, log, mock, properties, quartz, ref, rest, rest-api, saga, scheduler, seda, spring-event, stub, timer, validator, vm, xslt]
 [INFO] Created file: /Users/davsclaus/workspace/camel/examples/camel-example-main-artemis/target/classes/META-INF/services/org/apache/camel/autowire.properties (autowire by classpath: 1)
 ----
 

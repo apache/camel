@@ -62,64 +62,43 @@ public class TryProcessorTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:processor")
-                    .doTry()
-                        .process(new ProcessorFail())
-                        .to("mock:result")
-                    .doCatch(CamelException.class)
-                        .process(new ProcessorHandle())
-                    .doFinally()
-                        .to("mock:finally")
-                    .end()
+                from("direct:processor").doTry().process(new ProcessorFail()).to("mock:result").doCatch(CamelException.class).process(new ProcessorHandle()).doFinally()
+                    .to("mock:finally").end().to("mock:last");
+
+                from("direct:expression").doTry().setBody(new ProcessorFail()).to("mock:result").doCatch(CamelException.class).process(new ProcessorHandle()).doFinally()
+                    .to("mock:finally").end().to("mock:last");
+
+                from("direct:predicate").doTry().to("direct:sub-predicate").doCatch(CamelException.class).process(new ProcessorHandle()).doFinally().to("mock:finally").end()
                     .to("mock:last");
-                
-                from("direct:expression")
-                    .doTry()
-                        .setBody(new ProcessorFail())
-                        .to("mock:result")
-                    .doCatch(CamelException.class)
-                        .process(new ProcessorHandle())
-                    .doFinally()
-                        .to("mock:finally")
-                    .end()
-                    .to("mock:last");
-                
-                from("direct:predicate")
-                    .doTry()
-                        .to("direct:sub-predicate")
-                    .doCatch(CamelException.class)
-                        .process(new ProcessorHandle())
-                    .doFinally()
-                        .to("mock:finally")
-                    .end()
-                    .to("mock:last");
-                
-                from("direct:sub-predicate")
-                    .errorHandler(noErrorHandler())
-                    .filter(new ProcessorFail())
-                    .to("mock:result");
+
+                from("direct:sub-predicate").errorHandler(noErrorHandler()).filter(new ProcessorFail()).to("mock:result");
             }
         };
     }
 
     private class ProcessorFail implements Processor, Predicate, Expression {
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new RuntimeCamelException(new CamelException("Force to fail"));
         }
 
+        @Override
         public <T> T evaluate(Exchange exchange, Class<T> type) {
             throw new RuntimeCamelException(new CamelException("Force to fail"));
         }
 
+        @Override
         public boolean matches(Exchange exchange) {
             throw new RuntimeCamelException(new CamelException("Force to fail"));
         }
     }
 
     private class ProcessorHandle implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             handled = true;
 
@@ -127,8 +106,9 @@ public class TryProcessorTest extends ContextTestSupport {
 
             Exception e = (Exception)exchange.getProperty(Exchange.EXCEPTION_CAUGHT);
             assertNotNull("There should be an exception", e);
-            
-            // If we handle CamelException it is what we should have as an exception caught
+
+            // If we handle CamelException it is what we should have as an
+            // exception caught
             CamelException cause = assertIsInstanceOf(CamelException.class, e.getCause());
             assertNotNull(cause);
             assertEquals("Force to fail", cause.getMessage());

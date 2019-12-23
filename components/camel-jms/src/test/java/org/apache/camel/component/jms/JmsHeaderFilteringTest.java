@@ -98,6 +98,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
 
     class OutHeaderChecker implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
             JmsMessage message = exchange.getIn(JmsMessage.class);
 
@@ -123,6 +124,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
 
     class InHeaderChecker implements Processor {
 
+        @Override
         public void process(Exchange exchange) throws Exception {
 
             // filtered out by "in" filter

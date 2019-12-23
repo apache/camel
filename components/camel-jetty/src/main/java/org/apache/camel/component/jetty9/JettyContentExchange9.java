@@ -38,7 +38,7 @@ import org.apache.camel.ExchangeTimedOutException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.component.jetty.JettyContentExchange;
 import org.apache.camel.component.jetty.JettyHttpBinding;
-import org.apache.camel.converter.stream.OutputStreamBuilder;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.Request;
 import org.eclipse.jetty.client.api.Response;
@@ -51,7 +51,6 @@ import org.eclipse.jetty.http.HttpFields;
 import org.eclipse.jetty.util.Callback;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 
 /**
  * Jetty specific exchange which keeps track of the request and response.
@@ -73,8 +72,8 @@ public class JettyContentExchange9 implements JettyContentExchange {
 
     private boolean supportRedirect;
 
-    public void init(Exchange exchange, JettyHttpBinding jettyBinding,
-                     final HttpClient client, AsyncCallback callback) {
+    @Override
+    public void init(Exchange exchange, JettyHttpBinding jettyBinding, final HttpClient client, AsyncCallback callback) {
         this.exchange = exchange;
         this.jettyBinding = jettyBinding;
         this.client = client;
@@ -128,11 +127,13 @@ public class JettyContentExchange9 implements JettyContentExchange {
         doTaskCompleted(ex);
     }
 
+    @Override
     public byte[] getBody() {
         // must return the content as raw bytes
         return getResponseContentBytes();
     }
 
+    @Override
     public String getUrl() {
         try {
             return this.request.getURI().toURL().toExternalForm();
@@ -148,7 +149,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
     private void tryClose(Object obj) {
         if (obj instanceof Closeable) {
             try {
-                ((Closeable) obj).close();
+                ((Closeable)obj).close();
             } catch (IOException e) {
                 // Ignore
             }
@@ -169,47 +170,58 @@ public class JettyContentExchange9 implements JettyContentExchange {
         }
     }
 
+    @Override
     public void setRequestContentType(String contentType) {
         this.requestContentType = contentType;
     }
 
+    @Override
     public int getResponseStatus() {
         return this.response.getStatus();
     }
 
+    @Override
     public void setMethod(String method) {
         this.request.method(method);
     }
 
+    @Override
     public void setTimeout(long timeout) {
         this.request.timeout(timeout, TimeUnit.MILLISECONDS);
     }
 
+    @Override
     public void setURL(String url) {
         this.request = client.newRequest(url);
     }
 
+    @Override
     public void setRequestContent(byte[] byteArray) {
         this.request.content(new BytesContentProvider(byteArray), this.requestContentType);
     }
 
+    @Override
     public void setRequestContent(String data, String charset) throws UnsupportedEncodingException {
         StringContentProvider cp = charset != null ? new StringContentProvider(data, charset) : new StringContentProvider(data);
         this.request.content(cp, this.requestContentType);
     }
 
+    @Override
     public void setRequestContent(InputStream ins) {
         this.request.content(new InputStreamContentProvider(ins), this.requestContentType);
     }
 
+    @Override
     public void setRequestContent(InputStream ins, int contentLength) {
         this.request.content(new CamelInputStreamContentProvider(ins, contentLength), this.requestContentType);
     }
 
+    @Override
     public void addRequestHeader(String key, String s) {
         this.request.header(key, s);
     }
 
+    @Override
     public void send(HttpClient client) throws IOException {
         org.eclipse.jetty.client.api.Request.Listener listener = new Request.Listener.Adapter() {
 
@@ -248,9 +260,9 @@ public class JettyContentExchange9 implements JettyContentExchange {
                     try {
                         Object content = osb.build();
                         if (content instanceof byte[]) {
-                            onResponseComplete(result, (byte[]) content);
+                            onResponseComplete(result, (byte[])content);
                         } else {
-                            StreamCache cos = (StreamCache) content;
+                            StreamCache cos = (StreamCache)content;
                             ByteArrayOutputStream baos = new ByteArrayOutputStream();
                             cos.writeTo(baos);
                             onResponseComplete(result, baos.toByteArray());
@@ -268,6 +280,7 @@ public class JettyContentExchange9 implements JettyContentExchange {
         this.response = response;
     }
 
+    @Override
     public byte[] getResponseContentBytes() {
         return responseContent;
     }
@@ -286,11 +299,12 @@ public class JettyContentExchange9 implements JettyContentExchange {
             return fields.getFieldNamesCollection();
         } catch (NoSuchMethodError e) {
             try {
-                // In newer versions of Jetty the return type has been changed to Set.
+                // In newer versions of Jetty the return type has been changed
+                // to Set.
                 // This causes problems at byte-code level. Try recovering.
                 Method reflGetFieldNamesCollection = HttpFields.class.getMethod("getFieldNamesCollection");
                 Object result = reflGetFieldNamesCollection.invoke(fields);
-                return (Collection<String>) result;
+                return (Collection<String>)result;
             } catch (Exception reflectionException) {
                 // Suppress, throwing the original exception
                 throw e;
@@ -298,10 +312,12 @@ public class JettyContentExchange9 implements JettyContentExchange {
         }
     }
 
+    @Override
     public Map<String, Collection<String>> getRequestHeaders() {
         return getFieldsAsMap(request.getHeaders());
     }
 
+    @Override
     public Map<String, Collection<String>> getResponseHeaders() {
         return getFieldsAsMap(response.getHeaders());
     }

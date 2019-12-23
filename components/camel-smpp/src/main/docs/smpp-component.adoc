@@ -1,7 +1,11 @@
 [[smpp-component]]
-== SMPP Component
+= SMPP Component
 
-*Available as of Camel version 2.2*
+*Since Camel 2.2*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 This component provides access to an SMSC (Short Message Service Center)
 over the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP] protocol to
@@ -28,49 +32,49 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-### SMS limitations
+== SMS limitations
 
-SMS is neither reliable or secure.  Users who require reliable and
+SMS is neither reliable or secure.  Users who require reliable and
 secure delivery may want to consider using the XMPP or SIP components
 instead, combined with a smartphone app supporting the chosen protocol.
 
 * Reliability: although the SMPP standard offers a range of feedback
 mechanisms to indicate errors, non-delivery and confirmation of delivery
 it is not uncommon for mobile networks to hide or simulate these
-responses.  For example, some networks automatically send a delivery
+responses.  For example, some networks automatically send a delivery
 confirmation for every message even if the destination number is invalid
-or not switched on.  Some networks silently drop messages if they think
-they are spam.  Spam detection rules in the network may be very crude,
+or not switched on.  Some networks silently drop messages if they think
+they are spam.  Spam detection rules in the network may be very crude,
 sometimes more than 100 messages per day from a single sender may be
 considered spam.
 * Security: there is basic encryption for the last hop from the radio
-tower down to the recipient handset.  SMS messages are not encrypted or
-authenticated in any other part of the network.  Some operators allow
+tower down to the recipient handset.  SMS messages are not encrypted or
+authenticated in any other part of the network.  Some operators allow
 staff in retail outlets or call centres to browse through the SMS
-message histories of their customers.  Message sender identity can be
-easily forged.  Regulators and even the mobile telephone industry itself
+message histories of their customers.  Message sender identity can be
+easily forged.  Regulators and even the mobile telephone industry itself
 has cautioned against the use of SMS in two-factor authentication
 schemes and other purposes where security is important.
 
 While the Camel component makes it as easy as possible to send messages
 to the SMS network, it can not offer an easy solution to these problems.
 
-### Data coding, alphabet and international character sets
+== Data coding, alphabet and international character sets
 
-Data coding and alphabet can be specified on a per-message basis. 
-Default values can be specified for the endpoint.  It is important to
+Data coding and alphabet can be specified on a per-message basis. 
+Default values can be specified for the endpoint.  It is important to
 understand the relationship between these options and the way the
 component acts when more than one value is set.
 
 Data coding is an 8 bit field in the SMPP wire format.
 
-Alphabet corresponds to bits 0-3 of the data coding field.  For some
+Alphabet corresponds to bits 0-3 of the data coding field.  For some
 types of message, where a message class is used (by setting bit 5 of the
 data coding field), the lower two bits of the data coding field are not
 interpreted as alphabet and only bits 2 and 3 impact the alphabet.
 
 Furthermore, current version of the JSMPP library only seems to support
-bits 2 and 3, assuming that bits 0 and 1 are used for message class. 
+bits 2 and 3, assuming that bits 0 and 1 are used for message class. 
 This is why the Alphabet class in JSMPP doesn't support the value 3
 (binary 0011) which indicates ISO-8859-1.
 
@@ -88,10 +92,10 @@ find:
 parameter)
 
 Older versions of Camel had bugs in support for international character
-sets.  This feature only worked when a single encoding was used for all
+sets.  This feature only worked when a single encoding was used for all
 messages and was troublesome when users wanted to change it on a
-per-message basis.  Users who require this to work should ensure their
-version of Camel includes the fix for 
+per-message basis.  Users who require this to work should ensure their
+version of Camel includes the fix for 
 
 JIRA Issues Macro: com.atlassian.sal.api.net.ResponseStatusException:
 Unexpected response received. Status code: 404
@@ -101,50 +105,50 @@ Unexpected response received. Status code: 404
 In addition to trying to send the data coding value to the SMSC, the
 Camel component also tries to analyze the message body, convert it to a
 Java String (Unicode) and convert that to a byte array in the
-corresponding alphabet  When deciding which alphabet to use in the byte
+corresponding alphabet  When deciding which alphabet to use in the byte
 array, the Camel SMPP component does not consider the data coding value
 (header or configuration), it only considers the specified alphabet
 (from either the header or endpoint parameter).
 
 If some characters in the String can't be represented in the chosen
-alphabet, they may be replaced by the question mark ( ? ) symbol.  Users
+alphabet, they may be replaced by the question mark ( ? ) symbol.  Users
 of the API may want to consider checking if their message body can be
 converted to ISO-8859-1 before passing it to the component and if not,
-setting the alphabet header to request UCS-2 encoding.  If the alphabet
+setting the alphabet header to request UCS-2 encoding.  If the alphabet
 and data coding options are not specified at all then the component may
 try to detect the required encoding and set the data coding for you.
 
 The list of alphabet codes are specified in the SMPP specification v3.4,
-section 5.2.19.  One notable limitation of the SMPP specification is
+section 5.2.19.  One notable limitation of the SMPP specification is
 that there is no alphabet code for explicitly requesting use of the GSM
-3.38 (7 bit) character set.  Choosing the value 0 for the alphabet
+3.38 (7 bit) character set.  Choosing the value 0 for the alphabet
 selects the SMSC _default_ alphabet, this usually means GSM 3.38 but it
-is not guaranteed.  The SMPP gateway Nexmo
+is not guaranteed.  The SMPP gateway Nexmo
 https://help.nexmo.com/hc/en-us/articles/204015813-How-to-change-the-character-encoding-in-SMPP-[actually
 allows the default to be mapped to any other character set with a
 control panel option]. It is suggested that users check with their SMSC
 operator to confirm exactly which character set is being used as the
 default.
 
-### Message splitting and throttling
+== Message splitting and throttling
 
 After transforming a message body from a String to a byte array, the
 Camel component is also responsible for splitting the message into parts
-(within the 140 byte SMS size limit) before passing it to JSMPP.  This
+(within the 140 byte SMS size limit) before passing it to JSMPP.  This
 is completed automatically.
 
 If the GSM 3.38 alphabet is used, the component will pack up to 160
-characters into the 140 byte message body.  If an 8 bit character set is
+characters into the 140 byte message body.  If an 8 bit character set is
 used (e.g. ISO-8859-1 for western Europe) then 140 characters will be
-allowed within the 140 byte message body.  If 16 bit UCS-2 encoding is
+allowed within the 140 byte message body.  If 16 bit UCS-2 encoding is
 used then just 70 characters fit into each 140 byte message.
 
-Some SMSC providers implement throttling rules.  Each part of a message
+Some SMSC providers implement throttling rules.  Each part of a message
 that has been split may be counted separately by the provider's
-throttling mechanism.  The Camel Throttler component can be useful for
+throttling mechanism.  The Camel Throttler component can be useful for
 throttling messages in the SMPP route before handing them to the SMSC.
 
-### URI format
+== URI format
 
 [source,java]
 --------------------------------------------
@@ -162,13 +166,13 @@ use SSLSocket to init a connection to the server.
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-### URI Options
+== URI Options
 
 
 
 
 // component options: START
-The SMPP component supports 3 options, which are listed below.
+The SMPP component supports 4 options, which are listed below.
 
 
 
@@ -176,8 +180,9 @@ The SMPP component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *configuration* (advanced) | To use the shared SmppConfiguration as configuration. |  | SmppConfiguration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -195,7 +200,7 @@ smpp:host:port
 
 with the following path and query parameters:
 
-==== Path Parameters (2 parameters):
+=== Path Parameters (2 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -206,7 +211,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (40 parameters):
+=== Query Parameters (40 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -255,14 +260,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-smpp-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -270,7 +275,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 39 options, which are listed below.
+The component supports 40 options, which are listed below.
 
 
 
@@ -278,6 +283,7 @@ The component supports 39 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.smpp.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.smpp.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.smpp.configuration.address-range* | You can specify the address range for the SmppConsumer as defined in section 5.2.7 of the SMPP 3.4 specification. The SmppConsumer will receive messages only from SMSC's which target an address (MSISDN or IP address) within this range. |  | String
 | *camel.component.smpp.configuration.alphabet* | Defines encoding of data according the SMPP 3.4 specification, section 5.2.19. <ul> <li>0: SMSC Default Alphabet <li>4: 8 bit Alphabet</li> <li>8: UCS2 Alphabet</li></li> </ul> |  | Byte
 | *camel.component.smpp.configuration.data-coding* | Defines the data coding according the SMPP 3.4 specification, section 5.2.19. Example data encodings are: <ul> <li>0: SMSC Default Alphabet</li> <li>3: Latin 1 (ISO-8859-1)</li> <li>4: Octet unspecified (8-bit binary)</li> <li>8: UCS2 (ISO/IEC-10646)</li> <li>13: Extended Kanji JIS(X 0212-1990)</li> </ul> |  | Byte
@@ -314,8 +320,8 @@ The component supports 39 options, which are listed below.
 | *camel.component.smpp.configuration.transaction-timer* | Defines the maximum period of inactivity allowed after a transaction, after which an SMPP entity may assume that the session is no longer active. This timer may be active on either communicating SMPP entity (i.e. SMSC or ESME). | 10000 | Integer
 | *camel.component.smpp.configuration.type-of-number* | Defines the type of number (TON) to be used in the SME. The following TON values are defined: <ul> <li>0: Unknown</li> <li>1: International</li> <li>2: National</li> <li>3: Network Specific</li> <li>4: Subscriber Number</li> <li>5: Alphanumeric</li> <li>6: Abbreviated</li> </ul> |  | Byte
 | *camel.component.smpp.configuration.using-s-s-l* | Whether using SSL with the smpps protocol | false | Boolean
-| *camel.component.smpp.enabled* | Enable smpp component | true | Boolean
-| *camel.component.smpp.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.smpp.enabled* | Whether to enable auto configuration of the smpp component. This is enabled by default. |  | Boolean
+| *camel.component.smpp.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -329,7 +335,7 @@ You can have as many of these options as you like.
 smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&transactionTimer=5000&systemType=consumer
 ------------------------------------------------------------------------------------------------------------------
 
-### Producer Message Headers
+== Producer Message Headers
 
 The following message headers can be used to affect the behavior of the
 SMPP producer
@@ -410,16 +416,16 @@ converted in the following way: `String` -> `org.jsmpp.bean.OptionalParameter.CO
 `null` -> `org.jsmpp.bean.OptionalParameter.Null`
 
 |CamelSmppEncoding |String |*only for SubmitSm,
-SubmitMulti and DataSm*.  Specifies the encoding (character set name) of
-the bytes in the message body.  If the message body is a string then
-this is not relevant because Java Strings are always Unicode.  If the
+SubmitMulti and DataSm*.  Specifies the encoding (character set name) of
+the bytes in the message body.  If the message body is a string then
+this is not relevant because Java Strings are always Unicode.  If the
 body is a byte array then this header can be used to indicate that it is
-ISO-8859-1 or some other value.  Default value is specified by the
+ISO-8859-1 or some other value.  Default value is specified by the
 endpoint configuration parameter _encoding_
 
 |CamelSmppSplittingPolicy |String |*only for SubmitSm,
-SubmitMulti and DataSm*.  Specifies the policy for message splitting for
-this exchange.  Possible values are described in the endpoint
+SubmitMulti and DataSm*.  Specifies the policy for message splitting for
+this exchange.  Possible values are described in the endpoint
 configuration parameter _splittingPolicy_
 |=======================================================================
 
@@ -454,7 +460,7 @@ converted in the following way:
 `org.jsmpp.bean.OptionalParameter.Null` -> `null`
 |=======================================================================
 
-### Consumer Message Headers
+== Consumer Message Headers
 
 The following message headers are used by the SMPP consumer to set the
 request data from the SMSC in the message header
@@ -585,14 +591,14 @@ TIP: *JSMPP library*
 See the documentation of the http://jsmpp.org[JSMPP Library] for more
 details about the underlying library.
 
-### Exception handling
+== Exception handling
 
 This component supports the general Camel exception handling
 capabilities
 
 When an error occurs sending a message with SubmitSm (the default
 action), the org.apache.camel.component.smpp.SmppException is thrown
-with a nested exception, org.jsmpp.extra.NegativeResponseException. 
+with a nested exception, org.jsmpp.extra.NegativeResponseException. 
 Call NegativeResponseException.getCommandStatus() to obtain the exact
 SMPP negative response code, the values are explained in the SMPP
 specification 3.4, section 5.1.3. +
@@ -618,7 +624,7 @@ from("smpp://smppclient@localhost:2775?password=password&enquireLinkTimer=3000&t
 Please refer to the http://smsforum.net/SMPP_v3_4_Issue1_2.zip[SMPP
 specification] for the complete list of error codes and their meanings.
 
-### Samples
+== Samples
 
 A route which sends an SMS using the Java DSL:
 
@@ -665,7 +671,7 @@ If you need an SMSC simulator for your test, you can use the simulator
 provided by
 http://opensmpp.logica.com/CommonPart/Download/download2.html#simulator[Logica].
 
-### Debug logging
+== Debug logging
 
 This component has log level *DEBUG*, which can be helpful in debugging
 problems. If you use log4j, you can add the following line to your
@@ -676,9 +682,3 @@ configuration:
 log4j.logger.org.apache.camel.component.smpp=DEBUG
 --------------------------------------------------
 
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started

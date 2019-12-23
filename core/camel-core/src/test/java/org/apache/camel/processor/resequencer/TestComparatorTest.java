@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.processor.resequencer;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -23,11 +24,11 @@ import org.junit.Test;
 public class TestComparatorTest extends Assert {
 
     private TestComparator c;
-    
+
     private TestObject e1;
     private TestObject e2;
     private TestObject e3;
-    
+
     @Before
     public void setUp() {
         c = new TestComparator();
@@ -35,7 +36,7 @@ public class TestComparatorTest extends Assert {
         e2 = new TestObject(4);
         e3 = new TestObject(7);
     }
-    
+
     @After
     public void tearDown() throws Exception {
     }
@@ -66,5 +67,5 @@ public class TestComparatorTest extends Assert {
         assertTrue(c.compare(e3, e1) > 0);
         assertTrue(c.compare(e3, e3) == 0);
     }
-    
+
 }

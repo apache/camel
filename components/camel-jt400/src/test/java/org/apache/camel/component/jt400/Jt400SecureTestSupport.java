@@ -17,44 +17,38 @@
 package org.apache.camel.component.jt400;
 
 import com.ibm.as400.access.AS400ConnectionPool;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.junit.After;
 import org.junit.Before;
 
 /**
  * Useful base class for JT400 secured component unit tests. It creates a mock
- * secured connection pool, registers it under the ID {@code "mockPool"} and releases it
- * after the test runs.
+ * secured connection pool, registers it under the ID {@code "mockPool"} and
+ * releases it after the test runs.
  */
 public abstract class Jt400SecureTestSupport extends CamelTestSupport {
 
+    @BindToRegistry("mockPool")
     private AS400ConnectionPool connectionPool;
 
     protected Jt400SecureTestSupport() {
     }
 
+    @Override
     @Before
     public void setUp() throws Exception {
         connectionPool = new MockAS400SecureConnectionPool();
         super.setUp();
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         super.tearDown();
         if (connectionPool != null) {
             connectionPool.close();
         }
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        ObjectHelper.notNull(connectionPool, "connectionPool");
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("mockPool", connectionPool);
-        return registry;
     }
 
     /**

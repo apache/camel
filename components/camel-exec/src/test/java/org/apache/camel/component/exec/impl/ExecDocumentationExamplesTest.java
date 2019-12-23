@@ -28,7 +28,6 @@ import org.apache.camel.component.exec.ExecResult;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-
 import org.junit.Ignore;
 import org.junit.Test;
 

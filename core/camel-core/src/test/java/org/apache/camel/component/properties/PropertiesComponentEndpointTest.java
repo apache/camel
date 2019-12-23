@@ -18,7 +18,6 @@ package org.apache.camel.component.properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
@@ -51,9 +50,7 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("{{cool.start}}")
-                    .to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}")
-                    .to("mock:{{cool.result}}");
+                from("{{cool.start}}").to("log:{{cool.start}}?showBodyType=false&showExchangeId={{cool.showid}}").to("mock:{{cool.result}}");
             }
         });
         context.start();
@@ -68,11 +65,7 @@ public class PropertiesComponentEndpointTest extends ContextTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
-        context.addComponent("properties", pc);
-
+        context.getPropertiesComponent().setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
         return context;
     }
 

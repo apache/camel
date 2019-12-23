@@ -56,7 +56,8 @@ public class FromRestGetEmbeddedRouteTest extends ContextTestSupport {
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
         assertEquals("mock:bye", to.getUri());
 
-        // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
+        // the rest becomes routes and the input is a seda endpoint created by
+        // the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
         template.sendBody("seda:post-say-bye", "I was here");
         assertMockEndpointsSatisfied();
@@ -73,20 +74,9 @@ public class FromRestGetEmbeddedRouteTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
-                rest("/say/hello")
-                    .get()
-                        .route()
-                        .to("mock:hello")
-                        .transform(constant("Hello World"));
+                rest("/say/hello").get().route().to("mock:hello").transform(constant("Hello World"));
 
-                rest("/say/bye")
-                    .get().consumes("application/json")
-                        .route()
-                        .to("mock:bye")
-                        .transform(constant("Bye World"))
-                        .endRest()
-                    .post()
-                        .to("mock:update");
+                rest("/say/bye").get().consumes("application/json").route().to("mock:bye").transform(constant("Bye World")).endRest().post().to("mock:update");
             }
         };
     }

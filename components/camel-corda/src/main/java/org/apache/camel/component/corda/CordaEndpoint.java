@@ -18,6 +18,7 @@ package org.apache.camel.component.corda;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import net.corda.client.rpc.CordaRPCClient;
 import net.corda.client.rpc.CordaRPCConnection;
 import net.corda.core.messaging.CordaRPCOps;
@@ -25,45 +26,27 @@ import net.corda.core.utilities.NetworkHostAndPort;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The corda component uses the corda-rpc to interact with corda nodes.
+ * The corda component uses corda-rpc to interact with corda nodes.
  */
-@UriEndpoint(firstVersion = "2.23.0", scheme = "corda", title = "corda", syntax = "corda:configuration", label = "corda,blockchain")
+@UriEndpoint(firstVersion = "2.23.0", scheme = "corda", title = "Corda", syntax = "corda:node", label = "corda,blockchain")
 public class CordaEndpoint extends DefaultEndpoint {
 
-    @UriPath(description = "URL to the corda node")
-    @Metadata(required = true)
+    @UriParam
     private CordaConfiguration configuration;
+
     private CordaRPCConnection rpcConnection;
     private CordaRPCOps proxy;
 
-    public CordaEndpoint(String uri, String remaining, CordaComponent component, CordaConfiguration configuration) {
+    public CordaEndpoint(String uri, CordaComponent component, CordaConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
-
-        try {
-            URI nodeURI = new URI(uri);
-            configuration.setHost(nodeURI.getHost());
-            configuration.setPort(nodeURI.getPort());
-
-            if (nodeURI.getUserInfo() != null) {
-                String[] creds = nodeURI.getUserInfo().split(":");
-                if (configuration.getUsername() == null) {
-                    configuration.setUsername(creds[0]);
-                }
-                if (configuration.getPassword() == null) {
-                    configuration.setPassword(creds.length > 1 ? creds[1] : "");
-                }
-            }
-        } catch (URISyntaxException e) {
-            throw new IllegalArgumentException("Invalid URI: " + remaining, e);
-        }
     }
 
     @Override
@@ -76,6 +59,14 @@ public class CordaEndpoint extends DefaultEndpoint {
         CordaConsumer consumer = new CordaConsumer(this, processor, configuration, proxy);
         configureConsumer(consumer);
         return consumer;
+    }
+
+    public CordaConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(CordaConfiguration configuration) {
+        this.configuration = configuration;
     }
 
     @Override

@@ -47,7 +47,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: producer
          */
         default GeoCoderEndpointBuilder headersOnly(boolean headersOnly) {
-            setProperty("headersOnly", headersOnly);
+            doSetProperty("headersOnly", headersOnly);
             return this;
         }
         /**
@@ -59,7 +59,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: producer
          */
         default GeoCoderEndpointBuilder headersOnly(String headersOnly) {
-            setProperty("headersOnly", headersOnly);
+            doSetProperty("headersOnly", headersOnly);
             return this;
         }
         /**
@@ -70,7 +70,47 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: producer
          */
         default GeoCoderEndpointBuilder language(String language) {
-            setProperty("language", language);
+            doSetProperty("language", language);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default GeoCoderEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default GeoCoderEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -81,7 +121,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyAuthDomain(String proxyAuthDomain) {
-            setProperty("proxyAuthDomain", proxyAuthDomain);
+            doSetProperty("proxyAuthDomain", proxyAuthDomain);
             return this;
         }
         /**
@@ -92,7 +132,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyAuthHost(String proxyAuthHost) {
-            setProperty("proxyAuthHost", proxyAuthHost);
+            doSetProperty("proxyAuthHost", proxyAuthHost);
             return this;
         }
         /**
@@ -103,7 +143,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyAuthMethod(String proxyAuthMethod) {
-            setProperty("proxyAuthMethod", proxyAuthMethod);
+            doSetProperty("proxyAuthMethod", proxyAuthMethod);
             return this;
         }
         /**
@@ -115,7 +155,7 @@ public interface GeoCoderEndpointBuilderFactory {
          */
         default GeoCoderEndpointBuilder proxyAuthPassword(
                 String proxyAuthPassword) {
-            setProperty("proxyAuthPassword", proxyAuthPassword);
+            doSetProperty("proxyAuthPassword", proxyAuthPassword);
             return this;
         }
         /**
@@ -127,7 +167,7 @@ public interface GeoCoderEndpointBuilderFactory {
          */
         default GeoCoderEndpointBuilder proxyAuthUsername(
                 String proxyAuthUsername) {
-            setProperty("proxyAuthUsername", proxyAuthUsername);
+            doSetProperty("proxyAuthUsername", proxyAuthUsername);
             return this;
         }
         /**
@@ -138,7 +178,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyHost(String proxyHost) {
-            setProperty("proxyHost", proxyHost);
+            doSetProperty("proxyHost", proxyHost);
             return this;
         }
         /**
@@ -149,7 +189,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyPort(Integer proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -161,7 +201,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: proxy
          */
         default GeoCoderEndpointBuilder proxyPort(String proxyPort) {
-            setProperty("proxyPort", proxyPort);
+            doSetProperty("proxyPort", proxyPort);
             return this;
         }
         /**
@@ -172,7 +212,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: security
          */
         default GeoCoderEndpointBuilder apiKey(String apiKey) {
-            setProperty("apiKey", apiKey);
+            doSetProperty("apiKey", apiKey);
             return this;
         }
         /**
@@ -183,7 +223,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: security
          */
         default GeoCoderEndpointBuilder clientId(String clientId) {
-            setProperty("clientId", clientId);
+            doSetProperty("clientId", clientId);
             return this;
         }
         /**
@@ -194,7 +234,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: security
          */
         default GeoCoderEndpointBuilder clientKey(String clientKey) {
-            setProperty("clientKey", clientKey);
+            doSetProperty("clientKey", clientKey);
             return this;
         }
     }
@@ -218,7 +258,7 @@ public interface GeoCoderEndpointBuilderFactory {
          */
         default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -231,7 +271,7 @@ public interface GeoCoderEndpointBuilderFactory {
          */
         default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -243,7 +283,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGeoCoderEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -255,7 +295,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedGeoCoderEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -265,7 +305,7 @@ public interface GeoCoderEndpointBuilderFactory {
      * longitude) for a given address, or reverse lookup.
      * 
      * Category: api,location
-     * Available as of version: 2.12
+     * Since: 2.12
      * Maven coordinates: org.apache.camel:camel-geocoder
      * 
      * Syntax: <code>geocoder:address:latlng</code>
@@ -276,7 +316,7 @@ public interface GeoCoderEndpointBuilderFactory {
      * Path parameter: latlng
      * The geo latitude and longitude which should be prefixed with latlng:
      */
-    default GeoCoderEndpointBuilder geoCoder(String path) {
+    default GeoCoderEndpointBuilder geocoder(String path) {
         class GeoCoderEndpointBuilderImpl extends AbstractEndpointBuilder implements GeoCoderEndpointBuilder, AdvancedGeoCoderEndpointBuilder {
             public GeoCoderEndpointBuilderImpl(String path) {
                 super("geocoder", path);

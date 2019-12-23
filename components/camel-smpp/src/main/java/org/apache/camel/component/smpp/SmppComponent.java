@@ -52,11 +52,12 @@ public class SmppComponent extends DefaultComponent {
 
         // create a copy of the configuration as other endpoints can adjust their copy as well
         SmppConfiguration config = this.configuration.copy();
-
         config.configureFromURI(new URI(uri));
-        setProperties(config, parameters);
 
-        return createEndpoint(uri, config);
+        SmppEndpoint answer = new SmppEndpoint(uri, this, config);
+        setProperties(answer, parameters);
+        
+        return answer;
     }
 
     /**

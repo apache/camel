@@ -43,12 +43,11 @@ public class RecipientListExchangePropertyTest extends ContextTestSupport {
         assertSame("Should be same instance", myStuff, stuff);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:a")
-                        .recipientList(constant("mock:x,mock:y,mock:z"))
-                        .to("mock:result");
+                from("direct:a").recipientList(constant("mock:x,mock:y,mock:z")).to("mock:result");
             }
         };
 

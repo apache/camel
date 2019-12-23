@@ -16,6 +16,7 @@
  */
 package org.apache.camel.runtimecatalog;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Map;
 
@@ -108,7 +109,7 @@ public interface RuntimeCamelCatalog extends StaticService {
     EndpointValidationResult validateProperties(String scheme, Map<String, String> properties);
 
     /**
-     * Parses and validates the endpoint uri and constructs a key/value properties of each option.
+     * Parses and validates the endpoint uri
      *
      * @param uri  the endpoint uri
      * @return validation result
@@ -116,7 +117,7 @@ public interface RuntimeCamelCatalog extends StaticService {
     EndpointValidationResult validateEndpointProperties(String uri);
 
     /**
-     * Parses and validates the endpoint uri and constructs a key/value properties of each option.
+     * Parses and validates the endpoint uri
      * <p/>
      * The option ignoreLenientProperties can be used to ignore components that uses lenient properties.
      * When this is true, then the uri validation is stricter but would fail on properties that are not part of the component
@@ -130,7 +131,7 @@ public interface RuntimeCamelCatalog extends StaticService {
     EndpointValidationResult validateEndpointProperties(String uri, boolean ignoreLenientProperties);
 
     /**
-     * Parses and validates the endpoint uri and constructs a key/value properties of each option.
+     * Parses and validates the endpoint uri
      * <p/>
      * The option ignoreLenientProperties can be used to ignore components that uses lenient properties.
      * When this is true, then the uri validation is stricter but would fail on properties that are not part of the component
@@ -168,6 +169,14 @@ public interface RuntimeCamelCatalog extends StaticService {
      * @return validation result
      */
     LanguageValidationResult validateLanguageExpression(ClassLoader classLoader, String language, String text);
+
+    /**
+     * Parses and validates the configuration property
+     *
+     * @param line  the configuration line as key=value
+     * @return validation result
+     */
+    ConfigurationPropertiesValidationResult validateConfigurationProperty(String line);
 
     /**
      * Returns the component name from the given endpoint uri

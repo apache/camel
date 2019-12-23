@@ -34,14 +34,17 @@ public class SedaProducer extends DefaultAsyncProducer {
     private final WaitForTaskToComplete waitForTaskToComplete;
     private final long timeout;
     private final boolean blockWhenFull;
+    private final boolean discardWhenFull;
     private final long offerTimeout;
 
-    public SedaProducer(SedaEndpoint endpoint, WaitForTaskToComplete waitForTaskToComplete, long timeout, boolean blockWhenFull, long offerTimeout) {
+    public SedaProducer(SedaEndpoint endpoint, WaitForTaskToComplete waitForTaskToComplete,
+                        long timeout, boolean blockWhenFull, boolean discardWhenFull, long offerTimeout) {
         super(endpoint);
         this.endpoint = endpoint;
         this.waitForTaskToComplete = waitForTaskToComplete;
         this.timeout = timeout;
         this.blockWhenFull = blockWhenFull;
+        this.discardWhenFull = discardWhenFull;
         this.offerTimeout = offerTimeout;
         // Force the creation of the queue
         endpoint.getQueue();
@@ -70,12 +73,12 @@ public class SedaProducer extends DefaultAsyncProducer {
                     // check for timeout, which then already would have invoked the latch
                     if (latch.getCount() == 0) {
                         if (log.isTraceEnabled()) {
-                            log.trace("{}. Timeout occurred so response will be ignored: {}", this, response.hasOut() ? response.getOut() : response.getIn());
+                            log.trace("{}. Timeout occurred so response will be ignored: {}", this, response.getMessage());
                         }
                         return;
                     } else {
                         if (log.isTraceEnabled()) {
-                            log.trace("{} with response: {}", this, response.hasOut() ? response.getOut() : response.getIn());
+                            log.trace("{} with response: {}", this, response.getMessage());
                         }
                         try {
                             ExchangeHelper.copyResults(exchange, response);
@@ -188,7 +191,6 @@ public class SedaProducer extends DefaultAsyncProducer {
      * @param copy     whether to create a copy of the exchange to use for adding to the queue
      */
     protected void addToQueue(Exchange exchange, boolean copy) throws SedaConsumerNotAvailableException {
-        boolean offerTime;
         BlockingQueue<Exchange> queue = null;
         QueueReference queueReference = endpoint.getQueueReference();
         if (queueReference != null) {
@@ -216,7 +218,17 @@ public class SedaProducer extends DefaultAsyncProducer {
         }
 
         log.trace("Adding Exchange to queue: {}", target);
-        if (blockWhenFull && offerTimeout == 0) {
+        if (discardWhenFull) {
+            try {
+                boolean added = queue.offer(target, 0, TimeUnit.MILLISECONDS);
+                if (!added) {
+                    log.trace("Discarding Exchange as queue is full: {}", target);
+                }
+            } catch (InterruptedException e) {
+                // ignore
+                log.debug("Offer interrupted, are we stopping? {}", isStopping() || isStopped());
+            }
+        } else if (blockWhenFull && offerTimeout == 0) {
             try {
                 queue.put(target);
             } catch (InterruptedException e) {
@@ -225,10 +237,10 @@ public class SedaProducer extends DefaultAsyncProducer {
             }
         } else if (blockWhenFull && offerTimeout > 0) {
             try {
-                offerTime = queue.offer(target, offerTimeout, TimeUnit.MILLISECONDS);
-                if (!offerTime) {
+                boolean added = queue.offer(target, offerTimeout, TimeUnit.MILLISECONDS);
+                if (!added) {
                     throw new IllegalStateException("Fails to insert element into queue, "
-                            + "after timeout of"  + offerTimeout + "milliseconds");
+                            + "after timeout of "  + offerTimeout + " milliseconds");
                 }
             } catch (InterruptedException e) {
                 // ignore

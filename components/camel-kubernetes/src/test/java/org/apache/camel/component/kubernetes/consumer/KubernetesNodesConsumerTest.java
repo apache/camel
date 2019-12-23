@@ -25,7 +25,6 @@ import io.fabric8.kubernetes.api.model.Container;
 import io.fabric8.kubernetes.api.model.ContainerPort;
 import io.fabric8.kubernetes.api.model.Node;
 import io.fabric8.kubernetes.api.model.PodSpec;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -85,7 +84,7 @@ public class KubernetesNodesConsumerTest extends KubernetesTestSupport {
                 exchange.getIn().setHeader(KubernetesConstants.KUBERNETES_POD_SPEC, podSpec);
             }
         });
-        
+
         ex = template.request("direct:deletePod", new Processor() {
 
             @Override
@@ -109,18 +108,12 @@ public class KubernetesNodesConsumerTest extends KubernetesTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:list").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPods", host,
-                        authToken);
-                from("direct:listByLabels")
-                        .toF("kubernetes-pods://%s?oauthToken=%s&operation=listPodsByLabels", host, authToken);
-                from("direct:getPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=getPod", host,
-                        authToken);
-                from("direct:createPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host,
-                        authToken);
-                from("direct:deletePod").toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host,
-                        authToken);
-                fromF("kubernetes-nodes://%s?oauthToken=%s&resourceName=minikube", host, authToken)
-                        .process(new KubernertesProcessor()).to(mockResultEndpoint);
+                from("direct:list").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPods", host, authToken);
+                from("direct:listByLabels").toF("kubernetes-pods://%s?oauthToken=%s&operation=listPodsByLabels", host, authToken);
+                from("direct:getPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=getPod", host, authToken);
+                from("direct:createPod").toF("kubernetes-pods://%s?oauthToken=%s&operation=createPod", host, authToken);
+                from("direct:deletePod").toF("kubernetes-pods://%s?oauthToken=%s&operation=deletePod", host, authToken);
+                fromF("kubernetes-nodes://%s?oauthToken=%s&resourceName=minikube", host, authToken).process(new KubernertesProcessor()).to(mockResultEndpoint);
             }
         };
     }
@@ -130,8 +123,7 @@ public class KubernetesNodesConsumerTest extends KubernetesTestSupport {
         public void process(Exchange exchange) throws Exception {
             Message in = exchange.getIn();
             Node node = exchange.getIn().getBody(Node.class);
-            log.info("Got event with node name: " + node.getMetadata().getName() + " and action "
-                    + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
+            log.info("Got event with node name: " + node.getMetadata().getName() + " and action " + in.getHeader(KubernetesConstants.KUBERNETES_EVENT_ACTION));
         }
     }
 }

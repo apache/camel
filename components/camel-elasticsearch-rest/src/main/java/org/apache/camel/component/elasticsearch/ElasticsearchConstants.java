@@ -21,7 +21,6 @@ public interface ElasticsearchConstants {
     String PARAM_OPERATION = "operation";
     String PARAM_INDEX_ID = "indexId";
     String PARAM_INDEX_NAME = "indexName";
-    String PARAM_INDEX_TYPE = "indexType";
     String PARAM_WAIT_FOR_ACTIVE_SHARDS = "waitForActiveShards";
     String PARAM_SCROLL_KEEP_ALIVE_MS = "scrollKeepAliveMs";
     String PARAM_SCROLL = "useScroll";

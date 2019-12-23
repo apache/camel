@@ -43,6 +43,7 @@ public class MemoryAggregationRepository extends ServiceSupport implements Optim
         this.optimisticLocking = optimisticLocking;
     }
 
+    @Override
     public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
         if (!optimisticLocking) {
             throw new UnsupportedOperationException();
@@ -59,6 +60,7 @@ public class MemoryAggregationRepository extends ServiceSupport implements Optim
         return oldExchange;
     }
 
+    @Override
     public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
         if (optimisticLocking) { 
             throw new UnsupportedOperationException(); 
@@ -66,10 +68,12 @@ public class MemoryAggregationRepository extends ServiceSupport implements Optim
         return cache.put(key, exchange);
     }
 
+    @Override
     public Exchange get(CamelContext camelContext, String key) {
         return cache.get(key);
     }
 
+    @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         if (optimisticLocking) {
             if (!cache.remove(key, exchange)) {
@@ -80,10 +84,12 @@ public class MemoryAggregationRepository extends ServiceSupport implements Optim
         }
     }
 
+    @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
         // noop
     }
 
+    @Override
     public Set<String> getKeys() {
         // do not allow edits to the set
         return Collections.unmodifiableSet(cache.keySet());

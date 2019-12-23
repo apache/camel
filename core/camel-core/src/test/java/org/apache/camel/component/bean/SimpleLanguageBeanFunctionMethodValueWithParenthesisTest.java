@@ -78,33 +78,13 @@ public class SimpleLanguageBeanFunctionMethodValueWithParenthesisTest extends Co
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:single")
-                    .choice()
-                        .when().simple("${bean:foo?method=bar(${body}, 'a()b')}")
-                            .to("mock:result")
-                        .otherwise()
-                            .to("mock:other");
+                from("direct:single").choice().when().simple("${bean:foo?method=bar(${body}, 'a()b')}").to("mock:result").otherwise().to("mock:other");
 
-                from("direct:double")
-                    .choice()
-                        .when().simple("${bean:foo?method=bar(${body}, \"a()b\")}")
-                            .to("mock:result")
-                        .otherwise()
-                            .to("mock:other");
+                from("direct:double").choice().when().simple("${bean:foo?method=bar(${body}, \"a()b\")}").to("mock:result").otherwise().to("mock:other");
 
-                from("direct:header")
-                    .choice()
-                        .when().simple("${bean:foo?method=bar(${body}, ${header.myHeader})}")
-                            .to("mock:result")
-                        .otherwise()
-                            .to("mock:other");
+                from("direct:header").choice().when().simple("${bean:foo?method=bar(${body}, ${header.myHeader})}").to("mock:result").otherwise().to("mock:other");
 
-                from("direct:cron")
-                    .choice()
-                        .when().simple("${bean:foo?method=bar(${body.id}, ${body.cron})}")
-                            .to("mock:result")
-                        .otherwise()
-                            .to("mock:other");
+                from("direct:cron").choice().when().simple("${bean:foo?method=bar(${body.id}, ${body.cron})}").to("mock:result").otherwise().to("mock:other");
             }
         };
     }

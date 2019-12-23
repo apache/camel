@@ -21,6 +21,7 @@ import java.math.BigDecimal;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -42,6 +43,7 @@ public class JcrProducer extends DefaultProducer {
         super(jcrEndpoint);
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         TypeConverter converter = exchange.getContext().getTypeConverter();
         Session session = openSession();

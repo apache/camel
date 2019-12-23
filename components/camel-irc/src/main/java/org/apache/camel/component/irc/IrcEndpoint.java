@@ -52,6 +52,7 @@ public class IrcEndpoint extends DefaultEndpoint {
         this.configuration = configuration;
     }
 
+    @Override
     public Exchange createExchange(ExchangePattern pattern) {
         Exchange exchange = super.createExchange(pattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
@@ -121,16 +122,19 @@ public class IrcEndpoint extends DefaultEndpoint {
         return exchange;
     }
 
+    @Override
     public IrcProducer createProducer() throws Exception {
         return new IrcProducer(this, component.getIRCConnection(configuration));
     }
 
+    @Override
     public IrcConsumer createConsumer(Processor processor) throws Exception {
         IrcConsumer answer = new IrcConsumer(this, processor, component.getIRCConnection(configuration));
         configureConsumer(answer);
         return answer;
     }
 
+    @Override
     public IrcComponent getComponent() {
         return component;
     }

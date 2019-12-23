@@ -41,12 +41,10 @@ public class RouteContextProcessorTest extends ContextTestSupport {
     public static final int SAFETY_CAPACITY = 10;
 
     // Resequencer time-out
-    public static final long TIMEOUT = SAFETY_TIMEOUT
-            + (RandomSleepProcessor.MAX_PROCESS_TIME - RandomSleepProcessor.MIN_PROCESS_TIME);
+    public static final long TIMEOUT = SAFETY_TIMEOUT + (RandomSleepProcessor.MAX_PROCESS_TIME - RandomSleepProcessor.MIN_PROCESS_TIME);
 
     // Resequencer capacity
-    public static final int CAPACITY = SAFETY_CAPACITY
-            + (int) (CONCURRENCY * TIMEOUT / RandomSleepProcessor.MIN_PROCESS_TIME);
+    public static final int CAPACITY = SAFETY_CAPACITY + (int)(CONCURRENCY * TIMEOUT / RandomSleepProcessor.MIN_PROCESS_TIME);
 
     private static final int NUMBER_OF_MESSAGES = 10000;
 
@@ -61,13 +59,10 @@ public class RouteContextProcessorTest extends ContextTestSupport {
 
         ProducerTemplate template = context.createProducerTemplate();
         for (int i = 0; i < NUMBER_OF_MESSAGES; i++) {
-            template.sendBodyAndHeader("seda:fork", "Test Message: " + i,
-                    "seqnum", new Long(i));
+            template.sendBodyAndHeader("seda:fork", "Test Message: " + i, "seqnum", new Long(i));
         }
 
-        long expectedTime = NUMBER_OF_MESSAGES
-                * (RandomSleepProcessor.MAX_PROCESS_TIME + RandomSleepProcessor.MIN_PROCESS_TIME)
-                / 2 / CONCURRENCY + TIMEOUT;
+        long expectedTime = NUMBER_OF_MESSAGES * (RandomSleepProcessor.MAX_PROCESS_TIME + RandomSleepProcessor.MIN_PROCESS_TIME) / 2 / CONCURRENCY + TIMEOUT;
         Thread.sleep(expectedTime);
 
         assertMockEndpointsSatisfied();
@@ -80,10 +75,8 @@ public class RouteContextProcessorTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 Processor myProcessor = new RandomSleepProcessor();
-                from("seda:fork?concurrentConsumers=" + CONCURRENCY).process(
-                        myProcessor).to("seda:join");
-                from("seda:join").resequence(header("seqnum")).stream()
-                        .capacity(CAPACITY).timeout(TIMEOUT).to("mock:result");
+                from("seda:fork?concurrentConsumers=" + CONCURRENCY).process(myProcessor).to("seda:join");
+                from("seda:join").resequence(header("seqnum")).stream().capacity(CAPACITY).timeout(TIMEOUT).to("mock:result");
             }
         };
     }
@@ -98,8 +91,7 @@ public class RouteContextProcessorTest extends ContextTestSupport {
 
         @Override
         public void process(Exchange arg0) throws Exception {
-            long processTime = (long) (MIN_PROCESS_TIME + Math.random()
-                    * (MAX_PROCESS_TIME - MIN_PROCESS_TIME));
+            long processTime = (long)(MIN_PROCESS_TIME + Math.random() * (MAX_PROCESS_TIME - MIN_PROCESS_TIME));
             Thread.sleep(processTime);
         }
     }

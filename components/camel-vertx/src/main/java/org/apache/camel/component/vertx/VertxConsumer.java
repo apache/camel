@@ -25,8 +25,6 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.support.DefaultConsumer;
 
-import static org.apache.camel.component.vertx.VertxHelper.getVertxBody;
-
 public class VertxConsumer extends DefaultConsumer {
 
     private final VertxEndpoint endpoint;
@@ -55,7 +53,7 @@ public class VertxConsumer extends DefaultConsumer {
                 @Override
                 public void done(boolean doneSync) {
                     if (reply) {
-                        Object body = getVertxBody(exchange);
+                        Object body = exchange.getMessage().getBody();
                         if (body != null) {
                             log.debug("Sending reply to: {} with body: {}", event.replyAddress(), body);
                             event.reply(body);
@@ -68,6 +66,7 @@ public class VertxConsumer extends DefaultConsumer {
         }
     }
 
+    @Override
     protected void doStart() throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Registering EventBus handler on address {}", endpoint.getAddress());
@@ -79,6 +78,7 @@ public class VertxConsumer extends DefaultConsumer {
         super.doStart();
     }
 
+    @Override
     protected void doStop() throws Exception {
         if (log.isDebugEnabled()) {
             log.debug("Unregistering EventBus handler on address {}", endpoint.getAddress());

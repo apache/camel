@@ -44,18 +44,16 @@ public class OnExceptionHandledNoFailureProcessorTest extends ContextTestSupport
             public void configure() throws Exception {
                 errorHandler(deadLetterChannel("mock:error"));
 
-                // handle runtime exception, and let the regular error handler deal with it afterwards
-                onException(RuntimeException.class)
-                    .handled(true);
+                // handle runtime exception, and let the regular error handler
+                // deal with it afterwards
+                onException(RuntimeException.class).handled(true);
 
-                from("direct:start").
-                    process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            throw new RuntimeException("FAIL!");
-                        }
-                    }).
-                    to("mock:end");
+                from("direct:start").process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        throw new RuntimeException("FAIL!");
+                    }
+                }).to("mock:end");
             }
         };
     }

@@ -33,6 +33,7 @@ public class StreamEncodingTest extends CamelTestSupport {
         template.sendBody("direct:in", body);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

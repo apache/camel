@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.activation.FileDataSource;
 
 import io.undertow.client.ClientExchange;
@@ -47,7 +48,6 @@ import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.attachment.AttachmentMessage;
 import org.apache.camel.attachment.DefaultAttachment;
-import org.apache.camel.attachment.DefaultAttachmentMessage;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
@@ -60,6 +60,8 @@ import org.xnio.channels.BlockingReadableByteChannel;
 import org.xnio.channels.StreamSourceChannel;
 import org.xnio.streams.ChannelInputStream;
 
+import static org.apache.camel.util.BufferCaster.cast;
+
 /**
  * DefaultUndertowHttpBinding represent binding used by default, if user doesn't provide any.
  * By default {@link UndertowHeaderFilterStrategy} is also used.
@@ -71,6 +73,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     //use default filter strategy from Camel HTTP
     private HeaderFilterStrategy headerFilterStrategy;
     private Boolean transferException;
+    private Boolean muteException;
     private boolean useStreaming;
 
     public DefaultUndertowHttpBinding() {
@@ -80,18 +83,21 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     public DefaultUndertowHttpBinding(boolean useStreaming) {
         this.headerFilterStrategy = new UndertowHeaderFilterStrategy();
         this.transferException = Boolean.FALSE;
+        this.muteException = Boolean.FALSE;
         this.useStreaming = useStreaming;
     }
 
-    public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy, Boolean transferException) {
+    public DefaultUndertowHttpBinding(HeaderFilterStrategy headerFilterStrategy, Boolean transferException, Boolean muteException) {
         this.headerFilterStrategy = headerFilterStrategy;
         this.transferException = transferException;
+        this.muteException = muteException;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         return headerFilterStrategy;
     }
 
+    @Override
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
     }
@@ -100,8 +106,18 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return transferException;
     }
 
+    @Override
     public void setTransferException(Boolean transferException) {
         this.transferException = transferException;
+    }
+
+    public Boolean isMuteException() {
+        return muteException;
+    }
+
+    @Override
+    public void setMuteException(Boolean muteException) {
+        this.muteException = muteException;
     }
 
     @Override
@@ -175,7 +191,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public void populateCamelHeaders(HttpServerExchange httpExchange, Map<String, Object> headersMap, Exchange exchange) throws Exception {
-        LOG.trace("populateCamelHeaders: {}");
+        LOG.trace("populateCamelHeaders: {}", exchange.getMessage().getHeaders());
 
         String path = httpExchange.getRequestPath();
         UndertowEndpoint endpoint = (UndertowEndpoint) exchange.getFromEndpoint();
@@ -268,8 +284,8 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
     }
 
     @Override
-    public void populateCamelHeaders(ClientResponse response, Map<String, Object> headersMap, Exchange exchange) throws Exception {
-        LOG.trace("populateCamelHeaders: {}");
+    public void populateCamelHeaders(ClientResponse response, Map<String, Object> headersMap, Exchange exchange) {
+        LOG.trace("populateCamelHeaders: {}", exchange.getMessage().getHeaders());
 
         headersMap.put(Exchange.HTTP_RESPONSE_CODE, response.getResponseCode());
 
@@ -292,9 +308,7 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             }
 
             // add the headers one by one, and use the header filter strategy
-            Iterator<?> it = response.getResponseHeaders().get(name).iterator();
-            while (it.hasNext()) {
-                Object value = it.next();
+            for (Object value : response.getResponseHeaders().get(name)) {
                 LOG.trace("HTTP-header: {}", value);
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(name.toString(), value, exchange)) {
@@ -306,16 +320,16 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
 
     @Override
     public Object toHttpResponse(HttpServerExchange httpExchange, Message message) throws IOException {
-        boolean failed = message.getExchange().isFailed();
-        int defaultCode = failed ? 500 : 200;
-
-        int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
-
+        Exchange camelExchange = message.getExchange();
+        Object body = message.getBody();
+        Exception exception = camelExchange.getException();
+        
+        int code = determineResponseCode(camelExchange, body);
+        message.getHeaders().put(Exchange.HTTP_RESPONSE_CODE, code);
         httpExchange.setStatusCode(code);
 
-        TypeConverter tc = message.getExchange().getContext().getTypeConverter();
-
         //copy headers from Message to Response
+        TypeConverter tc = message.getExchange().getContext().getTypeConverter();
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
@@ -324,17 +338,14 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             while (it.hasNext()) {
                 String headerValue = tc.convertTo(String.class, it.next());
                 if (headerValue != null && headerFilterStrategy != null
-                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, camelExchange)) {
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);
                     httpExchange.getResponseHeaders().add(new HttpString(key), headerValue);
                 }
             }
         }
 
-        Object body = message.getBody();
-        Exception exception = message.getExchange().getException();
-
-        if (exception != null) {
+        if (exception != null && !isMuteException()) {
             if (isTransferException()) {
                 // we failed due an exception, and transfer it as java serialized object
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -360,9 +371,12 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             }
 
             // and mark the exception as failure handled, as we handled it by returning it as the response
-            ExchangeHelper.setFailureHandled(message.getExchange());
+            ExchangeHelper.setFailureHandled(camelExchange);
+        } else if (exception != null && isMuteException()) {
+            // mark the exception as failure handled, as we handled it by actively muting it
+            ExchangeHelper.setFailureHandled(camelExchange);
         }
-
+        
         // set the content type in the response.
         String contentType = MessageHelper.getContentType(message);
         if (contentType != null) {
@@ -373,6 +387,27 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
         return body;
     }
 
+    /*
+     * set the HTTP status code
+     */
+    private int determineResponseCode(Exchange camelExchange, Object body) {
+        boolean failed = camelExchange.isFailed();
+        int defaultCode = failed ? 500 : 200;
+
+        Message message = camelExchange.getMessage();
+        Integer currentCode = message.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
+        int codeToUse = currentCode == null ? defaultCode : currentCode;
+
+        if (codeToUse != 500) {
+            if ((body == null) || (body instanceof String && ((String) body).trim().isEmpty())) {
+                // no content 
+                codeToUse = currentCode == null ? 204 : currentCode;
+            }
+        }
+
+        return codeToUse;
+    }
+    
     @Override
     public Object toHttpRequest(ClientRequest clientRequest, Message message) {
 
@@ -422,14 +457,14 @@ public class DefaultUndertowHttpBinding implements UndertowHttpBinding {
             } else if (res == 0) {
                 LOG.error("Channel did not block");
             } else {
-                buffer.flip();
+                cast(buffer).flip();
                 out.write(buffer.array(), buffer.arrayOffset() + buffer.position(), buffer.arrayOffset() + buffer.limit());
                 buffer.clear();
             }
         }
     }
 
-    class FilePartDataSource extends FileDataSource {
+    static class FilePartDataSource extends FileDataSource {
         private String name;
         private String contentType;
 

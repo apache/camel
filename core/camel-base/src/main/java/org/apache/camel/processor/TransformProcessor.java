@@ -39,6 +39,7 @@ public class TransformProcessor extends AsyncProcessorSupport implements Traceab
         this.expression = expression;
     }
 
+    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
             Object newBody = expression.evaluate(exchange, Object.class);
@@ -49,8 +50,7 @@ public class TransformProcessor extends AsyncProcessorSupport implements Traceab
                 return true;
             }
 
-            boolean out = exchange.hasOut();
-            Message old = out ? exchange.getOut() : exchange.getIn();
+            Message old = exchange.getMessage();
 
             // create a new message container so we do not drag specialized message objects along
             // but that is only needed if the old message is a specialized message
@@ -85,14 +85,17 @@ public class TransformProcessor extends AsyncProcessorSupport implements Traceab
         return "Transform(" + expression + ")";
     }
 
+    @Override
     public String getTraceLabel() {
         return "transform[" + expression + "]";
     }
 
+    @Override
     public String getId() {
         return id;
     }
 
+    @Override
     public void setId(String id) {
         this.id = id;
     }

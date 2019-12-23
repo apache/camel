@@ -39,6 +39,108 @@ public interface IgniteSetEndpointBuilderFactory {
             return (AdvancedIgniteSetEndpointBuilder) this;
         }
         /**
+         * The collection configuration. Default: empty configuration. You can
+         * also conveniently set inner properties by using configuration.xyz=123
+         * options.
+         * 
+         * The option is a:
+         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default IgniteSetEndpointBuilder configuration(Object configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * The collection configuration. Default: empty configuration. You can
+         * also conveniently set inner properties by using configuration.xyz=123
+         * options.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.ignite.configuration.CollectionConfiguration</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default IgniteSetEndpointBuilder configuration(String configuration) {
+            doSetProperty("configuration", configuration);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteSetEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default IgniteSetEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * The operation to invoke on the Ignite Set. Superseded by the
+         * IgniteConstants.IGNITE_SETS_OPERATION header in the IN message.
+         * Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR,
+         * RETAIN_ALL, ARRAY.The set operation to perform.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default IgniteSetEndpointBuilder operation(IgniteSetOperation operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
+         * The operation to invoke on the Ignite Set. Superseded by the
+         * IgniteConstants.IGNITE_SETS_OPERATION header in the IN message.
+         * Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR,
+         * RETAIN_ALL, ARRAY.The set operation to perform.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.ignite.set.IgniteSetOperation</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default IgniteSetEndpointBuilder operation(String operation) {
+            doSetProperty("operation", operation);
+            return this;
+        }
+        /**
          * Sets whether to propagate the incoming body if the return type of the
          * underlying Ignite operation is void.
          * 
@@ -48,7 +150,7 @@ public interface IgniteSetEndpointBuilderFactory {
          */
         default IgniteSetEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 boolean propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -61,7 +163,7 @@ public interface IgniteSetEndpointBuilderFactory {
          */
         default IgniteSetEndpointBuilder propagateIncomingBodyIfNoReturnValue(
                 String propagateIncomingBodyIfNoReturnValue) {
-            setProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
+            doSetProperty("propagateIncomingBodyIfNoReturnValue", propagateIncomingBodyIfNoReturnValue);
             return this;
         }
         /**
@@ -74,7 +176,7 @@ public interface IgniteSetEndpointBuilderFactory {
          */
         default IgniteSetEndpointBuilder treatCollectionsAsCacheObjects(
                 boolean treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
         /**
@@ -87,7 +189,7 @@ public interface IgniteSetEndpointBuilderFactory {
          */
         default IgniteSetEndpointBuilder treatCollectionsAsCacheObjects(
                 String treatCollectionsAsCacheObjects) {
-            setProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
+            doSetProperty("treatCollectionsAsCacheObjects", treatCollectionsAsCacheObjects);
             return this;
         }
     }
@@ -111,7 +213,7 @@ public interface IgniteSetEndpointBuilderFactory {
          */
         default AdvancedIgniteSetEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -124,7 +226,7 @@ public interface IgniteSetEndpointBuilderFactory {
          */
         default AdvancedIgniteSetEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -136,7 +238,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIgniteSetEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -148,7 +250,7 @@ public interface IgniteSetEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedIgniteSetEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -174,7 +276,7 @@ public interface IgniteSetEndpointBuilderFactory {
      * you to interact with Ignite Set data structures.
      * 
      * Category: nosql,cache
-     * Available as of version: 2.17
+     * Since: 2.17
      * Maven coordinates: org.apache.camel:camel-ignite
      * 
      * Syntax: <code>ignite-set:name</code>

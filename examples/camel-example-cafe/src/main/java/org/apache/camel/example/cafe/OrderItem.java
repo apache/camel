@@ -51,6 +51,7 @@ public class OrderItem {
         return this.type;
     }
 
+    @Override
     public String toString() {
         return ((this.iced) ? "iced " : "hot ") + this.shots + " shot " + this.type;
     }

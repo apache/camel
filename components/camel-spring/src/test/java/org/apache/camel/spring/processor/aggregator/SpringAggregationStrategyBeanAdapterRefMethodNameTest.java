@@ -23,6 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 
 public class SpringAggregationStrategyBeanAdapterRefMethodNameTest extends AggregationStrategyBeanAdapterRefMethodNameTest {
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this, "org/apache/camel/spring/processor/aggregator/SpringAggregationStrategyBeanAdapterRefMethodNameTest.xml");
     }

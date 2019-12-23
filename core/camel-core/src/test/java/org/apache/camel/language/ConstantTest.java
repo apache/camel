@@ -23,16 +23,17 @@ public class ConstantTest extends LanguageTestSupport {
 
     @Test
     public void testConstantExpressions() throws Exception {
-        // We can put anything in here, the expression will 
+        // We can put anything in here, the expression will
         // always evaluate to itself
         assertExpression("a value", "a value");
     }
- 
+
     @Test
     public void testPredicates() throws Exception {
         assertPredicate("another value");
     }
 
+    @Override
     protected String getLanguageName() {
         return "constant";
     }

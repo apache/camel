@@ -1,7 +1,12 @@
 [[azure-blob-component]]
-== Azure Storage Blob Service Component
+= Azure Storage Blob Service Component
+:page-source: components/camel-azure/src/main/docs/azure-blob-component.adoc
 
-*Available as of Camel version 2.19*
+*Since Camel 2.19*
+
+// HEADER START
+*Both producer and consumer is supported*
+// HEADER END
 
 The Azure Blob component supports storing and retrieving the blobs to/from
 https://azure.microsoft.com/services/storage/blobs/[Azure Storage Blob] service.
@@ -11,7 +16,7 @@ Prerequisites
 You must have a valid Windows Azure Storage account. More information is available at
 https://docs.microsoft.com/azure/[Azure Documentation Portal].
 
-### URI Format
+== URI Format
 
 [source,java]
 ------------------------------
@@ -31,20 +36,21 @@ from("azure-blob:/camelazure/container1/blockBlob").
 to("file://blobdirectory");
 --------------------------------------------------------------------------------
 
-### URI Options
+== URI Options
 
 
 // component options: START
-The Azure Storage Blob Service component supports 3 options, which are listed below.
+The Azure Storage Blob Service component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *configuration* (advanced) | The Blob Service configuration |  | BlobService Configuration
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *configuration* (advanced) | The Blob Service configuration |  | BlobServiceConfiguration
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -67,7 +73,7 @@ azure-blob:containerOrBlobUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -77,7 +83,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (21 parameters):
+=== Query Parameters (21 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -107,14 +113,14 @@ with the following path and query parameters:
 |===
 // endpoint options: END
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-azure-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -122,7 +128,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 21 options, which are listed below.
+The component supports 22 options, which are listed below.
 
 
 
@@ -130,6 +136,7 @@ The component supports 21 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.azure-blob.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.azure-blob.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.azure-blob.configuration.account-name* | Set the Azure account name |  | String
 | *camel.component.azure-blob.configuration.azure-blob-client* | The blob service client |  | CloudBlob
 | *camel.component.azure-blob.configuration.blob-metadata* | Set the blob meta-data |  | Map
@@ -148,8 +155,8 @@ The component supports 21 options, which are listed below.
 | *camel.component.azure-blob.configuration.stream-read-size* | Set the minimum read size in bytes when reading the blob content |  | Integer
 | *camel.component.azure-blob.configuration.stream-write-size* | Set the size of the buffer for writing block and page blocks |  | Integer
 | *camel.component.azure-blob.configuration.use-flat-listing* | Specify if the flat or hierarchical blob listing should be used | true | Boolean
-| *camel.component.azure-blob.enabled* | Enable azure-blob component | true | Boolean
-| *camel.component.azure-blob.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.azure-blob.enabled* | Whether to enable auto configuration of the azure-blob component. This is enabled by default. |  | Boolean
+| *camel.component.azure-blob.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
@@ -160,17 +167,9 @@ Required Azure Storage Blob Service component options
 
 You have to provide the containerOrBlob name and the credentials if the private blob needs to be accessed.
 
-### Usage
+== Usage
 
-#### Message headers set by the Azure Storage Blob Service producer
-
-[width="100%",cols="10%,10%,80%",options="header",]
-|=======================================================================
-|Header |Type |Description
-|`CamelFileName` |`String` |The file name for the downloaded blob content.
-|=======================================================================
-
-#### Message headers set by the Azure Storage Blob Service producer consumer
+=== Message headers set by the Azure Storage Blob Service producer
 
 [width="100%",cols="10%,10%,80%",options="header",]
 |=======================================================================
@@ -178,8 +177,16 @@ You have to provide the containerOrBlob name and the credentials if the private 
 |`CamelFileName` |`String` |The file name for the downloaded blob content.
 |=======================================================================
 
+=== Message headers set by the Azure Storage Blob Service producer consumer
 
-#### Azure Blob Service operations
+[width="100%",cols="10%,10%,80%",options="header",]
+|=======================================================================
+|Header |Type |Description
+|`CamelFileName` |`String` |The file name for the downloaded blob content.
+|=======================================================================
+
+
+=== Azure Blob Service operations
 
 *Operations common to all block types*
 
@@ -235,49 +242,40 @@ You have to provide the containerOrBlob name and the credentials if the private 
 
 
 
-#### Azure Blob Client configuration
+=== Azure Blob Client configuration
 
-If your Camel Application is running behind a firewall or if you need to
-have more control over the Azure Blob Client configuration, you can
-create your own instance:
+If your Camel application is running behind a firewall or if you need more control over the Azure Blob Client configuration, you can create your own instance:
 
 [source,java]
---------------------------------------------------------------------------------------
-StorageCredentials credentials = new StorageCredentialsAccountAndKey("camelazure", Base64.encode("thekey".getBytes()));
-CloudBlob client = new CloudBlockBlob("camelazure", credentials);
+----
+StorageCredentials credentials = new StorageCredentialsAccountAndKey(accountName, accessKey);
+CloudBlob client = new CloudBlockBlob(URI.create("https://"
+                    + accountName + ".blob.core.windows.net/" + containerName 
+                    + "/" + fileName), credentials);
 registry.bind("azureBlobClient", client);
---------------------------------------------------------------------------------------
+----
 
-and refer to it in your Camel azure-blob component configuration:
+Then refer to this instance in your Camel `azure-blob` component configuration:
 
 [source,java]
---------------------------------------------------------------------------------
-from("azure-blob://camelazure/container1/blockBlob?azureBlobClient=#client")
+----
+from("azure-blob://" + accountName + "/" + containerName + "/" + fileName + "?azureBlobClient=#client")
 .to("mock:result");
---------------------------------------------------------------------------------
+----
 
-### Dependencies
+== Dependencies
 
-Maven users will need to add the following dependency to their pom.xml.
+Maven users will need to add the following dependency to their `pom.xml`.
 
 *pom.xml*
 
 [source,xml]
----------------------------------------
+----
 <dependency>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-azure</artifactId>
     <version>${camel-version}</version>
 </dependency>
----------------------------------------
+----
 
-where `${camel-version`} must be replaced by the actual version of Camel.
-
-### See Also
-
-* Configuring Camel
-* Component
-* Endpoint
-* Getting Started
-
-* Azure Component
+where `${camel-version}` must be replaced by the actual version of Camel.

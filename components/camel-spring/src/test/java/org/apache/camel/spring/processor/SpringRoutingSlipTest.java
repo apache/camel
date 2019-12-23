@@ -22,6 +22,7 @@ import org.apache.camel.processor.routingslip.RoutingSlipTest;
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
 public class SpringRoutingSlipTest extends RoutingSlipTest {
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         return createSpringCamelContext(this,
                 "org/apache/camel/spring/processor/routingSlip.xml");

@@ -30,6 +30,7 @@ public class DefaultNodeIdFactory implements NodeIdFactory {
 
     protected static Map<String, AtomicInteger> nodeCounters = new ConcurrentHashMap<>();
 
+    @Override
     public String createId(NamedNode definition) {
         String key = definition.getShortName();
         return key + getNodeCounter(key).incrementAndGet();

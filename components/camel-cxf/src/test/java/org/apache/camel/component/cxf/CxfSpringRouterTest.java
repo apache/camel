@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class CxfSpringRouterTest extends CxfSimpleRouterTest {
     protected AbstractXmlApplicationContext applicationContext;
 
+    @Override
     @Before
     public void setUp() throws Exception {
         CXFTestSupport.getPort1();
@@ -37,6 +38,7 @@ public class CxfSpringRouterTest extends CxfSimpleRouterTest {
 
     }
 
+    @Override
     @After
     public void tearDown() throws Exception {
         // Don't close the application context, as it will cause some trouble on the bus shutdown

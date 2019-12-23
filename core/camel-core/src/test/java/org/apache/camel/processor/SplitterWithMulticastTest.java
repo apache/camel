@@ -30,9 +30,11 @@ public class SplitterWithMulticastTest extends ContextTestSupport {
         getMockEndpoint("mock:result").allMessages().header("foo").isNull();
 
         getMockEndpoint("mock:split").expectedBodiesReceived("A", "B", "C");
-        // should have the bar header because multicast uses UseLatestAggregationStrategy by default
+        // should have the bar header because multicast uses
+        // UseLatestAggregationStrategy by default
         getMockEndpoint("mock:split").expectedHeaderReceived("bar", 123);
-        // should NOT have the foo header because multicast uses UseLatestAggregationStrategy by default
+        // should NOT have the foo header because multicast uses
+        // UseLatestAggregationStrategy by default
         getMockEndpoint("mock:split").allMessages().header("foo").isNull();
 
         template.sendBody("direct:start", "A,B,C");
@@ -45,15 +47,8 @@ public class SplitterWithMulticastTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .split(body().tokenize(","))
-                        .multicast()
-                            .setHeader("foo", constant("ABC"))
-                            .setHeader("bar", constant(123))
-                        .end()
-                        .to("log:split?showHeaders=true", "mock:split")
-                    .end()
-                    .to("log:result?showHeaders=true", "mock:result");
+                from("direct:start").split(body().tokenize(",")).multicast().setHeader("foo", constant("ABC")).setHeader("bar", constant(123)).end()
+                    .to("log:split?showHeaders=true", "mock:split").end().to("log:result?showHeaders=true", "mock:result");
             }
         };
     }

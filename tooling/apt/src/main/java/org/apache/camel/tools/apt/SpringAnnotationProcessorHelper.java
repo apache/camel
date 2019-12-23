@@ -56,7 +56,8 @@ import static org.apache.camel.tools.apt.helper.Strings.safeNull;
  */
 public class SpringAnnotationProcessorHelper {
 
-    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv, final TypeElement classElement) {
+    protected void processModelClass(final ProcessingEnvironment processingEnv, final RoundEnvironment roundEnv,
+                                     final TypeElement classElement) {
         final String javaTypeName = canonicalClassName(classElement.getQualifiedName().toString());
         String packageName = javaTypeName.substring(0, javaTypeName.lastIndexOf("."));
 
@@ -138,7 +139,7 @@ public class SpringAnnotationProcessorHelper {
 
             buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), entry.getKind(), entry.isRequired(), entry.getType(), entry.getDefaultValue(), doc,
                                                   entry.isDeprecated(), entry.getDeprecationNote(), false, null, null, entry.isEnumType(), entry.getEnums(), entry.isOneOf(),
-                                                  entry.getOneOfTypes(), entry.isAsPredicate(), null, null, false));
+                                                  entry.getOneOfTypes(), entry.isAsPredicate(), null, null, false, null, null));
         }
         buffer.append("\n  }");
 
@@ -251,7 +252,12 @@ public class SpringAnnotationProcessorHelper {
         TypeElement fieldTypeElement = findTypeElement(processingEnv, roundEnv, fieldTypeName);
 
         String defaultValue = findDefaultValue(fieldElement, fieldTypeName);
-        String docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+        String docComment;
+        if ("mdcLoggingKeysPattern".equals(fieldName)) {
+            docComment = findJavaDoc(elementUtils, fieldElement, "MDCLoggingKeysPattern", name, classElement, true);
+        } else {
+            docComment = findJavaDoc(elementUtils, fieldElement, fieldName, name, classElement, true);
+        }
         if (isNullOrEmpty(docComment)) {
             Metadata metadata = fieldElement.getAnnotation(Metadata.class);
             docComment = metadata != null ? metadata.description() : null;

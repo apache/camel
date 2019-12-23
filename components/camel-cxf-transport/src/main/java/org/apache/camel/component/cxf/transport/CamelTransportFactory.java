@@ -93,6 +93,7 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
         return getDestination(endpointInfo, bus);
     }
 
+    @Override
     public Set<String> getUriPrefixes() {
         return URI_PREFIXES;
     }
@@ -105,18 +106,23 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
         this.headerFilterStrategy = headerFilterStrategy;
     }
     
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
+    @Override
     public void setCamelContext(CamelContext c) {
         camelContext = c;
     }
+    @Override
     public Destination getDestination(EndpointInfo ei, Bus b) throws IOException {
         return new CamelDestination(camelContext, b, this, ei, headerFilterStrategy, checkException);
     }
+    @Override
     public Conduit getConduit(EndpointInfo targetInfo, Bus b) throws IOException {
         return getConduit(targetInfo, null, b);
     }
+    @Override
     public Conduit getConduit(EndpointInfo localInfo, EndpointReferenceType target, Bus b)
         throws IOException {
         return new CamelConduit(camelContext, b, localInfo, target, headerFilterStrategy);

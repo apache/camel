@@ -38,20 +38,11 @@ public class CorrectRouteIdTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").routeId("foo")
-                    .setHeader("foo").simple("${routeId}")
-                    .to("mock:foo")
-                    .to("seda:bar")
-                    .to("mock:result");
+                from("direct:foo").routeId("foo").setHeader("foo").simple("${routeId}").to("mock:foo").to("seda:bar").to("mock:result");
 
-                from("seda:bar").routeId("bar")
-                    .setHeader("bar").simple("${routeId}")
-                    .to("mock:bar")
-                    .to("direct:baz");
+                from("seda:bar").routeId("bar").setHeader("bar").simple("${routeId}").to("mock:bar").to("direct:baz");
 
-                from("direct:baz").routeId("baz")
-                    .setHeader("baz").simple("${routeId}")
-                    .to("mock:baz");
+                from("direct:baz").routeId("baz").setHeader("baz").simple("${routeId}").to("mock:baz");
             }
         };
     }

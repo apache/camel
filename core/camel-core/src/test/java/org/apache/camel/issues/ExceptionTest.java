@@ -35,9 +35,12 @@ public class ExceptionTest extends ContextTestSupport {
         exceptionEndpoint.expectedMessageCount(0);
         resultEndpoint.expectedMessageCount(0);
 
-        // we don't expect any thrown exception here as there's no onException clause defined for this test
-        // so that the general purpose dead letter channel will come into the play and then when all the attempts
-        // to redelivery fails the exchange will be moved to "mock:error" and then from the client point of
+        // we don't expect any thrown exception here as there's no onException
+        // clause defined for this test
+        // so that the general purpose dead letter channel will come into the
+        // play and then when all the attempts
+        // to redelivery fails the exchange will be moved to "mock:error" and
+        // then from the client point of
         // view the exchange is completed.
         template.sendBody("direct:start", "<body/>");
 
@@ -119,8 +122,7 @@ public class ExceptionTest extends ContextTestSupport {
 
                 if (getName().endsWith("WithLongHandler")) {
                     log.debug("Using long exception handler");
-                    onException(IllegalArgumentException.class).setBody(constant("<not-handled/>")).
-                        to("mock:exception");
+                    onException(IllegalArgumentException.class).setBody(constant("<not-handled/>")).to("mock:exception");
                 } else if (getName().endsWith("WithHandler")) {
                     log.debug("Using exception handler");
                     onException(IllegalArgumentException.class).to("mock:exception");
@@ -132,4 +134,3 @@ public class ExceptionTest extends ContextTestSupport {
         };
     }
 }
-

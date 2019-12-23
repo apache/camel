@@ -1,5 +1,5 @@
 [[HowtoavoidimportingbunchofcxfpackageswhenstartupthecamelcxfendpointfromOSGiplatform-HowtoavoidimportingbunchofcxfpackageswhenstartupthecamelcxfendpointfromOSGiplatform]]
-=== How to avoid importing bunch of cxf packages when start up the camel-cxf endpoint from OSGi platform?
+= How to avoid importing bunch of cxf packages when start up the camel-cxf endpoint from OSGi platform?
 
 If you are using camel-cxf endpoint in your OSGi bundle and want to get
 full of control of CXF component loading. (eg. you just want to use the

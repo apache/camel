@@ -36,6 +36,7 @@ public class XmppPubSubProducer extends DefaultProducer {
         LOG.debug("Creating XmppPresenceProducer");
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         try {
             if (connection == null) {

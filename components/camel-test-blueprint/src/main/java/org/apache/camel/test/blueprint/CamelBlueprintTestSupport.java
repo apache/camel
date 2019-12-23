@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -46,6 +47,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.junit.After;
 import org.junit.Before;
@@ -120,7 +122,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         Properties initialConfiguration = new Properties();
         String pid = setConfigAdminInitialConfiguration(initialConfiguration);
         if (pid != null) {
-            configAdminPidFiles = new String[][] {{prepareInitialConfigFile(initialConfiguration), pid}};
+            configAdminPidFiles = new String[][]{{prepareInitialConfigFile(initialConfiguration), pid}};
         }
 
         final String symbolicName = getClass().getSimpleName();
@@ -339,7 +341,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         return new KeyValueHolder<>(name, new KeyValueHolder<>(service, dict));
     }
 
-
     /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
      */
@@ -427,6 +428,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
      * <p/>
      * Return the location(s) of the bundle descriptors from the classpath.
      * Separate multiple locations by comma, or return a single location.
+     * <p/>
+     * Only one CamelContext is supported per blueprint bundle,
+     * so if you have multiple XML files then only one of them should have <tt>&lt;camelContext&gt</tt>.
      * <p/>
      * For example override this method and return <tt>OSGI-INF/blueprint/camel-context.xml</tt>
      *
@@ -526,8 +530,6 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
     /**
      * Create a temporary File with persisted configuration for ConfigAdmin
-     * @param initialConfiguration
-     * @return
      */
     private String prepareInitialConfigFile(Properties initialConfiguration) throws IOException {
         File dir = new File("target/etc");
@@ -537,7 +539,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         try {
             initialConfiguration.store(writer, null);
         } finally {
-            writer.close();
+            IOHelper.close(writer);
         }
         return cfg.getAbsolutePath();
     }

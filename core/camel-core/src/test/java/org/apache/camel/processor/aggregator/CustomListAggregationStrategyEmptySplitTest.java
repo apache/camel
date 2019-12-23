@@ -29,8 +29,7 @@ import org.junit.Test;
 /**
  *
  */
-public class CustomListAggregationStrategyEmptySplitTest extends
-        ContextTestSupport {
+public class CustomListAggregationStrategyEmptySplitTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
@@ -48,8 +47,7 @@ public class CustomListAggregationStrategyEmptySplitTest extends
         assertMockEndpointsSatisfied();
 
         // the list will be stored as the message body by default
-        List<Integer> numbers = result.getExchanges().get(0).getIn()
-                .getBody(List.class);
+        List<Integer> numbers = result.getExchanges().get(0).getIn().getBody(List.class);
         assertNotNull(numbers);
         assertEquals(0, numbers.size());
     }
@@ -59,9 +57,7 @@ public class CustomListAggregationStrategyEmptySplitTest extends
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                        .split(body(), new MyListOfNumbersStrategy())
-                        .to("mock:line").end().to("mock:result");
+                from("direct:start").split(body(), new MyListOfNumbersStrategy()).to("mock:line").end().to("mock:result");
             }
         };
     }
@@ -70,8 +66,7 @@ public class CustomListAggregationStrategyEmptySplitTest extends
      * Our strategy is irrelevant as getValue will not be called on an empty
      * list, however this strategy will group a list of integers.
      */
-    public final class MyListOfNumbersStrategy extends
-            AbstractListAggregationStrategy<Integer> {
+    public final class MyListOfNumbersStrategy extends AbstractListAggregationStrategy<Integer> {
 
         @Override
         public Integer getValue(Exchange exchange) {

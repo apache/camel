@@ -36,11 +36,13 @@ public class RouteRefCamelContextFactoryBeanTest extends RoutingUsingCamelContex
             };
         }
 
+        @Override
         public void addRoutesToCamelContext(CamelContext camelContext) throws Exception {
             camelContext.addRoutes(myRouteBuilder);
         }
     }
     
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/spring/routeRefCamelContextFactory.xml");
     }

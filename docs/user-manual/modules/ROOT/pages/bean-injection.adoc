@@ -1,0 +1,54 @@
+[[BeanInjection-BeanInjection]]
+= Bean Injection
+
+We support the injection of various resources using @EndpointInject or
+@BeanInject. This can be used to inject
+
+* xref:endpoint.adoc[Endpoint] instances which can be used for testing
+when used with xref:components::mock-component.adoc[Mock] endpoints; see the
+xref:spring-testing.adoc[Spring Testing] for an example.
+* xref:producertemplate.adoc[ProducerTemplate] instances for
+xref:pojo-producing.adoc[POJO Producing]
+* client side proxies for xref:pojo-producing.adoc[POJO Producing] which
+is a simple approach to xref:spring-remoting.adoc[Spring Remoting]
+
+[[BeanInjection-Using-BeanInject]]
+== Using @BeanInject
+
+From *Camel 2.13* onwards you can inject beans (obtained from the
+xref:registry.adoc[Registry]) into your beans such as `RouteBuilder`
+classes.
+
+For example to inject a bean named foo, you can enlist the bean in the
+xref:registry.adoc[Registry] such as in a Spring XML file:
+
+[source,xml]
+----
+<bean id="foo" class="com.foo.MyFooBean"/>
+----
+
+And then in a Java `RouteBuilder` class, you can inject the bean using
+`@BeanInject` as shown below:
+
+[source,java]
+----
+public class MyRouteBuilder extends RouteBuilder {
+
+   @BeanInject("foo")
+   MyFooBean foo;
+
+   public void configure() throws Exception {
+     ..
+   }
+}
+----
+
+If you omit the name, then Camel does a lookup by type, and injects the
+bean if there is exactly only one bean of that type enlisted in the
+xref:registry.adoc[Registry].
+
+[source,java]
+----
+   @BeanInject
+   MyFooBean foo;
+----

@@ -19,6 +19,7 @@ package org.apache.camel.component.aws.lambda;
 import java.nio.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.AmazonWebServiceRequest;
 import com.amazonaws.ResponseMetadata;
@@ -96,7 +97,6 @@ import org.joda.time.DateTime;
 public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     public AmazonLambdaClientMock() {
-        super();
     }
 
 
@@ -219,7 +219,7 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     public InvokeResult invoke(InvokeRequest invokeRequest) {
         InvokeResult result = new InvokeResult();
 
-        Map<String, Object> payload = new HashMap<>();
+        Map<String, String> payload = new HashMap<>();
         try {
             ObjectMapper mapper = new ObjectMapper();
             payload = mapper.readValue(StandardCharsets.UTF_8.decode(invokeRequest.getPayload()).toString(), new TypeReference<Map<String, String>>() {
@@ -240,7 +240,7 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
     @Override
     public ListEventSourceMappingsResult listEventSourceMappings(ListEventSourceMappingsRequest listEventSourceMappingsRequest) {
         ListEventSourceMappingsResult result = new ListEventSourceMappingsResult();
-        List<EventSourceMappingConfiguration> confList = new ArrayList<EventSourceMappingConfiguration>();
+        List<EventSourceMappingConfiguration> confList = new ArrayList<>();
         EventSourceMappingConfiguration conf = new EventSourceMappingConfiguration();
         conf.setBatchSize(100);
         conf.setFunctionArn("arn:aws:lambda:eu-central-1:643534317684:function:" + listEventSourceMappingsRequest.getFunctionName());

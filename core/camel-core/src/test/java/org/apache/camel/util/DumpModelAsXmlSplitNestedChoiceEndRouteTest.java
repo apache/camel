@@ -41,8 +41,9 @@ public class DumpModelAsXmlSplitNestedChoiceEndRouteTest extends ContextTestSupp
         NodeList nodes = doc.getElementsByTagName("split");
         assertEquals(1, nodes.getLength());
         Element node = (Element)nodes.item(0);
-        // there is an empty text document as we pretty print the xml, so need to do 2 x next sibling
-        Element last = (Element) node.getNextSibling().getNextSibling();
+        // there is an empty text document as we pretty print the xml, so need
+        // to do 2 x next sibling
+        Element last = (Element)node.getNextSibling().getNextSibling();
         assertEquals("mock:last", last.getAttribute("uri"));
     }
 
@@ -51,16 +52,8 @@ public class DumpModelAsXmlSplitNestedChoiceEndRouteTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("myRoute")
-                   .split().body()
-                        .to("mock:sub").id("myMock")
-                        .choice()
-                            .when(header("foo")).to("mock:foo")
-                            .when(header("bar")).to("mock:bar")
-                            .otherwise().to("mock:other")
-                        .end()
-                    .end()
-                    .to("mock:last");
+                from("direct:start").routeId("myRoute").split().body().to("mock:sub").id("myMock").choice().when(header("foo")).to("mock:foo").when(header("bar")).to("mock:bar")
+                    .otherwise().to("mock:other").end().end().to("mock:last");
             }
         };
     }

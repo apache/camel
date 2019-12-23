@@ -43,7 +43,7 @@ class ZipkinClientResponseAdaptor {
         if (eventNotifier.isIncludeMessageBody() || eventNotifier.isIncludeMessageBodyStreams()) {
             boolean streams = eventNotifier.isIncludeMessageBodyStreams();
             StreamCache cache = prepareBodyForLogging(exchange, streams);
-            String body = MessageHelper.extractBodyForLogging(exchange.hasOut() ? exchange.getOut() : exchange.getIn(), "", streams, streams);
+            String body = MessageHelper.extractBodyForLogging(exchange.getMessage(), "", streams, streams);
             span.tag("camel.client.exchange.message.response.body", body);
             if (cache != null) {
                 cache.reset();
@@ -51,7 +51,7 @@ class ZipkinClientResponseAdaptor {
         }
 
         // lets capture http response code for http based components
-        String responseCode = exchange.hasOut() ? exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE, String.class) : exchange.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE, String.class);
+        String responseCode = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE, String.class);
         if (responseCode != null) {
             span.tag("camel.client.exchange.message.response.code", responseCode);
         }

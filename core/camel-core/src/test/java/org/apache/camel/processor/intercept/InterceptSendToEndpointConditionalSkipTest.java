@@ -26,7 +26,8 @@ import org.junit.Test;
 public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSupport {
 
     /**
-     * Verify that the endpoint is only skipped if the adjacent 'when' condition is satisfied
+     * Verify that the endpoint is only skipped if the adjacent 'when' condition
+     * is satisfied
      */
     @Test
     public void testInterceptSendToEndpointSkipConditionSatisfied() throws Exception {
@@ -41,7 +42,8 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
     }
 
     /**
-     * Verify that the endpoint is not skipped if the adjacent 'when' condition evaluates to false
+     * Verify that the endpoint is not skipped if the adjacent 'when' condition
+     * evaluates to false
      */
     @Test
     public void testInterceptSendToEndpointSkipConditionNotSatisfied() throws Exception {
@@ -56,8 +58,10 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
     }
 
     /**
-     * Verify that the conditional skip support is only activated when using interceptSendToEndpoint().when() and not
-     * interceptSendToEndpoint().choice()..., as the choice keyword is not directly associated with the interception behaviour and it belongs to the
+     * Verify that the conditional skip support is only activated when using
+     * interceptSendToEndpoint().when() and not
+     * interceptSendToEndpoint().choice()..., as the choice keyword is not
+     * directly associated with the interception behaviour and it belongs to the
      * interception body (initiating a new routing block)
      */
     @Test
@@ -76,7 +80,8 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
     }
 
     /**
-     * Test that when multiple conditions are chained together in Java DSL, only the first one will determine whether the endpoint is skipped or not
+     * Test that when multiple conditions are chained together in Java DSL, only
+     * the first one will determine whether the endpoint is skipped or not
      */
     @Test
     public void testInterceptSendToEndpointSkipMultipleConditions() throws Exception {
@@ -96,35 +101,23 @@ public class InterceptSendToEndpointConditionalSkipTest extends ContextTestSuppo
             @Override
             public void configure() throws Exception {
                 // only skip if the body equals 'skip'
-                interceptSendToEndpoint("mock:skippable").skipSendToOriginalEndpoint()
-                        .when(body().isEqualTo("skip")).to("mock:detour");
+                interceptSendToEndpoint("mock:skippable").skipSendToOriginalEndpoint().when(body().isEqualTo("skip")).to("mock:detour");
 
-                // always skip with a normal with a normal choice inside instructing where to route instead
-                interceptSendToEndpoint("mock:skippableNoEffect").skipSendToOriginalEndpoint()
-                        .choice()
-                        .when(body().isEqualTo("skipNoEffectWhen")).to("mock:noSkipWhen")
-                        .otherwise().to("mock:noSkipOW");
+                // always skip with a normal with a normal choice inside
+                // instructing where to route instead
+                interceptSendToEndpoint("mock:skippableNoEffect").skipSendToOriginalEndpoint().choice().when(body().isEqualTo("skipNoEffectWhen")).to("mock:noSkipWhen").otherwise()
+                    .to("mock:noSkipOW");
 
-                // in this case, the original endpoint will be skipped but no message will be sent to mock:detour
-                interceptSendToEndpoint("mock:skippableMultipleConditions").skipSendToOriginalEndpoint()
-                        .when(body().isEqualTo("skip"))
-                        .when(body().isNotEqualTo("skip"))
-                            .to("mock:detour");
+                // in this case, the original endpoint will be skipped but no
+                // message will be sent to mock:detour
+                interceptSendToEndpoint("mock:skippableMultipleConditions").skipSendToOriginalEndpoint().when(body().isEqualTo("skip")).when(body().isNotEqualTo("skip"))
+                    .to("mock:detour");
 
-                from("direct:start")
-                        .to("mock:a")
-                        .to("mock:skippable")
-                        .to("mock:c");
+                from("direct:start").to("mock:a").to("mock:skippable").to("mock:c");
 
-                from("direct:startNoEffect")
-                        .to("mock:a")
-                        .to("mock:skippableNoEffect")
-                        .to("mock:c");
+                from("direct:startNoEffect").to("mock:a").to("mock:skippableNoEffect").to("mock:c");
 
-                from("direct:startMultipleConditions")
-                        .to("mock:a")
-                        .to("mock:skippableMultipleConditions")
-                        .to("mock:c");
+                from("direct:startMultipleConditions").to("mock:a").to("mock:skippableMultipleConditions").to("mock:c");
             }
         };
     }

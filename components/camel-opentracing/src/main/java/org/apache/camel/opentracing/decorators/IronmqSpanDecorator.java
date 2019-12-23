@@ -28,6 +28,11 @@ public class IronmqSpanDecorator extends AbstractMessagingSpanDecorator {
     }
 
     @Override
+    public String getComponentClassName() {
+        return "org.apache.camel.component.ironmq.IronMQComponent";
+    }
+
+    @Override
     protected String getMessageId(Exchange exchange) {
         return (String)exchange.getIn().getHeader(CAMEL_IRON_MQ_MESSAGE_ID);
     }

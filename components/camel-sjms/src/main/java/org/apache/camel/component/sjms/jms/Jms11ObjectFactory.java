@@ -40,6 +40,7 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
         return createMessageConsumer(session, destination, sjmsEndpoint.getMessageSelector(), sjmsEndpoint.isTopic(), sjmsEndpoint.getDurableSubscriptionId(), true, false);
     }
 
+    @Override
     public MessageConsumer createMessageConsumer(
             Session session,
             Destination destination,
@@ -93,6 +94,7 @@ public class Jms11ObjectFactory implements JmsObjectFactory {
         return createMessageProducer(session, destination, sjmsEndpoint.isPersistent(), sjmsEndpoint.getTtl());
     }
 
+    @Override
     public MessageProducer createMessageProducer(
             Session session,
             Destination destination,

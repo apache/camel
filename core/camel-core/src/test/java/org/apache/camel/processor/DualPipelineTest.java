@@ -61,20 +61,9 @@ public class DualPipelineTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .multicast()
-                        .pipeline()
-                            .to("mock:a")
-                            .setBody(constant("After A"))
-                            .to("mock:b")
-                        .end() //pipeline
-                        .pipeline()
-                            .to("mock:c")
-                            .setBody(constant("After C"))
-                            .to("mock:d")
-                            .to("mock:e")
-                        .end() //pipeline
-                    .end()//multicast
+                from("direct:start").multicast().pipeline().to("mock:a").setBody(constant("After A")).to("mock:b").end() // pipeline
+                    .pipeline().to("mock:c").setBody(constant("After C")).to("mock:d").to("mock:e").end() // pipeline
+                    .end()// multicast
                     .to("mock:result");
             }
         };

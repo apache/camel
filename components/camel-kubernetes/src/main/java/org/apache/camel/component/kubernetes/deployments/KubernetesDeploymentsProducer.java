@@ -24,8 +24,7 @@ import io.fabric8.kubernetes.api.model.apps.DeploymentList;
 import io.fabric8.kubernetes.api.model.apps.DeploymentSpec;
 import io.fabric8.kubernetes.api.model.apps.DoneableDeployment;
 import io.fabric8.kubernetes.client.dsl.NonNamespaceOperation;
-import io.fabric8.kubernetes.client.dsl.ScalableResource;
-
+import io.fabric8.kubernetes.client.dsl.RollableScalableResource;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.kubernetes.AbstractKubernetesEndpoint;
 import org.apache.camel.component.kubernetes.KubernetesConstants;
@@ -42,7 +41,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
 
     @Override
     public AbstractKubernetesEndpoint getEndpoint() {
-        return (AbstractKubernetesEndpoint) super.getEndpoint();
+        return (AbstractKubernetesEndpoint)super.getEndpoint();
     }
 
     @Override
@@ -76,7 +75,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         case KubernetesOperations.CREATE_DEPLOYMENT:
             doCreateDeployment(exchange, operation);
             break;
-            
+
         case KubernetesOperations.SCALE_DEPLOYMENT:
             doScaleDeployment(exchange, operation);
             break;
@@ -96,8 +95,8 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
     protected void doListDeploymentsByLabels(Exchange exchange, String operation) throws Exception {
         DeploymentList deploymentList = null;
         Map<String, String> labels = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENTS_LABELS, Map.class);
-        NonNamespaceOperation<Deployment, DeploymentList, DoneableDeployment, ScalableResource<Deployment, DoneableDeployment>> deployments = getEndpoint().getKubernetesClient()
-            .apps().deployments();
+        NonNamespaceOperation<Deployment, DeploymentList, DoneableDeployment, RollableScalableResource<Deployment, DoneableDeployment>> deployments = getEndpoint()
+            .getKubernetesClient().apps().deployments();
         for (Map.Entry<String, String> entry : labels.entrySet()) {
             deployments.withLabel(entry.getKey(), entry.getValue());
         }
@@ -162,7 +161,7 @@ public class KubernetesDeploymentsProducer extends DefaultProducer {
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), true);
         exchange.getOut().setBody(deployment);
     }
-    
+
     protected void doScaleDeployment(Exchange exchange, String operation) throws Exception {
         String deploymentName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_DEPLOYMENT_NAME, String.class);
         String namespaceName = exchange.getIn().getHeader(KubernetesConstants.KUBERNETES_NAMESPACE_NAME, String.class);

@@ -37,25 +37,44 @@ import org.slf4j.LoggerFactory;
 public abstract class ServiceSupport implements StatefulService {
 
     protected static final int NEW = 0;
-    protected static final int INITIALIZED = 1;
-    protected static final int STARTING = 2;
-    protected static final int STARTED = 3;
-    protected static final int SUSPENDING = 4;
-    protected static final int SUSPENDED = 5;
-    protected static final int STOPPING = 6;
-    protected static final int STOPPED = 7;
-    protected static final int SHUTTINGDOWN = 8;
-    protected static final int SHUTDOWN = 9;
-    protected static final int FAILED = 10;
+    protected static final int BUILDED = 1;
+    protected static final int INITIALIZED = 2;
+    protected static final int STARTING = 3;
+    protected static final int STARTED = 4;
+    protected static final int SUSPENDING = 5;
+    protected static final int SUSPENDED = 6;
+    protected static final int STOPPING = 7;
+    protected static final int STOPPED = 8;
+    protected static final int SHUTTINGDOWN = 9;
+    protected static final int SHUTDOWN = 10;
+    protected static final int FAILED = 11;
 
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final Object lock = new Object();
     protected volatile int status = NEW;
 
-    public void init() {
+    @Override
+    public void build() {
         if (status == NEW) {
             synchronized (lock) {
                 if (status == NEW) {
+                    log.trace("Building service: {}", this);
+                    try {
+                        doBuild();
+                    } catch (Exception e) {
+                        throw RuntimeCamelException.wrapRuntimeException(e);
+                    }
+                    status = BUILDED;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void init() {
+        if (status <= BUILDED) {
+            synchronized (lock) {
+                if (status <= BUILDED) {
                     log.trace("Initializing service: {}", this);
                     try {
                         doInit();
@@ -74,6 +93,7 @@ public abstract class ServiceSupport implements StatefulService {
      * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
      * invoke the operation in a safe manner.
      */
+    @Override
     public void start() {
         synchronized (lock) {
             if (status == STARTED) {
@@ -98,6 +118,13 @@ public abstract class ServiceSupport implements StatefulService {
                 status = STARTED;
                 log.trace("Service started: {}", this);
             } catch (Exception e) {
+                // need to stop as some resources may have been started during startup
+                try {
+                    stop();
+                } catch (Exception e2) {
+                    // ignore
+                    log.trace("Error while stopping service after it failed to start: " + this + ". This exception is ignored", e);
+                }
                 status = FAILED;
                 log.trace("Error while starting service: " + this, e);
                 throw RuntimeCamelException.wrapRuntimeException(e);
@@ -111,8 +138,13 @@ public abstract class ServiceSupport implements StatefulService {
      * <b>NOT</b> be overridden as they are used internally to keep track of the state of this service and properly
      * invoke the operation in a safe manner.
      */
+    @Override
     public void stop() {
         synchronized (lock) {
+            if (status == FAILED) {
+                log.trace("Service: {} failed and regarded as already stopped", this);
+                return;
+            }
             if (status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN) {
                 log.trace("Service: {} already stopped", this);
                 return;
@@ -247,6 +279,10 @@ public abstract class ServiceSupport implements StatefulService {
         return status == NEW;
     }
 
+    public boolean isBuild() {
+        return status == BUILDED;
+    }
+
     public boolean isInit() {
         return status == INITIALIZED;
     }
@@ -268,7 +304,7 @@ public abstract class ServiceSupport implements StatefulService {
 
     @Override
     public boolean isStopped() {
-        return status == NEW || status == INITIALIZED || status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN || status == FAILED;
+        return status == NEW || status == INITIALIZED || status == BUILDED || status == STOPPED || status == SHUTTINGDOWN || status == SHUTDOWN || status == FAILED;
     }
 
     @Override
@@ -309,6 +345,13 @@ public abstract class ServiceSupport implements StatefulService {
      */
     public boolean isStartingOrStarted() {
         return isStarting() || isStarted();
+    }
+
+    /**
+     * Optional build phase of the service.
+     * This method will only be called by frameworks which supports pre-building projects such as camel-quarkus.
+     */
+    protected void doBuild() throws Exception {
     }
 
     /**

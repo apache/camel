@@ -20,10 +20,10 @@ import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.BindToRegistry;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.engine.MemoryStateRepository;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.junit.After;
@@ -35,6 +35,7 @@ public class KafkaConsumerRebalancePartitionRevokeTest extends BaseEmbeddedKafka
     @EndpointInject("mock:result")
     private MockEndpoint result;
 
+    @BindToRegistry("offset")
     private OffsetStateRepository stateRepository;
     private CountDownLatch messagesLatch;
     
@@ -65,13 +66,6 @@ public class KafkaConsumerRebalancePartitionRevokeTest extends BaseEmbeddedKafka
         boolean partitionRevokeCalled = messagesLatch.await(30000, TimeUnit.MILLISECONDS);
         assertTrue("StateRepository.setState should have been called with offset >= 0 for topic" + TOPIC 
                 + ". Remaining count : " + messagesLatch.getCount(), partitionRevokeCalled);
-    }
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry registry = super.createRegistry();
-        registry.bind("offset", stateRepository);
-        return registry;
     }
 
     @Override

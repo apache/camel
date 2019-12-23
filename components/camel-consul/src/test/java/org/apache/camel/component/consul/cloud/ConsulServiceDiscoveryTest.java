@@ -29,8 +29,11 @@ import org.apache.camel.cloud.ServiceDiscovery;
 import org.apache.camel.component.consul.ConsulConfiguration;
 import org.apache.camel.component.consul.ConsulTestSupport;
 import org.assertj.core.api.Assertions;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.util.SocketUtils;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
     private AgentClient client;
@@ -52,23 +55,10 @@ public class ConsulServiceDiscoveryTest extends ConsulTestSupport {
             final boolean healty = ThreadLocalRandom.current().nextBoolean();
             final int port = SocketUtils.findAvailableTcpPort();
 
-            Registration.RegCheck c = ImmutableRegCheck.builder()
-                .ttl("1m")
-                .status(healty ? "passing" : "critical")
-                .build();
+            Registration.RegCheck c = ImmutableRegCheck.builder().ttl("1m").status(healty ? "passing" : "critical").build();
 
-            Registration r = ImmutableRegistration.builder()
-                .id("service-" + i)
-                .name("my-service")
-                .address("127.0.0.1")
-                .addTags("a-tag")
-                .addTags("key1=value1")
-                .addTags("key2=value2")
-                .addTags("healthy=" + healty)
-                .putMeta("meta-key", "meta-val")
-                .port(port)
-                .check(c)
-                .build();
+            Registration r = ImmutableRegistration.builder().id("service-" + i).name("my-service").address("127.0.0.1").addTags("a-tag").addTags("key1=value1")
+                .addTags("key2=value2").addTags("healthy=" + healty).putMeta("meta-key", "meta-val").port(port).check(c).build();
 
             client.register(r);
             registrations.add(r);

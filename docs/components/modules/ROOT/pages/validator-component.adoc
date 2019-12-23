@@ -1,7 +1,12 @@
 [[validator-component]]
-== Validator Component
+= Validator Component
+:page-source: components/camel-validator/src/main/docs/validator-component.adoc
 
-*Available as of Camel version 1.1*
+*Since Camel 1.1*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The Validation component performs XML validation of the message body
 using the JAXP Validation API and based on any of the supported XML
@@ -18,7 +23,7 @@ Syntax]
 The xref:msv-component.adoc[MSV] component also supports
 http://relaxng.org/[RelaxNG XML Syntax].
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -36,19 +41,20 @@ system which contains the XSD to validate against. For example:
 
 The Validation component is provided directly in the camel-core.
 
-=== Options
+== Options
 
 // component options: START
-The Validator component supports 3 options, which are listed below.
+The Validator component supports 4 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resourceResolverFactory* (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResource ResolverFactory
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
+| *resourceResolverFactory* (advanced) | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI |  | ValidatorResourceResolverFactory
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -62,7 +68,7 @@ validator:resourceUri
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -72,7 +78,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (12 parameters):
+=== Query Parameters (12 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -85,7 +91,7 @@ with the following path and query parameters:
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *errorHandler* (advanced) | To use a custom org.apache.camel.processor.validation.ValidatorErrorHandler. The default error handler captures the errors and throws an exception. |  | ValidatorErrorHandler
 | *resourceResolver* (advanced) | To use a custom LSResourceResolver. See also setResourceResolverFactory(ValidatorResourceResolverFactory) |  | LSResourceResolver
-| *resourceResolverFactory* (advanced) | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used |  | ValidatorResource ResolverFactory
+| *resourceResolverFactory* (advanced) | For creating a resource resolver which depends on the endpoint resource URI. Must not be used in combination with method setResourceResolver(LSResourceResolver). If not set then DefaultValidatorResourceResolverFactory is used |  | ValidatorResourceResolverFactory
 | *schemaFactory* (advanced) | To use a custom javax.xml.validation.SchemaFactory |  | SchemaFactory
 | *schemaLanguage* (advanced) | Configures the W3C XML Schema Namespace URI. | http://www.w3.org/2001/XMLSchema | String
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
@@ -94,14 +100,14 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-validator-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -109,7 +115,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 4 options, which are listed below.
+The component supports 5 options, which are listed below.
 
 
 
@@ -117,13 +123,14 @@ The component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.validator.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.validator.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.validator.enabled* | Whether to enable auto configuration of the validator component. This is enabled by default. |  | Boolean
-| *camel.component.validator.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.validator.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 | *camel.component.validator.resource-resolver-factory* | To use a custom LSResourceResolver which depends on a dynamic endpoint resource URI. The option is a org.apache.camel.component.validator.ValidatorResourceResolverFactory type. |  | String
 |===
 // spring-boot-auto-configure options: END
 
-=== Example
+== Example
 
 The following
 https://github.com/apache/camel/blob/master/components/camel-spring/src/test/resources/org/apache/camel/component/validator/camelContext.xml[example]
@@ -132,10 +139,10 @@ goes to one of two endpoints, either *mock:valid* or *mock:invalid*
 based on whether or not the XML matches the given schema (which is
 supplied on the classpath).
 
-=== Advanced: JMX method clearCachedSchema
+== Advanced: JMX method clearCachedSchema
 
 You can force that the cached schema in the
 validator endpoint is cleared and reread with the next process call with
-the JMX operation `clearCachedSchema`. You can also use this method to
+the JMX operation `clearCachedSchema`. You can also use this method to
 programmatically clear the cache. This method is available on the
 `ValidatorEndpoint` class.

@@ -24,7 +24,8 @@ import org.apache.camel.util.StopWatch;
 import org.junit.Test;
 
 /**
- * Tests that the failover load balancer will break out if CamelContext is shutting down.
+ * Tests that the failover load balancer will break out if CamelContext is
+ * shutting down.
  */
 public class FailoverLoadBalancerBreakoutDuringShutdownTest extends ContextTestSupport {
 
@@ -55,28 +56,21 @@ public class FailoverLoadBalancerBreakoutDuringShutdownTest extends ContextTestS
             @Override
             public void configure() throws Exception {
 
-                from("seda:start")
-                    .to("mock:before")
+                from("seda:start").to("mock:before")
                     // just keep on failover
-                    .loadBalance().failover(-1, false, true)
-                        .to("direct:a")
-                        .to("direct:b")
-                    .end()
-                    .to("mock:after");
+                    .loadBalance().failover(-1, false, true).to("direct:a").to("direct:b").end().to("mock:after");
 
-                from("direct:a")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                from("direct:a").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
 
-                from("direct:b")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            throw new IllegalArgumentException("Forced");
-                        }
-                    });
+                from("direct:b").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        throw new IllegalArgumentException("Forced");
+                    }
+                });
             }
         };
     }

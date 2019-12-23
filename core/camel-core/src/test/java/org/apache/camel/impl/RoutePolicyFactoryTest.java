@@ -78,13 +78,10 @@ public class RoutePolicyFactoryTest extends ContextTestSupport {
             public void configure() throws Exception {
                 context.addRoutePolicyFactory(new MyRoutePolicyFactory());
 
-                from("direct:foo").routeId("foo-route")
-                    .to("mock:foo");
+                from("direct:foo").routeId("foo-route").to("mock:foo");
 
-                from("direct:bar").routeId("bar-route")
-                    .to("mock:bar");
+                from("direct:bar").routeId("bar-route").to("mock:bar");
             }
         };
     }
 }
-

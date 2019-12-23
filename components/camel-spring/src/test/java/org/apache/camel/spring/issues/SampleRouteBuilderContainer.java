@@ -27,6 +27,7 @@ public class SampleRouteBuilderContainer implements InitializingBean {
         this.routeBuilder = routeBuilder;
     }
 
+    @Override
     public void afterPropertiesSet() throws Exception {
         routeBuilder.configure();
     }

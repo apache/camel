@@ -107,6 +107,7 @@ public class BindySimpleCsvOneToManyMarshallTest extends AbstractJUnit4SpringCon
     public static class ContextConfig extends RouteBuilder {
         BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.onetomany.Author.class);
 
+        @Override
         public void configure() {
             from("direct:start").marshal(camelDataFormat).to("mock:result");
         }

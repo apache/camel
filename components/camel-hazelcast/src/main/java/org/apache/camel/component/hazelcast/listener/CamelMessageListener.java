@@ -30,6 +30,7 @@ public class CamelMessageListener extends CamelListener implements MessageListen
         super(consumer, cacheName);
     }
 
+    @Override
     public void onMessage(Message<Object> objectMessage) {
         this.sendExchange(HazelcastConstants.RECEIVED, null, objectMessage);
     }

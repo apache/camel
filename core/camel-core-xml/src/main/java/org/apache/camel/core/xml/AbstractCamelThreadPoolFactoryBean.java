@@ -18,6 +18,7 @@ package org.apache.camel.core.xml;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -65,6 +66,7 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
     @Metadata(description = "Whether to use a scheduled thread pool", defaultValue = "false")
     private Boolean scheduled;
 
+    @Override
     public ExecutorService getObject() throws Exception {
         int size = CamelContextHelper.parseInteger(getCamelContext(), poolSize);
         if (size <= 0) {
@@ -109,6 +111,7 @@ public abstract class AbstractCamelThreadPoolFactoryBean extends AbstractCamelFa
         return answer;
     }
 
+    @Override
     public Class<ExecutorService> getObjectType() {
         return ExecutorService.class;
     }

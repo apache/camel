@@ -37,6 +37,7 @@ public final class CamelThreadFactory implements ThreadFactory {
         this.daemon = daemon;
     }
 
+    @Override
     public Thread newThread(Runnable runnable) {
         String threadName = ThreadHelper.resolveThreadName(pattern, name);
         Thread answer = new Thread(runnable, threadName);
@@ -50,6 +51,7 @@ public final class CamelThreadFactory implements ThreadFactory {
         return name;
     }
 
+    @Override
     public String toString() {
         return "CamelThreadFactory[" + name + "]";
     }

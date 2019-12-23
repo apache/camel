@@ -32,6 +32,7 @@ public class MyEmbeddedCustomListener extends InfinispanEmbeddedCustomListener {
         this.cacheName = cacheName;
     }
 
+    @Override
     @CacheEntryCreated
     public void processEvent(CacheEntryEvent<Object, Object> event) {
         if (isAccepted(event.getType().toString())) {

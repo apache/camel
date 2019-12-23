@@ -54,7 +54,7 @@ public interface StubEndpointBuilderFactory {
          * Group: common
          */
         default StubEndpointConsumerBuilder size(int size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -67,7 +67,7 @@ public interface StubEndpointBuilderFactory {
          * Group: common
          */
         default StubEndpointConsumerBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -85,7 +85,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointConsumerBuilder bridgeErrorHandler(
                 boolean bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -103,7 +103,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointConsumerBuilder bridgeErrorHandler(
                 String bridgeErrorHandler) {
-            setProperty("bridgeErrorHandler", bridgeErrorHandler);
+            doSetProperty("bridgeErrorHandler", bridgeErrorHandler);
             return this;
         }
         /**
@@ -115,7 +115,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointConsumerBuilder concurrentConsumers(
                 int concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
         /**
@@ -127,7 +127,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointConsumerBuilder concurrentConsumers(
                 String concurrentConsumers) {
-            setProperty("concurrentConsumers", concurrentConsumers);
+            doSetProperty("concurrentConsumers", concurrentConsumers);
             return this;
         }
     }
@@ -154,7 +154,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder exceptionHandler(
                 ExceptionHandler exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -170,7 +170,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder exceptionHandler(
                 String exceptionHandler) {
-            setProperty("exceptionHandler", exceptionHandler);
+            doSetProperty("exceptionHandler", exceptionHandler);
             return this;
         }
         /**
@@ -182,7 +182,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder exchangePattern(
                 ExchangePattern exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -195,7 +195,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder exchangePattern(
                 String exchangePattern) {
-            setProperty("exchangePattern", exchangePattern);
+            doSetProperty("exchangePattern", exchangePattern);
             return this;
         }
         /**
@@ -210,7 +210,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder limitConcurrentConsumers(
                 boolean limitConcurrentConsumers) {
-            setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
+            doSetProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
         }
         /**
@@ -225,7 +225,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder limitConcurrentConsumers(
                 String limitConcurrentConsumers) {
-            setProperty("limitConcurrentConsumers", limitConcurrentConsumers);
+            doSetProperty("limitConcurrentConsumers", limitConcurrentConsumers);
             return this;
         }
         /**
@@ -241,7 +241,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder multipleConsumers(
                 boolean multipleConsumers) {
-            setProperty("multipleConsumers", multipleConsumers);
+            doSetProperty("multipleConsumers", multipleConsumers);
             return this;
         }
         /**
@@ -257,7 +257,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder multipleConsumers(
                 String multipleConsumers) {
-            setProperty("multipleConsumers", multipleConsumers);
+            doSetProperty("multipleConsumers", multipleConsumers);
             return this;
         }
         /**
@@ -270,7 +270,7 @@ public interface StubEndpointBuilderFactory {
          * Group: consumer (advanced)
          */
         default AdvancedStubEndpointConsumerBuilder pollTimeout(int pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -284,7 +284,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder pollTimeout(
                 String pollTimeout) {
-            setProperty("pollTimeout", pollTimeout);
+            doSetProperty("pollTimeout", pollTimeout);
             return this;
         }
         /**
@@ -298,7 +298,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(
                 boolean purgeWhenStopping) {
-            setProperty("purgeWhenStopping", purgeWhenStopping);
+            doSetProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
         }
         /**
@@ -312,7 +312,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(
                 String purgeWhenStopping) {
-            setProperty("purgeWhenStopping", purgeWhenStopping);
+            doSetProperty("purgeWhenStopping", purgeWhenStopping);
             return this;
         }
         /**
@@ -325,7 +325,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -338,7 +338,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -352,7 +352,7 @@ public interface StubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStubEndpointConsumerBuilder queue(BlockingQueue queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -366,7 +366,7 @@ public interface StubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStubEndpointConsumerBuilder queue(String queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -379,7 +379,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -392,7 +392,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointConsumerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -416,7 +416,7 @@ public interface StubEndpointBuilderFactory {
          * Group: common
          */
         default StubEndpointProducerBuilder size(int size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -429,7 +429,7 @@ public interface StubEndpointBuilderFactory {
          * Group: common
          */
         default StubEndpointProducerBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -444,7 +444,7 @@ public interface StubEndpointBuilderFactory {
          * Group: producer
          */
         default StubEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
-            setProperty("blockWhenFull", blockWhenFull);
+            doSetProperty("blockWhenFull", blockWhenFull);
             return this;
         }
         /**
@@ -459,7 +459,7 @@ public interface StubEndpointBuilderFactory {
          * Group: producer
          */
         default StubEndpointProducerBuilder blockWhenFull(String blockWhenFull) {
-            setProperty("blockWhenFull", blockWhenFull);
+            doSetProperty("blockWhenFull", blockWhenFull);
             return this;
         }
         /**
@@ -474,7 +474,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointProducerBuilder discardIfNoConsumers(
                 boolean discardIfNoConsumers) {
-            setProperty("discardIfNoConsumers", discardIfNoConsumers);
+            doSetProperty("discardIfNoConsumers", discardIfNoConsumers);
             return this;
         }
         /**
@@ -489,7 +489,39 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointProducerBuilder discardIfNoConsumers(
                 String discardIfNoConsumers) {
-            setProperty("discardIfNoConsumers", discardIfNoConsumers);
+            doSetProperty("discardIfNoConsumers", discardIfNoConsumers);
+            return this;
+        }
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default StubEndpointProducerBuilder discardWhenFull(
+                boolean discardWhenFull) {
+            doSetProperty("discardWhenFull", discardWhenFull);
+            return this;
+        }
+        /**
+         * Whether a thread that sends messages to a full SEDA queue will be
+         * discarded. By default, an exception will be thrown stating that the
+         * queue is full. By enabling this option, the calling thread will give
+         * up sending and continue, meaning that the message was not sent to the
+         * SEDA queue.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default StubEndpointProducerBuilder discardWhenFull(
+                String discardWhenFull) {
+            doSetProperty("discardWhenFull", discardWhenFull);
             return this;
         }
         /**
@@ -504,7 +536,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointProducerBuilder failIfNoConsumers(
                 boolean failIfNoConsumers) {
-            setProperty("failIfNoConsumers", failIfNoConsumers);
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
         }
         /**
@@ -519,7 +551,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointProducerBuilder failIfNoConsumers(
                 String failIfNoConsumers) {
-            setProperty("failIfNoConsumers", failIfNoConsumers);
+            doSetProperty("failIfNoConsumers", failIfNoConsumers);
             return this;
         }
         /**
@@ -539,7 +571,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointProducerBuilder lazyStartProducer(
                 boolean lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -559,7 +591,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointProducerBuilder lazyStartProducer(
                 String lazyStartProducer) {
-            setProperty("lazyStartProducer", lazyStartProducer);
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -572,7 +604,7 @@ public interface StubEndpointBuilderFactory {
          * Group: producer
          */
         default StubEndpointProducerBuilder offerTimeout(long offerTimeout) {
-            setProperty("offerTimeout", offerTimeout);
+            doSetProperty("offerTimeout", offerTimeout);
             return this;
         }
         /**
@@ -585,7 +617,7 @@ public interface StubEndpointBuilderFactory {
          * Group: producer
          */
         default StubEndpointProducerBuilder offerTimeout(String offerTimeout) {
-            setProperty("offerTimeout", offerTimeout);
+            doSetProperty("offerTimeout", offerTimeout);
             return this;
         }
         /**
@@ -598,7 +630,7 @@ public interface StubEndpointBuilderFactory {
          * Group: producer
          */
         default StubEndpointProducerBuilder timeout(long timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -611,7 +643,7 @@ public interface StubEndpointBuilderFactory {
          * Group: producer
          */
         default StubEndpointProducerBuilder timeout(String timeout) {
-            setProperty("timeout", timeout);
+            doSetProperty("timeout", timeout);
             return this;
         }
         /**
@@ -629,7 +661,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointProducerBuilder waitForTaskToComplete(
                 WaitForTaskToComplete waitForTaskToComplete) {
-            setProperty("waitForTaskToComplete", waitForTaskToComplete);
+            doSetProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
         }
         /**
@@ -647,7 +679,7 @@ public interface StubEndpointBuilderFactory {
          */
         default StubEndpointProducerBuilder waitForTaskToComplete(
                 String waitForTaskToComplete) {
-            setProperty("waitForTaskToComplete", waitForTaskToComplete);
+            doSetProperty("waitForTaskToComplete", waitForTaskToComplete);
             return this;
         }
     }
@@ -671,7 +703,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointProducerBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -684,7 +716,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointProducerBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -698,7 +730,7 @@ public interface StubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStubEndpointProducerBuilder queue(BlockingQueue queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -712,7 +744,7 @@ public interface StubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStubEndpointProducerBuilder queue(String queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -725,7 +757,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointProducerBuilder synchronous(
                 boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -738,7 +770,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointProducerBuilder synchronous(
                 String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -762,7 +794,7 @@ public interface StubEndpointBuilderFactory {
          * Group: common
          */
         default StubEndpointBuilder size(int size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
         /**
@@ -775,7 +807,7 @@ public interface StubEndpointBuilderFactory {
          * Group: common
          */
         default StubEndpointBuilder size(String size) {
-            setProperty("size", size);
+            doSetProperty("size", size);
             return this;
         }
     }
@@ -799,7 +831,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -812,7 +844,7 @@ public interface StubEndpointBuilderFactory {
          */
         default AdvancedStubEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -826,7 +858,7 @@ public interface StubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStubEndpointBuilder queue(BlockingQueue queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -840,7 +872,7 @@ public interface StubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStubEndpointBuilder queue(String queue) {
-            setProperty("queue", queue);
+            doSetProperty("queue", queue);
             return this;
         }
         /**
@@ -852,7 +884,7 @@ public interface StubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStubEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -864,7 +896,7 @@ public interface StubEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedStubEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -874,7 +906,7 @@ public interface StubEndpointBuilderFactory {
      * endpoints while in development or testing.
      * 
      * Category: core,testing
-     * Available as of version: 2.10
+     * Since: 2.10
      * Maven coordinates: org.apache.camel:camel-stub
      * 
      * Syntax: <code>stub:name</code>

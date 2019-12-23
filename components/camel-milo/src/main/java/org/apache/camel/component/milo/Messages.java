@@ -31,6 +31,5 @@ public final class Messages {
      */
     public static void fillFromDataValue(final DataValue value, final DefaultMessage result) {
         result.setBody(value);
-        result.setFault(value.getStatusCode().isBad());
     }
 }

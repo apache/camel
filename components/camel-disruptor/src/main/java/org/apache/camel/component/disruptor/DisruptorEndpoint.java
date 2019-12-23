@@ -61,9 +61,9 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     @UriPath(description = "Name of queue") @Metadata(required = true)
     private String name;
     @UriParam(label = "consumer", defaultValue = "1")
-    private final int concurrentConsumers;
+    private int concurrentConsumers;
     @UriParam(label = "consumer")
-    private final boolean multipleConsumers;
+    private boolean multipleConsumers;
     @UriParam(label = "producer", defaultValue = "IfReplyExpected")
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
     @UriParam(label = "producer", defaultValue = "30000")
@@ -78,14 +78,10 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
     private DisruptorProducerType producerType;
 
     public DisruptorEndpoint(final String endpointUri, final Component component,
-                             final DisruptorReference disruptorReference, final int concurrentConsumers,
-                             final boolean multipleConsumers, boolean blockWhenFull) throws Exception {
+                             final DisruptorReference disruptorReference) {
         super(endpointUri, component);
         this.disruptorReference = disruptorReference;
         this.name = disruptorReference.getName();
-        this.concurrentConsumers = concurrentConsumers;
-        this.multipleConsumers = multipleConsumers;
-        this.blockWhenFull = blockWhenFull;
     }
 
     @ManagedAttribute(description = "Queue name")
@@ -108,12 +104,16 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         return getDisruptor().getPendingExchangeCount();
     }
 
-    /**
-     * Number of concurrent threads processing exchanges.
-     */
     @ManagedAttribute(description = "Number of concurrent consumers")
     public int getConcurrentConsumers() {
         return concurrentConsumers;
+    }
+
+    /**
+     * Number of concurrent threads processing exchanges.
+     */
+    public void setConcurrentConsumers(int concurrentConsumers) {
+        this.concurrentConsumers = concurrentConsumers;
     }
 
     @ManagedAttribute(description = "Option to specify whether the caller should wait for the async task to complete or not before continuing")
@@ -165,14 +165,18 @@ public class DisruptorEndpoint extends DefaultEndpoint implements AsyncEndpoint,
         return isMultipleConsumers();
     }
 
+    public boolean isMultipleConsumers() {
+        return multipleConsumers;
+    }
+
     /**
      * Specifies whether multiple consumers are allowed.
      * If enabled, you can use Disruptor for Publish-Subscribe messaging.
      * That is, you can send a message to the queue and have each consumer receive a copy of the message.
      * When enabled, this option should be specified on every consumer endpoint.
      */
-    public boolean isMultipleConsumers() {
-        return multipleConsumers;
+    public void setMultipleConsumers(boolean multipleConsumers) {
+        this.multipleConsumers = multipleConsumers;
     }
 
     /**

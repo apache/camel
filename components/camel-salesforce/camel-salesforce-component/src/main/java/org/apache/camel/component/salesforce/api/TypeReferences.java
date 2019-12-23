@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.core.type.TypeReference;
-
 import org.apache.camel.component.salesforce.api.dto.Limits.Usage;
 import org.apache.camel.component.salesforce.api.dto.RecentItem;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -30,7 +29,8 @@ import org.apache.camel.component.salesforce.api.dto.analytics.reports.RecentRep
 import org.apache.camel.component.salesforce.api.dto.analytics.reports.ReportInstance;
 
 /**
- * Class that holds {@link TypeReference} instances needed for Jackson mapper to support generics.
+ * Class that holds {@link TypeReference} instances needed for Jackson mapper to
+ * support generics.
  */
 public final class TypeReferences {
 

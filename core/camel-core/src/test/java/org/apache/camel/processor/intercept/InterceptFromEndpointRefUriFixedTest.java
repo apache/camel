@@ -23,6 +23,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class InterceptFromEndpointRefUriFixedTest extends InterceptFromEndpointRefUriTest {
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
@@ -32,7 +33,7 @@ public class InterceptFromEndpointRefUriFixedTest extends InterceptFromEndpointR
                 interceptFrom("ref:start").to("mock:intercepted");
 
                 from("ref:start").to("mock:first").to("ref:bar");
-                
+
                 from("ref:bar").to("mock:result");
             }
         };

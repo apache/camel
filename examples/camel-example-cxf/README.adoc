@@ -1,0 +1,55 @@
+== Camel CXF Example
+
+=== Introduction
+
+This example shows how to work with CXF and Camel.
+
+The Camel CXF example is a demo of the camel-cxf component to show how
+to route messages between CXF endpoints, with one endpoint consuming a
+SOAP over HTTP request while the other providing a SOAP over JMS request
+for the actual CXF Service endpoint. The Camel router just routes the
+SOAP over HTTP CXF client request to the SOAP over JMS CXF service.
+
+=== Build
+
+You will need to compile this example first:
+
+....
+mvn compile
+....
+
+=== Run
+
+To run the example of routing between different transport type
+
+....
+mvn exec:java -PHttpToJMS
+....
+
+To run the example of Camel transport type
+
+....
+mvn exec:java -PCamelTransport
+....
+
+To run the example of using WebServiceProvider API
+
+....
+mvn exec:java -PWebServiceProvider
+....
+
+To run the example of showing how to create CXF JAXRS endpoint
+
+....
+mvn exec:java -PJAXRS
+....
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!

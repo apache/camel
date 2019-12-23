@@ -104,34 +104,16 @@ public class SagaComponentTest extends ContextTestSupport {
                 context.addService(new InMemorySagaService());
 
                 // Manual complete/compensate
-                from("direct:manual-workflow")
-                        .saga()
-                        .compensation("mock:compensated")
-                        .completion("mock:completed")
-                        .completionMode(SagaCompletionMode.MANUAL)
-                        .to("seda:async");
+                from("direct:manual-workflow").saga().compensation("mock:compensated").completion("mock:completed").completionMode(SagaCompletionMode.MANUAL).to("seda:async");
 
-                from("seda:async")
-                        .choice()
-                        .when(body().isEqualTo(constant("manual-complete")))
-                        .to("saga:complete")
-                        .when(body().isEqualTo(constant("manual-compensate")))
-                        .to("saga:compensate")
-                        .end();
-
+                from("seda:async").choice().when(body().isEqualTo(constant("manual-complete"))).to("saga:complete").when(body().isEqualTo(constant("manual-compensate")))
+                    .to("saga:compensate").end();
 
                 // Auto complete/compensate
-                from("direct:auto-workflow")
-                        .saga()
-                        .completion("mock:completed")
-                        .compensation("mock:compensated")
-                        .choice()
-                        .when(body().isEqualTo(constant("auto-compensate")))
-                        .process(x -> {
-                            throw new RuntimeException("mock exception");
-                        })
-                        .end()
-                        .to("seda:async");
+                from("direct:auto-workflow").saga().completion("mock:completed").compensation("mock:compensated").choice().when(body().isEqualTo(constant("auto-compensate")))
+                    .process(x -> {
+                        throw new RuntimeException("mock exception");
+                    }).end().to("seda:async");
             }
         };
     }

@@ -36,26 +36,19 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Throwable.class)
-                    .to("mock:c")
-                    .to("direct:handle");
+                onException(Throwable.class).to("mock:c").to("direct:handle");
 
-                from("direct:test")
-                    .to("mock:a")
-                    .throwException(new IllegalStateException("Bad state"))
-                    .to("mock:b");
+                from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");
 
-                from("direct:handle")
-                    .to("mock:d")
-                    .log("Handling exception")
-                    .throwException(new NullPointerException("A NPE error here"));
+                from("direct:handle").to("mock:d").log("Handling exception").throwException(new NullPointerException("A NPE error here"));
             }
         });
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
-        // will be called twice because of the two exceptions because the circular exception is detected to break out
+        // will be called twice because of the two exceptions because the
+        // circular exception is detected to break out
         getMockEndpoint("mock:c").expectedMessageCount(2);
         getMockEndpoint("mock:d").expectedMessageCount(2);
 
@@ -78,26 +71,19 @@ public class OnExceptionRecursionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Throwable.class)
-                    .to("mock:c")
-                    .to("direct:handle");
+                onException(Throwable.class).to("mock:c").to("direct:handle");
 
-                from("direct:test")
-                    .to("mock:a")
-                    .throwException(new IllegalStateException("Bad state"))
-                    .to("mock:b");
+                from("direct:test").to("mock:a").throwException(new IllegalStateException("Bad state")).to("mock:b");
 
-                from("direct:handle").errorHandler(noErrorHandler())
-                    .to("mock:d")
-                    .log("Handling exception")
-                    .throwException(new NullPointerException("A NPE error here"));
+                from("direct:handle").errorHandler(noErrorHandler()).to("mock:d").log("Handling exception").throwException(new NullPointerException("A NPE error here"));
             }
         });
         context.start();
 
         getMockEndpoint("mock:a").expectedMessageCount(1);
         getMockEndpoint("mock:b").expectedMessageCount(0);
-        // we will only be called once because when the route fails its not under error handler
+        // we will only be called once because when the route fails its not
+        // under error handler
         // and therefore onException wont trigger the 2nd time
         getMockEndpoint("mock:c").expectedMessageCount(1);
         getMockEndpoint("mock:d").expectedMessageCount(1);

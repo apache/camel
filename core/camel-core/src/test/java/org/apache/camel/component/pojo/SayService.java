@@ -26,6 +26,7 @@ public class SayService implements ISay {
         this.message = message;
     }
 
+    @Override
     public String say() {
         return message;
     }

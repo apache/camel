@@ -122,6 +122,7 @@ public class DefaultUuidGenerator implements UuidGenerator {
         }
     }
 
+    @Override
     public String generateUuid() {
         StringBuilder sb = new StringBuilder(length);
         sb.append(seed);

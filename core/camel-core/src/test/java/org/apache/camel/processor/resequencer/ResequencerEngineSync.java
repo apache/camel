@@ -19,26 +19,26 @@ package org.apache.camel.processor.resequencer;
 /**
  * Synchronization facade for {@link ResequencerEngine} for testing purposes
  * only. This facade is used for both exclusion purposes and for visibility of
- * changes performed by different threads in unit tests. This facade is <i>not</i>
- * needed in {@link ResequencerEngine} applications because it is expected that
- * resequencing is performed by a single thread.
+ * changes performed by different threads in unit tests. This facade is
+ * <i>not</i> needed in {@link ResequencerEngine} applications because it is
+ * expected that resequencing is performed by a single thread.
  */
 public class ResequencerEngineSync<E> {
 
     private ResequencerEngine<E> resequencer;
-    
+
     public ResequencerEngineSync(ResequencerEngine<E> resequencer) {
         this.resequencer = resequencer;
     }
-    
+
     public synchronized void stop() {
         resequencer.stop();
     }
-    
+
     public synchronized int size() {
         return resequencer.size();
     }
-    
+
     public synchronized long getTimeout() {
         return resequencer.getTimeout();
     }
@@ -58,19 +58,19 @@ public class ResequencerEngineSync<E> {
     synchronized E getLastDelivered() {
         return resequencer.getLastDelivered();
     }
-    
+
     synchronized void setLastDelivered(E o) {
         resequencer.setLastDelivered(o);
     }
-    
+
     public synchronized void insert(E o) {
         resequencer.insert(o);
     }
-    
+
     public synchronized void deliver() throws Exception {
         resequencer.deliver();
     }
-    
+
     public synchronized boolean deliverNext() throws Exception {
         return resequencer.deliverNext();
     }

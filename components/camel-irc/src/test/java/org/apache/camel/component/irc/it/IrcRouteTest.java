@@ -22,9 +22,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.irc.IrcConstants;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class IrcRouteTest extends IrcIntegrationTestSupport {
@@ -43,14 +40,17 @@ public class IrcRouteTest extends IrcIntegrationTestSupport {
         }
     }
 
+    @Override
     protected String sendUri() {
         return "irc://{{camelTo}}@{{non.ssl.server}}?channels={{channel1}}";
     }
 
+    @Override
     protected String fromUri() {
         return "irc://{{camelFrom}}@{{non.ssl.server}}?&channels={{channel1}}";
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

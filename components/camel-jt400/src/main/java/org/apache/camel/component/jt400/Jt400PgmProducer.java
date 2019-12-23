@@ -48,6 +48,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         return (Jt400Endpoint) super.getEndpoint();
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
 
         String commandStr = getISeriesEndpoint().getObjectPath();

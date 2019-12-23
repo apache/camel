@@ -45,7 +45,7 @@ public interface ValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default ValidatorEndpointBuilder failOnNullBody(boolean failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -56,7 +56,7 @@ public interface ValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default ValidatorEndpointBuilder failOnNullBody(String failOnNullBody) {
-            setProperty("failOnNullBody", failOnNullBody);
+            doSetProperty("failOnNullBody", failOnNullBody);
             return this;
         }
         /**
@@ -68,7 +68,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default ValidatorEndpointBuilder failOnNullHeader(
                 boolean failOnNullHeader) {
-            setProperty("failOnNullHeader", failOnNullHeader);
+            doSetProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
         /**
@@ -80,7 +80,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default ValidatorEndpointBuilder failOnNullHeader(
                 String failOnNullHeader) {
-            setProperty("failOnNullHeader", failOnNullHeader);
+            doSetProperty("failOnNullHeader", failOnNullHeader);
             return this;
         }
         /**
@@ -91,7 +91,47 @@ public interface ValidatorEndpointBuilderFactory {
          * Group: producer
          */
         default ValidatorEndpointBuilder headerName(String headerName) {
-            setProperty("headerName", headerName);
+            doSetProperty("headerName", headerName);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ValidatorEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default ValidatorEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
     }
@@ -115,7 +155,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -128,7 +168,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -143,7 +183,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder errorHandler(
                 Object errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -158,7 +198,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder errorHandler(
                 String errorHandler) {
-            setProperty("errorHandler", errorHandler);
+            doSetProperty("errorHandler", errorHandler);
             return this;
         }
         /**
@@ -171,7 +211,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder resourceResolver(
                 Object resourceResolver) {
-            setProperty("resourceResolver", resourceResolver);
+            doSetProperty("resourceResolver", resourceResolver);
             return this;
         }
         /**
@@ -185,7 +225,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder resourceResolver(
                 String resourceResolver) {
-            setProperty("resourceResolver", resourceResolver);
+            doSetProperty("resourceResolver", resourceResolver);
             return this;
         }
         /**
@@ -201,7 +241,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder resourceResolverFactory(
                 Object resourceResolverFactory) {
-            setProperty("resourceResolverFactory", resourceResolverFactory);
+            doSetProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
         }
         /**
@@ -217,7 +257,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder resourceResolverFactory(
                 String resourceResolverFactory) {
-            setProperty("resourceResolverFactory", resourceResolverFactory);
+            doSetProperty("resourceResolverFactory", resourceResolverFactory);
             return this;
         }
         /**
@@ -230,7 +270,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder schemaFactory(
                 Object schemaFactory) {
-            setProperty("schemaFactory", schemaFactory);
+            doSetProperty("schemaFactory", schemaFactory);
             return this;
         }
         /**
@@ -243,7 +283,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder schemaFactory(
                 String schemaFactory) {
-            setProperty("schemaFactory", schemaFactory);
+            doSetProperty("schemaFactory", schemaFactory);
             return this;
         }
         /**
@@ -255,7 +295,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder schemaLanguage(
                 String schemaLanguage) {
-            setProperty("schemaLanguage", schemaLanguage);
+            doSetProperty("schemaLanguage", schemaLanguage);
             return this;
         }
         /**
@@ -267,7 +307,7 @@ public interface ValidatorEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -279,7 +319,7 @@ public interface ValidatorEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -293,7 +333,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder useSharedSchema(
                 boolean useSharedSchema) {
-            setProperty("useSharedSchema", useSharedSchema);
+            doSetProperty("useSharedSchema", useSharedSchema);
             return this;
         }
         /**
@@ -307,7 +347,7 @@ public interface ValidatorEndpointBuilderFactory {
          */
         default AdvancedValidatorEndpointBuilder useSharedSchema(
                 String useSharedSchema) {
-            setProperty("useSharedSchema", useSharedSchema);
+            doSetProperty("useSharedSchema", useSharedSchema);
             return this;
         }
     }
@@ -316,7 +356,7 @@ public interface ValidatorEndpointBuilderFactory {
      * Validates the payload of a message using XML Schema and JAXP Validation.
      * 
      * Category: core,validation
-     * Available as of version: 1.1
+     * Since: 1.1
      * Maven coordinates: org.apache.camel:camel-validator
      * 
      * Syntax: <code>validator:resourceUri</code>

@@ -113,6 +113,7 @@ public class ExecutableJavaProgram {
     }
 
     private static class ErrPrinter implements Runnable {
+        @Override
         public void run() {
             for (int t = 0; t < LINES_TO_PRINT_FROM_EACH_THREAD; t++) {
                 System.err.println(PRINT_IN_STDERR);
@@ -121,6 +122,7 @@ public class ExecutableJavaProgram {
     }
 
     private static class OutPrinter implements Runnable {
+        @Override
         public void run() {
             for (int t = 0; t < LINES_TO_PRINT_FROM_EACH_THREAD; t++) {
                 System.out.println(PRINT_IN_STDOUT);

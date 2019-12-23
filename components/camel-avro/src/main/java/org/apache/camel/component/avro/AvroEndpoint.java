@@ -16,8 +16,13 @@
  */
 package org.apache.camel.component.avro;
 
+import java.lang.reflect.Field;
+import java.util.Collections;
+import java.util.Map;
+
 import org.apache.avro.Protocol;
 import org.apache.avro.Schema;
+import org.apache.avro.reflect.ReflectData;
 import org.apache.camel.AsyncEndpoint;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -37,14 +42,6 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
     @UriParam
     private AvroConfiguration configuration;
 
-    /**
-     * Constructs a fully-initialized DefaultEndpoint instance. This is the
-     * preferred method of constructing an object from Java code (as opposed to
-     * Spring beans, etc.).
-     *
-     * @param endpointUri the full URI used to create this endpoint
-     * @param component   the component that created this endpoint
-     */
     public AvroEndpoint(String endpointUri, Component component, AvroConfiguration configuration) {
         super(endpointUri, component);
         this.configuration = configuration;
@@ -52,7 +49,7 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
 
     public Exchange createExchange(Protocol.Message message, Object request) {
         ExchangePattern pattern = ExchangePattern.InOut;
-        if (message.getResponse().equals(Schema.Type.NULL)) {
+        if (message.getResponse().getType().equals(Schema.Type.NULL)) {
             pattern = ExchangePattern.InOnly;
         }
         Exchange exchange = createExchange(pattern);
@@ -61,23 +58,67 @@ public abstract class AvroEndpoint extends DefaultEndpoint implements AsyncEndpo
         return exchange;
     }
     
-    /**
-     * Creates a new <a
-     * href="http://camel.apache.org/event-driven-consumer.html">Event
-     * Driven Consumer</a> which consumes messages from the endpoint using the
-     * given processor
-     *
-     * @param processor the given processor
-     * @return a newly created consumer
-     * @throws Exception can be thrown
-     */
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return new AvroConsumer(this, processor);
+        AvroConsumer consumer = new AvroConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public AvroConfiguration getConfiguration() {
         return configuration;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        validateConfiguration(configuration);
+
+    }
+
+    /**
+     * Validates configuration
+     */
+    private void validateConfiguration(AvroConfiguration config) throws Exception {
+        if (config.getProtocol() == null && config.getProtocolClassName() != null) {
+            Class<?> protocolClass = getCamelContext().getClassResolver().resolveClass(config.getProtocolClassName());
+            if (protocolClass != null) {
+                try {
+                    Field f = protocolClass.getField("PROTOCOL");
+                    if (f != null) {
+                        Protocol protocol = (Protocol)f.get(null);
+                        config.setProtocol(protocol);
+                    }
+                } catch (NoSuchFieldException e) {
+                    ReflectData reflectData = ReflectData.get();
+                    config.setProtocol(reflectData.getProtocol(protocolClass));
+                    config.setReflectionProtocol(true);
+                }
+            }
+        }
+
+        if (config.getProtocol() == null) {
+            throw new IllegalArgumentException("Avro configuration does not contain protocol");
+        }
+
+        if (config.getMessageName() != null && !config.getProtocol().getMessages().containsKey(config.getMessageName())) {
+            throw new IllegalArgumentException("Message " + config.getMessageName() + " is not defined in protocol");
+        }
+
+        if (config.isSingleParameter()) {
+            Map<String, Protocol.Message> messageMap = config.getProtocol().getMessages();
+            Iterable<Protocol.Message> messagesToCheck = config.getMessageName() == null
+                    ? messageMap.values()
+                    : Collections.singleton(messageMap.get(config.getMessageName()));
+            for (Protocol.Message message : messagesToCheck) {
+                if (message.getRequest().getFields().size() != 1) {
+                    throw new IllegalArgumentException("Single parameter option can't be used with message "
+                            + message.getName() + " because it has " + message.getRequest().getFields().size()
+                            + " parameters defined"
+                    );
+                }
+            }
+        }
+    }
 }

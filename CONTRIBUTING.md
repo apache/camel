@@ -49,7 +49,7 @@ To edit the documentation:
    - Create a commit and raise a Pull Request
 - If you want to add more documentation check for .adoc in codebase 
 
-For more information see [How does the website work](https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-does-the-website-work.adoc) or [How do I edit the website for more details](https://github.com/apache/camel/blob/master/docs/user-manual/en/faq/how-do-i-edit-the-website.adoc).
+For more information see [How does the website work](https://camel.apache.org/manual/latest/faq/how-does-the-website-work.html) or [How do I edit the website for more details](https://camel.apache.org/manual/latest/faq/how-do-i-edit-the-website.html).
 
 ## If you find a bug or problem
 
@@ -165,7 +165,7 @@ Before you can raise an issue in the [issue tracker](https://issues.apache.org/j
 
 Once you've got involved as above, we may well invite you to be a committer. See [How do I become a committer](http://camel.apache.org/how-do-i-become-a-committer.html) for more details.
 
-The first step is contributing to the project; if you want to take that a step forward and become a fellow committer on the project then see the [Committer Guide](http://activemq.apache.org/becoming-a-committer.html)
+The first step is contributing to the project; if you want to take that a step forward and become a fellow committer on the project then see the [Committer Guide](https://camel.apache.org/manual/latest/faq/how-do-i-become-a-committer.html)
 
 
 ## More resources

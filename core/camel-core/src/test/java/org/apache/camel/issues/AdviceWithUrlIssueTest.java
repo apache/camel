@@ -32,9 +32,7 @@ public class AdviceWithUrlIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("seda:test?concurrentConsumers=1").routeId("sedaroute")
-                    .to("log:before")
-                    .to("mock:target");
+                from("seda:test?concurrentConsumers=1").routeId("sedaroute").to("log:before").to("mock:target");
             }
         };
     }

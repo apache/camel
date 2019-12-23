@@ -48,6 +48,7 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
         this.assembler = new MBeanInfoAssembler();
     }
 
+    @Override
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {
         ModelMBeanInfo mbi = null;
         ModelMBeanInfo standardMbi = null;
@@ -60,15 +61,15 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
             if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
                 log.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
                 // get the mbean info into different groups (mbi = both, standard = standard out of the box mbi)
-                mbi = assembler.getMBeanInfo(obj, custom, name.toString());
-                standardMbi = assembler.getMBeanInfo(obj, null, name.toString());
+                mbi = assembler.getMBeanInfo(camelContext, obj, custom, name.toString());
+                standardMbi = assembler.getMBeanInfo(camelContext, obj, null, name.toString());
             }
         }
 
         if (mbi == null) {
             // use the default provided mbean which has been annotated with JMX annotations
             log.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name, obj);
-            mbi = assembler.getMBeanInfo(obj, null, name.toString());
+            mbi = assembler.getMBeanInfo(camelContext, obj, null, name.toString());
         }
 
         if (mbi == null) {

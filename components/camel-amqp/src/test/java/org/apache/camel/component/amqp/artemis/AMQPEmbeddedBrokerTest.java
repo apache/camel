@@ -85,6 +85,7 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
         resultEndpoint.assertIsSatisfied();
     }
     
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
         camelContext.getRegistry().bind("amqpConnection", discoverAMQP(camelContext));
@@ -92,6 +93,7 @@ public class AMQPEmbeddedBrokerTest extends CamelTestSupport {
         return camelContext;
     }
     
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

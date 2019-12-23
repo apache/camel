@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
 import javax.net.ssl.SSLContext;
 
 import io.undertow.client.ClientRequest;
@@ -130,15 +131,19 @@ public class UndertowProducer extends DefaultAsyncProducer {
         // Set the Host header
         final Message message = camelExchange.getIn();
         final String host = message.getHeader(Headers.HOST_STRING, String.class);
-        requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(uri::getAuthority));
-
+        if (endpoint.isPreserveHostHeader()) {
+            requestHeaders.put(Headers.HOST, Optional.ofNullable(host).orElseGet(uri::getAuthority));
+        } else {
+            requestHeaders.put(Headers.HOST, uri.getAuthority());
+        }
         cookieHeaders.forEach((key, values) -> {
             requestHeaders.putAll(HttpString.tryFromString(key), values);
         });
 
         final Object body = undertowHttpBinding.toHttpRequest(request, camelExchange.getIn());
         final UndertowClientCallback clientCallback;
-        if (getEndpoint().isUseStreaming() && (body instanceof InputStream)) {
+        final boolean streaming = getEndpoint().isUseStreaming();
+        if (streaming && (body instanceof InputStream)) {
             // For streaming, make it chunked encoding instead of specifying content length
             requestHeaders.put(Headers.TRANSFER_ENCODING, "chunked");
             clientCallback = new UndertowStreamingClientCallback(camelExchange, callback, getEndpoint(),
@@ -153,8 +158,14 @@ public class UndertowProducer extends DefaultAsyncProducer {
                 requestHeaders.put(Headers.CONTENT_LENGTH, bodyAsByte.remaining());
             }
 
-            clientCallback = new UndertowClientCallback(camelExchange, callback, getEndpoint(),
-                    request, bodyAsByte);
+            if (streaming) {
+                // response may receive streaming
+                clientCallback = new UndertowStreamingClientCallback(camelExchange, callback, getEndpoint(),
+                        request, bodyAsByte);
+            } else {
+                clientCallback = new UndertowClientCallback(camelExchange, callback, getEndpoint(),
+                        request, bodyAsByte);
+            }
         }
 
         if (log.isDebugEnabled()) {

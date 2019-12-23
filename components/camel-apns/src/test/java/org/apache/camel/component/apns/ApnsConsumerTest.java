@@ -18,7 +18,6 @@ package org.apache.camel.component.apns;
 
 import com.notnoop.apns.ApnsService;
 import com.notnoop.apns.utils.ApnsServerStub;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.apns.factory.ApnsServiceFactory;
@@ -30,7 +29,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 
 /**
  * Unit test that we can produce JMS message from files
@@ -73,6 +71,7 @@ public class ApnsConsumerTest extends CamelTestSupport {
         assertEquals(deviceToken, inactiveDevice.getDeviceToken());
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
@@ -86,6 +85,7 @@ public class ApnsConsumerTest extends CamelTestSupport {
         return camelContext;
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

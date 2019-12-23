@@ -36,7 +36,7 @@ import org.apache.camel.converter.IOConverter;
 /**
  * HL7 converters.
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class HL7GenericMessageConverter {
 
     private static final HapiContext GENERIC_MESSAGE_CONTEXT;

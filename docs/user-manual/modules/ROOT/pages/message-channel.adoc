@@ -1,18 +1,16 @@
 [[MessageChannel-MessageChannel]]
-== Message Channel
+= Message Channel
 
 Camel supports the
 http://www.enterpriseintegrationpatterns.com/MessageChannel.html[Message
 Channel] from the xref:enterprise-integration-patterns.adoc[EIP
 patterns]. The Message Channel is an internal implementation detail of
-the
-http://camel.apache.org/maven/current/camel-core/apidocs/org/apache/camel/Endpoint.html[Endpoint]
-interface and all interactions with the Message Channel are via the
+the `Endpoint` interface and all interactions with the Message Channel are via the
 Endpoint interfaces.
 
-image:http://www.enterpriseintegrationpatterns.com/img/MessageChannelSolution.gif[image]
+image::eip/MessageChannelSolution.gif[image]
 
-=== Samples
+== Samples
 
 In JMS, Message Channels are represented by topics and queues such as
 the following
@@ -23,7 +21,7 @@ jms:queue:foo
 -------------
 
 This message channel can be then used within the
-xref:jms-component.adoc[JMS] component
+xref:components::jms-component.adoc[JMS] component
 
 And the following shows a little Java route snippet:
 
@@ -43,9 +41,3 @@ And in XML:
 </route>
 ----
 
-=== See Also
-
-For more details see
-
-* xref:message.adoc[Message]
-* xref:messageEndpoint-eip.adoc[Message Endpoint]

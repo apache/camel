@@ -43,6 +43,7 @@ public class SesComponentIntegrationTest extends CamelTestSupport {
         assertNotNull(exchange.getIn().getHeader(SesConstants.MESSAGE_ID));
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override

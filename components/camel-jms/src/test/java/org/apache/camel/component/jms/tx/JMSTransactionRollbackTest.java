@@ -27,6 +27,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class JMSTransactionRollbackTest extends CamelSpringTestSupport {
 
+    @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext(
             "/org/apache/camel/component/jms/tx/JMSTransactionRollbackTest.xml");
@@ -43,6 +44,7 @@ public class JMSTransactionRollbackTest extends CamelSpringTestSupport {
     }
 
     public static class MyProcessor implements Processor {
+        @Override
         public void process(Exchange exchange) throws Exception {
             throw new IllegalArgumentException("Forced Exception");
         }

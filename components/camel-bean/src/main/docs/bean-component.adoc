@@ -1,11 +1,15 @@
 [[bean-component]]
-== Bean Component
+= Bean Component
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
+
+// HEADER START
+*Only producer is supported*
+// HEADER END
 
 The Bean component binds beans to Camel message exchanges.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -15,11 +19,11 @@ bean:beanName[?options]
 Where *beanID* can be any string which is used to look up the bean in
 the Registry
 
-=== Options
+== Options
 
 
 // component options: START
-The Bean component supports 3 options, which are listed below.
+The Bean component supports 4 options, which are listed below.
 
 
 
@@ -27,8 +31,9 @@ The Bean component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *cache* (advanced) | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -43,7 +48,7 @@ bean:beanName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -53,7 +58,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (6 parameters):
+=== Query Parameters (6 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -69,10 +74,43 @@ with the following path and query parameters:
 // endpoint options: END
 
 
+// spring-boot-auto-configure options: START
+== Spring Boot Auto-Configuration
+
+When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
+
+[source,xml]
+----
+<dependency>
+  <groupId>org.apache.camel.springboot</groupId>
+  <artifactId>camel-bean-starter</artifactId>
+  <version>x.x.x</version>
+  <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+
+The component supports 7 options, which are listed below.
+
+
+
+[width="100%",cols="2,5,^1,2",options="header"]
+|===
+| Name | Description | Default | Type
+| *camel.component.bean.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.bean.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
+| *camel.component.bean.cache* | If enabled, Camel will cache the result of the first Registry look-up. Cache can be enabled if the bean in the Registry is defined as a singleton scope. |  | Boolean
+| *camel.component.bean.enabled* | Whether to enable auto configuration of the bean component. This is enabled by default. |  | Boolean
+| *camel.component.bean.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
+| *camel.language.bean.enabled* | Whether to enable auto configuration of the bean language. This is enabled by default. |  | Boolean
+| *camel.language.bean.trim* | Whether to trim the value to remove leading and trailing whitespaces and line breaks | true | Boolean
+|===
+// spring-boot-auto-configure options: END
+
 You can append query options to the URI in the following format,
 `?option=value&option=value&...`
 
-=== Using
+== Using
 
 The object instance that is used to consume messages must be explicitly
 registered with the Registry. For example, if you
@@ -103,7 +141,7 @@ And the same route using Spring DSL:
 </route>
 ----------------------------
 
-=== Bean as endpoint
+== Bean as endpoint
 
 Camel also supports invoking xref:bean-component.adoc[Bean] as an Endpoint. In the
 route below:
@@ -116,7 +154,7 @@ Camel will use Bean Binding to invoke the
 `sayHello` method, by converting the Exchange's In body to the `String`
 type and storing the output of the method on the Exchange Out body.
 
-=== Java DSL bean syntax
+== Java DSL bean syntax
 
 Java DSL comes with syntactic sugar for the xref:bean-component.adoc[Bean]
 component. Instead of specifying the bean explicitly as the endpoint
@@ -148,7 +186,7 @@ from("direct:start").bean(new ExampleBean(), "methodName");
 from("direct:start").bean(ExampleBean.class);
 ---------------------------------------------------------------
 
-=== Bean Binding
+== Bean Binding
 
 How bean methods to be invoked are chosen (if they are not specified
 explicitly through the *method* parameter) and how parameter values are

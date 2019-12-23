@@ -19,6 +19,7 @@ package org.apache.camel.http.common;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -32,7 +33,7 @@ import org.apache.camel.support.GZIPHelper;
  * Some converter methods making it easy to convert the body of a message to servlet types or to switch between
  * the underlying {@link ServletInputStream} or {@link BufferedReader} payloads etc.
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class HttpConverter {
 
     private HttpConverter() {

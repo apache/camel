@@ -60,6 +60,7 @@ public class JmsDeadLetterQueueTest extends CamelTestSupport {
         assertNull(mock.getReceivedExchanges().get(0).getProperty(Exchange.EXCEPTION_CAUGHT));
     }
 
+    @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 

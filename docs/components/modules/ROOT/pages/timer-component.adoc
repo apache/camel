@@ -1,12 +1,17 @@
 [[timer-component]]
-== Timer Component
+= Timer Component
+:page-source: components/camel-timer/src/main/docs/timer-component.adoc
 
-*Available as of Camel version 1.0*
+*Since Camel 1.0*
+
+// HEADER START
+*Only consumer is supported*
+// HEADER END
 
 The Timer component is used to generate message exchanges when a
 timer fires You can only consume events from this endpoint.
 
-=== URI format
+== URI format
 
 [source]
 ----
@@ -29,22 +34,23 @@ advanced scheduling.
 
 TIP:*Specify time in human friendly format*
 You can specify the time in
-xref:how-do-i-specify-time-period-in-a-human-friendly-syntax.adoc[human
+xref:manual::faq/how-do-i-specify-time-period-in-a-human-friendly-syntax.adoc[human
 friendly syntax].
 
 
-=== Options
+== Options
 
 // component options: START
-The Timer component supports 2 options, which are listed below.
+The Timer component supports 3 options, which are listed below.
 
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *resolveProperty Placeholders* (advanced) | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
+| *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
 // component options: END
 
@@ -58,7 +64,7 @@ timer:timerName
 
 with the following path and query parameters:
 
-==== Path Parameters (1 parameters):
+=== Path Parameters (1 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -68,7 +74,7 @@ with the following path and query parameters:
 |===
 
 
-==== Query Parameters (13 parameters):
+=== Query Parameters (13 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -91,14 +97,14 @@ with the following path and query parameters:
 // endpoint options: END
 
 // spring-boot-auto-configure options: START
-=== Spring Boot Auto-Configuration
+== Spring Boot Auto-Configuration
 
 When using Spring Boot make sure to use the following Maven dependency to have support for auto configuration:
 
 [source,xml]
 ----
 <dependency>
-  <groupId>org.apache.camel</groupId>
+  <groupId>org.apache.camel.springboot</groupId>
   <artifactId>camel-timer-starter</artifactId>
   <version>x.x.x</version>
   <!-- use the same version as your Camel core version -->
@@ -106,7 +112,7 @@ When using Spring Boot make sure to use the following Maven dependency to have s
 ----
 
 
-The component supports 3 options, which are listed below.
+The component supports 4 options, which are listed below.
 
 
 
@@ -114,12 +120,13 @@ The component supports 3 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *camel.component.timer.basic-property-binding* | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | Boolean
+| *camel.component.timer.bridge-error-handler* | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | Boolean
 | *camel.component.timer.enabled* | Whether to enable auto configuration of the timer component. This is enabled by default. |  | Boolean
-| *camel.component.timer.resolve-property-placeholders* | Whether the component should resolve property placeholders on itself when starting. Only properties which are of String type can use property placeholders. | true | Boolean
+| *camel.component.timer.lazy-start-producer* | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | Boolean
 |===
 // spring-boot-auto-configure options: END
 
-=== Exchange Properties
+== Exchange Properties
 
 When the timer is fired, it adds the following information as properties
 to the `Exchange`:
@@ -139,7 +146,7 @@ to the `Exchange`:
 |`Exchange.TIMER_COUNTER` |`Long` |The current fire counter. Starts from 1.
 |===
 
-=== Sample
+== Sample
 
 To set up a route that generates an event every 60 seconds:
 
@@ -164,9 +171,9 @@ And the route in Spring DSL:
 </route>
 -----
 
-=== Firing as soon as possible
+== Firing as soon as possible
 
-*Available as of Camel 2.17*
+*Since Camel 2.17*
 
 You may want to fire messages in a Camel route as soon as possible you
 can use a negative delay:
@@ -186,11 +193,11 @@ negative delay to stop firing messages after a fixed number has been
 reached.
 
 If you don't specify a repeatCount then the timer will continue firing
-messages until the route will be stopped. 
+messages until the route will be stopped. 
 
-=== Firing only once
+== Firing only once
 
-*Available as of Camel 2.8*
+*Since Camel 2.8*
 
 You may want to fire a message in a Camel route only once, such as when
 starting the route. To do that you use the repeatCount option as shown:
@@ -203,7 +210,3 @@ starting the route. To do that you use the repeatCount option as shown:
 </route>
 ----
 
-=== See Also
-
-* xref:scheduler-component.adoc[Scheduler]
-* xref:quartz-component.adoc[Quartz]

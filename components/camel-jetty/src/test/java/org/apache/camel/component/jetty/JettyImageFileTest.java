@@ -29,10 +29,10 @@ import org.junit.Test;
  * Unit test for exposing a http server that returns images
  */
 public class JettyImageFileTest extends BaseJettyTest {
-    
+
     private void sendImageContent(boolean usingGZip) throws Exception {
         Endpoint endpoint = context.getEndpoint("http://localhost:{{port}}/myapp/myservice");
-        Exchange exchange = endpoint.createExchange();        
+        Exchange exchange = endpoint.createExchange();
         if (usingGZip) {
             exchange.getIn().setHeader(Exchange.CONTENT_ENCODING, "gzip");
         }
@@ -62,7 +62,8 @@ public class JettyImageFileTest extends BaseJettyTest {
     }
 
     public class MyImageService implements Processor {
-        public void process(Exchange exchange) throws Exception {            
+        @Override
+        public void process(Exchange exchange) throws Exception {
             exchange.getOut().setBody(new File("src/test/data/logo.jpeg"));
             exchange.getOut().setHeader("Content-Type", "image/jpeg");
         }

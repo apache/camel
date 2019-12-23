@@ -36,6 +36,7 @@ public class OsgiComponentResolver implements ComponentResolver {
         this.bundleContext = bundleContext;
     }
 
+    @Override
     public Component resolveComponent(String name, CamelContext context) throws Exception {
         Component componentReg = ResolverHelper.lookupComponentInRegistryWithFallback(context, name);
         if (componentReg != null) {

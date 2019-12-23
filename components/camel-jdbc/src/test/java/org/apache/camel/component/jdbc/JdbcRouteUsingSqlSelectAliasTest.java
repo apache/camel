@@ -55,6 +55,7 @@ public class JdbcRouteUsingSqlSelectAliasTest extends AbstractJdbcTestSupport {
         // END SNIPPET: invoke
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             // START SNIPPET: route

@@ -1,0 +1,62 @@
+[[MicroProfileHealth-MicroProfileHealthComponent]]
+= MicroProfile Health
+:page-source: components/camel-microprofile-health/src/main/docs/microprofile-health.adoc
+
+*Since Camel 3.0*
+
+The microprofile-health component is used for bridging https://microprofile.io/project/eclipse/microprofile-health[Eclipse MicroProfile Health] checks with Camel's own Health Check API.
+
+This enables you to write checks using the Camel health APIs and have them exposed via MicroProfile Health readiness and liveness checks.
+
+Maven users will need to add the following dependency to their `pom.xml`
+for this component:
+
+[source,xml]
+----
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-microprofile-health</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+----
+
+== Usage
+
+By default, Camel health checks are registered as both MicroProfile Health liveness and readiness checks. To have finer control over whether a Camel health check should
+be considered either a readiness or liveness check, you can extend the `AbstractCamelMicroProfileLivenessCheck` and `AbstractCamelMicroProfileReadinessCheck` classes.
+
+For example, to have a check registered exclusively as a liveness check:
+
+[source,java]
+----
+public class MyHealthCheck extends AbstractCamelMicroProfileLivenessCheck {
+
+    public MyHealthCheck() {
+        super("my-liveness-check-id");
+        getConfiguration().setEnabled(true);
+    }
+
+    @Override
+    protected void doCall(HealthCheckResultBuilder builder, Map<String, Object> options) {
+        builder.detail("some-detail-key", "some-value");
+
+        if (someSuccessCondition) {
+            builder.up();
+        } else {
+            builder.down();
+        }
+    }
+}
+----
+
+== Auto discovery
+
+The expectation is that this component is run within a MicroProfile container, where CDI and a library implementing the MicroProfile health specification is available.
+E.g https://github.com/smallrye/smallrye-health[SmallRye Health].
+
+In this scenario, the readiness and liveness checks are automatically discovered and registered for you.
+
+However, it's still possible to manually
+register Health checks without CDI. Ensure your camel health checks are available in the Camel registry and add an instance of
+`CamelMicroProfileReadinessCheck` and `CamelMicroProfileLivenessCheck` to the health check registry of your MicroProfile Health implementation.

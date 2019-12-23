@@ -24,11 +24,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
+import org.apache.camel.test.junit5.CamelTestSupport;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.asMap;
 import static org.apache.camel.dataformat.univocity.UniVocityTestHelper.join;
+import static org.apache.camel.test.junit5.TestSupport.assertIsInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * This class tests the marshalling of {@link org.apache.camel.dataformat.univocity.UniVocityCsvDataFormat}.

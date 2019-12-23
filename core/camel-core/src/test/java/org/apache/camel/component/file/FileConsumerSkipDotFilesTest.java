@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.file;
+
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
@@ -42,8 +43,7 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
         mock.expectedMessageCount(0);
         mock.setResultWaitTime(100);
 
-        template.sendBodyAndHeader("file:target/data/dotfiles/", "This is a dot file",
-            Exchange.FILE_NAME, ".skipme");
+        template.sendBodyAndHeader("file:target/data/dotfiles/", "This is a dot file", Exchange.FILE_NAME, ".skipme");
 
         mock.assertIsSatisfied();
     }
@@ -53,15 +53,14 @@ public class FileConsumerSkipDotFilesTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
 
-        template.sendBodyAndHeader("file:target/data/dotfiles/", "This is a dot file",
-            Exchange.FILE_NAME, ".skipme");
+        template.sendBodyAndHeader("file:target/data/dotfiles/", "This is a dot file", Exchange.FILE_NAME, ".skipme");
 
-        template.sendBodyAndHeader("file:target/data/dotfiles/", "Hello World",
-            Exchange.FILE_NAME, "hello.txt");
+        template.sendBodyAndHeader("file:target/data/dotfiles/", "Hello World", Exchange.FILE_NAME, "hello.txt");
 
         mock.assertIsSatisfied();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

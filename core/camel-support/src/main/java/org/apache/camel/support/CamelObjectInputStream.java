@@ -35,6 +35,7 @@ public class CamelObjectInputStream extends ObjectInputStream {
         }
     }
     
+    @Override
     protected Class<?> resolveClass(ObjectStreamClass desc) throws ClassNotFoundException, IOException {
         if (classLoader != null) {
             return Class.forName(desc.getName(), false, classLoader);

@@ -20,13 +20,11 @@ import java.util.Map;
 import java.util.Set;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
 
 @Component("aws-ses")
 public class SesComponent extends DefaultComponent {
@@ -47,34 +45,28 @@ public class SesComponent extends DefaultComponent {
     public SesComponent(CamelContext context) {
         super(context);
 
-        this.configuration = new SesConfiguration();
         registerExtension(new SesComponentVerifierExtension());
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        SesConfiguration configuration = this.configuration.copy();
-        setProperties(configuration, parameters);
 
         if (remaining == null || remaining.trim().length() == 0) {
             throw new IllegalArgumentException("From must be specified.");
         }
+        SesConfiguration configuration = this.configuration != null ? this.configuration.copy() : new SesConfiguration();
         configuration.setFrom(remaining);
-
-        if (ObjectHelper.isEmpty(configuration.getAccessKey())) {
-            setAccessKey(accessKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getSecretKey())) {
-            setSecretKey(secretKey);
-        }
-        if (ObjectHelper.isEmpty(configuration.getRegion())) {
-            setRegion(region);
-        }
+        SesEndpoint endpoint = new SesEndpoint(uri, this, configuration);
+        endpoint.getConfiguration().setAccessKey(accessKey);
+        endpoint.getConfiguration().setSecretKey(secretKey);
+        endpoint.getConfiguration().setRegion(region);
+        setProperties(endpoint, parameters);
         checkAndSetRegistryClient(configuration);
         if (configuration.getAmazonSESClient() == null && (configuration.getAccessKey() == null || configuration.getSecretKey() == null)) {
             throw new IllegalArgumentException("AmazonSESClient or accessKey and secretKey must be specified");
         }
 
-        return new SesEndpoint(uri, this, configuration);
+        return endpoint;
     }
 
     public SesConfiguration getConfiguration() {
@@ -89,36 +81,36 @@ public class SesComponent extends DefaultComponent {
     }
 
     public String getAccessKey() {
-        return configuration.getAccessKey();
+        return accessKey;
     }
 
     /**
      * Amazon AWS Access Key
      */
     public void setAccessKey(String accessKey) {
-        configuration.setAccessKey(accessKey);
+        this.accessKey = accessKey;
     }
 
     public String getSecretKey() {
-        return configuration.getSecretKey();
+        return secretKey;
     }
 
     /**
      * Amazon AWS Secret Key
      */
     public void setSecretKey(String secretKey) {
-        configuration.setSecretKey(secretKey);
+        this.secretKey = secretKey;
     }
 
     /**
      * The region in which SES client needs to work
      */
     public String getRegion() {
-        return configuration.getRegion();
+        return region;
     }
 
     public void setRegion(String region) {
-        configuration.setRegion(region);
+        this.region = region;
     }
     
     private void checkAndSetRegistryClient(SesConfiguration configuration) {

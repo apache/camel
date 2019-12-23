@@ -50,9 +50,7 @@ public class XsltOutputFileDeleteTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start")
-                    .to("xslt:org/apache/camel/component/xslt/example.xsl?output=file&deleteOutputFile=true")
-                    .to("mock:result");
+                from("direct:start").to("xslt:org/apache/camel/component/xslt/example.xsl?output=file&deleteOutputFile=true").to("mock:result");
             }
         };
     }

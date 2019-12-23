@@ -1,12 +1,12 @@
 [[Building-BuildingCamelfromSource]]
-=== Building Camel from Source
+= Building Camel from Source
 
 Camel uses http://maven.apache.org/[Maven] as its build and management
 tool. If you don't fancy using Maven you can use your IDE directly or
 Download a distribution or JAR.
 
 [[Building-Prequisites]]
-==== Prequisites
+== Prequisites
 
 *Required:*
 
@@ -29,7 +29,7 @@ Download a distribution or JAR.
 PATH to generate the PDF documentation
 
 [[Building-Mavenoptions]]
-==== Maven options
+== Maven options
 
 To build camel maven has to be configured to use more memory
 
@@ -51,7 +51,7 @@ set MAVEN_OPTS="-Xms2048m -Xmx3584m"
 -------------------------------------------------------
 
 [[Building-Anormalbuild]]
-==== A normal build
+== A normal build
 
 [source,text]
 -----------------
@@ -59,7 +59,7 @@ mvn clean install
 -----------------
 
 [[Building-Anormalbuildwithoutrunningtests]]
-==== A quick build without running tests
+== A quick build without running tests
 
 The following skips building the manual, the distro and does not execute
 the unit tests.
@@ -70,7 +70,7 @@ mvn clean install -Pfastinstall
 -------------------------------
 
 [[Building-Anormalbuildwithoutrunningtestsbutcheckstyleverificationenabled]]
-==== A normal build without running tests but checkstyle verification enabled
+== A normal build without running tests but checkstyle verification enabled
 
 [source,text]
 -------------------------------------------
@@ -78,13 +78,13 @@ mvn clean install -Pfastinstall,sourcecheck
 -------------------------------------------
 
 [[Building-UsinganIDE]]
-==== Using an IDE
+== Using an IDE
 
 If you prefer to use an IDE then you can auto-generate the IDE's project
 files using maven plugins. e.g.
 
 [[Building-IntelliJ]]
-===== IntelliJ
+=== IntelliJ
 
 [source,text]
 -------------
@@ -92,7 +92,7 @@ mvn idea:idea
 -------------
 
 [[Building-Eclipse]]
-===== Eclipse
+=== Eclipse
 
 There are several ways to import the projects into Eclipse.
 
@@ -119,7 +119,7 @@ follows:
 TIP: For a better experience some users set 8 GB when all projects are loaded and opened.
 
 [[Building-CloningtheGitRepository]]
-Cloning the Git Repository 
+Cloning the Git Repository 
 
 Either follow instructions about getting the latest
 source, or clone the Git repository with Eclipse by
@@ -137,14 +137,14 @@ Import -> Maven -> Existing Maven Projects*. Point the wizard to the
 root directory of the cloned repository. Eclipse will analyze all Camel
 projects and eventually present the following summary:
 
-image:building.data/camel-eclipse-m2e-import.png[image]
+image::camel-eclipse-m2e-import.png[image]
 
 Simply confirm the import of all projects by clicking *Finish*. The
 import process will create Eclipse projects and automatically set up
 build paths using dependency details provided by the pom.xml files. Once
 completed, all Camel projects will be available in your workspace:
 
-image:building.data/camel-eclipse-m2e-import-completed.png[image]
+image::camel-eclipse-m2e-import-completed.png[image]
 
 NOTE: As you can see main project is combined with multiple sub projects/modules (e.g. components, archetypes, tooling etc.). Many sub projects/modules are again categorized or packaged with another layer of sub modules and so on. Developers can import project/module which is relevant to them and work on it instead importing entire project which will consume memory and eventually slow down Eclipse. This approach is not only easy to import and work in eclipse as well as easy to test. Lets say you do some code changes in the camel-ftp component, then you can run the checks from within this directory.
 
@@ -207,7 +207,7 @@ need to update the projects.
 --------------------------------------------------------------------------
 
 [[Building-Buildingwithcheckstyle]]
-==== Building with checkstyle
+== Building with checkstyle
 
 To enable source style checking with checkstyle, build Camel with the
 -Psourcecheck parameter
@@ -218,7 +218,7 @@ mvn -Psourcecheck clean install
 -------------------------------
 
 [[Building-Buildingsourcejars]]
-==== Building source jars
+== Building source jars
 
 If you want to build jar files with the source code, that for instance
 Eclipse can important so you can debug the Camel code as well. Then you
@@ -230,7 +230,7 @@ mvn clean source:jar install -Pfastinstall
 ------------------------------------------
 
 [[Building-Workingwithkaraffeatures]]
-==== Working with karaf features
+== Working with karaf features
 
 If you change anything in the features.xml from `platform/karaf` you can
 run a validation step to ensure the generated features.xml file is
@@ -243,7 +243,7 @@ mvn clean install -Pvalidate
 ----------------------------
 
 [[Building-ExecutingunittestsusingEkstazi]]
-==== Executing unit tests using Ekstazi
+== Executing unit tests using Ekstazi
 
 Normally, when you execute the unit tests during your development cycle
 for a particular component, you are executing all the tests each time.
@@ -253,7 +253,7 @@ tests. Ekstazi is a regression testing tool that can keep track of the
 test results and the changed classes so that unaffected tests can be
 skipped during the subsequent testing. For more details of Ekstazi,
 please refer to the Ekstazi page
-at http://www.ekstazi.org[http://www.ekstazi.org].
+at http://www.ekstazi.org[http://www.ekstazi.org].
 
 To use Ekstazi, you can run the tests with the maven profile ekstazi.
 
@@ -262,9 +262,3 @@ To use Ekstazi, you can run the tests with the maven profile ekstazi.
 mvn test -Pekstazi
 ------------------
 
-[[Building-SeeAlso]]
-==== See Also
-
-* Running Unit Tests
-* Source
-* Examples

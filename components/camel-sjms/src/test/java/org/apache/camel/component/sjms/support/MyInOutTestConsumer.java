@@ -97,6 +97,7 @@ public class MyInOutTestConsumer implements MessageListener {
         return Long.toHexString(randomLong);
     }
 
+    @Override
     public void onMessage(Message message) {
         String messageText = null;
         try {

@@ -26,7 +26,7 @@ import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.webhook.WebhookConfiguration;
 import org.apache.camel.component.webhook.WebhookEndpoint;
 import org.apache.camel.test.AvailablePortFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests a producer that sends media information.
@@ -45,7 +45,7 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
             mock.expectedBodiesReceived("aho");
             mock.expectedMinimumMessageCount(1);
 
-            template().sendBodyAndHeader("netty4-http:" + url, content, Exchange.CONTENT_TYPE, "application/json");
+            template().sendBodyAndHeader("netty-http:" + url, content, Exchange.CONTENT_TYPE, "application/json");
             mock.assertIsSatisfied();
         }
     }
@@ -64,7 +64,7 @@ public class TelegramWebhookCallTest extends TelegramTestSupport {
                         .host("localhost")
                         .port(port);
 
-                from("webhook:telegram:bots/mock-token?webhookAutoRegister=false")
+                from("webhook:telegram:bots?authorizationToken=mock-token&webhookAutoRegister=false")
                         .id("webhook")
                         .convertBodyTo(String.class)
                         .to("mock:endpoint");

@@ -33,7 +33,7 @@ import org.apache.camel.component.crypto.cms.exception.CryptoCmsNoCertificateFor
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsSignatureException;
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsSignatureInvalidContentHashException;
 import org.apache.camel.component.crypto.cms.exception.CryptoCmsVerifierCertificateNotValidException;
-import org.apache.camel.converter.stream.OutputStreamBuilder;
+import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.util.IOHelper;
 import org.bouncycastle.asn1.cms.Attribute;
 import org.bouncycastle.asn1.cms.CMSAttributes;
@@ -170,7 +170,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
             Collection<X509CertificateHolder> certCollection = certStore.getMatches(signer.getSID());
 
             if (certCollection.isEmpty()) {
-                if (conf.isVerifySignaturesOfAllSigners(exchange)) {
+                if (conf.isVerifySignaturesOfAllSigners()) {
                     throw new CryptoCmsNoCertificateForSignerInfoException("KCS7/CMS signature verification failed. The public key for the signer information with"
                                                                            + signerInformationToString(signer) + " cannot be found in the configured certificates: "
                                                                            + certsToString(allowedVerifyCerts));
@@ -185,7 +185,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
                 if (signer.verify(new JcaSimpleSignerInfoVerifierBuilder().setProvider(BouncyCastleProvider.PROVIDER_NAME).build(cert))) {
                     LOG.debug("Verification successful");
                     atLeastOneSignatureVerified = true;
-                    if (!conf.isVerifySignaturesOfAllSigners(exchange)) {
+                    if (!conf.isVerifySignaturesOfAllSigners()) {
                         return;
                     }
                 } else {
@@ -272,7 +272,7 @@ public class SignedDataVerifier extends CryptoCmsUnmarshaller {
         for (Attribute attr : attributes.values()) {
             sb.append(attr.getAttrType());
             if (CMSAttributes.signingTime.equals(attr.getAttrType()) || CMSAttributes.messageDigest.equals(attr.getAttrType())
-                || CMSAttributes.cmsAlgorithmProtect.equals(attr.getAttrType()) || CMSAttributeTableGenerator.CONTENT_TYPE.equals(attr.getAttrType())) {
+                || CMSAttributes.cmsAlgorithmProtect.equals(attr.getAttrType())) {
                 // for these attributes we can print the value because we know
                 // they do not contain confidential or personal data
                 sb.append("=");

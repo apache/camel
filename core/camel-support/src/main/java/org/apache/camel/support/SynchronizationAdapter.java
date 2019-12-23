@@ -29,10 +29,12 @@ import org.apache.camel.spi.SynchronizationVetoable;
  */
 public class SynchronizationAdapter implements SynchronizationVetoable, Ordered, SynchronizationRouteAware {
 
+    @Override
     public void onComplete(Exchange exchange) {
         onDone(exchange);
     }
 
+    @Override
     public void onFailure(Exchange exchange) {
         onDone(exchange);
     }
@@ -41,20 +43,24 @@ public class SynchronizationAdapter implements SynchronizationVetoable, Ordered,
         // noop
     }
 
+    @Override
     public boolean allowHandover() {
         // allow by default
         return true;
     }
 
+    @Override
     public int getOrder() {
         // no particular order by default
         return 0;
     }
 
+    @Override
     public void onBeforeRoute(Route route, Exchange exchange) {
         // noop
     }
 
+    @Override
     public void onAfterRoute(Route route, Exchange exchange) {
         // noop
     }

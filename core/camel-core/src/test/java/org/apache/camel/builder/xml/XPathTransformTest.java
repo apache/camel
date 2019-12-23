@@ -60,8 +60,8 @@ public class XPathTransformTest extends ContextTestSupport {
         when(l.isInfoEnabled()).thenReturn(true);
 
         String body = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
-                + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
-                + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>"; 
+                      + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
+                      + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>";
         Document doc = context.getTypeConverter().convertTo(Document.class, body);
         Field logField = XPathBuilder.class.getDeclaredField("LOG");
         logField.setAccessible(true);
@@ -85,8 +85,8 @@ public class XPathTransformTest extends ContextTestSupport {
         when(l.isInfoEnabled()).thenReturn(true);
 
         String body = "<aRoot xmlns:nsa=\"http://namespacec.net\"><nsa:a xmlns:nsa=\"http://namespacea.net\">Hello|there|Camel</nsa:a>"
-                + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
-                + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>";
+                      + "<nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a><nsb:a xmlns:nsb=\"http://namespaceb.net\">Hello|there|Camel</nsb:a>"
+                      + "<a xmlns=\"http://defaultNamespace.net\">Hello|there|Camel</a><a>Hello|there|Camel</a></aRoot>";
         Document doc = context.getTypeConverter().convertTo(Document.class, body);
         Field logField = XPathBuilder.class.getDeclaredField("LOG");
         logField.setAccessible(true);

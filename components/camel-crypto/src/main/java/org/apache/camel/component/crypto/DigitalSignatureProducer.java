@@ -19,6 +19,7 @@ package org.apache.camel.component.crypto;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.crypto.processor.DigitalSignatureProcessor;
 import org.apache.camel.support.DefaultProducer;
+
 /**
  * <code>DigitalSignatureProducer</code>
  */
@@ -31,6 +32,7 @@ public class DigitalSignatureProducer extends DefaultProducer {
         this.processor = processor;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         processor.process(exchange);
     }

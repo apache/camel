@@ -68,6 +68,7 @@ public class FhirJsonDataformatErrorHandlerTest extends CamelTestSupport {
         assertEquals(null, patient.getExtension().get(0).getUrl());
         assertEquals("2011-01-02T11:13:15", patient.getExtension().get(0).getValueAsPrimitive().getValueAsString());    }
 
+    @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {

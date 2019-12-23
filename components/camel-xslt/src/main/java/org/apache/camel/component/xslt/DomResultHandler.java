@@ -28,10 +28,12 @@ public class DomResultHandler implements ResultHandler {
 
     private DOMResult result = new DOMResult();
 
+    @Override
     public Result getResult() {
         return result;
     }
 
+    @Override
     public void setBody(Message in) {
         in.setBody(result.getNode());
     }

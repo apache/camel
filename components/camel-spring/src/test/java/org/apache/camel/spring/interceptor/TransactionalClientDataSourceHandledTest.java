@@ -26,6 +26,7 @@ import org.junit.Test;
  */
 public class TransactionalClientDataSourceHandledTest extends TransactionalClientDataSourceWithOnExceptionTest {
 
+    @Override
     @Test
     public void testTransactionRollback() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:error");
@@ -40,6 +41,7 @@ public class TransactionalClientDataSourceHandledTest extends TransactionalClien
         assertEquals("Number of books", 2, count);
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new SpringRouteBuilder() {
             public void configure() throws Exception {

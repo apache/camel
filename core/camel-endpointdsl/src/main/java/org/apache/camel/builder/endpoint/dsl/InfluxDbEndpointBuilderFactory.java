@@ -46,7 +46,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder batch(boolean batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -57,7 +57,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder batch(String batch) {
-            setProperty("batch", batch);
+            doSetProperty("batch", batch);
             return this;
         }
         /**
@@ -68,7 +68,47 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder databaseName(String databaseName) {
-            setProperty("databaseName", databaseName);
+            doSetProperty("databaseName", databaseName);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default InfluxDbEndpointBuilder lazyStartProducer(
+                boolean lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
+            return this;
+        }
+        /**
+         * Whether the producer should be started lazy (on the first message).
+         * By starting lazy you can use this to allow CamelContext and routes to
+         * startup in situations where a producer may otherwise fail during
+         * starting and cause the route to fail being started. By deferring this
+         * startup to be lazy then the startup failure can be handled during
+         * routing messages via Camel's routing error handlers. Beware that when
+         * the first message is processed then creating and starting the
+         * producer may take a little time and prolong the total processing time
+         * of the processing.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: producer
+         */
+        default InfluxDbEndpointBuilder lazyStartProducer(
+                String lazyStartProducer) {
+            doSetProperty("lazyStartProducer", lazyStartProducer);
             return this;
         }
         /**
@@ -79,7 +119,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder operation(String operation) {
-            setProperty("operation", operation);
+            doSetProperty("operation", operation);
             return this;
         }
         /**
@@ -90,7 +130,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder query(String query) {
-            setProperty("query", query);
+            doSetProperty("query", query);
             return this;
         }
         /**
@@ -102,7 +142,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: producer
          */
         default InfluxDbEndpointBuilder retentionPolicy(String retentionPolicy) {
-            setProperty("retentionPolicy", retentionPolicy);
+            doSetProperty("retentionPolicy", retentionPolicy);
             return this;
         }
     }
@@ -126,7 +166,7 @@ public interface InfluxDbEndpointBuilderFactory {
          */
         default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
                 boolean basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -139,7 +179,7 @@ public interface InfluxDbEndpointBuilderFactory {
          */
         default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
-            setProperty("basicPropertyBinding", basicPropertyBinding);
+            doSetProperty("basicPropertyBinding", basicPropertyBinding);
             return this;
         }
         /**
@@ -151,7 +191,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(boolean synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
         /**
@@ -163,7 +203,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(String synchronous) {
-            setProperty("synchronous", synchronous);
+            doSetProperty("synchronous", synchronous);
             return this;
         }
     }
@@ -173,7 +213,7 @@ public interface InfluxDbEndpointBuilderFactory {
      * series database.
      * 
      * Category: database
-     * Available as of version: 2.18
+     * Since: 2.18
      * Maven coordinates: org.apache.camel:camel-influxdb
      * 
      * Syntax: <code>influxdb:connectionBean</code>
@@ -181,7 +221,7 @@ public interface InfluxDbEndpointBuilderFactory {
      * Path parameter: connectionBean (required)
      * Connection to the influx database, of class InfluxDB.class
      */
-    default InfluxDbEndpointBuilder influxDb(String path) {
+    default InfluxDbEndpointBuilder influxdb(String path) {
         class InfluxDbEndpointBuilderImpl extends AbstractEndpointBuilder implements InfluxDbEndpointBuilder, AdvancedInfluxDbEndpointBuilder {
             public InfluxDbEndpointBuilderImpl(String path) {
                 super("influxdb", path);

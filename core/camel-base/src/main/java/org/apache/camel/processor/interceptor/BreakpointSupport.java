@@ -31,26 +31,32 @@ public abstract class BreakpointSupport implements Breakpoint {
 
     private State state = State.Active;
 
+    @Override
     public State getState() {
         return state;
     }
 
+    @Override
     public void suspend() {
         state = State.Suspended;
     }
 
+    @Override
     public void activate() {
         state = State.Active;
     }
 
+    @Override
     public void beforeProcess(Exchange exchange, Processor processor, NamedNode definition) {
         // noop
     }
 
+    @Override
     public void afterProcess(Exchange exchange, Processor processor, NamedNode definition, long timeTaken) {
         // noop
     }
 
+    @Override
     public void onEvent(Exchange exchange, ExchangeEvent event, NamedNode definition) {
         // noop
     }

@@ -25,7 +25,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.kafka.KafkaComponent;
 import org.apache.camel.component.kafka.KafkaConstants;
-import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +47,7 @@ public final class MessagePublisherClient {
 
         camelContext.addRoutes(new RouteBuilder() {
             public void configure() {
-                PropertiesComponent pc = getContext().getComponent("properties", PropertiesComponent.class);
-                pc.setLocation("classpath:application.properties");
+                camelContext.getPropertiesComponent().setLocation("classpath:application.properties");
 
                 // setup kafka component with the brokers
                 KafkaComponent kafka = new KafkaComponent();

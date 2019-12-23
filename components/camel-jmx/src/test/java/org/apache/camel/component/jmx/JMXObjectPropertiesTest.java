@@ -20,7 +20,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the objectName is created with the hashtable of objectProperties

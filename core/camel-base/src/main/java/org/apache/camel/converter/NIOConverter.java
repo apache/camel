@@ -29,11 +29,13 @@ import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.util.BufferCaster.cast;
+
 /**
  * Some core java.nio based
  * <a href="http://camel.apache.org/type-converter.html">Type Converters</a>
  */
-@Converter(loader = true)
+@Converter(generateLoader = true)
 public final class NIOConverter {
 
     private static final Logger LOG = LoggerFactory.getLogger(NIOConverter.class);
@@ -103,7 +105,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Short value) {
         ByteBuffer buf = ByteBuffer.allocate(2);
         buf.putShort(value);
-        buf.flip();
+        cast(buf).flip();
         return buf;
     }
 
@@ -111,7 +113,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Integer value) {
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putInt(value);
-        buf.flip();
+        cast(buf).flip();
         return buf;
     }
 
@@ -119,7 +121,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Long value) {
         ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putLong(value);
-        buf.flip();
+        cast(buf).flip();
         return buf;
     }
 
@@ -127,7 +129,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Float value) {
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.putFloat(value);
-        buf.flip();
+        cast(buf).flip();
         return buf;
     }
 
@@ -135,7 +137,7 @@ public final class NIOConverter {
     public static ByteBuffer toByteBuffer(Double value) {
         ByteBuffer buf = ByteBuffer.allocate(8);
         buf.putDouble(value);
-        buf.flip();
+        cast(buf).flip();
         return buf;
     }
 
@@ -143,4 +145,5 @@ public final class NIOConverter {
     public static InputStream toInputStream(ByteBuffer bufferbuffer) {
         return IOConverter.toInputStream(toByteArray(bufferbuffer));
     }
+
 }

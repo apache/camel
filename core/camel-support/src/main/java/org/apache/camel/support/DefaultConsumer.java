@@ -56,10 +56,12 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         return consumerToString;
     }
 
+    @Override
     public Route getRoute() {
         return route;
     }
 
+    @Override
     public void setRoute(Route route) {
         this.route = route;
     }
@@ -101,10 +103,12 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         UnitOfWorkHelper.doneUow(exchange.getUnitOfWork(), exchange);
     }
 
+    @Override
     public Endpoint getEndpoint() {
         return endpoint;
     }
 
+    @Override
     public Processor getProcessor() {
         return processor;
     }
@@ -139,11 +143,13 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
         ServiceHelper.initService(processor);
     }
 
+    @Override
     protected void doStop() throws Exception {
         log.debug("Stopping consumer: {}", this);
         ServiceHelper.stopService(processor);
     }
 
+    @Override
     protected void doStart() throws Exception {
         log.debug("Starting consumer: {}", this);
         ServiceHelper.startService(processor);

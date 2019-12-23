@@ -24,8 +24,10 @@ import org.apache.camel.Producer;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit test to verify that we can pool a BINARY file from the FTP Server and store it on a local file path
@@ -35,11 +37,11 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
     // must user "consumer." prefix on the parameters to the file component
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/tmp4/camel?password=admin&binary=true"
-                + "&consumer.delay=5000&recursive=false";
+                + "&delay=5000&recursive=false";
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         super.setUp();
         prepareFtpServer();
@@ -52,12 +54,12 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         resultEndpoint.assertIsSatisfied();
         Exchange ex = resultEndpoint.getExchanges().get(0);
         byte[] bytes = ex.getIn().getBody(byte[].class);
-        assertTrue("Logo size wrong", bytes.length > 10000);
+        assertTrue(bytes.length > 10000, "Logo size wrong");
 
         // assert the file
         File file = new File("target/ftptest/deleteme.jpg");
-        assertTrue("The binary file should exists", file.exists());
-        assertTrue("Logo size wrong", file.length() > 10000);
+        assertTrue(file.exists(), "The binary file should exists");
+        assertTrue(file.length() > 10000, "Logo size wrong");
     }
 
     private void prepareFtpServer() throws Exception {
@@ -73,6 +75,7 @@ public class FromFtpToBinaryFileTest extends FtpServerTestSupport {
         producer.stop();
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

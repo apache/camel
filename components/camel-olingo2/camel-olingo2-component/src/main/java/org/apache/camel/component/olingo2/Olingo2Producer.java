@@ -65,11 +65,12 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
                     response = resultIndex.filterResponse(response);
                 }
 
-                // producer returns a single response, even for methods with List return types
+                // producer returns a single response, even for methods with
+                // List return types
                 exchange.getOut().setBody(response);
                 // copy headers
                 exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-                
+
                 // Add http response headers
                 exchange.getOut().setHeader(Olingo2Constants.PROPERTY_PREFIX + RESPONSE_HTTP_HEADERS, responseHeaders);
 
@@ -117,7 +118,8 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
     @Override
     public void interceptProperties(Map<String, Object> properties) {
         //
-        // If we have a filterAlreadySeen property then initialise the filter index
+        // If we have a filterAlreadySeen property then initialise the filter
+        // index
         //
         Object value = properties.get(Olingo2Endpoint.FILTER_ALREADY_SEEN);
         if (value == null) {
@@ -125,7 +127,8 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
         }
 
         //
-        // Initialise the index if not already and if filterAlreadySeen has been set
+        // Initialise the index if not already and if filterAlreadySeen has been
+        // set
         //
         if (Boolean.parseBoolean(value.toString()) && resultIndex == null) {
             resultIndex = new Olingo2Index();

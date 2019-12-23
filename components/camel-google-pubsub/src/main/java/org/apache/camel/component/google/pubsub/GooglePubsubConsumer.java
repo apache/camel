@@ -95,8 +95,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
         private final String threadId;
 
         PubsubPoller(String id) {
-            this.subscriptionFullName = String.format("projects/%s/subscriptions/%s",
-                                                      GooglePubsubConsumer.this.endpoint.getProjectId(),
+            this.subscriptionFullName = String.format("projects/%s/subscriptions/%s", GooglePubsubConsumer.this.endpoint.getProjectId(),
                                                       GooglePubsubConsumer.this.endpoint.getDestinationName());
             this.threadId = GooglePubsubConsumer.this.endpoint.getDestinationName() + "-" + "Thread " + id;
         }
@@ -115,11 +114,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
                         if (localLog.isTraceEnabled()) {
                             localLog.trace("Polling : {}", threadId);
                         }
-                        pullResponse = GooglePubsubConsumer.this.pubsub
-                                .projects()
-                                .subscriptions()
-                                .pull(subscriptionFullName, pullRequest)
-                                .execute();
+                        pullResponse = GooglePubsubConsumer.this.pubsub.projects().subscriptions().pull(subscriptionFullName, pullRequest).execute();
                     } catch (SocketTimeoutException ste) {
                         if (localLog.isTraceEnabled()) {
                             localLog.trace("Socket timeout : {}", threadId);
@@ -170,4 +165,3 @@ class GooglePubsubConsumer extends DefaultConsumer {
         }
     }
 }
-

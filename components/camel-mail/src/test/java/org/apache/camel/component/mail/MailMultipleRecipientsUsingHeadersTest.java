@@ -54,6 +54,7 @@ public class MailMultipleRecipientsUsingHeadersTest extends CamelTestSupport {
         assertEquals("Camel rocks", msg.getSubject());
     }
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

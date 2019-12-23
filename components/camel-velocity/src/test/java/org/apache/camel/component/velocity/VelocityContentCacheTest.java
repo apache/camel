@@ -34,6 +34,7 @@ import org.junit.Test;
  */
 public class VelocityContentCacheTest extends CamelTestSupport {
 
+    @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -147,6 +148,7 @@ public class VelocityContentCacheTest extends CamelTestSupport {
     }
     
 
+    @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

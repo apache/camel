@@ -42,8 +42,8 @@ public class FromRestGetContentTypeTest extends ContextTestSupport {
         });
 
         assertNotNull(out);
-        assertEquals("{ \"name\" : \"Donald\" }", out.getOut().getBody());
-        assertEquals("application/json", out.getOut().getHeader(Exchange.CONTENT_TYPE));
+        assertEquals("{ \"name\" : \"Donald\" }", out.getMessage().getBody());
+        assertEquals("application/json", out.getMessage().getHeader(Exchange.CONTENT_TYPE));
     }
 
     @Override
@@ -53,8 +53,7 @@ public class FromRestGetContentTypeTest extends ContextTestSupport {
             public void configure() throws Exception {
                 restConfiguration().host("localhost");
 
-                rest("/say/hello").produces("application/json")
-                    .get().to("direct:hello");
+                rest("/say/hello").produces("application/json").get().to("direct:hello");
 
                 from("direct:hello").setBody(constant("{ \"name\" : \"Donald\" }"));
 

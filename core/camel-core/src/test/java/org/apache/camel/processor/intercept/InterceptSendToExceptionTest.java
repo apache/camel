@@ -51,4 +51,3 @@ public class InterceptSendToExceptionTest extends ContextTestSupport {
         };
     }
 }
-

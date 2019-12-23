@@ -17,6 +17,7 @@
 package org.apache.camel.example.management;
 
 import java.util.Set;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -27,6 +28,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ManagementExampleTest extends CamelSpringTestSupport {
 
+    @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("META-INF/spring/camel-context.xml");
     }

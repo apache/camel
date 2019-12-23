@@ -47,6 +47,7 @@ public class VmConsumer extends SedaConsumer implements CamelContextAware {
      * @param exchange the exchange
      * @return the exchange to process by this consumer.
      */
+    @Override
     protected Exchange prepareExchange(Exchange exchange) {
         // send a new copied exchange with the camel context from this consumer
         Exchange newExchange = ExchangeHelper.copyExchangeAndSetCamelContext(exchange, getCamelContext());

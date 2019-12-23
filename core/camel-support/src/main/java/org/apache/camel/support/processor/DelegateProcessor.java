@@ -48,6 +48,7 @@ public class DelegateProcessor extends ServiceSupport implements org.apache.came
         this.processor = processor;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         processNext(exchange);
     }
@@ -63,6 +64,7 @@ public class DelegateProcessor extends ServiceSupport implements org.apache.came
         return "Delegate[" + processor + "]";
     }
 
+    @Override
     public Processor getProcessor() {
         return processor;
     }
@@ -71,18 +73,22 @@ public class DelegateProcessor extends ServiceSupport implements org.apache.came
         this.processor = processor;
     }
 
+    @Override
     protected void doStart() throws Exception {
         ServiceHelper.startService(processor);
     }
 
+    @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(processor);
     }
 
+    @Override
     public boolean hasNext() {
         return processor != null;
     }
 
+    @Override
     public List<Processor> next() {
         if (!hasNext()) {
             return null;

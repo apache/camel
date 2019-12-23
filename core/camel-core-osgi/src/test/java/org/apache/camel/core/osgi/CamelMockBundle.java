@@ -45,10 +45,12 @@ public class CamelMockBundle extends MockBundle {
             this.list = list;
         }
 
+        @Override
         public boolean hasMoreElements() {
             return list != null && index < list.size();
         }
 
+        @Override
         public E nextElement() {
             E result = null;
             if (list != null) { 
@@ -72,6 +74,7 @@ public class CamelMockBundle extends MockBundle {
         return new ListEnumeration<>(list);
     }
 
+    @Override
     public Enumeration<String> getEntryPaths(String path) {
         Enumeration<String> result = null;
         if (META_INF_COMPONENT.equals(path)) {
@@ -90,6 +93,7 @@ public class CamelMockBundle extends MockBundle {
         return result;
     }
     
+    @Override
     public Enumeration<URL> findEntries(String path, String filePattern, boolean recurse) {
         if (path.equals("/org/apache/camel/core/osgi/test") && filePattern.equals("*.class")) {
             List<URL> urls = new ArrayList<>();
@@ -113,6 +117,7 @@ public class CamelMockBundle extends MockBundle {
         return Version.parseVersion("1.0.0");
     }
 
+    @Override
     public Class<?> loadClass(String name) throws ClassNotFoundException {
         if (isLoadableClass(name)) {
             return super.loadClass(name);
