@@ -78,7 +78,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         component.setSecretKey("YYY");
         LambdaEndpoint endpoint = (LambdaEndpoint)component.createEndpoint("aws-lambda://myFunction");
         
-        assertEquals("myFunction", endpoint.getConfiguration().getFunction());
+        assertEquals("myFunction", endpoint.getFunction());
         assertEquals("XXX", endpoint.getConfiguration().getAccessKey());
         assertEquals("YYY", endpoint.getConfiguration().getSecretKey());
     }
@@ -91,7 +91,7 @@ public class LambdaComponentConfigurationTest extends CamelTestSupport {
         component.setRegion(Regions.US_WEST_1.toString());
         LambdaEndpoint endpoint = (LambdaEndpoint)component.createEndpoint("aws-lambda://myFunction?accessKey=xxxxxx&secretKey=yyyyy&region=US_EAST_1");
         
-        assertEquals("myFunction", endpoint.getConfiguration().getFunction());
+        assertEquals("myFunction", endpoint.getFunction());
         assertEquals("xxxxxx", endpoint.getConfiguration().getAccessKey());
         assertEquals("yyyyy", endpoint.getConfiguration().getSecretKey());
         assertEquals("US_EAST_1", endpoint.getConfiguration().getRegion());
