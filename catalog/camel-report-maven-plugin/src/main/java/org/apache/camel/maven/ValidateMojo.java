@@ -18,7 +18,9 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.InputStream;
+import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -26,8 +28,8 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.camel.PropertyBindingException;
 import org.apache.camel.catalog.CamelCatalog;
+import org.apache.camel.catalog.ConfigurationPropertiesValidationResult;
 import org.apache.camel.catalog.DefaultCamelCatalog;
 import org.apache.camel.catalog.EndpointValidationResult;
 import org.apache.camel.catalog.LanguageValidationResult;
@@ -165,7 +167,7 @@ public class ValidateMojo extends AbstractExecMojo {
 
     /**
      * Location of configuration files to validate. The default is application.properties
-     * Multiple values can be separated by comma and use ANT path style.
+     * Multiple values can be separated by comma and use wildcard pattern matching.
      */
     @Parameter(property = "camel.configurationFiles")
     private String configurationFiles = "application.properties";
@@ -180,6 +182,8 @@ public class ValidateMojo extends AbstractExecMojo {
         catalog.setSuggestionStrategy(new LuceneSuggestionStrategy());
         // enable loading other catalog versions dynamically
         catalog.setVersionManager(new MavenVersionManager());
+        // use custom class loading
+        catalog.getJSonSchemaResolver().setClassLoader(ValidateMojo.class.getClassLoader());
         // enable caching
         catalog.enableCache();
 
@@ -211,22 +215,25 @@ public class ValidateMojo extends AbstractExecMojo {
         doExecuteConfigurationFiles(catalog);
     }
 
-    protected void doExecuteConfigurationFiles(CamelCatalog catalog) {
+    protected void doExecuteConfigurationFiles(CamelCatalog catalog) throws MojoExecutionException {
         // TODO: implement me
 
         Set<File> propertiesFiles = new LinkedHashSet<>();
         List list = project.getResources();
         for (Object obj : list) {
-            String dir = (String) obj;
-            findPropertiesFiles(new File(dir), propertiesFiles);
+            Resource dir = (Resource) obj;
+            findPropertiesFiles(new File(dir.getDirectory()), propertiesFiles);
         }
         if (includeTest) {
             list = project.getTestResources();
             for (Object obj : list) {
-                String dir = (String) obj;
-                findPropertiesFiles(new File(dir), propertiesFiles);
+                Resource dir = (Resource) obj;
+                findPropertiesFiles(new File(dir.getDirectory()), propertiesFiles);
             }
         }
+
+        List<ConfigurationPropertiesValidationResult> results = new ArrayList<>();
+
         for (File file : propertiesFiles) {
             if (matchPropertiesFile(file)) {
                 InputStream is = null;
@@ -235,7 +242,25 @@ public class ValidateMojo extends AbstractExecMojo {
                     Properties prop = new OrderedProperties();
                     prop.load(is);
 
-                    EndpointValidationResult result = catalog.validateConfigurationProperty(line);
+                    // validate each line
+                    for (String name : prop.stringPropertyNames()) {
+                        String value = prop.getProperty(name);
+                        if (value != null) {
+                            String text = name + "=" + value;
+                            ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
+                            // only include lines that camel can accept (as there may be non camel properties too)
+                            if (result.isAccepted()) {
+                                // try to find line number
+                                int lineNumber = findLineNumberInPropertiesFile(file, name);
+                                if (lineNumber != -1) {
+                                    result.setLineNumber(lineNumber);
+                                }
+                                results.add(result);
+                                result.setText(text);
+                                result.setFileName(file.getName());
+                            }
+                        }
+                    }
                 } catch (Exception e) {
                     getLog().warn("Error parsing file " + file + " code due " + e.getMessage(), e);
                 } finally {
@@ -243,6 +268,108 @@ public class ValidateMojo extends AbstractExecMojo {
                 }
             }
         }
+
+        int configurationErrors = 0;
+        int unknownComponents = 0;
+        int incapableErrors = 0;
+        int deprecatedOptions = 0;
+        for (ConfigurationPropertiesValidationResult result : results) {
+            int deprecated = result.getDeprecated() != null ? result.getDeprecated().size() : 0;
+            deprecatedOptions += deprecated;
+
+            boolean ok = result.isSuccess() && !result.hasWarnings();
+            if (!ok && ignoreUnknownComponent && result.getUnknownComponent() != null) {
+                // if we failed due unknown component then be okay if we should ignore that
+                unknownComponents++;
+                ok = true;
+            }
+            if (!ok && ignoreIncapable && result.getIncapable() != null) {
+                // if we failed due incapable then be okay if we should ignore that
+                incapableErrors++;
+                ok = true;
+            }
+            if (ok && !ignoreDeprecated && deprecated > 0) {
+                ok = false;
+            }
+
+            if (!ok) {
+                if (result.getUnknownComponent() != null) {
+                    unknownComponents++;
+                } else if (result.getIncapable() != null) {
+                    incapableErrors++;
+                } else {
+                    configurationErrors++;
+                }
+
+                StringBuilder sb = new StringBuilder();
+                sb.append("Configuration validation error at: ");
+                sb.append("(").append(result.getFileName());
+                if (result.getLineNumber() > 0) {
+                    sb.append(":").append(result.getLineNumber());
+                }
+                sb.append(")");
+                sb.append("\n\n");
+                String out = result.summaryErrorMessage(false, ignoreDeprecated, true);
+                sb.append(out);
+                sb.append("\n\n");
+
+                getLog().warn(sb.toString());
+            } else if (showAll) {
+                StringBuilder sb = new StringBuilder();
+                sb.append("Configuration validation passed at: ");
+                sb.append(result.getFileName());
+                if (result.getLineNumber() > 0) {
+                    sb.append(":").append(result.getLineNumber());
+                }
+                sb.append("\n");
+                sb.append("\n\t").append(result.getText());
+                sb.append("\n\n");
+
+                getLog().info(sb.toString());
+            }
+        }
+        String configurationSummary;
+        if (configurationErrors == 0) {
+            int ok = results.size() - configurationErrors - incapableErrors - unknownComponents;
+            configurationSummary = String.format("Configuration validation success: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, configurationErrors, incapableErrors, unknownComponents, deprecatedOptions);
+        } else {
+            int ok = results.size() - configurationErrors - incapableErrors - unknownComponents;
+            configurationSummary = String.format("Configuration validation error: (%s = passed, %s = invalid, %s = incapable, %s = unknown components, %s = deprecated options)",
+                    ok, configurationErrors, incapableErrors, unknownComponents, deprecatedOptions);
+        }
+        if (configurationErrors > 0) {
+            getLog().warn(configurationSummary);
+        } else {
+            getLog().info(configurationSummary);
+        }
+
+        if (failOnError && (configurationErrors > 0)) {
+            throw new MojoExecutionException(configurationSummary + "\n");
+        }
+    }
+
+    private int findLineNumberInPropertiesFile(File file, String name) {
+        name = name.trim();
+        // try to find the line number
+        try (LineNumberReader r = new LineNumberReader(new FileReader(file))) {
+            String line = r.readLine();
+            while (line != null) {
+                int pos = line.indexOf('=');
+                if (pos > 0) {
+                    line = line.substring(0, pos);
+                }
+                line = line.trim();
+                if (line.equals(name)) {
+                    return r.getLineNumber();
+                }
+                line = r.readLine();
+            }
+        } catch (Exception e) {
+            // ignore
+        }
+
+        return -1;
     }
 
     protected void doExecuteRoutes(CamelCatalog catalog) throws MojoExecutionException, MojoFailureException {
@@ -491,7 +618,7 @@ public class ValidateMojo extends AbstractExecMojo {
             long sedaDirectEndpoints = countEndpointPairs(endpoints, "direct") + countEndpointPairs(endpoints, "seda");
             sedaDirectErrors += validateEndpointPairs(endpoints, "direct") + validateEndpointPairs(endpoints, "seda");
             if (sedaDirectErrors == 0) {
-                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation success (%s = pairs)", sedaDirectEndpoints);
+                sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation success: (%s = pairs)", sedaDirectEndpoints);
             } else {
                 sedaDirectSummary = String.format("Endpoint pair (seda/direct) validation error: (%s = pairs, %s = non-pairs)", sedaDirectEndpoints, sedaDirectErrors);
             }
@@ -507,7 +634,7 @@ public class ValidateMojo extends AbstractExecMojo {
         String routeIdSummary = "";
         if (duplicateRouteId) {
             if (duplicateRouteIdErrors == 0) {
-                routeIdSummary = String.format("Duplicate route id validation success (%s = ids)", routeIds.size());
+                routeIdSummary = String.format("Duplicate route id validation success: (%s = ids)", routeIds.size());
             } else {
                 routeIdSummary = String.format("Duplicate route id validation error: (%s = ids, %s = duplicates)", routeIds.size(), duplicateRouteIdErrors);
             }

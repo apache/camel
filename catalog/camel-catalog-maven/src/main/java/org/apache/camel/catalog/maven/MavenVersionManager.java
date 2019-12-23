@@ -163,6 +163,9 @@ public class MavenVersionManager implements VersionManager, Closeable {
         if (is == null) {
             is = MavenVersionManager.class.getClassLoader().getResourceAsStream(name);
         }
+        if (is == null) {
+            is = classLoader.getResourceAsStream(name);
+        }
 
         return is;
     }

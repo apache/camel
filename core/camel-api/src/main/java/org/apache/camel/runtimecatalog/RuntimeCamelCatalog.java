@@ -16,6 +16,7 @@
  */
 package org.apache.camel.runtimecatalog;
 
+import java.io.InputStream;
 import java.net.URISyntaxException;
 import java.util.Map;
 
@@ -172,10 +173,10 @@ public interface RuntimeCamelCatalog extends StaticService {
     /**
      * Parses and validates the configuration property
      *
-     * @param text  the configuration text
+     * @param line  the configuration line as key=value
      * @return validation result
      */
-    ConfigurationPropertiesValidationResult validateConfigurationProperty(String text);
+    ConfigurationPropertiesValidationResult validateConfigurationProperty(String line);
 
     /**
      * Returns the component name from the given endpoint uri
