@@ -27,9 +27,6 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class LambdaConfiguration implements Cloneable {
 
-    @UriPath
-    @Metadata(required = true)
-    private String function;
     @UriParam
     @Metadata(required = true)
     private LambdaOperations operation;
@@ -47,17 +44,6 @@ public class LambdaConfiguration implements Cloneable {
     private Integer proxyPort;
     @UriParam(label = "advanced")
     private AWSLambda awsLambdaClient;
-
-    public String getFunction() {
-        return function;
-    }
-
-    /**
-     * Name of the Lambda function.
-     */
-    public void setFunction(String function) {
-        this.function = function;
-    }
 
     public AWSLambda getAwsLambdaClient() {
         return awsLambdaClient;

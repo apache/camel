@@ -27,8 +27,10 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.util.ObjectHelper;
 
@@ -41,6 +43,9 @@ public class LambdaEndpoint extends DefaultEndpoint {
 
     private AWSLambda awsLambdaClient;
 
+    @UriPath
+    @Metadata(required = true)
+    private String function;
     @UriParam
     private LambdaConfiguration configuration;
 
@@ -57,6 +62,17 @@ public class LambdaEndpoint extends DefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return new LambdaProducer(this);
+    }
+
+    public String getFunction() {
+        return function;
+    }
+
+    /**
+     * Name of the Lambda function.
+     */
+    public void setFunction(String function) {
+        this.function = function;
     }
 
     @Override

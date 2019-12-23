@@ -128,7 +128,7 @@ public class LambdaProducer extends DefaultProducer {
     private void getFunction(AWSLambda lambdaClient, Exchange exchange) {
         GetFunctionResult result;
         try {
-            result = lambdaClient.getFunction(new GetFunctionRequest().withFunctionName(getConfiguration().getFunction()));
+            result = lambdaClient.getFunction(new GetFunctionRequest().withFunctionName(getEndpoint().getFunction()));
         } catch (AmazonServiceException ase) {
             log.trace("getFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
@@ -140,7 +140,7 @@ public class LambdaProducer extends DefaultProducer {
     private void deleteFunction(AWSLambda lambdaClient, Exchange exchange) {
         DeleteFunctionResult result;
         try {
-            result = lambdaClient.deleteFunction(new DeleteFunctionRequest().withFunctionName(getConfiguration().getFunction()));
+            result = lambdaClient.deleteFunction(new DeleteFunctionRequest().withFunctionName(getEndpoint().getFunction()));
         } catch (AmazonServiceException ase) {
             log.trace("deleteFunction command returned the error code {}", ase.getErrorCode());
             throw ase;
@@ -165,7 +165,7 @@ public class LambdaProducer extends DefaultProducer {
         InvokeResult result;
         try {
             InvokeRequest request = new InvokeRequest()
-                .withFunctionName(getConfiguration().getFunction())
+                .withFunctionName(getEndpoint().getFunction())
                 .withPayload(exchange.getIn().getBody(String.class));
             result = lambdaClient.invoke(request);
         } catch (AmazonServiceException ase) {
@@ -181,7 +181,7 @@ public class LambdaProducer extends DefaultProducer {
 
         try {
             CreateFunctionRequest request = new CreateFunctionRequest()
-                .withFunctionName(getConfiguration().getFunction());
+                .withFunctionName(getEndpoint().getFunction());
 
             FunctionCode functionCode = new FunctionCode();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.S3_BUCKET))) {
@@ -316,7 +316,7 @@ public class LambdaProducer extends DefaultProducer {
 
         try {
             UpdateFunctionCodeRequest request = new UpdateFunctionCodeRequest()
-                .withFunctionName(getConfiguration().getFunction());
+                .withFunctionName(getEndpoint().getFunction());
 
             FunctionCode functionCode = new FunctionCode();
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.S3_BUCKET))) {
@@ -378,7 +378,7 @@ public class LambdaProducer extends DefaultProducer {
     private void createEventSourceMapping(AWSLambda lambdaClient, Exchange exchange) {
         CreateEventSourceMappingResult result;
         try {
-            CreateEventSourceMappingRequest request = new CreateEventSourceMappingRequest().withFunctionName(getConfiguration().getFunction());
+            CreateEventSourceMappingRequest request = new CreateEventSourceMappingRequest().withFunctionName(getEndpoint().getFunction());
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_ARN))) {
                 request.withEventSourceArn(exchange.getIn().getHeader(LambdaConstants.EVENT_SOURCE_ARN, String.class));
             } else {
@@ -436,7 +436,7 @@ public class LambdaProducer extends DefaultProducer {
     private void listEventSourceMapping(AWSLambda lambdaClient, Exchange exchange) {
         ListEventSourceMappingsResult result;
         try {
-            ListEventSourceMappingsRequest request = new ListEventSourceMappingsRequest().withFunctionName(getConfiguration().getFunction());
+            ListEventSourceMappingsRequest request = new ListEventSourceMappingsRequest().withFunctionName(getEndpoint().getFunction());
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT))) {
                 Integer timeout = exchange.getIn().getHeader(LambdaConstants.SDK_CLIENT_EXECUTION_TIMEOUT, Integer.class);
                 request.withSdkClientExecutionTimeout(timeout);
@@ -527,7 +527,7 @@ public class LambdaProducer extends DefaultProducer {
     private void publishVersion(AWSLambda lambdaClient, Exchange exchange) {
         PublishVersionResult result;
         try {
-            PublishVersionRequest request = new PublishVersionRequest().withFunctionName(getConfiguration().getFunction());
+            PublishVersionRequest request = new PublishVersionRequest().withFunctionName(getEndpoint().getFunction());
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.VERSION_DESCRIPTION))) {
                 String description = exchange.getIn().getHeader(LambdaConstants.VERSION_DESCRIPTION, String.class);
                 request.withDescription(description);
@@ -548,7 +548,7 @@ public class LambdaProducer extends DefaultProducer {
     private void listVersions(AWSLambda lambdaClient, Exchange exchange) {
         ListVersionsByFunctionResult result;
         try {
-            ListVersionsByFunctionRequest request = new ListVersionsByFunctionRequest().withFunctionName(getConfiguration().getFunction());
+            ListVersionsByFunctionRequest request = new ListVersionsByFunctionRequest().withFunctionName(getEndpoint().getFunction());
             result = lambdaClient.listVersionsByFunction(request);
         } catch (AmazonServiceException ase) {
             log.trace("publishVersion command returned the error code {}", ase.getErrorCode());
