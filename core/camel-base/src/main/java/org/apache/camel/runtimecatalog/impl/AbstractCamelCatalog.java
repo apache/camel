@@ -112,7 +112,7 @@ public abstract class AbstractCamelCatalog {
             if (dfName != null) {
                 String dfJson = jsonSchemaResolver.getDataFormatJSonSchema(dfName);
                 List<Map<String, String>> dfRows = parseJsonSchema("properties", dfJson, true);
-                if (dfRows != null && !dfRows.isEmpty()) {
+                if (!dfRows.isEmpty()) {
                     rows.addAll(dfRows);
                 }
             }
@@ -214,8 +214,7 @@ public abstract class AbstractCamelCatalog {
                         result.addInvalidEnum(name, value);
                         result.addInvalidEnumChoices(name, choices);
                         if (suggestionStrategy != null) {
-                            Set<String> names = new LinkedHashSet<>();
-                            names.addAll(Arrays.asList(choices));
+                            Set<String> names = new LinkedHashSet<>(Arrays.asList(choices));
                             String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
                             if (suggestions != null) {
                                 result.addInvalidEnumSuggestions(name, suggestions);
@@ -350,7 +349,7 @@ public abstract class AbstractCamelCatalog {
             if (dfName != null) {
                 String dfJson = jsonSchemaResolver.getDataFormatJSonSchema(dfName);
                 List<Map<String, String>> dfRows = parseJsonSchema("properties", dfJson, true);
-                if (dfRows != null && !dfRows.isEmpty()) {
+                if (!dfRows.isEmpty()) {
                     rows.addAll(dfRows);
                 }
             }
@@ -450,8 +449,7 @@ public abstract class AbstractCamelCatalog {
                         result.addInvalidEnum(name, value);
                         result.addInvalidEnumChoices(name, choices);
                         if (suggestionStrategy != null) {
-                            Set<String> names = new LinkedHashSet<>();
-                            names.addAll(Arrays.asList(choices));
+                            Set<String> names = new LinkedHashSet<>(Arrays.asList(choices));
                             String[] suggestions = suggestionStrategy.suggestEndpointOptions(names, value);
                             if (suggestions != null) {
                                 result.addInvalidEnumSuggestions(name, suggestions);
@@ -997,22 +995,22 @@ public abstract class AbstractCamelCatalog {
         List<String> tokens = new ArrayList<>();
 
         if (syntax != null) {
-            String current = "";
+            StringBuilder current = new StringBuilder();
             for (int i = 0; i < syntax.length(); i++) {
                 char ch = syntax.charAt(i);
                 if (Character.isLetterOrDigit(ch)) {
-                    current += ch;
+                    current.append(ch);
                 } else {
                     // reset for new current tokens
                     if (current.length() > 0) {
-                        tokens.add(current);
-                        current = "";
+                        tokens.add(current.toString());
+                        current = new StringBuilder();
                     }
                 }
             }
             // anything left over?
             if (current.length() > 0) {
-                tokens.add(current);
+                tokens.add(current.toString());
             }
         }
 
@@ -1102,17 +1100,28 @@ public abstract class AbstractCamelCatalog {
                 List<Map<String, String>> rows = parseMainJsonSchema(json);
 
                 // lower case option and remove dash
-                String lookupKey = longKey.replaceAll("-", "").toLowerCase(Locale.US);
+                String nOption = longKey.replaceAll("-", "").toLowerCase(Locale.US);
+
+                // look for suffix or array index after 2nd dot
+                int secondDot = nOption.indexOf('.');
+                secondDot = nOption.indexOf('.', secondDot + 1) + 1;
+
                 String suffix = null;
-                int pos = option.indexOf('.');
-                // TODO: add support for [] maps for main
-                if (pos > 0 && option.length() > pos) {
-                    suffix = option.substring(pos + 1);
-                    // remove .suffix from lookup key
-                    int len = lookupKey.length() - suffix.length() - 1;
-                    lookupKey = lookupKey.substring(0, len);
+                int posDot = nOption.indexOf('.', secondDot);
+                int posBracket = nOption.indexOf('[', secondDot);
+                if (posDot > 0 && posBracket > 0) {
+                    int first = Math.min(posDot, posBracket);
+                    suffix = nOption.substring(first);
+                    nOption = nOption.substring(0, first);
+                } else if (posDot > 0) {
+                    suffix = nOption.substring(posDot);
+                    nOption = nOption.substring(0, posDot);
+                } else if (posBracket > 0) {
+                    suffix = nOption.substring(posBracket);
+                    nOption = nOption.substring(0, posBracket);
                 }
-                doValidateConfigurationProperty(result, rows, name, value, longKey, lookupKey, suffix);
+
+                doValidateConfigurationProperty(result, rows, name, value, longKey, nOption, suffix);
             }
         }
 

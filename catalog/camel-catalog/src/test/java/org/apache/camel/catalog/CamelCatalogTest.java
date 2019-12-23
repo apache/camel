@@ -1507,9 +1507,12 @@ public class CamelCatalogTest {
         result = catalog.validateConfigurationProperty(text);
         assertFalse(result.isSuccess());
         assertEquals("12x5", result.getInvalidNumber().get("camel.resilience4j.slow-call-rate-threshold"));
+    }
 
-        text = "camel.rest.api-properties=#foo";
-        result = catalog.validateConfigurationProperty(text);
+    @Test
+    public void testValidateConfigurationPropertyMainMap() throws Exception {
+        String text = "camel.rest.api-properties=#foo";
+        ConfigurationPropertiesValidationResult result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
         text = "camel.rest.api-properties=bar";
@@ -1529,10 +1532,9 @@ public class CamelCatalogTest {
         result = catalog.validateConfigurationProperty(text);
         assertTrue(result.isSuccess());
 
-        // TODO: add support for [] maps for main
-//        text = "camel.rest.api-properties[drink]=no";
-//        result = catalog.validateConfigurationProperty(text);
-//        assertTrue(result.isSuccess());
+        text = "camel.rest.api-properties[drink]=no";
+        result = catalog.validateConfigurationProperty(text);
+        assertTrue(result.isSuccess());
     }
 
 }
