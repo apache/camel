@@ -98,13 +98,16 @@ public class XmppConsumer extends DefaultConsumer implements IncomingChatMessage
 
             final AndFilter packetFilter = new AndFilter(new StanzaTypeFilter(Presence.class));
             connection.addSyncStanzaListener(this, packetFilter);
+            String roomPassword = endpoint.getRoomPassword();
             MultiUserChatManager mucm = MultiUserChatManager.getInstanceFor(connection);
             muc = mucm.getMultiUserChat(JidCreate.entityBareFrom(endpoint.resolveRoom(connection)));
             muc.addMessageListener(this);
-            MucEnterConfiguration mucc = muc.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
-                    .requestNoHistory()
-                    .build();
-            muc.join(mucc);
+            MucEnterConfiguration.Builder mucc = muc.getEnterConfigurationBuilder(Resourcepart.from(endpoint.getNickname()))
+                    .requestNoHistory();
+            if (roomPassword != null) {
+                mucc.withPassword(roomPassword);
+            }
+            muc.join(mucc.build());
             log.info("Joined room: {} as: {}", muc.getRoom(), endpoint.getNickname());
         }
 
