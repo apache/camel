@@ -71,7 +71,7 @@ diagram below:
 
 image::camel_sync_request_reply.png[image]
 
-\1. The client sends a sync Request Reply
+ 1. The client sends a sync Request Reply
 message over xref:components::http-component.adoc[HTTP] to Camel. The client application will
 wait for the response that Camel routes and processes. +
  2. The message invokes an external xref:components::mina-component.adoc[TCP] service using
@@ -112,7 +112,7 @@ completely. This is illustrated in the diagram below:
 
 image::camel_sync_request_only.png[image]
 
-\1. The client sends a Request only and we can
+ 1. The client sends a Request only and we can
 still use xref:components::http-component.adoc[HTTP] despite http being
 Request Reply by nature. +
  2. Camel invokes an external xref:components::mina-component.adoc[TCP] service using
@@ -140,7 +140,7 @@ processed in Camel. This is illustrated in the diagram below:
 
 image::camel_async_request_only.png[image]
 
-\1. The client sends a Request only and we can
+ 1. The client sends a Request only and we can
 still use xref:components::http-component.adoc[HTTP] despite http being
 Request Reply by nature. The control is
 immediately returned to the client application, that can continue and do
