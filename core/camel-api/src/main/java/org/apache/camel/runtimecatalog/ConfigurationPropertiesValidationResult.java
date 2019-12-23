@@ -26,20 +26,44 @@ import java.util.Map;
  */
 public class ConfigurationPropertiesValidationResult extends PropertiesValidationResult implements Serializable {
 
-    private String key;
-    private String value;
+    private String fileName;
+    private String text;
+    private int lineNumber;
+    private boolean accepted;
 
-    public ConfigurationPropertiesValidationResult(String key, String value) {
-        this.key = key;
-        this.value = value;
+    public ConfigurationPropertiesValidationResult() {
     }
 
-    public String getKey() {
-        return key;
+    public String getFileName() {
+        return fileName;
     }
 
-    public String getValue() {
-        return value;
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public void setLineNumber(int lineNumber) {
+        this.lineNumber = lineNumber;
+    }
+
+    public boolean isAccepted() {
+        return accepted;
+    }
+
+    public void setAccepted(boolean accepted) {
+        this.accepted = accepted;
     }
 
     /**
@@ -204,13 +228,25 @@ public class ConfigurationPropertiesValidationResult extends PropertiesValidatio
             sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
             sb.append("\n");
         }
-        sb.append("\n");
+        if (text != null) {
+            sb.append("\t").append(text).append("\n");
+        } else {
+            sb.append("\n");
+        }
         for (Map.Entry<String, String> option : options.entrySet()) {
-            String out = String.format(format, option.getKey(), option.getValue());
+            String out = String.format(format, shortKey(option.getKey()), option.getValue());
             sb.append("\n\t").append(out);
         }
 
         return sb.toString();
+    }
+
+    private static String shortKey(String key) {
+        if (key.indexOf('.') > 0) {
+            return key.substring(key.lastIndexOf('.') + 1);
+        } else {
+            return key;
+        }
     }
 
 }

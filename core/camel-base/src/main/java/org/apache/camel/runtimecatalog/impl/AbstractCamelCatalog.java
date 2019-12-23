@@ -1019,16 +1019,18 @@ public abstract class AbstractCamelCatalog {
         return tokens.toArray(new String[tokens.size()]);
     }
 
-    public ConfigurationPropertiesValidationResult validateConfigurationProperty(String text) {
-        String longKey = before(text, "=");
+    public ConfigurationPropertiesValidationResult validateConfigurationProperty(String line) {
+        String longKey = before(line, "=");
         String key = longKey;
-        String value = after(text, "=");
+        String value = after(line, "=");
 
-        ConfigurationPropertiesValidationResult result = new ConfigurationPropertiesValidationResult(key, value);
+        ConfigurationPropertiesValidationResult result = new ConfigurationPropertiesValidationResult();
         boolean accept = acceptConfigurationPropertyKey(key);
         if (!accept) {
-            result.addUnknown(key);
+            result.setAccepted(false);
             return result;
+        } else {
+            result.setAccepted(true);
         }
 
         boolean component = key.startsWith("camel.component.");

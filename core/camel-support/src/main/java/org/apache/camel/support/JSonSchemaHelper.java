@@ -33,6 +33,8 @@ import org.apache.camel.util.json.Jsoner;
  */
 public final class JSonSchemaHelper {
 
+    private static final String[] LOGGING_LEVELS = new String[]{"ERROR", "WARN", "INFO", "DEBUG", "TRACE", "OFF"};
+
     private JSonSchemaHelper() {
     }
 
@@ -70,6 +72,16 @@ public final class JSonSchemaHelper {
                         String type = newRow.get("type");
                         newRow.put("javaType", type);
                         newRow.put("type", fromMainToType(type));
+                        // add known enums
+                        if ("org.apache.camel.LoggingLevel".equals(type)) {
+                            newRow.put("enum", "ERROR,WARN,INFO,DEBUG,TRACE,OFF");
+                        } else if ("org.apache.camel.ManagementStatisticsLevel".equals(type)) {
+                            newRow.put("enum", "Extended,Default,RoutesOnly,Off");
+                        } else if ("org.apache.camel.spi.RestBindingMode".equals(type)) {
+                            newRow.put("enum", "auto,off,json,xml,json_xml");
+                        } else if ("org.apache.camel.spi.RestHostNameResolver".equals(type)) {
+                            newRow.put("enum", "allLocalIp,localIp,localHostName");
+                        }
                     }
                 }
             }

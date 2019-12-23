@@ -30,10 +30,16 @@ import org.apache.camel.util.IOHelper;
  */
 public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
 
+    private ClassLoader classLoader;
     private final CatalogCamelContext camelContext;
 
     public CamelContextJSonSchemaResolver(CamelContext camelContext) {
         this.camelContext = camelContext.adapt(CatalogCamelContext.class);
+    }
+
+    @Override
+    public void setClassLoader(ClassLoader classLoader) {
+        this.classLoader = classLoader;
     }
 
     @Override
@@ -85,15 +91,21 @@ public class CamelContextJSonSchemaResolver implements JSonSchemaResolver {
     @Override
     public String getMainJsonSchema() {
         String path = "META-INF/camel-main-configuration-metadata.json";
-        ClassResolver resolver = camelContext.getClassResolver();
-        InputStream inputStream = resolver.loadResourceAsStream(path);
-        if (inputStream != null) {
+        InputStream is = null;
+        if (classLoader != null) {
+            is = classLoader.getResourceAsStream(path);
+        }
+        if (is == null) {
+            ClassResolver resolver = camelContext.getClassResolver();
+            is = resolver.loadResourceAsStream(path);
+        }
+        if (is != null) {
             try {
-                return IOHelper.loadText(inputStream);
+                return IOHelper.loadText(is);
             } catch (IOException e) {
                 // ignore
             } finally {
-                IOHelper.close(inputStream);
+                IOHelper.close(is);
             }
         }
         return null;
