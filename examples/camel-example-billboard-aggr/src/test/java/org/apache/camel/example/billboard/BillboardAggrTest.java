@@ -33,7 +33,7 @@ import org.junit.Test;
 
 public class BillboardAggrTest extends CamelTestSupport {
 
-    private static final String BASEPATH = System.getProperty("user.dir") + "/src/test/resources/data";
+    private static final String BASEPATH = System.getProperty("user.dir") + "/src/test/data";
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -67,7 +67,6 @@ public class BillboardAggrTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                //@formatter:off
                 from("file:" + BASEPATH + "?noop=true&idempotent=true")
                     .split(body().tokenize("\n")).streaming().parallelProcessing()
                         // skip first line with headers
@@ -87,7 +86,6 @@ public class BillboardAggrTest extends CamelTestSupport {
                     .aggregate(new MyAggregationStrategy()).header("artist")
                         .completionPredicate(header("CamelSplitComplete").isEqualTo(true))
                     .to("mock:result");
-                //@formatter:on
             }
         };
     }
@@ -109,7 +107,7 @@ public class BillboardAggrTest extends CamelTestSupport {
         }
 
         public void setArtistHeader(Exchange exchange, SongRecord song) {
-            exchange.getOut().setHeader("artist", song.getArtist());
+            exchange.getMessage().setHeader("artist", song.getArtist());
         }
 
         public Map<String, Integer> getTop20Artists() {
