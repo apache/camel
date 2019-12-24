@@ -49,7 +49,8 @@ public class Record {
 
     @Override
     public String toString() {
-        return "{key='" + getKey() + "', value='" + getValue() + "'}";
+        return "{key='" + getKey() 
+            + "', value='" + getValue() + "'}";
     }
 
 }
