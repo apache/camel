@@ -409,7 +409,7 @@ public final class PropertyBindingSupport {
                             }
                         }
                     }
-                } else if (value != null) {
+                } else if (value != null && deepNesting) {
                     // remember this as parent and also autowire nested properties
                     // do not walk down if it point to our-selves (circular reference)
                     parents.add(target);
