@@ -19,6 +19,7 @@ package org.apache.camel.example.bigxml;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -59,7 +60,7 @@ public class XmlTokenizerTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("file:" + TestUtils.getBasePath() + "?readLock=changed&noop=true")
                     .split(body().tokenizeXML("record", "records")).streaming().stopOnException()
-                        //.log(LoggingLevel.TRACE, "org.apache.camel.example.bigxml", "${body}")
+                        .log(LoggingLevel.TRACE, "org.apache.camel.example.bigxml", "${body}")
                         .to("log:org.apache.camel.example.bigxml?level=DEBUG&groupInterval=100&groupDelay=100&groupActiveOnly=false")
                     .end();
             }
