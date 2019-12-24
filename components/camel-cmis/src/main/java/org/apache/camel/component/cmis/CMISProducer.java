@@ -16,11 +16,8 @@
  */
 package org.apache.camel.component.cmis;
 
-import java.awt.Stroke;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.nio.file.Path;
-import java.security.MessageDigest;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -261,7 +258,7 @@ public class CMISProducer extends DefaultProducer {
         Message message = exchange.getIn();
 
         String objectId = message.getHeader(CamelCMISConstants.CMIS_OBJECT_ID, String.class);
-        Boolean allVersions = Boolean.valueOf(message.getHeader(CamelCMISConstants.ALL_VERSIONS, String.class));
+        Boolean allVersions = message.getHeader(CamelCMISConstants.ALL_VERSIONS, Boolean.class);
 
         Document document = (Document) getSessionFacade().getObjectById(objectId);
 
