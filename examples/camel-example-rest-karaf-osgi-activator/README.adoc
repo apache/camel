@@ -1,0 +1,74 @@
+== Rest Karaf Osgi Activator Example 
+
+=== Introduction
+
+This example creates Apache Camel within an Apache Karaf Distribution.  The distribution includes the following Apache Karaf Features:
+. camel-core
+. camel-netty-http
+. camel-jackson
+. camel-swagger-java
+. camel-tika
+
+The example also includes the camel-osgi-activator which is a small bundle for starting an OSGi Apache Camel Project. The bundle starts the CamelContext and registering RouteBuilders from any bundle.
+
+=== Project Structure
+
+The project contains 5 subprojects
+
+. parent - Parent POM for dependency and plugin management
+. provision - Apache Karaf KAR project with all pre-installed camel features and bundle dependencies.
+. distribution - Apache Karaf Distribution project that creates a full Apache Karaf runtime with provision KAR.
+. core-rest - The preinstalled bundle with a Camel REST DSL Configuration.  Setup to install before context start.
+. tika-detect - The preinstalled bundle with a Camel REST DSL Route that uses Apache Tika to detect a file MIME Type.
+. tika-parse - A separate Camel REST DSL bundle that does not come pre-installed but maybe installed and started at runtime with an additional REST route that parses a file with Apache Tika.
+
+=== Build
+
+You will need to build this example first:
+
+[source,sh]
+----
+$ mvn install
+----
+
+=== Run OSGi / Karaf
+
+This example creates a distribution of Apache Karaf in the distribution/target folder.
+
+. Unzip the zip or tar.gz file 
++
+. Start Apache Karaf with the command below
++
+[source,sh]
+----
+$ bin/karaf
+----
+. The first REST route will registered from the camel-example-rest-karaf-osgi-activator-rest bundle.  This bundle comes pre-installed. It can be tested with the curl below
++
+[source,sh]
+----
+curl http://localhost:8080/camel-rest-osgi-activator/tika/detect?filePath=system/org/apache/camel/example/camel-example-rest-karaf-osgi-activator-tika-detect/3.1.0-SNAPSHOT/camel-example-rest-karaf-osgi-activator-tika-detect-3.1.0-SNAPSHOT.jar
+----
++
+. Install a new bundle with it's own REST route
++
+[source,sh]
+----
+karaf@root()> install -s mvn:org.apache.camel.example/camel-example-rest-karaf-osgi-activator-tika-parse/3.1.0-SNAPSHOT
+----
+. This will expose a new route that can be tested without restarting
++
+[source,sh]
+----
+curl http://localhost:8080/camel-rest-osgi-activator/tika/parse?filePath=system/org/apache/camel/example/camel-example-rest-karaf-osgi-activator-tika-detect/3.1.0-SNAPSHOT/camel-example-rest-karaf-osgi-activator-tika-detect-3.1.0-SNAPSHOT.jar
+----
+
+=== Help and contributions
+
+If you hit any problem using Camel or have some feedback, then please
+https://camel.apache.org/support.html[let us know].
+
+We also love contributors, so
+https://camel.apache.org/contributing.html[get involved] :-)
+
+The Camel riders!
