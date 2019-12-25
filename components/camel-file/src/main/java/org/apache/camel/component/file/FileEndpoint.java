@@ -350,8 +350,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         }
         String permissionsString = chmod.trim().substring(chmod.length() - 3);  // if 4 digits chop off leading one
         for (int i = 0; i < permissionsString.length(); i++) {
-            Character c = permissionsString.charAt(i);
-            if (!Character.isDigit(c) || Integer.parseInt(c.toString()) > 7) {
+            char c = permissionsString.charAt(i);
+            if (!Character.isDigit(c) || c > 7) {
                 return false;
             }
         }
@@ -366,9 +366,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         String chmodString = chmod.substring(chmod.length() - 3);  // if 4 digits chop off leading one
 
-        Integer ownerValue = Integer.parseInt(chmodString.substring(0, 1));
-        Integer groupValue = Integer.parseInt(chmodString.substring(1, 2));
-        Integer othersValue = Integer.parseInt(chmodString.substring(2, 3));
+        int ownerValue = Integer.parseInt(chmodString.substring(0, 1));
+        int groupValue = Integer.parseInt(chmodString.substring(1, 2));
+        int othersValue = Integer.parseInt(chmodString.substring(2, 3));
 
         if ((ownerValue & CHMOD_WRITE_MASK) > 0) {
             permissions.add(PosixFilePermission.OWNER_WRITE);
@@ -427,9 +427,9 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
         String chmodString = chmodDirectory.substring(chmodDirectory.length() - 3);  // if 4 digits chop off leading one
 
-        Integer ownerValue = Integer.parseInt(chmodString.substring(0, 1));
-        Integer groupValue = Integer.parseInt(chmodString.substring(1, 2));
-        Integer othersValue = Integer.parseInt(chmodString.substring(2, 3));
+        int ownerValue = Integer.parseInt(chmodString.substring(0, 1));
+        int groupValue = Integer.parseInt(chmodString.substring(1, 2));
+        int othersValue = Integer.parseInt(chmodString.substring(2, 3));
 
         if ((ownerValue & CHMOD_WRITE_MASK) > 0) {
             permissions.add(PosixFilePermission.OWNER_WRITE);
