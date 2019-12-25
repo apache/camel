@@ -38,7 +38,19 @@ public enum CamelCMISActions {
     CHECK_OUT { public String getMethodName() {
             return "checkOut"; }},
     CANCEL_CHECK_OUT { public String getMethodName() {
-            return "cancelCheckOut"; }};
+            return "cancelCheckOut"; }},
+    GET_FOLDER { public String getMethodName() {
+            return "getFolder"; }},
+    LIST_FOLDER { public String getMethodName() {
+            return "listFolder"; }},
+    FIND_OBJECT_BY_ID { public String getMethodName() {
+            return "findObjectById"; }},
+    FIND_OBJECT_BY_PATH { public String getMethodName() {
+            return "findObjectByPath"; }},
+    CREATE_FOLDER_BY_PATH { public String getMethodName() {
+            return "createFolderByPath"; }},
+    DOWNLOAD_DOCUMENT { public String getMethodName() {
+            return "downloadDocument"; }};
 
     public abstract String getMethodName();
 }
