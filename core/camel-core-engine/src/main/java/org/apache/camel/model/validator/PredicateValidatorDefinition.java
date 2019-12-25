@@ -22,7 +22,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 import org.apache.camel.model.ExpressionNodeHelper;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.spi.Metadata;
@@ -52,13 +51,7 @@ public class PredicateValidatorDefinition extends ValidatorDefinition {
     public void setExpression(ExpressionDefinition expression) {
         // favour using the helper to set the expression as it can unwrap some
         // unwanted builders when using Java DSL
-        if (expression instanceof Expression) {
-            this.expression = ExpressionNodeHelper.toExpressionDefinition((Expression)expression);
-        } else if (expression instanceof Predicate) {
-            this.expression = ExpressionNodeHelper.toExpressionDefinition((Predicate)expression);
-        } else {
-            this.expression = expression;
-        }
+        this.expression = ExpressionNodeHelper.toExpressionDefinition((Expression) expression);
     }
 
 }
