@@ -561,7 +561,7 @@ public class LambdaProducer extends DefaultProducer {
     private LambdaOperations determineOperation(Exchange exchange) {
         LambdaOperations operation = exchange.getIn().getHeader(LambdaConstants.OPERATION, LambdaOperations.class);
         if (operation == null) {
-            operation = getConfiguration().getOperation();
+            operation = getConfiguration().getOperation() == null ? LambdaOperations.invokeFunction : getConfiguration().getOperation();
         }
         return operation;
     }
