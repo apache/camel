@@ -351,7 +351,7 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
         String permissionsString = chmod.trim().substring(chmod.length() - 3);  // if 4 digits chop off leading one
         for (int i = 0; i < permissionsString.length(); i++) {
             char c = permissionsString.charAt(i);
-            if (!Character.isDigit(c) || c > 7) {
+            if (!Character.isDigit(c) || Integer.parseInt(Character.toString(c)) > 7) {
                 return false;
             }
         }
