@@ -112,7 +112,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
             boolean writeAsTempAndRename = ObjectHelper.isNotEmpty(endpoint.getTempFileName());
             String tempTarget = null;
             // remember if target exists to avoid checking twice
-            Boolean targetExists;
+            boolean targetExists;
             if (writeAsTempAndRename) {
                 // compute temporary name with the temp prefix
                 tempTarget = createTempFileName(exchange, target);

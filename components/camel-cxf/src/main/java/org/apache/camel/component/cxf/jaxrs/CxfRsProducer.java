@@ -361,7 +361,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         //http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
         if (throwException) {
             if (response instanceof Response) {
-                Integer respCode = ((Response) response).getStatus();
+                int respCode = ((Response) response).getStatus();
                 if (respCode > 207) {
                     throw populateCxfRsProducerException(exchange, (Response) response, respCode);
                 }
@@ -455,7 +455,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
         saveCookies(exchange, target, cookieHandler);
         if (throwException) {
             if (response instanceof Response) {
-                Integer respCode = ((Response) response).getStatus();
+                int respCode = ((Response) response).getStatus();
                 if (respCode > 207) {
                     throw populateCxfRsProducerException(exchange, (Response) response, respCode);
                 }
@@ -737,7 +737,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             //Throw exception on a response > 207
             //http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
             if (response != null && throwException) {
-                Integer respCode = response.getStatus();
+                int respCode = response.getStatus();
                 if (respCode > 207) {
                     return true;
                 }
@@ -833,7 +833,7 @@ public class CxfRsProducer extends DefaultAsyncProducer {
             //Throw exception on a response > 207
             //http://en.wikipedia.org/wiki/List_of_HTTP_status_codes
             if (response != null && throwException) {
-                Integer respCode = response.getStatus();
+                int respCode = response.getStatus();
                 if (respCode > 207) {
                     return true;
                 }
