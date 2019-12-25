@@ -31,6 +31,7 @@ import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
+import org.apache.chemistry.opencmis.client.api.FileableCmisObject;
 import org.apache.chemistry.opencmis.client.api.Folder;
 import org.apache.chemistry.opencmis.commons.PropertyIds;
 import org.apache.chemistry.opencmis.commons.exceptions.CmisObjectNotFoundException;
@@ -285,12 +286,9 @@ public class CMISProducerTest extends CMISTestSupport {
 
         template.send(exchange);
 
-        Map<String, String> movedFolders = exchange.getOut().getBody(HashMap.class);
+        FileableCmisObject movedFolder = exchange.getOut().getBody(FileableCmisObject.class);
 
-
-        Folder movedFolder = (Folder) createSession().getObject(movedFolders.get(toBeMoved.getId()));
-
-        assertEquals(movedFolder.getParentId(), destinationFolder.getId());
+        assertEquals(movedFolder.getParents().get(0).getId(), destinationFolder.getId());
     }
 
     @Test
@@ -346,7 +344,7 @@ public class CMISProducerTest extends CMISTestSupport {
 
         template.send(exchange);
 
-        Map<String, String> copiedFolders = exchange.getOut().getBody(HashMap.class);
+        Map<String, CmisObject> copiedFolders = exchange.getOut().getBody(HashMap.class);
 
         Folder copy = (Folder) createSession().getObject(copiedFolders.get(folder.getId()));
         assertEquals(folder.getName(), copy.getName());

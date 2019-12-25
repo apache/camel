@@ -51,9 +51,9 @@ import org.junit.BeforeClass;
 
 public class CMISTestSupport extends CamelTestSupport {
     protected static final String CMIS_ENDPOINT_TEST_SERVER
-        = "http://localhost:%s/chemistry-opencmis-server-inmemory/atom11";
+            = "http://localhost:%s/chemistry-opencmis-server-inmemory/atom11";
     protected static final String OPEN_CMIS_SERVER_WAR_PATH
-        = "target/dependency/chemistry-opencmis-server-inmemory.war";
+            = "target/dependency/chemistry-opencmis-server-inmemory.war";
 
     protected static Server cmisServer;
     protected static int port;
@@ -135,7 +135,7 @@ public class CMISTestSupport extends CamelTestSupport {
     }
 
     protected Document createTextDocument(Folder newFolder, String content, String fileName)
-        throws UnsupportedEncodingException {
+            throws UnsupportedEncodingException {
         byte[] buf = content.getBytes("UTF-8");
         ByteArrayInputStream input = new ByteArrayInputStream(buf);
         ContentStream contentStream = createSession().getObjectFactory()
