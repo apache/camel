@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.http.rest;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.http.BaseHttpTest;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
@@ -32,24 +28,41 @@ import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseContent;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.eclipse.jetty.http.HttpMethod.GET;
+
 public class RestCamelComponentVerifierTest extends BaseHttpTest {
+
     private HttpServer localServer;
+    private Map<String, Object> parameters;
+    private ComponentVerifierExtension verifier;
 
     @Before
     @Override
     public void setUp() throws Exception {
+        super.setUp();
+
         localServer = ServerBootstrap.bootstrap()
-            .setHttpProcessor(getHttpProcessor())
-            .registerHandler("/verify", new BasicValidationHandler("GET", null, null, getExpectedContent()))
-            .create();
+                .setHttpProcessor(getHttpProcessor())
+                .registerHandler("/verify", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
 
         localServer.start();
 
-        super.setUp();
+        RestComponent component = context().getComponent("rest", RestComponent.class);
+        verifier = component.getVerifier();
+
+        parameters = new HashMap<>();
+        parameters.put("componentName", "http");
+        parameters.put("host", "http://localhost:" + localServer.getLocalPort());
+        parameters.put("path", "verify");
     }
 
     @After
@@ -69,12 +82,12 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
     private HttpProcessor getHttpProcessor() {
         return new ImmutableHttpProcessor(
-            Arrays.asList(
-                new RequestBasicAuth()
-            ),
-            Arrays.asList(
-                new ResponseContent(),
-                new ResponseBasicUnauthorized())
+                Collections.singletonList(
+                        new RequestBasicAuth()
+                ),
+                Arrays.asList(
+                        new ResponseContent(),
+                        new ResponseBasicUnauthorized())
         );
     }
 
@@ -82,16 +95,15 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     // Helpers
     // *************************************************
 
+    @SuppressWarnings("unused")
     protected String getLocalServerUri(String contextPath) {
-        return new StringBuilder()
-            .append("http://")
-            .append(localServer.getInetAddress().getHostName())
-            .append(":")
-            .append(localServer.getLocalPort())
-            .append(contextPath != null
-                ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
-                : "")
-            .toString();
+        return "http://" +
+                localServer.getInetAddress().getHostName() +
+                ":" +
+                localServer.getLocalPort() +
+                (contextPath != null
+                        ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
+                        : "");
     }
 
     // *************************************************
@@ -99,52 +111,32 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
     // *************************************************
     @Test
     public void testParameters() throws Exception {
-        RestComponent component = context().getComponent("rest", RestComponent.class);
-        ComponentVerifierExtension verifier = component.getVerifier();
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "http");
-        parameters.put("host", "http://localhost:" + localServer.getLocalPort());
-        parameters.put("path", "verify");
         parameters.put("method", "get");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
     public void testMissingRestParameters() throws Exception {
-        RestComponent component = context.getComponent("rest", RestComponent.class);
-        ComponentVerifierExtension verifier = component.getVerifier();
-
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "http");
-        parameters.put("host", "http://localhost:" + localServer.getLocalPort());
-        parameters.put("path", "verify");
-
         // This parameter does not belong to the rest component and validation
         // is delegated to the transport component
         parameters.put("copyHeaders", false);
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
-        Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
-        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
+        assertTrue(result.getErrors().get(0).getParameterKeys().contains("method"));
     }
 
     @Test
-    public void testWrongComponentParameters() throws Exception {
-        RestComponent component = context.getComponent("rest", RestComponent.class);
-        ComponentVerifierExtension verifier = component.getVerifier();
+    public void testWrongComponentParameters() {
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "http");
-        parameters.put("host", "http://localhost:" + localServer.getLocalPort());
-        parameters.put("path", "verify");
         parameters.put("method", "get");
 
         // This parameter does not belong to the rest component and validation
@@ -153,26 +145,20 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER, result.getErrors().get(0).getCode());
-        Assert.assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
-        Assert.assertTrue(result.getErrors().get(0).getParameterKeys().contains("nonExistingOption"));
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.UNKNOWN_PARAMETER, result.getErrors().get(0).getCode());
+        assertEquals(1, result.getErrors().get(0).getParameterKeys().size());
+        assertTrue(result.getErrors().get(0).getParameterKeys().contains("nonExistingOption"));
     }
 
     @Test
     public void testConnectivity() throws Exception {
-        RestComponent component = context().getComponent("rest", RestComponent.class);
-        ComponentVerifierExtension verifier = component.getVerifier();
 
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("componentName", "http");
-        parameters.put("host", "http://localhost:" + localServer.getLocalPort());
-        parameters.put("path", "verify");
         parameters.put("method", "get");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 }

@@ -16,53 +16,54 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.Component;
 import org.apache.camel.component.extension.ComponentVerifierExtension;
 import org.apache.camel.component.http.handler.AuthenticationValidationHandler;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.apache.http.localserver.RequestBasicAuth;
 import org.apache.http.localserver.ResponseBasicUnauthorized;
-import org.apache.http.protocol.HttpContext;
 import org.apache.http.protocol.HttpProcessor;
 import org.apache.http.protocol.HttpRequestHandler;
 import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseContent;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     private static final String AUTH_USERNAME = "camel";
     private static final String AUTH_PASSWORD = "password";
 
     private HttpServer localServer;
+    private ComponentVerifierExtension verifier;
 
     @Before
     @Override
     public void setUp() throws Exception {
+        super.setUp();
+
         localServer = ServerBootstrap.bootstrap()
-            .setHttpProcessor(getHttpProcessor())
-            .registerHandler("/basic", new BasicValidationHandler("GET", null, null, getExpectedContent()))
-            .registerHandler("/auth", new AuthenticationValidationHandler("GET", null, null, getExpectedContent(), AUTH_USERNAME, AUTH_PASSWORD))
-            .registerHandler("/redirect", redirectTo(HttpStatus.SC_MOVED_PERMANENTLY, "/redirected"))
-            .registerHandler("/redirected", new BasicValidationHandler("GET", null, null, getExpectedContent()))
-            .create();
+                .setHttpProcessor(getHttpProcessor())
+                .registerHandler("/basic", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .registerHandler("/auth", new AuthenticationValidationHandler(GET.name(), null, null, getExpectedContent(), AUTH_USERNAME, AUTH_PASSWORD))
+                .registerHandler("/redirect", redirectTo(HttpStatus.SC_MOVED_PERMANENTLY, "/redirected"))
+                .registerHandler("/redirected", new BasicValidationHandler(GET.name(), null, null, getExpectedContent()))
+                .create();
 
         localServer.start();
 
-        super.setUp();
+        Component component = context().getComponent("http");
+        verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
     }
 
     @After
@@ -82,12 +83,12 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
 
     private HttpProcessor getHttpProcessor() {
         return new ImmutableHttpProcessor(
-            Arrays.asList(
-                new RequestBasicAuth()
-            ),
-            Arrays.asList(
-                new ResponseContent(),
-                new ResponseBasicUnauthorized())
+                Collections.singletonList(
+                        new RequestBasicAuth()
+                ),
+                Arrays.asList(
+                        new ResponseContent(),
+                        new ResponseBasicUnauthorized())
         );
     }
 
@@ -96,24 +97,19 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     // *************************************************
 
     protected String getLocalServerUri(String contextPath) {
-        return new StringBuilder()
-            .append("http://")
-            .append(localServer.getInetAddress().getHostName())
-            .append(":")
-            .append(localServer.getLocalPort())
-            .append(contextPath != null
-                ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
-                : "")
-            .toString();
+        return "http://" +
+                localServer.getInetAddress().getHostName() +
+                ":" +
+                localServer.getLocalPort() +
+                (contextPath != null
+                        ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
+                        : "");
     }
 
     private HttpRequestHandler redirectTo(int code, String path) {
-        return new HttpRequestHandler() {
-            @Override
-            public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                response.setHeader("location", getLocalServerUri(path));
-                response.setStatusCode(code);
-            }
+        return (request, response, context) -> {
+            response.setHeader("location", getLocalServerUri(path));
+            response.setStatusCode(code);
         };
     }
 
@@ -123,33 +119,27 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
 
     @Test
     public void testParameters() throws Exception {
-        Component component = context().getComponent("http");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/basic"));
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
     public void testMissingMandatoryParameters() throws Exception {
-        Component component = context().getComponent("http");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
-
         Map<String, Object> parameters = new HashMap<>();
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.PARAMETERS, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
 
         ComponentVerifierExtension.VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, error.getCode());
-        Assert.assertTrue(error.getParameterKeys().contains("httpUri"));
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.MISSING_PARAMETER, error.getCode());
+        assertTrue(error.getParameterKeys().contains("httpUri"));
     }
 
     // *************************************************
@@ -158,41 +148,32 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
 
     @Test
     public void testConnectivity() throws Exception {
-        Component component = context().getComponent("http");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/basic"));
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
     public void testConnectivityWithWrongUri() throws Exception {
-        Component component = context().getComponent("http");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", "http://www.not-existing-uri.unknown");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
 
         ComponentVerifierExtension.VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, error.getCode());
-        Assert.assertTrue(error.getParameterKeys().contains("httpUri"));
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.EXCEPTION, error.getCode());
+        assertTrue(error.getParameterKeys().contains("httpUri"));
     }
 
     @Test
     public void testConnectivityWithAuthentication() throws Exception {
-        Component component = context().getComponent("http");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/auth"));
         parameters.put("authUsername", AUTH_USERNAME);
@@ -200,14 +181,11 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
     public void testConnectivityWithWrongAuthenticationData() throws Exception {
-        Component component = context().getComponent("http");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/auth"));
         parameters.put("authUsername", "unknown");
@@ -215,48 +193,42 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
 
         ComponentVerifierExtension.VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.AUTHENTICATION, error.getCode());
-        Assert.assertEquals(401, error.getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
-        Assert.assertTrue(error.getParameterKeys().contains("authUsername"));
-        Assert.assertTrue(error.getParameterKeys().contains("authPassword"));
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.AUTHENTICATION, error.getCode());
+        assertEquals(401, error.getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_CODE));
+        assertTrue(error.getParameterKeys().contains("authUsername"));
+        assertTrue(error.getParameterKeys().contains("authPassword"));
     }
 
     @Test
     public void testConnectivityWithRedirect() throws Exception {
-        Component component = context().getComponent("http");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/redirect"));
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
+        assertEquals(ComponentVerifierExtension.Result.Status.OK, result.getStatus());
     }
 
     @Test
     public void testConnectivityWithRedirectDisabled() throws Exception {
-        Component component = context().getComponent("http");
-        ComponentVerifierExtension verifier = component.getExtension(ComponentVerifierExtension.class).orElseThrow(IllegalStateException::new);
-
         Map<String, Object> parameters = new HashMap<>();
         parameters.put("httpUri", getLocalServerUri("/redirect"));
         parameters.put("httpClient.redirectsEnabled", "false");
 
         ComponentVerifierExtension.Result result = verifier.verify(ComponentVerifierExtension.Scope.CONNECTIVITY, parameters);
 
-        Assert.assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
-        Assert.assertEquals(1, result.getErrors().size());
+        assertEquals(ComponentVerifierExtension.Result.Status.ERROR, result.getStatus());
+        assertEquals(1, result.getErrors().size());
 
         ComponentVerifierExtension.VerificationError error = result.getErrors().get(0);
 
-        Assert.assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.GENERIC, error.getCode());
-        Assert.assertEquals(getLocalServerUri("/redirected"), error.getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_REDIRECT));
-        Assert.assertTrue(error.getParameterKeys().contains("httpUri"));
+        assertEquals(ComponentVerifierExtension.VerificationError.StandardCode.GENERIC, error.getCode());
+        assertEquals(getLocalServerUri("/redirected"), error.getDetails().get(ComponentVerifierExtension.VerificationError.HttpAttribute.HTTP_REDIRECT));
+        assertTrue(error.getParameterKeys().contains("httpUri"));
     }
 }

@@ -16,11 +16,7 @@
  */
 package org.apache.camel.component.http;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
@@ -29,6 +25,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
 
@@ -81,9 +80,8 @@ public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyFromSystemProperties() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?useSystemProperties=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        String endpointUri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "?useSystemProperties=true";
+        Exchange exchange = template.request(endpointUri, exchange1 -> {
         });
 
         assertExchange(exchange);

@@ -16,12 +16,7 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.http.HttpException;
 import org.apache.http.HttpRequest;
@@ -34,6 +29,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+import static org.apache.http.HttpHeaders.ACCEPT_LANGUAGE;
+
 public class HttpCamelHeadersTest extends BaseHttpTest {
 
     protected HttpServer localServer;
@@ -43,7 +45,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
     public void setUp() throws Exception {
         Map<String, String> expectedHeaders = new HashMap<>();
         expectedHeaders.put("TestHeader", "test");
-        expectedHeaders.put("Accept-Language", "pl");
+        expectedHeaders.put(ACCEPT_LANGUAGE, "pl");
 
         localServer = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
@@ -51,7 +53,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/", new MyHeaderValidationHandler("GET", "HTTP/1.0", getExpectedContent(), expectedHeaders)).create();
+                registerHandler("/", new MyHeaderValidationHandler(GET.name(), "HTTP/1.0", getExpectedContent(), expectedHeaders)).create();
         localServer.start();
 
         super.setUp();
@@ -77,7 +79,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
         super.assertHeaders(headers);
 
         assertEquals("test", headers.get("TestHeader"));
-        assertEquals("pl", headers.get("Accept-Language"));
+        assertEquals("pl", headers.get(ACCEPT_LANGUAGE));
     }
 
     private Exchange doExchange() {
@@ -88,12 +90,10 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
                         + localServer.getLocalPort()
                         + "/"
                         + setupEndpointParams(),
-                new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        exchange.getIn().setHeader("TestHeader", "test");
-                        exchange.getIn().setHeader("Accept-Language", "pl");
-                        exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
-                    }
+                exchange -> {
+                    exchange.getIn().setHeader("TestHeader", "test");
+                    exchange.getIn().setHeader(ACCEPT_LANGUAGE, "pl");
+                    exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
                 }
         );
     }
@@ -106,7 +106,7 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
         private String expectProtocolVersion;
 
         MyHeaderValidationHandler(String expectedMethod, String protocolVersion,
-                                         String responseContent, Map<String, String> expectedHeaders) {
+                                  String responseContent, Map<String, String> expectedHeaders) {
             super(expectedMethod, null, null, responseContent, expectedHeaders);
             expectProtocolVersion = protocolVersion;
         }

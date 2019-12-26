@@ -16,12 +16,6 @@
  */
 package org.apache.camel.component.http.helper;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -32,11 +26,16 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.support.DefaultExchange;
 import org.junit.Test;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 public class HttpHelperTest {
 
     @Test
@@ -171,6 +170,7 @@ public class HttpHelperTest {
                 createHttpEndpoint(true, "http://www.google.com"));
         assertEquals("http://www.google.com/", url);
     }
+
     @Test
     public void createURLShouldAddPathAndQueryParamsAndSlash() throws Exception {
         String url = HttpHelper.createURL(
@@ -178,6 +178,7 @@ public class HttpHelperTest {
                 createHttpEndpoint(true, "http://www.google.com/context?test=true"));
         assertEquals("http://www.google.com/context/search?test=true", url);
     }
+
     @Test
     public void createURLShouldAddPathAndQueryParamsAndRemoveDuplicateSlash() throws Exception {
         String url = HttpHelper.createURL(

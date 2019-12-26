@@ -17,13 +17,14 @@
 package org.apache.camel.component.http;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
 
@@ -38,7 +39,7 @@ public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+                registerHandler("/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -57,11 +58,7 @@ public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
     @Test
     public void notBridgeEndpointWithDefault() throws Exception {
 
-        Exchange exchange = template.request("http://host/", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_URI, "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/");
-            }
-        });
+        Exchange exchange = template.request("http://host/", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_URI, "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/"));
         assertExchange(exchange);
     }
 }

@@ -16,24 +16,17 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.io.ByteArrayInputStream;
 
 public class HttpProducerContentLengthTest extends BaseHttpTest {
 
@@ -41,48 +34,46 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
 
     private final String bodyContent = "{ \n \"content\"=\"This is content\" \n }";
 
+    private String endpointUrl;
 
     @Before
     @Override
     public void setUp() throws Exception {
+        super.setUp();
+
         localServer = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
                 setConnectionReuseStrategy(getConnectionReuseStrategy()).
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/content-streamed", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
-                        String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
-                        Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
-                        String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
+                registerHandler("/content-streamed", (request, response, context) -> {
+                    Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
+                    String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
+                    Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
+                    String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
 
-                        //Request Body Chunked if no Content-Length set.
-                        assertEquals("", contentLength);
-                        assertEquals("chunked", transferEncoding);
-                        response.setStatusCode(HttpStatus.SC_OK);
-                    }
-                }).registerHandler("/content-not-streamed", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
-                        String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
-                        Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
-                        String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
+                    //Request Body Chunked if no Content-Length set.
+                    assertEquals("", contentLength);
+                    assertEquals("chunked", transferEncoding);
+                    response.setStatusCode(HttpStatus.SC_OK);
+                }).registerHandler("/content-not-streamed", (request, response, context) -> {
+            Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
+            String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
+            Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
+            String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
 
-                        //Content-Length should match byte array
-                        assertEquals("35", contentLength);
-                        assertEquals("", transferEncoding);
-                        response.setStatusCode(HttpStatus.SC_OK);
-                    }
-                })
+            //Content-Length should match byte array
+            assertEquals("35", contentLength);
+            assertEquals("", transferEncoding);
+            response.setStatusCode(HttpStatus.SC_OK);
+        })
                 .create();
 
         localServer.start();
 
-        super.setUp();
+        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
+
     }
 
     @After
@@ -97,15 +88,10 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
 
     @Test
     public void testContentLengthStream() throws Exception {
-        Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content-streamed?bridgeEndpoint=true", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "1000");
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
-                exchange.getIn().setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream(bodyContent.getBytes())));
-            }
-
+        Exchange out = template.request(endpointUrl + "/content-streamed?bridgeEndpoint=true", exchange -> {
+            exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "1000");
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            exchange.getIn().setBody(new ByteArrayInputStreamCache(new ByteArrayInputStream(bodyContent.getBytes())));
         });
 
         assertNotNull(out);
@@ -115,15 +101,10 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
 
     @Test
     public void testContentLengthNotStreamed() throws Exception {
-        Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content-not-streamed?bridgeEndpoint=true", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "1000");
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
-                exchange.getIn().setBody(bodyContent.getBytes());
-            }
-
+        Exchange out = template.request(endpointUrl + "/content-not-streamed?bridgeEndpoint=true", exchange -> {
+            exchange.getIn().setHeader(Exchange.CONTENT_LENGTH, "1000");
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+            exchange.getIn().setBody(bodyContent.getBytes());
         });
 
         assertNotNull(out);

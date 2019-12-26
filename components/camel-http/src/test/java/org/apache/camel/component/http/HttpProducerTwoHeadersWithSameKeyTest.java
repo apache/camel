@@ -16,25 +16,18 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.http.Header;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -52,35 +45,29 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/myapp", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        Header[] from = request.getHeaders("from");
-                        assertEquals("me", from[0].getValue());
-                        Header[] to = request.getHeaders("to");
-                        assertEquals("[foo, bar]", to[0].getValue());
+                registerHandler("/myapp", (request, response, context) -> {
+                    Header[] from = request.getHeaders("from");
+                    assertEquals("me", from[0].getValue());
+                    Header[] to = request.getHeaders("to");
+                    assertEquals("[foo, bar]", to[0].getValue());
 
-                        response.setHeader("bar", "yes");
-                        response.addHeader("foo", "123");
-                        response.addHeader("foo", "456");
-                        response.setEntity(new StringEntity("OK", "ASCII"));
-                        response.setStatusCode(HttpStatus.SC_OK);
-                    }
+                    response.setHeader("bar", "yes");
+                    response.addHeader("foo", "123");
+                    response.addHeader("foo", "456");
+                    response.setEntity(new StringEntity("OK", "ASCII"));
+                    response.setStatusCode(HttpStatus.SC_OK);
                 }).
-                registerHandler("/myapp", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        Header[] from = request.getHeaders("from");
-                        assertEquals("me", from[0].getValue());
-                        Header[] to = request.getHeaders("to");
-                        assertEquals("[foo, bar]", to[0].getValue());
+                registerHandler("/myapp", (request, response, context) -> {
+                    Header[] from = request.getHeaders("from");
+                    assertEquals("me", from[0].getValue());
+                    Header[] to = request.getHeaders("to");
+                    assertEquals("[foo, bar]", to[0].getValue());
 
-                        response.setHeader("bar", "yes");
-                        response.addHeader("foo", "123");
-                        response.addHeader("foo", "456");
-                        response.setEntity(new StringEntity("OK", "ASCII"));
-                        response.setStatusCode(HttpStatus.SC_OK);
-                    }
+                    response.setHeader("bar", "yes");
+                    response.addHeader("foo", "123");
+                    response.addHeader("foo", "456");
+                    response.setEntity(new StringEntity("OK", "ASCII"));
+                    response.setStatusCode(HttpStatus.SC_OK);
                 }).create();
         localServer.start();
 
@@ -99,15 +86,15 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
 
     @Test
     public void testTwoHeadersWithSameKeyHeader() throws Exception {
-        Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody(null);
-                exchange.getIn().setHeader("from", "me");
-                List<String> list = new ArrayList<>();
-                list.add("foo");
-                list.add("bar");
-                exchange.getIn().setHeader("to", list);
-            }
+        String endpointUri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp";
+
+        Exchange out = template.request(endpointUri, exchange -> {
+            exchange.getIn().setBody(null);
+            exchange.getIn().setHeader("from", "me");
+            List<String> list = new ArrayList<>();
+            list.add("foo");
+            list.add("bar");
+            exchange.getIn().setHeader("to", list);
         });
 
         assertNotNull(out);

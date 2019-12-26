@@ -16,14 +16,7 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.camel.util.URISupport;
 import org.apache.commons.codec.BinaryDecoder;
@@ -48,6 +41,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
+
 public class HttpProxyServerTest extends BaseHttpTest {
 
     private HttpServer proxy;
@@ -63,7 +64,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("*", new HeaderValidationHandler("GET", null, null, getExpectedContent(), expectedHeaders)).create();
+                registerHandler("*", new HeaderValidationHandler(GET.name(), null, null, getExpectedContent(), expectedHeaders)).create();
         proxy.start();
 
         super.setUp();
@@ -86,8 +87,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
         List<HttpResponseInterceptor> responseInterceptors = new ArrayList<>();
         responseInterceptors.add(new ResponseContent());
         responseInterceptors.add(new ResponseProxyBasicUnauthorized());
-        ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
-        return httpproc;
+        return new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
     }
 
     @Test
@@ -106,9 +106,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
     @Test
     public void httpGetWithProxyAndWithoutUser() throws Exception {
 
-        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyAuthHost=" + getProxyHost() + "&proxyAuthPort=" + getProxyPort(), new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request("http://" + getProxyHost() + ":" + getProxyPort() + "?proxyAuthHost=" + getProxyHost() + "&proxyAuthPort=" + getProxyPort(), exchange1 -> {
         });
 
         assertExchange(exchange);
