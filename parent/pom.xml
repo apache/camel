@@ -51,7 +51,7 @@
         <apacheds-version>2.0.0.AM25</apacheds-version>
         <apache-any23-version>2.3</apache-any23-version>
         <apache-any23-bundle-version>2.3_1</apache-any23-bundle-version>
-        <apache-drill-version>1.16.0</apache-drill-version>
+        <apache-drill-version>1.17.0</apache-drill-version>
         <apache-gora-version>0.9</apache-gora-version>
         <apache-mime4j-version>0.8.3</apache-mime4j-version>
         <aries-blueprint-api-version>1.0.1</aries-blueprint-api-version>
