@@ -85,7 +85,6 @@ public interface LambdaEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code>
          * type.
          * 
-         * Required: true
          * Group: producer
          */
         default LambdaEndpointBuilder operation(LambdaOperations operation) {
@@ -100,34 +99,10 @@ public interface LambdaEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code>
          * type.
          * 
-         * Required: true
          * Group: producer
          */
         default LambdaEndpointBuilder operation(String operation) {
             doSetProperty("operation", operation);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Lambda client.
-         * 
-         * The option is a: <code>com.amazonaws.Protocol</code> type.
-         * 
-         * Group: producer
-         */
-        default LambdaEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
-            return this;
-        }
-        /**
-         * To define a proxy protocol when instantiating the Lambda client.
-         * 
-         * The option will be converted to a <code>com.amazonaws.Protocol</code>
-         * type.
-         * 
-         * Group: producer
-         */
-        default LambdaEndpointBuilder proxyProtocol(String proxyProtocol) {
-            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**
@@ -175,6 +150,29 @@ public interface LambdaEndpointBuilderFactory {
          */
         default LambdaEndpointBuilder proxyPort(String proxyPort) {
             doSetProperty("proxyPort", proxyPort);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Lambda client.
+         * 
+         * The option is a: <code>com.amazonaws.Protocol</code> type.
+         * 
+         * Group: proxy
+         */
+        default LambdaEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
+            return this;
+        }
+        /**
+         * To define a proxy protocol when instantiating the Lambda client.
+         * 
+         * The option will be converted to a <code>com.amazonaws.Protocol</code>
+         * type.
+         * 
+         * Group: proxy
+         */
+        default LambdaEndpointBuilder proxyProtocol(String proxyProtocol) {
+            doSetProperty("proxyProtocol", proxyProtocol);
             return this;
         }
         /**

@@ -19,16 +19,13 @@ package org.apache.camel.component.aws.lambda;
 import com.amazonaws.Protocol;
 import com.amazonaws.services.lambda.AWSLambda;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.spi.UriPath;
 
 @UriParams
 public class LambdaConfiguration implements Cloneable {
 
     @UriParam(defaultValue = "invokeFunction")
-    @Metadata(required = true)
     private LambdaOperations operation = LambdaOperations.invokeFunction;
     @UriParam(label = "security", secret = true)
     private String accessKey;
@@ -36,7 +33,7 @@ public class LambdaConfiguration implements Cloneable {
     private String secretKey;
     @UriParam(label = "producer")
     private String region;
-    @UriParam(enums = "HTTP,HTTPS", defaultValue = "HTTPS")
+    @UriParam(label = "proxy", enums = "HTTP,HTTPS", defaultValue = "HTTPS")
     private Protocol proxyProtocol = Protocol.HTTPS;
     @UriParam(label = "proxy")
     private String proxyHost;
