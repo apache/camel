@@ -2,7 +2,7 @@
 
 When using Spring the CamelContext can be pre configured based on
 defined beans in spring XML.
-This page documentes these features. Most of these features
+This page documents these features. Most of these features
 requires *Camel 2.0*.
 
 == What can be configured
