@@ -27,9 +27,9 @@ import org.apache.camel.spi.UriPath;
 @UriParams
 public class LambdaConfiguration implements Cloneable {
 
-    @UriParam
+    @UriParam(defaultValue = "invokeFunction")
     @Metadata(required = true)
-    private LambdaOperations operation;
+    private LambdaOperations operation = LambdaOperations.invokeFunction;
     @UriParam(label = "security", secret = true)
     private String accessKey;
     @UriParam(label = "security", secret = true)
