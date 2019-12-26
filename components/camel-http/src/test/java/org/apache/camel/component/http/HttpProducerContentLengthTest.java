@@ -57,17 +57,18 @@ public class HttpProducerContentLengthTest extends BaseHttpTest {
                     assertEquals("", contentLength);
                     assertEquals("chunked", transferEncoding);
                     response.setStatusCode(HttpStatus.SC_OK);
-                }).registerHandler("/content-not-streamed", (request, response, context) -> {
-            Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
-            String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
-            Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
-            String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
+                })
+                .registerHandler("/content-not-streamed", (request, response, context) -> {
+                    Header contentLengthHeader = request.getFirstHeader(Exchange.CONTENT_LENGTH);
+                    String contentLength = contentLengthHeader != null ? contentLengthHeader.getValue() : "";
+                    Header transferEncodingHeader = request.getFirstHeader(Exchange.TRANSFER_ENCODING);
+                    String transferEncoding = transferEncodingHeader != null ? transferEncodingHeader.getValue() : "";
 
-            //Content-Length should match byte array
-            assertEquals("35", contentLength);
-            assertEquals("", transferEncoding);
-            response.setStatusCode(HttpStatus.SC_OK);
-        })
+                    //Content-Length should match byte array
+                    assertEquals("35", contentLength);
+                    assertEquals("", transferEncoding);
+                    response.setStatusCode(HttpStatus.SC_OK);
+                })
                 .create();
 
         localServer.start();

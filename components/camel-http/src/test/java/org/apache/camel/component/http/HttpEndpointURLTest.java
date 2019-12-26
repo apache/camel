@@ -26,13 +26,13 @@ import org.junit.Test;
 public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
-    public void testHttpEndpointURLWithIPv6() {
+    public void testHttpEndpointURLWithIPv6() throws Exception {
         HttpEndpoint endpoint = (HttpEndpoint)context.getEndpoint("http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
         assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
     }
 
     @Test
-    public void testHttpEndpointHttpUri() {
+    public void testHttpEndpointHttpUri() throws Exception {
         HttpEndpoint http1 = context.getEndpoint("http://www.google.com", HttpEndpoint.class);
         HttpEndpoint http2 = context.getEndpoint("https://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
         HttpEndpoint http3 = context.getEndpoint("https://www.google.com?test=parameter", HttpEndpoint.class);
@@ -51,7 +51,7 @@ public class HttpEndpointURLTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConnectionManagerFromHttpUri() {
+    public void testConnectionManagerFromHttpUri() throws Exception {
         HttpEndpoint http1 = context.getEndpoint("http://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
         HttpClientConnectionManager connectionManager = http1.getClientConnectionManager();
         assertTrue("Get a wrong type of connection manager", connectionManager instanceof PoolingHttpClientConnectionManager);
@@ -63,7 +63,7 @@ public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
     // Just for CAMEL-8607
-    public void testRawWithUnsafeCharacters() {
+    public void testRawWithUnsafeCharacters() throws Exception {
         HttpEndpoint http1 = context.getEndpoint("http://www.google.com?authenticationPreemptive=true&authPassword=RAW(foo%bar)&authUsername=RAW(username)", HttpEndpoint.class);
         assertTrue("The password is not loggged", URISupport.sanitizeUri(http1.getEndpointUri()).indexOf("authPassword=xxxxxx") > 0);
     }

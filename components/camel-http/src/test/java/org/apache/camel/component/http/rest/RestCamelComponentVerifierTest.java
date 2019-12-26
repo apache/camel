@@ -97,10 +97,10 @@ public class RestCamelComponentVerifierTest extends BaseHttpTest {
 
     @SuppressWarnings("unused")
     protected String getLocalServerUri(String contextPath) {
-        return "http://" +
-                localServer.getInetAddress().getHostName() +
-                ":" +
-                localServer.getLocalPort() +
+        return "http://"
+                + localServer.getInetAddress().getHostName()
+                + ":"
+                + localServer.getLocalPort() +
                 (contextPath != null
                         ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
                         : "");

@@ -97,11 +97,11 @@ public class CamelComponentVerifierExtensionTest extends BaseHttpTest {
     // *************************************************
 
     protected String getLocalServerUri(String contextPath) {
-        return "http://" +
-                localServer.getInetAddress().getHostName() +
-                ":" +
-                localServer.getLocalPort() +
-                (contextPath != null
+        return "http://"
+                + localServer.getInetAddress().getHostName()
+                + ":"
+                + localServer.getLocalPort()
+                + (contextPath != null
                         ? contextPath.startsWith("/") ? contextPath : "/" + contextPath
                         : "");
     }
