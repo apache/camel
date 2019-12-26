@@ -91,6 +91,7 @@
         <module>camel-example-olingo4-blueprint</module>
         <module>camel-example-pojo-messaging</module>
         <module>camel-example-reactive-executor-vertx</module>
+        <module>camel-example-rest-karaf-osgi-activator</module>
         <module>camel-example-route-throttling</module>
         <module>camel-example-servlet-rest-blueprint</module>
         <module>camel-example-servlet-tomcat</module>
