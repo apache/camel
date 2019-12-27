@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.http;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.Exchange;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
@@ -24,9 +27,6 @@ import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
 
 public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.IOException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.http.common.HttpOperationFailedException;
@@ -30,8 +32,6 @@ import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 

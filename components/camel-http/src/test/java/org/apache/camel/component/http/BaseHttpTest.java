@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.http.HttpStatus;
-
-import java.util.Map;
 
 import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
 import static org.apache.http.HttpHeaders.CONTENT_TYPE;

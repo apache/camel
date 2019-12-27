@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.http.HttpException;
@@ -28,10 +32,6 @@ import org.apache.http.protocol.HttpContext;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 import static org.apache.http.HttpHeaders.ACCEPT_LANGUAGE;
@@ -89,12 +89,11 @@ public class HttpCamelHeadersTest extends BaseHttpTest {
                         + ":"
                         + localServer.getLocalPort()
                         + "/"
-                        + setupEndpointParams(),
-                exchange -> {
-                    exchange.getIn().setHeader("TestHeader", "test");
-                    exchange.getIn().setHeader(ACCEPT_LANGUAGE, "pl");
-                    exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
-                }
+                        + setupEndpointParams(), exchange -> {
+                exchange.getIn().setHeader("TestHeader", "test");
+                exchange.getIn().setHeader(ACCEPT_LANGUAGE, "pl");
+                exchange.getIn().setHeader(Exchange.HTTP_PROTOCOL_VERSION, "HTTP/1.0");
+        }
         );
     }
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.ByteArrayInputStream;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.ByteArrayInputStreamCache;
 import org.apache.http.Header;
@@ -25,8 +27,6 @@ import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
 
 public class HttpProducerContentLengthTest extends BaseHttpTest {
 

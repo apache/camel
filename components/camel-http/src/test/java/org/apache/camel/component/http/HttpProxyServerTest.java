@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.camel.util.URISupport;
@@ -40,12 +46,6 @@ import org.apache.http.protocol.ResponseContent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 

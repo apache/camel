@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.http;
 
+import java.net.ConnectException;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
@@ -23,9 +26,6 @@ import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.net.ConnectException;
-import java.util.concurrent.TimeUnit;
 
 import static org.apache.camel.http.common.HttpMethods.GET;
 

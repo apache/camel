@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.HeaderValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
@@ -25,9 +28,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class HttpProducerWithSystemPropertiesTest extends BaseHttpTest {
 

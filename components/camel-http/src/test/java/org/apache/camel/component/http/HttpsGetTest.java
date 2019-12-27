@@ -68,8 +68,7 @@ public class HttpsGetTest extends BaseHttpsTest {
     public void httpsGet() throws Exception {
 
         Exchange exchange = template.request("https://127.0.0.1:" + localServer.getLocalPort()
-                + "/mail/?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters", exchange1 -> {
-                });
+                + "/mail/?x509HostnameVerifier=#x509HostnameVerifier&sslContextParameters=#sslContextParameters", exchange1 -> { });
 
         assertExchange(exchange);
     }

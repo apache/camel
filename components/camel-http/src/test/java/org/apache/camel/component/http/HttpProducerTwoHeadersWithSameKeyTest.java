@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.http.Header;
 import org.apache.http.HttpStatus;
@@ -25,9 +28,6 @@ import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  *

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
@@ -25,8 +27,6 @@ import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.Map;
 
 import static org.apache.camel.component.http.HttpMethods.*;
 

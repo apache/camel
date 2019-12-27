@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.http;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.BindToRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.http.handler.AuthenticationValidationHandler;
@@ -33,9 +36,6 @@ import org.apache.http.protocol.ResponseContent;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.camel.component.http.HttpMethods.GET;
 
