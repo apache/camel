@@ -210,7 +210,7 @@ The following headers are available when consuming change events from Debezium.
 [width="100%",cols="2m,2m,1m,5",options="header"]
 |===
 | Header constant                           | Header value                                   | Type        | Description
-| DebeziumConstants.HEADER_IDENTIFIER       | "CamelDebeziumIdentifier"                      | String      | The identifier of the connector, normally is this format "+++{server-name}.{database-name}.{table-name}+++".
+| DebeziumConstants.HEADER_IDENTIFIER       | "CamelDebeziumIdentifier"                      | String      | The identifier of the connector, normally is this format "{server-name}.{database-name}.{table-name}".
 | DebeziumConstants.HEADER_KEY              | "CamelDebeziumKey"                             | Struct      | The key of the event, normally is the table Primary Key.
 | DebeziumConstants.HEADER_SOURCE_METADATA  | "CamelDebeziumSourceMetadata"                  | Map         | The metadata about the source event, for example `table` name, database `name`, log position, etc, please refer to the Debezium documentation for more info.
 | DebeziumConstants.HEADER_OPERATION        | "CamelDebeziumOperation"                       | String      | If presents, the type of event operation. Values for the connector are `c` for create (or insert), `u` for update, `d` for delete or `r` for read (in the case of a initial sync).
