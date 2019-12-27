@@ -93,7 +93,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
             try {
                 e.getCamelContext().removeService(s);
             } catch (Exception ex) {
-                LOG.error("Error removing service {}", s, ex);
+                LOG.debug("Error removing service: " +  s, ex);
             }
         }
     }
@@ -213,7 +213,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         try {
             s.stop();
         } catch (Exception e) {
-            LOG.debug("Error stopping service {}", s, e);
+            LOG.debug("Error stopping service: " +  s, e);
         }
     }
 
@@ -241,6 +241,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
 
         @Override
         public void release(S s) {
+            // noop
         }
 
         @Override
@@ -250,7 +251,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
 
         @Override
         public void stop() {
-            S toStop = null;
+            S toStop;
             synchronized (this) {
                 toStop = s;
                 s = null;
@@ -275,7 +276,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
                 try {
                     endpoint.getCamelContext().removeService(s);
                 } catch (Exception e) {
-                    LOG.debug("Error removing service {}", s, e);
+                    LOG.debug("Error removing service: " +  s, e);
                 }
             }
         }
