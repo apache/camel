@@ -92,17 +92,18 @@ with the following path and query parameters:
 | *format* (common) | Sets the data format for sending messages. | text | Format
 | *guiAvailable* (common) | Sets whether AS/400 prompting is enabled in the environment running Camel. | false | boolean
 | *keyed* (common) | Whether to use keyed or non-keyed data queues. | false | boolean
-| *outputFieldsIdxArray* (common) | Specifies which fields (program parameters) are output parameters. |  | Integer[]
-| *outputFieldsLengthArray* (common) | Specifies the fields (program parameters) length as in the AS/400 program definition. |  | Integer[]
 | *searchKey* (common) | Search key for keyed data queues. |  | String
-| *searchType* (common) | Search type such as EQ for equal etc. | EQ | SearchType
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *readTimeout* (consumer) | Timeout in millis the consumer will wait while trying to read a new message of the data queue. | 30000 | int
+| *searchType* (consumer) | Search type such as EQ for equal etc. | EQ | SearchType
 | *sendEmptyMessageWhenIdle* (consumer) | If the polling consumer did not poll any files, you can enable this option to send an empty message (no body) instead. | false | boolean
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
 | *pollStrategy* (consumer) | A pluggable org.apache.camel.PollingConsumerPollingStrategy allowing you to provide your custom implementation to control error handling usually occurred during the poll operation before an Exchange have been created and being routed in Camel. |  | PollingConsumerPollStrategy
 | *lazyStartProducer* (producer) | Whether the producer should be started lazy (on the first message). By starting lazy you can use this to allow CamelContext and routes to startup in situations where a producer may otherwise fail during starting and cause the route to fail being started. By deferring this startup to be lazy then the startup failure can be handled during routing messages via Camel's routing error handlers. Beware that when the first message is processed then creating and starting the producer may take a little time and prolong the total processing time of the processing. | false | boolean
+| *outputFieldsIdxArray* (producer) | Specifies which fields (program parameters) are output parameters. |  | Integer[]
+| *outputFieldsLengthArray* (producer) | Specifies the fields (program parameters) length as in the AS/400 program definition. |  | Integer[]
+| *procedureName* (producer) | Procedure name from a service program to call |  | String
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *backoffErrorThreshold* (scheduler) | The number of subsequent error polls (failed due some error) that should happen before the backoffMultipler should kick-in. |  | int
@@ -119,7 +120,6 @@ with the following path and query parameters:
 | *startScheduler* (scheduler) | Whether the scheduler should be auto started. | true | boolean
 | *timeUnit* (scheduler) | Time unit for initialDelay and delay options. | MILLISECONDS | TimeUnit
 | *useFixedDelay* (scheduler) | Controls if fixed delay or fixed rate is used. See ScheduledExecutorService in JDK for details. | true | boolean
-| *procedureName* (procedureName) | Procedure name from a service program to call |  | String
 | *secured* (security) | Whether connections to AS/400 are secured with SSL. | false | boolean
 |===
 // endpoint options: END

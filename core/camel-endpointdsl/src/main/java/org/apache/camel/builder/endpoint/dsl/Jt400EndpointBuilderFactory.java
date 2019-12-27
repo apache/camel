@@ -140,58 +140,6 @@ public interface Jt400EndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder outputFieldsIdxArray(
-                Integer[] outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder outputFieldsIdxArray(
-                String outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
-         * Specifies the fields (program parameters) length as in the AS/400
-         * program definition.
-         * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder outputFieldsLengthArray(
-                Integer[] outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
-            return this;
-        }
-        /**
-         * Specifies the fields (program parameters) length as in the AS/400
-         * program definition.
-         * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder outputFieldsLengthArray(
-                String outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
-            return this;
-        }
-        /**
          * Search key for keyed data queues.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -200,30 +148,6 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder searchKey(String searchKey) {
             doSetProperty("searchKey", searchKey);
-            return this;
-        }
-        /**
-         * Search type such as EQ for equal etc.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder searchType(SearchType searchType) {
-            doSetProperty("searchType", searchType);
-            return this;
-        }
-        /**
-         * Search type such as EQ for equal etc.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointConsumerBuilder searchType(String searchType) {
-            doSetProperty("searchType", searchType);
             return this;
         }
         /**
@@ -284,6 +208,30 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointConsumerBuilder readTimeout(String readTimeout) {
             doSetProperty("readTimeout", readTimeout);
+            return this;
+        }
+        /**
+         * Search type such as EQ for equal etc.
+         * 
+         * The option is a:
+         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
+         * 
+         * Group: consumer
+         */
+        default Jt400EndpointConsumerBuilder searchType(SearchType searchType) {
+            doSetProperty("searchType", searchType);
+            return this;
+        }
+        /**
+         * Search type such as EQ for equal etc.
+         * 
+         * The option will be converted to a
+         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
+         * 
+         * Group: consumer
+         */
+        default Jt400EndpointConsumerBuilder searchType(String searchType) {
+            doSetProperty("searchType", searchType);
             return this;
         }
         /**
@@ -670,17 +618,6 @@ public interface Jt400EndpointBuilderFactory {
             return this;
         }
         /**
-         * Procedure name from a service program to call.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: procedureName
-         */
-        default Jt400EndpointConsumerBuilder procedureName(String procedureName) {
-            doSetProperty("procedureName", procedureName);
-            return this;
-        }
-        /**
          * Whether connections to AS/400 are secured with SSL.
          * 
          * The option is a: <code>boolean</code> type.
@@ -958,58 +895,6 @@ public interface Jt400EndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder outputFieldsIdxArray(
-                Integer[] outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder outputFieldsIdxArray(
-                String outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
-         * Specifies the fields (program parameters) length as in the AS/400
-         * program definition.
-         * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder outputFieldsLengthArray(
-                Integer[] outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
-            return this;
-        }
-        /**
-         * Specifies the fields (program parameters) length as in the AS/400
-         * program definition.
-         * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder outputFieldsLengthArray(
-                String outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
-            return this;
-        }
-        /**
          * Search key for keyed data queues.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1018,30 +903,6 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointProducerBuilder searchKey(String searchKey) {
             doSetProperty("searchKey", searchKey);
-            return this;
-        }
-        /**
-         * Search type such as EQ for equal etc.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder searchType(SearchType searchType) {
-            doSetProperty("searchType", searchType);
-            return this;
-        }
-        /**
-         * Search type such as EQ for equal etc.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointProducerBuilder searchType(String searchType) {
-            doSetProperty("searchType", searchType);
             return this;
         }
         /**
@@ -1085,11 +946,63 @@ public interface Jt400EndpointBuilderFactory {
             return this;
         }
         /**
+         * Specifies which fields (program parameters) are output parameters.
+         * 
+         * The option is a: <code>java.lang.Integer[]</code> type.
+         * 
+         * Group: producer
+         */
+        default Jt400EndpointProducerBuilder outputFieldsIdxArray(
+                Integer[] outputFieldsIdxArray) {
+            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
+            return this;
+        }
+        /**
+         * Specifies which fields (program parameters) are output parameters.
+         * 
+         * The option will be converted to a <code>java.lang.Integer[]</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default Jt400EndpointProducerBuilder outputFieldsIdxArray(
+                String outputFieldsIdxArray) {
+            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
+            return this;
+        }
+        /**
+         * Specifies the fields (program parameters) length as in the AS/400
+         * program definition.
+         * 
+         * The option is a: <code>java.lang.Integer[]</code> type.
+         * 
+         * Group: producer
+         */
+        default Jt400EndpointProducerBuilder outputFieldsLengthArray(
+                Integer[] outputFieldsLengthArray) {
+            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+            return this;
+        }
+        /**
+         * Specifies the fields (program parameters) length as in the AS/400
+         * program definition.
+         * 
+         * The option will be converted to a <code>java.lang.Integer[]</code>
+         * type.
+         * 
+         * Group: producer
+         */
+        default Jt400EndpointProducerBuilder outputFieldsLengthArray(
+                String outputFieldsLengthArray) {
+            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
+            return this;
+        }
+        /**
          * Procedure name from a service program to call.
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
-         * Group: procedureName
+         * Group: producer
          */
         default Jt400EndpointProducerBuilder procedureName(String procedureName) {
             doSetProperty("procedureName", procedureName);
@@ -1284,58 +1197,6 @@ public interface Jt400EndpointBuilderFactory {
             return this;
         }
         /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder outputFieldsIdxArray(
-                Integer[] outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
-         * Specifies which fields (program parameters) are output parameters.
-         * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder outputFieldsIdxArray(
-                String outputFieldsIdxArray) {
-            doSetProperty("outputFieldsIdxArray", outputFieldsIdxArray);
-            return this;
-        }
-        /**
-         * Specifies the fields (program parameters) length as in the AS/400
-         * program definition.
-         * 
-         * The option is a: <code>java.lang.Integer[]</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder outputFieldsLengthArray(
-                Integer[] outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
-            return this;
-        }
-        /**
-         * Specifies the fields (program parameters) length as in the AS/400
-         * program definition.
-         * 
-         * The option will be converted to a <code>java.lang.Integer[]</code>
-         * type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder outputFieldsLengthArray(
-                String outputFieldsLengthArray) {
-            doSetProperty("outputFieldsLengthArray", outputFieldsLengthArray);
-            return this;
-        }
-        /**
          * Search key for keyed data queues.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -1344,41 +1205,6 @@ public interface Jt400EndpointBuilderFactory {
          */
         default Jt400EndpointBuilder searchKey(String searchKey) {
             doSetProperty("searchKey", searchKey);
-            return this;
-        }
-        /**
-         * Search type such as EQ for equal etc.
-         * 
-         * The option is a:
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder searchType(SearchType searchType) {
-            doSetProperty("searchType", searchType);
-            return this;
-        }
-        /**
-         * Search type such as EQ for equal etc.
-         * 
-         * The option will be converted to a
-         * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
-         * 
-         * Group: common
-         */
-        default Jt400EndpointBuilder searchType(String searchType) {
-            doSetProperty("searchType", searchType);
-            return this;
-        }
-        /**
-         * Procedure name from a service program to call.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: procedureName
-         */
-        default Jt400EndpointBuilder procedureName(String procedureName) {
-            doSetProperty("procedureName", procedureName);
             return this;
         }
         /**

@@ -71,14 +71,17 @@ public class Jt400Configuration {
 
     private final AS400ConnectionPool connectionPool;
 
-    @UriPath @Metadata(required = true, secret = true)
+    @UriPath(label = "security") @Metadata(required = true, secret = true)
     private String userID;
 
-    @UriPath @Metadata(required = true, secret = true)
+    @UriPath(label = "security") @Metadata(required = true, secret = true)
     private String password;
 
-    @UriPath @Metadata(required = true)
+    @UriPath(label = "security") @Metadata(required = true)
     private String systemName;
+
+    @UriParam(label = "security")
+    private boolean secured;
 
     @UriPath @Metadata(required = true)
     private String objectPath;
@@ -101,22 +104,19 @@ public class Jt400Configuration {
     @UriParam
     private String searchKey;
 
-    @UriParam(defaultValue = "EQ")
+    @UriParam(label = "consumer", defaultValue = "EQ")
     private SearchType searchType = SearchType.EQ;
 
-    @UriParam(label = "security")
-    private boolean secured;
-
-    @UriParam
+    @UriParam(label = "producer")
     private Integer[] outputFieldsIdxArray;
 
-    @UriParam
+    @UriParam(label = "producer")
     private Integer[] outputFieldsLengthArray;
 
     @UriParam(label = "consumer", defaultValue = "30000")
     private int readTimeout = 30000;
 
-    @UriParam(label = "procedureName")
+    @UriParam(label = "producer")
     private String procedureName;
 
     public Jt400Configuration(String endpointUri, AS400ConnectionPool connectionPool) throws URISyntaxException {
