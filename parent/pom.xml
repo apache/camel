@@ -177,7 +177,6 @@
         <egit-github-core-bundle-version>2.1.5_1</egit-github-core-bundle-version>
         <ehcache-version>2.10.6</ehcache-version>
         <ehcache3-version>3.8.1</ehcache3-version>
-        <ekstazi-maven-plugin-version>5.3.0</ekstazi-maven-plugin-version>
         <elasticsearch-rest-sniffer-version>7.3.2</elasticsearch-rest-sniffer-version>
         <elasticsearch-rest-cluster-runner-version>7.3.2.0</elasticsearch-rest-cluster-runner-version>
         <elasticsearch-rest-version>7.3.2</elasticsearch-rest-version>
@@ -4585,56 +4584,6 @@
                             <excludes>
                                 <exclude>**/*XXXTest.*</exclude>
                             </excludes>
-                        </configuration>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-
-        <!-- experimental profile to activate ekstazi http://www.ekstazi.org -->
-        <profile>
-            <id>ekstazi</id>
-            <activation>
-                <property>
-                    <name>ekstazi</name>
-                </property>
-            </activation>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.codehaus.woodstox</groupId>
-                    <artifactId>woodstox-core-asl</artifactId>
-                    <version>${woodstox-version}</version>
-                    <scope>test</scope>
-                </dependency>
-            </dependencies>
-
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.ekstazi</groupId>
-                        <artifactId>ekstazi-maven-plugin</artifactId>
-                        <version>${ekstazi-maven-plugin-version}</version>
-                        <configuration>
-                            <!-- always run tests that failed in prevoius run -->
-                            <forcefailing>true</forcefailing>
-                        </configuration>
-                        <executions>
-                            <execution>
-                                <id>doit</id>
-                                <goals>
-                                    <goal>select</goal>
-                                    <goal>restore</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <version>${maven-surefire-plugin-version}</version>
-                        <configuration>
-                            <excludesFile>${java.io.tmpdir}/${user.name}EkstaziExcludes</excludesFile>
                         </configuration>
                     </plugin>
                 </plugins>
