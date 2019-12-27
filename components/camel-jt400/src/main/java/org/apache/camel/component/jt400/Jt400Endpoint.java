@@ -94,12 +94,6 @@ public class Jt400Endpoint extends ScheduledPollEndpoint implements MultipleCons
         }
     }
 
-    @Override
-    public boolean isSingleton() {
-        // cannot be singleton as we store an AS400 instance on the configuration
-        return false;
-    }
-
     /**
      * Obtains an {@code AS400} object that connects to this endpoint. Since
      * these objects represent limited resources, clients have the

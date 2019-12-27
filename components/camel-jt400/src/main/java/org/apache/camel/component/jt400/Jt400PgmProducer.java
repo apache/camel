@@ -37,8 +37,6 @@ import org.slf4j.LoggerFactory;
 public class Jt400PgmProducer extends DefaultProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(Jt400PgmProducer.class);
-    
-    private AS400 iSeries;
 
     public Jt400PgmProducer(Jt400Endpoint endpoint) {
         super(endpoint);
@@ -51,39 +49,52 @@ public class Jt400PgmProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
 
-        String commandStr = getISeriesEndpoint().getObjectPath();
-        ProgramParameter[] parameterList = getParameterList(exchange);
+        AS400 iSeries = null;
+        try {
+            iSeries = connect();
 
-        ProgramCall pgmCall;
-        if (getISeriesEndpoint().getType() == Jt400Type.PGM) {
-            pgmCall = new ProgramCall(iSeries);
-        } else {
-            pgmCall = new ServiceProgramCall(iSeries);
-            ((ServiceProgramCall)pgmCall).setProcedureName(getISeriesEndpoint().getProcedureName());
-            ((ServiceProgramCall)pgmCall).setReturnValueFormat(ServiceProgramCall.NO_RETURN_VALUE);
-        }
-        pgmCall.setProgram(commandStr);
-        pgmCall.setParameterList(parameterList);
+            String commandStr = getISeriesEndpoint().getObjectPath();
+            ProgramParameter[] parameterList = getParameterList(exchange, iSeries);
 
-        if (LOG.isDebugEnabled()) {
-            LOG.trace("Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
+            ProgramCall pgmCall;
+            if (getISeriesEndpoint().getType() == Jt400Type.PGM) {
+                pgmCall = new ProgramCall(iSeries);
+            } else {
+                pgmCall = new ServiceProgramCall(iSeries);
+                ((ServiceProgramCall) pgmCall)
+                    .setProcedureName(getISeriesEndpoint().getProcedureName());
+                ((ServiceProgramCall) pgmCall)
+                    .setReturnValueFormat(ServiceProgramCall.NO_RETURN_VALUE);
+            }
+            pgmCall.setProgram(commandStr);
+            pgmCall.setParameterList(parameterList);
+
+            if (LOG.isDebugEnabled()) {
+                LOG.trace(
+                    "Starting to call PGM '{}' in host '{}' authentication with the user '{}'",
                     new Object[]{commandStr, iSeries.getSystemName(), iSeries.getUserId()});
-        }
+            }
 
-        boolean result = pgmCall.run();
+            boolean result = pgmCall.run();
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Executed PGM '{}' in host '{}'. Success? {}", commandStr, iSeries.getSystemName(), result);
-        }
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Executed PGM '{}' in host '{}'. Success? {}", commandStr,
+                    iSeries.getSystemName(), result);
+            }
 
-        if (result) {
-            handlePGMOutput(exchange, pgmCall, parameterList);
-        } else {
-            throw new Jt400PgmCallException(getOutputMessages(pgmCall));
+            if (result) {
+                handlePGMOutput(exchange, pgmCall, parameterList, iSeries);
+            } else {
+                throw new Jt400PgmCallException(getOutputMessages(pgmCall));
+            }
+        } catch (Exception e) {
+            throw new Jt400PgmCallException(e);
+        } finally {
+            release(iSeries);
         }
     }
 
-    private ProgramParameter[] getParameterList(Exchange exchange) throws InvalidPayloadException, PropertyVetoException {
+    private ProgramParameter[] getParameterList(Exchange exchange, AS400 iSeries) throws InvalidPayloadException, PropertyVetoException {
 
         Object body = exchange.getIn().getMandatoryBody();
 
@@ -147,7 +158,7 @@ public class Jt400PgmProducer extends DefaultProducer {
         return parameterList;
     }
 
-    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, ProgramParameter[] inputs) throws InvalidPayloadException {
+    private void handlePGMOutput(Exchange exchange, ProgramCall pgmCall, ProgramParameter[] inputs, AS400 iSeries) throws InvalidPayloadException {
 
         Object body = exchange.getIn().getMandatoryBody();
         Object[] params = (Object[]) body;
@@ -196,23 +207,20 @@ public class Jt400PgmProducer extends DefaultProducer {
         return outputMsg.toString();
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        if (iSeries == null) {
-            iSeries = getISeriesEndpoint().getSystem();
-        }
+    private AS400 connect() throws Exception {
+        AS400 iSeries = getISeriesEndpoint().getSystem();
         if (!iSeries.isConnected(AS400.COMMAND)) {
-            LOG.info("Connecting to {}", getISeriesEndpoint());
+            LOG.debug("Connecting to {}", getISeriesEndpoint());
             iSeries.connectService(AS400.COMMAND);
         }
+
+        return iSeries;
     }
 
-    @Override
-    protected void doStop() throws Exception {
+    private void release(AS400 iSeries) throws Exception {
         if (iSeries != null) {
-            LOG.info("Releasing connection to {}", getISeriesEndpoint());
+            LOG.debug("Releasing connection to {}", getISeriesEndpoint());
             getISeriesEndpoint().releaseSystem(iSeries);
-            iSeries = null;
         }
     }
 
