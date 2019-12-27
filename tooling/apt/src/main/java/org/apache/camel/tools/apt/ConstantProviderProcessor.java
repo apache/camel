@@ -76,7 +76,6 @@ public class ConstantProviderProcessor extends AbstractCamelAnnotationProcessor 
                     String name = field.getSimpleName().toString();
                     String text = (String) field.getConstantValue();
                     fields.put(name, text);
-                    dumpExceptionToErrorFile("camel-apt-error.log", "Name: " + field.getSimpleName().toString() + "=" + text, null);
                 }
             }
 
