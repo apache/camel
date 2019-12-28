@@ -19,13 +19,14 @@ package org.apache.camel.component.http;
 import java.io.ByteArrayInputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.component.http.HttpMethods.POST;
 
 public class HttpCharsetTest extends BaseHttpTest {
 
@@ -43,7 +44,7 @@ public class HttpCharsetTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/", new BasicValidationHandler("POST", null, getBody(), getExpectedContent())).create();
+                registerHandler("/", new BasicValidationHandler(POST.name(), null, getBody(), getExpectedContent())).create();
         localServer.start();
 
         super.setUp();
@@ -61,11 +62,9 @@ public class HttpCharsetTest extends BaseHttpTest {
 
     @Test
     public void sendCharsetInExchangeProperty() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.setProperty(Exchange.CHARSET_NAME, charset);
-                exchange.getIn().setBody(getBody());
-            }
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
+            exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange1.getIn().setBody(getBody());
         });
 
         assertExchange(exchange);
@@ -73,11 +72,9 @@ public class HttpCharsetTest extends BaseHttpTest {
 
     @Test
     public void sendByteArrayCharsetInExchangeProperty() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.setProperty(Exchange.CHARSET_NAME, charset);
-                exchange.getIn().setBody(getBody().getBytes(charset));
-            }
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
+            exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange1.getIn().setBody(getBody().getBytes(charset));
         });
 
         assertExchange(exchange);
@@ -85,26 +82,24 @@ public class HttpCharsetTest extends BaseHttpTest {
 
     @Test
     public void sendInputStreamCharsetInExchangeProperty() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.setProperty(Exchange.CHARSET_NAME, charset);
-                exchange.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
-            }
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/", exchange1 -> {
+            exchange1.setProperty(Exchange.CHARSET_NAME, charset);
+            exchange1.getIn().setBody(new ByteArrayInputStream(getBody().getBytes(charset)));
         });
 
         assertExchange(exchange);
     }
 
     protected String getBody() {
-        char lattinSmallLetterAWithDiaeresis = 0x00E4;
-        char lattinSmallLetterOWithDiaeresis = 0x00F6;
-        char lattinSmallLetterUWithDiaeresis = 0x00FC;
-        char lattinSmallLetterSharpS = 0x00DF;
+        char latinSmallLetterAWithDiaeresis = 0x00E4;
+        char latinSmallLetterOWithDiaeresis = 0x00F6;
+        char latinSmallLetterUWithDiaeresis = 0x00FC;
+        char latinSmallLetterSharpS = 0x00DF;
 
         return "hl=de&q=camel+"
-                + lattinSmallLetterAWithDiaeresis
-                + lattinSmallLetterOWithDiaeresis
-                + lattinSmallLetterUWithDiaeresis
-                + lattinSmallLetterSharpS;
+                + latinSmallLetterAWithDiaeresis
+                + latinSmallLetterOWithDiaeresis
+                + latinSmallLetterUWithDiaeresis
+                + latinSmallLetterSharpS;
     }
 }

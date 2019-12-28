@@ -171,6 +171,7 @@ public class HttpHelperTest {
                 createHttpEndpoint(true, "http://www.google.com"));
         assertEquals("http://www.google.com/", url);
     }
+
     @Test
     public void createURLShouldAddPathAndQueryParamsAndSlash() throws Exception {
         String url = HttpHelper.createURL(
@@ -178,6 +179,7 @@ public class HttpHelperTest {
                 createHttpEndpoint(true, "http://www.google.com/context?test=true"));
         assertEquals("http://www.google.com/context/search?test=true", url);
     }
+
     @Test
     public void createURLShouldAddPathAndQueryParamsAndRemoveDuplicateSlash() throws Exception {
         String url = HttpHelper.createURL(
