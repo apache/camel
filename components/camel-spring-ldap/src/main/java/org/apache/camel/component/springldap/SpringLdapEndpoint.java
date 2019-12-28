@@ -68,11 +68,6 @@ public class SpringLdapEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
-    @Override
     public String createEndpointUri() {
         return "spring-ldap://" + templateName + "?operation=" + operation.name() + "&scope=" + getScope();
     }
