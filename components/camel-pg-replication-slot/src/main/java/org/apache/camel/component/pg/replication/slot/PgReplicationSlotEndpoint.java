@@ -77,7 +77,7 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return null;
+        throw new UnsupportedOperationException("Producer not supported");
     }
 
     @Override
@@ -87,16 +87,8 @@ public class PgReplicationSlotEndpoint extends ScheduledPollEndpoint {
         return consumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     /**
      * Creates a new PostgreSQL JDBC connection that's setup for replication.
-     *
-     * @return JDBC connection
-     * @throws SQLException
      */
     Connection newDbConnection() throws SQLException {
         Properties props = new Properties();
