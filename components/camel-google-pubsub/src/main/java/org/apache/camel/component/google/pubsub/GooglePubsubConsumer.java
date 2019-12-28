@@ -68,9 +68,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
         localLog.info("Starting Google PubSub consumer for {}/{}", endpoint.getProjectId(), endpoint.getDestinationName());
         executor = endpoint.createExecutor();
         for (int i = 0; i < endpoint.getConcurrentConsumers(); i++) {
-
             executor.submit(new PubsubPoller(i + ""));
-
         }
     }
 
@@ -122,7 +120,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
                         continue;
                     }
 
-                    if (null == pullResponse.getReceivedMessages()) {
+                    if (pullResponse.getReceivedMessages() == null) {
                         continue;
                     }
 
@@ -159,7 +157,7 @@ class GooglePubsubConsumer extends DefaultConsumer {
                         }
                     }
                 } catch (Exception e) {
-                    localLog.error("Failure getting messages from PubSub : ", e);
+                    localLog.error("Failure getting messages from PubSub", e);
                 }
             }
         }

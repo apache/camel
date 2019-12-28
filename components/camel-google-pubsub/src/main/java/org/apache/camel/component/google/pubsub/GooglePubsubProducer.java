@@ -19,6 +19,7 @@ package org.apache.camel.component.google.pubsub;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -74,9 +75,6 @@ public class GooglePubsubProducer extends DefaultProducer {
 
     /**
      * The method converts a single incoming message into a List
-     *
-     * @param exchange
-     * @return
      */
     private static List<Exchange> prepareExchangeList(Exchange exchange) {
 
@@ -105,7 +103,7 @@ public class GooglePubsubProducer extends DefaultProducer {
             Object body = exchange.getIn().getBody();
 
             if (body instanceof String) {
-                message.encodeData(((String)body).getBytes("UTF-8"));
+                message.encodeData(((String)body).getBytes(StandardCharsets.UTF_8));
             } else if (body instanceof byte[]) {
                 message.encodeData((byte[])body);
             } else {

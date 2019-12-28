@@ -94,13 +94,6 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         return (SalesforceComponent)super.getComponent();
     }
 
-    @Override
-    public boolean isSingleton() {
-        // re-use endpoint instance across multiple threads
-        // the description of this method is a little confusing
-        return true;
-    }
-
     public SalesforceEndpointConfig getConfiguration() {
         return configuration;
     }
