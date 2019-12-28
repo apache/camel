@@ -232,23 +232,6 @@ public class SshConfiguration implements Cloneable {
         this.timeout = timeout;
     }
 
-    /**
-     * @deprecated As of version 2.11, replaced by {@link #getCertResource()}
-     */
-    @Deprecated
-    public String getCertFilename() {
-        return ((certResource != null) && certResource.startsWith("file:")) ? certResource.substring(5) : null;
-    }
-
-    /**
-     * @deprecated As of version 2.11, replaced by {@link #setCertResource(String)}
-     */
-    @Deprecated
-    @Metadata(deprecationNote = "As of version 2.11, replaced by certResource.")
-    public void setCertFilename(String certFilename) {
-        this.certResource = "file:" + certFilename;
-    }
-
     public String getCertResource() {
         return certResource;
     }
