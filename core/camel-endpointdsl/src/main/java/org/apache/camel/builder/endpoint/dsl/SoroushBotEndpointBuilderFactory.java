@@ -198,19 +198,6 @@ public interface SoroushBotEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authorization token for using the bot. if uri path does not
-         * contain authorization token, this token will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SoroushBotEndpointConsumerBuilder authorizationToken(
-                String authorizationToken) {
-            doSetProperty("authorizationToken", authorizationToken);
-            return this;
-        }
-        /**
          * The strategy to backoff in case of connection failure. Currently 3
          * strategies are supported: 1. Exponential (default): It multiply
          * retryWaitingTime by retryExponentialCoefficient after each connection
@@ -361,6 +348,19 @@ public interface SoroushBotEndpointBuilderFactory {
         default SoroushBotEndpointConsumerBuilder retryWaitingTime(
                 String retryWaitingTime) {
             doSetProperty("retryWaitingTime", retryWaitingTime);
+            return this;
+        }
+        /**
+         * The authorization token for using the bot. if uri path does not
+         * contain authorization token, this token will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SoroushBotEndpointConsumerBuilder authorizationToken(
+                String authorizationToken) {
+            doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
     }
@@ -730,19 +730,6 @@ public interface SoroushBotEndpointBuilderFactory {
             return this;
         }
         /**
-         * The authorization token for using the bot. if uri path does not
-         * contain authorization token, this token will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SoroushBotEndpointProducerBuilder authorizationToken(
-                String authorizationToken) {
-            doSetProperty("authorizationToken", authorizationToken);
-            return this;
-        }
-        /**
          * The strategy to backoff in case of connection failure. Currently 3
          * strategies are supported: 1. Exponential (default): It multiply
          * retryWaitingTime by retryExponentialCoefficient after each connection
@@ -895,6 +882,19 @@ public interface SoroushBotEndpointBuilderFactory {
             doSetProperty("retryWaitingTime", retryWaitingTime);
             return this;
         }
+        /**
+         * The authorization token for using the bot. if uri path does not
+         * contain authorization token, this token will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SoroushBotEndpointProducerBuilder authorizationToken(
+                String authorizationToken) {
+            doSetProperty("authorizationToken", authorizationToken);
+            return this;
+        }
     }
 
     /**
@@ -1019,19 +1019,6 @@ public interface SoroushBotEndpointBuilderFactory {
         default SoroushBotEndpointBuilder maxConnectionRetry(
                 String maxConnectionRetry) {
             doSetProperty("maxConnectionRetry", maxConnectionRetry);
-            return this;
-        }
-        /**
-         * The authorization token for using the bot. if uri path does not
-         * contain authorization token, this token will be used.
-         * 
-         * The option is a: <code>java.lang.String</code> type.
-         * 
-         * Group: security
-         */
-        default SoroushBotEndpointBuilder authorizationToken(
-                String authorizationToken) {
-            doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
         /**
@@ -1183,6 +1170,19 @@ public interface SoroushBotEndpointBuilderFactory {
         default SoroushBotEndpointBuilder retryWaitingTime(
                 String retryWaitingTime) {
             doSetProperty("retryWaitingTime", retryWaitingTime);
+            return this;
+        }
+        /**
+         * The authorization token for using the bot. if uri path does not
+         * contain authorization token, this token will be used.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: security
+         */
+        default SoroushBotEndpointBuilder authorizationToken(
+                String authorizationToken) {
+            doSetProperty("authorizationToken", authorizationToken);
             return this;
         }
     }
