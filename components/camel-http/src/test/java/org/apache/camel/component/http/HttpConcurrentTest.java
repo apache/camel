@@ -16,26 +16,19 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -56,16 +49,14 @@ public class HttpConcurrentTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/", new HttpRequestHandler() {
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        try {
-                            Thread.sleep(1000);
-                        } catch (InterruptedException e) {
-                            // ignore
-                        }
-                        response.setStatusCode(HttpStatus.SC_OK);
-                        response.setEntity(new StringEntity("" + counter.incrementAndGet()));
+                registerHandler("/", (request, response, context) -> {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        // ignore
                     }
+                    response.setStatusCode(HttpStatus.SC_OK);
+                    response.setEntity(new StringEntity("" + counter.incrementAndGet()));
                 }).create();
         localServer.start();
 
@@ -98,13 +89,8 @@ public class HttpConcurrentTest extends BaseHttpTest {
         // so no need for a thread-safe Map implementation
         Map<Integer, Future<String>> responses = new HashMap<>();
         for (int i = 0; i < files; i++) {
-            final int index = i;
-            Future<String> out = executor.submit(new Callable<String>() {
-                public String call() throws Exception {
-                    return template.requestBody("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort(), null, String.class);
-                }
-            });
-            responses.put(index, out);
+            Future<String> out = executor.submit(() -> template.requestBody("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort(), null, String.class));
+            responses.put(i, out);
         }
 
         assertEquals(files, responses.size());

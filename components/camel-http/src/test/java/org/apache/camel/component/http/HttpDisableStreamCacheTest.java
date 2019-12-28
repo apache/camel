@@ -19,7 +19,6 @@ package org.apache.camel.component.http;
 import java.io.InputStream;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.impl.bootstrap.HttpServer;
@@ -27,6 +26,8 @@ import org.apache.http.impl.bootstrap.ServerBootstrap;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.http.common.HttpMethods.GET;
 
 public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
@@ -41,7 +42,7 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/test/", new BasicValidationHandler("GET", null, null, getExpectedContent())).
+                registerHandler("/test/", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
                 create();
         localServer.start();
 
@@ -60,9 +61,7 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
 
     @Test
     public void httpDisableStreamCache() throws Exception {
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/test/?disableStreamCache=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/test/?disableStreamCache=true", exchange1 -> {
         });
 
         InputStream is = assertIsInstanceOf(InputStream.class, exchange.getOut().getBody());

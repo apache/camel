@@ -20,7 +20,6 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.http.HttpStatus;
 import org.apache.http.impl.bootstrap.HttpServer;
@@ -29,9 +28,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.component.http.HttpMethods.*;
+
 public class HttpMethodsTest extends BaseHttpTest {
 
     private HttpServer localServer;
+
+    private String baseUrl;
 
     @Before
     @Override
@@ -42,18 +45,20 @@ public class HttpMethodsTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/get", new BasicValidationHandler("GET", null, null, getExpectedContent())).
-                registerHandler("/patch", new BasicValidationHandler("PATCH", null, null, getExpectedContent())).
-                registerHandler("/patch1", new BasicValidationHandler("PATCH", null, "rocks camel?", getExpectedContent())).
-                registerHandler("/post", new BasicValidationHandler("POST", null, null, getExpectedContent())).
-                registerHandler("/post1", new BasicValidationHandler("POST", null, "rocks camel?", getExpectedContent())).
-                registerHandler("/put", new BasicValidationHandler("PUT", null, null, getExpectedContent())).
-                registerHandler("/trace", new BasicValidationHandler("TRACE", null, null, getExpectedContent())).
-                registerHandler("/options", new BasicValidationHandler("OPTIONS", null, null, getExpectedContent())).
-                registerHandler("/delete", new BasicValidationHandler("DELETE", null, null, getExpectedContent())).
-                registerHandler("/delete1", new BasicValidationHandler("DELETE", null, null, getExpectedContent())).
-                registerHandler("/head", new BasicValidationHandler("HEAD", null, null, getExpectedContent())).create();
+                registerHandler("/get", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
+                registerHandler("/patch", new BasicValidationHandler(PATCH.name(), null, null, getExpectedContent())).
+                registerHandler("/patch1", new BasicValidationHandler(PATCH.name(), null, "rocks camel?", getExpectedContent())).
+                registerHandler("/post", new BasicValidationHandler(POST.name(), null, null, getExpectedContent())).
+                registerHandler("/post1", new BasicValidationHandler(POST.name(), null, "rocks camel?", getExpectedContent())).
+                registerHandler("/put", new BasicValidationHandler(PUT.name(), null, null, getExpectedContent())).
+                registerHandler("/trace", new BasicValidationHandler(TRACE.name(), null, null, getExpectedContent())).
+                registerHandler("/options", new BasicValidationHandler(OPTIONS.name(), null, null, getExpectedContent())).
+                registerHandler("/delete", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent())).
+                registerHandler("/delete1", new BasicValidationHandler(DELETE.name(), null, null, getExpectedContent())).
+                registerHandler("/head", new BasicValidationHandler(HEAD.name(), null, null, getExpectedContent())).create();
         localServer.start();
+
+        baseUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
 
         super.setUp();
     }
@@ -71,9 +76,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpGet() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/get", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-            }
+        Exchange exchange = template.request(baseUrl + "/get", exchange1 -> {
         });
 
         assertExchange(exchange);
@@ -82,11 +85,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpGetWithUriParam() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/get?httpMethod=GET", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/get?httpMethod=GET", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "POST"));
 
         assertExchange(exchange);
     }
@@ -94,11 +93,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPatch() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/patch?throwExceptionOnFailure=false", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PATCH");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/patch?throwExceptionOnFailure=false", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PATCH"));
 
         assertNotNull(exchange);
         assertTrue(exchange.hasOut());
@@ -115,11 +110,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPatchWithBody() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/patch1?throwExceptionOnFailure=false", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("rocks camel?");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/patch1?throwExceptionOnFailure=false", exchange1 -> exchange1.getIn().setBody("rocks camel?"));
 
         assertNotNull(exchange);
         assertTrue(exchange.hasOut());
@@ -134,11 +125,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPost() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/post", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "POST");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/post", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "POST"));
 
         assertExchange(exchange);
     }
@@ -146,11 +133,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPostWithBody() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/post1", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("rocks camel?");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/post1", exchange1 -> exchange1.getIn().setBody("rocks camel?"));
 
         assertExchange(exchange);
     }
@@ -158,11 +141,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpPut() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/put", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PUT");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/put", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "PUT"));
 
         assertExchange(exchange);
     }
@@ -170,11 +149,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpTrace() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/trace", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "TRACE");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/trace", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "TRACE"));
 
         assertExchange(exchange);
     }
@@ -182,11 +157,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpOptions() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/options", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/options", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "OPTIONS"));
 
         assertExchange(exchange);
     }
@@ -194,11 +165,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpDelete() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/delete", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/delete", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE"));
 
         assertExchange(exchange);
     }
@@ -206,11 +173,9 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpDeleteWithBody() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/delete1?deleteWithBody=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE");
-                exchange.getIn().setBody("rocks camel?");
-            }
+        Exchange exchange = template.request(baseUrl + "/delete1?deleteWithBody=true", exchange1 -> {
+            exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "DELETE");
+            exchange1.getIn().setBody("rocks camel?");
         });
 
         assertExchange(exchange);
@@ -221,11 +186,9 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpGetWithBody() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/get?getWithBody=true", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "GET");
-                exchange.getIn().setBody("rocks camel?");
-            }
+        Exchange exchange = template.request(baseUrl + "/get?getWithBody=true", exchange1 -> {
+            exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "GET");
+            exchange1.getIn().setBody("rocks camel?");
         });
 
         assertExchange(exchange);
@@ -236,11 +199,7 @@ public class HttpMethodsTest extends BaseHttpTest {
     @Test
     public void httpHead() throws Exception {
 
-        Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/head", new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "HEAD");
-            }
-        });
+        Exchange exchange = template.request(baseUrl + "/head", exchange1 -> exchange1.getIn().setHeader(Exchange.HTTP_METHOD, "HEAD"));
 
         assertNotNull(exchange);
 

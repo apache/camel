@@ -27,6 +27,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.component.http.HttpMethods.GET;
+
+
 /**
  * Unit test that show custom header filter useful to send Connection Close header
  */
@@ -46,7 +49,7 @@ public class HttpProducerExplicitConnectionCloseTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/myget", new BasicValidationHandler("GET", null, null, getExpectedContent())).
+                registerHandler("/myget", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).
                 create();
         localServer.start();
 

@@ -22,6 +22,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.http.HttpStatus;
 
+import static org.apache.http.HttpHeaders.CONTENT_LENGTH;
+import static org.apache.http.HttpHeaders.CONTENT_TYPE;
+
 public abstract class BaseHttpsTest extends HttpsServerTestSupport {
 
     protected void assertExchange(Exchange exchange) {
@@ -35,8 +38,8 @@ public abstract class BaseHttpsTest extends HttpsServerTestSupport {
 
     protected void assertHeaders(Map<String, Object> headers) {
         assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("12", headers.get("Content-Length"));
-        assertNotNull("Should have Content-Type header", headers.get("Content-Type"));
+        assertEquals("12", headers.get(CONTENT_LENGTH));
+        assertNotNull("Should have Content-Type header", headers.get(CONTENT_TYPE));
     }
 
     protected void assertBody(String body) {

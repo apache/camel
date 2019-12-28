@@ -25,6 +25,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.component.http.HttpMethods.GET;
+
 public class HttpSendDynamicAwareTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -38,8 +40,8 @@ public class HttpSendDynamicAwareTest extends BaseHttpTest {
             setResponseFactory(getHttpResponseFactory()).
             setExpectationVerifier(getHttpExpectationVerifier()).
             setSslContext(getSSLContext()).
-            registerHandler("/moes", new DrinkValidationHandler("GET", null, null, "drink")).
-            registerHandler("/joes", new DrinkValidationHandler("GET", null, null, "drink")).
+            registerHandler("/moes", new DrinkValidationHandler(GET.name(), null, null, "drink")).
+            registerHandler("/joes", new DrinkValidationHandler(GET.name(), null, null, "drink")).
             create();
         localServer.start();
 

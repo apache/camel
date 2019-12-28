@@ -26,7 +26,7 @@ import org.junit.Test;
 public class HttpEndpointURLTest extends CamelTestSupport {
 
     @Test
-    public void testHttpEndpointURLWithIPv6() {
+    public void testHttpEndpointURLWithIPv6() throws Exception {
         HttpEndpoint endpoint = (HttpEndpoint)context.getEndpoint("http://[2a00:8a00:6000:40::1413]:30300/test?test=true");
         assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
     }

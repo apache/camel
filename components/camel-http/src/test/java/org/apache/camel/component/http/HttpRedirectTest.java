@@ -19,7 +19,6 @@ package org.apache.camel.component.http;
 import java.io.IOException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.http.handler.BasicValidationHandler;
 import org.apache.camel.http.common.HttpOperationFailedException;
 import org.apache.http.HttpException;
@@ -33,6 +32,8 @@ import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+
+import static org.apache.camel.component.http.HttpMethods.GET;
 
 /**
  *
@@ -50,7 +51,7 @@ public class HttpRedirectTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/someplaceelse", new BasicValidationHandler("GET", null, null, "Bye World")).
+                registerHandler("/someplaceelse", new BasicValidationHandler(GET.name(), null, null, "Bye World")).
                 registerHandler("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY)).
                 create();
         localServer.start();
@@ -74,10 +75,8 @@ public class HttpRedirectTest extends BaseHttpTest {
         String uri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
                 + "/test?httpClient.redirectsEnabled=false&httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
                 + "&httpClient.staleConnectionCheckEnabled=false";
-        Exchange out = template.request(uri, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // no data
-            }
+        Exchange out = template.request(uri, exchange -> {
+            // no data
         });
 
         assertNotNull(out);
@@ -93,10 +92,8 @@ public class HttpRedirectTest extends BaseHttpTest {
         String uri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort()
                 + "/test?httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
                 + "&httpClient.staleConnectionCheckEnabled=false";
-        Exchange out = template.request(uri, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                // no data
-            }
+        Exchange out = template.request(uri, exchange -> {
+            // no data
         });
 
         assertNotNull(out);

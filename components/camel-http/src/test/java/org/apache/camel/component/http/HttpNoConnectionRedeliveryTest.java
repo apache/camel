@@ -28,6 +28,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.http.common.HttpMethods.GET;
+
 public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
 
     private HttpServer localServer;
@@ -41,7 +43,7 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/search", new BasicValidationHandler("GET", null, null, getExpectedContent())).create();
+                registerHandler("/search", new BasicValidationHandler(GET.name(), null, null, getExpectedContent())).create();
         localServer.start();
 
         super.setUp();

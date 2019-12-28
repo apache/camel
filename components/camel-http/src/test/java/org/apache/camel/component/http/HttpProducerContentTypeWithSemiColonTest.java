@@ -16,52 +16,45 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public class HttpProducerContentTypeWithSemiColomnTest extends BaseHttpTest {
+public class HttpProducerContentTypeWithSemiColonTest extends BaseHttpTest {
 
     private static final String CONTENT_TYPE = "multipart/form-data;boundary=---------------------------j2radvtrk";
 
     private HttpServer localServer;
 
+    private String endpointUrl;
+
     @Before
     @Override
     public void setUp() throws Exception {
+        super.setUp();
+
         localServer = ServerBootstrap.bootstrap().
                 setHttpProcessor(getBasicHttpProcessor()).
                 setConnectionReuseStrategy(getConnectionReuseStrategy()).
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/content", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
+                registerHandler("/content", (request, response, context) -> {
+                    String contentType = request.getFirstHeader(Exchange.CONTENT_TYPE).getValue();
 
-                        assertEquals(CONTENT_TYPE.replace(";", "; "), contentType);
+                    assertEquals(CONTENT_TYPE.replace(";", "; "), contentType);
 
-                        response.setEntity(new StringEntity(contentType, "ASCII"));
-                        response.setStatusCode(HttpStatus.SC_OK);
-                    }
+                    response.setEntity(new StringEntity(contentType, "ASCII"));
+                    response.setStatusCode(HttpStatus.SC_OK);
                 }).create();
         localServer.start();
 
-        super.setUp();
+        endpointUrl = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort();
     }
 
     @After
@@ -76,14 +69,9 @@ public class HttpProducerContentTypeWithSemiColomnTest extends BaseHttpTest {
 
     @Test
     public void testContentTypeWithBoundary() throws Exception {
-        Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
-                exchange.getIn().setBody("This is content");
-            }
-
+        Exchange out = template.request(endpointUrl + "/content", exchange -> {
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
+            exchange.getIn().setBody("This is content");
         });
 
         assertNotNull(out);
@@ -94,14 +82,9 @@ public class HttpProducerContentTypeWithSemiColomnTest extends BaseHttpTest {
 
     @Test
     public void testContentTypeWithBoundaryWithIgnoreResponseBody() throws Exception {
-        Exchange out = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/content?ignoreResponseBody=true", new Processor() {
-
-            @Override
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
-                exchange.getIn().setBody("This is content");
-            }
-
+        Exchange out = template.request(endpointUrl + "/content?ignoreResponseBody=true", exchange -> {
+            exchange.getIn().setHeader(Exchange.CONTENT_TYPE, CONTENT_TYPE);
+            exchange.getIn().setBody("This is content");
         });
 
         assertNotNull(out);

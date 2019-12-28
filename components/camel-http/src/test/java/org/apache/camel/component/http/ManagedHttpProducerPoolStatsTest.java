@@ -16,22 +16,14 @@
  */
 package org.apache.camel.component.http;
 
-import java.io.IOException;
-
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.http.HttpException;
-import org.apache.http.HttpRequest;
-import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.bootstrap.HttpServer;
 import org.apache.http.impl.bootstrap.ServerBootstrap;
-import org.apache.http.protocol.HttpContext;
-import org.apache.http.protocol.HttpRequestHandler;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,12 +46,9 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
                 setResponseFactory(getHttpResponseFactory()).
                 setExpectationVerifier(getHttpExpectationVerifier()).
                 setSslContext(getSSLContext()).
-                registerHandler("/myapp", new HttpRequestHandler() {
-                    @Override
-                    public void handle(HttpRequest request, HttpResponse response, HttpContext context) throws HttpException, IOException {
-                        response.setEntity(new StringEntity("OK", "ASCII"));
-                        response.setStatusCode(HttpStatus.SC_OK);
-                    }
+                registerHandler("/myapp", (request, response, context) -> {
+                    response.setEntity(new StringEntity("OK", "ASCII"));
+                    response.setStatusCode(HttpStatus.SC_OK);
                 }).create();
         localServer.start();
 
@@ -83,11 +72,7 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
 
         String uri = "http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/myapp";
 
-        Exchange out = template.request(uri, new Processor() {
-            public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setBody("Hello World");
-            }
-        });
+        Exchange out = template.request(uri, exchange -> exchange.getIn().setBody("Hello World"));
 
         assertNotNull(out);
         assertEquals("OK", out.getOut().getBody(String.class));
