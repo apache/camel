@@ -163,3 +163,16 @@ Pay particular attention to the existence of *.asc (signature) files.
 If the you don't like the content of the repository, right click your repository and choose "Drop".
 You can then rollback your release and repeat the process.
 Note the repository URL, you will need this in your vote email.
+
+. Once the release has been voted
+
+* Login to https://repository.apache.org using your Apache LDAP credentials.
+Click on "Staging Repositories". Then select "org.apache.camel-xxx" in the list of repositories, where xxx represents
+your username and ip.
+Click "Release" on the tool bar above.
+This will release the artifacts.
+
+. Publish the xsd schemas
+
+* On https://github.com/apache/camel-website/tree/master/static/schema the xsd related to blueprint,cxf,spring-security and spring
+must be pushed to make them available to end users.
