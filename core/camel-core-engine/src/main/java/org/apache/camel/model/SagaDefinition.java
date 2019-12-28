@@ -60,8 +60,10 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
     @XmlElement(name = "option")
     private List<SagaOptionDefinition> options;
 
+    @XmlAttribute
+    private String sagaServiceRef;
     @XmlTransient
-    private CamelSagaService sagaService; // TODO add ref for xml configuration
+    private CamelSagaService sagaService;
 
     public SagaDefinition() {
     }
@@ -168,6 +170,17 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
         this.sagaService = sagaService;
     }
 
+    public String getSagaServiceRef() {
+        return sagaServiceRef;
+    }
+
+    /**
+     * Refers to the id to lookup in the registry for the specific CamelSagaService to use.
+     */
+    public void setSagaServiceRef(String sagaServiceRef) {
+        this.sagaServiceRef = sagaServiceRef;
+    }
+
     public List<SagaOptionDefinition> getOptions() {
         return options;
     }
@@ -228,6 +241,11 @@ public class SagaDefinition extends OutputDefinition<SagaDefinition> {
 
     public SagaDefinition sagaService(CamelSagaService sagaService) {
         setSagaService(sagaService);
+        return this;
+    }
+
+    public SagaDefinition sagaServiceRef(String sagaServiceRef) {
+        setSagaServiceRef(sagaServiceRef);
         return this;
     }
 
