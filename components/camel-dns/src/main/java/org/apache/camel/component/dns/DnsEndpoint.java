@@ -58,11 +58,6 @@ public class DnsEndpoint extends DefaultEndpoint {
         throw new UnsupportedOperationException("Consumer not supported");
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     public DnsType getDnsType() {
         return dnsType;
     }

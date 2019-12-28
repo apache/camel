@@ -108,7 +108,9 @@ public class GooglePubsubEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         afterPropertiesSet();
         setExchangePattern(ExchangePattern.InOnly);
-        return new GooglePubsubConsumer(this, processor);
+        GooglePubsubConsumer consumer = new GooglePubsubConsumer(this, processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public ExecutorService createExecutor() {

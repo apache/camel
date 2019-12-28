@@ -69,12 +69,6 @@ public class ControlBusEndpoint extends DefaultEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        // we dont want to be enlisted in JMX, so lets just be non-singleton
-        return false;
-    }
-
-    @Override
     public ControlBusComponent getComponent() {
         return (ControlBusComponent) super.getComponent();
     }
