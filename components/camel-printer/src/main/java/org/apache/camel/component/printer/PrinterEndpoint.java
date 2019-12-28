@@ -59,11 +59,6 @@ public class PrinterEndpoint extends DefaultEndpoint {
         return new PrinterProducer(this, config);
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
-
     public PrinterConfiguration getConfig() {
         return config;
     }
