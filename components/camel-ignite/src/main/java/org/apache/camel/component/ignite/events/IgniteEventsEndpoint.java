@@ -94,8 +94,6 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the endpoint ID (not used).
-     * 
-     * @return endpoint ID (not used)
      */
     public String getEndpointId() {
         return endpointId;
@@ -103,8 +101,6 @@ public class IgniteEventsEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The endpoint ID (not used).
-     * 
-     * @param endpointId endpoint ID (not used)
      */
     public void setEndpointId(String endpointId) {
         this.endpointId = endpointId;

@@ -94,8 +94,6 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the topic name.
-     * 
-     * @return topic name
      */
     public String getTopic() {
         return topic;
@@ -103,8 +101,6 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The topic name.
-     * 
-     * @param topic topic name
      */
     public void setTopic(String topic) {
         this.topic = topic;
@@ -112,8 +108,6 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the cluster group expression.
-     * 
-     * @return cluster group expression
      */
     public ClusterGroupExpression getClusterGroupExpression() {
         return clusterGroupExpression;
@@ -121,8 +115,6 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The cluster group expression.
-     * 
-     * @param clusterGroupExpression cluster group expression
      */
     public void setClusterGroupExpression(ClusterGroupExpression clusterGroupExpression) {
         this.clusterGroupExpression = clusterGroupExpression;
@@ -130,8 +122,6 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the timeout.
-     * 
-     * @return timeout
      */
     public Long getTimeout() {
         return timeout;
@@ -139,8 +129,6 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The timeout for the send operation when using ordered messages.
-     * 
-     * @param timeout timeout
      */
     public void setTimeout(Long timeout) {
         this.timeout = timeout;
@@ -148,8 +136,6 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the send mode.
-     * 
-     * @return send mode
      */
     public IgniteMessagingSendMode getSendMode() {
         return sendMode;
@@ -158,8 +144,6 @@ public class IgniteMessagingEndpoint extends AbstractIgniteEndpoint {
     /**
      * The send mode to use.
      * Possible values: UNORDERED, ORDERED.
-     * 
-     * @param sendMode send mode
      */
     public void setSendMode(IgniteMessagingSendMode sendMode) {
         this.sendMode = sendMode;
