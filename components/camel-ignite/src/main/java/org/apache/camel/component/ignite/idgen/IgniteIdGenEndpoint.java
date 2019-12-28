@@ -80,8 +80,6 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the name.
-     * 
-     * @return name
      */
     public String getName() {
         return name;
@@ -89,8 +87,6 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The sequence name.
-     * 
-     * @param name name
      */
     public void setName(String name) {
         this.name = name;
@@ -98,8 +94,6 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the initial value.
-     * 
-     * @return initial value
      */
     public Long getInitialValue() {
         return initialValue;
@@ -107,8 +101,6 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The initial value.
-     * 
-     * @param initialValue initial value
      */
     public void setInitialValue(Long initialValue) {
         this.initialValue = initialValue;
@@ -116,8 +108,6 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the operation.
-     * 
-     * @return operation
      */
     public IgniteIdGenOperation getOperation() {
         return operation;
@@ -127,8 +117,6 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
      * The operation to invoke on the Ignite ID Generator.
      * Superseded by the IgniteConstants.IGNITE_IDGEN_OPERATION header in the IN message.
      * Possible values: ADD_AND_GET, GET, GET_AND_ADD, GET_AND_INCREMENT, INCREMENT_AND_GET.
-     * 
-     * @param operation operation
      */
     public void setOperation(IgniteIdGenOperation operation) {
         this.operation = operation;
@@ -136,8 +124,6 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the batch size.
-     * 
-     * @return batch size
      */
     public Integer getBatchSize() {
         return batchSize;
@@ -145,8 +131,6 @@ public class IgniteIdGenEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The batch size.
-     * 
-     * @param batchSize batch size
      */
     public void setBatchSize(Integer batchSize) {
         this.batchSize = batchSize;

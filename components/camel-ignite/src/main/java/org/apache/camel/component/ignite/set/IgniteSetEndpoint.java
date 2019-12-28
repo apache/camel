@@ -73,8 +73,6 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the set name.
-     * 
-     * @return
      */
     public String getName() {
         return name;
@@ -82,8 +80,6 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * The set name.
-     * 
-     * @param name
      */
     public void setName(String name) {
         this.name = name;
@@ -91,8 +87,6 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the collection configuration. Default: empty configuration.
-     * 
-     * @return
      */
     public CollectionConfiguration getConfiguration() {
         return configuration;
@@ -102,8 +96,6 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
      * The collection configuration. Default: empty configuration.
      * <p>
      * You can also conveniently set inner properties by using <tt>configuration.xyz=123</tt> options.
-     * 
-     * @param configuration
      */
     public void setConfiguration(CollectionConfiguration configuration) {
         this.configuration = configuration;
@@ -111,8 +103,6 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
 
     /**
      * Gets the set operation to perform.
-     * 
-     * @return
      */
     public IgniteSetOperation getOperation() {
         return operation;
@@ -122,8 +112,6 @@ public class IgniteSetEndpoint extends AbstractIgniteEndpoint {
      * The operation to invoke on the Ignite Set.
      * Superseded by the IgniteConstants.IGNITE_SETS_OPERATION header in the IN message.
      * Possible values: CONTAINS, ADD, SIZE, REMOVE, ITERATOR, CLEAR, RETAIN_ALL, ARRAY.The set operation to perform.
-     * 
-     * @param operation
      */
     public void setOperation(IgniteSetOperation operation) {
         this.operation = operation;
