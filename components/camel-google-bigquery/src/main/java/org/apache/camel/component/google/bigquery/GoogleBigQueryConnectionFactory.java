@@ -113,14 +113,15 @@ public class GoogleBigQueryConnectionFactory {
     }
 
     private GoogleCredential createFromFile() throws Exception {
+        try (InputStream is = new FileInputStream(credentialsFileLocation)) {
+            GoogleCredential credential = GoogleCredential.fromStream(is);
 
-        GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(credentialsFileLocation));
+            if (credential.createScopedRequired()) {
+                credential = credential.createScoped(BigqueryScopes.all());
+            }
 
-        if (credential.createScopedRequired()) {
-            credential = credential.createScoped(BigqueryScopes.all());
+            return credential;
         }
-
-        return credential;
     }
 
     private GoogleCredential createDefault() throws Exception {
