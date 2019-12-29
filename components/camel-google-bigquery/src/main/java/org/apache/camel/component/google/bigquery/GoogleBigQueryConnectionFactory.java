@@ -17,6 +17,7 @@
 package org.apache.camel.component.google.bigquery;
 
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.spec.PKCS8EncodedKeySpec;
