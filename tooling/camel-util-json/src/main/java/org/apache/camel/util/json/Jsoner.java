@@ -753,8 +753,6 @@ public final class Jsoner {
      *            to a string in JSON format.
      * @param writableDestination represents where the resulting JSON text is
      *            written to.
-     * @param replacement represents what is serialized instead of a non-JSON
-     *            value when replacements are allowed.
      * @param flags represents the allowances and restrictions on serialization.
      * @throws IOException if the writableDestination encounters an I/O problem.
      * @throws IllegalArgumentException if the jsonSerializable isn't

@@ -319,9 +319,6 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
 
     /**
      * Removes the Signature elements from the document.
-     * 
-     * @param doc
-     *            document
      */
     protected void removeSignatureElements(Node node) {
         Document doc = XmlSignatureHelper.getDocument(node);
