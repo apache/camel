@@ -25,6 +25,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.RouteAware;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
@@ -33,7 +34,7 @@ import org.apache.camel.util.URISupport;
 /**
  * A default consumer useful for implementation inheritance.
  */
-public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware {
+public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware, RouteIdAware {
 
     private transient String consumerToString;
     private final Endpoint endpoint;
@@ -41,6 +42,7 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     private volatile AsyncProcessor asyncProcessor;
     private ExceptionHandler exceptionHandler;
     private Route route;
+    private String routeId;
 
     public DefaultConsumer(Endpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
@@ -64,6 +66,16 @@ public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAw
     @Override
     public void setRoute(Route route) {
         this.route = route;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     /**
