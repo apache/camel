@@ -24,6 +24,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 
@@ -32,9 +33,10 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 /**
  * The processor which sends messages in a loop.
  */
-public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
+public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
 
     private String id;
+    private String routeId;
     private final Expression expression;
     private final Predicate predicate;
     private final boolean copy;
@@ -49,7 +51,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-
             LoopState state = new LoopState(exchange, callback);
 
             if (exchange.isTransacted()) {
@@ -58,7 +59,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
                 exchange.getContext().getReactiveExecutor().scheduleMain(state);
             }
             return false;
-
         } catch (Exception e) {
             exchange.setException(e);
             callback.done(true);
@@ -180,6 +180,16 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

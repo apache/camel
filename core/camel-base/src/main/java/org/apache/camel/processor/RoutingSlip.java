@@ -32,6 +32,7 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
 import org.apache.camel.support.ExchangeHelper;
@@ -52,9 +53,10 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * as the failover load balancer is a specialized pipeline. So the trick is to keep doing the same as the
  * pipeline to ensure it works the same and the async routing engine is flawless.
  */
-public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdAware {
+public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     protected String id;
+    protected String routeId;
     protected ProducerCache producerCache;
     protected int cacheSize;
     protected boolean ignoreInvalidEndpoints;
@@ -110,6 +112,16 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public Expression getExpression() {

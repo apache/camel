@@ -36,6 +36,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -47,9 +48,10 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Processor for wire tapping exchanges to an endpoint destination.
  */
-public class WireTapProcessor extends AsyncProcessorSupport implements Traceable, ShutdownAware, IdAware, CamelContextAware {
+public class WireTapProcessor extends AsyncProcessorSupport implements Traceable, ShutdownAware, IdAware, RouteIdAware, CamelContextAware {
 
     private String id;
+    private String routeId;
     private CamelContext camelContext;
     private final SendDynamicProcessor dynamicProcessor;
     private final String uri;
@@ -97,6 +99,16 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

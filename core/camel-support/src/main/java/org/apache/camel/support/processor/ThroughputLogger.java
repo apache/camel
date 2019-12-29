@@ -27,15 +27,17 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.CamelLogger;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A logger for logging message throughput.
  */
-public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProcessor, IdAware {
+public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProcessor, IdAware, RouteIdAware {
 
     private String id;
+    private String routeId;
     private final AtomicInteger receivedCounter = new AtomicInteger();
     private NumberFormat numberFormat = NumberFormat.getNumberInstance();
     private long groupReceivedCount;
@@ -80,6 +82,16 @@ public class ThroughputLogger extends AsyncProcessorSupport implements AsyncProc
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

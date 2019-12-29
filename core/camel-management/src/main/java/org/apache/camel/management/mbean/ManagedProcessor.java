@@ -30,6 +30,7 @@ import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.StepDefinition;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.service.ServiceHelper;
 
 @ManagedResource(description = "Managed Processor")
@@ -133,6 +134,8 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
     public String getRouteId() {
         if (route != null) {
             return route.getId();
+        } else if (processor instanceof RouteIdAware) {
+            return ((RouteIdAware) processor).getRouteId();
         }
         return null;
     }

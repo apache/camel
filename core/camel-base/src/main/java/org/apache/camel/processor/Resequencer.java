@@ -44,6 +44,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExpressionComparator;
@@ -55,12 +56,13 @@ import org.apache.camel.util.ObjectHelper;
  * An implementation of the <a href="http://camel.apache.org/resequencer.html">Resequencer</a>
  * which can reorder messages within a batch.
  */
-public class Resequencer extends AsyncProcessorSupport implements Navigate<Processor>, IdAware, Traceable {
+public class Resequencer extends AsyncProcessorSupport implements Navigate<Processor>, IdAware, RouteIdAware, Traceable {
 
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
 
     private String id;
+    private String routeId;
     private long batchTimeout = DEFAULT_BATCH_TIMEOUT;
     private int batchSize = DEFAULT_BATCH_SIZE;
     private int outBatchSize;
@@ -250,7 +252,17 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
         this.id = id;
     }
 
-    // Implementation methods
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
+
+// Implementation methods
     //-------------------------------------------------------------------------
 
     protected static Set<Exchange> createSet(Expression expression, boolean allowDuplicates, boolean reverse) {

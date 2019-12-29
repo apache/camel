@@ -25,16 +25,18 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
 
 /**
  * A default base class for a {@link LoadBalancer} implementation.
  */
-public abstract class LoadBalancerSupport extends AsyncProcessorSupport implements LoadBalancer, Navigate<Processor>, IdAware {
+public abstract class LoadBalancerSupport extends AsyncProcessorSupport implements LoadBalancer, Navigate<Processor>, IdAware, RouteIdAware {
 
     private final AtomicReference<AsyncProcessor[]> processors = new AtomicReference<>(new AsyncProcessor[0]);
     private String id;
+    private String routeId;
 
     @Override
     public void addProcessor(AsyncProcessor processor) {
@@ -97,6 +99,16 @@ public abstract class LoadBalancerSupport extends AsyncProcessorSupport implemen
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

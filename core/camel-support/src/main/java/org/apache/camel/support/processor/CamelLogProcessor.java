@@ -27,6 +27,7 @@ import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.LogListener;
 import org.apache.camel.spi.MaskingFormatter;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
@@ -36,9 +37,10 @@ import org.apache.camel.support.AsyncProcessorSupport;
  * The name <tt>CamelLogger</tt> has been chosen to avoid any name clash with log kits
  * which has a <tt>Logger</tt> class.
  */
-public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware {
+public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware {
 
     private String id;
+    private String routeId;
     private CamelLogger logger;
     private ExchangeFormatter formatter;
     private MaskingFormatter maskingFormatter;
@@ -73,6 +75,16 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware 
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

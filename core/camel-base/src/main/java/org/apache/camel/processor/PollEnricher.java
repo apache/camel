@@ -31,6 +31,7 @@ import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.BridgeExceptionHandlerToErrorHandler;
 import org.apache.camel.support.DefaultConsumer;
@@ -52,11 +53,12 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  *
  * @see Enricher
  */
-public class PollEnricher extends AsyncProcessorSupport implements IdAware, CamelContextAware {
+public class PollEnricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
 
     private CamelContext camelContext;
     private ConsumerCache consumerCache;
     private String id;
+    private String routeId;
     private AggregationStrategy aggregationStrategy;
     private final Expression expression;
     private long timeout;
@@ -93,6 +95,16 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Came
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public Expression getExpression() {

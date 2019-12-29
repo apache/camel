@@ -21,14 +21,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
  * Processor for marking an {@link org.apache.camel.Exchange} to rollback.
  */
-public class RollbackProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
+public class RollbackProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private String id;
+    private String routeId;
     private boolean markRollbackOnly;
     private boolean markRollbackOnlyLast;
     private String message;
@@ -90,6 +92,16 @@ public class RollbackProcessor extends AsyncProcessorSupport implements Traceabl
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public String getMessage() {

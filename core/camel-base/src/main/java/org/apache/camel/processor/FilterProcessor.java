@@ -22,6 +22,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.support.service.ServiceHelper;
 
@@ -29,9 +30,10 @@ import org.apache.camel.support.service.ServiceHelper;
  * The processor which implements the
  * <a href="http://camel.apache.org/message-filter.html">Message Filter</a> EIP pattern.
  */
-public class FilterProcessor extends DelegateAsyncProcessor implements Traceable, IdAware {
+public class FilterProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
 
     private String id;
+    private String routeId;
     private final Predicate predicate;
     private transient long filtered;
 
@@ -86,6 +88,16 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 
 /**
  * A <a href="http://camel.apache.org/delayer.html">Delayer</a> which
@@ -32,7 +33,8 @@ import org.apache.camel.spi.IdAware;
  * <p/>
  * This implementation will block while waiting.
  */
-public class Delayer extends DelayProcessorSupport implements Traceable, IdAware {
+public class Delayer extends DelayProcessorSupport implements Traceable, IdAware, RouteIdAware {
+    private String routeId;
     private String id;
     private Expression delay;
     private long delayValue;
@@ -56,6 +58,16 @@ public class Delayer extends DelayProcessorSupport implements Traceable, IdAware
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

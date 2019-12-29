@@ -26,14 +26,16 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * The processor which sets an {@link Exception} on the {@link Exchange}
  */
-public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Traceable, IdAware, CamelContextAware {
+public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware, CamelContextAware {
     private String id;
+    private String routeId;
     private CamelContext camelContext;
     private Expression simple;
     private final Exception exception;
@@ -92,6 +94,16 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Tr
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public Exception getException() {

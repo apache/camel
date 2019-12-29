@@ -30,6 +30,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
@@ -41,11 +42,12 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * Creates a Pipeline pattern where the output of the previous step is sent as
  * input to the next step, reusing the same message exchanges
  */
-public class Pipeline extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware {
+public class Pipeline extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private final CamelContext camelContext;
     private List<AsyncProcessor> processors;
     private String id;
+    private String routeId;
 
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         this.camelContext = camelContext;
@@ -162,6 +164,16 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override
