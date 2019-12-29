@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -40,10 +41,11 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 /**
  * Processor implementing <a href="http://camel.apache.org/oncompletion.html">onCompletion</a>.
  */
-public class OnCompletionProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
+public class OnCompletionProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private final CamelContext camelContext;
     private String id;
+    private String routeId;
     private final Processor processor;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
@@ -98,6 +100,16 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

@@ -47,6 +47,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
 
     private CamelContext camelContext;
     private String id;
+    private String routeId;
     private final Expression messageIdExpression;
     private final AsyncProcessor processor;
     private final IdempotentRepository idempotentRepository;
@@ -90,6 +91,14 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

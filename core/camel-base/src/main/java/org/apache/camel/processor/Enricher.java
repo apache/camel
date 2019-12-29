@@ -31,6 +31,7 @@ import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultExchange;
@@ -53,10 +54,11 @@ import static org.apache.camel.support.ExchangeHelper.copyResultsPreservePattern
  *
  * @see PollEnricher
  */
-public class Enricher extends AsyncProcessorSupport implements IdAware, CamelContextAware {
+public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
 
     private CamelContext camelContext;
     private String id;
+    private String routeId;
     private ProducerCache producerCache;
     private final Expression expression;
     private AggregationStrategy aggregationStrategy;
@@ -87,6 +89,16 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, CamelCon
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public Expression getExpression() {

@@ -31,6 +31,7 @@ import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.ObjectHelper;
@@ -45,11 +46,12 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * pattern where the list of actual endpoints to send a message exchange to are
  * dependent on some dynamic expression.
  */
-public class RecipientList extends AsyncProcessorSupport implements IdAware {
+public class RecipientList extends AsyncProcessorSupport implements IdAware, RouteIdAware {
 
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
     private String id;
+    private String routeId;
     private ProducerCache producerCache;
     private Expression expression;
     private final String delimiter;
@@ -107,6 +109,16 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware {
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

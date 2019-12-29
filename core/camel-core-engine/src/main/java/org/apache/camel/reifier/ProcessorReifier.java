@@ -27,6 +27,7 @@ import org.apache.camel.Channel;
 import org.apache.camel.ErrorHandlerFactory;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteAware;
 import org.apache.camel.model.AggregateDefinition;
 import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.CatchDefinition;
@@ -106,6 +107,7 @@ import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteIdAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -488,6 +490,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
                 String id = getId(output, routeContext);
                 ((IdAware)processor).setId(id);
             }
+            if (processor instanceof RouteIdAware) {
+                ((RouteIdAware)processor).setRouteId(routeContext.getRouteId());
+            }
 
             if (output instanceof Channel && processor == null) {
                 continue;
@@ -575,6 +580,9 @@ public abstract class ProcessorReifier<T extends ProcessorDefinition<?>> extends
         if (processor instanceof IdAware) {
             String id = getId(definition, routeContext);
             ((IdAware)processor).setId(id);
+        }
+        if (processor instanceof RouteIdAware) {
+            ((RouteIdAware)processor).setRouteId(routeContext.getRouteId());
         }
 
         if (processor == null) {

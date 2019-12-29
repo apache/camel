@@ -23,6 +23,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 
 /**
@@ -36,9 +37,10 @@ import org.apache.camel.support.AsyncProcessorSupport;
  * an exchange stream, rough consolidation of noisy and bursty exchange traffic
  * or where queuing of throttled exchanges is undesirable.
  */
-public class SamplingThrottler extends AsyncProcessorSupport implements Traceable, IdAware {
+public class SamplingThrottler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private String id;
+    private String routeId;
     private long messageFrequency;
     private long currentMessageCount;
     private long samplePeriod;
@@ -85,6 +87,16 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

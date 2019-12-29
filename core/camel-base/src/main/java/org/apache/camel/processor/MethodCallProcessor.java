@@ -22,6 +22,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
@@ -30,8 +31,9 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * A processor which are used when calling a method and setting the response as the message body
  */
-public class MethodCallProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
+public class MethodCallProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
     private String id;
+    private String routeId;
     private final Expression expression;
 
     public MethodCallProcessor(Expression expression) {
@@ -102,6 +104,16 @@ public class MethodCallProcessor extends AsyncProcessorSupport implements Tracea
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public Expression getExpression() {

@@ -30,6 +30,7 @@ import org.apache.camel.Traceable;
 import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.EventHelper;
@@ -43,7 +44,7 @@ import org.apache.camel.util.URISupport;
  *
  * @see SendDynamicProcessor
  */
-public class SendProcessor extends AsyncProcessorSupport implements Traceable, EndpointAware, IdAware {
+public class SendProcessor extends AsyncProcessorSupport implements Traceable, EndpointAware, IdAware, RouteIdAware {
 
     protected transient String traceLabelToString;
     protected final CamelContext camelContext;
@@ -53,6 +54,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     protected Endpoint destination;
     protected ExchangePattern destinationExchangePattern;
     protected String id;
+    protected String routeId;
     protected volatile long counter;
 
     public SendProcessor(Endpoint destination) {
@@ -86,6 +88,15 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

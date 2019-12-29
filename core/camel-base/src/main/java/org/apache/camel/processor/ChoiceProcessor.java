@@ -27,6 +27,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.service.ServiceHelper;
@@ -38,9 +39,10 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * they are true their processors are used, with a default otherwise clause used
  * if none match.
  */
-public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware {
+public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private String id;
+    private String routeId;
     private final List<FilterProcessor> filters;
     private final Processor otherwise;
     private transient long notFiltered;
@@ -193,6 +195,16 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

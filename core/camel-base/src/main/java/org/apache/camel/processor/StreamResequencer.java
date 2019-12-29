@@ -36,6 +36,7 @@ import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.LoggingExceptionHandler;
 import org.apache.camel.support.service.ServiceHelper;
@@ -62,9 +63,10 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @see ResequencerEngine
  */
-public class StreamResequencer extends AsyncProcessorSupport implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware {
+public class StreamResequencer extends AsyncProcessorSupport implements SequenceSender<Exchange>, Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     private String id;
+    private String routeId;
     private final CamelContext camelContext;
     private final ExceptionHandler exceptionHandler;
     private final ResequencerEngine<Exchange> engine;
@@ -186,6 +188,16 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

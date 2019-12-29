@@ -22,14 +22,16 @@ import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the header on the IN or OUT message with an {@link org.apache.camel.Expression}
  */
-public class SetHeaderProcessor extends AsyncProcessorSupport implements Traceable, IdAware {
+public class SetHeaderProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
     private String id;
+    private String routeId;
     private final Expression headerName;
     private final Expression expression;
 
@@ -82,6 +84,16 @@ public class SetHeaderProcessor extends AsyncProcessorSupport implements Traceab
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     public String getHeaderName() {

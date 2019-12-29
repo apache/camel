@@ -33,6 +33,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.util.ObjectHelper;
 
@@ -56,7 +57,7 @@ import org.apache.camel.util.ObjectHelper;
  * callers point of view in the last timePeriodMillis no more than
  * maxRequestsPerPeriod have been allowed to be acquired.
  */
-public class Throttler extends AsyncProcessorSupport implements Traceable, IdAware {
+public class Throttler extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
 
     private static final String DEFAULT_KEY = "CamelThrottlerDefaultKey";
 
@@ -72,6 +73,7 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     private volatile long timePeriodMillis;
     private volatile long cleanPeriodMillis;
     private String id;
+    private String routeId;
     private Expression maxRequestsPerPeriodExpression;
     private boolean rejectExecution;
     private boolean asyncDelayed;
@@ -387,6 +389,16 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
     @Override
     public void setId(final String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     /**

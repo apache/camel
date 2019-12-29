@@ -24,6 +24,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.builder.OutputStreamBuilder;
 import org.apache.camel.support.service.ServiceHelper;
@@ -33,8 +34,9 @@ import org.apache.camel.util.ObjectHelper;
  * Marshals the body of the incoming message using the given
  * <a href="http://camel.apache.org/data-format.html">data format</a>
  */
-public class MarshalProcessor extends AsyncProcessorSupport implements Traceable, CamelContextAware, IdAware {
+public class MarshalProcessor extends AsyncProcessorSupport implements Traceable, CamelContextAware, IdAware, RouteIdAware {
     private String id;
+    private String routeId;
     private CamelContext camelContext;
     private final DataFormat dataFormat;
 
@@ -89,6 +91,16 @@ public class MarshalProcessor extends AsyncProcessorSupport implements Traceable
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

@@ -51,6 +51,7 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -71,7 +72,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  *
  * @see Pipeline
  */
-public class MulticastProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware {
+public class MulticastProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, IdAware, RouteIdAware {
 
     /**
      * Class that represent each step in the multicast route to do
@@ -140,6 +141,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     protected final Processor onPrepare;
     private final CamelContext camelContext;
     private String id;
+    private String routeId;
     private Collection<Processor> processors;
     private final AggregationStrategy aggregationStrategy;
     private final boolean parallelProcessing;
@@ -203,6 +205,16 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

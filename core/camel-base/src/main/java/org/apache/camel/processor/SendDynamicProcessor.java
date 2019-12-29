@@ -30,6 +30,7 @@ import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.ProducerCache;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.SendDynamicAware;
 import org.apache.camel.support.AsyncProcessorSupport;
 import org.apache.camel.support.EndpointHelper;
@@ -42,7 +43,7 @@ import org.apache.camel.util.URISupport;
  *
  * @see org.apache.camel.processor.SendProcessor
  */
-public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAware, CamelContextAware {
+public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAware, RouteIdAware, CamelContextAware {
 
     protected SendDynamicAware dynamicAware;
     protected CamelContext camelContext;
@@ -51,6 +52,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     protected ExchangePattern pattern;
     protected ProducerCache producerCache;
     protected String id;
+    protected String routeId;
     protected boolean ignoreInvalidEndpoint;
     protected int cacheSize;
     protected boolean allowOptimisedComponents = true;
@@ -73,6 +75,16 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override

@@ -55,6 +55,7 @@ import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.ShutdownAware;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.Synchronization;
@@ -84,7 +85,7 @@ import org.apache.camel.util.TimeUtils;
  * and older prices are discarded). Another idea is to combine line item messages
  * together into a single invoice message.
  */
-public class AggregateProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware {
+public class AggregateProcessor extends AsyncProcessorSupport implements Navigate<Processor>, Traceable, ShutdownPrepared, ShutdownAware, IdAware, RouteIdAware {
 
     public static final String AGGREGATE_TIMEOUT_CHECKER = "AggregateTimeoutChecker";
     public static final String AGGREGATE_OPTIMISTIC_LOCKING_EXECUTOR = "AggregateOptimisticLockingExecutor";
@@ -102,6 +103,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     private final CamelContext camelContext;
     private final AsyncProcessor processor;
     private String id;
+    private String routeId;
     private AggregationStrategy aggregationStrategy;
     private boolean preCompletion;
     private Expression correlationExpression;
@@ -293,6 +295,14 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
     @Override
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
     }
 
     @Override
