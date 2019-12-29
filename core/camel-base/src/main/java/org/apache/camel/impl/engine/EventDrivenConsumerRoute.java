@@ -29,6 +29,7 @@ import org.apache.camel.Suspendable;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.PatternHelper;
 
 /**
@@ -70,6 +71,9 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
             services.add(consumer);
             if (consumer instanceof RouteAware) {
                 ((RouteAware) consumer).setRoute(this);
+            }
+            if (consumer instanceof RouteIdAware) {
+                ((RouteIdAware) consumer).setRouteId(this.getId());
             }
         }
         Processor processor = getProcessor();

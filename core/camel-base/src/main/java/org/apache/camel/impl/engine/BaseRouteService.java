@@ -40,6 +40,7 @@ import org.apache.camel.Service;
 import org.apache.camel.processor.ErrorHandler;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.support.ChildServiceSupport;
 import org.apache.camel.support.EventHelper;
@@ -170,6 +171,9 @@ public abstract class BaseRouteService extends ChildServiceSupport {
                     // inject the route
                     if (service instanceof RouteAware) {
                         ((RouteAware) service).setRoute(route);
+                    }
+                    if (service instanceof RouteIdAware) {
+                        ((RouteIdAware) service).setRouteId(route.getId());
                     }
 
                     if (service instanceof Consumer) {
