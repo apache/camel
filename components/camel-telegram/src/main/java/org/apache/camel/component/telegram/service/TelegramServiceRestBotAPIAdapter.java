@@ -40,6 +40,7 @@ import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
+import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.model.SendLocationMessage;
@@ -88,6 +89,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         m.put(OutgoingAudioMessage.class, new OutgoingAudioMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
         m.put(OutgoingVideoMessage.class, new OutgoingVideoMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
         m.put(OutgoingDocumentMessage.class, new OutgoingDocumentMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
+        m.put(OutgoingStickerMessage.class, new OutgoingStickerMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
         m.put(SendLocationMessage.class,
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendLocation"));
         m.put(EditMessageLiveLocationMessage.class,
@@ -263,6 +265,22 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
             buildTextPart(builder, "caption", message.getCaption());
         }
 
+    }
+
+    static class OutgoingStickerMessageHandler extends OutgoingMessageHandler<OutgoingStickerMessage> {
+        public OutgoingStickerMessageHandler(AsyncHttpClient asyncHttpClient, int bufferSize, ObjectMapper mapper, String baseUri) {
+            super(asyncHttpClient, bufferSize, mapper, baseUri + "/sendSticker", null);
+        }
+
+        @Override
+        protected void addBody(RequestBuilder builder, OutgoingStickerMessage message) {
+            fillCommonMediaParts(builder, message);
+            if (message.getSticker() != null) {
+                buildTextPart(builder, "sticker", message.getSticker());
+            } else {
+                buildMediaPart(builder, "sticker", message.getFilenameWithExtension(), message.getStickerImage());
+            }
+        }
     }
 
     abstract static class OutgoingMessageHandler<T extends OutgoingMessage> {
