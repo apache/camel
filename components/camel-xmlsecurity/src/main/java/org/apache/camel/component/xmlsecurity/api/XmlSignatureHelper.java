@@ -233,8 +233,6 @@ public final class XmlSignatureHelper {
      * Returns a configuration for an XPATH2 transformation which consists of
      * several XPATH expressions.
      * 
-     * @param xpathAndFilterList
-     *            list of XPATH expressions with their filters
      * @param namespaceMap
      *            namespace map, key is the prefix, value is the namespace, can
      *            be <code>null</code>

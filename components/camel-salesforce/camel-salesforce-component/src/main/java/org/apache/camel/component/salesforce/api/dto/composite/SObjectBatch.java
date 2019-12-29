@@ -202,7 +202,6 @@ public final class SObjectBatch implements Serializable {
      * @param type type of SObject
      * @param fieldName external identifier field name
      * @param fieldValue external identifier field value
-     * @param fields to return
      * @return this batch builder
      */
     public SObjectBatch addGetByExternalId(final String type, final String fieldName, final String fieldValue) {
@@ -276,7 +275,7 @@ public final class SObjectBatch implements Serializable {
     /**
      * Add retrieval of SObject records by search to the batch.
      *
-     * @param query SOSL search to execute
+     * @param searchString SOSL search to execute
      * @return this batch builder
      */
     public SObjectBatch addSearch(final String searchString) {
@@ -310,7 +309,7 @@ public final class SObjectBatch implements Serializable {
      *
      * @param type type of SObject
      * @param fieldName name of the field holding the external identifier
-     * @param id external identifier value
+     * @param fieldValue external identifier value
      * @param data SObject with fields to change
      * @return this batch builder
      */
@@ -330,7 +329,7 @@ public final class SObjectBatch implements Serializable {
      *
      * @param type type of SObject
      * @param fieldName name of the field holding the external identifier
-     * @param id external identifier value
+     * @param fieldValue external identifier value
      * @param data SObject with fields to change
      * @return this batch builder
      */

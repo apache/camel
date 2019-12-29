@@ -49,7 +49,7 @@ public final class SshShellOutputStringHelper {
      * Returns an object before the given last token
      *
      * @param text  the text
-     * @param before the last token
+     * @param beforeLast the last token
      * @param mapper a mapping function to convert the string before the token to type T
      * @return an Optional describing the result of applying a mapping function to the text before the token.
      */
@@ -68,7 +68,7 @@ public final class SshShellOutputStringHelper {
      *
      * @param text  the text
      * @param after is the starting token to skip the text before that.
-     * @param before the last token
+     * @param beforeLast the last token
      * @return the text between the tokens, or <tt>null</tt> if text does not contain the tokens
      */
     public static String betweenBeforeLast(String text, String after, String beforeLast) {
