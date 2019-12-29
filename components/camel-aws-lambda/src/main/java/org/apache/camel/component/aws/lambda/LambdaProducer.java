@@ -202,8 +202,9 @@ public class LambdaProducer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.ZIP_FILE))) {
                 String zipFile = exchange.getIn().getHeader(LambdaConstants.ZIP_FILE, String.class);
                 File fileLocalPath = new File(zipFile);
-                FileInputStream inputStream = new FileInputStream(fileLocalPath);
-                functionCode.withZipFile(ByteBuffer.wrap(IOUtils.toByteArray(inputStream)));
+                try (FileInputStream inputStream = new FileInputStream(fileLocalPath)) {
+                    functionCode.withZipFile(ByteBuffer.wrap(IOUtils.toByteArray(inputStream)));
+                }
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
                 functionCode.withZipFile(exchange.getIn().getBody(ByteBuffer.class));
@@ -337,8 +338,9 @@ public class LambdaProducer extends DefaultProducer {
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.ZIP_FILE))) {
                 String zipFile = exchange.getIn().getHeader(LambdaConstants.ZIP_FILE, String.class);
                 File fileLocalPath = new File(zipFile);
-                FileInputStream inputStream = new FileInputStream(fileLocalPath);
-                functionCode.withZipFile(ByteBuffer.wrap(IOUtils.toByteArray(inputStream)));
+                try (FileInputStream inputStream = new FileInputStream(fileLocalPath)) {
+                    functionCode.withZipFile(ByteBuffer.wrap(IOUtils.toByteArray(inputStream)));
+                }
             }
             if (ObjectHelper.isNotEmpty(exchange.getIn().getBody())) {
                 functionCode.withZipFile(exchange.getIn().getBody(ByteBuffer.class));
