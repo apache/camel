@@ -53,26 +53,6 @@ public class ManagedProducerCache extends ManagedService implements ManagedProdu
     }
 
     @Override
-    public Long getHits() {
-        return producerCache.getHits();
-    }
-
-    @Override
-    public Long getMisses() {
-        return producerCache.getMisses();
-    }
-
-    @Override
-    public Long getEvicted() {
-        return producerCache.getEvicted();
-    }
-
-    @Override
-    public void resetStatistics() {
-        producerCache.resetCacheStatistics();
-    }
-
-    @Override
     public void purge() {
         producerCache.purge();
     }

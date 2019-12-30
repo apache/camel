@@ -377,29 +377,6 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     }
 
     @Override
-    public long getHits() {
-        return producers.getHits();
-    }
-
-    @Override
-    public long getMisses() {
-        return producers.getMisses();
-    }
-
-    @Override
-    public long getEvicted() {
-        return producers.getEvicted();
-    }
-
-    @Override
-    public void resetCacheStatistics() {
-        producers.resetStatistics();
-        if (statistics != null) {
-            statistics.clear();
-        }
-    }
-
-    @Override
     public synchronized void purge() {
         try {
             producers.stop();
@@ -414,7 +391,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
     @Override
     public void cleanUp() {
-        producers.cleanUp();
+        // noop
     }
 
     @Override

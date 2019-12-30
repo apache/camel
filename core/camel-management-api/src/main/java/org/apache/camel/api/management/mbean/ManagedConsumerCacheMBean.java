@@ -30,18 +30,6 @@ public interface ManagedConsumerCacheMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Maximum cache size (capacity)")
     Integer getMaximumCacheSize();
 
-    @ManagedAttribute(description = "Cache hits")
-    Long getHits();
-
-    @ManagedAttribute(description = "Cache misses")
-    Long getMisses();
-
-    @ManagedAttribute(description = "Cache evicted")
-    Long getEvicted();
-
-    @ManagedOperation(description = "Reset cache statistics")
-    void resetStatistics();
-
     @ManagedOperation(description = "Purges the cache")
     void purge();
 

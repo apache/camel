@@ -163,50 +163,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         pool.clear();
     }
 
-    public void cleanUp() {
-        if (cache instanceof LRUCache) {
-            ((LRUCache) cache).cleanUp();
-        }
-    }
-
-    public void resetStatistics() {
-        if (cache instanceof LRUCache) {
-            ((LRUCache) cache).resetStatistics();
-        }
-    }
-
-    public long getEvicted() {
-        if (cache instanceof LRUCache) {
-            return ((LRUCache) cache).getEvicted();
-        } else {
-            return -1;
-        }
-    }
-
-    public long getMisses() {
-        if (cache instanceof LRUCache) {
-            return ((LRUCache) cache).getMisses();
-        } else {
-            return -1;
-        }
-    }
-
-    public long getHits() {
-        if (cache instanceof LRUCache) {
-            return ((LRUCache) cache).getHits();
-        } else {
-            return -1;
-        }
-    }
-
-    public int getMaxCacheSize() {
-        if (cache instanceof LRUCache) {
-            return ((LRUCache) cache).getMaxCacheSize();
-        } else {
-            return -1;
-        }
-    }
-
     static <S extends Service> void stop(S s) {
         try {
             s.stop();
