@@ -78,7 +78,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
     }
 
     @Override
-    public void reset() {
+    public synchronized void reset() {
         // reset by closing and creating a new stream based on the file
         close();
         // reset by creating a new stream based on the file
