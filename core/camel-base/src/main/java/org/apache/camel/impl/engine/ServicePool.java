@@ -33,22 +33,24 @@ import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+// TODO: Remove statistics, and LRUCache for singleton
+// TODO: Fix bug in multi-pool
+// TODO: Add unit test
+
 /**
- * A service pool is like a connection pool but can pool any kind of objects.
- *
- * The pool will contain at most (the capacity) number of services.
+ * A base class for a pool for either producers or consumers.
  */
-public class ServicePool<S extends Service> extends ServiceSupport implements NonManagedService {
+abstract class ServicePool<S extends Service> extends ServiceSupport implements NonManagedService {
 
-    static final Logger LOG = LoggerFactory.getLogger(ServicePool.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServicePool.class);
 
-    final ThrowingFunction<Endpoint, S, Exception> creator;
-    final Function<S, Endpoint> getEndpoint;
-    final ConcurrentHashMap<Endpoint, Pool<S>> pool = new ConcurrentHashMap<>();
-    int capacity;
-    Map<Key<S>, S> cache;
+    private final ThrowingFunction<Endpoint, S, Exception> creator;
+    private final Function<S, Endpoint> getEndpoint;
+    private final ConcurrentHashMap<Endpoint, Pool<S>> pool = new ConcurrentHashMap<>();
+    private int capacity;
+    private Map<Key<S>, S> cache;
 
-    interface Pool<S> {
+    private interface Pool<S> {
         S acquire() throws Exception;
         void release(S s);
         int size();
@@ -57,7 +59,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         boolean evict(S s);
     }
 
-    static class Key<S> {
+    private static class Key<S> {
         private final S s;
         public Key(S s) {
             this.s = Objects.requireNonNull(s);
@@ -79,7 +81,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         this.cache = capacity > 0 ? LRUCacheFactory.newLRUCache(capacity, this::onEvict) : null;
     }
 
-    protected void onEvict(S s) {
+    private void onEvict(S s) {
         Endpoint e = getEndpoint.apply(s);
         Pool<S> p = pool.get(e);
         if (p != null) {
@@ -97,10 +99,10 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
     }
 
     /**
-     * Tries to acquire the service with the given key
+     * Tries to acquire the producer/consumer with the given key
      *
      * @param endpoint the endpoint
-     * @return the acquired service
+     * @return the acquired producer/consumer
      */
     public S acquire(Endpoint endpoint) throws Exception {
         if (!isStarted()) {
@@ -114,16 +116,16 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
     }
 
     /**
-     * Releases the service back to the pool
+     * Releases the producer/consumer back to the pool
      *
      * @param endpoint the endpoint
-     * @param s the service
+     * @param s the producer/consumer
      */
     public void release(Endpoint endpoint, S s) {
         getPool(endpoint).release(s);
     }
 
-    protected Pool<S> getPool(Endpoint endpoint) {
+    private Pool<S> getPool(Endpoint endpoint) {
         return pool.computeIfAbsent(endpoint, this::createPool);
     }
 

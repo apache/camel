@@ -16,19 +16,19 @@
  */
 package org.apache.camel.impl;
 
+import javax.naming.Context;
 import java.util.Map;
 
-import javax.naming.Context;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.BeanProcessorFactoryResolver;
 import org.apache.camel.impl.engine.BeanProxyFactoryResolver;
+import org.apache.camel.impl.engine.PollingConsumerServicePool;
 import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
 import org.apache.camel.impl.engine.DefaultBeanIntrospection;
 import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
@@ -55,10 +55,10 @@ import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
 import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.impl.engine.EndpointKey;
 import org.apache.camel.impl.engine.HeadersMapFactoryResolver;
+import org.apache.camel.impl.engine.ProducerServicePool;
 import org.apache.camel.impl.engine.PropertiesComponentFactoryResolver;
 import org.apache.camel.impl.engine.ReactiveExecutorResolver;
 import org.apache.camel.impl.engine.RestRegistryFactoryResolver;
-import org.apache.camel.impl.engine.ServicePool;
 import org.apache.camel.impl.engine.WebSpherePackageScanClassResolver;
 import org.apache.camel.impl.health.DefaultHealthCheckRegistry;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
@@ -292,13 +292,13 @@ public class DefaultCamelContext extends AbstractModelCamelContext {
     }
 
     @Override
-    protected ServicePool<Producer> createProducerServicePool() {
-        return new ServicePool<>(Endpoint::createProducer, Producer::getEndpoint, 100);
+    protected ProducerServicePool createProducerServicePool() {
+        return new ProducerServicePool(Endpoint::createAsyncProducer, Producer::getEndpoint, 100);
     }
 
     @Override
-    protected ServicePool<PollingConsumer> createPollingConsumerServicePool() {
-        return new ServicePool<>(Endpoint::createPollingConsumer, PollingConsumer::getEndpoint, 100);
+    protected PollingConsumerServicePool createPollingConsumerServicePool() {
+        return new PollingConsumerServicePool(Endpoint::createPollingConsumer, Consumer::getEndpoint, 100);
     }
 
     @Override

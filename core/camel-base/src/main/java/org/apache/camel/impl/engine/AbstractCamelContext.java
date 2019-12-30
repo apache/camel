@@ -59,9 +59,7 @@ import org.apache.camel.IsSingleton;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.NoSuchEndpointException;
-import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.Route;
@@ -241,8 +239,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile ClassResolver classResolver;
     private volatile PackageScanClassResolver packageScanClassResolver;
     private volatile PackageScanResourceResolver packageScanResourceResolver;
-    private volatile ServicePool<Producer> producerServicePool;
-    private volatile ServicePool<PollingConsumer> pollingConsumerServicePool;
+    private volatile ProducerServicePool producerServicePool;
+    private volatile PollingConsumerServicePool pollingConsumerServicePool;
     private volatile NodeIdFactory nodeIdFactory;
     private volatile ProcessorFactory processorFactory;
     private volatile MessageHistoryFactory messageHistoryFactory;
@@ -2094,11 +2092,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         this.errorHandlerExecutorService = errorHandlerExecutorService;
     }
 
-    public void setProducerServicePool(ServicePool<Producer> producerServicePool) {
+    public void setProducerServicePool(ProducerServicePool producerServicePool) {
         this.producerServicePool = doAddService(producerServicePool);
     }
 
-    public ServicePool<Producer> getProducerServicePool() {
+    public ProducerServicePool getProducerServicePool() {
         if (producerServicePool == null) {
             synchronized (lock) {
                 if (producerServicePool == null) {
@@ -2109,7 +2107,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return producerServicePool;
     }
 
-    public ServicePool<PollingConsumer> getPollingConsumerServicePool() {
+    public PollingConsumerServicePool getPollingConsumerServicePool() {
         if (pollingConsumerServicePool == null) {
             synchronized (lock) {
                 if (pollingConsumerServicePool == null) {
@@ -2120,7 +2118,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         return pollingConsumerServicePool;
     }
 
-    public void setPollingConsumerServicePool(ServicePool<PollingConsumer> pollingConsumerServicePool) {
+    public void setPollingConsumerServicePool(PollingConsumerServicePool pollingConsumerServicePool) {
         this.pollingConsumerServicePool = doAddService(pollingConsumerServicePool);
     }
 
@@ -4207,9 +4205,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     protected abstract ExecutorServiceManager createExecutorServiceManager();
 
-    protected abstract ServicePool<Producer> createProducerServicePool();
+    protected abstract ProducerServicePool createProducerServicePool();
 
-    protected abstract ServicePool<PollingConsumer> createPollingConsumerServicePool();
+    protected abstract PollingConsumerServicePool createPollingConsumerServicePool();
 
     protected abstract UnitOfWorkFactory createUnitOfWorkFactory();
 

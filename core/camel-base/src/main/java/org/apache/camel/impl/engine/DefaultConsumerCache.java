@@ -19,6 +19,7 @@ package org.apache.camel.impl.engine;
 import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
@@ -35,7 +36,7 @@ import org.apache.camel.support.service.ServiceSupport;
 public class DefaultConsumerCache extends ServiceSupport implements ConsumerCache {
 
     private final CamelContext camelContext;
-    private final ServicePool<PollingConsumer> consumers;
+    private final PollingConsumerServicePool consumers;
     private final Object source;
 
     private EndpointUtilizationStatistics statistics;
@@ -46,7 +47,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         this.source = source;
         this.camelContext = camelContext;
         this.maxCacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
-        this.consumers = new ServicePool<>(Endpoint::createPollingConsumer, PollingConsumer::getEndpoint, maxCacheSize);
+        this.consumers = new PollingConsumerServicePool(Endpoint::createPollingConsumer, Consumer::getEndpoint, maxCacheSize);
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
