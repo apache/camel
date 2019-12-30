@@ -48,9 +48,9 @@ public class ManagedUnregisterProducerTest extends ManagementTestSupport {
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("mock://result", uri);
 
-        // TODO: populating route id on producers is not implemented yet
-        //String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
-        //assertEquals("route1", routeId);
+        // the producer should have route id
+        String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
+        assertEquals("route1", routeId);
 
         Boolean singleton = (Boolean) mbeanServer.getAttribute(on, "Singleton");
         assertEquals(Boolean.TRUE, singleton);
