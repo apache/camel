@@ -23,12 +23,15 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.karaf.container.internal.JavaVersionUtil;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
+import org.ops4j.pax.exam.options.extra.VMOption;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.streamBundle;
+import static org.ops4j.pax.exam.CoreOptions.when;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.configureConsole;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.ops4j.pax.exam.karaf.options.KarafDistributionOption.keepRuntimeFolder;
@@ -51,7 +54,12 @@ public enum PaxExamOptions {
             // Don't bother with local console output as it just ends up cluttering the logs
             configureConsole().ignoreLocalConsole(),
             // Force the log level to INFO so we have more details during the test. It defaults to WARN.
-            logLevel(LogLevelOption.LogLevel.INFO)
+            logLevel(LogLevelOption.LogLevel.INFO),
+            when(JavaVersionUtil.getMajorVersion() >= 9)
+                .useOptions(
+                        new VMOption("-classpath"),
+                        new VMOption("lib/jdk9plus/*" + File.pathSeparator + "lib/boot/*")
+                        )
         ),
         CAMEL_CORE_OSGI(
                 createStreamBundleOption("camel-core-engine.jar"),
