@@ -213,7 +213,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         try {
             s.stop();
         } catch (Exception e) {
-            LOG.debug("Error stopping service: " +  s, e);
+            LOG.debug("Error stopping service: {}", s, e);
         }
     }
 
