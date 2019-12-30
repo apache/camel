@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.FailedToCreateProducerException;
 import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.StatefulService;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.SharedCamelInternalProcessor;
@@ -50,7 +51,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     private static final long ACQUIRE_WAIT_TIME = 30000;
 
     private final CamelContext camelContext;
-    private final ServicePool<AsyncProducer> producers;
+    private final ProducerServicePool producers;
     private final Object source;
     private final SharedCamelInternalProcessor internalProcessor;
 
@@ -63,7 +64,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         this.source = source;
         this.camelContext = camelContext;
         this.maxCacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
-        this.producers = new ServicePool<>(Endpoint::createAsyncProducer, AsyncProducer::getEndpoint, maxCacheSize);
+        this.producers = new ProducerServicePool(Endpoint::createAsyncProducer, Producer::getEndpoint, maxCacheSize);
 
         // only if JMX is enabled
         if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
@@ -341,10 +342,6 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
             return true;
         }
 
-    }
-
-    protected AsyncProducer doGetProducer(Endpoint endpoint) throws Exception {
-        return producers.acquire(endpoint);
     }
 
     @Override
