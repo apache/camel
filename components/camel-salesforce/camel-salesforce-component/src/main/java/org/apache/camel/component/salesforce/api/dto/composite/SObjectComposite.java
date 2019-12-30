@@ -201,7 +201,6 @@ public final class SObjectComposite implements Serializable {
      * @param type type of SObject
      * @param fieldName external identifier field name
      * @param fieldValue external identifier field value
-     * @param fields to return
      * @return this batch builder
      */
     public SObjectComposite addGetByExternalId(final String type, final String fieldName, final String fieldValue, final String referenceId) {
@@ -286,7 +285,7 @@ public final class SObjectComposite implements Serializable {
      *
      * @param type type of SObject
      * @param fieldName name of the field holding the external identifier
-     * @param id external identifier value
+     * @param fieldValue external identifier field value
      * @param data SObject with fields to change
      * @return this batch builder
      */
@@ -306,7 +305,7 @@ public final class SObjectComposite implements Serializable {
      *
      * @param type type of SObject
      * @param fieldName name of the field holding the external identifier
-     * @param id external identifier value
+     * @param fieldValue external identifier field value
      * @param data SObject with fields to change
      * @return this batch builder
      */
