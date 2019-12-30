@@ -400,7 +400,7 @@ The zip and gzip dataformat has been renamed to zipdeflater and gzipdeflater as 
 
 === Simple language
 
-The functionality to change the simple language tokens for start/end functions has been removed. The default tokens with `+++${xxx}+++` and `+++${xxx}+++` is now hardcoded (optimized). The functionality to change these tokens was never really in use and would only confuse Camel users if a new syntax are in use.
+The functionality to change the simple language tokens for start/end functions has been removed. The default tokens with `+++${xxx}+++` and `+++$simple{xxx}+++` is now hardcoded (optimized). The functionality to change these tokens was never really in use and would only confuse Camel users if a new syntax are in use.
 
 === Moved APIs
 
