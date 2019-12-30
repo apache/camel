@@ -35,16 +35,14 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A service pool is like a connection pool but can pool any kind of objects.
- * <p/>
- *  The pool will contain at most (the capacity) number of services.
- * <p/>
- * By default the capacity is set to 100.
+ *
+ * The pool will contain at most (the capacity) number of services.
  */
 public class ServicePool<S extends Service> extends ServiceSupport implements NonManagedService {
 
     static final Logger LOG = LoggerFactory.getLogger(ServicePool.class);
 
-    final ThrowingFunction<Endpoint, S, Exception> producer;
+    final ThrowingFunction<Endpoint, S, Exception> creator;
     final Function<S, Endpoint> getEndpoint;
     final ConcurrentHashMap<Endpoint, Pool<S>> pool = new ConcurrentHashMap<>();
     int capacity;
@@ -74,8 +72,8 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         }
     }
 
-    public ServicePool(ThrowingFunction<Endpoint, S, Exception> producer, Function<S, Endpoint> getEndpoint, int capacity) {
-        this.producer = producer;
+    public ServicePool(ThrowingFunction<Endpoint, S, Exception> creator, Function<S, Endpoint> getEndpoint, int capacity) {
+        this.creator = creator;
         this.getEndpoint = getEndpoint;
         this.capacity = capacity;
         this.cache = capacity > 0 ? LRUCacheFactory.newLRUCache(capacity, this::onEvict) : null;
@@ -93,7 +91,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
             try {
                 e.getCamelContext().removeService(s);
             } catch (Exception ex) {
-                LOG.debug("Error removing service: " +  s, ex);
+                LOG.debug("Error removing service: {}", s, ex);
             }
         }
     }
@@ -132,7 +130,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
     private Pool<S> createPool(Endpoint endpoint) {
         boolean singleton = endpoint.isSingleton();
         try {
-            S s = producer.apply(endpoint);
+            S s = creator.apply(endpoint);
             if (s instanceof IsSingleton) {
                 singleton = ((IsSingleton) s).isSingleton();
             }
@@ -148,8 +146,6 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
 
     /**
      * Returns the current size of the pool
-     *
-     * @return the current size of the pool
      */
     public int size() {
         return pool.values().stream().mapToInt(Pool::size).sum();
@@ -230,7 +226,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
             if (s == null) {
                 synchronized (this) {
                     if (s == null) {
-                        S tempS = producer.apply(endpoint);
+                        S tempS = creator.apply(endpoint);
                         endpoint.getCamelContext().addService(tempS, true, true);
                         s = tempS;
                     }
@@ -276,7 +272,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
                 try {
                     endpoint.getCamelContext().removeService(s);
                 } catch (Exception e) {
-                    LOG.debug("Error removing service: " +  s, e);
+                    LOG.debug("Error removing service: {}", s, e);
                 }
             }
         }
@@ -294,7 +290,7 @@ public class ServicePool<S extends Service> extends ServiceSupport implements No
         public S acquire() throws Exception {
             S s = queue.poll();
             if (s == null) {
-                s = producer.apply(endpoint);
+                s = creator.apply(endpoint);
                 s.start();
             }
             return s;
