@@ -26,14 +26,12 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.IsSingleton;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Service;
-import org.apache.camel.support.LRUCache;
 import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.support.service.ServiceSupport;
 import org.apache.camel.util.function.ThrowingFunction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-// TODO: Remove statistics, and LRUCache for singleton
 // TODO: Fix bug in multi-pool
 // TODO: Add unit test
 
@@ -48,7 +46,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     private final Function<S, Endpoint> getEndpoint;
     private final ConcurrentHashMap<Endpoint, Pool<S>> pool = new ConcurrentHashMap<>();
     private int capacity;
-    private Map<Key<S>, S> cache;
+    private Map<Key<S>, S> multiPoolCache;
 
     private interface Pool<S> {
         S acquire() throws Exception;
@@ -78,7 +76,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         this.creator = creator;
         this.getEndpoint = getEndpoint;
         this.capacity = capacity;
-        this.cache = capacity > 0 ? LRUCacheFactory.newLRUCache(capacity, this::onEvict) : null;
+        this.multiPoolCache = capacity > 1 ? LRUCacheFactory.newLRUCache(capacity, this::onEvict) : null;
     }
 
     private void onEvict(S s) {
@@ -109,8 +107,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             return null;
         }
         S s = getPool(endpoint).acquire();
-        if (s != null && cache != null) {
-            cache.putIfAbsent(new Key<>(s), s);
+        if (s != null && multiPoolCache != null) {
+            multiPoolCache.putIfAbsent(new Key<>(s), s);
         }
         return s;
     }
@@ -155,15 +153,19 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
     @Override
     protected void doStart() throws Exception {
+        // noop
     }
 
     @Override
     protected void doStop() throws Exception {
         pool.values().forEach(Pool::stop);
         pool.clear();
+        if (multiPoolCache != null) {
+            multiPoolCache.clear();
+        }
     }
 
-    static <S extends Service> void stop(S s) {
+    private static <S extends Service> void stop(S s) {
         try {
             s.stop();
         } catch (Exception e) {
@@ -175,7 +177,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final Endpoint endpoint;
         private volatile S s;
 
-        public SinglePool(Endpoint endpoint) {
+        SinglePool(Endpoint endpoint) {
             this.endpoint = endpoint;
         }
 
@@ -240,7 +242,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         private final Endpoint endpoint;
         private final ConcurrentLinkedQueue<S> queue = new ConcurrentLinkedQueue<>();
 
-        public MultiplePool(Endpoint endpoint) {
+        MultiplePool(Endpoint endpoint) {
             this.endpoint = endpoint;
         }
 
