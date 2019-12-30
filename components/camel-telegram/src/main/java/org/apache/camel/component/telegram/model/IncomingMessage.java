@@ -54,6 +54,8 @@ public class IncomingMessage implements Serializable {
 
     private IncomingDocument document;
 
+    private IncomingSticker sticker;
+
     @JsonProperty("location")
     private Location location;
 
@@ -132,6 +134,14 @@ public class IncomingMessage implements Serializable {
         this.document = document;
     }
 
+    public IncomingSticker getSticker() {
+        return sticker;
+    }
+
+    public void setSticker(IncomingSticker sticker) {
+        this.sticker = sticker;
+    }
+
     public Location getLocation() {
         return location;
     }
@@ -152,6 +162,7 @@ public class IncomingMessage implements Serializable {
         sb.append(", video=").append(video);
         sb.append(", audio=").append(audio);
         sb.append(", document=").append(document);
+        sb.append(", sticker=").append(sticker);
         sb.append(", location=").append(location);
         sb.append('}');
         return sb.toString();
