@@ -35,6 +35,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.TelegramService;
 import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
+import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
@@ -98,6 +99,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/stopMessageLiveLocation"));
         m.put(SendVenueMessage.class,
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendVenue"));
+        m.put(EditMessageTextMessage.class,
+            new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageText"));
         this.handlers = m;
     }
 
@@ -189,7 +192,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         protected void addBody(RequestBuilder builder, OutgoingMessage message) {
             try {
                 final String body = mapper.writeValueAsString(message);
-                LOG.warn("sending " + body);
+                LOG.info("sending " + body);
                 builder.setBody(body);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Could not serialize " + message);

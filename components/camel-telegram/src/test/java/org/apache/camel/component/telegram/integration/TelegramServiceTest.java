@@ -20,10 +20,13 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.camel.component.telegram.TelegramParseMode;
+import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
+import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
+import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
@@ -32,6 +35,7 @@ import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
 import org.apache.camel.component.telegram.util.TelegramApiConfig;
 import org.apache.camel.component.telegram.util.TelegramTestSupport;
 import org.apache.camel.component.telegram.util.TelegramTestUtil;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -87,28 +91,28 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setText("Choose one option!");
 
         InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
-                .text("Option One - I").build();
+            .text("Option One - I").build();
 
         InlineKeyboardButton buttonOptionOneII = InlineKeyboardButton.builder()
-                .text("Option One - II").build();
+            .text("Option One - II").build();
 
         InlineKeyboardButton buttonOptionTwoI = InlineKeyboardButton.builder()
-                .text("Option Two - I").build();
+            .text("Option Two - I").build();
 
         InlineKeyboardButton buttonOptionThreeI = InlineKeyboardButton.builder()
-                .text("Option Three - I").build();
+            .text("Option Three - I").build();
 
         InlineKeyboardButton buttonOptionThreeII = InlineKeyboardButton.builder()
-                .text("Option Three - II").build();
+            .text("Option Three - II").build();
 
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
-                .keyboard()
-                    .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
-                    .addRow(Arrays.asList(buttonOptionTwoI))
-                    .addRow(Arrays.asList(buttonOptionThreeI, buttonOptionThreeII))
-                    .close()
-                .oneTimeKeyboard(true)
-                .build();
+            .keyboard()
+            .addRow(Arrays.asList(buttonOptionOneI, buttonOptionOneII))
+            .addRow(Arrays.asList(buttonOptionTwoI))
+            .addRow(Arrays.asList(buttonOptionThreeI, buttonOptionThreeII))
+            .close()
+            .oneTimeKeyboard(true)
+            .build();
 
         msg.setReplyKeyboardMarkup(replyMarkup);
 
@@ -122,8 +126,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setText("Your answer was accepted!");
 
         ReplyKeyboardMarkup replyMarkup = ReplyKeyboardMarkup.builder()
-                .removeKeyboard(true)
-                .build();
+            .removeKeyboard(true)
+            .build();
 
         msg.setReplyKeyboardMarkup(replyMarkup);
 
@@ -273,6 +277,62 @@ public class TelegramServiceTest extends TelegramTestSupport {
         OutgoingStickerMessage msg = OutgoingStickerMessage.createWithUrl(imageUri, chatId, null, null);
 
         template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+    }
+
+    @Test
+    public void testEditTextMessage() {
+
+        final String originalText = "ORIGINAL";
+        final String newText = "NEW";
+
+        // Send message
+        OutgoingTextMessage originalMessage = new OutgoingTextMessage();
+        originalMessage.setText(originalText);
+        Integer messageId = sendMessage(originalMessage);
+
+        // Edit message
+        EditMessageTextMessage msg = new EditMessageTextMessage.Builder()
+            .chatId(chatId)
+            .text(newText)
+            .messageId(messageId)
+            .build();
+
+        MessageResult response = (MessageResult) template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+
+        Assertions.assertEquals(newText, response.getMessage().getText());
+    }
+
+    @Test
+    public void testEditTextMessageWithUrl() {
+
+        final String originalText = "ORIGINAL";
+        final String urlDescription = "Inline URL";
+        final String url = "http://www.example.com/";
+        final String newTextWithUrl = String.format("<a href=\"%s\">%s</a>", url, urlDescription);
+
+        // Send message
+        OutgoingTextMessage originalMessage = new OutgoingTextMessage();
+        originalMessage.setText(originalText);
+        Integer messageId = sendMessage(originalMessage);
+
+        // Edit message
+        EditMessageTextMessage msg = new EditMessageTextMessage.Builder()
+            .chatId(chatId)
+            .text(newTextWithUrl)
+            .parseMode("HTML")
+            .messageId(messageId)
+            .build();
+
+        MessageResult response = (MessageResult) template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+
+        Assertions.assertEquals(urlDescription, response.getMessage().getText());
+        Assertions.assertEquals(url, response.getMessage().getEntities().get(0).getUrl());
+        Assertions.assertEquals("text_link", response.getMessage().getEntities().get(0).getType());
+    }
+
+    private Integer sendMessage(OutgoingMessage outgoingMessage) {
+        MessageResult originalResponse = (MessageResult) template.requestBody(String.format("telegram://bots?chatId=%s", chatId), outgoingMessage);
+        return originalResponse.getMessage().getMessageId().intValue();
     }
 
 }

@@ -56,6 +56,8 @@ public class IncomingMessage implements Serializable {
 
     private IncomingSticker sticker;
 
+    private List<MessageEntity> entities;
+
     @JsonProperty("location")
     private Location location;
 
@@ -150,6 +152,14 @@ public class IncomingMessage implements Serializable {
         this.location = location;
     }
 
+    public List<MessageEntity> getEntities() {
+        return entities;
+    }
+
+    public void setEntities(List<MessageEntity> entities) {
+        this.entities = entities;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("IncomingMessage{");
@@ -164,6 +174,7 @@ public class IncomingMessage implements Serializable {
         sb.append(", document=").append(document);
         sb.append(", sticker=").append(sticker);
         sb.append(", location=").append(location);
+        sb.append(", entities=").append(entities);
         sb.append('}');
         return sb.toString();
     }
