@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jt400;
 
+import java.io.IOException;
+
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.BaseDataQueue;
 import com.ibm.as400.access.DataQueue;
@@ -69,7 +71,7 @@ class Jt400DataQueueService implements Service {
             }
         }
         if (!queue.getSystem().isConnected(AS400.DATAQUEUE)) {
-            LOG.info("Connecting to {}", endpoint);
+            LOG.debug("Connecting to {}", endpoint);
             try {
                 queue.getSystem().connectService(AS400.DATAQUEUE);
             } catch (Exception e) {
@@ -81,7 +83,7 @@ class Jt400DataQueueService implements Service {
     @Override
     public void stop() {
         if (queue != null) {
-            LOG.info("Releasing connection to {}", endpoint);
+            LOG.debug("Releasing connection to {}", endpoint);
             AS400 system = queue.getSystem();
             queue = null;
             endpoint.releaseSystem(system);
@@ -99,4 +101,8 @@ class Jt400DataQueueService implements Service {
         return queue;
     }
 
+    @Override
+    public void close() throws IOException {
+        stop();
+    }
 }
