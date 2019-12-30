@@ -33,12 +33,9 @@ public class Jt400DataQueueProducer extends DefaultProducer {
     /**
      * Performs the lifecycle logic of this producer.
      */
-    private final Jt400DataQueueService queueService;
-
     protected Jt400DataQueueProducer(Jt400Endpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.queueService = new Jt400DataQueueService(endpoint);
     }
 
     /**
@@ -53,11 +50,14 @@ public class Jt400DataQueueProducer extends DefaultProducer {
      */
     @Override
     public void process(Exchange exchange) throws Exception {
-        BaseDataQueue queue = queueService.getDataQueue();
-        if (endpoint.isKeyed()) {
-            process((KeyedDataQueue) queue, exchange);
-        } else {
-            process((DataQueue) queue, exchange);
+        try (Jt400DataQueueService queueService = new Jt400DataQueueService(endpoint)) {
+            queueService.start();
+            BaseDataQueue queue = queueService.getDataQueue();
+            if (endpoint.isKeyed()) {
+                process((KeyedDataQueue) queue, exchange);
+            } else {
+                process((DataQueue) queue, exchange);
+            }
         }
     }
 
@@ -75,16 +75,6 @@ public class Jt400DataQueueProducer extends DefaultProducer {
         } else {
             queue.write(exchange.getIn().getHeader(Jt400Endpoint.KEY, String.class), exchange.getIn().getBody(String.class));
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        queueService.start();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        queueService.stop();
     }
 
 }
