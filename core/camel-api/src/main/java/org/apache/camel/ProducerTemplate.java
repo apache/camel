@@ -153,6 +153,7 @@ public interface ProducerTemplate extends Service {
     /**
      * Cleanup the cache (purging stale entries)
      */
+    @Deprecated
     void cleanUp();
 
     // Synchronous methods

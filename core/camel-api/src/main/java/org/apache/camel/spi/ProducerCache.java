@@ -37,9 +37,6 @@ public interface ProducerCache extends Service {
     /**
      * Acquires a pooled producer which you <b>must</b> release back again after usage using the
      * {@link #releaseProducer(org.apache.camel.Endpoint, org.apache.camel.AsyncProducer)} method.
-     * <p/>
-     * If the producer is currently starting then the cache will wait at most 30 seconds for the producer
-     * to finish starting and be ready for use.
      *
      * @param endpoint the endpoint
      * @return the producer
@@ -108,38 +105,6 @@ public interface ProducerCache extends Service {
     int getCapacity();
 
     /**
-     * Gets the cache hits statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the hits
-     */
-    long getHits();
-
-    /**
-     * Gets the cache misses statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the misses
-     */
-    long getMisses();
-
-    /**
-     * Gets the cache evicted statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the evicted
-     */
-    long getEvicted();
-
-    /**
-     * Resets the cache statistics
-     */
-    void resetCacheStatistics();
-
-    /**
      * Purges this cache
      */
     void purge();
@@ -147,12 +112,16 @@ public interface ProducerCache extends Service {
     /**
      * Cleanup the cache (purging stale entries)
      */
+    @Deprecated
     void cleanUp();
-
-    boolean isEventNotifierEnabled();
 
     /**
      * Whether {@link org.apache.camel.spi.EventNotifier} is enabled
+     */
+    boolean isEventNotifierEnabled();
+
+    /**
+     * Sets whether {@link org.apache.camel.spi.EventNotifier} is enabled
      */
     void setEventNotifierEnabled(boolean eventNotifierEnabled);
 

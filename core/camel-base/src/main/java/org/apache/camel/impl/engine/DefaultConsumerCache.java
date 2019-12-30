@@ -167,6 +167,16 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     }
 
     /**
+     * Gets the maximum cache size (capacity).
+     *
+     * @return the capacity
+     */
+    @Override
+    public int getCapacity() {
+        return maxCacheSize;
+    }
+
+    /**
      * Returns the current size of the cache
      *
      * @return the current size
@@ -176,65 +186,6 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         int size = consumers.size();
         log.trace("size = {}", size);
         return size;
-    }
-
-    /**
-     * Gets the maximum cache size (capacity).
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the capacity
-     */
-    @Override
-    public int getCapacity() {
-        return consumers.getMaxCacheSize();
-    }
-
-    /**
-     * Gets the cache hits statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the hits
-     */
-    @Override
-    public long getHits() {
-        return consumers.getHits();
-    }
-
-    /**
-     * Gets the cache misses statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the misses
-     */
-    @Override
-    public long getMisses() {
-        return consumers.getMisses();
-    }
-
-    /**
-     * Gets the cache evicted statistic
-     * <p/>
-     * Will return <tt>-1</tt> if it cannot determine this if a custom cache was used.
-     *
-     * @return the evicted
-     */
-    @Override
-    public long getEvicted() {
-        return consumers.getEvicted();
-    }
-
-    /**
-     * Resets the cache statistics
-     */
-    @Override
-    public void resetCacheStatistics() {
-        consumers.resetStatistics();
-        if (statistics != null) {
-            statistics.clear();
-        }
     }
 
     /**
@@ -253,12 +204,9 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         }
     }
 
-    /**
-     * Cleanup the cache (purging stale entries)
-     */
     @Override
     public void cleanUp() {
-        consumers.cleanUp();
+        // noop
     }
 
     @Override
