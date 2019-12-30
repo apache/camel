@@ -190,6 +190,7 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<>();
+    private final ThreadLocal<Route> setupRoute = new ThreadLocal<>();
     private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<>();
     private Initialization initialization = Initialization.Default;
     private Boolean autoStartup = Boolean.TRUE;
@@ -1372,7 +1373,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                     // use specialized endpoint add
                     strategy.onEndpointAdd((Endpoint)service);
                 } else {
-                    strategy.onServiceAdd(this, service, null);
+                    Route route = setupRoute.get();
+                    strategy.onServiceAdd(this, service, route);
                 }
             }
 
@@ -3140,8 +3142,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             // will then be prepared in time before we start inputs which will
             // consume messages to be routed
             BaseRouteService routeService = entry.getValue().getRouteService();
-            log.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
-            routeService.warmUp();
+            try {
+                log.debug("Warming up route id: {} having autoStartup={}", routeService.getId(), autoStartup);
+                setupRoute.set(routeService.getRoute());
+                routeService.warmUp();
+            } finally {
+                setupRoute.remove();
+            }
         }
     }
 
