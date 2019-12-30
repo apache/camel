@@ -25,6 +25,7 @@ import org.apache.camel.component.telegram.model.InlineKeyboardButton;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
+import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
 import org.apache.camel.component.telegram.model.ReplyKeyboardMarkup;
@@ -241,8 +242,35 @@ public class TelegramServiceTest extends TelegramTestSupport {
         OutgoingDocumentMessage msg = new OutgoingDocumentMessage();
         msg.setDocument(document);
         msg.setChatId(chatId);
-        msg.setFilenameWithExtension("file.png");
+        msg.setFilenameWithExtension("file.txt");
         msg.setCaption("A document");
+
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+    }
+
+    @Test
+    public void testSendStickerViaImage() throws IOException {
+        byte[] document = TelegramTestUtil.createSampleImage("WEBP");
+
+        OutgoingStickerMessage msg = OutgoingStickerMessage.createWithImage(document, "file.webp", chatId, null, null);
+
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+    }
+
+    @Test
+    public void testSendStickerViaFileId() {
+        String fileId = "CAADBAADEQADmDVxAkmg3XnDZam0FgQ";
+
+        OutgoingStickerMessage msg = OutgoingStickerMessage.createWithFileId(fileId, chatId, null, null);
+
+        template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+    }
+
+    @Test
+    public void testSendStickerViaUrl() {
+        String imageUri = "https://www.gstatic.com/webp/gallery/1.sm.webp?dcb_=0.7185987052045011";
+
+        OutgoingStickerMessage msg = OutgoingStickerMessage.createWithUrl(imageUri, chatId, null, null);
 
         template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
     }
