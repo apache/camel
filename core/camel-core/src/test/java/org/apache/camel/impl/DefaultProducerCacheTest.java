@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncProducer;
@@ -32,7 +33,11 @@ import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
+import org.apache.camel.support.service.ServiceSupport;
 import org.junit.Test;
+
+
+import static org.awaitility.Awaitility.await;
 
 public class DefaultProducerCacheTest extends ContextTestSupport {
 
@@ -58,10 +63,12 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         // the eviction is async so force cleanup
         cache.cleanUp();
-        Thread.sleep(50);
 
-        assertEquals("Size should be 1000", 1000, cache.size());
+        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Size should be 1000", 1000, cache.size()));
+
         cache.stop();
+
+        assertEquals("Size should be 0", 0, cache.size());
     }
 
     @Test
@@ -80,15 +87,9 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         // the eviction is async so force cleanup
         cache.cleanUp();
-        Thread.sleep(50);
 
-        assertEquals("Size should be 5", 5, cache.size());
-
-        // the eviction listener is async so sleep a bit
-        Thread.sleep(1000);
-
-        // should have stopped the 3 evicted
-        assertEquals(3, stopCounter.get());
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Size should be 5", 5, cache.size()));
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, stopCounter.get()));
 
         cache.stop();
 

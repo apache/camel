@@ -207,7 +207,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
     }
 
     @Override
-    protected void doStart() throws Exception {
+    protected void doInit() throws Exception {
         if (producerCache == null) {
             // use a single producer cache as we need to only hold reference for one destination
             // and use a regular HashMap as we do not want a soft reference store that may get re-claimed when low on memory
@@ -216,6 +216,10 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
             producerCache = new DefaultProducerCache(this, camelContext, 1);
             // do not add as service as we do not want to manage the producer cache
         }
+    }
+
+    @Override
+    protected void doStart() throws Exception {
         ServiceHelper.startService(producerCache);
 
         // warm up the producer by starting it so we can fail fast if there was a problem

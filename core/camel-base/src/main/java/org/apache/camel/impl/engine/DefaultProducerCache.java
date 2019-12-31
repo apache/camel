@@ -63,7 +63,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
     public DefaultProducerCache(Object source, CamelContext camelContext, int cacheSize) {
         this.source = source;
         this.camelContext = camelContext;
-        this.maxCacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
+        this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
         this.producers = new ProducerServicePool(Endpoint::createAsyncProducer, Producer::getEndpoint, maxCacheSize);
 
         // only if JMX is enabled
@@ -391,7 +391,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
     @Override
     public void cleanUp() {
-        // noop
+        producers.cleanUp();
     }
 
     @Override

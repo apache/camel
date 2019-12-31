@@ -42,7 +42,7 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
     public void testNonSingleton() throws Exception {
         context.addComponent("dummy", new MyDummyComponent());
 
-        DefaultProducerCache cache = new DefaultProducerCache(this, context, -1);
+        DefaultProducerCache cache = new DefaultProducerCache(this, context, 100);
         cache.start();
 
         Endpoint endpoint = context.getEndpoint("dummy:foo");
@@ -54,9 +54,11 @@ public class ProducerCacheNonSingletonTest extends ContextTestSupport {
         assertNull("Should not store producer on CamelContext", found);
 
         cache.releaseProducer(endpoint, producer);
-        assertTrue("Should be stopped", producer.getStatus().isStopped());
+        assertTrue("Should still be started", producer.getStatus().isStarted());
 
         cache.stop();
+
+        assertTrue("Should be stopped", producer.getStatus().isStopped());
     }
 
     public class MyDummyComponent extends DefaultComponent {

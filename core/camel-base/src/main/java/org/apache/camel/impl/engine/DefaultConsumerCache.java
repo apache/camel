@@ -46,7 +46,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
     public DefaultConsumerCache(Object source, CamelContext camelContext, int cacheSize) {
         this.source = source;
         this.camelContext = camelContext;
-        this.maxCacheSize = cacheSize == 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
+        this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
         this.consumers = new PollingConsumerServicePool(Endpoint::createPollingConsumer, Consumer::getEndpoint, maxCacheSize);
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
@@ -206,7 +206,7 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
 
     @Override
     public void cleanUp() {
-        // noop
+        consumers.cleanUp();
     }
 
     @Override

@@ -35,8 +35,7 @@ public class DefaultConsumerCacheTest extends ContextTestSupport {
 
         assertEquals("Size should be 0", 0, cache.size());
 
-        // test that we cache at most 1000 consumers to avoid it eating to much
-        // memory
+        // test that we cache at most 1000 consumers to avoid it eating to much memory
         for (int i = 0; i < 1003; i++) {
             Endpoint e = context.getEndpoint("direct:queue:" + i);
             PollingConsumer p = cache.acquirePollingConsumer(e);
@@ -45,8 +44,10 @@ public class DefaultConsumerCacheTest extends ContextTestSupport {
 
         // the eviction is async so force cleanup
         cache.cleanUp();
-        await().atMost(1, TimeUnit.SECONDS).until(() -> cache.size() == 1000);
+
+        await().atMost(3, TimeUnit.SECONDS).until(() -> cache.size() == 1000);
         assertEquals("Size should be 1000", 1000, cache.size());
+
         cache.stop();
     }
 
