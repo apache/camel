@@ -257,7 +257,7 @@ public class CMISProducerTest extends CMISTestSupport {
         createSession().getObject(folder.getId());
     }
 
-    @Test (expected = CmisObjectNotFoundException.class)
+    @Test 
     public void deleteDocument() throws UnsupportedEncodingException {
 
         Document document = createTextDocument(createSession().getRootFolder(), "This is new test document",  "document.txt");
