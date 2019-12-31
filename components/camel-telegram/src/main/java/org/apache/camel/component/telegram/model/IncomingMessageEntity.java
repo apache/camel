@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class MessageEntity {
+public class IncomingMessageEntity {
 
     private String type;
 
@@ -34,7 +34,7 @@ public class MessageEntity {
 
     private User user;
 
-    public MessageEntity() {
+    public IncomingMessageEntity() {
     }
 
     public String getType() {

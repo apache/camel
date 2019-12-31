@@ -34,6 +34,7 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.TelegramService;
+import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
 import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
@@ -101,6 +102,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendVenue"));
         m.put(EditMessageTextMessage.class,
             new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageText"));
+        m.put(EditMessageCaptionMessage.class,
+            new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageCaption"));
         this.handlers = m;
     }
 
