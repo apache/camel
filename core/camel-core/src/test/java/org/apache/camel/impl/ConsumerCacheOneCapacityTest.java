@@ -27,11 +27,11 @@ import org.junit.Test;
 
 import static org.awaitility.Awaitility.await;
 
-public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
+public class ConsumerCacheOneCapacityTest extends ContextTestSupport {
 
     @Test
-    public void testConsumerCacheZeroCapacity() throws Exception {
-        DefaultConsumerCache cache = new DefaultConsumerCache(this, context, -1);
+    public void testConsumerCacheOneCapacity() throws Exception {
+        DefaultConsumerCache cache = new DefaultConsumerCache(this, context, 1);
         cache.start();
 
         assertEquals("Size should be 0", 0, cache.size());
@@ -50,13 +50,16 @@ public class ConsumerCacheZeroCapacityTest extends ContextTestSupport {
         cache.releasePollingConsumer(endpoint, consumer);
 
         // takes a little to stop
-        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Stopped", ((ServiceSupport)consumer).getStatus().name()));
+        assertTrue("Should still be started", ((ServiceSupport)consumer).isStarted());
+
+        cache.stop();
+
+        // takes a little to stop
+        await().atMost(2, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Stopped", ((ServiceSupport)consumer).getStatus().name()));
 
         // should not be a file consumer thread
         found = Thread.getAllStackTraces().keySet().stream().anyMatch(t -> t.getName().contains("target/data/foo"));
         assertFalse("Should not find file consumer thread", found);
-
-        cache.stop();
     }
 
 }
