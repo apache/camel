@@ -116,7 +116,6 @@ public interface ConsumerCache extends Service {
     /**
      * Cleanup the cache (purging stale entries)
      */
-    @Deprecated
     void cleanUp();
 
     /**

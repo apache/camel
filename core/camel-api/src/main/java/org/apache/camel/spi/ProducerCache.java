@@ -115,7 +115,6 @@ public interface ProducerCache extends Service {
     /**
      * Cleanup the cache (purging stale entries)
      */
-    @Deprecated
     void cleanUp();
 
     /**

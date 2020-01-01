@@ -19,21 +19,25 @@ package org.apache.camel.impl;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 import org.apache.camel.AsyncProducer;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.engine.DefaultProducerCache;
+import org.apache.camel.impl.engine.ProducerServicePool;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.support.DefaultComponent;
 import org.apache.camel.support.DefaultEndpoint;
 import org.apache.camel.support.DefaultProducer;
 import org.apache.camel.support.service.ServiceSupport;
+import org.apache.camel.util.function.ThrowingFunction;
 import org.junit.Test;
 
 
@@ -41,6 +45,7 @@ import static org.awaitility.Awaitility.await;
 
 public class DefaultProducerCacheTest extends ContextTestSupport {
 
+    private final AtomicInteger producerCounter = new AtomicInteger();
     private final AtomicInteger stopCounter = new AtomicInteger();
     private final AtomicInteger shutdownCounter = new AtomicInteger();
 
@@ -146,6 +151,92 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         cache.stop();
     }
 
+    @Test
+    public void testCacheEvictWhileInUse() throws Exception {
+        producerCounter.set(0);
+
+        MyProducerCache cache = new MyProducerCache(this, context, 2);
+        cache.start();
+
+        assertEquals("Size should be 0", 0, cache.size());
+
+        Endpoint e = newEndpoint(false, 1);
+        e.setCamelContext(context);
+
+        AsyncProducer p1 = cache.acquireProducer(e);
+        assertEquals("Size should be 0", 0, cache.size());
+
+        AsyncProducer p2 = cache.acquireProducer(e);
+        assertEquals("Size should be 0", 0, cache.size());
+
+        cache.releaseProducer(e, p2);
+        cache.releaseProducer(e, p1);
+
+        assertEquals("Size should be 2", 2, cache.size());
+
+        // nothing has stopped yet
+        assertEquals(0, stopCounter.get());
+
+        p1 = cache.acquireProducer(e);
+        p2 = cache.acquireProducer(e);
+        AsyncProducer p3 = cache.acquireProducer(e);
+
+        assertEquals("Size should be 0", 0, cache.size());
+
+        // nothing has stopped yet even we have 3 producers and a cache limit of 2
+        assertEquals(0, stopCounter.get());
+
+        // force evict p1 while its in use (eg simulate someone else grabbing it while evicting race condition)
+        cache.forceEvict(p1);
+
+        // and should still not be stopped
+        assertEquals(0, stopCounter.get());
+
+        // now release the others back
+        cache.releaseProducer(e, p3);
+        cache.releaseProducer(e, p2);
+
+        // which should trigger the eviction run to stop one of the producers as we have 3 and the cache size is 2
+        assertEquals(1, stopCounter.get());
+
+        cache.stop();
+
+        // should have stopped all 3 when the cache is stopped
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, stopCounter.get()));
+    }
+
+    private class MyProducerCache extends DefaultProducerCache {
+
+        private MyServicePool myServicePool;
+
+        public MyProducerCache(Object source, CamelContext camelContext, int cacheSize) {
+            super(source, camelContext, cacheSize);
+        }
+
+        @Override
+        protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
+            myServicePool = new MyServicePool(Endpoint::createAsyncProducer, Producer::getEndpoint, cacheSize);
+            return myServicePool;
+        }
+
+        public void forceEvict(AsyncProducer producer) {
+            myServicePool.onEvict(producer);
+        }
+
+    }
+
+    private class MyServicePool extends ProducerServicePool {
+
+        public MyServicePool(ThrowingFunction<Endpoint, AsyncProducer, Exception> creator, Function<AsyncProducer, Endpoint> getEndpoint, int capacity) {
+            super(creator, getEndpoint, capacity);
+        }
+
+        @Override
+        protected void onEvict(AsyncProducer asyncProducer) {
+            super.onEvict(asyncProducer);
+        }
+    }
+
     @Override
     public void setUp() throws Exception {
         super.setUp();
@@ -196,8 +287,11 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
     private final class MyProducer extends DefaultProducer {
 
+        private int id;
+
         MyProducer(Endpoint endpoint) {
             super(endpoint);
+            id = producerCounter.incrementAndGet();
         }
 
         @Override
@@ -213,6 +307,11 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         @Override
         protected void doShutdown() throws Exception {
             shutdownCounter.incrementAndGet();
+        }
+
+        @Override
+        public String toString() {
+            return "MyProducer[" + id + "]";
         }
     }
 }

@@ -16,8 +16,9 @@
  */
 package org.apache.camel.impl;
 
-import javax.naming.Context;
 import java.util.Map;
+
+import javax.naming.Context;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -28,7 +29,6 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.engine.BeanProcessorFactoryResolver;
 import org.apache.camel.impl.engine.BeanProxyFactoryResolver;
-import org.apache.camel.impl.engine.PollingConsumerServicePool;
 import org.apache.camel.impl.engine.DefaultAsyncProcessorAwaitManager;
 import org.apache.camel.impl.engine.DefaultBeanIntrospection;
 import org.apache.camel.impl.engine.DefaultCamelBeanPostProcessor;
@@ -55,6 +55,7 @@ import org.apache.camel.impl.engine.DefaultUnitOfWorkFactory;
 import org.apache.camel.impl.engine.DefaultUuidGenerator;
 import org.apache.camel.impl.engine.EndpointKey;
 import org.apache.camel.impl.engine.HeadersMapFactoryResolver;
+import org.apache.camel.impl.engine.PollingConsumerServicePool;
 import org.apache.camel.impl.engine.ProducerServicePool;
 import org.apache.camel.impl.engine.PropertiesComponentFactoryResolver;
 import org.apache.camel.impl.engine.ReactiveExecutorResolver;
