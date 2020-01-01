@@ -21,6 +21,7 @@ import java.util.Arrays;
 
 import org.apache.camel.component.telegram.TelegramParseMode;
 import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
+import org.apache.camel.component.telegram.model.EditMessageDelete;
 import org.apache.camel.component.telegram.model.EditMessageMediaMessage;
 import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.IncomingMessage;
@@ -440,14 +441,14 @@ public class TelegramServiceTest extends TelegramTestSupport {
         //send photo message
         Integer messageId = sendSamplePhotoMessageAndGetMessageId();
 
-        //update to audio message
-        InputMediaVideo inputMediaDocument = new InputMediaVideo();
-        inputMediaDocument.setCaption(caption);
-        inputMediaDocument.setMedia(mediaUrl);
+        //update to video message
+        InputMediaVideo inputMediaVideo = new InputMediaVideo();
+        inputMediaVideo.setCaption(caption);
+        inputMediaVideo.setMedia(mediaUrl);
 
         EditMessageMediaMessage editMessageMediaMessage = new EditMessageMediaMessage.Builder()
             .messageId(messageId)
-            .media(inputMediaDocument)
+            .media(inputMediaVideo)
             .build();
 
         IncomingMessage incomingMessage = sendMessage(editMessageMediaMessage).getMessage();
@@ -466,19 +467,35 @@ public class TelegramServiceTest extends TelegramTestSupport {
         //send photo message
         Integer messageId = sendSamplePhotoMessageAndGetMessageId();
 
-        //update to audio message
-        InputMediaPhoto inputMediaDocument = new InputMediaPhoto();
-        inputMediaDocument.setCaption(caption);
-        inputMediaDocument.setMedia(mediaUrl);
+        //update to another photo message
+        InputMediaPhoto inputMediaPhoto = new InputMediaPhoto();
+        inputMediaPhoto.setCaption(String.format("<b>%s</b>", caption));
+        inputMediaPhoto.setParseMode("HTML");
+        inputMediaPhoto.setMedia(mediaUrl);
 
         EditMessageMediaMessage editMessageMediaMessage = new EditMessageMediaMessage.Builder()
             .messageId(messageId)
-            .media(inputMediaDocument)
+            .media(inputMediaPhoto)
             .build();
 
         IncomingMessage incomingMessage = sendMessage(editMessageMediaMessage).getMessage();
         Assertions.assertNotNull(incomingMessage.getPhoto());
         Assertions.assertEquals(caption, incomingMessage.getCaption());
+        Assertions.assertEquals("bold", incomingMessage.getCaptionEntities().get(0).getType());
+    }
+
+    @Test
+    void testDeleteMessage() {
+
+        //send message
+        Integer messageId = sendSampleTextMessageAndGetMessageId("text");
+
+        //delete message
+        EditMessageDelete messageDelete = new EditMessageDelete(chatId, messageId);
+
+        MessageResult incomingMessage = sendMessage(messageDelete);
+        Assertions.assertTrue(incomingMessage.isOk());
+        Assertions.assertTrue(incomingMessage.isResult());
     }
 
     private Integer sendSamplePhotoMessageAndGetMessageId(String caption) throws IOException {
@@ -509,6 +526,6 @@ public class TelegramServiceTest extends TelegramTestSupport {
     }
 
     private MessageResult sendMessage(OutgoingMessage outgoingMessage) {
-        return (MessageResult) template.requestBody(String.format("telegram://bots?chatId=%s", chatId), outgoingMessage);
+        return (MessageResult) template.requestBody(String.format("telegram://bots?chatId=%s", "288482186"), outgoingMessage);
     }
 }

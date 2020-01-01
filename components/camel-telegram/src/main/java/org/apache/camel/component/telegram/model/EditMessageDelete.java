@@ -17,29 +17,34 @@
 package org.apache.camel.component.telegram.model;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-/**
- * Represents a photo to be sent.
- */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class InputMediaPhoto extends InputMedia {
+public class EditMessageDelete extends OutgoingMessage {
 
-    private static final String TYPE = "photo";
+    @JsonProperty("message_id")
+    private Integer messageId;
 
     /**
-     * Creates {@link InputMediaPhoto} instance.
+     * Builds {@link EditMessageDelete} instance.
      *
-     * @param media     File to send. Pass a file_id to send a file that exists on the Telegram servers, or pass an
-     *                  HTTP URL for Telegram to get a file from the Internet
-     * @param caption   Optional. Caption of the video to be sent, 0-1024 characters
-     * @param parseMode Optional. Send 'Markdown' or 'HTML', if you want Telegram apps to show bold, italic,
-     *                  fixed-width text or inline URLs in the media caption.
+     * @param chatId    Unique identifier for the target chat or username of the target channel.
+     * @param messageId Identifier of the message to delete
      */
-    public InputMediaPhoto(String media, String caption, String parseMode) {
-        super(TYPE, media, caption, parseMode);
+    public EditMessageDelete(String chatId, Integer messageId) {
+        super.setChatId(chatId);
+        this.messageId = messageId;
     }
 
-    public InputMediaPhoto() {
-        super.setType(TYPE);
+    public Integer getMessageId() {
+        return messageId;
+    }
+
+    @Override
+    public String toString() {
+        return "EditMessageDelete{"
+            + "messageId=" + messageId
+            + ", chatId='" + chatId + '\''
+            + '}';
     }
 }

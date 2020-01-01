@@ -35,7 +35,8 @@ public class InputMediaAudio extends InputMedia {
     /**
      * Creates {@link InputMediaAudio} instance.
      *
-     * @param media     File to send. Pass a file_id to send a file that exists on the Telegram servers
+     * @param media     File to send. Pass a file_id to send a file that exists on the Telegram servers, or pass an
+     *                  HTTP URL for Telegram to get a file from the Internet
      * @param caption   Optional. Caption of the video to be sent, 0-1024 characters
      * @param parseMode Optional. Send 'Markdown' or 'HTML', if you want Telegram apps to show bold, italic,
      *                  fixed-width text or inline URLs in the media caption.
