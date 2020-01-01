@@ -116,10 +116,6 @@ public class MiloClientEndpoint extends DefaultEndpoint {
         return consumer;
     }
 
-    @Override
-    public boolean isSingleton() {
-        return false;
-    }
 
     public MiloClientConnection getConnection() {
         return this.connection;
