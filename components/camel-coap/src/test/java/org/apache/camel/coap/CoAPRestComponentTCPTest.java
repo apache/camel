@@ -23,7 +23,7 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.eclipse.californium.core.CoapClient;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.eclipse.californium.elements.tcp.TcpClientConnector;
+import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
 
 /**
  * Test the CoAP Rest Component with plain TCP.

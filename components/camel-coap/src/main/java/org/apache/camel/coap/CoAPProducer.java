@@ -30,8 +30,8 @@ import org.eclipse.californium.core.CoapResponse;
 import org.eclipse.californium.core.coap.MediaTypeRegistry;
 import org.eclipse.californium.core.network.CoapEndpoint;
 import org.eclipse.californium.core.network.config.NetworkConfig;
-import org.eclipse.californium.elements.tcp.TcpClientConnector;
-import org.eclipse.californium.elements.tcp.TlsClientConnector;
+import org.eclipse.californium.elements.tcp.netty.TcpClientConnector;
+import org.eclipse.californium.elements.tcp.netty.TlsClientConnector;
 import org.eclipse.californium.scandium.DTLSConnector;
 
 /**
