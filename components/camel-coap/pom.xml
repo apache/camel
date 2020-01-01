@@ -52,7 +52,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.californium</groupId>
-            <artifactId>element-connector-tcp</artifactId>
+            <artifactId>element-connector-tcp-netty</artifactId>
             <version>${californium-version}</version>
         </dependency>
 
