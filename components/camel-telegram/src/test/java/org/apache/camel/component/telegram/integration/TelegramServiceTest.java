@@ -18,14 +18,17 @@ package org.apache.camel.component.telegram.integration;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.camel.component.telegram.TelegramParseMode;
 import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
 import org.apache.camel.component.telegram.model.EditMessageDelete;
 import org.apache.camel.component.telegram.model.EditMessageMediaMessage;
+import org.apache.camel.component.telegram.model.EditMessageReplyMarkupMessage;
 import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.IncomingMessage;
 import org.apache.camel.component.telegram.model.InlineKeyboardButton;
+import org.apache.camel.component.telegram.model.InlineKeyboardMarkup;
 import org.apache.camel.component.telegram.model.InputMediaAnimation;
 import org.apache.camel.component.telegram.model.InputMediaAudio;
 import org.apache.camel.component.telegram.model.InputMediaPhoto;
@@ -297,7 +300,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
         Integer messageId = sendSampleTextMessageAndGetMessageId(originalText);
 
         // Edit message
-        EditMessageTextMessage msg = new EditMessageTextMessage.Builder()
+        EditMessageTextMessage msg = EditMessageTextMessage.builder()
             .chatId(chatId)
             .text(newText)
             .messageId(messageId)
@@ -321,14 +324,14 @@ public class TelegramServiceTest extends TelegramTestSupport {
         Integer messageId = sendSampleTextMessageAndGetMessageId(originalText);
 
         // Edit message
-        EditMessageTextMessage msg = new EditMessageTextMessage.Builder()
+        EditMessageTextMessage msg = EditMessageTextMessage.builder()
             .chatId(chatId)
             .text(newTextWithUrl)
             .parseMode("HTML")
             .messageId(messageId)
             .build();
 
-        MessageResult response = (MessageResult) template.requestBody(String.format("telegram://bots?chatId=%s", chatId), msg);
+        MessageResult response = sendMessage(msg);
 
         Assertions.assertEquals(urlDescription, response.getMessage().getText());
         Assertions.assertEquals(url, response.getMessage().getEntities().get(0).getUrl());
@@ -345,7 +348,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
         Integer messageId = sendSamplePhotoMessageAndGetMessageId(originalCaption);
 
         //edit message
-        EditMessageCaptionMessage editMessageCaptionMessage = new EditMessageCaptionMessage.Builder()
+        EditMessageCaptionMessage editMessageCaptionMessage = EditMessageCaptionMessage.builder()
             .caption(newCaption)
             .messageId(messageId)
             .build();
@@ -367,7 +370,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
         Integer messageId = sendSamplePhotoMessageAndGetMessageId(originalCaption);
 
         //edit message
-        EditMessageCaptionMessage editMessageCaptionMessage = new EditMessageCaptionMessage.Builder()
+        EditMessageCaptionMessage editMessageCaptionMessage = EditMessageCaptionMessage.builder()
             .caption(newCaptionWithUrl)
             .messageId(messageId)
             .parseMode("HTML")
@@ -394,7 +397,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
         inputMediaAudio.setCaption(caption);
         inputMediaAudio.setMedia(mediaUrl);
 
-        EditMessageMediaMessage editMessageMediaMessage = new EditMessageMediaMessage.Builder()
+        EditMessageMediaMessage editMessageMediaMessage = EditMessageMediaMessage.builder()
             .messageId(messageId)
             .media(inputMediaAudio)
             .build();
@@ -420,7 +423,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
         inputMediaAnimation.setCaption(caption);
         inputMediaAnimation.setMedia(mediaUrl);
 
-        EditMessageMediaMessage editMessageMediaMessage = new EditMessageMediaMessage.Builder()
+        EditMessageMediaMessage editMessageMediaMessage = EditMessageMediaMessage.builder()
             .messageId(messageId)
             .media(inputMediaAnimation)
             .build();
@@ -446,7 +449,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
         inputMediaVideo.setCaption(caption);
         inputMediaVideo.setMedia(mediaUrl);
 
-        EditMessageMediaMessage editMessageMediaMessage = new EditMessageMediaMessage.Builder()
+        EditMessageMediaMessage editMessageMediaMessage = EditMessageMediaMessage.builder()
             .messageId(messageId)
             .media(inputMediaVideo)
             .build();
@@ -473,7 +476,7 @@ public class TelegramServiceTest extends TelegramTestSupport {
         inputMediaPhoto.setParseMode("HTML");
         inputMediaPhoto.setMedia(mediaUrl);
 
-        EditMessageMediaMessage editMessageMediaMessage = new EditMessageMediaMessage.Builder()
+        EditMessageMediaMessage editMessageMediaMessage = EditMessageMediaMessage.builder()
             .messageId(messageId)
             .media(inputMediaPhoto)
             .build();
@@ -482,6 +485,34 @@ public class TelegramServiceTest extends TelegramTestSupport {
         Assertions.assertNotNull(incomingMessage.getPhoto());
         Assertions.assertEquals(caption, incomingMessage.getCaption());
         Assertions.assertEquals("bold", incomingMessage.getCaptionEntities().get(0).getType());
+    }
+
+    @Test
+    void testEditMarkupMessage() throws IOException {
+
+        //send message
+        Integer messageId = sendSamplePhotoMessageAndGetMessageId();
+
+        //edit markup
+        InlineKeyboardButton buttonOptionOneI = InlineKeyboardButton.builder()
+            .text("camel")
+            .url("https://camel.apache.org/")
+            .build();
+
+        InlineKeyboardMarkup replyMarkup = InlineKeyboardMarkup.builder()
+            .addRow(Collections.singletonList(buttonOptionOneI))
+            .build();
+
+        EditMessageReplyMarkupMessage editMessageReplyMarkupMessage = new EditMessageReplyMarkupMessage.Builder()
+            .messageId(messageId)
+            .replyMarkup(replyMarkup)
+            .build();
+
+        MessageResult incomingMessage = sendMessage(editMessageReplyMarkupMessage);
+        Assertions.assertTrue(incomingMessage.isOk());
+
+        Assertions.assertEquals(buttonOptionOneI, incomingMessage.getMessage().getReplyMarkup().getInlineKeyboard()
+        .get(0).get(0));
     }
 
     @Test
@@ -526,6 +557,6 @@ public class TelegramServiceTest extends TelegramTestSupport {
     }
 
     private MessageResult sendMessage(OutgoingMessage outgoingMessage) {
-        return (MessageResult) template.requestBody(String.format("telegram://bots?chatId=%s", "288482186"), outgoingMessage);
+        return (MessageResult) template.requestBody(String.format("telegram://bots?chatId=%s", chatId), outgoingMessage);
     }
 }

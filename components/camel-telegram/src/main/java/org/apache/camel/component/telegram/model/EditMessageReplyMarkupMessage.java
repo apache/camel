@@ -20,12 +20,10 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Message to edit animation, audio, document, photo, or video messages.
- * If a message is a part of a message album, then it can be edited only to a photo or a video.
- * Otherwise, message type can be changed arbitrarily.
+ * Message to edit only the reply markup of messages.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class EditMessageMediaMessage extends OutgoingMessage {
+public class EditMessageReplyMarkupMessage extends OutgoingMessage {
 
     @JsonProperty("message_id")
     private Integer messageId;
@@ -33,27 +31,23 @@ public class EditMessageMediaMessage extends OutgoingMessage {
     @JsonProperty("inline_message_id")
     private String inlineMessageId;
 
-    private InputMedia media;
-
     @JsonProperty("reply_markup")
     private InlineKeyboardMarkup replyMarkup;
 
     /**
-     * Builds {@link EditMessageMediaMessage} instance.
+     * Builds {@link EditMessageReplyMarkupMessage} instance.
      *
      * @param chatId               Unique identifier for the target chat or username of the target channel.
      * @param messageId            Identifier of the message to edit. Required if inline_message_id is not specified.
      * @param inlineMessageId      Required if chat_id and message_id are not specified.
      *                             Identifier of the inline message.
-     * @param media                The media to send.
      * @param replyMarkup          An inline keyboard that appears right next to the message it belongs to.
      */
-    public EditMessageMediaMessage(String chatId, Integer messageId, String inlineMessageId, InputMedia media,
-                                   InlineKeyboardMarkup replyMarkup) {
+    public EditMessageReplyMarkupMessage(String chatId, Integer messageId, String inlineMessageId,
+                                         InlineKeyboardMarkup replyMarkup) {
         this.chatId = chatId;
         this.messageId = messageId;
         this.inlineMessageId = inlineMessageId;
-        this.media = media;
         this.replyMarkup = replyMarkup;
     }
 
@@ -69,22 +63,13 @@ public class EditMessageMediaMessage extends OutgoingMessage {
         return replyMarkup;
     }
 
-    public InputMedia getMedia() {
-        return media;
-    }
-
-    public static Builder builder() {
-        return new Builder();
-    }
-
     public static final class Builder {
         protected String chatId;
         private Integer messageId;
         private String inlineMessageId;
-        private InputMedia media;
         private InlineKeyboardMarkup replyMarkup;
 
-        private Builder() {
+        public Builder() {
         }
 
         public Builder messageId(Integer messageId) {
@@ -94,11 +79,6 @@ public class EditMessageMediaMessage extends OutgoingMessage {
 
         public Builder inlineMessageId(String inlineMessageId) {
             this.inlineMessageId = inlineMessageId;
-            return this;
-        }
-
-        public Builder media(InputMedia media) {
-            this.media = media;
             return this;
         }
 
@@ -112,9 +92,20 @@ public class EditMessageMediaMessage extends OutgoingMessage {
             return this;
         }
 
-        public EditMessageMediaMessage build() {
-            return new EditMessageMediaMessage(
-                chatId, messageId, inlineMessageId, media, replyMarkup);
+        public EditMessageReplyMarkupMessage build() {
+            return new EditMessageReplyMarkupMessage(chatId, messageId, inlineMessageId, replyMarkup);
         }
     }
+
+
+    @Override
+    public String toString() {
+        return "EditMessageReplyMarkupMessage{"
+            + "messageId=" + messageId
+            + ", inlineMessageId='" + inlineMessageId + '\''
+            + ", replyMarkup=" + replyMarkup
+            + ", chatId='" + chatId + '\''
+            + '}';
+    }
 }
+

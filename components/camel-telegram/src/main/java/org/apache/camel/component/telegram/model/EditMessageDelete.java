@@ -19,6 +19,9 @@ package org.apache.camel.component.telegram.model;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Message to delete a message, including service messages.
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EditMessageDelete extends OutgoingMessage {
 

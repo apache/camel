@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Message to edit text and game messages.
- * On success, if edited message is sent by the bot, the edited Message is returned
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EditMessageTextMessage extends OutgoingMessage {
@@ -41,10 +40,10 @@ public class EditMessageTextMessage extends OutgoingMessage {
     private Boolean disableWebPagePreview;
 
     @JsonProperty("reply_markup")
-    private ReplyKeyboardMarkup replyMarkup;
+    private InlineKeyboardMarkup replyMarkup;
 
     /**
-     * Constructs {@link EditMessageTextMessage} instance.
+     * Builds {@link EditMessageTextMessage} instance.
      *
      * @param chatId                Unique identifier for the target chat or username of the target channel.
      * @param messageId             Identifier of the message to edit. Required if inline_message_id is not specified.
@@ -54,10 +53,10 @@ public class EditMessageTextMessage extends OutgoingMessage {
      * @param parseMode             Send Markdown or HTML, if you want Telegram apps to show bold, italic,
      *                              fixed-width text or inline URLs in your bot's message.
      * @param disableWebPagePreview Disables link previews for links in this message.
-     * @param replyMarkup           A JSON-serialized object for an inline keyboard.
+     * @param replyMarkup           An inline keyboard that appears right next to the message it belongs to.
      */
     public EditMessageTextMessage(String chatId, Integer messageId, String inlineMessageId, String text,
-                                  String parseMode, Boolean disableWebPagePreview, ReplyKeyboardMarkup replyMarkup) {
+                                  String parseMode, Boolean disableWebPagePreview, InlineKeyboardMarkup replyMarkup) {
         this.chatId = chatId;
         this.messageId = messageId;
         this.inlineMessageId = inlineMessageId;
@@ -87,10 +86,14 @@ public class EditMessageTextMessage extends OutgoingMessage {
         return disableWebPagePreview;
     }
 
-    public ReplyKeyboardMarkup getReplyMarkup() {
+    public InlineKeyboardMarkup getReplyMarkup() {
         return replyMarkup;
     }
 
+    public static Builder builder() {
+        return new Builder();
+    }
+    
     public static final class Builder {
         protected String chatId;
         private Integer messageId;
@@ -98,9 +101,9 @@ public class EditMessageTextMessage extends OutgoingMessage {
         private String text;
         private String parseMode;
         private Boolean disableWebPagePreview;
-        private ReplyKeyboardMarkup replyMarkup;
+        private InlineKeyboardMarkup replyMarkup;
 
-        public Builder() {
+        private Builder() {
         }
 
         public Builder messageId(Integer messageId) {
@@ -128,7 +131,7 @@ public class EditMessageTextMessage extends OutgoingMessage {
             return this;
         }
 
-        public Builder replyMarkup(ReplyKeyboardMarkup replyMarkup) {
+        public Builder replyMarkup(InlineKeyboardMarkup replyMarkup) {
             this.replyMarkup = replyMarkup;
             return this;
         }

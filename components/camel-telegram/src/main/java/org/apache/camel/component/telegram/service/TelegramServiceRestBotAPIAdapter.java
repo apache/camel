@@ -38,6 +38,7 @@ import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
 import org.apache.camel.component.telegram.model.EditMessageDelete;
 import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
 import org.apache.camel.component.telegram.model.EditMessageMediaMessage;
+import org.apache.camel.component.telegram.model.EditMessageReplyMarkupMessage;
 import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
@@ -110,6 +111,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageMedia"));
         m.put(EditMessageDelete.class,
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/deleteMessage"));
+        m.put(EditMessageReplyMarkupMessage.class,
+            new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageReplyMarkup"));
         this.handlers = m;
     }
 

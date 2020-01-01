@@ -21,7 +21,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * Message to edit captions of messages.
- * On success, if edited message is sent by the bot, the edited Message is returned
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EditMessageCaptionMessage extends OutgoingMessage {
@@ -38,10 +37,10 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
     private String parseMode;
 
     @JsonProperty("reply_markup")
-    private ReplyKeyboardMarkup replyMarkup;
+    private InlineKeyboardMarkup replyMarkup;
 
     /**
-     * Constructs {@link EditMessageCaptionMessage} instance.
+     * Builds {@link EditMessageCaptionMessage} instance.
      *
      * @param chatId                Unique identifier for the target chat or username of the target channel.
      * @param messageId             Identifier of the message to edit. Required if inline_message_id is not specified.
@@ -50,10 +49,10 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
      * @param caption               New caption of the message.
      * @param parseMode             Send Markdown or HTML, if you want Telegram apps to show bold, italic,
      *                              fixed-width text or inline URLs in your bot's message.
-     * @param replyMarkup           A JSON-serialized object for an inline keyboard.
+     * @param replyMarkup           An inline keyboard that appears right next to the message it belongs to.
      */
     public EditMessageCaptionMessage(String chatId, Integer messageId, String inlineMessageId, String caption,
-                                     String parseMode, ReplyKeyboardMarkup replyMarkup) {
+                                     String parseMode, InlineKeyboardMarkup replyMarkup) {
         this.chatId = chatId;
         this.messageId = messageId;
         this.inlineMessageId = inlineMessageId;
@@ -78,8 +77,12 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
         return parseMode;
     }
 
-    public ReplyKeyboardMarkup getReplyMarkup() {
+    public InlineKeyboardMarkup getReplyMarkup() {
         return replyMarkup;
+    }
+
+    public static Builder builder() {
+        return new Builder();
     }
 
     public static final class Builder {
@@ -88,9 +91,9 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
         private String inlineMessageId;
         private String caption;
         private String parseMode;
-        private ReplyKeyboardMarkup replyMarkup;
+        private InlineKeyboardMarkup replyMarkup;
 
-        public Builder() {
+        private Builder() {
         }
 
         public Builder messageId(Integer messageId) {
@@ -113,7 +116,7 @@ public class EditMessageCaptionMessage extends OutgoingMessage {
             return this;
         }
 
-        public Builder replyMarkup(ReplyKeyboardMarkup replyMarkup) {
+        public Builder replyMarkup(InlineKeyboardMarkup replyMarkup) {
             this.replyMarkup = replyMarkup;
             return this;
         }

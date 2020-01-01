@@ -27,7 +27,7 @@ public class InputMediaPhoto extends InputMedia {
     private static final String TYPE = "photo";
 
     /**
-     * Creates {@link InputMediaPhoto} instance.
+     * Builds {@link InputMediaPhoto} instance.
      *
      * @param media     File to send. Pass a file_id to send a file that exists on the Telegram servers, or pass an
      *                  HTTP URL for Telegram to get a file from the Internet

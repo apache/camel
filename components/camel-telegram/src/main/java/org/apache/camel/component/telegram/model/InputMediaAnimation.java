@@ -33,7 +33,7 @@ public class InputMediaAnimation extends InputMedia {
     private Integer duration;
 
     /**
-     * Creates {@link InputMediaAnimation} instance.
+     * Builds {@link InputMediaAnimation} instance.
      *
      * @param media     File to send. Pass a file_id to send a file that exists on the Telegram servers, or pass an
      *                  HTTP URL for Telegram to get a file from the Internet

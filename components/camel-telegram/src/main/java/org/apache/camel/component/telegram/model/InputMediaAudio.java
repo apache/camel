@@ -33,7 +33,7 @@ public class InputMediaAudio extends InputMedia {
     private String title;
 
     /**
-     * Creates {@link InputMediaAudio} instance.
+     * Builds {@link InputMediaAudio} instance.
      *
      * @param media     File to send. Pass a file_id to send a file that exists on the Telegram servers, or pass an
      *                  HTTP URL for Telegram to get a file from the Internet

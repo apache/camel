@@ -16,14 +16,19 @@
  */
 package org.apache.camel.component.telegram.model;
 
+import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+
 /**
- * This object represents the content of a media message to be sent.
+ * Represents the content of a media message to be sent.
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public abstract class InputMedia {
+public abstract class InputMedia implements Serializable {
+
+    private static final long serialVersionUID = 7249606337728192452L;
 
     private String type;
 

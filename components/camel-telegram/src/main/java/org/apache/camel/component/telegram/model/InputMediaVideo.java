@@ -37,7 +37,7 @@ public class InputMediaVideo extends InputMedia {
     private String supportsStreaming;
 
     /**
-     * Creates {@link InputMediaVideo} instance.
+     * Builds {@link InputMediaVideo} instance.
      *
      * @param media             File to send. Pass a file_id to send a file that exists on the Telegram servers,
      *                          or pass an HTTP URL for Telegram to get a file from the Internet

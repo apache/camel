@@ -64,6 +64,9 @@ public class IncomingMessage implements Serializable {
     @JsonProperty("caption_entities")
     private List<IncomingMessageEntity> captionEntities;
 
+    @JsonProperty("reply_markup")
+    private InlineKeyboardMarkup replyMarkup;
+
     private String caption;
 
     public IncomingMessage() {
@@ -181,6 +184,14 @@ public class IncomingMessage implements Serializable {
         this.captionEntities = captionEntities;
     }
 
+    public InlineKeyboardMarkup getReplyMarkup() {
+        return replyMarkup;
+    }
+
+    public void setReplyMarkup(InlineKeyboardMarkup replyMarkup) {
+        this.replyMarkup = replyMarkup;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("IncomingMessage{");
@@ -198,6 +209,7 @@ public class IncomingMessage implements Serializable {
         sb.append(", entities=").append(entities);
         sb.append(", caption=").append(caption);
         sb.append(", captionEntities=").append(captionEntities);
+        sb.append(", replyMarkup=").append(replyMarkup);
         sb.append('}');
         return sb.toString();
     }
