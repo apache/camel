@@ -126,7 +126,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBody(String endpointUri, long timeout) {
-        Object answer = null;
+        Object answer;
         Exchange exchange = receive(endpointUri, timeout);
         try {
             answer = extractResultBody(exchange);
@@ -143,7 +143,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
 
     @Override
     public Object receiveBodyNoWait(String endpointUri) {
-        Object answer = null;
+        Object answer;
         Exchange exchange = receiveNoWait(endpointUri);
         try {
             answer = extractResultBody(exchange);
@@ -161,7 +161,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     @Override
     @SuppressWarnings("unchecked")
     public <T> T receiveBody(String endpointUri, Class<T> type) {
-        Object answer = null;
+        Object answer;
         Exchange exchange = receive(endpointUri);
         try {
             answer = extractResultBody(exchange);
@@ -180,7 +180,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     @Override
     @SuppressWarnings("unchecked")
     public <T> T receiveBody(String endpointUri, long timeout, Class<T> type) {
-        Object answer = null;
+        Object answer;
         Exchange exchange = receive(endpointUri, timeout);
         try {
             answer = extractResultBody(exchange);
@@ -199,7 +199,7 @@ public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerT
     @Override
     @SuppressWarnings("unchecked")
     public <T> T receiveBodyNoWait(String endpointUri, Class<T> type) {
-        Object answer = null;
+        Object answer;
         Exchange exchange = receiveNoWait(endpointUri);
         try {
             answer = extractResultBody(exchange);

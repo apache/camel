@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.Producer;
 import org.apache.camel.spi.ConsumerCache;
 import org.apache.camel.spi.EndpointUtilizationStatistics;
 import org.apache.camel.support.CamelContextHelper;
@@ -47,13 +48,17 @@ public class DefaultConsumerCache extends ServiceSupport implements ConsumerCach
         this.source = source;
         this.camelContext = camelContext;
         this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
-        this.consumers = new PollingConsumerServicePool(Endpoint::createPollingConsumer, Consumer::getEndpoint, maxCacheSize);
+        this.consumers = createServicePool(camelContext, maxCacheSize);
         // only if JMX is enabled
         if (camelContext.getManagementStrategy().getManagementAgent() != null) {
             this.extendedStatistics = camelContext.getManagementStrategy().getManagementAgent().getStatisticsLevel().isExtended();
         } else {
             this.extendedStatistics = false;
         }
+    }
+
+    protected PollingConsumerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
+        return new PollingConsumerServicePool(Endpoint::createPollingConsumer, Consumer::getEndpoint, cacheSize);
     }
 
     public boolean isExtendedStatistics() {

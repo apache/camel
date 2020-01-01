@@ -88,7 +88,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * Therefore we mark the entries to be evicted from this thread only,
      * and then let SinglePool and MultiPool handle the evictions when they are acquiring/releases producers/consumers.
      */
-    private void onEvict(S s) {
+    protected void onEvict(S s) {
         Endpoint e = getEndpoint.apply(s);
         Pool<S> p = pool.get(e);
         if (p != null) {
@@ -128,7 +128,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * @param s the producer/consumer
      */
     public void release(Endpoint endpoint, S s) {
-        getPool(endpoint).release(s);
+        if (pool.containsKey(endpoint)) {
+            getPool(endpoint).release(s);
+        }
     }
 
     private Pool<S> getPool(Endpoint endpoint) {
@@ -173,9 +175,12 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
 
     @Override
     protected void doStop() throws Exception {
+        cleanUp();
+
         pool.values().forEach(Pool::stop);
         pool.clear();
         if (cache != null) {
+            cache.values().forEach(ServicePool::stop);
             cache.clear();
         }
     }
@@ -297,8 +302,8 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
             if (!evicts.isEmpty()) {
                 synchronized (this) {
                     if (!evicts.isEmpty()) {
-                        evicts.forEach(queue::remove);
                         evicts.forEach(this::doStop);
+                        evicts.forEach(queue::remove);
                         evicts.clear();
                         if (queue.isEmpty()) {
                             pool.remove(endpoint);
@@ -339,7 +344,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         public void stop() {
             queue.forEach(this::doStop);
             queue.clear();
-            evicts.clear();
             pool.remove(endpoint);
         }
 

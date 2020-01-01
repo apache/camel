@@ -64,7 +64,7 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
         this.source = source;
         this.camelContext = camelContext;
         this.maxCacheSize = cacheSize <= 0 ? CamelContextHelper.getMaximumCachePoolSize(camelContext) : cacheSize;
-        this.producers = new ProducerServicePool(Endpoint::createAsyncProducer, Producer::getEndpoint, maxCacheSize);
+        this.producers = createServicePool(camelContext, maxCacheSize);
 
         // only if JMX is enabled
         if (camelContext.getManagementStrategy() != null && camelContext.getManagementStrategy().getManagementAgent() != null) {
@@ -75,6 +75,10 @@ public class DefaultProducerCache extends ServiceSupport implements ProducerCach
 
         // internal processor used for sending
         internalProcessor = new SharedCamelInternalProcessor(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
+    }
+
+    protected ProducerServicePool createServicePool(CamelContext camelContext, int cacheSize) {
+        return new ProducerServicePool(Endpoint::createAsyncProducer, Producer::getEndpoint, cacheSize);
     }
 
     @Override
