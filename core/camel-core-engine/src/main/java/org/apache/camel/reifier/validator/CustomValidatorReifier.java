@@ -28,7 +28,7 @@ public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefi
     }
 
     @Override
-    protected Validator doCreateValidator(CamelContext context) throws Exception {
+    protected Validator doCreateValidator(CamelContext context) {
         if (definition.getRef() == null && definition.getClassName() == null) {
             throw new IllegalArgumentException("'ref' or 'type' must be specified for customValidator");
         }
@@ -42,12 +42,11 @@ public class CustomValidatorReifier extends ValidatorReifier<CustomValidatorDefi
                 throw new IllegalArgumentException(String.format("Validator '%s' is already in use. Please check if duplicate validator exists.", definition.getRef()));
             }
         } else {
-            Class<Validator> validatorClass = context.getClassResolver().resolveMandatoryClass(definition.getClassName(), Validator.class);
+            Class<Validator> validatorClass = context.getClassResolver().resolveClass(definition.getClassName(), Validator.class);
             if (validatorClass == null) {
                 throw new IllegalArgumentException("Cannot find validator class: " + definition.getClassName());
             }
             validator = context.getInjector().newInstance(validatorClass, false);
-
         }
         validator.setCamelContext(context);
         return validator.setType(definition.getType());

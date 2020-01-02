@@ -29,6 +29,9 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Ordered;
 import org.apache.camel.Route;
 import org.apache.camel.RoutesBuilder;
+import org.apache.camel.ValueHolder;
+import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -41,8 +44,15 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
+import org.apache.camel.reifier.transformer.TransformerReifier;
+import org.apache.camel.reifier.validator.ValidatorReifier;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.PropertiesComponent;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.Transformer;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.function.ThrowingConsumer;
@@ -543,6 +553,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (TransformerBuilder tdb : transformerBuilders) {
             tdb.configure(camelContext);
         }
+
+        // create and register transformers on transformer registry
+        for (TransformerDefinition def : camelContext.getExtension(Model.class).getTransformers()) {
+            Transformer transformer = TransformerReifier.reifier(def).createTransformer(camelContext);
+            camelContext.getTransformerRegistry().put(createTransformerKey(def), transformer);
+        }
+    }
+
+    private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
+        return ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
     }
 
     protected void populateValidators() {
@@ -553,6 +573,16 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         for (ValidatorBuilder vb : validatorBuilders) {
             vb.configure(camelContext);
         }
+
+        // create and register validators on validator registry
+        for (ValidatorDefinition def : camelContext.getExtension(Model.class).getValidators()) {
+            Validator validator = ValidatorReifier.reifier(def).createValidator(camelContext);
+            camelContext.getValidatorRegistry().put(createValidatorKey(def), validator);
+        }
+    }
+
+    private static ValidatorKey createValidatorKey(ValidatorDefinition def) {
+        return new ValidatorKey(new DataType(def.getType()));
     }
 
     public RestsDefinition getRestCollection() {

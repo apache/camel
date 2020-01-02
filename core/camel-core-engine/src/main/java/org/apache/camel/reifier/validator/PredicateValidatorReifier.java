@@ -31,7 +31,7 @@ public class PredicateValidatorReifier extends ValidatorReifier<PredicateValidat
     }
 
     @Override
-    protected Validator doCreateValidator(CamelContext context) throws Exception {
+    protected Validator doCreateValidator(CamelContext context) {
         Predicate pred = definition.getExpression().createPredicate(context);
         PredicateValidatingProcessor processor = new PredicateValidatingProcessor(pred);
         return new ProcessorValidator(context).setProcessor(processor).setType(definition.getType());

@@ -165,6 +165,9 @@ public class ValidatorBuilder {
             throw new IllegalArgumentException("No Validator type was specified");
         }
 
+        // force init of validator registry
+        camelContext.getValidatorRegistry();
+
         validator.setType(type);
         camelContext.getExtension(Model.class).getValidators().add(validator);
     }

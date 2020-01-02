@@ -32,7 +32,7 @@ public class EndpointValidatorReifier extends ValidatorReifier<EndpointValidator
     }
 
     @Override
-    protected Validator doCreateValidator(CamelContext context) throws Exception {
+    protected Validator doCreateValidator(CamelContext context) {
         Endpoint endpoint = definition.getUri() != null ? context.getEndpoint(definition.getUri()) : context.getRegistry().lookupByNameAndType(definition.getRef(), Endpoint.class);
         SendProcessor processor = new SendProcessor(endpoint, ExchangePattern.InOut);
         return new ProcessorValidator(context).setProcessor(processor).setType(definition.getType());

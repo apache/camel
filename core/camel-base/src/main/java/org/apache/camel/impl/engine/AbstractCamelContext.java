@@ -2524,10 +2524,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         // re-create endpoint registry as the cache size limit may be set after the constructor of this instance was called.
         // and we needed to create endpoints up-front as it may be accessed before this context is started
         endpoints = doAddService(createEndpointRegistry(endpoints));
-        // Initialize declarative transformer registry
-        transformerRegistry = doAddService(createTransformerRegistry());
-        // Initialize declarative validator registry
-        validatorRegistry = doAddService(createValidatorRegistry());
 
         // optimised to not include runtimeEndpointRegistry unless startServices
         // its enabled or JMX statistics is in extended mode
@@ -3983,27 +3979,49 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public Transformer resolveTransformer(String scheme) {
-        return transformerRegistry.resolveTransformer(new TransformerKey(scheme));
+        return getTransformerRegistry().resolveTransformer(new TransformerKey(scheme));
     }
 
     @Override
     public Transformer resolveTransformer(DataType from, DataType to) {
-        return transformerRegistry.resolveTransformer(new TransformerKey(from, to));
+        return getTransformerRegistry().resolveTransformer(new TransformerKey(from, to));
     }
 
     @Override
-    public TransformerRegistry<TransformerKey> getTransformerRegistry() {
+    public TransformerRegistry getTransformerRegistry() {
+        if (transformerRegistry == null) {
+            synchronized (lock) {
+                if (transformerRegistry == null) {
+                    setTransformerRegistry(createTransformerRegistry());
+                }
+            }
+        }
         return transformerRegistry;
+    }
+
+    public void setTransformerRegistry(TransformerRegistry transformerRegistry) {
+        this.transformerRegistry = doAddService(transformerRegistry);
     }
 
     @Override
     public Validator resolveValidator(DataType type) {
-        return validatorRegistry.resolveValidator(new ValidatorKey(type));
+        return getValidatorRegistry().resolveValidator(new ValidatorKey(type));
     }
 
     @Override
-    public ValidatorRegistry<ValidatorKey> getValidatorRegistry() {
+    public ValidatorRegistry getValidatorRegistry() {
+        if (validatorRegistry == null) {
+            synchronized (lock) {
+                if (validatorRegistry == null) {
+                    setValidatorRegistry(createValidatorRegistry());
+                }
+            }
+        }
         return validatorRegistry;
+    }
+
+    public void setValidatorRegistry(ValidatorRegistry validatorRegistry) {
+        this.validatorRegistry = doAddService(validatorRegistry);
     }
 
     @Override
@@ -4200,8 +4218,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     protected abstract EndpointRegistry<EndpointKey> createEndpointRegistry(Map<EndpointKey, Endpoint> endpoints);
 
-    protected abstract TransformerRegistry<TransformerKey> createTransformerRegistry() throws Exception;
+    protected abstract TransformerRegistry<TransformerKey> createTransformerRegistry();
 
-    protected abstract ValidatorRegistry<ValidatorKey> createValidatorRegistry() throws Exception;
+    protected abstract ValidatorRegistry<ValidatorKey> createValidatorRegistry();
 
 }

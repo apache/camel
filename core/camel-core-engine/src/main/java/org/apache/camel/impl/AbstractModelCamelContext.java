@@ -257,31 +257,13 @@ public abstract class AbstractModelCamelContext extends AbstractCamelContext imp
     }
 
     @Override
-    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() throws Exception {
-        DefaultValidatorRegistry registry = new DefaultValidatorRegistry(this);
-        for (ValidatorDefinition def : getValidators()) {
-            Validator validator = ValidatorReifier.reifier(def).createValidator(this);
-            registry.put(createKey(def), doAddService(validator));
-        }
-        return registry;
-    }
-
-    private ValidatorKey createKey(ValidatorDefinition def) {
-        return new ValidatorKey(new DataType(def.getType()));
+    protected ValidatorRegistry<ValidatorKey> createValidatorRegistry() {
+        return new DefaultValidatorRegistry(this);
     }
 
     @Override
-    protected TransformerRegistry<TransformerKey> createTransformerRegistry() throws Exception {
-        DefaultTransformerRegistry registry = new DefaultTransformerRegistry(this);
-        for (TransformerDefinition def : getTransformers()) {
-            Transformer transformer = TransformerReifier.reifier(def).createTransformer(this);
-            registry.put(createKey(def), doAddService(transformer));
-        }
-        return registry;
-    }
-
-    private TransformerKey createKey(TransformerDefinition def) {
-        return ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+    protected TransformerRegistry<TransformerKey> createTransformerRegistry() {
+        return new DefaultTransformerRegistry(this);
     }
 
     protected abstract HealthCheckRegistry createHealthCheckRegistry();

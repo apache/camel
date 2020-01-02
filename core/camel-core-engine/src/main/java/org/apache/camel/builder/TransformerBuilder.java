@@ -185,6 +185,9 @@ public class TransformerBuilder {
             transformer.setToType(to);
         }
 
+        // force init of transformer registry
+        camelContext.getTransformerRegistry();
+
         camelContext.getExtension(Model.class).getTransformers().add(transformer);
     }
 }
