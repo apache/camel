@@ -62,3 +62,12 @@ The Java DSL has been revisited and the following methods have been removed:
 * WireTapDefinition::onPrepare(Supplier<Processor>)
 
 This change is motivated by the need to remove method ambiguity for untyped languages such as Groovy and JavaScript, for more info see https://issues.apache.org/jira/browse/CAMEL-14300
+
+=== CamelContext 
+
+Some unused methods has been removed from `CamelContext` which was not part of the public API. The following methods has been removed:
+
+* getProducerServicePool
+* setProducerServicePool
+* getPollingConsumerServicePool
+* setPollingConsumerServicePool
