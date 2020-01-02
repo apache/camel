@@ -100,12 +100,18 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
         if (logger.shouldLog()) {
             log("clearCache", null);
         }
-        IntrospectionSupport.clearCache();
+        if (invoked.get() > 0) {
+            IntrospectionSupport.clearCache();
+        }
     }
 
     @Override
     public long getCachedClassesCounter() {
-        return IntrospectionSupport.getCacheCounter();
+        if (invoked.get() > 0) {
+            return IntrospectionSupport.getCacheCounter();
+        } else {
+            return 0;
+        }
     }
 
     @Override
@@ -186,11 +192,13 @@ public class DefaultBeanIntrospection extends ServiceSupport implements BeanIntr
 
     @Override
     protected void doStop() throws Exception {
-        IntrospectionSupport.stop();
+        if (invoked.get() > 0) {
+            IntrospectionSupport.stop();
+        }
         if (extendedStatistics) {
-            LOG.info("BeanIntrospection invoked: {} times", getInvokedCounter());
+            LOG.info("Stopping BeanIntrospection which was invoked: {} times", invoked.get());
         } else {
-            LOG.debug("BeanIntrospection invoked: {} times", getInvokedCounter());
+            LOG.debug("Stopping BeanIntrospection which was invoked: {} times", invoked.get());
         }
     }
 }
