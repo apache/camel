@@ -120,6 +120,12 @@ public @interface RecipientList {
     long timeout() default 0;
 
     /**
+     * Sets the maximum size used by the producer cache which is used to cache and
+     * reuse producers when using this recipient list, when uris are reused.
+     */
+    int cacheSize() default 0;
+
+    /**
      * Uses the {@link Processor} when preparing the {@link org.apache.camel.Exchange} to be send.
      * This can be used to deep-clone messages that should be send, or any custom logic needed before
      * the exchange is send.

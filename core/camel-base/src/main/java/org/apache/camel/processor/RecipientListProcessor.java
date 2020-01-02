@@ -32,7 +32,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.engine.DefaultProducerCache;
 import org.apache.camel.spi.ProducerCache;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
@@ -40,6 +39,7 @@ import org.apache.camel.support.EndpointHelper;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.service.ServiceHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -158,13 +158,6 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy,
-                                  boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
-                                  boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate) {
-        this(camelContext, producerCache, iter, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
-             shareUnitOfWork, parallelAggregate, false);
-    }
-
-    public RecipientListProcessor(CamelContext camelContext, ProducerCache producerCache, Iterator<?> iter, AggregationStrategy aggregationStrategy,
                                   boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming, boolean stopOnException,
                                   long timeout, Processor onPrepare, boolean shareUnitOfWork, boolean parallelAggregate, boolean stopOnAggregateException) {
         super(camelContext, null, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService, streaming, stopOnException, timeout, onPrepare,
@@ -272,9 +265,7 @@ public class RecipientListProcessor extends MulticastProcessor {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        if (producerCache == null) {
-            producerCache = new DefaultProducerCache(this, getCamelContext(), 0);
-        }
+        ObjectHelper.notNull(producerCache, "producerCache", this);
         ServiceHelper.startService(producerCache);
     }
 

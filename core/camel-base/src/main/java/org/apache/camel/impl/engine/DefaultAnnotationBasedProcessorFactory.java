@@ -50,6 +50,7 @@ public final class DefaultAnnotationBasedProcessorFactory implements AnnotationB
         recipientList.setParallelAggregate(annotation.parallelAggregate());
         recipientList.setStreaming(annotation.streaming());
         recipientList.setTimeout(annotation.timeout());
+        recipientList.setCacheSize(annotation.cacheSize());
         recipientList.setShareUnitOfWork(annotation.shareUnitOfWork());
 
         if (ObjectHelper.isNotEmpty(annotation.executorServiceRef())) {
