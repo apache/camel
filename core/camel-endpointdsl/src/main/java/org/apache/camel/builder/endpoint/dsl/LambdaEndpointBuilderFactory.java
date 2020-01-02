@@ -293,6 +293,7 @@ public interface LambdaEndpointBuilderFactory {
     enum LambdaOperations {
         listFunctions,
         getFunction,
+        createAlias,
         createFunction,
         deleteFunction,
         invokeFunction,

@@ -107,7 +107,11 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public CreateAliasResult createAlias(CreateAliasRequest createAliasRequest) {
-        throw new UnsupportedOperationException();
+        CreateAliasResult result = new CreateAliasResult();
+        result.setFunctionVersion("1");
+        result.setName("alias");
+        result.setDescription("an alias");
+        return result;
     }
 
     @Override

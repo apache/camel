@@ -20,6 +20,7 @@ public enum LambdaOperations {
 
     listFunctions,
     getFunction,
+    createAlias,
     createFunction,
     deleteFunction,
     invokeFunction,
