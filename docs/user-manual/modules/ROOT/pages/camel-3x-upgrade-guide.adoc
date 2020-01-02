@@ -65,7 +65,7 @@ This change is motivated by the need to remove method ambiguity for untyped lang
 
 === CamelContext 
 
-Some unused methods has been removed from `CamelContext` which was not part of the public API. The following methods has been removed:
+Some unused methods have been removed from `CamelContext` which were not part of the public API. The following methods have been removed:
 
 * getProducerServicePool
 * setProducerServicePool

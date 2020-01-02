@@ -1,6 +1,6 @@
 = Apache Camel 2.x to 3.0 Migration Guide
 
-This document is intended for helping you migrate your Apache Camel applications
+This document is intended to help you migrate your Apache Camel applications
 from version 2.x to 3.0.
 
 IMPORTANT: If you are upgrading Camel 3.x to 3.y then use the
@@ -8,27 +8,30 @@ xref:camel-3x-upgrade-guide.adoc[Camel 3.x Upgrade Guide].
 
 == Java versions
 
-Camel 3 supports Java 11. Support for Java 8 is best effort for the earlier versions of Camel 3. However at some time in the 3.x lifeline we will drop support for Java 8.
+Camel 3 supports Java 11. Support for Java 8 is best effort for early versions of Camel 3. However at some time in the 3.x lifeline we will drop support for Java 8.
 
-However, in Java 11 JAXB modules have been **removed** from the JDK, therefore you will need to add them as Maven dependencies (if you use JAXB such as when using XML DSL or the camel-jaxb component):
-       
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
- 
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>2.3.0.1</version>
-        </dependency>
- 
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.3.2</version>
-        </dependency>
+In Java 11 the JAXB modules have been **removed** from the JDK, therefore you will need to add them as Maven dependencies (if you use JAXB such as when using XML DSL or the camel-jaxb component):
+
+[source,xml]
+----
+<dependency>
+    <groupId>javax.xml.bind</groupId>
+    <artifactId>jaxb-api</artifactId>
+    <version>2.3.1</version>
+</dependency>
+
+<dependency>
+    <groupId>com.sun.xml.bind</groupId>
+    <artifactId>jaxb-core</artifactId>
+    <version>2.3.0.1</version>
+</dependency>
+
+<dependency>
+    <groupId>com.sun.xml.bind</groupId>
+    <artifactId>jaxb-impl</artifactId>
+    <version>2.3.2</version>
+</dependency>
+----
 
 == Modularization of camel-core
 
@@ -48,8 +51,8 @@ In Camel 2.x camel-core was one JAR file, it has now been split up into many JAR
 - camel-util
 - camel-util-json
 
-Maven users of Apache Camel can keep using the dependency `camel-core` which will have transitive dependency on all of its modules, and therefore no migration is needed.
-However, users who want to trim the size of the classes on the classpath, can use fine grained Maven dependency on only the modules needed.
+Maven users of Apache Camel can keep using the dependency `camel-core` which has transitive dependencies on all of its modules, and therefore no migration is needed.
+However, users who want to trim the size of the classes on the classpath, can use fine grained Maven dependencies on only the modules needed.
 You may find how to do that in the examples.
 
 We have also modularized many of the core components and moved them out of `camel-core` to individual components:
@@ -106,17 +109,17 @@ Use:
 
 == Multiple CamelContexts per application not supported
 
-Support for multiple CamelContext's has been removed/deprecated and only 1 CamelContext per deployment is supported.
+Support for multiple CamelContexts has been removed and only 1 CamelContext per deployment is supported.
 The latter was not recommended anyway and was also not 100% implemented (for example in camel-cdi).
 For Camel 3 only 1 CamelContext per deployment is recommended and supported.
 
-The `context` attribute on the various Camel annotations such as `@EndpointInject`, `@Produce`, `@Consume` etc has therefore been removed.
+The `context` attribute on the various Camel annotations such as `@EndpointInject`, `@Produce`, `@Consume` etc. has therefore been removed.
 
 == Migrating custom components
 
 You should depend on `camel-support` and not `camel-core` directly.
 
-The classes from `org.apache.camel.impl` that was intended to support Camel developers building custom components has been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. For example classes such as `DefaultComponent`, `DefaultEndpoint` etc has been moved and migration is necessary.
+The classes from `org.apache.camel.impl` that are intended to support Camel developers building custom components have been moved out of `camel-core` into `camel-support` into the `org.apache.camel.support` package. For example classes such as `DefaultComponent`, `DefaultEndpoint` etc. have been moved and migration is necessary.
 
 == Migrating custom languages
 
@@ -124,7 +127,7 @@ The `LanguageAnnotation` annotation class has been moved from package `org.apach
 
 == Deprecated APIs and Components
 
-All deprecated APIs and components from Camel 2.x has been removed in Camel 3.
+All deprecated APIs and components from Camel 2.x have been removed in Camel 3.
 
 == Migrating Camel applications
 
@@ -207,11 +210,17 @@ We have renamed the attribute `headerName` and `propertyName` in the XML DSL for
 
 So migrate
 
-  <setHeader headerName="foo"><simple>Hello ${body}</simple></setHeader>
+[source,xml]
+----
+<setHeader headerName="foo"><simple>Hello ${body}</simple></setHeader>
+----
 
 To
 
-  <setHeader name="foo"><simple>Hello ${body}</simple></setHeader>
+[source,xml]
+----
+<setHeader name="foo"><simple>Hello ${body}</simple></setHeader>
+----
 
 And the same for `<setProperty>`.
 
@@ -219,21 +228,27 @@ And the same for `<setProperty>`.
 
 The aggregte EIP have renamed the expressions (not the attributes) for setting correlation size/timeout to avoid a name clash, so migrate:
 
-  <completionSize>
-    <header>mySize</header>
-  </completionSize>
+[source,xml]
+----
+<completionSize>
+  <header>mySize</header>
+</completionSize>
+----
 
 To
 
-  <completionSizeExpression>
-    <header>mySize</header>
-  </completionSizeExpression>
+[source,xml]
+----
+<completionSizeExpression>
+  <header>mySize</header>
+</completionSizeExpression>
+----
 
 And the same for `<completionTimeout>`.
 
 ==== camel-cdi
 
-Support for multiple CamelContext's has been removed, and therefore `@ContextName` has been removed. Instead use standard CDI annotations such as `@Named` and `@ApplicationScoped`.
+Support for multiple CamelContexts has been removed, and therefore `@ContextName` has been removed. Instead use standard CDI annotations such as `@Named` and `@ApplicationScoped`.
 
 === javax.script
 
