@@ -82,7 +82,7 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (15 parameters):
+=== Query Parameters (16 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
@@ -94,6 +94,7 @@ with the following path and query parameters:
 | *privateKey* (common) | Set the configured private key for use with Raw Public Key. |  | PrivateKey
 | *pskStore* (common) | Set the PskStore to use for pre-shared key. |  | PskStore
 | *publicKey* (common) | Set the configured public key for use with Raw Public Key. |  | PublicKey
+| *recommendedCipherSuitesOnly* (common) | The CBC cipher suites are not recommended. If you want to use them, you first need to set the recommendedCipherSuitesOnly option to false. | true | boolean
 | *sslContextParameters* (common) | Set the SSLContextParameters object for setting up TLS. This is required for coapstcp, and for coaps when we are using certificates for TLS (as opposed to RPK or PKS). |  | SSLContextParameters
 | *trustedRpkStore* (common) | Set the TrustedRpkStore to use to determine trust in raw public keys. |  | TrustedRpkStore
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
