@@ -95,7 +95,6 @@ camel routes without them knowing
 * xref:route-builder.adoc[RouteBuilder]
 * xref:route-policy.adoc[RoutePolicy]
 * xref:routes.adoc[Routes]
-* xref:servicepool.adoc[ServicePool]
 * xref:stream-caching.adoc[Stream caching]
 * xref:threading-model.adoc[Threading Model]
 * xref:tracer.adoc[Tracer]
