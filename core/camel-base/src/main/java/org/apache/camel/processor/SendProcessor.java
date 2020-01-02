@@ -164,18 +164,18 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
             }
 
             return true;
+        } else {
+            configureExchange(exchange, pattern);
+            log.debug(">>>> {} {}", destination, exchange);
+
+            // send the exchange to the destination using the producer cache for the non optimized producers
+            return producerCache.doInAsyncProducer(destination, exchange, callback, (producer, ex, cb) -> producer.process(ex, doneSync -> {
+                // restore previous MEP
+                exchange.setPattern(existingPattern);
+                // signal we are done
+                cb.done(doneSync);
+            }));
         }
-
-        configureExchange(exchange, pattern);
-        log.debug(">>>> {} {}", destination, exchange);
-
-        // send the exchange to the destination using the producer cache for the non optimized producers
-        return producerCache.doInAsyncProducer(destination, exchange, callback, (producer, ex, cb) -> producer.process(ex, doneSync -> {
-            // restore previous MEP
-            exchange.setPattern(existingPattern);
-            // signal we are done
-            cb.done(doneSync);
-        }));
     }
     
     public Endpoint getDestination() {
@@ -208,7 +208,8 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
     @Override
     protected void doInit() throws Exception {
-        if (producerCache == null) {
+        // if the producer is not singleton we need to use a producer cache
+        if (!destination.isSingletonProducer() && producerCache == null) {
             // use a single producer cache as we need to only hold reference for one destination
             // and use a regular HashMap as we do not want a soft reference store that may get re-claimed when low on memory
             // as we want to ensure the producer is kept around, to ensure its lifecycle is fully managed,
@@ -220,30 +221,27 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(producerCache);
-
         // warm up the producer by starting it so we can fail fast if there was a problem
         // however must start endpoint first
         ServiceHelper.startService(destination);
 
-        // this SendProcessor is used a lot in Camel (eg every .to in the route DSL) and therefore we
-        // want to optimize for regular producers, by using the producer directly instead of the ProducerCache.
-        // Only for pooled and non-singleton producers we have to use the ProducerCache as it supports these
-        // kind of producer better (though these kind of producer should be rare)
-
-        AsyncProducer producer = producerCache.acquireProducer(destination);
-        if (!producer.isSingleton()) {
-            // no we cannot optimize it - so release the producer back to the producer cache
-            // and use the producer cache for sending
-            producerCache.releaseProducer(destination, producer);
+        // yes we can optimize and use the producer directly for sending
+        if (destination.isSingletonProducer()) {
+            this.producer = destination.createAsyncProducer();
+            // ensure the producer is managed and started
+            camelContext.addService(this.producer, true, true);
         } else {
-            // yes we can optimize and use the producer directly for sending
-            this.producer = producer;
+            // no we need the producer cache for pooled non-singleton producers
+            ServiceHelper.startService(producerCache);
         }
     }
 
     @Override
     protected void doStop() throws Exception {
+        // ensure the producer is removed before its stopped
+        if (this.producer != null) {
+            camelContext.removeService(this.producer);
+        }
         ServiceHelper.stopService(producerCache, producer);
     }
 

@@ -69,7 +69,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         // the eviction is async so force cleanup
         cache.cleanUp();
 
-        await().atMost(1, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Size should be 1000", 1000, cache.size()));
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Size should be 1000", 1000, cache.size()));
 
         cache.stop();
 
@@ -93,8 +93,8 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         // the eviction is async so force cleanup
         cache.cleanUp();
 
-        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Size should be 5", 5, cache.size()));
-        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, stopCounter.get()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Size should be 5", 5, cache.size()));
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, stopCounter.get()));
 
         cache.stop();
 
