@@ -164,6 +164,34 @@ public interface CoAPEndpointBuilderFactory {
             return this;
         }
         /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default CoAPEndpointConsumerBuilder recommendedCipherSuitesOnly(
+                boolean recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
+            return this;
+        }
+        /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default CoAPEndpointConsumerBuilder recommendedCipherSuitesOnly(
+                String recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
+            return this;
+        }
+        /**
          * Set the SSLContextParameters object for setting up TLS. This is
          * required for coapstcp, and for coaps when we are using certificates
          * for TLS (as opposed to RPK or PKS).
@@ -519,6 +547,34 @@ public interface CoAPEndpointBuilderFactory {
             return this;
         }
         /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default CoAPEndpointProducerBuilder recommendedCipherSuitesOnly(
+                boolean recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
+            return this;
+        }
+        /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default CoAPEndpointProducerBuilder recommendedCipherSuitesOnly(
+                String recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
+            return this;
+        }
+        /**
          * Set the SSLContextParameters object for setting up TLS. This is
          * required for coapstcp, and for coaps when we are using certificates
          * for TLS (as opposed to RPK or PKS).
@@ -805,6 +861,34 @@ public interface CoAPEndpointBuilderFactory {
          */
         default CoAPEndpointBuilder publicKey(String publicKey) {
             doSetProperty("publicKey", publicKey);
+            return this;
+        }
+        /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default CoAPEndpointBuilder recommendedCipherSuitesOnly(
+                boolean recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
+            return this;
+        }
+        /**
+         * The CBC cipher suites are not recommended. If you want to use them,
+         * you first need to set the recommendedCipherSuitesOnly option to
+         * false.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Group: common
+         */
+        default CoAPEndpointBuilder recommendedCipherSuitesOnly(
+                String recommendedCipherSuitesOnly) {
+            doSetProperty("recommendedCipherSuitesOnly", recommendedCipherSuitesOnly);
             return this;
         }
         /**

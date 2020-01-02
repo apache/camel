@@ -81,6 +81,9 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     @UriParam
     private SSLContextParameters sslContextParameters;
+    
+    @UriParam(defaultValue = "true")
+    private boolean recommendedCipherSuitesOnly = true;
 
     private CoAPComponent component;
 
@@ -270,7 +273,19 @@ public class CoAPEndpoint extends DefaultEndpoint {
         this.clientAuthentication = clientAuthentication;
     }
 
-    public boolean isClientAuthenticationRequired() {
+    public boolean isRecommendedCipherSuitesOnly() {
+		return recommendedCipherSuitesOnly;
+	}
+
+    /**
+     * The CBC cipher suites are not recommended. If you want to use them, you first need to set the recommendedCipherSuitesOnly 
+     * option to false.  
+     */
+	public void setRecommendedCipherSuitesOnly(boolean recommendedCipherSuitesOnly) {
+		this.recommendedCipherSuitesOnly = recommendedCipherSuitesOnly;
+	}
+
+	public boolean isClientAuthenticationRequired() {
         String clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
             clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();
@@ -327,7 +342,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
                 throw new IllegalStateException("Either a trustedRpkStore, sslContextParameters or pskStore object "
                                                 + "must be configured for a TLS client");
             }
-
+            builder.setRecommendedCipherSuitesOnly(isRecommendedCipherSuitesOnly());
             builder.setClientOnly();
         } else {
             if (privateKey == null && sslContextParameters == null && pskStore == null) {
@@ -345,6 +360,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
             builder.setAddress(address);
             builder.setClientAuthenticationRequired(isClientAuthenticationRequired());
             builder.setClientAuthenticationWanted(isClientAuthenticationWanted());
+            builder.setRecommendedCipherSuitesOnly(isRecommendedCipherSuitesOnly());
         }
 
         try {
