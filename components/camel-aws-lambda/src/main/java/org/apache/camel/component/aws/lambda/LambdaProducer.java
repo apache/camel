@@ -574,6 +574,8 @@ public class LambdaProducer extends DefaultProducer {
             if (ObjectHelper.isEmpty(version) || ObjectHelper.isEmpty(aliasName)) {
                 throw new IllegalArgumentException("Function Version and alias must be specified to create an alias");
             }
+            request.setFunctionVersion(version);
+            request.setName(aliasName);
             if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.FUNCTION_ALIAS_DESCRIPTION))) {
                 String aliasDescription = exchange.getIn().getHeader(LambdaConstants.FUNCTION_ALIAS_DESCRIPTION, String.class);
                 request.setDescription(aliasDescription);
