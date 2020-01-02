@@ -70,6 +70,12 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
     }
 
     @Override
+    public boolean isSingletonProducer() {
+        // this producer is stateful because the remote file operations is not thread safe
+        return false;
+    }
+
+    @Override
     public RemoteFileConfiguration getConfiguration() {
         return (RemoteFileConfiguration) this.configuration;
     }
