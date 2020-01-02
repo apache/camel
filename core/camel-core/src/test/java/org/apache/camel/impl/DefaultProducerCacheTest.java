@@ -66,10 +66,11 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             cache.releaseProducer(e, p);
         }
 
-        // the eviction is async so force cleanup
-        cache.cleanUp();
-
-        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Size should be 1000", 1000, cache.size()));
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
+            // the eviction is async so force cleanup
+            cache.cleanUp();
+            assertEquals("Size should be 1000", 1000, cache.size());
+        });
 
         cache.stop();
 
@@ -90,10 +91,12 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
             cache.releaseProducer(e, p);
         }
 
-        // the eviction is async so force cleanup
-        cache.cleanUp();
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
+            // the eviction is async so force cleanup
+            cache.cleanUp();
+            assertEquals("Size should be 5", 5, cache.size());
+        });
 
-        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals("Size should be 5", 5, cache.size()));
         await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> assertEquals(3, stopCounter.get()));
 
         cache.stop();
@@ -248,6 +251,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
     }
 
     private final class MyComponent extends DefaultComponent {
+
         public MyComponent(CamelContext context) {
             super(context);
         }
