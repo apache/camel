@@ -83,6 +83,13 @@ public interface Endpoint extends IsSingleton, Service {
     Producer createProducer() throws Exception;
 
     /**
+     * Whether this endpoint creates singleton producers
+     */
+    default boolean isSingletonProducer() {
+        return isSingleton();
+    }
+
+    /**
      * Creates a new producer which is used send messages into the endpoint
      *
      * @return a newly created producer
