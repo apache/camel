@@ -205,6 +205,12 @@ The default is 3 seconds.|No
 
 |createFunction |`CamelAwsLambdaSubnetIds` |`List<String>` |If your Lambda function accesses resources in a VPC, a list of one or more subnet IDs in your VPC.|No
 
+|createAlias |`CamelAwsLambdaFunctionVersion` |`String` |The function version to set in the alias|Yes
+
+|createAlias |`CamelAwsLambdaAliasFunctionName` |`String` |The function name to set in the alias|Yes
+
+|createAlias |`CamelAwsLambdaAliasFunctionDescription` |`String` |The function description to set in the alias|No
+
 |=======================================================================
 
 == List of Avalaible Operations
@@ -223,6 +229,7 @@ The default is 3 seconds.|No
 - untagResource
 - publishVersion
 - listVersions
+- createAlias
 
 == Example
 
