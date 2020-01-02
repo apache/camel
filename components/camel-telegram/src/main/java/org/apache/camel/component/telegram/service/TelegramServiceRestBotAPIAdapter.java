@@ -34,7 +34,12 @@ import io.netty.handler.codec.http.HttpHeaders;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.telegram.TelegramService;
+import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
+import org.apache.camel.component.telegram.model.EditMessageDelete;
 import org.apache.camel.component.telegram.model.EditMessageLiveLocationMessage;
+import org.apache.camel.component.telegram.model.EditMessageMediaMessage;
+import org.apache.camel.component.telegram.model.EditMessageReplyMarkupMessage;
+import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
@@ -98,6 +103,16 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/stopMessageLiveLocation"));
         m.put(SendVenueMessage.class,
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendVenue"));
+        m.put(EditMessageTextMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageText"));
+        m.put(EditMessageCaptionMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageCaption"));
+        m.put(EditMessageMediaMessage.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageMedia"));
+        m.put(EditMessageDelete.class,
+                new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/deleteMessage"));
+        m.put(EditMessageReplyMarkupMessage.class,
+            new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageReplyMarkup"));
         this.handlers = m;
     }
 
@@ -174,7 +189,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 .get(message.getClass());
         if (handler == null) {
             throw new IllegalArgumentException(
-                    "Unsupported message type " + (message != null ? message.getClass().getName() : null));
+                    "Unsupported message type " + (message.getClass().getName()));
         }
         handler.sendMessage(exchange, callback, message);
     }
@@ -189,7 +204,6 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         protected void addBody(RequestBuilder builder, OutgoingMessage message) {
             try {
                 final String body = mapper.writeValueAsString(message);
-                LOG.warn("sending " + body);
                 builder.setBody(body);
             } catch (JsonProcessingException e) {
                 throw new RuntimeException("Could not serialize " + message);
@@ -421,8 +435,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         }
 
         @Override
-        public State onStatusReceived(HttpResponseStatus responseStatus)
-                throws Exception {
+        public State onStatusReceived(HttpResponseStatus responseStatus) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("{} onStatusReceived {}", exchange.getExchangeId(), responseStatus);
             }
@@ -432,7 +445,7 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         }
 
         @Override
-        public State onHeadersReceived(HttpHeaders headers) throws Exception {
+        public State onHeadersReceived(HttpHeaders headers) {
             contentEncoding = headers.get("Content-Encoding");
             contentType = headers.get("Content-Type");
             charset = withDefault(extractContentTypeCharsetAttribute(contentType), StandardCharsets.UTF_8);

@@ -59,6 +59,16 @@ public class IncomingMessage implements Serializable {
     @JsonProperty("location")
     private Location location;
 
+    private List<IncomingMessageEntity> entities;
+
+    @JsonProperty("caption_entities")
+    private List<IncomingMessageEntity> captionEntities;
+
+    @JsonProperty("reply_markup")
+    private InlineKeyboardMarkup replyMarkup;
+
+    private String caption;
+
     public IncomingMessage() {
     }
 
@@ -150,6 +160,38 @@ public class IncomingMessage implements Serializable {
         this.location = location;
     }
 
+    public List<IncomingMessageEntity> getEntities() {
+        return entities;
+    }
+
+    public void setEntities(List<IncomingMessageEntity> entities) {
+        this.entities = entities;
+    }
+
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+    }
+
+    public List<IncomingMessageEntity> getCaptionEntities() {
+        return captionEntities;
+    }
+
+    public void setCaptionEntities(List<IncomingMessageEntity> captionEntities) {
+        this.captionEntities = captionEntities;
+    }
+
+    public InlineKeyboardMarkup getReplyMarkup() {
+        return replyMarkup;
+    }
+
+    public void setReplyMarkup(InlineKeyboardMarkup replyMarkup) {
+        this.replyMarkup = replyMarkup;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("IncomingMessage{");
@@ -164,6 +206,10 @@ public class IncomingMessage implements Serializable {
         sb.append(", document=").append(document);
         sb.append(", sticker=").append(sticker);
         sb.append(", location=").append(location);
+        sb.append(", entities=").append(entities);
+        sb.append(", caption=").append(caption);
+        sb.append(", captionEntities=").append(captionEntities);
+        sb.append(", replyMarkup=").append(replyMarkup);
         sb.append('}');
         return sb.toString();
     }

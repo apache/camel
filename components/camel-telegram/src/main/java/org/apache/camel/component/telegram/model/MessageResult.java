@@ -19,7 +19,10 @@ package org.apache.camel.component.telegram.model;
 import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class MessageResult implements Serializable {
@@ -28,8 +31,9 @@ public class MessageResult implements Serializable {
 
     private boolean ok;
 
-    @JsonProperty("result")
     private IncomingMessage message;
+
+    private boolean result;
 
     public MessageResult() {
     }
@@ -48,6 +52,22 @@ public class MessageResult implements Serializable {
 
     public void setMessage(IncomingMessage message) {
         this.message = message;
+    }
+
+    @JsonSetter("result")
+    public void setResult(JsonNode result) throws JsonProcessingException  {
+        if (result != null) {
+            if (result.isBoolean()) {
+                this.result = result.asBoolean();
+            } else if (result.isObject()) {
+                ObjectMapper objectMapper = new ObjectMapper();
+                this.message = objectMapper.treeToValue(result, IncomingMessage.class);
+            }
+        }
+    }
+
+    public boolean isResult() {
+        return result;
     }
 
     @Override
