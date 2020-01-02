@@ -471,7 +471,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         for (Service child : list) {
             if (child instanceof ShutdownPrepared) {
                 try {
-                    log.trace("Preparing {} shutdown on {}", forced ? "forced" : "", child);
+                    log.trace("Preparing (forced: {}) shutdown on: {}", forced, child);
                     ((ShutdownPrepared) child).prepareShutdown(suspendOnly, forced);
                 } catch (Exception e) {
                     if (suppressLogging) {
