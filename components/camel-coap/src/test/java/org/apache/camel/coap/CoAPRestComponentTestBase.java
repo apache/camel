@@ -110,7 +110,9 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
     }
 
     protected abstract String getProtocol();
+
     protected abstract void decorateClient(CoapClient client) throws GeneralSecurityException, IOException;
+
     protected abstract void decorateRestConfiguration(RestConfigurationDefinition restConfig);
 
     protected String getClientURI() {
@@ -122,17 +124,12 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RestConfigurationDefinition restConfig =
-                    restConfiguration("coap").scheme(getProtocol()).host("localhost").port(coapport);
+                RestConfigurationDefinition restConfig = restConfiguration("coap").scheme(getProtocol()).host("localhost").port(coapport);
                 decorateRestConfiguration(restConfig);
 
-                rest("/TestParams")
-                    .get().to("direct:get1")
-                    .post().to("direct:post1");
+                rest("/TestParams").get().to("direct:get1").post().to("direct:post1");
 
-                rest("/TestResource")
-                    .get("/{id}").to("direct:get1")
-                    .post("/{id}").to("direct:post1");
+                rest("/TestResource").get("/{id}").to("direct:get1").post("/{id}").to("direct:post1");
 
                 from("direct:get1").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
@@ -150,9 +147,7 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
                     }
                 });
 
-                from("direct:start")
-                    .toF(getClientURI(), coapport)
-                    .to("mock:result");
+                from("direct:start").toF(getClientURI(), coapport).to("mock:result");
             }
         };
     }

@@ -47,14 +47,11 @@ public class CoAPMethodTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT)
-                        .setBody(constant("GET: /test/a"));
+                fromF("coap://localhost:%d/test/a?coapMethodRestrict=GET", PORT).setBody(constant("GET: /test/a"));
 
-                fromF("coap://localhost:%d/test/b?coapMethodRestrict=POST", PORT)
-                        .setBody(simple("Hello ${body}"));
+                fromF("coap://localhost:%d/test/b?coapMethodRestrict=POST", PORT).setBody(simple("Hello ${body}"));
 
-                fromF("coap://localhost:%d/test/c?coapMethodRestrict=DELETE", PORT)
-                        .setBody(constant("DELETE: /test/c"));
+                fromF("coap://localhost:%d/test/c?coapMethodRestrict=DELETE", PORT).setBody(constant("DELETE: /test/c"));
             }
         };
     }

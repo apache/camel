@@ -35,8 +35,7 @@ public class CoAPConsumerDefaultPortTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("coap:localhost/greeting")
-                    .setBody(constant("Hello World"));
+                from("coap:localhost/greeting").setBody(constant("Hello World"));
             }
         };
     }
