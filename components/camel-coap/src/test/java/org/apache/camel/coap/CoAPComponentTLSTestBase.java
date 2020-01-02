@@ -208,7 +208,9 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
     }
 
     protected abstract String getProtocol();
+
     protected abstract boolean isPSKSupported();
+
     protected abstract boolean isRPKSupported();
 
     @Override
@@ -220,40 +222,27 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                fromF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters", PORT)
-                    .transform(body().prepend("Hello "));
+                fromF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters", PORT).transform(body().prepend("Hello "));
 
                 fromF(getProtocol() + "://localhost:%d/TestResource?alias=selfsigned&sslContextParameters=#selfSignedServiceSSLContextParameters", PORT2)
                     .transform(body().prepend("Hello "));
 
-                fromF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientAuthServiceSSLContextParameters", PORT3)
-                    .transform(body().prepend("Hello "));
+                fromF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientAuthServiceSSLContextParameters", PORT3).transform(body().prepend("Hello "));
 
                 fromF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&cipherSuites=TLS_ECDHE_ECDSA_WITH_AES_128_CCM_8", PORT4)
                     .transform(body().prepend("Hello "));
 
-                from("direct:start")
-                    .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters", PORT)
-                    .to("mock:result");
+                from("direct:start").toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters", PORT).to("mock:result");
 
-                from("direct:notruststore")
-                    .toF(getProtocol() + "://localhost:%d/TestResource", PORT)
-                    .to("mock:result");
+                from("direct:notruststore").toF(getProtocol() + "://localhost:%d/TestResource", PORT).to("mock:result");
 
-                from("direct:failedtrust")
-                    .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters2", PORT)
-                    .to("mock:result");
+                from("direct:failedtrust").toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientSSLContextParameters2", PORT).to("mock:result");
 
-                from("direct:selfsigned")
-                    .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#selfSignedClientSSLContextParameters", PORT2)
-                    .to("mock:result");
+                from("direct:selfsigned").toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#selfSignedClientSSLContextParameters", PORT2).to("mock:result");
 
-                from("direct:clientauth")
-                    .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientAuthClientSSLContextParameters", PORT3)
-                    .to("mock:result");
+                from("direct:clientauth").toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientAuthClientSSLContextParameters", PORT3).to("mock:result");
 
-                from("direct:failedclientauth")
-                    .toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientAuthClientSSLContextParameters2", PORT3)
+                from("direct:failedclientauth").toF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#clientAuthClientSSLContextParameters2", PORT3)
                     .to("mock:result");
 
                 from("direct:ciphersuites")
@@ -261,46 +250,33 @@ abstract class CoAPComponentTLSTestBase extends CamelTestSupport {
                     .to("mock:result");
 
                 if (isRPKSupported()) {
-                    fromF(getProtocol() + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey", PORT5)
-                        .transform(body().prepend("Hello "));
+                    fromF(getProtocol() + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey", PORT5).transform(body().prepend("Hello "));
 
-                    fromF(getProtocol() + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&trustedRpkStore=#trustedRpkStore", PORT6)
-                        .transform(body().prepend("Hello "));
+                    fromF(getProtocol() + "://localhost:%d/TestResource?privateKey=#privateKey&publicKey=#publicKey&clientAuthentication=REQUIRE&trustedRpkStore=#trustedRpkStore",
+                          PORT6).transform(body().prepend("Hello "));
 
-                    from("direct:rpk")
-                        .toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore", PORT5)
-                        .to("mock:result");
+                    from("direct:rpk").toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore", PORT5).to("mock:result");
 
-                    from("direct:rpknotruststore")
-                        .toF(getProtocol() + "://localhost:%d/TestResource", PORT5)
-                        .to("mock:result");
+                    from("direct:rpknotruststore").toF(getProtocol() + "://localhost:%d/TestResource", PORT5).to("mock:result");
 
-                    from("direct:rpkfailedtrust")
-                        .toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#failedTrustedRpkStore", PORT5)
-                        .to("mock:result");
+                    from("direct:rpkfailedtrust").toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#failedTrustedRpkStore", PORT5).to("mock:result");
 
                     from("direct:rpkclientauth")
-                        .toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&privateKey=#privateKey&publicKey=#publicKey", PORT6)
-                        .to("mock:result");
+                        .toF(getProtocol() + "://localhost:%d/TestResource?trustedRpkStore=#trustedRpkStore&privateKey=#privateKey&publicKey=#publicKey", PORT6).to("mock:result");
                 }
 
                 if (isPSKSupported()) {
-                    fromF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
-                        .transform(body().prepend("Hello "));
+                    fromF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore", PORT7).transform(body().prepend("Hello "));
 
                     fromF(getProtocol() + "://localhost:%d/TestResource?sslContextParameters=#serviceSSLContextParameters&pskStore=#pskStore", PORT8)
                         .transform(body().prepend("Hello "));
 
-                    from("direct:psk")
-                        .toF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore", PORT7)
+                    from("direct:psk").toF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore", PORT7).to("mock:result");
+
+                    from("direct:pskciphersuite").toF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256", PORT7)
                         .to("mock:result");
 
-                    from("direct:pskciphersuite")
-                        .toF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore&cipherSuites=TLS_PSK_WITH_AES_128_GCM_SHA256", PORT7)
-                        .to("mock:result");
-
-                    from("direct:pskx509")
-                        .toF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore&sslContextParameters=#clientSSLContextParameters", PORT8)
+                    from("direct:pskx509").toF(getProtocol() + "://localhost:%d/TestResource?pskStore=#pskStore&sslContextParameters=#clientSSLContextParameters", PORT8)
                         .to("mock:result");
                 }
 

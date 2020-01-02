@@ -51,7 +51,7 @@ public class CoAPProducer extends DefaultProducer {
         CoapClient client = getClient(exchange);
         String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
         if (ct == null) {
-            //?default?
+            // ?default?
             ct = "application/octet-stream";
         }
         String method = CoAPHelper.getDefaultMethod(exchange, client);

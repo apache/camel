@@ -47,7 +47,8 @@ import org.eclipse.californium.scandium.dtls.pskstore.PskStore;
 import org.eclipse.californium.scandium.dtls.rpkstore.TrustedRpkStore;
 
 /**
- * The coap component is used for sending and receiving messages from COAP capable devices.
+ * The coap component is used for sending and receiving messages from COAP
+ * capable devices.
  */
 @UriEndpoint(firstVersion = "2.16.0", scheme = "coap,coaps,coap+tcp,coaps+tcp", title = "CoAP", syntax = "coap:uri", label = "iot")
 public class CoAPEndpoint extends DefaultEndpoint {
@@ -81,7 +82,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
     @UriParam
     private SSLContextParameters sslContextParameters;
-    
+
     @UriParam(defaultValue = "true")
     private boolean recommendedCipherSuitesOnly = true;
 
@@ -102,7 +103,8 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Comma separated list of methods that the CoAP consumer will bind to. The default is to bind to all methods (DELETE, GET, POST, PUT).
+     * Comma separated list of methods that the CoAP consumer will bind to. The
+     * default is to bind to all methods (DELETE, GET, POST, PUT).
      */
     public String getCoapMethodRestrict() {
         return this.coapMethodRestrict;
@@ -134,38 +136,44 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets the alias used to query the KeyStore for the private key and certificate. This parameter is used
-     * when we are enabling TLS with certificates on the service side, and similarly on the client side when
-     * TLS is used with certificates and client authentication. If the parameter is not specified then the
-     * default behavior is to use the first alias in the keystore that contains a key entry. This configuration
-     * parameter does not apply to configuring TLS via a Raw Public Key or a Pre-Shared Key.
+     * Gets the alias used to query the KeyStore for the private key and
+     * certificate. This parameter is used when we are enabling TLS with
+     * certificates on the service side, and similarly on the client side when
+     * TLS is used with certificates and client authentication. If the parameter
+     * is not specified then the default behavior is to use the first alias in
+     * the keystore that contains a key entry. This configuration parameter does
+     * not apply to configuring TLS via a Raw Public Key or a Pre-Shared Key.
      */
     public String getAlias() {
         return alias;
     }
 
     /**
-     * Sets the alias used to query the KeyStore for the private key and certificate. This parameter is used
-     * when we are enabling TLS with certificates on the service side, and similarly on the client side when
-     * TLS is used with certificates and client authentication. If the parameter is not specified then the
-     * default behavior is to use the first alias in the keystore that contains a key entry. This configuration
-     * parameter does not apply to configuring TLS via a Raw Public Key or a Pre-Shared Key.
+     * Sets the alias used to query the KeyStore for the private key and
+     * certificate. This parameter is used when we are enabling TLS with
+     * certificates on the service side, and similarly on the client side when
+     * TLS is used with certificates and client authentication. If the parameter
+     * is not specified then the default behavior is to use the first alias in
+     * the keystore that contains a key entry. This configuration parameter does
+     * not apply to configuring TLS via a Raw Public Key or a Pre-Shared Key.
      */
     public void setAlias(String alias) {
         this.alias = alias;
     }
 
     /**
-     * Get the SSLContextParameters object for setting up TLS. This is required for coaps+tcp, and for coaps when we are
-     * using certificates for TLS (as opposed to RPK or PKS).
+     * Get the SSLContextParameters object for setting up TLS. This is required
+     * for coaps+tcp, and for coaps when we are using certificates for TLS (as
+     * opposed to RPK or PKS).
      */
     public SSLContextParameters getSslContextParameters() {
         return sslContextParameters;
     }
 
     /**
-     * Set the SSLContextParameters object for setting up TLS. This is required for coaps+tcp, and for coaps when we are
-     * using certificates for TLS (as opposed to RPK or PKS).
+     * Set the SSLContextParameters object for setting up TLS. This is required
+     * for coaps+tcp, and for coaps when we are using certificates for TLS (as
+     * opposed to RPK or PKS).
      */
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
@@ -228,16 +236,18 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets the cipherSuites String. This is a comma separated String of ciphersuites to configure. If it is not
-     * specified, then it falls back to getting the ciphersuites from the sslContextParameters object.
+     * Gets the cipherSuites String. This is a comma separated String of
+     * ciphersuites to configure. If it is not specified, then it falls back to
+     * getting the ciphersuites from the sslContextParameters object.
      */
     public String getCipherSuites() {
         return cipherSuites;
     }
 
     /**
-     * Sets the cipherSuites String. This is a comma separated String of ciphersuites to configure. If it is not
-     * specified, then it falls back to getting the ciphersuites from the sslContextParameters object.
+     * Sets the cipherSuites String. This is a comma separated String of
+     * ciphersuites to configure. If it is not specified, then it falls back to
+     * getting the ciphersuites from the sslContextParameters object.
      */
     public void setCipherSuites(String cipherSuites) {
         this.cipherSuites = cipherSuites;
@@ -256,36 +266,40 @@ public class CoAPEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Gets the configuration options for server-side client-authentication requirements. The value is
-     * either null or one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back
-     * to checking the sslContextParameters.getServerParameters().getClientAuthentication() value.
+     * Gets the configuration options for server-side client-authentication
+     * requirements. The value is either null or one of NONE, WANT, REQUIRE. If
+     * this value is not specified, then it falls back to checking the
+     * sslContextParameters.getServerParameters().getClientAuthentication()
+     * value.
      */
     public String getClientAuthentication() {
         return clientAuthentication;
     }
 
     /**
-     * Sets the configuration options for server-side client-authentication requirements.
-     * The value must be one of NONE, WANT, REQUIRE. If this value is not specified, then it falls back
-     * to checking the sslContextParameters.getServerParameters().getClientAuthentication() value.
+     * Sets the configuration options for server-side client-authentication
+     * requirements. The value must be one of NONE, WANT, REQUIRE. If this value
+     * is not specified, then it falls back to checking the
+     * sslContextParameters.getServerParameters().getClientAuthentication()
+     * value.
      */
     public void setClientAuthentication(String clientAuthentication) {
         this.clientAuthentication = clientAuthentication;
     }
 
     public boolean isRecommendedCipherSuitesOnly() {
-		return recommendedCipherSuitesOnly;
-	}
+        return recommendedCipherSuitesOnly;
+    }
 
     /**
-     * The CBC cipher suites are not recommended. If you want to use them, you first need to set the recommendedCipherSuitesOnly 
-     * option to false.  
+     * The CBC cipher suites are not recommended. If you want to use them, you
+     * first need to set the recommendedCipherSuitesOnly option to false.
      */
-	public void setRecommendedCipherSuitesOnly(boolean recommendedCipherSuitesOnly) {
-		this.recommendedCipherSuitesOnly = recommendedCipherSuitesOnly;
-	}
+    public void setRecommendedCipherSuitesOnly(boolean recommendedCipherSuitesOnly) {
+        this.recommendedCipherSuitesOnly = recommendedCipherSuitesOnly;
+    }
 
-	public boolean isClientAuthenticationRequired() {
+    public boolean isClientAuthenticationRequired() {
         String clientAuth = clientAuthentication;
         if (clientAuth == null && sslContextParameters != null && sslContextParameters.getServerParameters() != null) {
             clientAuth = sslContextParameters.getServerParameters().getClientAuthentication();
@@ -313,7 +327,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
             List<Certificate> trustCerts = new ArrayList<>();
             while (aliases.hasMoreElements()) {
                 String alias = aliases.nextElement();
-                X509Certificate cert = (X509Certificate) trustStore.getCertificate(alias);
+                X509Certificate cert = (X509Certificate)trustStore.getCertificate(alias);
                 if (cert != null) {
                     trustCerts.add(cert);
                 }
@@ -324,7 +338,6 @@ public class CoAPEndpoint extends DefaultEndpoint {
 
         return new Certificate[0];
     }
-
 
     public static boolean enableDTLS(URI uri) {
         return "coaps".equals(uri.getScheme());
@@ -339,21 +352,19 @@ public class CoAPEndpoint extends DefaultEndpoint {
         DtlsConnectorConfig.Builder builder = new DtlsConnectorConfig.Builder();
         if (client) {
             if (trustedRpkStore == null && sslContextParameters == null && pskStore == null) {
-                throw new IllegalStateException("Either a trustedRpkStore, sslContextParameters or pskStore object "
-                                                + "must be configured for a TLS client");
+                throw new IllegalStateException("Either a trustedRpkStore, sslContextParameters or pskStore object " + "must be configured for a TLS client");
             }
             builder.setRecommendedCipherSuitesOnly(isRecommendedCipherSuitesOnly());
             builder.setClientOnly();
         } else {
             if (privateKey == null && sslContextParameters == null && pskStore == null) {
-                throw new IllegalStateException("Either a privateKey, sslContextParameters or pskStore object "
-                                                + "must be configured for a TLS service");
+                throw new IllegalStateException("Either a privateKey, sslContextParameters or pskStore object " + "must be configured for a TLS service");
             }
             if (privateKey != null && publicKey == null) {
                 throw new IllegalStateException("A public key must be configured to use a Raw Public Key with TLS");
             }
-            if ((isClientAuthenticationRequired() || isClientAuthenticationWanted())
-                && (sslContextParameters == null || sslContextParameters.getTrustManagers() == null) && publicKey == null) {
+            if ((isClientAuthenticationRequired() || isClientAuthenticationWanted()) && (sslContextParameters == null || sslContextParameters.getTrustManagers() == null)
+                && publicKey == null) {
                 throw new IllegalStateException("A truststore must be configured to support TLS client authentication");
             }
 
@@ -364,12 +375,14 @@ public class CoAPEndpoint extends DefaultEndpoint {
         }
 
         try {
-            // Configure the identity if the sslContextParameters or privateKey parameter is specified
+            // Configure the identity if the sslContextParameters or privateKey
+            // parameter is specified
             if (sslContextParameters != null && sslContextParameters.getKeyManagers() != null) {
                 KeyManagersParameters keyManagers = sslContextParameters.getKeyManagers();
                 KeyStore keyStore = keyManagers.getKeyStore().createKeyStore();
 
-                // Use the configured alias or fall back to the first alias in the keystore that contains a key
+                // Use the configured alias or fall back to the first alias in
+                // the keystore that contains a key
                 String alias = getAlias();
                 if (alias == null) {
                     Enumeration<String> aliases = keyStore.aliases();
@@ -385,8 +398,7 @@ public class CoAPEndpoint extends DefaultEndpoint {
                     throw new IllegalStateException("The sslContextParameters keystore must contain a key entry");
                 }
 
-                PrivateKey privateKey =
-                    (PrivateKey)keyStore.getKey(alias, keyManagers.getKeyPassword().toCharArray());
+                PrivateKey privateKey = (PrivateKey)keyStore.getKey(alias, keyManagers.getKeyPassword().toCharArray());
                 builder.setIdentity(privateKey, keyStore.getCertificateChain(alias));
             } else if (privateKey != null) {
                 builder.setIdentity(privateKey, publicKey);

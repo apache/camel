@@ -91,8 +91,7 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
                     } else if (endpoint.isClientAuthenticationWanted()) {
                         clientAuthMode = TlsServerConnector.ClientAuthMode.WANTED;
                     }
-                    tcpConnector =
-                        new TlsServerConnector(sslContext, clientAuthMode, address, tcpThreads, tlsHandshakeTimeout, tcpIdleTimeout);
+                    tcpConnector = new TlsServerConnector(sslContext, clientAuthMode, address, tcpThreads, tlsHandshakeTimeout, tcpIdleTimeout);
                 } else {
                     tcpConnector = new TcpServerConnector(address, tcpThreads, tcpIdleTimeout);
                 }
@@ -120,8 +119,9 @@ public class CoAPComponent extends DefaultComponent implements RestConsumerFacto
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath,
-            String uriTemplate, String consumes, String produces, RestConfiguration configuration, Map<String, Object> parameters) throws Exception {
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate, String consumes, String produces,
+                                   RestConfiguration configuration, Map<String, Object> parameters)
+        throws Exception {
 
         String path = basePath;
         if (uriTemplate != null) {

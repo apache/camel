@@ -43,7 +43,7 @@ public class CoAPComponentTest extends CoAPTestSupport {
         CoapClient client = createClient("/TestResource");
         CoapResponse response = client.post("Camel", MediaTypeRegistry.TEXT_PLAIN);
         assertEquals("Hello Camel", response.getResponseText());
-        
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         mock.expectedBodiesReceived("Hello Camel CoAP");
@@ -69,21 +69,13 @@ public class CoAPComponentTest extends CoAPTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("coap://localhost:%d/TestResource", PORT)
-                    .convertBodyTo(String.class)
-                    .transform(body().prepend("Hello "));
+                fromF("coap://localhost:%d/TestResource", PORT).convertBodyTo(String.class).transform(body().prepend("Hello "));
 
-                fromF("coap+tcp://localhost:%d/TestResource", TCP_PORT)
-                    .convertBodyTo(String.class)
-                    .transform(body().prepend("Hello "));
+                fromF("coap+tcp://localhost:%d/TestResource", TCP_PORT).convertBodyTo(String.class).transform(body().prepend("Hello "));
 
-                from("direct:start")
-                    .toF("coap://localhost:%d/TestResource", PORT)
-                    .to("mock:result");
+                from("direct:start").toF("coap://localhost:%d/TestResource", PORT).to("mock:result");
 
-                from("direct:starttcp")
-                    .toF("coap+tcp://localhost:%d/TestResource", TCP_PORT)
-                    .to("mock:result");
+                from("direct:starttcp").toF("coap+tcp://localhost:%d/TestResource", TCP_PORT).to("mock:result");
             }
         };
     }
