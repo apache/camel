@@ -910,7 +910,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Gets the {@link org.apache.camel.spi.TransformerRegistry}
      * @return the TransformerRegistry
      */
-    TransformerRegistry<? extends ValueHolder<String>> getTransformerRegistry();
+    TransformerRegistry getTransformerRegistry();
 
     /**
      * Resolve a validator given from/to data type.
@@ -924,7 +924,7 @@ public interface CamelContext extends StatefulService, RuntimeConfiguration {
      * Gets the {@link org.apache.camel.spi.ValidatorRegistry}
      * @return the ValidatorRegistry
      */
-    ValidatorRegistry<? extends ValueHolder<String>> getValidatorRegistry();
+    ValidatorRegistry getValidatorRegistry();
 
     /**
      * Sets global options that can be referenced in the camel context

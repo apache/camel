@@ -56,10 +56,10 @@ public abstract class ValidatorReifier<T> {
         throw new IllegalStateException("Unsupported definition: " + definition);
     }
 
-    public Validator createValidator(CamelContext context) throws Exception {
+    public Validator createValidator(CamelContext context) {
         return doCreateValidator(context);
     }
 
-    protected abstract Validator doCreateValidator(CamelContext context) throws Exception;
+    protected abstract Validator doCreateValidator(CamelContext context);
 
 }

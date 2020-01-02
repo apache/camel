@@ -39,6 +39,7 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.TypeConverterExists;
 import org.apache.camel.TypeConverters;
+import org.apache.camel.ValueHolder;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cloud.ServiceRegistry;
@@ -51,6 +52,8 @@ import org.apache.camel.health.HealthCheckRegistry;
 import org.apache.camel.health.HealthCheckRepository;
 import org.apache.camel.health.HealthCheckService;
 import org.apache.camel.impl.engine.DefaultManagementStrategy;
+import org.apache.camel.impl.transformer.TransformerKey;
+import org.apache.camel.impl.validator.ValidatorKey;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.FromDefinition;
 import org.apache.camel.model.GlobalOptionsDefinition;
@@ -76,13 +79,18 @@ import org.apache.camel.model.dataformat.DataFormatsDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.transformer.TransformerDefinition;
 import org.apache.camel.model.transformer.TransformersDefinition;
+import org.apache.camel.model.validator.ValidatorDefinition;
 import org.apache.camel.model.validator.ValidatorsDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
+import org.apache.camel.reifier.transformer.TransformerReifier;
+import org.apache.camel.reifier.validator.ValidatorReifier;
 import org.apache.camel.runtimecatalog.JSonSchemaResolver;
 import org.apache.camel.runtimecatalog.RuntimeCamelCatalog;
 import org.apache.camel.spi.AsyncProcessorAwaitManager;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.spi.EventFactory;
@@ -111,9 +119,11 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.spi.Validator;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.ObjectHelper;
 import org.apache.camel.util.StringHelper;
@@ -427,6 +437,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // must init rest refs before we add the rests
             initRestRefs();
 
+            initTransformers();
+            initValidators();
+
             // cannot add rests as routes yet as we need to initialize this specially
             getContext().addRestDefinitions(getRests(), false);
 
@@ -472,6 +485,34 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // and we are now finished setting up the routes
             getContext().adapt(ExtendedCamelContext.class).setupRoutes(true);
         }
+    }
+
+    private void initTransformers() {
+        if (getTransformers() != null) {
+            for (TransformerDefinition def : getTransformers().getTransformers()) {
+                // create and register transformers on transformer registry
+                Transformer transformer = TransformerReifier.reifier(def).createTransformer(getContext());
+                getContext().getTransformerRegistry().put(createTransformerKey(def), transformer);
+            }
+        }
+    }
+
+    private static ValueHolder<String> createTransformerKey(TransformerDefinition def) {
+        return org.apache.camel.util.ObjectHelper.isNotEmpty(def.getScheme()) ? new TransformerKey(def.getScheme()) : new TransformerKey(new DataType(def.getFromType()), new DataType(def.getToType()));
+    }
+
+    private void initValidators() {
+        if (getValidators() != null) {
+            for (ValidatorDefinition def : getValidators().getValidators()) {
+                // create and register validators on validator registry
+                Validator validator = ValidatorReifier.reifier(def).createValidator(getContext());
+                getContext().getValidatorRegistry().put(createValidatorKey(def), validator);
+            }
+        }
+    }
+
+    private static ValidatorKey createValidatorKey(ValidatorDefinition def) {
+        return new ValidatorKey(new DataType(def.getType()));
     }
 
     /**

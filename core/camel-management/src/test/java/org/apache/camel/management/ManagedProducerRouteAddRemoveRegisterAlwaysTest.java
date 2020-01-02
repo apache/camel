@@ -28,7 +28,7 @@ import org.junit.Test;
 
 public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementTestSupport {
 
-    private int services = 14;
+    private int services = 12;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {

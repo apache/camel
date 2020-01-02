@@ -28,7 +28,7 @@ public class CustomTransformeReifier extends TransformerReifier<CustomTransforme
     }
 
     @Override
-    protected Transformer doCreateTransformer(CamelContext context) throws Exception {
+    protected Transformer doCreateTransformer(CamelContext context) {
         if (definition.getRef() == null && definition.getClassName() == null) {
             throw new IllegalArgumentException("'ref' or 'className' must be specified for customTransformer");
         }
@@ -42,12 +42,11 @@ public class CustomTransformeReifier extends TransformerReifier<CustomTransforme
                 throw new IllegalArgumentException(String.format("Transformer '%s' is already in use. Please check if duplicate transformer exists.", definition.getRef()));
             }
         } else {
-            Class<Transformer> transformerClass = context.getClassResolver().resolveMandatoryClass(definition.getClassName(), Transformer.class);
+            Class<Transformer> transformerClass = context.getClassResolver().resolveClass(definition.getClassName(), Transformer.class);
             if (transformerClass == null) {
                 throw new IllegalArgumentException("Cannot find transformer class: " + definition.getClassName());
             }
             transformer = context.getInjector().newInstance(transformerClass, false);
-
         }
         transformer.setCamelContext(context);
         return transformer.setModel(definition.getScheme()).setFrom(definition.getFromType()).setTo(definition.getToType());

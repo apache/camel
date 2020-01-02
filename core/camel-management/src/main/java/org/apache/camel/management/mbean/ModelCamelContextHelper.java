@@ -27,6 +27,7 @@ import org.apache.camel.model.RouteDefinition;
 /**
  * A number of helper methods
  */
+@Deprecated
 public final class ModelCamelContextHelper {
 
     /**

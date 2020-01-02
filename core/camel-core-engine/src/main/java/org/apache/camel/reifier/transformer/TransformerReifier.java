@@ -52,10 +52,10 @@ public abstract class TransformerReifier<T> {
         throw new IllegalStateException("Unsupported definition: " + definition);
     }
 
-    public Transformer createTransformer(CamelContext context) throws Exception {
+    public Transformer createTransformer(CamelContext context) {
         return doCreateTransformer(context);
     }
 
-    protected abstract Transformer doCreateTransformer(CamelContext context) throws Exception;
+    protected abstract Transformer doCreateTransformer(CamelContext context);
 
 }
