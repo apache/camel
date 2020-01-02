@@ -119,7 +119,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         if (!isStarted()) {
             return null;
         }
-        S s = getPool(endpoint).acquire();
+        S s = getOrCreatePool(endpoint).acquire();
         if (s != null && cache != null) {
             cache.putIfAbsent(new Key<>(s), s);
         }
@@ -133,12 +133,13 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
      * @param s the producer/consumer
      */
     public void release(Endpoint endpoint, S s) {
-        if (pool.containsKey(endpoint)) {
-            getPool(endpoint).release(s);
+        Pool<S> p = pool.get(endpoint);
+        if (p != null) {
+            p.release(s);
         }
     }
 
-    private Pool<S> getPool(Endpoint endpoint) {
+    private Pool<S> getOrCreatePool(Endpoint endpoint) {
         return pool.computeIfAbsent(endpoint, this::createPool);
     }
 
