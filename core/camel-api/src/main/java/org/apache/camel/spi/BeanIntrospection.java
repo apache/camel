@@ -24,15 +24,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.meta.Experimental;
 
 /**
  * Used for introspecting beans properties via Java reflection; such as extracting current property values,
  * or updating one or more properties etc.
  *
- * End users should favour using org.apache.camel.support.PropertyBindingSupport instead.
+ * End users should favour using {@link org.apache.camel.support.PropertyBindingSupport} instead.
  */
-@Experimental
 public interface BeanIntrospection extends StaticService {
 
     /**

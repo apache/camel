@@ -2632,10 +2632,14 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         doStartOrResumeRoutes(routeServices, true, !doNotStartRoutesOnFirstStart, false, true);
         EventHelper.notifyCamelContextRoutesStarted(this);
 
-        long cacheCounter = getBeanIntrospection().getCachedClassesCounter();
+        long cacheCounter = beanIntrospection != null ? beanIntrospection.getCachedClassesCounter() : 0;
         if (cacheCounter > 0) {
             log.debug("Clearing BeanIntrospection cache with {} objects using during starting Camel", cacheCounter);
-            getBeanIntrospection().clearCache();
+            beanIntrospection.clearCache();
+        }
+        long invokedCounter = beanIntrospection != null ? beanIntrospection.getInvokedCounter() : 0;
+        if (invokedCounter > 0) {
+            log.debug("BeanIntrospection invoked {} times during starting Camel", invokedCounter);
         }
 
         // starting will continue in the start method
