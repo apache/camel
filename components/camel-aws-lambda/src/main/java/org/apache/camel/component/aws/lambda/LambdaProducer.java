@@ -32,6 +32,8 @@ import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeadLetterConfig;
+import com.amazonaws.services.lambda.model.DeleteAliasRequest;
+import com.amazonaws.services.lambda.model.DeleteAliasResult;
 import com.amazonaws.services.lambda.model.DeleteEventSourceMappingRequest;
 import com.amazonaws.services.lambda.model.DeleteEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionRequest;
@@ -124,6 +126,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case createAlias:
             createAlias(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case deleteAlias:
+            deleteAlias(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -583,6 +588,24 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.createAlias(request);
         } catch (AmazonServiceException ase) {
             log.trace("createAlias command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void deleteAlias(AWSLambda lambdaClient, Exchange exchange) {
+        DeleteAliasResult result;
+        try {
+            DeleteAliasRequest request = new DeleteAliasRequest().withFunctionName(getEndpoint().getFunction());
+            String aliasName = exchange.getIn().getHeader(LambdaConstants.FUNCTION_ALIAS_NAME, String.class);
+            if (ObjectHelper.isEmpty(aliasName)) {
+                throw new IllegalArgumentException("Function alias must be specified to delete an alias");
+            }
+            request.setName(aliasName);
+            result = lambdaClient.deleteAlias(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("deleteAlias command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

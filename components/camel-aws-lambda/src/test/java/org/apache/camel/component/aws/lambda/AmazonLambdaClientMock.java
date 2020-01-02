@@ -157,7 +157,8 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public DeleteAliasResult deleteAlias(DeleteAliasRequest deleteAliasRequest) {
-        throw new UnsupportedOperationException();
+        DeleteAliasResult res = new DeleteAliasResult();
+        return res;
     }
 
     @Override
