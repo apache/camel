@@ -46,6 +46,13 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     }
 
     @Override
+    public boolean isSingletonProducer() {
+        // the producer should not be singleton otherwise cannot use concurrent producers and safely
+        // use request/reply with correct correlation
+        return !configuration.isSync();
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         ObjectHelper.notNull(configuration, "configuration");
         return new MinaProducer(this);

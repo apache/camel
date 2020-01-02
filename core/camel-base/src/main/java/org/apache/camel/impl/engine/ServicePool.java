@@ -144,15 +144,12 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     private Pool<S> createPool(Endpoint endpoint) {
-        boolean singleton = endpoint.isSingleton();
         try {
             S s = creator.apply(endpoint);
-            if (s instanceof IsSingleton) {
-                singleton = ((IsSingleton) s).isSingleton();
-            }
         } catch (Exception e) {
             // Ignore
         }
+        boolean singleton = endpoint.isSingletonProducer();
         if (singleton) {
             return new SinglePool(endpoint);
         } else {

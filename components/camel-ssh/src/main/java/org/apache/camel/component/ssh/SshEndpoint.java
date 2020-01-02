@@ -50,6 +50,12 @@ public class SshEndpoint extends ScheduledPollEndpoint {
     }
 
     @Override
+    public boolean isSingletonProducer() {
+        // SshClient is not thread-safe to be shared
+        return false;
+    }
+
+    @Override
     public Producer createProducer() throws Exception {
         return new SshProducer(this);
     }
