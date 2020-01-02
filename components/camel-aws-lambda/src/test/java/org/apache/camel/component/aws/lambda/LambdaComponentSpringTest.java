@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.amazonaws.services.lambda.model.CreateAliasResult;
 import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeleteEventSourceMappingResult;
@@ -250,6 +251,26 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
         assertNotNull(result);
         assertEquals("GetHelloWithName", result.getVersions().get(0).getFunctionName());
         assertEquals("1", result.getVersions().get(0).getVersion());
+    }
+    
+    @Test
+    public void createAliasTest() throws Exception {
+
+        Exchange exchange = template.send("direct:createAlias", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.FUNCTION_ALIAS_DESCRIPTION, "an alias");
+                exchange.getIn().setHeader(LambdaConstants.FUNCTION_ALIAS_NAME, "alias");
+                exchange.getIn().setHeader(LambdaConstants.FUNCTION_VERSION, "1");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        CreateAliasResult result = (CreateAliasResult)exchange.getOut().getBody();
+        assertNotNull(result);
+        assertEquals("an alias", result.getDescription());
+        assertEquals("alias", result.getName());
+        assertEquals("1", result.getFunctionVersion());
     }
 
     @Override
