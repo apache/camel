@@ -33,6 +33,11 @@
     <name>Camel :: Example :: REST :: Karaf :: OSGi Activator</name>
     <description>An example showing how to use Apache Camel on Apache Karaf with the OSGi Activator component</description>
 	
+    <properties>
+        <category>OSGi</category>
+        <title>Karaf OSGi Activator</title>
+    </properties>
+
 	<modules>
 		<module>parent</module>
 		<module>core-rest</module>

@@ -11,7 +11,7 @@ View the individual example READMEs for details.
 == Examples
 
 // examples: START
-Number of Examples: 84 (0 deprecated)
+Number of Examples: 85 (0 deprecated)
 
 [width="100%",cols="4,2,4",options="header"]
 |===
@@ -158,6 +158,8 @@ Number of Examples: 84 (0 deprecated)
     
 
 | link:camel-example-olingo4-blueprint/README.adoc[Olingo4 OSGi] (camel-example-olingo4-blueprint) | OSGi | An example which use the Olingo4 component in OSGi Blueprint
+
+| link:camel-example-rest-karaf-osgi-activator/README.adoc[Karaf OSGi Activator] (camel-example-rest-karaf-osgi-activator) | OSGi | An example showing how to use Apache Camel on Apache Karaf with the OSGi Activator component
 
 | link:camel-example-servlet-rest-blueprint/README.adoc[Servlet REST Blueprint] (camel-example-servlet-rest-blueprint) | OSGi | An example using Servlet Rest with OSGi Blueprint
 
