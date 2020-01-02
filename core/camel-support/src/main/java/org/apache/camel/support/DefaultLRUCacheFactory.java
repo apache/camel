@@ -179,7 +179,7 @@ public class DefaultLRUCacheFactory extends LRUCacheFactory {
             // stop service as its evicted from cache
             ServiceHelper.stopService(value);
         } catch (Exception e) {
-            log.warn("Error stopping service: " + value + ". This exception will be ignored.", e);
+            log.warn("Error stopping service: {}. This exception will be ignored.", value, e);
         }
     }
 }
