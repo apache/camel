@@ -218,7 +218,7 @@ The default is 3 seconds.|No
 == List of Avalaible Operations
 
 - listFunctions
-- getFunction,
+- getFunction
 - createFunction
 - deleteFunction
 - invokeFunction
