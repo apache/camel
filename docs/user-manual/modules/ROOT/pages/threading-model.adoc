@@ -12,7 +12,6 @@ Camel leverages thread pools in the following places:
 concurrency
 * xref:components::seda-component.adoc[SEDA] component for asynchronous connectivity
 * xref:async.adoc[Threads DSL] in the Camel route
-* xref:servicepool.adoc[ServicePool] for pooling services
 * And some component provide thread pools by nature such as
 xref:components::jms-component.adoc[JMS], xref:components::jetty-component.adoc[Jetty]
 
@@ -22,7 +21,7 @@ xref:components::jms-component.adoc[JMS], xref:components::jetty-component.adoc[
 By default when a thread pool is to be created then its based on the
 default thread pool profile which is:
 
-[source,java]
+[source,xml]
 --------------------------------------------------------------------------------------------------------
     <threadPoolProfile id="defaultThreadPoolProfile" defaultProfile="true"
                        poolSize="10" maxPoolSize="20" maxQueueSize="1000" allowCoreThreadTimeOut="false"
@@ -57,7 +56,7 @@ Suppose you want to use a custom thread pool profile for a Multicast EIP
 pattern in a Camel route you can do it using the `executorServiceRef`
 attribute as shown:
 
-[source,java]
+[source,xml]
 ---------------------------------------------------------------------------
 <camelContext ...>
     ...
@@ -168,7 +167,7 @@ In Camel 2.11 onwards its easier to set the thread name pattern on the
 CamelContext using the threadNamePattern attribute in the XML files as
 shown below:
 
-[source,java]
+[source,xml]
 --------------------------------------------------------------------------------------------------------------
   <camelContext xmlns="http://camel.apache.org/schema/spring" threadNamePattern="Riding the thread #counter#">
     <route>
