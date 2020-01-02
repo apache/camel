@@ -239,8 +239,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private volatile ClassResolver classResolver;
     private volatile PackageScanClassResolver packageScanClassResolver;
     private volatile PackageScanResourceResolver packageScanResourceResolver;
-    private volatile ProducerServicePool producerServicePool;
-    private volatile PollingConsumerServicePool pollingConsumerServicePool;
     private volatile NodeIdFactory nodeIdFactory;
     private volatile ProcessorFactory processorFactory;
     private volatile MessageHistoryFactory messageHistoryFactory;
@@ -2092,36 +2090,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         this.errorHandlerExecutorService = errorHandlerExecutorService;
     }
 
-    public void setProducerServicePool(ProducerServicePool producerServicePool) {
-        this.producerServicePool = doAddService(producerServicePool);
-    }
-
-    public ProducerServicePool getProducerServicePool() {
-        if (producerServicePool == null) {
-            synchronized (lock) {
-                if (producerServicePool == null) {
-                    setProducerServicePool(createProducerServicePool());
-                }
-            }
-        }
-        return producerServicePool;
-    }
-
-    public PollingConsumerServicePool getPollingConsumerServicePool() {
-        if (pollingConsumerServicePool == null) {
-            synchronized (lock) {
-                if (pollingConsumerServicePool == null) {
-                    setPollingConsumerServicePool(createPollingConsumerServicePool());
-                }
-            }
-        }
-        return pollingConsumerServicePool;
-    }
-
-    public void setPollingConsumerServicePool(PollingConsumerServicePool pollingConsumerServicePool) {
-        this.pollingConsumerServicePool = doAddService(pollingConsumerServicePool);
-    }
-
     @Override
     public UnitOfWorkFactory getUnitOfWorkFactory() {
         if (unitOfWorkFactory == null) {
@@ -3315,8 +3283,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
         getAsyncProcessorAwaitManager();
         getShutdownStrategy();
         getPackageScanClassResolver();
-        getProducerServicePool();
-        getPollingConsumerServicePool();
         getRestRegistryFactory();
         getReactiveExecutor();
         getBeanIntrospection();
@@ -3357,8 +3323,11 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected void forceStopLazyInitialization() {
         injector = null;
         languageResolver = null;
+        dataFormatResolver = null;
+        componentResolver = null;
         typeConverterRegistry = null;
         typeConverter = null;
+        reactiveExecutor = null;
     }
 
     /**
@@ -4208,10 +4177,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected abstract PackageScanResourceResolver createPackageScanResourceResolver();
 
     protected abstract ExecutorServiceManager createExecutorServiceManager();
-
-    protected abstract ProducerServicePool createProducerServicePool();
-
-    protected abstract PollingConsumerServicePool createPollingConsumerServicePool();
 
     protected abstract UnitOfWorkFactory createUnitOfWorkFactory();
 
