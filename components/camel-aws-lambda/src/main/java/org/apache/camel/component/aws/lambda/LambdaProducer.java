@@ -25,6 +25,8 @@ import java.util.Map;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.lambda.AWSLambda;
+import com.amazonaws.services.lambda.model.CreateAliasRequest;
+import com.amazonaws.services.lambda.model.CreateAliasResult;
 import com.amazonaws.services.lambda.model.CreateEventSourceMappingRequest;
 import com.amazonaws.services.lambda.model.CreateEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.CreateFunctionRequest;
@@ -119,6 +121,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case listVersions:
             listVersions(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case createAlias:
+            createAlias(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -554,6 +559,28 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.listVersionsByFunction(request);
         } catch (AmazonServiceException ase) {
             log.trace("publishVersion command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void createAlias(AWSLambda lambdaClient, Exchange exchange) {
+        CreateAliasResult result;
+        try {
+            CreateAliasRequest request = new CreateAliasRequest().withFunctionName(getEndpoint().getFunction());
+            String version = exchange.getIn().getHeader(LambdaConstants.FUNCTION_VERSION, String.class);
+            String aliasName = exchange.getIn().getHeader(LambdaConstants.FUNCTION_ALIAS_NAME, String.class);
+            if (ObjectHelper.isEmpty(version) || ObjectHelper.isEmpty(aliasName)) {
+                throw new IllegalArgumentException("Function Version and alias must be specified to create an alias");
+            }
+            if (ObjectHelper.isNotEmpty(exchange.getIn().getHeader(LambdaConstants.FUNCTION_ALIAS_DESCRIPTION))) {
+                String aliasDescription = exchange.getIn().getHeader(LambdaConstants.FUNCTION_ALIAS_DESCRIPTION, String.class);
+                request.setDescription(aliasDescription);
+            } 
+            result = lambdaClient.createAlias(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("createAlias command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
