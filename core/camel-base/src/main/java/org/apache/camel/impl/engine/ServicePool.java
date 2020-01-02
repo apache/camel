@@ -80,13 +80,18 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         this.getEndpoint = getEndpoint;
         this.capacity = capacity;
         // only use a LRU cache if capacity is more than one
+        // the LRU cache is a facade that handles the logic to know which producers/consumers to evict/remove
+        // when we hit max capacity. Then we remove them in the associated pool ConcurrentMap instance.
         this.cache = capacity > 1 ? LRUCacheFactory.newLRUCache(capacity, this::onEvict) : null;
     }
 
     /**
      * This callback is invoked by LRUCache from a separate background cleanup thread.
      * Therefore we mark the entries to be evicted from this thread only,
-     * and then let SinglePool and MultiPool handle the evictions when they are acquiring/releases producers/consumers.
+     * and then let SinglePool and MultiPool handle the evictions (stop the producer/consumer safely)
+     * when they are acquiring/releases producers/consumers. If we sop the producer/consumer from the
+     * LRUCache background thread we can have a race condition with a pooled producer may have been
+     * acquired at the same time its being evicted.
      */
     protected void onEvict(S s) {
         Endpoint e = getEndpoint.apply(s);
@@ -94,7 +99,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         if (p != null) {
             p.evict(s);
         } else {
-            // service no longer in a pool (should not happen)
+            // service no longer in a pool (such as being released twice, or can happen during shutdown of Camel etc)
             ServicePool.stop(s);
             try {
                 e.getCamelContext().removeService(s);
@@ -161,6 +166,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         return pool.values().stream().mapToInt(Pool::size).sum();
     }
 
+    /**
+     * Cleanup the pool (removing stale instances that should be evicted)
+     */
     public void cleanUp() {
         if (cache instanceof LRUCache) {
             ((LRUCache) cache).cleanUp();
@@ -185,6 +193,9 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
     }
 
+    /**
+     * Stosp the service safely
+     */
     private static <S extends Service> void stop(S s) {
         try {
             s.stop();
