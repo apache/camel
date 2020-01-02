@@ -319,7 +319,7 @@ public class LambdaProducerTest extends CamelTestSupport {
     @Test
     public void deleteAliasTest() throws Exception {
 
-        Exchange exchange = template.send("direct:createAlias", ExchangePattern.InOut, new Processor() {
+        Exchange exchange = template.send("direct:deleteAlias", ExchangePattern.InOut, new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setHeader(LambdaConstants.FUNCTION_ALIAS_NAME, "alias");
