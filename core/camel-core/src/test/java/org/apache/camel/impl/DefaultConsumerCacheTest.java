@@ -42,11 +42,11 @@ public class DefaultConsumerCacheTest extends ContextTestSupport {
             assertNotNull("the polling consumer should not be null", p);
         }
 
-        // the eviction is async so force cleanup
-        cache.cleanUp();
-
-        await().atMost(3, TimeUnit.SECONDS).until(() -> cache.size() == 1000);
-        assertEquals("Size should be 1000", 1000, cache.size());
+        await().atMost(3, TimeUnit.SECONDS).untilAsserted(() -> {
+            // the eviction is async so force cleanup
+            cache.cleanUp();
+            assertEquals("Size should be 1000", 1000, cache.size());
+        });
 
         cache.stop();
     }
