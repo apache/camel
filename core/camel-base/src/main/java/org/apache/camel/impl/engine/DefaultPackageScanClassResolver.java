@@ -445,6 +445,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
     public void clearCache() {
         if (jarCache != null) {
             jarCache.clear();
+            jarCache = null;
         }
     }
 

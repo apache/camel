@@ -107,7 +107,7 @@ public interface PackageScanClassResolver extends StaticService {
     void setAcceptableSchemes(String schemes);
 
     /**
-     * Clears the internal cache.
+     * Clears and frees the internal cache.
      */
     void clearCache();
 }
