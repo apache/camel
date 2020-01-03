@@ -33,7 +33,27 @@ public abstract class LRUCacheFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(LRUCacheFactory.class);
 
     private static volatile LRUCacheFactory instance;
-    
+
+    /**
+     * Initializes and creates the cache factory if not explicit set.
+     */
+    public static void init() {
+        if (instance == null) {
+            instance = createLRUCacheFactory();
+        }
+    }
+
+    /**
+     * Use this to set a specific LRUCacheFactory instance, such as before starting Camel, that
+     * then avoids doing auto discovery of the cache factory via classpath.
+     */
+    public static void setLRUCacheFactory(LRUCacheFactory cacheFactory) {
+        instance = cacheFactory;
+    }
+
+    /**
+     * Gets (and creates if needed) the LRUCacheFactory to use.
+     */
     public static LRUCacheFactory getInstance() {
         if (instance == null) {
             synchronized (LRUCacheFactory.class) {
