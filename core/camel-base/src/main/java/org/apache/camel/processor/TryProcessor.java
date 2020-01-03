@@ -64,7 +64,6 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-
         exchange.getContext().getReactiveExecutor().schedule(new TryState(exchange, callback));
         return false;
     }
