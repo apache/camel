@@ -83,12 +83,12 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private String style(String label) {
         if (style == OutputStyle.Default) {
             if (multiline) {
-                return String.format("  %s: ", label);
+                return "  " + label + ": ";
             } else {
-                return String.format(", %s: ", label);
+                return ",  " + label + ": ";
             }
         } else if (style == OutputStyle.Tab) {
-            return String.format("\t%s: ", label);
+            return "'t" + label + ": " ;
         } else {
             return String.format("\t%-20s", label);
         }
