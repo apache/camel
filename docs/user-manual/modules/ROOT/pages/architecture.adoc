@@ -14,7 +14,7 @@ which contains a collection of Component instances.
 A Component is essentially a factory of
 Endpoint instances. You can explicitly configure
 Component instances in Java code or an IoC
-container like Spring or Guice, or they can be auto-discovered using
+container like Spring, or they can be auto-discovered using
 URIs.
 
 An Endpoint acts rather like a URI or URL in a web
