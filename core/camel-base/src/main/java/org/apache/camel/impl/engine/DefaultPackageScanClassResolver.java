@@ -53,7 +53,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class DefaultPackageScanClassResolver extends BasePackageScanResolver implements PackageScanClassResolver, NonManagedService {
 
-    private Map<String, List<String>> jarCache;
+    private volatile Map<String, List<String>> jarCache;
     private Set<PackageScanFilter> scanFilters;
 
     @Override
@@ -250,6 +250,12 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
                             stream = new FileInputStream(file);
                         }
 
+                        // only create jar cache on-demand when needed
+                        if (jarCache == null) {
+                            // use a soft cache so it can be claimed if needed
+                            jarCache = LRUCacheFactory.newLRUWeakCache(1000);
+                        }
+
                         loadImplementationsInJar(test, packageName, stream, urlPath, classes, jarCache);
                     } finally {
                         IOHelper.close(stream);
@@ -444,11 +450,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
 
     @Override
     protected void doStart() throws Exception {
-        if (jarCache == null) {
-            // use a JAR cache to speed up scanning JARs, but let it be soft referenced
-            // so it can claim the data when memory is needed
-            jarCache = LRUCacheFactory.newLRUCache(1000);
-        }
+        // noop
     }
 
     @Override
