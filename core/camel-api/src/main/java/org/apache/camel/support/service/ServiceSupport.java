@@ -65,6 +65,7 @@ public abstract class ServiceSupport implements StatefulService {
                         throw RuntimeCamelException.wrapRuntimeException(e);
                     }
                     status = BUILDED;
+                    log.trace("Built service: {}", this);
                 }
             }
         }
@@ -82,6 +83,7 @@ public abstract class ServiceSupport implements StatefulService {
                         throw RuntimeCamelException.wrapRuntimeException(e);
                     }
                     status = INITIALIZED;
+                    log.trace("Initialized service: {}", this);
                 }
             }
         }
@@ -116,7 +118,7 @@ public abstract class ServiceSupport implements StatefulService {
                 log.trace("Starting service: {}", this);
                 doStart();
                 status = STARTED;
-                log.trace("Service started: {}", this);
+                log.trace("Started service: {}", this);
             } catch (Exception e) {
                 // need to stop as some resources may have been started during startup
                 try {
@@ -158,7 +160,7 @@ public abstract class ServiceSupport implements StatefulService {
             try {
                 doStop();
                 status = STOPPED;
-                log.trace("Service: {} stopped service", this);
+                log.trace("Stopped: {} service", this);
             } catch (Exception e) {
                 status = FAILED;
                 log.trace("Error while stopping service: " + this, e);
@@ -189,7 +191,7 @@ public abstract class ServiceSupport implements StatefulService {
             try {
                 doSuspend();
                 status = SUSPENDED;
-                log.trace("Service suspended: {}", this);
+                log.trace("Suspended service: {}", this);
             } catch (Exception e) {
                 status = FAILED;
                 log.trace("Error while suspending service: " + this, e);
@@ -216,7 +218,7 @@ public abstract class ServiceSupport implements StatefulService {
             try {
                 doResume();
                 status = STARTED;
-                log.trace("Service resumed: {}", this);
+                log.trace("Resumed service: {}", this);
             } catch (Exception e) {
                 status = FAILED;
                 log.trace("Error while resuming service: " + this, e);
@@ -235,7 +237,7 @@ public abstract class ServiceSupport implements StatefulService {
     public void shutdown() {
         synchronized (lock) {
             if (status == SHUTDOWN) {
-                log.trace("Service: {} already shut down", this);
+                log.trace("Service: {} already shutdown", this);
                 return;
             }
             if (status == SHUTTINGDOWN) {
@@ -247,7 +249,7 @@ public abstract class ServiceSupport implements StatefulService {
             log.trace("Shutting down service: {}", this);
             try {
                 doShutdown();
-                log.trace("Service: {} shut down", this);
+                log.trace("Shutdown service: {}", this);
                 status = SHUTDOWN;
             } catch (Exception e) {
                 status = FAILED;
