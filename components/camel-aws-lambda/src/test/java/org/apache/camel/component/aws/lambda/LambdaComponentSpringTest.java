@@ -28,6 +28,7 @@ import com.amazonaws.services.lambda.model.CreateFunctionResult;
 import com.amazonaws.services.lambda.model.DeleteAliasResult;
 import com.amazonaws.services.lambda.model.DeleteEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
+import com.amazonaws.services.lambda.model.GetAliasResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
@@ -287,6 +288,24 @@ public class LambdaComponentSpringTest extends CamelSpringTestSupport {
 
         DeleteAliasResult result = (DeleteAliasResult)exchange.getOut().getBody();
         assertNotNull(result);
+    }
+    
+    @Test
+    public void getAliasTest() throws Exception {
+
+        Exchange exchange = template.send("direct:getAlias", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.FUNCTION_ALIAS_NAME, "alias");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        GetAliasResult result = (GetAliasResult)exchange.getOut().getBody();
+        assertNotNull(result);
+        assertEquals("an alias", result.getDescription());
+        assertEquals("alias", result.getName());
+        assertEquals("1", result.getFunctionVersion());
     }
 
     @Override
