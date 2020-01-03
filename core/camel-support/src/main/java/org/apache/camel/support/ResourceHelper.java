@@ -29,11 +29,18 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.ClassResolver;
+import org.apache.camel.util.AntPathMatcher;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
@@ -305,4 +312,25 @@ public final class ResourceHelper {
         return uri;
     }
 
+    /**
+     * Find resources from the file system using Ant-style path patterns.
+     *
+     * @param root the starting file
+     * @param pattern the Ant pattern
+     * @return a list of files matching the given pattern
+     * @throws Exception
+     */
+    public static Set<Path> findInFileSystem(Path root, String pattern) throws Exception {
+        try (Stream<Path> path = Files.walk(root)) {
+            return path
+                .filter(Files::isRegularFile)
+                .filter(entry -> {
+                    Path relative = root.relativize(entry);
+                    boolean match = AntPathMatcher.INSTANCE.match(pattern, relative.toString());
+                    LOG.debug("Found resource: {} matching pattern: {} -> {}", entry.toString(), pattern, match);
+                    return match;
+                })
+                .collect(Collectors.toCollection(LinkedHashSet::new));
+        }
+    }
 }
