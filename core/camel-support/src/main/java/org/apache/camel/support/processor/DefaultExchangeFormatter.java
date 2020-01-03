@@ -80,18 +80,20 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     @UriParam(label = "formatting", enums = "Default,Tab,Fixed", defaultValue = "Default", description = "Sets the outputs style to use.")
     private OutputStyle style = OutputStyle.Default;
 
-    private String style(String label) {
+    private StringBuilder style(StringBuilder sb, String label) {
         if (style == OutputStyle.Default) {
             if (multiline) {
-                return "  " + label + ": ";
+                sb.append("  ").append(label).append(": ");
             } else {
-                return ",  " + label + ": ";
+                sb.append(", ").append(label).append(": ");
             }
         } else if (style == OutputStyle.Tab) {
-            return "'t" + label + ": " ;
+            sb.append("\t").append(label).append(": ");
         } else {
-            return String.format("\t%-20s", label);
+            String s = String.format("\t%-20s", label);
+            sb.append(s);
         }
+        return sb;
     }
 
     @Override
@@ -103,32 +105,32 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("Id")).append(exchange.getExchangeId());
+            style(sb, "Id").append(exchange.getExchangeId());
         }
         if (showAll || showExchangePattern) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("ExchangePattern")).append(exchange.getPattern());
+            style(sb, "ExchangePattern").append(exchange.getPattern());
         }
 
         if (showAll || showProperties) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("Properties")).append(sortMap(filterHeaderAndProperties(exchange.getProperties())));
+            style(sb, "Properties").append(sortMap(filterHeaderAndProperties(exchange.getProperties())));
         }
         if (showAll || showHeaders) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("Headers")).append(sortMap(filterHeaderAndProperties(in.getHeaders())));
+            style(sb, "Headers").append(sortMap(filterHeaderAndProperties(in.getHeaders())));
         }
         if (showAll || showBodyType) {
             if (multiline) {
                 sb.append(SEPARATOR);
             }
-            sb.append(style("BodyType")).append(getBodyTypeAsString(in));
+            style(sb, "BodyType").append(getBodyTypeAsString(in));
         }
         if (showAll || showBody) {
             if (multiline) {
@@ -138,7 +140,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (skipBodyLineSeparator) {
                 body = StringHelper.replaceAll(body, LS, "");
             }
-            sb.append(style("Body")).append(body);
+            style(sb, "Body").append(body);
         }
 
         if (showAll || showException || showCaughtException) {
@@ -157,21 +159,22 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                     sb.append(SEPARATOR);
                 }
                 if (caught) {
-                    sb.append(style("CaughtExceptionType")).append(exception.getClass().getCanonicalName());
-                    sb.append(style("CaughtExceptionMessage")).append(exception.getMessage());
+                    style(sb, "CaughtExceptionType").append(exception.getClass().getCanonicalName());
+                    style(sb, "CaughtExceptionMessage").append(exception.getMessage());
                 } else {
-                    sb.append(style("ExceptionType")).append(exception.getClass().getCanonicalName());
-                    sb.append(style("ExceptionMessage")).append(exception.getMessage());
+                    style(sb, "ExceptionType").append(exception.getClass().getCanonicalName());
+                    style(sb, "ExceptionMessage").append(exception.getMessage());
                 }
                 if (showAll || showStackTrace) {
                     StringWriter sw = new StringWriter();
                     exception.printStackTrace(new PrintWriter(sw));
-                    sb.append(style("StackTrace")).append(sw.toString());
+                    style(sb, "StackTrace").append(sw.toString());
                 }
             }
         }
 
-        if (maxChars > 0) {
+        // only cut if we hit max-chars limit
+        if (maxChars > 0 && sb.length() > maxChars) {
             StringBuilder answer = new StringBuilder();
             for (String s : sb.toString().split(SEPARATOR)) {
                 if (s != null) {
@@ -196,8 +199,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             sb.append("]");
             return sb.toString();
         } else {
-            // get rid of the leading space comma if needed
-            if (sb.length() > 0 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
+            // get rid of the leading comma space if needed
+            if (sb.length() > 1 && sb.charAt(0) == ',' && sb.charAt(1) == ' ') {
                 sb.replace(0, 2, "");
             }
             sb.insert(0, "Exchange[");
@@ -418,7 +421,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
         }
 
-        return MessageHelper.extractBodyForLogging(message, "", isShowStreams(), isShowFiles(), getMaxChars(message));
+        return MessageHelper.extractBodyForLogging(message, null, isShowStreams(), isShowFiles(), getMaxChars(message));
     }
 
     private int getMaxChars(Message message) {
