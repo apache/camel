@@ -3,8 +3,8 @@
 
 Spring started life using XML Config to wire beans
 together. However some folks don't like using XML and would rather use
-Java code which led to the creation of Guice along with the Spring
-JavaConfig project.
+Java code with the Spring JavaConfig project.
+
 
 You can use either the XML or Java config approaches with Camel; its
 your choice really on which you prefer.

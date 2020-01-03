@@ -436,7 +436,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     /**
      * Sets the endpointUri if it has not been specified yet via some kind of
      * dependency injection mechanism. This allows dependency injection
-     * frameworks such as Spring or Guice to set the default endpoint URI in
+     * frameworks such as Spring to set the default endpoint URI in
      * cases where it has not been explicitly configured using the name/context
      * in which an Endpoint is created.
      */
