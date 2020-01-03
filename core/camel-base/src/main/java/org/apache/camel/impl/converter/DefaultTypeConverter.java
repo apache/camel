@@ -81,6 +81,11 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
                 log.info("Type converters loaded (fast: {}, scanned: {})", fast, additional);
                 log.warn("Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.", additional);
             }
+
+            // lets clear the cache from the resolver as its often only used during startup
+            if (resolver != null) {
+                resolver.clearCache();
+            }
         }
 
         String time = TimeUtils.printDuration(watch.taken());
