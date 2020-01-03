@@ -40,6 +40,8 @@ import com.amazonaws.services.lambda.model.DeleteFunctionRequest;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.Environment;
 import com.amazonaws.services.lambda.model.FunctionCode;
+import com.amazonaws.services.lambda.model.GetAliasRequest;
+import com.amazonaws.services.lambda.model.GetAliasResult;
 import com.amazonaws.services.lambda.model.GetFunctionRequest;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.InvokeRequest;
@@ -129,6 +131,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case deleteAlias:
             deleteAlias(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case getAlias:
+            getAlias(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -606,6 +611,24 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.deleteAlias(request);
         } catch (AmazonServiceException ase) {
             log.trace("deleteAlias command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void getAlias(AWSLambda lambdaClient, Exchange exchange) {
+        GetAliasResult result;
+        try {
+            GetAliasRequest request = new GetAliasRequest().withFunctionName(getEndpoint().getFunction());
+            String aliasName = exchange.getIn().getHeader(LambdaConstants.FUNCTION_ALIAS_NAME, String.class);
+            if (ObjectHelper.isEmpty(aliasName)) {
+                throw new IllegalArgumentException("Function alias must be specified to get an alias");
+            }
+            request.setName(aliasName);
+            result = lambdaClient.getAlias(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("getAlias command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);

@@ -295,6 +295,7 @@ public interface LambdaEndpointBuilderFactory {
         getFunction,
         createAlias,
         deleteAlias,
+        getAlias,
         createFunction,
         deleteFunction,
         invokeFunction,
