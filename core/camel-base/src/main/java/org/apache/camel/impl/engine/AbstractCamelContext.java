@@ -2286,10 +2286,10 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public void start() {
+        startDate = new Date();
         try (MDCHelper mdcHelper = new MDCHelper()) {
             init();
             vetoStarted.set(false);
-            startDate = new Date();
             stopWatch.restart();
             log.info("Apache Camel {} (CamelContext: {}) is starting", getVersion(), getName());
 
