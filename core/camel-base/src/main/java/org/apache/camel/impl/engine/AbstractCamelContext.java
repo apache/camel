@@ -260,8 +260,8 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     private final DeferServiceFactory deferServiceFactory = new DefaultDeferServiceFactory();
     private final AnnotationBasedProcessorFactory annotationBasedProcessorFactory = new DefaultAnnotationBasedProcessorFactory();
 
-    private TransformerRegistry<TransformerKey> transformerRegistry;
-    private ValidatorRegistry<ValidatorKey> validatorRegistry;
+    private volatile TransformerRegistry<TransformerKey> transformerRegistry;
+    private volatile ValidatorRegistry<ValidatorKey> validatorRegistry;
     private EndpointRegistry<EndpointKey> endpoints;
     private RuntimeEndpointRegistry runtimeEndpointRegistry;
 
