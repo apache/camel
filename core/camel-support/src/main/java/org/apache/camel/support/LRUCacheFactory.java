@@ -46,6 +46,7 @@ public abstract class LRUCacheFactory {
     }
 
     private static LRUCacheFactory createLRUCacheFactory() {
+        LOGGER.trace("createLRUCacheFactory");
         try {
             ClassLoader classLoader = LRUCacheFactory.class.getClassLoader();
             URL url = classLoader.getResource("META-INF/services/org/apache/camel/lru-cache-factory");
@@ -55,12 +56,17 @@ public abstract class LRUCacheFactory {
                     props.load(is);
                 }
                 String clazzName = props.getProperty("class");
-                Class<?> clazz = classLoader.loadClass(clazzName);
-                Object factory = clazz.getDeclaredConstructor().newInstance();
-                return (LRUCacheFactory) factory;
+                if (clazzName != null) {
+                    LOGGER.trace("Loading class: {}", clazzName);
+                    Class<?> clazz = classLoader.loadClass(clazzName);
+                    LOGGER.trace("Creating LURCacheFactory instance from class: {}", clazzName);
+                    Object factory = clazz.getDeclaredConstructor().newInstance();
+                    LOGGER.trace("Created LURCacheFactory instance: {}", factory);
+                    return (LRUCacheFactory) factory;
+                }
             }
         } catch (Throwable t) {
-            LOGGER.warn("Error creating LRUCacheFactory", t);
+            LOGGER.warn("Error creating LRUCacheFactory. Will use DefaultLRUCacheFactory.", t);
         }
         return new DefaultLRUCacheFactory();
     }
