@@ -1437,6 +1437,8 @@ public abstract class DefaultConfigurationProperties<T> {
      * You can turn this off by setting the value to false.
      *
      * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * By default classpath is assumed if no prefix is specified.
+     *
      * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
      *
      * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
@@ -1455,6 +1457,8 @@ public abstract class DefaultConfigurationProperties<T> {
      * You can turn this off by setting the value to false.
      *
      * Files can be loaded from either classpath or file by prefixing with classpath: or file:
+     * By default classpath is assumed if no prefix is specified.
+     *
      * Wildcards is supported using a ANT pattern style paths, such as classpath:&#42;&#42;/&#42;camel&#42;.xml
      *
      * Notice when using wildcards, then there is additional overhead as the classpath is scanned, where
