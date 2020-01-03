@@ -62,7 +62,7 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
             if ("file:".equals(scheme)) {
                 // file based scanning
                 root = root.substring(scheme.length());
-                findInFileSystem(root, answer, subPattern);
+                findInFileSystem(new File(root), answer, subPattern);
             } else {
                 if ("classpath:".equals(scheme)) {
                     root = root.substring(scheme.length());
@@ -79,13 +79,15 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
         return answer;
     }
 
-    protected void findInFileSystem(String root, Set<InputStream> resources, String subPattern) {
-        File dir = new File(root);
+    protected void findInFileSystem(File dir, Set<InputStream> resources, String subPattern) {
         if (dir.exists() && dir.isDirectory()) {
             File[] files = dir.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    if (file.isFile()) {
+                    if (file.isDirectory() && !file.getName().startsWith(".")) {
+                        // skip hidden directories
+                        findInFileSystem(file, resources, subPattern);
+                    } else if (file.isFile()) {
                         boolean match = PATH_MATCHER.match(subPattern, file.getName());
                         log.debug("Found resource: {} matching pattern: {} -> {}", file.getName(), subPattern, match);
                         if (match) {
