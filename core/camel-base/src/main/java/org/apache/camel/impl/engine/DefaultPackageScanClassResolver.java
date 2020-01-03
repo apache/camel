@@ -253,7 +253,7 @@ public class DefaultPackageScanClassResolver extends BasePackageScanResolver imp
                         // only create jar cache on-demand when needed
                         if (jarCache == null) {
                             // use a soft cache so it can be claimed if needed
-                            jarCache = LRUCacheFactory.newLRUWeakCache(1000);
+                            jarCache = LRUCacheFactory.newLRUSoftCache(1000);
                         }
 
                         loadImplementationsInJar(test, packageName, stream, urlPath, classes, jarCache);
