@@ -17,6 +17,7 @@
 package org.apache.camel.impl.converter;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
@@ -547,15 +548,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         for (URL url : loaderResources) {
             log.debug("Loading file {} to retrieve list of type converters, from url: {}", META_INF_SERVICES_TYPE_CONVERTER_LOADER, url);
             BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
-            try {
-                reader.lines()
-                        .map(String::trim)
-                        .filter(l -> !l.isEmpty())
-                        .filter(l -> !l.startsWith("#"))
-                        .forEach(loaders::add);
-            } finally {
-                IOHelper.close(reader, url.toString(), log);
-            }
+            String line;
+            do {
+                line = reader.readLine();
+                if (line != null && !line.startsWith("#")) {
+                    loaders.add(line);
+                }
+            } while (line != null);
+            IOHelper.close(reader);
         }
         return loaders;
     }
