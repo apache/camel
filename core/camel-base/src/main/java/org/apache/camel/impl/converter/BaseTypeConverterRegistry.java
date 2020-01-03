@@ -525,10 +525,20 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         Collection<String> names = findTypeConverterLoaderClasses();
         for (String name : names) {
             log.debug("Resolving TypeConverterLoader: {}", name);
-            Class clazz = getResolver().getClassLoaders().stream()
-                    .map(cl -> ObjectHelper.loadClass(name, cl))
-                    .filter(Objects::nonNull)
-                    .findAny().orElseThrow(() -> new ClassNotFoundException(name));
+            Class clazz = null;
+            for (ClassLoader loader : getResolver().getClassLoaders()) {
+                try {
+                    clazz = loader.loadClass(name);
+                } catch (Throwable e) {
+                    // ignore
+                }
+                if (clazz != null) {
+                    break;
+                }
+            }
+            if (clazz == null) {
+                throw new ClassNotFoundException(name);
+            }
             Object obj = getInjector().newInstance(clazz, false);
             if (obj instanceof TypeConverterLoader) {
                 TypeConverterLoader loader = (TypeConverterLoader) obj;
