@@ -27,7 +27,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLDecoder;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.LinkedHashSet;
@@ -35,7 +34,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
-import java.util.stream.Stream;
 
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.NonManagedService;
@@ -83,23 +81,13 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
     }
 
     protected void findInFileSystem(File dir, Set<InputStream> resources, String subPattern) throws Exception {
-        try (Stream<Path> path = Files.walk(dir.toPath())) {
-            path.filter(f -> {
-                if (f.toFile().isFile()) {
-                    String shortName = f.toFile().getName();
-                    boolean match = PATH_MATCHER.match(subPattern, shortName);
-                    log.debug("Found resource: {} matching pattern: {} -> {}", shortName, subPattern, match);
-                    return match;
-                }
-                return false;
-            }).forEach(f -> {
-                try {
-                    resources.add(new FileInputStream(f.toFile()));
-                } catch (FileNotFoundException e) {
-                    // ignore
-                }
-            });
-        }
+        ResourceHelper.findInFileSystem(dir.toPath(), subPattern).forEach(f -> {
+            try {
+                resources.add(Files.newInputStream(f));
+            } catch (IOException e) {
+                // ignore
+            }
+        });
     }
 
     protected void findInClasspath(String packageName, Set<InputStream> resources, String subPattern) {
