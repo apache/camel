@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.engine.ExplicitCamelContextNameStrategy;
 import org.apache.camel.model.Model;
@@ -87,6 +88,14 @@ public class ValidatorListCommandTest {
         context.getExtension(Model.class).getValidators().add(cvd);
         context.setNameStrategy(new ExplicitCamelContextNameStrategy("foobar"));
         context.start();
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:foo")
+                        .to("mock:foo");
+            }
+        });
 
         CamelController controller = new DummyCamelController(context);
 
