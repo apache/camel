@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Injector;
 import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.TimeUtils;
 
 /**
  * Default implementation of a type converter registry used for
@@ -60,6 +62,8 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
 
     @Override
     protected void doStart() throws Exception {
+        StopWatch watch = new StopWatch();
+
         super.doStart();
 
         // core type converters is always loaded which does not use any classpath scanning and therefore is fast
@@ -78,6 +82,9 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
                 log.warn("Annotation scanning mode loaded {} type converters. Its recommended to migrate to @Converter(loader = true) for fast type converter mode.", additional);
             }
         }
+
+        String time = TimeUtils.printDuration(watch.taken());
+        log.debug("Loaded {} type converters in {}", typeMappings.size(), time);
     }
 
     @Override
