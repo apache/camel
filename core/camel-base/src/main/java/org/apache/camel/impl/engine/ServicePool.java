@@ -19,7 +19,6 @@ package org.apache.camel.impl.engine;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
@@ -27,7 +26,6 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.IsSingleton;
 import org.apache.camel.NonManagedService;
 import org.apache.camel.Service;
 import org.apache.camel.support.LRUCache;
@@ -49,7 +47,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     private final Function<S, Endpoint> getEndpoint;
     private final ConcurrentMap<Endpoint, Pool<S>> pool = new ConcurrentHashMap<>();
     private int capacity;
-    private Map<Key<S>, S> cache;
+    private Map<S, S> cache;
 
     private interface Pool<S> {
         S acquire() throws Exception;
@@ -58,21 +56,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         void stop();
         void evict(S s);
         void cleanUp();
-    }
-
-    private static class Key<S> {
-        private final S s;
-        public Key(S s) {
-            this.s = Objects.requireNonNull(s);
-        }
-        @Override
-        public boolean equals(Object o) {
-            return o instanceof Key && ((Key) o).s == s;
-        }
-        @Override
-        public int hashCode() {
-            return s.hashCode();
-        }
     }
 
     public ServicePool(ThrowingFunction<Endpoint, S, Exception> creator, Function<S, Endpoint> getEndpoint, int capacity) {
@@ -121,7 +104,7 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
         }
         S s = getOrCreatePool(endpoint).acquire();
         if (s != null && cache != null) {
-            cache.putIfAbsent(new Key<>(s), s);
+            cache.putIfAbsent(s, s);
         }
         return s;
     }
@@ -144,11 +127,6 @@ abstract class ServicePool<S extends Service> extends ServiceSupport implements 
     }
 
     private Pool<S> createPool(Endpoint endpoint) {
-        try {
-            S s = creator.apply(endpoint);
-        } catch (Exception e) {
-            // Ignore
-        }
         boolean singleton = endpoint.isSingletonProducer();
         if (singleton) {
             return new SinglePool(endpoint);
