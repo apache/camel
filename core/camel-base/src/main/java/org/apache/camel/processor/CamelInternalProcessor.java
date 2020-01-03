@@ -240,7 +240,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                     log.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
                              exchange.getExchangeId(), exchange);
                 }
-            }, "CamelInternalProcessor - UnitOfWork - afterProcess - " + processor + " - " + exchange.getExchangeId());
+            });
             return false;
         }
     }

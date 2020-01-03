@@ -201,7 +201,7 @@ public class SharedCamelInternalProcessor {
                     LOG.trace("Exchange processed and is continued routed asynchronously for exchangeId: {} -> {}",
                             exchange.getExchangeId(), exchange);
                 }
-            }, "SharedCamelInternalProcessor - UnitOfWork - afterProcess - " + processor + " - " + exchange.getExchangeId());
+            });
             return sync;
         }
     }
