@@ -27,7 +27,7 @@ which kind of transport used, so learn the API once and you will be able to
 interact with all the Components that is provided out-of-the-box.
 
 Apache Camel has powerful Bean Binding and integrated seamless with
-popular frameworks such as Spring, CDI, Blueprint and Guice.
+popular frameworks such as Spring, CDI and Blueprint.
 
 Apache Camel has extensive testing support allowing you to easily
 unit test your routes.

@@ -20,7 +20,7 @@ will be able to interact with all the Components that is provided
 out-of-the-box.
 
 Apache Camel has powerful Bean Binding and integrated seamless with popular
-frameworks such as Spring and Guice.
+frameworks such as Spring, CDI and Blueprint.
 
 Apache Camel has extensive Testing support allowing you to easily
 unit test your routes.
