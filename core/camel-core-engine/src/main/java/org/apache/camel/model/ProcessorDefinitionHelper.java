@@ -802,8 +802,9 @@ public final class ProcessorDefinitionHelper {
             // lookup and resolve properties for String based properties
             for (Map.Entry<String, Supplier<String>> entry : readProperties.entrySet()) {
                 String name = entry.getKey();
-                String value = entry.getValue().get();
-                String text = camelContext.resolvePropertyPlaceholders(value);
+                Supplier<String> supplier = entry.getValue();
+                String value = supplier != null ? supplier.get() : null;
+                String text = value != null ? camelContext.resolvePropertyPlaceholders(value) : null;
 
                 // is the value a known field (currently we only support
                 // constants from Exchange.class)
