@@ -311,7 +311,7 @@ public class RestEndpoint extends DefaultEndpoint {
 
         String pname = getProducerComponentName();
         if (pname != null) {
-            Object comp = getCamelContext().getRegistry().lookupByName(getProducerComponentName());
+            Object comp = getCamelContext().getRegistry().lookupByName(pname);
             if (comp instanceof RestProducerFactory) {
                 factory = (RestProducerFactory) comp;
             } else {
@@ -323,12 +323,11 @@ public class RestEndpoint extends DefaultEndpoint {
 
             if (factory == null) {
                 if (comp != null) {
-                    throw new IllegalArgumentException("Component " + getProducerComponentName() + " is not a RestProducerFactory");
+                    throw new IllegalArgumentException("Component " + pname + " is not a RestProducerFactory");
                 } else {
                     throw new NoSuchBeanException(getProducerComponentName(), RestProducerFactory.class.getName());
                 }
             }
-            pname = getProducerComponentName();
         }
 
         // try all components
@@ -339,6 +338,22 @@ public class RestEndpoint extends DefaultEndpoint {
                     factory = (RestProducerFactory) comp;
                     pname = name;
                     break;
+                }
+            }
+        }
+
+        // fallback to use consumer name as it may be producer capable too
+        if (pname == null && getConsumerComponentName() != null) {
+            String cname = getConsumerComponentName();
+            Object comp = getCamelContext().getRegistry().lookupByName(cname);
+            if (comp instanceof RestProducerFactory) {
+                factory = (RestProducerFactory) comp;
+                pname = cname;
+            } else {
+                comp = setupComponent(cname, getCamelContext(), (Map<String, Object>) parameters.get("component"));
+                if (comp instanceof RestProducerFactory) {
+                    factory = (RestProducerFactory) comp;
+                    pname = cname;
                 }
             }
         }
