@@ -37,6 +37,12 @@ public class MainXmlTest extends Assert {
     }
 
     @Test
+    public void testMainRoutesCollectorScanWildcardDirClasspathPath() throws Exception {
+        // will load XML from target/classes when testing
+        doTestMain("org/apache/camel/main/**/*.xml");
+    }
+
+    @Test
     public void testMainRoutesCollectorScanClasspathPrefix() throws Exception {
         // will load XML from target/classes when testing
         doTestMain("classpath:org/apache/camel/main/xml/camel-*.xml");
@@ -51,6 +57,11 @@ public class MainXmlTest extends Assert {
     @Test
     public void testMainRoutesCollectorScanInDir() throws Exception {
         doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-*.xml");
+    }
+
+    @Test
+    public void testMainRoutesCollectorScanWildcardDirFilePath() throws Exception {
+        doTestMain("file:src/test/resources/**/*.xml");
     }
 
     @Test
