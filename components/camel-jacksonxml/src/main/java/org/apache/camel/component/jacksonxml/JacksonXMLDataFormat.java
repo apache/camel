@@ -169,11 +169,7 @@ public class JacksonXMLDataFormat extends ServiceSupport implements DataFormat, 
         this.xmlMapper.writerWithView(jsonView).writeValue(stream, graph);
 
         if (contentTypeHeader) {
-            if (exchange.hasOut()) {
-                exchange.getOut().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-            } else {
-                exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-            }
+            exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, "application/xml");
         }
     }
 
