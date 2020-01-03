@@ -260,7 +260,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
         if (isParallelProcessing()) {
             executorService.submit(() -> camelContext.getReactiveExecutor().schedule(runnable));
         } else {
-            camelContext.getReactiveExecutor().schedule(runnable, "Multicast next step");
+            camelContext.getReactiveExecutor().schedule(runnable);
         }
     }
 

@@ -49,34 +49,49 @@ public class VertXReactiveExecutor extends ServiceSupport implements ReactiveExe
     }
 
     @Override
-    public void schedule(Runnable runnable, String description) {
+    public void schedule(Runnable runnable) {
         LOG.trace("schedule: {}", runnable);
+        vertx.nettyEventLoopGroup().execute(runnable);
+    }
+
+    @Override
+    public void schedule(Runnable runnable, String description) {
         if (description != null) {
             runnable = describe(runnable, description);
         }
+        schedule(runnable);
+    }
+
+    @Override
+    public void scheduleMain(Runnable runnable) {
+        LOG.trace("scheduleMain: {}", runnable);
         vertx.nettyEventLoopGroup().execute(runnable);
     }
 
     @Override
     public void scheduleMain(Runnable runnable, String description) {
-        LOG.trace("scheduleMain: {}", runnable);
         if (description != null) {
             runnable = describe(runnable, description);
         }
-        vertx.nettyEventLoopGroup().execute(runnable);
+        scheduleMain(runnable);
     }
 
     @Override
-    public void scheduleSync(Runnable runnable, String description) {
+    public void scheduleSync(Runnable runnable) {
         LOG.trace("scheduleSync: {}", runnable);
-        if (description != null) {
-            runnable = describe(runnable, description);
-        }
         final Runnable task = runnable;
         vertx.executeBlocking(future -> {
             task.run();
             future.complete();
         }, res -> { });
+    }
+
+    @Override
+    public void scheduleSync(Runnable runnable, String description) {
+        if (description != null) {
+            runnable = describe(runnable, description);
+        }
+        scheduleSync(runnable);
     }
 
     @Override

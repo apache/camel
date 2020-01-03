@@ -28,9 +28,7 @@ public interface ReactiveExecutor {
      *
      * @param runnable    the task
      */
-    default void schedule(Runnable runnable) {
-        schedule(runnable, null);
-    }
+    void schedule(Runnable runnable);
 
     /**
      * Schedules the task to be run
@@ -45,9 +43,7 @@ public interface ReactiveExecutor {
      *
      * @param runnable    the task
      */
-    default void scheduleMain(Runnable runnable) {
-        scheduleMain(runnable, null);
-    }
+    void scheduleMain(Runnable runnable);
 
     /**
      * Schedules the task to be prioritized and run asap
@@ -62,9 +58,7 @@ public interface ReactiveExecutor {
      *
      * @param runnable    the task
      */
-    default void scheduleSync(Runnable runnable) {
-        scheduleSync(runnable, null);
-    }
+    void scheduleSync(Runnable runnable);
 
     /**
      * Schedules the task to run synchronously

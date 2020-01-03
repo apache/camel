@@ -83,11 +83,9 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (exchange.isTransacted()) {
-            camelContext.getReactiveExecutor().scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true),
-                    "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]");
+            camelContext.getReactiveExecutor().scheduleSync(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true));
         } else {
-            camelContext.getReactiveExecutor().scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true),
-                    "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]");
+            camelContext.getReactiveExecutor().scheduleMain(() -> Pipeline.this.doProcess(exchange, callback, processors.iterator(), true));
         }
         return false;
     }
@@ -103,8 +101,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
             AsyncProcessor processor = processors.next();
 
             processor.process(exchange, doneSync ->
-                    camelContext.getReactiveExecutor().schedule(() -> doProcess(exchange, callback, processors, false),
-                            "Step[" + exchange.getExchangeId() + "," + Pipeline.this + "]"));
+                    camelContext.getReactiveExecutor().schedule(() -> doProcess(exchange, callback, processors, false)));
         } else {
             ExchangeHelper.copyResults(exchange, exchange);
 

@@ -52,11 +52,26 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
     private final AtomicLong pendingTasks = new AtomicLong();
 
     @Override
+    public void schedule(Runnable runnable) {
+        workers.get().schedule(runnable, true, false, false);
+    }
+
+    @Override
+    public void scheduleMain(Runnable runnable) {
+        workers.get().schedule(runnable, true, true, false);
+    }
+
+    @Override
+    public void scheduleSync(Runnable runnable) {
+        workers.get().schedule(runnable, false, true, true);
+    }
+
+    @Override
     public void scheduleMain(Runnable runnable, String description) {
         if (description != null) {
             runnable = describe(runnable, description);
         }
-        workers.get().schedule(runnable, true, true, false);
+        scheduleMain(runnable);
     }
 
     @Override
@@ -64,7 +79,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         if (description != null) {
             runnable = describe(runnable, description);
         }
-        workers.get().schedule(runnable, true, false, false);
+        schedule(runnable);
     }
 
     @Override
@@ -72,7 +87,7 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         if (description != null) {
             runnable = describe(runnable, description);
         }
-        workers.get().schedule(runnable, false, true, true);
+        scheduleSync(runnable);
     }
 
     @Override
