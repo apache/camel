@@ -3546,7 +3546,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
 
     @Override
     public void setupManagement(Map<String, Object> options) {
-        ManagementStrategyFactory factory = new DefaultManagementStrategyFactory();
+        log.trace("Setting up management");
+
+        ManagementStrategyFactory factory = null;
         if (!isJMXDisabled()) {
             try {
                 FactoryFinder finder = getFactoryFinder("META-INF/services/org/apache/camel/management/");
@@ -3557,9 +3559,13 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                     }
                 }
             } catch (Exception e) {
-                log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);
+                log.warn("Cannot create JmxManagementStrategyFactory. Will fallback and disable JMX.", e);
             }
         }
+        if (factory == null) {
+            factory = new DefaultManagementStrategyFactory();
+        }
+        log.debug("Setting up management with factory: {}", factory);
 
         // preserve any existing event notifiers that may have been already added
         List<EventNotifier> notifiers = null;
@@ -3567,7 +3573,6 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
             notifiers = managementStrategy.getEventNotifiers();
         }
 
-        log.debug("Setting up management with factory: {}", factory);
         try {
             ManagementStrategy strategy = factory.create(this, options);
             if (notifiers != null) {
