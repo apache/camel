@@ -37,9 +37,30 @@ public class MainXmlTest extends Assert {
     }
 
     @Test
+    public void testMainRoutesCollectorScanClasspathPrefix() throws Exception {
+        // will load XML from target/classes when testing
+        doTestMain("classpath:org/apache/camel/main/xml/camel-*.xml");
+    }
+
+    @Test
     public void testMainRoutesCollectorScanInJar() throws Exception {
         // will load XML from camel-core test JAR when testing
         doTestMain("org/apache/camel/model/scan-*.xml");
+    }
+
+    @Test
+    public void testMainRoutesCollectorScanInDir() throws Exception {
+        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-*.xml");
+    }
+
+    @Test
+    public void testMainRoutesCollectorFile() throws Exception {
+        doTestMain("file:src/test/resources/org/apache/camel/main/xml/camel-dummy.xml,file:src/test/resources/org/apache/camel/main/xml/camel-scan.xml,");
+    }
+
+    @Test
+    public void testMainRoutesCollectorScanInJarAndDir() throws Exception {
+        doTestMain("classpath:org/apache/camel/main/xml/*dummy.xml,file:src/test/resources/org/apache/camel/main/xml/*scan.xml");
     }
 
     protected void doTestMain(String xmlRoutes) throws Exception {

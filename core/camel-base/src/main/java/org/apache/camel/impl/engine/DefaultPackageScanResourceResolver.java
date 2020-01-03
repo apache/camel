@@ -49,26 +49,60 @@ public class DefaultPackageScanResourceResolver extends BasePackageScanResolver 
 
     private static final AntPathMatcher PATH_MATCHER = AntPathMatcher.INSTANCE;
 
-    public Set<InputStream> findResources(String locations) throws Exception {
+    public Set<InputStream> findResources(String location) throws Exception {
         Set<InputStream> answer = new LinkedHashSet<>();
 
         // if its a pattern then we need to scan its root path and find
         // all matching resources using the sub pattern
-        if (PATH_MATCHER.isPattern(locations)) {
-            String root = PATH_MATCHER.determineRootDir(locations);
-            String subPattern = locations.substring(root.length());
-            // scan from root path and find all resources
-            find(root, answer, subPattern);
+        if (PATH_MATCHER.isPattern(location)) {
+            String root = PATH_MATCHER.determineRootDir(location);
+            String subPattern = location.substring(root.length());
+
+            String scheme = ResourceHelper.getScheme(location);
+            if ("file:".equals(scheme)) {
+                // file based scanning
+                root = root.substring(scheme.length());
+                findInFileSystem(root, answer, subPattern);
+            } else {
+                if ("classpath:".equals(scheme)) {
+                    root = root.substring(scheme.length());
+                }
+                // assume classpath based scan from root path and find all resources
+                findInClasspath(root, answer, subPattern);
+            }
         } else {
             // its a single resource so load it directly
-            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), locations);
+            InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext(), location);
             answer.add(is);
         }
 
         return answer;
     }
 
-    protected void find(String packageName, Set<InputStream> resources, String subPattern) {
+    protected void findInFileSystem(String root, Set<InputStream> resources, String subPattern) {
+        File dir = new File(root);
+        if (dir.exists() && dir.isDirectory()) {
+            File[] files = dir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    if (file.isFile()) {
+                        boolean match = PATH_MATCHER.match(subPattern, file.getName());
+                        log.debug("Found resource: {} matching pattern: {} -> {}", file.getName(), subPattern, match);
+                        if (match) {
+                            try {
+                                // the input stream will be closed later
+                                resources.add(new FileInputStream(file));
+                            } catch (FileNotFoundException e) {
+                                // ignore
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    protected void findInClasspath(String packageName, Set<InputStream> resources, String subPattern) {
         packageName = packageName.replace('.', '/');
         // If the URL is a jar, the URLClassloader.getResources() seems to require a trailing slash.
         // The trailing slash is harmless for other URLs
