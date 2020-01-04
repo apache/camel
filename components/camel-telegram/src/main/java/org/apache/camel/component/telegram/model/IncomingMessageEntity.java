@@ -20,6 +20,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * This object represents one special entity in a text message. For example, hashtags, usernames, URLs, etc.
+ *
+ * @see <a href="https://core.telegram.org/bots/api#messageentity">https://core.telegram.org/bots/api#messageentity</a>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class IncomingMessageEntity {

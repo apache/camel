@@ -69,6 +69,8 @@ public class IncomingMessage implements Serializable {
 
     private String caption;
 
+    private IncomingGame game;
+
     public IncomingMessage() {
     }
 
@@ -192,6 +194,14 @@ public class IncomingMessage implements Serializable {
         this.replyMarkup = replyMarkup;
     }
 
+    public IncomingGame getGame() {
+        return game;
+    }
+
+    public void setGame(IncomingGame game) {
+        this.game = game;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("IncomingMessage{");
@@ -210,6 +220,7 @@ public class IncomingMessage implements Serializable {
         sb.append(", caption=").append(caption);
         sb.append(", captionEntities=").append(captionEntities);
         sb.append(", replyMarkup=").append(replyMarkup);
+        sb.append(", game=").append(game);
         sb.append('}');
         return sb.toString();
     }

@@ -39,7 +39,10 @@ public final class TelegramMessageHelper {
             if (update.getChannelPost().getChat() != null) {
                 exchange.getMessage().setHeader(TelegramConstants.TELEGRAM_CHAT_ID, update.getChannelPost().getChat().getId());
             }
+        } else if (update.getCallbackQuery() != null) {
+            exchange.getMessage().setBody(update.getCallbackQuery());
         }
+
     }
 
 }

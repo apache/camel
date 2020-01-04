@@ -1,0 +1,42 @@
+{
+    "ok": true,
+    "result": {
+        "message_id": 935,
+        "from": {
+            "id": 770882310,
+            "is_bot": true,
+            "first_name": "camelDemoBot",
+            "username": "camelDemoBot"
+        },
+        "chat": {
+            "id": 434822960,
+            "first_name": "Peter",
+            "last_name": "Palaga",
+            "type": "private"
+        },
+        "date": 1576249600,
+        "game": {
+            "title": "test_game",
+            "description": "test",
+            "photo": [
+                {
+                    "file_id": "AgADBAADnrAxG1rhiVAsV1IghUpUwn4eqhsABAEAAwIAA20AA32sBQABFgQ",
+                    "file_unique_id": "AQADfh6qGwAEfawFAAE",
+                    "file_size": 2469,
+                    "width": 320,
+                    "height": 180
+                }
+            ]
+        },
+        "reply_markup": {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "Play test_game",
+                        "callback_game": {}
+                    }
+                ]
+            ]
+        }
+    }
+}
