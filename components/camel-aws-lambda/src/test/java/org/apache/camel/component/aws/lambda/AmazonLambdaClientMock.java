@@ -55,8 +55,6 @@ import com.amazonaws.services.lambda.model.GetFunctionRequest;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.GetPolicyRequest;
 import com.amazonaws.services.lambda.model.GetPolicyResult;
-import com.amazonaws.services.lambda.model.InvokeAsyncRequest;
-import com.amazonaws.services.lambda.model.InvokeAsyncResult;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
 import com.amazonaws.services.lambda.model.ListAliasesRequest;
@@ -381,11 +379,6 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public DeleteFunctionConcurrencyResult deleteFunctionConcurrency(DeleteFunctionConcurrencyRequest deleteFunctionConcurrencyRequest) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public InvokeAsyncResult invokeAsync(InvokeAsyncRequest invokeAsyncRequest) {
         throw new UnsupportedOperationException();
     }
 
