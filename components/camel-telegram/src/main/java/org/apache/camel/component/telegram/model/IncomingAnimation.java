@@ -22,14 +22,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * Contains information about a photo.
+ * Represents an animation file (GIF or H.264/MPEG-4 AVC video without sound).
  *
- * @see <a href="https://core.telegram.org/bots/api#photosize">https://core.telegram.org/bots/api#photosize</a>
+ * @see <a href="https://core.telegram.org/bots/api#animation">https://core.telegram.org/bots/api#animation</a>
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class IncomingPhotoSize implements Serializable {
+public class IncomingAnimation implements Serializable {
 
-    private static final long serialVersionUID = -7793605325953618846L;
+    private static final long serialVersionUID = 5280714879829232835L;
 
     @JsonProperty("file_id")
     private String fileId;
@@ -41,10 +41,21 @@ public class IncomingPhotoSize implements Serializable {
 
     private Integer height;
 
+    @JsonProperty("duration")
+    private Integer durationSeconds;
+
+    private IncomingPhotoSize thumb;
+
+    @JsonProperty("file_name")
+    private String fileName;
+
+    @JsonProperty("mime_type")
+    private String mimeType;
+
     @JsonProperty("file_size")
     private Long fileSize;
 
-    public IncomingPhotoSize() {
+    public IncomingAnimation() {
     }
 
     public String getFileId() {
@@ -79,6 +90,30 @@ public class IncomingPhotoSize implements Serializable {
         this.fileSize = fileSize;
     }
 
+    public Integer getDurationSeconds() {
+        return durationSeconds;
+    }
+
+    public void setDurationSeconds(Integer durationSeconds) {
+        this.durationSeconds = durationSeconds;
+    }
+
+    public IncomingPhotoSize getThumb() {
+        return thumb;
+    }
+
+    public void setThumb(IncomingPhotoSize thumb) {
+        this.thumb = thumb;
+    }
+
+    public String getMimeType() {
+        return mimeType;
+    }
+
+    public void setMimeType(String mimeType) {
+        this.mimeType = mimeType;
+    }
+
     public String getFileUniqueId() {
         return fileUniqueId;
     }
@@ -87,14 +122,26 @@ public class IncomingPhotoSize implements Serializable {
         this.fileUniqueId = fileUniqueId;
     }
 
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("IncomingPhotoSize{");
+        final StringBuilder sb = new StringBuilder("IncomingAnimation{");
         sb.append("fileId='").append(fileId).append('\'');
+        sb.append(", fileUniqueId='").append(fileUniqueId).append('\'');
         sb.append(", width=").append(width);
         sb.append(", height=").append(height);
+        sb.append(", durationSeconds=").append(durationSeconds);
+        sb.append(", thumb=").append(thumb);
+        sb.append(", fileName='").append(fileName).append('\'');
+        sb.append(", mimeType='").append(mimeType).append('\'');
         sb.append(", fileSize=").append(fileSize);
-        sb.append(", fileUniqueId=").append(fileUniqueId);
         sb.append('}');
         return sb.toString();
     }

@@ -17,10 +17,13 @@
 package org.apache.camel.component.telegram.integration;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 import org.apache.camel.component.telegram.TelegramParseMode;
+import org.apache.camel.component.telegram.model.CallbackGame;
 import org.apache.camel.component.telegram.model.EditMessageCaptionMessage;
 import org.apache.camel.component.telegram.model.EditMessageDelete;
 import org.apache.camel.component.telegram.model.EditMessageMediaMessage;
@@ -36,6 +39,7 @@ import org.apache.camel.component.telegram.model.InputMediaVideo;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
+import org.apache.camel.component.telegram.model.OutgoingGameMessage;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
@@ -527,6 +531,24 @@ public class TelegramServiceTest extends TelegramTestSupport {
         MessageResult incomingMessage = sendMessage(messageDelete);
         Assertions.assertTrue(incomingMessage.isOk());
         Assertions.assertTrue(incomingMessage.isResult());
+    }
+
+    @Test
+    void testSendGameMessage() {
+        String gameShortName = "<game-name-here>";
+
+        InlineKeyboardButton ib = new InlineKeyboardButton();
+        ib.setCallbackGame(new CallbackGame(gameShortName));
+        List<List<InlineKeyboardButton>> iButtons = new ArrayList<>();
+        iButtons.add(new ArrayList<>(Collections.singletonList(ib)));
+
+        OutgoingGameMessage outgoingGameMessage = new OutgoingGameMessage();
+        outgoingGameMessage.setGameShortName(gameShortName);
+        outgoingGameMessage.setReplyMarkup(new InlineKeyboardMarkup(iButtons));
+
+        IncomingMessage incomingMessage = sendMessage(outgoingGameMessage).getMessage();
+
+        Assertions.assertNotNull(incomingMessage.getGame());
     }
 
     private Integer sendSamplePhotoMessageAndGetMessageId(String caption) throws IOException {

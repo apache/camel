@@ -55,7 +55,7 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
         SendVenueMessage msg = new SendVenueMessage(latitude, longitude, "title", "address");
         template.requestBody("direct:telegram", msg, MessageResult.class);
 
-        final MockProcessor<SendLocationMessage> mockProcessor = getMockRoutes().getMock("sendVenue");
+        final MockProcessor<SendVenueMessage> mockProcessor = getMockRoutes().getMock("sendVenue");
         assertThat(mockProcessor.awaitRecordedMessages(1, 5000).get(0))
                 .usingRecursiveComparison()
                 .isEqualTo(msg);
@@ -66,7 +66,7 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
         EditMessageLiveLocationMessage msg = new EditMessageLiveLocationMessage(latitude, longitude);
         template.requestBody("direct:telegram", msg, MessageResult.class);
 
-        final MockProcessor<SendLocationMessage> mockProcessor = getMockRoutes().getMock("editMessageLiveLocation");
+        final MockProcessor<EditMessageLiveLocationMessage> mockProcessor = getMockRoutes().getMock("editMessageLiveLocation");
         assertThat(mockProcessor.awaitRecordedMessages(1, 5000).get(0))
                 .usingRecursiveComparison()
                 .isEqualTo(msg);
@@ -77,7 +77,7 @@ public class TelegramProducerLocationTest extends TelegramTestSupport {
         StopMessageLiveLocationMessage msg = new StopMessageLiveLocationMessage();
         template.requestBody("direct:telegram", msg, MessageResult.class);
 
-        final MockProcessor<SendLocationMessage> mockProcessor = getMockRoutes().getMock("stopMessageLiveLocation");
+        final MockProcessor<StopMessageLiveLocationMessage> mockProcessor = getMockRoutes().getMock("stopMessageLiveLocation");
         assertThat(mockProcessor.awaitRecordedMessages(1, 5000).get(0))
                 .usingRecursiveComparison()
                 .isEqualTo(msg);

@@ -42,7 +42,9 @@ import org.apache.camel.component.telegram.model.EditMessageReplyMarkupMessage;
 import org.apache.camel.component.telegram.model.EditMessageTextMessage;
 import org.apache.camel.component.telegram.model.MessageResult;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
+import org.apache.camel.component.telegram.model.OutgoingCallbackQueryMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
+import org.apache.camel.component.telegram.model.OutgoingGameMessage;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
 import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
@@ -95,6 +97,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
         m.put(OutgoingVideoMessage.class, new OutgoingVideoMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
         m.put(OutgoingDocumentMessage.class, new OutgoingDocumentMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
         m.put(OutgoingStickerMessage.class, new OutgoingStickerMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri));
+        m.put(OutgoingGameMessage.class,
+            new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendGame"));
         m.put(SendLocationMessage.class,
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/sendLocation"));
         m.put(EditMessageLiveLocationMessage.class,
@@ -113,6 +117,8 @@ public class TelegramServiceRestBotAPIAdapter implements TelegramService {
                 new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/deleteMessage"));
         m.put(EditMessageReplyMarkupMessage.class,
             new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/editMessageReplyMarkup"));
+        m.put(OutgoingCallbackQueryMessage.class,
+            new OutgoingPlainMessageHandler(asyncHttpClient, bufferSize, mapper, baseUri + "/answerCallbackQuery"));
         this.handlers = m;
     }
 
