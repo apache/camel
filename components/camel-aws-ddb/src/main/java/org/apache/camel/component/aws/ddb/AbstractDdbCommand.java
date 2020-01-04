@@ -41,12 +41,7 @@ public abstract class AbstractDdbCommand {
     public abstract void execute();
 
     protected Message getMessageForResponse(Exchange exchange) {
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(exchange.getIn());
-            return out;
-        }
-        return exchange.getIn();
+        return exchange.getMessage();
     }
 
     protected String determineTableName() {
