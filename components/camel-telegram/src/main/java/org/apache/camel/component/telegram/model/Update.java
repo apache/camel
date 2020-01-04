@@ -37,6 +37,9 @@ public class Update implements Serializable {
     @JsonProperty("channel_post")
     private IncomingMessage channelpost;
 
+    @JsonProperty("callback_query")
+    private IncomingCallbackQuery callbackQuery;
+
     public Update() {
     }
 
@@ -64,12 +67,21 @@ public class Update implements Serializable {
         this.channelpost = channelpost;
     }
 
+    public IncomingCallbackQuery getCallbackQuery() {
+        return callbackQuery;
+    }
+
+    public void setCallbackQuery(IncomingCallbackQuery callbackQuery) {
+        this.callbackQuery = callbackQuery;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("Update{");
         sb.append("updateId=").append(updateId);
         sb.append(", message=").append(message);
         sb.append(", channel_post=").append(channelpost);
+        sb.append(", callbackQuery=").append(callbackQuery);
         sb.append('}');
         return sb.toString();
     }

@@ -23,6 +23,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.telegram.model.OutgoingGameMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.util.TelegramMockRoutes;
 import org.apache.camel.component.telegram.util.TelegramMockRoutes.MockProcessor;
@@ -31,6 +32,7 @@ import org.apache.camel.component.telegram.util.TelegramTestUtil;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -222,6 +224,25 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
         assertEquals("Markdown", message.getParseMode());
     }
 
+    @Test
+    public void testRouteWithGame() throws Exception {
+        final MockProcessor<OutgoingGameMessage> mockProcessor = getMockRoutes().getMock("sendGame");
+        mockProcessor.clearRecordedMessages();
+
+        Exchange ex = endpoint.createExchange();
+
+        OutgoingGameMessage msg = new OutgoingGameMessage();
+        msg.setGameShortName("shortName");
+
+        ex.getIn().setBody(msg);
+
+        template.send(endpoint, ex);
+
+        final OutgoingGameMessage message = mockProcessor.awaitRecordedMessages(1, 5000).get(0);
+        assertNotNull("my-id", message.getChatId());
+        assertNotNull("shortName", message.getGameShortName());
+    }
+
     @Override
     protected RoutesBuilder[] createRouteBuilders() throws Exception {
         return new RoutesBuilder[] {
@@ -261,7 +282,12 @@ public class TelegramProducerMediaTest extends TelegramTestSupport {
                         "sendMessage",
                         "POST",
                         OutgoingTextMessage.class,
-                        TelegramTestUtil.stringResource("messages/send-message.json"));
+                        TelegramTestUtil.stringResource("messages/send-message.json"))
+                .addEndpoint(
+                    "sendGame",
+                    "POST",
+                    OutgoingGameMessage.class,
+                    TelegramTestUtil.stringResource("messages/send-game.json"));
     }
 
     static void assertMultipartFilename(byte[] message, String name, String filename) {

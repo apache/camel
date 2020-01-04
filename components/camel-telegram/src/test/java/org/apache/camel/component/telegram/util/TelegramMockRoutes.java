@@ -51,9 +51,9 @@ public class TelegramMockRoutes extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        mocks.entrySet().stream().forEach(en -> {
-            from("netty-http:http://localhost:" + port + "/botmock-token/" + en.getKey() + "?httpMethodRestrict=" + en.getValue().method)
-                .process(en.getValue());
+        mocks.forEach((key, value) -> {
+            from("netty-http:http://localhost:" + port + "/botmock-token/" + key + "?httpMethodRestrict=" + value.method)
+                .process(value);
         });
 
     }
@@ -108,7 +108,7 @@ public class TelegramMockRoutes extends RouteBuilder {
         public List<T> awaitRecordedMessages(int count, long timeoutMillis) {
             return Awaitility.await()
                     .atMost(timeoutMillis, TimeUnit.MILLISECONDS)
-                    .until(() -> getRecordedMessages(), msgs -> msgs.size() >= count);
+                    .until(this::getRecordedMessages, msgs -> msgs.size() >= count);
         }
 
     }

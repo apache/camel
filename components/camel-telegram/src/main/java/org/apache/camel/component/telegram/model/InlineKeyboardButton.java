@@ -19,14 +19,19 @@ package org.apache.camel.component.telegram.model;
 import java.io.Serializable;
 import java.util.Objects;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 /**
  * Represents one button of an inline keyboard. You must use exactly one of the optional fields.
+ *
+ * @see <a href="https://core.telegram.org/bots/api#inlinekeyboardbutton">
+ *     https://core.telegram.org/bots/api#inlinekeyboardbutton</a>
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InlineKeyboardButton implements Serializable {
 
     private static final long serialVersionUID = -5386858930543292655L;
@@ -41,6 +46,9 @@ public class InlineKeyboardButton implements Serializable {
     @JsonProperty("callback_data")
     private String callbackData;
 
+    @JsonProperty("callback_game")
+    private CallbackGame callbackGame;
+
     public InlineKeyboardButton() {
 
     }
@@ -52,8 +60,10 @@ public class InlineKeyboardButton implements Serializable {
      * @param url          Optional. HTTP or tg:// url to be opened when button is pressed
      * @param loginUrl     Optional. An HTTP URL used to automatically authorize the user.
      * @param callbackData Optional. Data to be sent in a callback query to the bot when button is pressed, 1-64 bytes
+     * @param callbackGame Optional. Description of the game that will be launched when the user presses the button.
      */
-    public InlineKeyboardButton(String text, String url, LoginUrl loginUrl, String callbackData) {
+    public InlineKeyboardButton(String text, String url, LoginUrl loginUrl,
+                                String callbackData, CallbackGame callbackGame) {
         this.text = text;
         this.url = url;
         this.callbackData = callbackData;
@@ -91,8 +101,15 @@ public class InlineKeyboardButton implements Serializable {
         this.callbackData = callbackData;
     }
 
-    public static Builder builder() {
+    public CallbackGame getCallbackGame() {
+        return callbackGame;
+    }
 
+    public void setCallbackGame(CallbackGame callbackGame) {
+        this.callbackGame = callbackGame;
+    }
+
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -102,6 +119,7 @@ public class InlineKeyboardButton implements Serializable {
         private String url;
         private String callbackData;
         private LoginUrl loginUrl;
+        private CallbackGame callbackGame;
 
         public Builder text(String text) {
             this.text = text;
@@ -118,24 +136,31 @@ public class InlineKeyboardButton implements Serializable {
             return this;
         }
 
+        public Builder callbackGame(CallbackGame callbackGame) {
+            this.callbackGame = callbackGame;
+            return this;
+        }
+
         public Builder loginUrl(LoginUrl loginUrl) {
             this.loginUrl = loginUrl;
             return this;
         }
 
         public InlineKeyboardButton build() {
-            return new InlineKeyboardButton(text, url, loginUrl, callbackData);
+            return new InlineKeyboardButton(text, url, loginUrl, callbackData, callbackGame);
         }
     }
 
     @Override
     public String toString() {
-        return "InlineKeyboardButton{"
-            + "text='" + text + '\''
-            + ", url='" + url + '\''
-            + ", loginUrl=" + loginUrl
-            + ", callbackData='" + callbackData + '\''
-            + '}';
+        final StringBuilder sb = new StringBuilder("InlineKeyboardButton{");
+        sb.append("text='").append(text).append('\'');
+        sb.append(", url='").append(url).append('\'');
+        sb.append(", loginUrl=").append(loginUrl);
+        sb.append(", callbackData='").append(callbackData).append('\'');
+        sb.append(", callbackGame=").append(callbackGame);
+        sb.append('}');
+        return sb.toString();
     }
 
     @Override
@@ -148,13 +173,14 @@ public class InlineKeyboardButton implements Serializable {
         }
         InlineKeyboardButton that = (InlineKeyboardButton) o;
         return Objects.equals(text, that.text)
-            && Objects.equals(url, that.url)
-            && Objects.equals(loginUrl, that.loginUrl)
-            && Objects.equals(callbackData, that.callbackData);
+               && Objects.equals(url, that.url)
+               && Objects.equals(loginUrl, that.loginUrl)
+               && Objects.equals(callbackData, that.callbackData)
+               && Objects.equals(callbackGame, that.callbackGame);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(text, url, loginUrl, callbackData);
+        return Objects.hash(text, url, loginUrl, callbackData, callbackGame);
     }
 }
