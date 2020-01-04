@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
-import java.util.stream.Stream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -47,9 +46,6 @@ public final class MessageHelper {
 
     private static final String MESSAGE_HISTORY_HEADER = "%-20s %-20s %-80s %-12s";
     private static final String MESSAGE_HISTORY_OUTPUT = "[%-18.18s] [%-18.18s] [%-78.78s] [%10.10s]";
-
-    private static final String TRACING_HEADER = "%-8s %-20s %-20s %-40s %-12s";
-    private static final String TRACING_OUTPUT = "[%-6.6s] [%-18.18s] [%-18.18s] [%-38.38s] [%10.10s]";
 
     /**
      * Utility classes should not have a public constructor.
@@ -294,10 +290,14 @@ public final class MessageHelper {
             return "[Body is null]";
         }
 
+        if (!allowFiles) {
+            if (obj instanceof WrappedFile || obj instanceof File) {
+                return "[Body is file based: " + obj + "]";
+            }
+        }
+
         if (!allowStreams) {
-            if (instanceOf(obj, "java.xml.transform.Source")) {
-                return "[Body is instance of java.xml.transform.Source]";
-            } else if (obj instanceof StreamCache) {
+            if (obj instanceof StreamCache) {
                 return "[Body is instance of org.apache.camel.StreamCache]";
             } else if (obj instanceof InputStream) {
                 return "[Body is instance of java.io.InputStream]";
@@ -307,16 +307,9 @@ public final class MessageHelper {
                 return "[Body is instance of java.io.Reader]";
             } else if (obj instanceof Writer) {
                 return "[Body is instance of java.io.Writer]";
-            } else if (obj instanceof WrappedFile || obj instanceof File) {
-                if (!allowFiles) {
-                    return "[Body is file based: " + obj + "]";
-                }
-            }
-        }
-
-        if (!allowFiles) {
-            if (obj instanceof WrappedFile || obj instanceof File) {
-                return "[Body is file based: " + obj + "]";
+            } else if (obj.getClass().getName().equals("javax.xml.transform.stax.StAXSource")) {
+                // StAX source is streaming based
+                return "[Body is instance of javax.xml.transform.Source]";
             }
         }
 
@@ -369,16 +362,6 @@ public final class MessageHelper {
         }
 
         return body;
-    }
-
-    private static boolean instanceOf(Object obj, String interfaceName) {
-        return interfaces(obj.getClass()).anyMatch(cl -> cl.getName().equals(interfaceName));
-    }
-
-    private static Stream<Class<?>> interfaces(Class<?> clazz) {
-        return clazz == null ? Stream.empty() : Stream.concat(
-                Stream.concat(Stream.of(clazz), interfaces(clazz.getSuperclass())),
-                Stream.of(clazz.getInterfaces()).flatMap(MessageHelper::interfaces));
     }
 
     /**
