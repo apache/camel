@@ -53,8 +53,8 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
                 exchange.getIn().setBody(IOUtils.toByteArray(inputStream));
             }
         });
-        assertNotNull(exchange.getOut().getBody(CreateFunctionResult.class));
-        assertEquals(exchange.getOut().getBody(CreateFunctionResult.class).getFunctionName(), "GetHelloWithName");
+        assertNotNull(exchange.getMessage().getBody(CreateFunctionResult.class));
+        assertEquals(exchange.getMessage().getBody(CreateFunctionResult.class).getFunctionName(), "GetHelloWithName");
     }
 
     @Test
@@ -66,8 +66,8 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
 
             }
         });
-        assertNotNull(exchange.getOut().getBody(ListFunctionsResult.class));
-        assertEquals(exchange.getOut().getBody(ListFunctionsResult.class).getFunctions().size(), 3);
+        assertNotNull(exchange.getMessage().getBody(ListFunctionsResult.class));
+        assertEquals(exchange.getMessage().getBody(ListFunctionsResult.class).getFunctions().size(), 3);
     }
 
 
@@ -80,7 +80,7 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
 
             }
         });
-        GetFunctionResult result = exchange.getOut().getBody(GetFunctionResult.class);
+        GetFunctionResult result = exchange.getMessage().getBody(GetFunctionResult.class);
         assertNotNull(result);
         assertEquals(result.getConfiguration().getFunctionName(), "GetHelloWithName");
         assertEquals(result.getConfiguration().getRuntime(), "nodejs6.10");
@@ -98,8 +98,8 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
             }
         });
 
-        assertNotNull(exchange.getOut().getBody(String.class));
-        assertEquals(exchange.getOut().getBody(String.class), "{\"Hello\":\"Camel\"}");
+        assertNotNull(exchange.getMessage().getBody(String.class));
+        assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
     }
 
 
@@ -112,7 +112,7 @@ public class LambdaComponentIntegrationTest extends CamelTestSupport {
             public void process(Exchange exchange) throws Exception {
             }
         });
-        assertNotNull(exchange.getOut().getBody(DeleteFunctionResult.class));
+        assertNotNull(exchange.getMessage().getBody(DeleteFunctionResult.class));
     }
 
 

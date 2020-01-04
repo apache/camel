@@ -122,7 +122,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
 
         assertMockEndpointsSatisfied();
-        assertNotNull(exchange.getOut().getBody(DeleteFunctionResult.class));
+        assertNotNull(exchange.getMessage().getBody(DeleteFunctionResult.class));
     }
 
     @Test
@@ -136,7 +136,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        GetFunctionResult result = (GetFunctionResult)exchange.getOut().getBody();
+        GetFunctionResult result = (GetFunctionResult)exchange.getMessage().getBody();
         assertEquals(result.getConfiguration().getFunctionName(), "GetHelloWithName");
     }
 
@@ -151,7 +151,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        ListFunctionsResult result = (ListFunctionsResult)exchange.getOut().getBody();
+        ListFunctionsResult result = (ListFunctionsResult)exchange.getMessage().getBody();
         assertEquals(result.getFunctions().size(), 1);
         assertEquals(result.getFunctions().get(0).getFunctionName(), "GetHelloWithName");
     }
@@ -166,8 +166,8 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        assertNotNull(exchange.getOut().getBody(String.class));
-        assertEquals(exchange.getOut().getBody(String.class), "{\"Hello\":\"Camel\"}");
+        assertNotNull(exchange.getMessage().getBody(String.class));
+        assertEquals(exchange.getMessage().getBody(String.class), "{\"Hello\":\"Camel\"}");
     }
 
     @Test
@@ -181,7 +181,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        CreateEventSourceMappingResult result = exchange.getOut().getBody(CreateEventSourceMappingResult.class);
+        CreateEventSourceMappingResult result = exchange.getMessage().getBody(CreateEventSourceMappingResult.class);
         assertEquals(result.getFunctionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
     }
     
@@ -195,7 +195,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        DeleteEventSourceMappingResult result = exchange.getOut().getBody(DeleteEventSourceMappingResult.class);
+        DeleteEventSourceMappingResult result = exchange.getMessage().getBody(DeleteEventSourceMappingResult.class);
         assertTrue(result.getState().equalsIgnoreCase("Deleting"));
     }
     
@@ -208,7 +208,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        ListEventSourceMappingsResult result = exchange.getOut().getBody(ListEventSourceMappingsResult.class);
+        ListEventSourceMappingsResult result = exchange.getMessage().getBody(ListEventSourceMappingsResult.class);
         assertEquals(result.getEventSourceMappings().get(0).getFunctionArn(), "arn:aws:lambda:eu-central-1:643534317684:function:GetHelloWithName");
     }
     
@@ -223,7 +223,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        ListTagsResult result = (ListTagsResult)exchange.getOut().getBody();
+        ListTagsResult result = (ListTagsResult)exchange.getMessage().getBody();
         assertEquals("lambda-tag", result.getTags().get("test"));
     }
     
@@ -241,7 +241,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        TagResourceResult result = (TagResourceResult)exchange.getOut().getBody();
+        TagResourceResult result = (TagResourceResult)exchange.getMessage().getBody();
         assertNotNull(result);
     }
     
@@ -259,7 +259,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        UntagResourceResult result = (UntagResourceResult)exchange.getOut().getBody();
+        UntagResourceResult result = (UntagResourceResult)exchange.getMessage().getBody();
         assertNotNull(result);
     }
 
@@ -274,7 +274,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        PublishVersionResult result = (PublishVersionResult)exchange.getOut().getBody();
+        PublishVersionResult result = (PublishVersionResult)exchange.getMessage().getBody();
         assertNotNull(result);
         assertEquals("GetHelloWithName", result.getFunctionName());
         assertEquals("This is my description", result.getDescription());
@@ -291,7 +291,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        ListVersionsByFunctionResult result = (ListVersionsByFunctionResult)exchange.getOut().getBody();
+        ListVersionsByFunctionResult result = (ListVersionsByFunctionResult)exchange.getMessage().getBody();
         assertNotNull(result);
         assertEquals("GetHelloWithName", result.getVersions().get(0).getFunctionName());
         assertEquals("1", result.getVersions().get(0).getVersion());
@@ -310,7 +310,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        CreateAliasResult result = (CreateAliasResult)exchange.getOut().getBody();
+        CreateAliasResult result = (CreateAliasResult)exchange.getMessage().getBody();
         assertNotNull(result);
         assertEquals("an alias", result.getDescription());
         assertEquals("alias", result.getName());
@@ -328,7 +328,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        DeleteAliasResult result = (DeleteAliasResult)exchange.getOut().getBody();
+        DeleteAliasResult result = (DeleteAliasResult)exchange.getMessage().getBody();
         assertNotNull(result);
     }
     
@@ -343,7 +343,7 @@ public class LambdaProducerTest extends CamelTestSupport {
         });
         assertMockEndpointsSatisfied();
 
-        GetAliasResult result = (GetAliasResult)exchange.getOut().getBody();
+        GetAliasResult result = (GetAliasResult)exchange.getMessage().getBody();
         assertNotNull(result);
         assertEquals("an alias", result.getDescription());
         assertEquals("alias", result.getName());
