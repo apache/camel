@@ -48,12 +48,9 @@ public class DockerCustomCmdExecFactoryTestIT extends DockerITTestSupport  {
                 from("direct:in")
                     .to("docker://version?cmdExecFactory=" + FakeDockerCmdExecFactory.class.getName())
                     .log("${body}")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            Version version = exchange.getIn().getBody(Version.class);
-                            exchange.getOut().setBody(version.getVersion());
-                        }
+                    .process(exchange -> {
+                        Version version = exchange.getIn().getBody(Version.class);
+                        exchange.getMessage().setBody(version.getVersion());
                     })
                     .to("mock:result");
             }
