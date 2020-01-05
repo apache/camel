@@ -86,7 +86,7 @@ public class S3ComponentExistingBucketTest extends CamelTestSupport {
         assertEquals("REDUCED_REDUNDANCY", putObjectRequest.getStorageClass());
         assertEquals("mycamelbucket", putObjectRequest.getBucketName());
 
-        assertResponseMessage(exchange.getOut());
+        assertResponseMessage(exchange.getMessage());
     }
 
     @Test
