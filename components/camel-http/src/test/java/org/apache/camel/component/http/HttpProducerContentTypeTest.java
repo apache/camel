@@ -76,7 +76,7 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
 
         assertNotNull(out);
         assertFalse("Should not fail", out.isFailed());
-        assertEquals(CONTENT_TYPE, out.getOut().getBody(String.class));
+        assertEquals(CONTENT_TYPE, out.getMessage().getBody(String.class));
 
     }
 
@@ -89,7 +89,7 @@ public class HttpProducerContentTypeTest extends BaseHttpTest {
 
         assertNotNull(out);
         assertFalse("Should not fail", out.isFailed());
-        assertNull(out.getOut().getBody());
+        assertNull(out.getMessage().getBody());
 
     }
 }

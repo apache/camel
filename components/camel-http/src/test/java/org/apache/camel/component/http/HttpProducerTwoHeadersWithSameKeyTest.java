@@ -99,10 +99,10 @@ public class HttpProducerTwoHeadersWithSameKeyTest extends BaseHttpTest {
 
         assertNotNull(out);
         assertFalse("Should not fail", out.isFailed());
-        assertEquals("OK", out.getOut().getBody(String.class));
-        assertEquals("yes", out.getOut().getHeader("bar"));
+        assertEquals("OK", out.getMessage().getBody(String.class));
+        assertEquals("yes", out.getMessage().getHeader("bar"));
 
-        List<?> foo = out.getOut().getHeader("foo", List.class);
+        List<?> foo = out.getMessage().getHeader("foo", List.class);
         assertNotNull(foo);
         assertEquals(2, foo.size());
         assertEquals("123", foo.get(0));

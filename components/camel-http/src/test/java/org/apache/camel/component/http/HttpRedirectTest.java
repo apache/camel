@@ -97,9 +97,9 @@ public class HttpRedirectTest extends BaseHttpTest {
         });
 
         assertNotNull(out);
-        assertEquals(HttpStatus.SC_OK, out.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
-        assertEquals("OK", out.getOut().getHeader(Exchange.HTTP_RESPONSE_TEXT));
-        assertEquals("Bye World", out.getOut().getBody(String.class));
+        assertEquals(HttpStatus.SC_OK, out.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("OK", out.getMessage().getHeader(Exchange.HTTP_RESPONSE_TEXT));
+        assertEquals("Bye World", out.getMessage().getBody(String.class));
     }
 
     private final class RedirectHandler implements HttpRequestHandler {

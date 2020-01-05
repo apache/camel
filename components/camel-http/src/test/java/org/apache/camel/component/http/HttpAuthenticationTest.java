@@ -122,7 +122,7 @@ public class HttpAuthenticationTest extends BaseHttpTest {
     protected void assertExchangeFailed(Exchange exchange) {
         assertNotNull(exchange);
 
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         assertNotNull(out);
 
         Map<String, Object> headers = out.getHeaders();
