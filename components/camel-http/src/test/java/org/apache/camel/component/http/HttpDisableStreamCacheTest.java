@@ -64,7 +64,7 @@ public class HttpDisableStreamCacheTest extends BaseHttpTest {
         Exchange exchange = template.request("http://" + localServer.getInetAddress().getHostName() + ":" + localServer.getLocalPort() + "/test/?disableStreamCache=true", exchange1 -> {
         });
 
-        InputStream is = assertIsInstanceOf(InputStream.class, exchange.getOut().getBody());
+        InputStream is = assertIsInstanceOf(InputStream.class, exchange.getMessage().getBody());
         assertNotNull(is);
 
         String name = is.getClass().getName();

@@ -81,7 +81,7 @@ public class HttpProducerConnectionCloseTest extends BaseHttpTest {
         producer.process(exchange);
         producer.stop();
 
-        assertEquals(HTTP.CONN_CLOSE, exchange.getOut().getHeader("connection"));
+        assertEquals(HTTP.CONN_CLOSE, exchange.getMessage().getHeader("connection"));
         assertExchange(exchange);
     }
 

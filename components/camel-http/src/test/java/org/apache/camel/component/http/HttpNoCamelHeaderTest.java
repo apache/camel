@@ -78,7 +78,7 @@ public class HttpNoCamelHeaderTest extends BaseHttpTest {
 
         assertNotNull(out);
         assertFalse("Should not fail", out.isFailed());
-        assertEquals("dude", out.getOut().getHeader("MyApp"));
-        assertNull(out.getOut().getHeader(Exchange.TO_ENDPOINT));
+        assertEquals("dude", out.getMessage().getHeader("MyApp"));
+        assertNull(out.getMessage().getHeader(Exchange.TO_ENDPOINT));
     }
 }

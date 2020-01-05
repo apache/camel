@@ -75,7 +75,7 @@ public class ManagedHttpProducerPoolStatsTest extends BaseHttpTest {
         Exchange out = template.request(uri, exchange -> exchange.getIn().setBody("Hello World"));
 
         assertNotNull(out);
-        assertEquals("OK", out.getOut().getBody(String.class));
+        assertEquals("OK", out.getMessage().getBody(String.class));
 
         // look up stats
         HttpEndpoint http = context.getEndpoint(uri, HttpEndpoint.class);
