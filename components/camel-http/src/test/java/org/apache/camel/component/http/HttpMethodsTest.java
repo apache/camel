@@ -98,7 +98,7 @@ public class HttpMethodsTest extends BaseHttpTest {
         assertNotNull(exchange);
         assertTrue(exchange.hasOut());
 
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         Map<String, Object> headers = out.getHeaders();
         assertEquals(HttpStatus.SC_OK, headers.get(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("OK", headers.get(Exchange.HTTP_RESPONSE_TEXT));
@@ -115,7 +115,7 @@ public class HttpMethodsTest extends BaseHttpTest {
         assertNotNull(exchange);
         assertTrue(exchange.hasOut());
 
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         Map<String, Object> headers = out.getHeaders();
         assertEquals(HttpStatus.SC_METHOD_FAILURE, headers.get(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("0", headers.get("Content-Length"));
@@ -203,7 +203,7 @@ public class HttpMethodsTest extends BaseHttpTest {
 
         assertNotNull(exchange);
 
-        Message out = exchange.getOut();
+        Message out = exchange.getMessage();
         assertNotNull(out);
         assertHeaders(out.getHeaders());
         assertNull(out.getBody(String.class));
