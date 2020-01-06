@@ -334,6 +334,7 @@ public class KafkaProducerTest {
         // assert results
         verifySendMessages(Arrays.asList("overridenTopic1", "overridenTopic2", "overridenTopic3"));
         assertRecordMetadataExists(3);
+        assertRecordMetadataExistsForEachAggregatedExchange();
     }
 
     @Test
@@ -359,6 +360,7 @@ public class KafkaProducerTest {
         // assert results
         verifySendMessages(Arrays.asList("overridenTopic1", "overridenTopic2", "overridenTopic3"));
         assertRecordMetadataExists(3);
+        assertRecordMetadataExistsForEachAggregatedMessage();
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
@@ -409,6 +411,26 @@ public class KafkaProducerTest {
         assertTrue(recordMetaData1 != null);
         assertEquals("Expected one recordMetaData", recordMetaData1.size(), numMetadata);
         assertTrue(recordMetaData1.get(0) != null);
+    }
+
+    private void assertRecordMetadataExistsForEachAggregatedExchange() {
+        List<Exchange> exchanges = (List<Exchange>) in.getBody();
+        for(Exchange ex : exchanges) {
+            List<RecordMetadata> recordMetaData = (List<RecordMetadata>) ex.getMessage().getHeader(KafkaConstants.KAFKA_RECORDMETA);
+            assertTrue(recordMetaData != null);
+            assertEquals("Expected one recordMetaData", recordMetaData.size(), 1);
+            assertTrue(recordMetaData.get(0) != null);
+        };
+    }
+
+    private void assertRecordMetadataExistsForEachAggregatedMessage() {
+        List<Message> messages = (List<Message>) in.getBody();
+        for(Message msg : messages) {
+            List<RecordMetadata> recordMetaData = (List<RecordMetadata>) msg.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+            assertTrue(recordMetaData != null);
+            assertEquals("Expected one recordMetaData", recordMetaData.size(), 1);
+            assertTrue(recordMetaData.get(0) != null);
+        };
     }
 
     private Exchange aggregateExchanges(final List<Exchange> exchangesToAggregate, final AggregationStrategy strategy) {
