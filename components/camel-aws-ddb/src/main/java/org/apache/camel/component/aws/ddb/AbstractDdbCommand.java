@@ -88,4 +88,13 @@ public abstract class AbstractDdbCommand {
     protected Boolean determineConsistentRead() {
         return exchange.getIn().getHeader(DdbConstants.CONSISTENT_READ, configuration.isConsistentRead(), Boolean.class);
     }
+
+    @SuppressWarnings("unchecked")
+    protected Map<String, AttributeValue> determineExclusiveStartKey() {
+        return exchange.getIn().getHeader(DdbConstants.START_KEY, Map.class);
+    }
+
+    protected Integer determineLimit() {
+        return exchange.getIn().getHeader(DdbConstants.LIMIT, Integer.class);
+    }
 }
