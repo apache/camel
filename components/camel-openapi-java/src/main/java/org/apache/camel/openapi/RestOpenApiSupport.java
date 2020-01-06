@@ -52,7 +52,6 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Info;
 import io.apicurio.datamodels.openapi.v3.models.Oas30License;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.model.Model;
