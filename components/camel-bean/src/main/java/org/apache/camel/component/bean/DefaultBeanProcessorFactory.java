@@ -42,15 +42,14 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
 
     @Override
     public Processor createBeanProcessor(CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
-                                         String method, boolean cacheBean) throws Exception {
+                                         String method, boolean singleton) throws Exception {
 
         BeanProcessor answer;
         Class<?> clazz = bean != null ? bean.getClass() : null;
         BeanHolder beanHolder;
 
         if (ObjectHelper.isNotEmpty(ref)) {
-            // lets cache by default
-            if (cacheBean) {
+            if (singleton) {
                 // cache the registry lookup which avoids repeat lookup in the registry
                 beanHolder = new RegistryBean(camelContext, ref).createCacheHolder();
                 // bean holder will check if the bean exists
@@ -62,7 +61,6 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
             answer = new BeanProcessor(beanHolder);
         } else {
             if (bean == null) {
-
                 if (beanType == null && beanClass == null) {
                     throw new IllegalArgumentException("bean, ref or beanType must be provided");
                 }
@@ -79,7 +77,7 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
                 }
 
                 // attempt to create bean using injector which supports auto-wiring
-                if (cacheBean && camelContext.getInjector().supportsAutoWiring()) {
+                if (singleton && camelContext.getInjector().supportsAutoWiring()) {
                     try {
                         LOG.debug("Attempting to create new bean instance from class: {} via auto-wiring enabled", clazz);
                         bean = CamelContextHelper.newInstance(camelContext, clazz);
@@ -89,7 +87,7 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
                 }
 
                 // create a bean if there is a default public no-arg constructor
-                if (bean == null && cacheBean && ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
+                if (bean == null && singleton && ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
                     LOG.debug("Class has default no-arg constructor so creating a new bean instance: {}", clazz);
                     bean = CamelContextHelper.newInstance(camelContext, clazz);
                     ObjectHelper.notNull(bean, "bean", this);
@@ -107,7 +105,7 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
             if (bean != null) {
                 beanHolder = new ConstantBeanHolder(bean, camelContext);
             } else {
-                if (cacheBean && ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
+                if (singleton && ObjectHelper.hasDefaultPublicNoArgConstructor(clazz)) {
                     // we can only cache if we can create an instance of the bean, and for that we need a public constructor
                     beanHolder = new ConstantTypeBeanHolder(clazz, camelContext).createCacheHolder();
                 } else {
@@ -129,7 +127,7 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
             // check there is a method with the given name, and leverage BeanInfo for that
             // which we only do if we are caching the bean as otherwise we will create a bean instance for this check
             // which we only want to do if we cache the bean
-            if (cacheBean) {
+            if (singleton) {
                 BeanInfo beanInfo = beanHolder.getBeanInfo();
                 if (bean != null) {
                     // there is a bean instance, so check for any methods

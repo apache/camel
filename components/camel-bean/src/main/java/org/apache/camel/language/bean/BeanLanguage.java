@@ -122,16 +122,6 @@ public class BeanLanguage extends LanguageSupport {
         return new BeanExpression(beanName, method);
     }
 
-    public Expression createExpression(Object bean, String method) {
-        org.apache.camel.util.ObjectHelper.notNull(bean, "bean");
-        if (bean instanceof String) {
-            String beanName = (String) bean;
-            return new BeanExpression(beanName, method);
-        } else {
-            return new BeanExpression(bean, method);
-        }
-    }
-
     @Override
     public boolean isSingleton() {
         return false;
