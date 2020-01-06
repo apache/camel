@@ -39,12 +39,16 @@ public class BeanComponent extends DefaultComponent {
     @Deprecated
     @Metadata(defaultValue = "true", description = "Use singleton option instead.")
     private Boolean cache;
-    @Metadata(defaultValue = "true", description = "Whether to use singleton scoped beans. If enabled then the bean"
-            + " is created or looked up once and reused (the bean should be thread-safe). Setting this to false will let Camel create/lookup"
-            + " a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return "
-            + " a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which"
-            + " has their own settings for setting bean scopes.")
-    private Boolean singleton = Boolean.TRUE;
+    @Metadata(defaultValue = "Singleton", description = "Scope of bean."
+            + " When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint."
+            + " The bean should be thread-safe in case concurrent threads is calling the bean at the same time."
+            + " When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean"
+            + " while processing a request and you want to call the same bean instance multiple times while processing the request."
+            + " The bean should not be thread-safe as the instance is only called from the same request.  "
+            + " When using delegate scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated "
+            + " to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope."
+            + " so when using delegate then this depends on the delegated registry.")
+    private BeanScope scope = BeanScope.Singleton;
 
     public BeanComponent() {
     }
@@ -58,7 +62,7 @@ public class BeanComponent extends DefaultComponent {
         if (cache != null) {
             endpoint.setCache(cache);
         }
-        endpoint.setSingleton(singleton);
+        endpoint.setScope(scope);
         setProperties(endpoint, parameters);
 
         // the bean.xxx options is for the bean
@@ -86,19 +90,23 @@ public class BeanComponent extends DefaultComponent {
 
     @Deprecated
     public Boolean getCache() {
-        return singleton;
+        return scope == BeanScope.Singleton;
     }
 
     @Deprecated
     public void setCache(Boolean cache) {
-        this.singleton = cache;
+        if (cache) {
+            scope = BeanScope.Singleton;
+        } else {
+            scope = BeanScope.Delegate;
+        }
     }
 
-    public Boolean getSingleton() {
-        return singleton;
+    public BeanScope getScope() {
+        return scope;
     }
 
-    public void setSingleton(Boolean singleton) {
-        this.singleton = singleton;
+    public void setScope(BeanScope scope) {
+        this.scope = scope;
     }
 }

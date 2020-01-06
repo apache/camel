@@ -76,16 +76,16 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         return delegate.getMethod();
     }
 
-    public Boolean getSingleton() {
-        return delegate.getSingleton();
-    }
-
-    public void setSingleton(Boolean singleton) {
-        delegate.setSingleton(singleton);
-    }
-
     public void setMethod(String method) {
         delegate.setMethod(method);
+    }
+
+    public BeanScope getScope() {
+        return delegate.getScope();
+    }
+
+    public void setScope(BeanScope scope) {
+        delegate.setScope(scope);
     }
 
     public boolean isShorthandMethod() {
