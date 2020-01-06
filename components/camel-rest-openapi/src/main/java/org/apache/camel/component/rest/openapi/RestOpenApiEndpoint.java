@@ -55,6 +55,8 @@ import io.apicurio.datamodels.openapi.v3.models.Oas30Operation;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Parameter;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Response;
 import io.apicurio.datamodels.openapi.v3.models.Oas30SecurityScheme;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -342,12 +344,8 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
             return componentBasePath;
         }
 
-        final String specificationBasePath;
-        if (openapi instanceof Oas20Document) {
-            specificationBasePath = ((Oas20Document)openapi).basePath;
-        } else {
-            specificationBasePath = "";
-        } 
+        final String specificationBasePath = getBasePathFromOasDocument((OasDocument)openapi);
+        
         if (isNotEmpty(specificationBasePath)) {
             return specificationBasePath;
         }
@@ -365,6 +363,42 @@ public final class RestOpenApiEndpoint extends DefaultEndpoint {
         }
 
         return RestOpenApiComponent.DEFAULT_BASE_PATH;
+    }
+    
+    public static String getBasePathFromOasDocument(final OasDocument openapi) {
+        String basePath = null;
+        if (openapi instanceof Oas20Document) {
+            basePath = ((Oas20Document)openapi).basePath;
+        } else if (openapi instanceof Oas30Document) {
+            if (((Oas30Document)openapi).getServers() != null 
+                && ((Oas30Document)openapi).getServers().get(0) != null) {
+                try {
+                    Oas30Server server = (Oas30Server)((Oas30Document)openapi).getServers().get(0);
+                    if (server.variables != null && server.variables.get("basePath") != null) {
+                        basePath = server.variables.get("basePath").default_;
+                    }
+                    if (basePath == null) {
+                        // parse server url as fallback
+                        URL serverUrl = new URL(((Oas30Document)openapi).getServers().get(0).url);
+                        basePath = serverUrl.getPath();
+                        if (basePath.indexOf("//") == 0) {
+                            // strip off the first "/" if double "/" exists
+                            basePath = basePath.substring(1);
+                        }
+                        if ("/".equals(basePath)) {
+                            basePath = "";
+                        }
+                    } 
+                                    
+                } catch (MalformedURLException e) {
+                    //not a valid whole url, just the basePath
+                    basePath = ((Oas30Document)openapi).getServers().get(0).url;
+                }
+            }
+            
+        }
+        return basePath;
+        
     }
 
     String determineComponentName() {

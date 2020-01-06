@@ -25,6 +25,8 @@ import javax.annotation.processing.Filer;
 import io.apicurio.datamodels.openapi.models.OasDocument;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
+import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
+
 import org.apache.camel.model.rest.RestsDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,15 +182,22 @@ public abstract class RestDslGenerator<G> {
             if (((Oas30Document)openapi).getServers() != null 
                 && ((Oas30Document)openapi).getServers().get(0) != null) {
                 try {
-                    URL serverUrl = new URL(((Oas30Document)openapi).getServers().get(0).url);
-                    basePath = serverUrl.getPath();
-                    if (basePath.indexOf("//") == 0) {
-                        //strip off the first "/" if double "/" exists
-                        basePath = basePath.substring(1);
+                    Oas30Server server = (Oas30Server)((Oas30Document)openapi).getServers().get(0);
+                    if (server.variables != null && server.variables.get("basePath") != null) {
+                        basePath = server.variables.get("basePath").default_;
                     }
-                    if ("/".equals(basePath)) {
-                        basePath = "";
-                    }
+                    if (basePath == null) {
+                        // parse server url as fallback
+                        URL serverUrl = new URL(((Oas30Document)openapi).getServers().get(0).url);
+                        basePath = serverUrl.getPath();
+                        if (basePath.indexOf("//") == 0) {
+                            // strip off the first "/" if double "/" exists
+                            basePath = basePath.substring(1);
+                        }
+                        if ("/".equals(basePath)) {
+                            basePath = "";
+                        }
+                    } 
                                     
                 } catch (MalformedURLException e) {
                     //not a valid whole url, just the basePath

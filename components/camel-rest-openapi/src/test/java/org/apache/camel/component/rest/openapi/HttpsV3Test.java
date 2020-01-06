@@ -90,7 +90,7 @@ public abstract class HttpsV3Test extends CamelTestSupport {
         assertEquals(Integer.valueOf(14), pet.id);
         assertEquals("Olafur Eliason Arnalds", pet.name);
 
-        petstore.verify(getRequestedFor(urlEqualTo("/pet/14")).withHeader("Accept",
+        petstore.verify(getRequestedFor(urlEqualTo("/api/v3/pet/14")).withHeader("Accept",
             equalTo("application/xml, application/json")));
     }
 
@@ -141,7 +141,7 @@ public abstract class HttpsV3Test extends CamelTestSupport {
             Files.readAllBytes(Paths.get(RestOpenApiGlobalHttpsTest.class.getResource("/openapi.json").toURI())))));
 
         petstore.stubFor(
-            get(urlEqualTo("/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
+            get(urlEqualTo("/api/v3/pet/14")).willReturn(aResponse().withStatus(HttpURLConnection.HTTP_OK).withBody(
                 "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Pet><id>14</id><name>Olafur Eliason Arnalds</name></Pet>")));
     }
 
