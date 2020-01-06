@@ -154,18 +154,6 @@ public class KafkaProducer extends DefaultAsyncProducer {
             topic = URISupport.extractRemainderPath(new URI(endpoint.getEndpointUri()), true);
         }
 
-        // endpoint take precedence over header configuration
-        final Integer partitionKey = endpoint.getConfiguration().getPartitionKey() != null
-                ? endpoint.getConfiguration().getPartitionKey() : exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
-        final boolean hasPartitionKey = partitionKey != null;
-
-        // endpoint take precedence over header configuration
-        Object key = endpoint.getConfiguration().getKey() != null
-                ? endpoint.getConfiguration().getKey() : exchange.getIn().getHeader(KafkaConstants.KEY);
-        final Object messageKey = key != null
-                ? tryConvertToSerializedType(exchange, key, endpoint.getConfiguration().getKeySerializerClass()) : null;
-        final boolean hasMessageKey = messageKey != null;
-
         // extracting headers which need to be propagated
         List<Header> propagatedHeaders = getPropagatedHeaders(exchange, endpoint.getConfiguration());
 
@@ -192,21 +180,52 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     // must convert each entry of the iterator into the value according to the serializer
                     Object next = msgList.next();
                     String innerTopic = msgTopic;
+                    Object innerKey = null;
+                    Integer innerPartitionKey = null;
+                    boolean hasPartitionKey = false;
+                    boolean hasMessageKey = false;
 
-                    if (next instanceof Exchange && ((Exchange) next).getIn().getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
-                        innerTopic = (String) ((Exchange) next).getIn().removeHeader(KafkaConstants.OVERRIDE_TOPIC);
+                    Object value = next;
+
+                    if (next instanceof Exchange || next instanceof Message) {
+                        Exchange innerExchange = null;
+                        Message innerMmessage = null;
+                        if (next instanceof Exchange) {
+                            innerExchange = (Exchange) next;
+                            innerMmessage = innerExchange.getIn();
+                        } else {
+                            innerMmessage = (Message) next;
+                        }
+
+                        if(innerMmessage.getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
+                            innerTopic = (String) innerMmessage.removeHeader(KafkaConstants.OVERRIDE_TOPIC);
+                        }
+
+                        if(innerMmessage.getHeader(KafkaConstants.PARTITION_KEY) != null) {
+                            innerPartitionKey = endpoint.getConfiguration().getPartitionKey() != null
+                                ? endpoint.getConfiguration().getPartitionKey() : innerMmessage.getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
+                            hasPartitionKey = innerPartitionKey != null;
+                        }
+
+                        if(innerMmessage.getHeader(KafkaConstants.KEY) != null) {
+                            innerKey = endpoint.getConfiguration().getKey() != null
+                                ? endpoint.getConfiguration().getKey() : innerMmessage.getHeader(KafkaConstants.KEY);
+
+                            final Object messageKey = innerKey != null
+                                ? tryConvertToSerializedType(innerExchange, innerKey, endpoint.getConfiguration().getKeySerializerClass()) : null;
+                            hasMessageKey = messageKey != null;
+                        }
+
+                        final Exchange ex = innerExchange == null ? exchange : innerExchange;
+                        value = tryConvertToSerializedType(ex, innerMmessage.getBody(),
+                            endpoint.getConfiguration().getSerializerClass());
+
                     }
-
-                    if (next instanceof Message && ((Message) next).getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
-                        innerTopic = (String) ((Message) next).removeHeader(KafkaConstants.OVERRIDE_TOPIC);
-                    }
-
-                    Object value = tryConvertToSerializedType(exchange, next, endpoint.getConfiguration().getSerializerClass());
 
                     if (hasPartitionKey && hasMessageKey) {
-                        return new ProducerRecord(innerTopic, partitionKey, null, key, value, propagatedHeaders);
+                        return new ProducerRecord(innerTopic, innerPartitionKey, null, innerKey, value, propagatedHeaders);
                     } else if (hasMessageKey) {
-                        return new ProducerRecord(innerTopic, null, null, key, value, propagatedHeaders);
+                        return new ProducerRecord(innerTopic, null, null, innerKey, value, propagatedHeaders);
                     } else {
                         return new ProducerRecord(innerTopic, null, null, null, value, propagatedHeaders);
                     }
@@ -218,6 +237,18 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 }
             };
         }
+
+        // endpoint take precedence over header configuration
+        final Integer partitionKey = endpoint.getConfiguration().getPartitionKey() != null
+            ? endpoint.getConfiguration().getPartitionKey() : exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
+        final boolean hasPartitionKey = partitionKey != null;
+
+        // endpoint take precedence over header configuration
+        Object key = endpoint.getConfiguration().getKey() != null
+            ? endpoint.getConfiguration().getKey() : exchange.getIn().getHeader(KafkaConstants.KEY);
+        final Object messageKey = key != null
+            ? tryConvertToSerializedType(exchange, key, endpoint.getConfiguration().getKeySerializerClass()) : null;
+        final boolean hasMessageKey = messageKey != null;
 
         // must convert each entry of the iterator into the value according to the serializer
         Object value = tryConvertToSerializedType(exchange, msg, endpoint.getConfiguration().getSerializerClass());
@@ -311,6 +342,10 @@ public class KafkaProducer extends DefaultAsyncProducer {
      */
     protected Object tryConvertToSerializedType(Exchange exchange, Object object, String serializerClass) {
         Object answer = null;
+
+        if(exchange == null) {
+            return object;
+        }
 
         if (KafkaConstants.KAFKA_DEFAULT_SERIALIZER.equals(serializerClass)) {
             answer = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, object);
