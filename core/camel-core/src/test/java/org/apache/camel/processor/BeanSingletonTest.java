@@ -25,8 +25,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-@Deprecated
-public class BeanCachedTest extends ContextTestSupport {
+public class BeanSingletonTest extends ContextTestSupport {
 
     private Context context;
 
@@ -37,9 +36,8 @@ public class BeanCachedTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:noCache").to("bean:something?cache=false");
-                from("direct:cached").to("bean:something?cache=true");
-
+                from("direct:noCache").to("bean:something?singleton=false");
+                from("direct:cached").to("bean:something?singleton=true");
             }
         };
     }
@@ -66,7 +64,7 @@ public class BeanCachedTest extends ContextTestSupport {
     }
 
     @Test
-    public void testBeanWithCached() throws Exception {
+    public void testBeanWithSingleton() throws Exception {
         // Just make sure the bean processor doesn't work if the cached is false
         MyBean originalInstance = registry.lookupByNameAndType("something", MyBean.class);
         template.sendBody("direct:cached", null);

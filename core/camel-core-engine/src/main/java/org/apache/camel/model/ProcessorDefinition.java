@@ -2499,10 +2499,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Translator EIP:</a> Adds a bean which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a
-     *            String
-     * @param method the method name to invoke on the bean (can be used to avoid
-     *            ambiguity)
+     * @param bean the bean to invoke, or a reference to a bean if the type is a String
+     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
      */
     public Type bean(Supplier<Object> bean, String method) {
@@ -2514,21 +2512,18 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Translator EIP:</a> Adds a bean which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a
-     *            String
-     * @param cache if enabled, Camel will cache the result of the first
-     *            Registry look-up. Cache can be enabled if the bean in the
-     *            Registry is defined as a singleton scope. the multi parameter
+     * @param bean the bean to invoke, or a reference to a bean if the type is a String
+     * @param singleton whether to use singleton scoped beans, or not
      * @return the builder
      */
-    public Type bean(Object bean, boolean cache) {
+    public Type bean(Object bean, boolean singleton) {
         BeanDefinition answer = new BeanDefinition();
         if (bean instanceof String) {
             answer.setRef((String)bean);
         } else {
             answer.setBean(bean);
         }
-        answer.setCache(Boolean.toString(cache));
+        answer.setSingleton(Boolean.toString(singleton));
         addOutput(answer);
         return asType();
     }
@@ -2538,16 +2533,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Translator EIP:</a> Adds a bean which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a
-     *            String
-     * @param method the method name to invoke on the bean (can be used to avoid
-     *            ambiguity)
-     * @param cache if enabled, Camel will cache the result of the first
-     *            Registry look-up. Cache can be enabled if the bean in the
-     *            Registry is defined as a singleton scope. the multi parameter
+     * @param bean the bean to invoke, or a reference to a bean if the type is a String
+     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param singleton whether to use singleton scoped beans, or not
      * @return the builder
      */
-    public Type bean(Object bean, String method, boolean cache) {
+    public Type bean(Object bean, String method, boolean singleton) {
         BeanDefinition answer = new BeanDefinition();
         if (bean instanceof String) {
             answer.setRef((String)bean);
@@ -2555,7 +2546,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             answer.setBean(bean);
         }
         answer.setMethod(method);
-        answer.setCache(Boolean.toString(cache));
+        answer.setSingleton(Boolean.toString(singleton));
         addOutput(answer);
         return asType();
     }
@@ -2565,8 +2556,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Translator EIP:</a> Adds a bean which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
      *
-     * @param beanType the bean class, Camel will instantiate an object at
-     *            runtime
+     * @param beanType the bean class, Camel will instantiate an object at runtime
      * @return the builder
      */
     public Type bean(Class<?> beanType) {
@@ -2581,10 +2571,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Translator EIP:</a> Adds a bean which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
      *
-     * @param beanType the bean class, Camel will instantiate an object at
-     *            runtime
-     * @param method the method name to invoke on the bean (can be used to avoid
-     *            ambiguity)
+     * @param beanType the bean class, Camel will instantiate an object at runtime
+     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
      */
     public Type bean(Class<?> beanType, String method) {
@@ -2600,20 +2588,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Translator EIP:</a> Adds a bean which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
      *
-     * @param beanType the bean class, Camel will instantiate an object at
-     *            runtime
-     * @param method the method name to invoke on the bean (can be used to avoid
-     *            ambiguity)
-     * @param cache if enabled, Camel will cache the result of the first
-     *            Registry look-up. Cache can be enabled if the bean in the
-     *            Registry is defined as a singleton scope. the multi parameter
+     * @param beanType the bean class, Camel will instantiate an object at runtime
+     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param singleton whether to use singleton scoped beans, or not
      * @return the builder
      */
-    public Type bean(Class<?> beanType, String method, boolean cache) {
+    public Type bean(Class<?> beanType, String method, boolean singleton) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
         answer.setMethod(method);
-        answer.setCache(Boolean.toString(cache));
+        answer.setSingleton(Boolean.toString(singleton));
         addOutput(answer);
         return asType();
     }

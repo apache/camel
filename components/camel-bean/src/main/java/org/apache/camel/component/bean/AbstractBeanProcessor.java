@@ -35,7 +35,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     private transient Processor processor;
     private transient boolean lookupProcessorDone;
     private final Object lock = new Object();
-    private Boolean cache;
+    private Boolean singleton;
     private String method;
     private boolean shorthandMethod;
 
@@ -88,7 +88,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
             Processor target = getProcessor();
             if (target == null) {
                 // only attempt to lookup the processor once or nearly once
-                boolean allowCache = cache == null || cache; // allow cache by default
+                boolean allowCache = singleton == null || singleton; // allow cache by default
                 if (allowCache) {
                     if (!lookupProcessorDone) {
                         synchronized (lock) {
@@ -167,12 +167,12 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         return method;
     }
 
-    public Boolean getCache() {
-        return cache;
+    public Boolean getSingleton() {
+        return singleton;
     }
 
-    public void setCache(Boolean cache) {
-        this.cache = cache;
+    public void setSingleton(Boolean singleton) {
+        this.singleton = singleton;
     }
 
     /**

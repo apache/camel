@@ -11,6 +11,15 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.0 to 3.1
 
+=== came-bean
+
+The bean component has been changed to behave as singleton scoped by default.
+This means that the bean is created or looked up once and reused.
+
+The option `cache` has been deprecated in favour of the new `singleton` option that by default is `true`. You can set this to `false` to use the old behaviour.
+
+NOTE: Setting this to false will let Camel create/lookup a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which has their own settings for setting bean scopes.
+
 === camel-nats
 
 The `camel-nats` component has changed its endpoint syntax from `nats:servers` to `nats:topic`.

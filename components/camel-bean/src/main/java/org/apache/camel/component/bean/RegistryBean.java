@@ -59,9 +59,7 @@ public class RegistryBean implements BeanHolder {
     }
 
     /**
-     * Creates a cached and constant {@link org.apache.camel.component.bean.BeanHolder} from this holder.
-     *
-     * @return a new {@link org.apache.camel.component.bean.BeanHolder} that has cached the lookup of the bean.
+     * Creates a singleton (cached and constant) {@link org.apache.camel.component.bean.BeanHolder} from this holder.
      */
     public ConstantBeanHolder createCacheHolder() {
         Object bean = getBean();

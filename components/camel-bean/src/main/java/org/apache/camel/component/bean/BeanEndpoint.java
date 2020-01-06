@@ -40,9 +40,15 @@ public class BeanEndpoint extends DefaultEndpoint {
     private String beanName;
     @UriParam(label = "common", description = "Sets the name of the method to invoke on the bean")
     private String method;
-    @UriParam(label = "common", description = "If enabled, Camel will cache the result of the first Registry look-up."
-            + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
+    @Deprecated
+    @UriParam(label = "common", description = "Use singleton option instead.")
     private Boolean cache;
+    @UriParam(label = "common", defaultValue = "true", description = "Whether to use singleton scoped beans. If enabled then the bean"
+            + " is created or looked up once and reused (the bean should be thread-safe). Setting this to false will let Camel create/lookup"
+            + " a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return "
+            + " a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which"
+            + " has their own settings for setting bean scopes.")
+    private Boolean singleton = Boolean.TRUE;
     @UriParam(prefix = "bean.", label = "common", description = "Used for configuring additional properties on the bean", multiValue = true)
     private Map<String, Object> parameters;
 
@@ -83,7 +89,8 @@ public class BeanEndpoint extends DefaultEndpoint {
             BeanHolder holder = getBeanHolder();
             if (holder == null) {
                 RegistryBean registryBean = new RegistryBean(getCamelContext(), beanName);
-                if (isCache()) {
+                if (isSingleton()) {
+                    // if singleton then create a cached holder that use the same singleton instance
                     holder = registryBean.createCacheHolder();
                 } else {
                     holder = registryBean;
@@ -93,7 +100,7 @@ public class BeanEndpoint extends DefaultEndpoint {
             if (method != null) {
                 processor.setMethod(method);
             }
-            processor.setCache(cache);
+            processor.setSingleton(singleton);
             if (parameters != null) {
                 setProperties(processor, parameters);
             }
@@ -113,36 +120,41 @@ public class BeanEndpoint extends DefaultEndpoint {
         return beanName;
     }
 
-    /**
-     * Sets the name of the bean to invoke
-     */
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }
 
+    @Deprecated
     public boolean isCache() {
-        return cache != null ? cache : false;
+        return isSingleton();
     }
 
+    @Deprecated
     public Boolean getCache() {
-        return cache;
+        return getSingleton();
     }
 
-    /**
-     * If enabled, Camel will cache the result of the first Registry look-up.
-     * Cache can be enabled if the bean in the Registry is defined as a singleton scope.
-     */
+    @Deprecated
     public void setCache(Boolean cache) {
-        this.cache = cache;
+        setSingleton(cache);
+    }
+
+    public boolean isSingleton() {
+        return singleton != null ? singleton : false;
+    }
+
+    public Boolean getSingleton() {
+        return singleton;
+    }
+
+    public void setSingleton(Boolean singleton) {
+        this.singleton = singleton;
     }
 
     public String getMethod() {
         return method;
     }
 
-    /**
-     * Sets the name of the method to invoke on the bean
-     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -159,9 +171,6 @@ public class BeanEndpoint extends DefaultEndpoint {
         return parameters;
     }
 
-    /**
-     * Used for configuring additional properties on the bean
-     */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }

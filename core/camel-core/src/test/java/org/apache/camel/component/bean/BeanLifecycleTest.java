@@ -83,9 +83,9 @@ public class BeanLifecycleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").routeId("foo").bean(statefulInstance, "doSomething").bean(MyStatefulBean.class, "doSomething")
+                from("direct:foo").routeId("foo").bean(statefulInstance, "doSomething", false).bean(MyStatefulBean.class, "doSomething")
                     .bean(MyStatefulBean.class.getName(), "doSomething", true).bean(MyStatelessBean.class.getName(), "doSomething", false)
-                    .to("bean:statefulInstanceInRegistry?method=doSomething&cache=true").to("bean:statefulInstanceInRegistryNoCache?method=doSomething&cache=false")
+                    .to("bean:statefulInstanceInRegistry?method=doSomething&singleton=true").to("bean:statefulInstanceInRegistryNoCache?method=doSomething&singleton=false")
                     .to("mock:result");
             }
         };

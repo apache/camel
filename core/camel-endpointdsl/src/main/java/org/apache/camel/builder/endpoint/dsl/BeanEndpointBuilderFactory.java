@@ -39,28 +39,26 @@ public interface BeanEndpointBuilderFactory {
             return (AdvancedBeanEndpointBuilder) this;
         }
         /**
-         * If enabled, Camel will cache the result of the first Registry
-         * look-up. Cache can be enabled if the bean in the Registry is defined
-         * as a singleton scope.
+         * Use singleton option instead.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default BeanEndpointBuilder cache(Boolean cache) {
             doSetProperty("cache", cache);
             return this;
         }
         /**
-         * If enabled, Camel will cache the result of the first Registry
-         * look-up. Cache can be enabled if the bean in the Registry is defined
-         * as a singleton scope.
+         * Use singleton option instead.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
          * Group: common
          */
+        @Deprecated
         default BeanEndpointBuilder cache(String cache) {
             doSetProperty("cache", cache);
             return this;
@@ -99,6 +97,43 @@ public interface BeanEndpointBuilderFactory {
          */
         default BeanEndpointBuilder parameters(String parameters) {
             doSetProperty("parameters", parameters);
+            return this;
+        }
+        /**
+         * Whether to use singleton scoped beans. If enabled then the bean is
+         * created or looked up once and reused (the bean should be
+         * thread-safe). Setting this to false will let Camel create/lookup a
+         * new bean instance, per use; which acts as prototype scoped. However
+         * beware that if you lookup the bean, then the registry that holds the
+         * bean, would return a bean accordingly to its configuration, which can
+         * be singleton or prototype scoped. For example if you use Spring, or
+         * CDI, which has their own settings for setting bean scopes.
+         * 
+         * The option is a: <code>java.lang.Boolean</code> type.
+         * 
+         * Group: common
+         */
+        default BeanEndpointBuilder singleton(Boolean singleton) {
+            doSetProperty("singleton", singleton);
+            return this;
+        }
+        /**
+         * Whether to use singleton scoped beans. If enabled then the bean is
+         * created or looked up once and reused (the bean should be
+         * thread-safe). Setting this to false will let Camel create/lookup a
+         * new bean instance, per use; which acts as prototype scoped. However
+         * beware that if you lookup the bean, then the registry that holds the
+         * bean, would return a bean accordingly to its configuration, which can
+         * be singleton or prototype scoped. For example if you use Spring, or
+         * CDI, which has their own settings for setting bean scopes.
+         * 
+         * The option will be converted to a <code>java.lang.Boolean</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default BeanEndpointBuilder singleton(String singleton) {
+            doSetProperty("singleton", singleton);
             return this;
         }
         /**

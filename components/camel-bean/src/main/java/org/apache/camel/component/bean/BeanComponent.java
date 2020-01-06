@@ -26,7 +26,7 @@ import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
- * The <a href="http://camel.apache.org/bean.html">Bean Component</a> is for invoking Java beans from Camel.
+ * The Bean component is for invoking Java beans from Camel.
  */
 @org.apache.camel.spi.annotations.Component("bean")
 public class BeanComponent extends DefaultComponent {
@@ -36,9 +36,15 @@ public class BeanComponent extends DefaultComponent {
     @SuppressWarnings("unchecked")
     private final Map<BeanInfoCacheKey, BeanInfo> beanInfoCache = LRUCacheFactory.newLRUSoftCache(1000);
 
-    @Metadata(label = "advanced", description = "If enabled, Camel will cache the result of the first Registry look-up."
-        + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
+    @Deprecated
+    @Metadata(defaultValue = "true", description = "Use singleton option instead.")
     private Boolean cache;
+    @Metadata(defaultValue = "true", description = "Whether to use singleton scoped beans. If enabled then the bean"
+            + " is created or looked up once and reused (the bean should be thread-safe). Setting this to false will let Camel create/lookup"
+            + " a new bean instance, per use; which acts as prototype scoped. However beware that if you lookup the bean, then the registry that holds the bean, would return "
+            + " a bean accordingly to its configuration, which can be singleton or prototype scoped. For example if you use Spring, or CDI, which"
+            + " has their own settings for setting bean scopes.")
+    private Boolean singleton = Boolean.TRUE;
 
     public BeanComponent() {
     }
@@ -49,7 +55,10 @@ public class BeanComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanEndpoint endpoint = new BeanEndpoint(uri, this);
         endpoint.setBeanName(remaining);
-        endpoint.setCache(cache);
+        if (cache != null) {
+            endpoint.setCache(cache);
+        }
+        endpoint.setSingleton(singleton);
         setProperties(endpoint, parameters);
 
         // the bean.xxx options is for the bean
@@ -75,15 +84,21 @@ public class BeanComponent extends DefaultComponent {
         beanInfoCache.clear();
     }
 
+    @Deprecated
     public Boolean getCache() {
-        return cache;
+        return singleton;
     }
 
-    /**
-     * If enabled, Camel will cache the result of the first Registry look-up.
-     * Cache can be enabled if the bean in the Registry is defined as a singleton scope.
-     */
+    @Deprecated
     public void setCache(Boolean cache) {
-        this.cache = cache;
+        this.singleton = cache;
+    }
+
+    public Boolean getSingleton() {
+        return singleton;
+    }
+
+    public void setSingleton(Boolean singleton) {
+        this.singleton = singleton;
     }
 }

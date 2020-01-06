@@ -38,7 +38,7 @@
     </camelContext>
 
     <bean id="deadLetterErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
-        <property name="deadLetterUri" value="bean:exceptionProcessor"/>
+        <property name="deadLetterUri" value="mock:exceptionProcessor"/>
         <property name="redeliveryPolicy" ref="rsRedeliveryPolicyConfig"/>
     </bean>
 

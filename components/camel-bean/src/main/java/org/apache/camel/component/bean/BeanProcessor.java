@@ -76,12 +76,12 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         return delegate.getMethod();
     }
 
-    public Boolean getCache() {
-        return delegate.getCache();
+    public Boolean getSingleton() {
+        return delegate.getSingleton();
     }
 
-    public void setCache(Boolean cache) {
-        delegate.setCache(cache);
+    public void setSingleton(Boolean singleton) {
+        delegate.setSingleton(singleton);
     }
 
     public void setMethod(String method) {

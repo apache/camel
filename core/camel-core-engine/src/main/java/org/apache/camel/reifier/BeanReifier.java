@@ -44,11 +44,11 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         if (fac == null) {
             throw new IllegalStateException("Cannot find BeanProcessorFactory. Make sure camel-bean is on the classpath.");
         }
-        return fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, isCacheBean());
+        return fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, isSingletonBean());
     }
 
-    private boolean isCacheBean() {
-        return definition.getCache() == null || Boolean.parseBoolean(definition.getCache());
+    private boolean isSingletonBean() {
+        return definition.getSingleton() == null || Boolean.parseBoolean(definition.getSingleton());
     }
 
 }
