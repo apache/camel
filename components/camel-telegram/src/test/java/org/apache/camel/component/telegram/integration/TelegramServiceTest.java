@@ -17,10 +17,8 @@
 package org.apache.camel.component.telegram.integration;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.camel.component.telegram.TelegramParseMode;
 import org.apache.camel.component.telegram.model.CallbackGame;
@@ -37,11 +35,14 @@ import org.apache.camel.component.telegram.model.InputMediaAudio;
 import org.apache.camel.component.telegram.model.InputMediaPhoto;
 import org.apache.camel.component.telegram.model.InputMediaVideo;
 import org.apache.camel.component.telegram.model.MessageResult;
+import org.apache.camel.component.telegram.model.MessageResultGameScores;
 import org.apache.camel.component.telegram.model.OutgoingAudioMessage;
 import org.apache.camel.component.telegram.model.OutgoingDocumentMessage;
 import org.apache.camel.component.telegram.model.OutgoingGameMessage;
+import org.apache.camel.component.telegram.model.OutgoingGetGameHighScoresMessage;
 import org.apache.camel.component.telegram.model.OutgoingMessage;
 import org.apache.camel.component.telegram.model.OutgoingPhotoMessage;
+import org.apache.camel.component.telegram.model.OutgoingSetGameScoreMessage;
 import org.apache.camel.component.telegram.model.OutgoingStickerMessage;
 import org.apache.camel.component.telegram.model.OutgoingTextMessage;
 import org.apache.camel.component.telegram.model.OutgoingVideoMessage;
@@ -357,8 +358,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .messageId(messageId)
             .build();
 
-        IncomingMessage incomingMessage = sendMessage(editMessageCaptionMessage).getMessage();
-        Assertions.assertEquals(newCaption, incomingMessage.getCaption());
+        MessageResult message = sendMessage(editMessageCaptionMessage);
+        Assertions.assertEquals(newCaption, message.getMessage().getCaption());
     }
 
     @Test
@@ -380,7 +381,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .parseMode("HTML")
             .build();
 
-        IncomingMessage incomingMessage = sendMessage(editMessageCaptionMessage).getMessage();
+        MessageResult message = sendMessage(editMessageCaptionMessage);
+        IncomingMessage incomingMessage = message.getMessage();
         Assertions.assertEquals(urlDescription, incomingMessage.getCaption());
         Assertions.assertEquals(url, incomingMessage.getCaptionEntities().get(0).getUrl());
         Assertions.assertEquals("text_link", incomingMessage.getCaptionEntities().get(0).getType());
@@ -406,7 +408,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .media(inputMediaAudio)
             .build();
 
-        IncomingMessage incomingMessage = sendMessage(editMessageMediaMessage).getMessage();
+        MessageResult message = sendMessage(editMessageMediaMessage);
+        IncomingMessage incomingMessage = message.getMessage();
         Assertions.assertNull(incomingMessage.getPhoto());
         Assertions.assertNotNull(incomingMessage.getAudio());
         Assertions.assertEquals(caption, incomingMessage.getCaption());
@@ -432,7 +435,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .media(inputMediaAnimation)
             .build();
 
-        IncomingMessage incomingMessage = sendMessage(editMessageMediaMessage).getMessage();
+        MessageResult message = sendMessage(editMessageMediaMessage);
+        IncomingMessage incomingMessage = message.getMessage();
         Assertions.assertNull(incomingMessage.getPhoto());
         Assertions.assertNotNull(incomingMessage.getDocument());
         Assertions.assertEquals(caption, incomingMessage.getCaption());
@@ -458,7 +462,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .media(inputMediaVideo)
             .build();
 
-        IncomingMessage incomingMessage = sendMessage(editMessageMediaMessage).getMessage();
+        MessageResult message = sendMessage(editMessageMediaMessage);
+        IncomingMessage incomingMessage = message.getMessage();
         Assertions.assertNull(incomingMessage.getPhoto());
         Assertions.assertNotNull(incomingMessage.getVideo());
         Assertions.assertEquals(caption, incomingMessage.getCaption());
@@ -485,7 +490,8 @@ public class TelegramServiceTest extends TelegramTestSupport {
             .media(inputMediaPhoto)
             .build();
 
-        IncomingMessage incomingMessage = sendMessage(editMessageMediaMessage).getMessage();
+        MessageResult message = sendMessage(editMessageMediaMessage);
+        IncomingMessage incomingMessage = message.getMessage();
         Assertions.assertNotNull(incomingMessage.getPhoto());
         Assertions.assertEquals(caption, incomingMessage.getCaption());
         Assertions.assertEquals("bold", incomingMessage.getCaptionEntities().get(0).getType());
@@ -535,20 +541,43 @@ public class TelegramServiceTest extends TelegramTestSupport {
 
     @Test
     void testSendGameMessage() {
-        String gameShortName = "<game-name-here>";
+        String gameShortName = "<game-short-name>";
+        String gameText = "<game-text>";
+        long gameScore = 15L;
 
-        InlineKeyboardButton ib = new InlineKeyboardButton();
-        ib.setCallbackGame(new CallbackGame(gameShortName));
-        List<List<InlineKeyboardButton>> iButtons = new ArrayList<>();
-        iButtons.add(new ArrayList<>(Collections.singletonList(ib)));
+        InlineKeyboardButton inlineKeyboardButton = new InlineKeyboardButton();
+        inlineKeyboardButton.setCallbackGame(new CallbackGame(gameShortName));
+        inlineKeyboardButton.setText(gameText);
+        InlineKeyboardMarkup inlineKeyboardMarkup =
+            InlineKeyboardMarkup.builder().addRow(Collections.singletonList(inlineKeyboardButton)).build();
 
         OutgoingGameMessage outgoingGameMessage = new OutgoingGameMessage();
         outgoingGameMessage.setGameShortName(gameShortName);
-        outgoingGameMessage.setReplyMarkup(new InlineKeyboardMarkup(iButtons));
+        outgoingGameMessage.setReplyMarkup(inlineKeyboardMarkup);
 
-        IncomingMessage incomingMessage = sendMessage(outgoingGameMessage).getMessage();
+        // send game
+        MessageResult message = sendMessage(outgoingGameMessage);
+        IncomingMessage incomingMessage = message.getMessage();
+
+        // set game score
+        OutgoingSetGameScoreMessage outgoingSetGameScoreMessage = new OutgoingSetGameScoreMessage();
+        outgoingSetGameScoreMessage.setMessageId(incomingMessage.getMessageId());
+        outgoingSetGameScoreMessage.setScore(gameScore);
+        outgoingSetGameScoreMessage.setUserId(incomingMessage.getFrom().getId());
+        MessageResult setGameScoreMessage = sendMessage(outgoingSetGameScoreMessage);
+
+        // get game high scores
+        OutgoingGetGameHighScoresMessage outgoingGetGameHighScoresMessage = new OutgoingGetGameHighScoresMessage();
+        outgoingGetGameHighScoresMessage.setMessageId(incomingMessage.getMessageId());
+        outgoingGetGameHighScoresMessage.setUserId(incomingMessage.getFrom().getId());
+
+        MessageResultGameScores getGameHighScores = sendMessage(outgoingGetGameHighScoresMessage);
 
         Assertions.assertNotNull(incomingMessage.getGame());
+        Assertions.assertNotNull(incomingMessage.getReplyMarkup());
+        Assertions.assertTrue(setGameScoreMessage.isOk());
+        Assertions.assertTrue(getGameHighScores.isOk());
+        Assertions.assertNotNull(getGameHighScores.getGameHighScores());
     }
 
     private Integer sendSamplePhotoMessageAndGetMessageId(String caption) throws IOException {
@@ -559,13 +588,15 @@ public class TelegramServiceTest extends TelegramTestSupport {
         msg.setFilenameWithExtension("file.png");
         msg.setCaption(caption);
 
-        return sendMessage(msg).getMessage().getMessageId().intValue();
+        MessageResult message = sendMessage(msg);
+        return message.getMessage().getMessageId().intValue();
     }
 
     private Integer sendSampleTextMessageAndGetMessageId(String text) {
         OutgoingTextMessage msg = new OutgoingTextMessage();
         msg.setText(text);
-        return sendMessage(msg).getMessage().getMessageId().intValue();
+        MessageResult message = sendMessage(msg);
+        return message.getMessage().getMessageId().intValue();
     }
 
     private Integer sendSamplePhotoMessageAndGetMessageId() throws IOException {
@@ -574,11 +605,11 @@ public class TelegramServiceTest extends TelegramTestSupport {
         OutgoingPhotoMessage msg = new OutgoingPhotoMessage();
         msg.setPhoto(image);
         msg.setFilenameWithExtension("file.png");
-
-        return sendMessage(msg).getMessage().getMessageId().intValue();
+        MessageResult message = sendMessage(msg);
+        return message.getMessage().getMessageId().intValue();
     }
 
-    private MessageResult sendMessage(OutgoingMessage outgoingMessage) {
-        return (MessageResult) template.requestBody(String.format("telegram://bots?chatId=%s", chatId), outgoingMessage);
+    private <T extends MessageResult> T sendMessage(OutgoingMessage outgoingMessage) {
+        return (T) template.requestBody(String.format("telegram://bots?chatId=%s", chatId), outgoingMessage);
     }
 }
