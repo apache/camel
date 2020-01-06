@@ -16,39 +16,39 @@
  */
 package org.apache.camel.component.telegram.model;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSetter;
 
-/**
- * Used to delete a message, including service messages.
- * On success, returns a {@link MessageResult} object.
- */
-@JsonInclude(JsonInclude.Include.NON_NULL)
-public class EditMessageDelete extends OutgoingMessage {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class MessageResultGameScores extends MessageResult {
 
-    @JsonProperty("message_id")
-    private Integer messageId;
+    @JsonProperty("result")
+    private List<GameHighScore> gameHighScores;
 
-    /**
-     * Builds {@link EditMessageDelete} instance.
-     *
-     * @param chatId    Unique identifier for the target chat or username of the target channel.
-     * @param messageId Identifier of the message to delete
-     */
-    public EditMessageDelete(String chatId, Integer messageId) {
-        super.setChatId(chatId);
-        this.messageId = messageId;
+    public MessageResultGameScores() {
     }
 
-    public Integer getMessageId() {
-        return messageId;
+    public List<GameHighScore> getGameHighScores() {
+        return gameHighScores;
+    }
+
+    public void setMessage(List<GameHighScore> gameHighScores) {
+        this.gameHighScores = gameHighScores;
+    }
+
+    @JsonSetter("result")
+    public void setResult(List<GameHighScore> result) {
+        this.gameHighScores = result;
     }
 
     @Override
     public String toString() {
-        return "EditMessageDelete{"
-            + "messageId=" + messageId
-            + ", chatId='" + chatId + '\''
-            + '}';
+        final StringBuilder sb = new StringBuilder("MessageResultIncomingMessage{");
+        sb.append("gameHighScores=").append(gameHighScores);
+        sb.append('}');
+        return sb.toString();
     }
 }
