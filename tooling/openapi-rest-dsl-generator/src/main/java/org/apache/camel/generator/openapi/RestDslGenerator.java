@@ -26,7 +26,6 @@ import io.apicurio.datamodels.openapi.models.OasDocument;
 import io.apicurio.datamodels.openapi.v2.models.Oas20Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Document;
 import io.apicurio.datamodels.openapi.v3.models.Oas30Server;
-
 import org.apache.camel.model.rest.RestsDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
