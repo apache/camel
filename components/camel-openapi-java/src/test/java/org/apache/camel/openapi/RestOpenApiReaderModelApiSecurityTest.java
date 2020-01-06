@@ -28,13 +28,13 @@ import org.apache.camel.model.rest.RestParamType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-
-
-
 public class RestOpenApiReaderModelApiSecurityTest extends CamelTestSupport {
 
     @BindToRegistry("dummy-rest")
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
+
+    @BindToRegistry("userService")
+    private Object dummy = new Object();
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
