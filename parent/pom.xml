@@ -297,7 +297,6 @@
         <jackson-spark-version>2.6.7</jackson-spark-version>
         <jackson2-version>2.10.2</jackson2-version>
         <jackrabbit-version>2.20.0</jackrabbit-version>
-        <jackrabbit-guava-version>15.0</jackrabbit-guava-version>
         <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
         <jasminb-jsonapi-version>0.10</jasminb-jsonapi-version>
         <jandex-version>2.1.2.Final</jandex-version>
