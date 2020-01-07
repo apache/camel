@@ -122,6 +122,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder lazyStartProducer(
@@ -346,6 +347,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
@@ -400,6 +402,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(

@@ -59,6 +59,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SpringBatchEndpointBuilder jobFromHeader(String jobFromHeader) {
@@ -149,6 +150,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SpringBatchEndpointBuilder lazyStartProducer(
@@ -187,6 +189,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringBatchEndpointBuilder basicPropertyBinding(
@@ -214,6 +217,7 @@ public interface SpringBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringBatchEndpointBuilder synchronous(

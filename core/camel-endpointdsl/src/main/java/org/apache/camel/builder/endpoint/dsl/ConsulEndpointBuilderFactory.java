@@ -123,6 +123,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default ConsulEndpointConsumerBuilder pingInstance(String pingInstance) {
@@ -242,6 +243,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ConsulEndpointConsumerBuilder bridgeErrorHandler(
@@ -267,6 +269,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 10
          * Group: watch
          */
         default ConsulEndpointConsumerBuilder blockSeconds(String blockSeconds) {
@@ -291,6 +294,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a <code>java.math.BigInteger</code>
          * type.
          * 
+         * Default: 0
          * Group: watch
          */
         default ConsulEndpointConsumerBuilder firstIndex(String firstIndex) {
@@ -314,6 +318,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: watch
          */
         default ConsulEndpointConsumerBuilder recursive(String recursive) {
@@ -469,6 +474,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedConsulEndpointConsumerBuilder basicPropertyBinding(
@@ -498,6 +504,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
          * 
+         * Default: DEFAULT
          * Group: advanced
          */
         default AdvancedConsulEndpointConsumerBuilder consistencyMode(
@@ -573,6 +580,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedConsulEndpointConsumerBuilder synchronous(
@@ -668,6 +676,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default ConsulEndpointProducerBuilder pingInstance(String pingInstance) {
@@ -802,6 +811,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ConsulEndpointProducerBuilder lazyStartProducer(
@@ -829,6 +839,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ConsulEndpointProducerBuilder valueAsString(String valueAsString) {
@@ -927,6 +938,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedConsulEndpointProducerBuilder basicPropertyBinding(
@@ -956,6 +968,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
          * 
+         * Default: DEFAULT
          * Group: advanced
          */
         default AdvancedConsulEndpointProducerBuilder consistencyMode(
@@ -1031,6 +1044,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedConsulEndpointProducerBuilder synchronous(
@@ -1126,6 +1140,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default ConsulEndpointBuilder pingInstance(String pingInstance) {
@@ -1304,6 +1319,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder basicPropertyBinding(
@@ -1333,6 +1349,7 @@ public interface ConsulEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.orbitz.consul.option.ConsistencyMode</code> type.
          * 
+         * Default: DEFAULT
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder consistencyMode(
@@ -1405,6 +1422,7 @@ public interface ConsulEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedConsulEndpointBuilder synchronous(String synchronous) {

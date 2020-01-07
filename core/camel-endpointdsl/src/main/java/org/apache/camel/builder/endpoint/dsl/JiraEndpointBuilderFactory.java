@@ -59,6 +59,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 6000
          * Group: common
          */
         default JiraEndpointConsumerBuilder delay(String delay) {
@@ -107,6 +108,7 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JiraEndpointConsumerBuilder bridgeErrorHandler(
@@ -147,6 +149,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 50
          * Group: consumer
          */
         default JiraEndpointConsumerBuilder maxResults(String maxResults) {
@@ -314,6 +317,7 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJiraEndpointConsumerBuilder basicPropertyBinding(
@@ -341,6 +345,7 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJiraEndpointConsumerBuilder synchronous(
@@ -377,6 +382,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 6000
          * Group: common
          */
         default JiraEndpointProducerBuilder delay(String delay) {
@@ -429,6 +435,7 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JiraEndpointProducerBuilder lazyStartProducer(
@@ -540,6 +547,7 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJiraEndpointProducerBuilder basicPropertyBinding(
@@ -567,6 +575,7 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJiraEndpointProducerBuilder synchronous(
@@ -603,6 +612,7 @@ public interface JiraEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 6000
          * Group: common
          */
         default JiraEndpointBuilder delay(String delay) {
@@ -724,6 +734,7 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJiraEndpointBuilder basicPropertyBinding(
@@ -750,6 +761,7 @@ public interface JiraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJiraEndpointBuilder synchronous(String synchronous) {

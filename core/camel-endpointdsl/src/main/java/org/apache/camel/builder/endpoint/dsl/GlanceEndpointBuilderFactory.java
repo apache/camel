@@ -120,6 +120,7 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GlanceEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -204,6 +205,7 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder basicPropertyBinding(
@@ -230,6 +232,7 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder synchronous(String synchronous) {

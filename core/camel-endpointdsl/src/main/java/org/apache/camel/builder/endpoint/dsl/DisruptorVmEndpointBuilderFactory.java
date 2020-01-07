@@ -70,6 +70,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1024
          * Group: common
          */
         default DisruptorVmEndpointConsumerBuilder size(String size) {
@@ -106,6 +107,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder bridgeErrorHandler(
@@ -131,6 +133,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder concurrentConsumers(
@@ -164,6 +167,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder multipleConsumers(
@@ -195,6 +199,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.disruptor.DisruptorWaitStrategy</code> type.
          * 
+         * Default: Blocking
          * Group: consumer
          */
         default DisruptorVmEndpointConsumerBuilder waitStrategy(
@@ -290,6 +295,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder basicPropertyBinding(
@@ -317,6 +323,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDisruptorVmEndpointConsumerBuilder synchronous(
@@ -362,6 +369,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1024
          * Group: common
          */
         default DisruptorVmEndpointProducerBuilder size(String size) {
@@ -394,6 +402,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder blockWhenFull(
@@ -435,6 +444,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder lazyStartProducer(
@@ -468,6 +478,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.disruptor.DisruptorProducerType</code> type.
          * 
+         * Default: Multi
          * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder producerType(
@@ -496,6 +507,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder timeout(String timeout) {
@@ -530,6 +542,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.WaitForTaskToComplete</code> type.
          * 
+         * Default: IfReplyExpected
          * Group: producer
          */
         default DisruptorVmEndpointProducerBuilder waitForTaskToComplete(
@@ -568,6 +581,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDisruptorVmEndpointProducerBuilder basicPropertyBinding(
@@ -595,6 +609,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDisruptorVmEndpointProducerBuilder synchronous(
@@ -640,6 +655,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1024
          * Group: common
          */
         default DisruptorVmEndpointBuilder size(String size) {
@@ -677,6 +693,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDisruptorVmEndpointBuilder basicPropertyBinding(
@@ -704,6 +721,7 @@ public interface DisruptorVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDisruptorVmEndpointBuilder synchronous(

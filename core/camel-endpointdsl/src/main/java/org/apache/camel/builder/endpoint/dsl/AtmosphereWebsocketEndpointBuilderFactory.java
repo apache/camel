@@ -60,6 +60,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AtmosphereWebsocketEndpointConsumerBuilder sendToAll(
@@ -85,6 +86,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AtmosphereWebsocketEndpointConsumerBuilder useStreaming(
@@ -140,6 +142,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AtmosphereWebsocketEndpointConsumerBuilder disableStreamCache(
@@ -192,6 +195,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder async(String async) {
@@ -228,6 +232,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder bridgeErrorHandler(
@@ -255,6 +260,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder chunked(
@@ -296,6 +302,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder matchOnUriPrefix(
@@ -323,6 +330,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder muteException(
@@ -402,6 +410,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointConsumerBuilder transferException(
@@ -477,6 +486,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder attachmentMultipartBinding(
@@ -506,6 +516,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder eagerCheckContentAvailable(
@@ -604,6 +615,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder optionsEnabled(
@@ -631,6 +643,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder traceEnabled(
@@ -658,6 +671,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder basicPropertyBinding(
@@ -687,6 +701,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageBody(
@@ -716,6 +731,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageFormUrlEncodedBody(
@@ -745,6 +761,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder mapHttpMessageHeaders(
@@ -772,6 +789,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointConsumerBuilder synchronous(
@@ -808,6 +826,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AtmosphereWebsocketEndpointProducerBuilder sendToAll(
@@ -833,6 +852,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AtmosphereWebsocketEndpointProducerBuilder useStreaming(
@@ -888,6 +908,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AtmosphereWebsocketEndpointProducerBuilder disableStreamCache(
@@ -943,6 +964,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointProducerBuilder chunked(
@@ -984,6 +1006,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointProducerBuilder transferException(
@@ -1051,6 +1074,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder basicPropertyBinding(
@@ -1080,6 +1104,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageBody(
@@ -1109,6 +1134,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageFormUrlEncodedBody(
@@ -1138,6 +1164,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder mapHttpMessageHeaders(
@@ -1165,6 +1192,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointProducerBuilder synchronous(
@@ -1200,6 +1228,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AtmosphereWebsocketEndpointBuilder sendToAll(String sendToAll) {
@@ -1224,6 +1253,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AtmosphereWebsocketEndpointBuilder useStreaming(
@@ -1279,6 +1309,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AtmosphereWebsocketEndpointBuilder disableStreamCache(
@@ -1333,6 +1364,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointBuilder chunked(String chunked) {
@@ -1373,6 +1405,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtmosphereWebsocketEndpointBuilder transferException(
@@ -1439,6 +1472,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder basicPropertyBinding(
@@ -1468,6 +1502,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageBody(
@@ -1497,6 +1532,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageFormUrlEncodedBody(
@@ -1526,6 +1562,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder mapHttpMessageHeaders(
@@ -1553,6 +1590,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosphereWebsocketEndpointBuilder synchronous(

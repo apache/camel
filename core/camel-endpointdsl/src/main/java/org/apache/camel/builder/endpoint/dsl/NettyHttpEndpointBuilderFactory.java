@@ -76,6 +76,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder bridgeEndpoint(
@@ -102,6 +103,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder disconnect(String disconnect) {
@@ -125,6 +127,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder keepAlive(String keepAlive) {
@@ -149,6 +152,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder reuseAddress(
@@ -190,6 +194,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder reuseChannel(
@@ -214,6 +219,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder sync(String sync) {
@@ -237,6 +243,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointConsumerBuilder tcpNoDelay(String tcpNoDelay) {
@@ -263,6 +270,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NettyHttpEndpointConsumerBuilder matchOnUriPrefix(
@@ -290,6 +298,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NettyHttpEndpointConsumerBuilder muteException(
@@ -319,6 +328,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default NettyHttpEndpointConsumerBuilder send503whenSuspended(
@@ -473,6 +483,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder needClientAuth(
@@ -583,6 +594,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder ssl(String ssl) {
@@ -613,6 +625,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyHttpEndpointConsumerBuilder sslClientCertHeaders(
@@ -737,6 +750,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NettyHttpEndpointConsumerBuilder bridgeErrorHandler(
@@ -806,6 +820,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder bossCount(
@@ -860,6 +875,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder chunkedMaxContentLength(
@@ -887,6 +903,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder compression(
@@ -914,6 +931,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disconnectOnNoReply(
@@ -954,6 +972,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder logWarnOnBadRequest(
@@ -991,6 +1010,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder mapHeaders(
@@ -1020,6 +1040,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 8192
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder maxHeaderSize(
@@ -1102,6 +1123,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder noReplyLogLevel(
@@ -1136,6 +1158,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
@@ -1164,6 +1187,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder serverExceptionCaughtLogLevel(
@@ -1217,6 +1241,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder traceEnabled(
@@ -1254,6 +1279,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder urlDecodeHeaders(
@@ -1281,6 +1307,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedNettyHttpEndpointConsumerBuilder usingExecutorService(
@@ -1312,6 +1339,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder allowSerializedHeaders(
@@ -1421,6 +1449,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder disableStreamCache(
@@ -1482,6 +1511,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder nativeTransport(
@@ -1573,6 +1603,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder receiveBufferSize(
@@ -1626,6 +1657,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder sendBufferSize(
@@ -1667,6 +1699,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferException(
@@ -1702,6 +1735,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder transferExchange(
@@ -1845,6 +1879,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder basicPropertyBinding(
@@ -1872,6 +1907,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointConsumerBuilder synchronous(
@@ -1920,6 +1956,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder bridgeEndpoint(
@@ -1946,6 +1983,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder disconnect(String disconnect) {
@@ -1969,6 +2007,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder keepAlive(String keepAlive) {
@@ -1993,6 +2032,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder reuseAddress(
@@ -2034,6 +2074,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder reuseChannel(
@@ -2058,6 +2099,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder sync(String sync) {
@@ -2081,6 +2123,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
@@ -2107,6 +2150,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: producer
          */
         default NettyHttpEndpointProducerBuilder connectTimeout(
@@ -2192,6 +2236,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default NettyHttpEndpointProducerBuilder throwExceptionOnFailure(
@@ -2370,6 +2415,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder ssl(String ssl) {
@@ -2400,6 +2446,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyHttpEndpointProducerBuilder sslClientCertHeaders(
@@ -2528,6 +2575,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NettyHttpEndpointProducerBuilder lazyStartProducer(
@@ -2592,6 +2640,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder lazyChannelCreation(
@@ -2653,6 +2702,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolEnabled(
@@ -2682,6 +2732,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxActive(
@@ -2707,6 +2758,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMaxIdle(
@@ -2736,6 +2788,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 300000
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder producerPoolMinEvictableIdle(
@@ -2787,6 +2840,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedNettyHttpEndpointProducerBuilder useRelativePath(
@@ -2818,6 +2872,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder allowSerializedHeaders(
@@ -2927,6 +2982,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder disableStreamCache(
@@ -2988,6 +3044,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder nativeTransport(
@@ -3079,6 +3136,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder receiveBufferSize(
@@ -3132,6 +3190,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder sendBufferSize(
@@ -3173,6 +3232,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferException(
@@ -3208,6 +3268,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder transferExchange(
@@ -3294,6 +3355,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder basicPropertyBinding(
@@ -3321,6 +3383,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointProducerBuilder synchronous(
@@ -3368,6 +3431,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyHttpEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
@@ -3393,6 +3457,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyHttpEndpointBuilder disconnect(String disconnect) {
@@ -3416,6 +3481,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointBuilder keepAlive(String keepAlive) {
@@ -3439,6 +3505,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointBuilder reuseAddress(String reuseAddress) {
@@ -3478,6 +3545,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyHttpEndpointBuilder reuseChannel(String reuseChannel) {
@@ -3501,6 +3569,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointBuilder sync(String sync) {
@@ -3524,6 +3593,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyHttpEndpointBuilder tcpNoDelay(String tcpNoDelay) {
@@ -3699,6 +3769,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyHttpEndpointBuilder ssl(String ssl) {
@@ -3729,6 +3800,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyHttpEndpointBuilder sslClientCertHeaders(
@@ -3856,6 +3928,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder allowSerializedHeaders(
@@ -3965,6 +4038,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder disableStreamCache(
@@ -4026,6 +4100,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder nativeTransport(
@@ -4117,6 +4192,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder receiveBufferSize(
@@ -4170,6 +4246,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder sendBufferSize(
@@ -4211,6 +4288,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder transferException(
@@ -4246,6 +4324,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder transferExchange(
@@ -4328,6 +4407,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder basicPropertyBinding(
@@ -4354,6 +4434,7 @@ public interface NettyHttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyHttpEndpointBuilder synchronous(String synchronous) {

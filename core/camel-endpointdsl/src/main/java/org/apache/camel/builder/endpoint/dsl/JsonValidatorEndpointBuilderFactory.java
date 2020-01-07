@@ -56,6 +56,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JsonValidatorEndpointBuilder contentCache(String contentCache) {
@@ -80,6 +81,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default JsonValidatorEndpointBuilder failOnNullBody(
@@ -105,6 +107,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default JsonValidatorEndpointBuilder failOnNullHeader(
@@ -157,6 +160,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JsonValidatorEndpointBuilder lazyStartProducer(
@@ -195,6 +199,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder basicPropertyBinding(
@@ -280,6 +285,7 @@ public interface JsonValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJsonValidatorEndpointBuilder synchronous(

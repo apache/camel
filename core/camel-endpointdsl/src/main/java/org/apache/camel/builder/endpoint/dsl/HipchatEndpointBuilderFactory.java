@@ -91,6 +91,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
          * 
+         * Default: CloseableHttpClient default from HttpClient library
          * Group: common
          */
         default HipchatEndpointConsumerBuilder httpClient(String httpClient) {
@@ -127,6 +128,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HipchatEndpointConsumerBuilder bridgeErrorHandler(
@@ -154,6 +156,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HipchatEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -264,6 +267,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder delay(String delay) {
@@ -289,6 +293,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder greedy(String greedy) {
@@ -316,6 +321,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -343,6 +349,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -370,6 +377,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder runLoggingLevel(
@@ -467,6 +475,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder startScheduler(
@@ -492,6 +501,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -518,6 +528,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default HipchatEndpointConsumerBuilder useFixedDelay(
@@ -645,6 +656,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHipchatEndpointConsumerBuilder basicPropertyBinding(
@@ -672,6 +684,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHipchatEndpointConsumerBuilder synchronous(
@@ -734,6 +747,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
          * 
+         * Default: CloseableHttpClient default from HttpClient library
          * Group: common
          */
         default HipchatEndpointProducerBuilder httpClient(String httpClient) {
@@ -774,6 +788,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HipchatEndpointProducerBuilder lazyStartProducer(
@@ -812,6 +827,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHipchatEndpointProducerBuilder basicPropertyBinding(
@@ -839,6 +855,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHipchatEndpointProducerBuilder synchronous(
@@ -901,6 +918,7 @@ public interface HipchatEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.http.impl.client.CloseableHttpClient</code> type.
          * 
+         * Default: CloseableHttpClient default from HttpClient library
          * Group: common
          */
         default HipchatEndpointBuilder httpClient(String httpClient) {
@@ -938,6 +956,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHipchatEndpointBuilder basicPropertyBinding(
@@ -964,6 +983,7 @@ public interface HipchatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHipchatEndpointBuilder synchronous(String synchronous) {

@@ -104,6 +104,7 @@ public interface KMSEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KMSEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -188,6 +189,7 @@ public interface KMSEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default KMSEndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -250,6 +252,7 @@ public interface KMSEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKMSEndpointBuilder basicPropertyBinding(
@@ -276,6 +279,7 @@ public interface KMSEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKMSEndpointBuilder synchronous(String synchronous) {

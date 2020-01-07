@@ -104,6 +104,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder bridgeErrorHandler(
@@ -166,6 +167,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder considerLastUpdate(
@@ -191,6 +193,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder consumeFromNow(
@@ -215,6 +218,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder maxResults(String maxResults) {
@@ -294,6 +298,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleCalendarStreamEndpointBuilder sendEmptyMessageWhenIdle(
@@ -408,6 +413,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder delay(String delay) {
@@ -433,6 +439,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder greedy(String greedy) {
@@ -461,6 +468,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder initialDelay(
@@ -489,6 +497,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder repeatCount(
@@ -517,6 +526,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder runLoggingLevel(
@@ -614,6 +624,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder startScheduler(
@@ -639,6 +650,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder timeUnit(String timeUnit) {
@@ -665,6 +677,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleCalendarStreamEndpointBuilder useFixedDelay(
@@ -792,6 +805,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder basicPropertyBinding(
@@ -819,6 +833,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleCalendarStreamEndpointBuilder synchronous(

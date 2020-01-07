@@ -59,6 +59,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default GangliaEndpointBuilder dmax(String dmax) {
@@ -111,6 +112,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GangliaEndpointBuilder lazyStartProducer(
@@ -151,6 +153,7 @@ public interface GangliaEndpointBuilderFactory {
          * <code>info.ganglia.gmetric4j.gmetric.GMetric$UDPAddressingMode</code>
          * type.
          * 
+         * Default: MULTICAST
          * Group: producer
          */
         default GangliaEndpointBuilder mode(String mode) {
@@ -187,6 +190,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>info.ganglia.gmetric4j.gmetric.GMetricSlope</code> type.
          * 
+         * Default: BOTH
          * Group: producer
          */
         default GangliaEndpointBuilder slope(String slope) {
@@ -223,6 +227,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 60
          * Group: producer
          */
         default GangliaEndpointBuilder tmax(String tmax) {
@@ -246,6 +251,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5
          * Group: producer
          */
         default GangliaEndpointBuilder ttl(String ttl) {
@@ -271,6 +277,7 @@ public interface GangliaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>info.ganglia.gmetric4j.gmetric.GMetricType</code> type.
          * 
+         * Default: STRING
          * Group: producer
          */
         default GangliaEndpointBuilder type(String type) {
@@ -309,6 +316,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default GangliaEndpointBuilder wireFormat31x(String wireFormat31x) {
@@ -346,6 +354,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGangliaEndpointBuilder basicPropertyBinding(
@@ -372,6 +381,7 @@ public interface GangliaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGangliaEndpointBuilder synchronous(String synchronous) {

@@ -83,6 +83,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BonitaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -165,6 +166,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder basicPropertyBinding(
@@ -191,6 +193,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder synchronous(String synchronous) {

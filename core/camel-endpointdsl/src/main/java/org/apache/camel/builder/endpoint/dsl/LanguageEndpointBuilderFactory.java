@@ -57,6 +57,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LanguageEndpointBuilder binary(String binary) {
@@ -84,6 +85,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LanguageEndpointBuilder cacheScript(String cacheScript) {
@@ -107,6 +109,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default LanguageEndpointBuilder contentCache(String contentCache) {
@@ -147,6 +150,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LanguageEndpointBuilder lazyStartProducer(
@@ -184,6 +188,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default LanguageEndpointBuilder transform(String transform) {
@@ -221,6 +226,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder basicPropertyBinding(
@@ -247,6 +253,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder synchronous(String synchronous) {

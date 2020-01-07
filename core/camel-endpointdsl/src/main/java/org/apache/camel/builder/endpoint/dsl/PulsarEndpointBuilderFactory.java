@@ -61,6 +61,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 100
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder ackGroupTimeMillis(
@@ -88,6 +89,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder ackTimeoutMillis(
@@ -123,6 +125,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder allowManualAcknowledgement(
@@ -160,6 +163,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder bridgeErrorHandler(
@@ -211,6 +215,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder consumerQueueSize(
@@ -236,6 +241,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder numberOfConsumers(
@@ -278,6 +284,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.pulsar.utils.consumers.SubscriptionType</code> type.
          * 
+         * Default: EXCLUSIVE
          * Group: consumer
          */
         default PulsarEndpointConsumerBuilder subscriptionType(
@@ -373,6 +380,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder basicPropertyBinding(
@@ -400,6 +408,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPulsarEndpointConsumerBuilder synchronous(
@@ -438,6 +447,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default PulsarEndpointProducerBuilder batchingEnabled(
@@ -465,6 +475,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: producer
          */
         default PulsarEndpointProducerBuilder batchingMaxMessages(
@@ -496,6 +507,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: producer
          */
         default PulsarEndpointProducerBuilder batchingMaxPublishDelayMicros(
@@ -527,6 +539,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PulsarEndpointProducerBuilder blockIfQueueFull(
@@ -554,6 +567,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.CompressionType</code> type.
          * 
+         * Default: NONE
          * Group: producer
          */
         default PulsarEndpointProducerBuilder compressionType(
@@ -585,6 +599,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default PulsarEndpointProducerBuilder initialSequenceId(
@@ -626,6 +641,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PulsarEndpointProducerBuilder lazyStartProducer(
@@ -653,6 +669,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: producer
          */
         default PulsarEndpointProducerBuilder maxPendingMessages(
@@ -680,6 +697,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 50000
          * Group: producer
          */
         default PulsarEndpointProducerBuilder maxPendingMessagesAcrossPartitions(
@@ -731,6 +749,7 @@ public interface PulsarEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.pulsar.client.api.MessageRoutingMode</code> type.
          * 
+         * Default: RoundRobinPartition
          * Group: producer
          */
         default PulsarEndpointProducerBuilder messageRoutingMode(
@@ -767,6 +786,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default PulsarEndpointProducerBuilder sendTimeoutMs(String sendTimeoutMs) {
@@ -804,6 +824,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder basicPropertyBinding(
@@ -831,6 +852,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPulsarEndpointProducerBuilder synchronous(
@@ -880,6 +902,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder basicPropertyBinding(
@@ -906,6 +929,7 @@ public interface PulsarEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPulsarEndpointBuilder synchronous(String synchronous) {

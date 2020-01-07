@@ -107,6 +107,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default SnmpEndpointConsumerBuilder retries(String retries) {
@@ -168,6 +169,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: common
          */
         default SnmpEndpointConsumerBuilder snmpVersion(String snmpVersion) {
@@ -191,6 +193,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1500
          * Group: common
          */
         default SnmpEndpointConsumerBuilder timeout(String timeout) {
@@ -251,6 +254,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SnmpEndpointConsumerBuilder bridgeErrorHandler(
@@ -275,6 +279,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 60000
          * Group: consumer
          */
         default SnmpEndpointConsumerBuilder delay(String delay) {
@@ -301,6 +306,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SnmpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -327,6 +333,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SnmpEndpointConsumerBuilder treeList(String treeList) {
@@ -438,6 +445,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder greedy(String greedy) {
@@ -465,6 +473,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -492,6 +501,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -519,6 +529,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder runLoggingLevel(
@@ -616,6 +627,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -640,6 +652,7 @@ public interface SnmpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -665,6 +678,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SnmpEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -766,6 +780,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 3
          * Group: security
          */
         default SnmpEndpointConsumerBuilder securityLevel(String securityLevel) {
@@ -903,6 +918,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnmpEndpointConsumerBuilder basicPropertyBinding(
@@ -930,6 +946,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnmpEndpointConsumerBuilder synchronous(
@@ -1008,6 +1025,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default SnmpEndpointProducerBuilder retries(String retries) {
@@ -1069,6 +1087,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: common
          */
         default SnmpEndpointProducerBuilder snmpVersion(String snmpVersion) {
@@ -1092,6 +1111,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1500
          * Group: common
          */
         default SnmpEndpointProducerBuilder timeout(String timeout) {
@@ -1156,6 +1176,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SnmpEndpointProducerBuilder lazyStartProducer(
@@ -1258,6 +1279,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 3
          * Group: security
          */
         default SnmpEndpointProducerBuilder securityLevel(String securityLevel) {
@@ -1306,6 +1328,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnmpEndpointProducerBuilder basicPropertyBinding(
@@ -1333,6 +1356,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnmpEndpointProducerBuilder synchronous(
@@ -1411,6 +1435,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default SnmpEndpointBuilder retries(String retries) {
@@ -1471,6 +1496,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: common
          */
         default SnmpEndpointBuilder snmpVersion(String snmpVersion) {
@@ -1494,6 +1520,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1500
          * Group: common
          */
         default SnmpEndpointBuilder timeout(String timeout) {
@@ -1617,6 +1644,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 3
          * Group: security
          */
         default SnmpEndpointBuilder securityLevel(String securityLevel) {
@@ -1665,6 +1693,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnmpEndpointBuilder basicPropertyBinding(
@@ -1691,6 +1720,7 @@ public interface SnmpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnmpEndpointBuilder synchronous(String synchronous) {

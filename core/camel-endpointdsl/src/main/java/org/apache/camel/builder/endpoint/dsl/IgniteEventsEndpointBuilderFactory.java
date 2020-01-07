@@ -72,6 +72,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IgniteEventsEndpointBuilder bridgeErrorHandler(
@@ -141,6 +142,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default IgniteEventsEndpointBuilder propagateIncomingBodyIfNoReturnValue(
@@ -168,6 +170,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IgniteEventsEndpointBuilder treatCollectionsAsCacheObjects(
@@ -263,6 +266,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteEventsEndpointBuilder basicPropertyBinding(
@@ -290,6 +294,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteEventsEndpointBuilder synchronous(

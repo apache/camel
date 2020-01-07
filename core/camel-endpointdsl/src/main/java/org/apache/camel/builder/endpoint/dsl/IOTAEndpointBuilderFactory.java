@@ -57,6 +57,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 9
          * Group: producer
          */
         default IOTAEndpointBuilder depth(String depth) {
@@ -96,6 +97,7 @@ public interface IOTAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IOTAEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -125,6 +127,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 14
          * Group: producer
          */
         default IOTAEndpointBuilder minWeightMagnitude(String minWeightMagnitude) {
@@ -185,6 +188,7 @@ public interface IOTAEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 1
          * Group: security
          */
         default IOTAEndpointBuilder securityLevel(String securityLevel) {
@@ -222,6 +226,7 @@ public interface IOTAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIOTAEndpointBuilder basicPropertyBinding(
@@ -248,6 +253,7 @@ public interface IOTAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIOTAEndpointBuilder synchronous(String synchronous) {

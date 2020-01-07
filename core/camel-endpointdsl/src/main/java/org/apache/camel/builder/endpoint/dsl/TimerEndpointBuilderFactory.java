@@ -72,6 +72,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TimerEndpointBuilder bridgeErrorHandler(
@@ -104,6 +105,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: consumer
          */
         default TimerEndpointBuilder delay(String delay) {
@@ -129,6 +131,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TimerEndpointBuilder fixedRate(String fixedRate) {
@@ -158,6 +161,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: consumer
          */
         default TimerEndpointBuilder period(String period) {
@@ -185,6 +189,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: consumer
          */
         default TimerEndpointBuilder repeatCount(String repeatCount) {
@@ -279,6 +284,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder basicPropertyBinding(
@@ -305,6 +311,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder daemon(String daemon) {
@@ -342,6 +349,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder synchronous(String synchronous) {

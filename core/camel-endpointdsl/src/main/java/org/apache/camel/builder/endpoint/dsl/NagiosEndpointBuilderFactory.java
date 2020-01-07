@@ -54,6 +54,7 @@ public interface NagiosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: producer
          */
         default NagiosEndpointBuilder connectionTimeout(String connectionTimeout) {
@@ -94,6 +95,7 @@ public interface NagiosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NagiosEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -121,6 +123,7 @@ public interface NagiosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default NagiosEndpointBuilder sendSync(String sendSync) {
@@ -144,6 +147,7 @@ public interface NagiosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: producer
          */
         default NagiosEndpointBuilder timeout(String timeout) {
@@ -216,6 +220,7 @@ public interface NagiosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder basicPropertyBinding(
@@ -242,6 +247,7 @@ public interface NagiosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNagiosEndpointBuilder synchronous(String synchronous) {

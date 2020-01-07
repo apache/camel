@@ -62,6 +62,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MinaEndpointConsumerBuilder disconnect(String disconnect) {
@@ -87,6 +88,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MinaEndpointConsumerBuilder minaLogger(String minaLogger) {
@@ -110,6 +112,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MinaEndpointConsumerBuilder sync(String sync) {
@@ -137,6 +140,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default MinaEndpointConsumerBuilder timeout(String timeout) {
@@ -162,6 +166,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: common
          */
         default MinaEndpointConsumerBuilder writeTimeout(String writeTimeout) {
@@ -198,6 +203,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MinaEndpointConsumerBuilder bridgeErrorHandler(
@@ -224,6 +230,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MinaEndpointConsumerBuilder clientMode(String clientMode) {
@@ -258,6 +265,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: codec
          */
         default MinaEndpointConsumerBuilder allowDefaultCodec(
@@ -309,6 +317,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1024
          * Group: codec
          */
         default MinaEndpointConsumerBuilder decoderMaxLineLength(
@@ -336,6 +345,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: codec
          */
         default MinaEndpointConsumerBuilder encoderMaxLineLength(
@@ -401,6 +411,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: codec
          */
         default MinaEndpointConsumerBuilder textline(String textline) {
@@ -456,6 +467,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default MinaEndpointConsumerBuilder autoStartTls(String autoStartTls) {
@@ -519,6 +531,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedMinaEndpointConsumerBuilder disconnectOnNoReply(
@@ -604,6 +617,7 @@ public interface MinaEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: consumer (advanced)
          */
         default AdvancedMinaEndpointConsumerBuilder noReplyLogLevel(
@@ -631,6 +645,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMinaEndpointConsumerBuilder basicPropertyBinding(
@@ -656,6 +671,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 16
          * Group: advanced
          */
         default AdvancedMinaEndpointConsumerBuilder maximumPoolSize(
@@ -683,6 +699,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedMinaEndpointConsumerBuilder orderedThreadPoolExecutor(
@@ -710,6 +727,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMinaEndpointConsumerBuilder synchronous(
@@ -745,6 +763,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMinaEndpointConsumerBuilder transferExchange(
@@ -782,6 +801,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MinaEndpointProducerBuilder disconnect(String disconnect) {
@@ -807,6 +827,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MinaEndpointProducerBuilder minaLogger(String minaLogger) {
@@ -830,6 +851,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MinaEndpointProducerBuilder sync(String sync) {
@@ -857,6 +879,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default MinaEndpointProducerBuilder timeout(String timeout) {
@@ -882,6 +905,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: common
          */
         default MinaEndpointProducerBuilder writeTimeout(String writeTimeout) {
@@ -922,6 +946,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MinaEndpointProducerBuilder lazyStartProducer(
@@ -957,6 +982,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: codec
          */
         default MinaEndpointProducerBuilder allowDefaultCodec(
@@ -1008,6 +1034,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1024
          * Group: codec
          */
         default MinaEndpointProducerBuilder decoderMaxLineLength(
@@ -1035,6 +1062,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: codec
          */
         default MinaEndpointProducerBuilder encoderMaxLineLength(
@@ -1100,6 +1128,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: codec
          */
         default MinaEndpointProducerBuilder textline(String textline) {
@@ -1155,6 +1184,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default MinaEndpointProducerBuilder autoStartTls(String autoStartTls) {
@@ -1218,6 +1248,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedMinaEndpointProducerBuilder cachedAddress(
@@ -1245,6 +1276,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedMinaEndpointProducerBuilder lazySessionCreation(
@@ -1272,6 +1304,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMinaEndpointProducerBuilder basicPropertyBinding(
@@ -1297,6 +1330,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 16
          * Group: advanced
          */
         default AdvancedMinaEndpointProducerBuilder maximumPoolSize(
@@ -1324,6 +1358,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedMinaEndpointProducerBuilder orderedThreadPoolExecutor(
@@ -1351,6 +1386,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMinaEndpointProducerBuilder synchronous(
@@ -1386,6 +1422,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMinaEndpointProducerBuilder transferExchange(
@@ -1423,6 +1460,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MinaEndpointBuilder disconnect(String disconnect) {
@@ -1448,6 +1486,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MinaEndpointBuilder minaLogger(String minaLogger) {
@@ -1471,6 +1510,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MinaEndpointBuilder sync(String sync) {
@@ -1498,6 +1538,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default MinaEndpointBuilder timeout(String timeout) {
@@ -1523,6 +1564,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: common
          */
         default MinaEndpointBuilder writeTimeout(String writeTimeout) {
@@ -1556,6 +1598,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: codec
          */
         default MinaEndpointBuilder allowDefaultCodec(String allowDefaultCodec) {
@@ -1606,6 +1649,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1024
          * Group: codec
          */
         default MinaEndpointBuilder decoderMaxLineLength(
@@ -1633,6 +1677,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: codec
          */
         default MinaEndpointBuilder encoderMaxLineLength(
@@ -1698,6 +1743,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: codec
          */
         default MinaEndpointBuilder textline(String textline) {
@@ -1752,6 +1798,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default MinaEndpointBuilder autoStartTls(String autoStartTls) {
@@ -1815,6 +1862,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMinaEndpointBuilder basicPropertyBinding(
@@ -1839,6 +1887,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 16
          * Group: advanced
          */
         default AdvancedMinaEndpointBuilder maximumPoolSize(
@@ -1866,6 +1915,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedMinaEndpointBuilder orderedThreadPoolExecutor(
@@ -1892,6 +1942,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMinaEndpointBuilder synchronous(String synchronous) {
@@ -1926,6 +1977,7 @@ public interface MinaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMinaEndpointBuilder transferExchange(

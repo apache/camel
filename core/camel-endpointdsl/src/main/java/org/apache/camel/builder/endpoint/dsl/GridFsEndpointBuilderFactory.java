@@ -158,6 +158,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder bridgeErrorHandler(
@@ -182,6 +183,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder delay(String delay) {
@@ -221,6 +223,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -291,6 +294,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.gridfs.QueryStrategy</code>
          * type.
          * 
+         * Default: TimeStamp
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder queryStrategy(String queryStrategy) {
@@ -385,6 +389,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointConsumerBuilder basicPropertyBinding(
@@ -412,6 +417,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointConsumerBuilder synchronous(
@@ -551,6 +557,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GridFsEndpointProducerBuilder lazyStartProducer(
@@ -600,6 +607,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointProducerBuilder basicPropertyBinding(
@@ -627,6 +635,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointProducerBuilder synchronous(
@@ -761,6 +770,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointBuilder basicPropertyBinding(
@@ -787,6 +797,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointBuilder synchronous(String synchronous) {

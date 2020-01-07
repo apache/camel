@@ -89,6 +89,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CometdEndpointConsumerBuilder crossOriginFilterOn(
@@ -154,6 +155,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default CometdEndpointConsumerBuilder jsonCommented(String jsonCommented) {
@@ -177,6 +179,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default CometdEndpointConsumerBuilder logLevel(String logLevel) {
@@ -202,6 +205,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default CometdEndpointConsumerBuilder maxInterval(String maxInterval) {
@@ -228,6 +232,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1500
          * Group: common
          */
         default CometdEndpointConsumerBuilder multiFrameInterval(
@@ -254,6 +259,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 240000
          * Group: common
          */
         default CometdEndpointConsumerBuilder timeout(String timeout) {
@@ -290,6 +296,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CometdEndpointConsumerBuilder bridgeErrorHandler(
@@ -317,6 +324,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CometdEndpointConsumerBuilder sessionHeadersEnabled(
@@ -412,6 +420,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCometdEndpointConsumerBuilder basicPropertyBinding(
@@ -439,6 +448,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCometdEndpointConsumerBuilder synchronous(
@@ -504,6 +514,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CometdEndpointProducerBuilder crossOriginFilterOn(
@@ -569,6 +580,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default CometdEndpointProducerBuilder jsonCommented(String jsonCommented) {
@@ -592,6 +604,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default CometdEndpointProducerBuilder logLevel(String logLevel) {
@@ -617,6 +630,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default CometdEndpointProducerBuilder maxInterval(String maxInterval) {
@@ -643,6 +657,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1500
          * Group: common
          */
         default CometdEndpointProducerBuilder multiFrameInterval(
@@ -669,6 +684,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 240000
          * Group: common
          */
         default CometdEndpointProducerBuilder timeout(String timeout) {
@@ -697,6 +713,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CometdEndpointProducerBuilder disconnectLocalSession(
@@ -738,6 +755,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CometdEndpointProducerBuilder lazyStartProducer(
@@ -776,6 +794,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCometdEndpointProducerBuilder basicPropertyBinding(
@@ -803,6 +822,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCometdEndpointProducerBuilder synchronous(
@@ -867,6 +887,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CometdEndpointBuilder crossOriginFilterOn(
@@ -931,6 +952,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default CometdEndpointBuilder jsonCommented(String jsonCommented) {
@@ -954,6 +976,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default CometdEndpointBuilder logLevel(String logLevel) {
@@ -979,6 +1002,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default CometdEndpointBuilder maxInterval(String maxInterval) {
@@ -1004,6 +1028,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1500
          * Group: common
          */
         default CometdEndpointBuilder multiFrameInterval(
@@ -1030,6 +1055,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 240000
          * Group: common
          */
         default CometdEndpointBuilder timeout(String timeout) {
@@ -1067,6 +1093,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCometdEndpointBuilder basicPropertyBinding(
@@ -1093,6 +1120,7 @@ public interface CometdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCometdEndpointBuilder synchronous(String synchronous) {

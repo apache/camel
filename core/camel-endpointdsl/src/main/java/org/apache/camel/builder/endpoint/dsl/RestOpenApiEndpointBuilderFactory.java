@@ -133,6 +133,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RestOpenApiEndpointBuilder lazyStartProducer(
@@ -185,6 +186,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestOpenApiEndpointBuilder basicPropertyBinding(
@@ -212,6 +214,7 @@ public interface RestOpenApiEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestOpenApiEndpointBuilder synchronous(

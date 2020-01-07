@@ -128,6 +128,7 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LuceneEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -211,6 +212,7 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder basicPropertyBinding(
@@ -237,6 +239,7 @@ public interface LuceneEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLuceneEndpointBuilder synchronous(String synchronous) {

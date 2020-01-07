@@ -97,6 +97,7 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default VertxEndpointConsumerBuilder bridgeErrorHandler(
@@ -192,6 +193,7 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedVertxEndpointConsumerBuilder basicPropertyBinding(
@@ -219,6 +221,7 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedVertxEndpointConsumerBuilder synchronous(
@@ -296,6 +299,7 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default VertxEndpointProducerBuilder lazyStartProducer(
@@ -334,6 +338,7 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedVertxEndpointProducerBuilder basicPropertyBinding(
@@ -361,6 +366,7 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedVertxEndpointProducerBuilder synchronous(
@@ -435,6 +441,7 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedVertxEndpointBuilder basicPropertyBinding(
@@ -461,6 +468,7 @@ public interface VertxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedVertxEndpointBuilder synchronous(String synchronous) {

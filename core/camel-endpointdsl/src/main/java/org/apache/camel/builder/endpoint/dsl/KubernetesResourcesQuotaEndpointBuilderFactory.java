@@ -124,6 +124,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder lazyStartProducer(
@@ -354,6 +355,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder basicPropertyBinding(
@@ -408,6 +410,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder synchronous(

@@ -87,6 +87,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default HttpEndpointBuilder disableStreamCache(String disableStreamCache) {
@@ -144,6 +145,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
@@ -169,6 +171,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default HttpEndpointBuilder chunked(String chunked) {
@@ -197,6 +200,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default HttpEndpointBuilder clearExpiredCookies(
@@ -223,6 +227,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder connectionClose(String connectionClose) {
@@ -252,6 +257,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default HttpEndpointBuilder copyHeaders(String copyHeaders) {
@@ -317,6 +323,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder ignoreResponseBody(String ignoreResponseBody) {
@@ -356,6 +363,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -390,6 +398,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder preserveHostHeader(String preserveHostHeader) {
@@ -418,6 +427,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default HttpEndpointBuilder throwExceptionOnFailure(
@@ -458,6 +468,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder transferException(String transferException) {
@@ -616,6 +627,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default HttpEndpointBuilder authenticationPreemptive(
@@ -860,6 +872,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedHttpEndpointBuilder deleteWithBody(String deleteWithBody) {
@@ -887,6 +900,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedHttpEndpointBuilder getWithBody(String getWithBody) {
@@ -929,6 +943,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder basicPropertyBinding(
@@ -1008,6 +1023,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 20
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
@@ -1143,6 +1159,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
@@ -1172,6 +1189,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
@@ -1201,6 +1219,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
@@ -1226,6 +1245,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 200
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
@@ -1252,6 +1272,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder synchronous(String synchronous) {
@@ -1276,6 +1297,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(

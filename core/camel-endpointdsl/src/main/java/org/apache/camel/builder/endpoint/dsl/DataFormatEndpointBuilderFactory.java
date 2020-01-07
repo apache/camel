@@ -74,6 +74,7 @@ public interface DataFormatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DataFormatEndpointBuilder lazyStartProducer(
@@ -112,6 +113,7 @@ public interface DataFormatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDataFormatEndpointBuilder basicPropertyBinding(
@@ -139,6 +141,7 @@ public interface DataFormatEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDataFormatEndpointBuilder synchronous(String synchronous) {

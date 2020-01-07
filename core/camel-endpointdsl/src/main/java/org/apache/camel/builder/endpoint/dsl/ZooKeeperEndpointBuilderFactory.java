@@ -59,6 +59,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder listChildren(
@@ -83,6 +84,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default ZooKeeperEndpointConsumerBuilder timeout(String timeout) {
@@ -106,6 +108,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder backoff(String backoff) {
@@ -142,6 +145,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder bridgeErrorHandler(
@@ -166,6 +170,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder repeat(String repeat) {
@@ -192,6 +197,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default ZooKeeperEndpointConsumerBuilder sendEmptyMessageOnDelete(
@@ -287,6 +293,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZooKeeperEndpointConsumerBuilder basicPropertyBinding(
@@ -314,6 +321,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZooKeeperEndpointConsumerBuilder synchronous(
@@ -350,6 +358,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ZooKeeperEndpointProducerBuilder listChildren(
@@ -374,6 +383,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default ZooKeeperEndpointProducerBuilder timeout(String timeout) {
@@ -397,6 +407,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder create(String create) {
@@ -449,6 +460,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ZooKeeperEndpointProducerBuilder lazyStartProducer(
@@ -487,6 +499,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZooKeeperEndpointProducerBuilder basicPropertyBinding(
@@ -514,6 +527,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZooKeeperEndpointProducerBuilder synchronous(
@@ -549,6 +563,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ZooKeeperEndpointBuilder listChildren(String listChildren) {
@@ -572,6 +587,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default ZooKeeperEndpointBuilder timeout(String timeout) {
@@ -609,6 +625,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZooKeeperEndpointBuilder basicPropertyBinding(
@@ -635,6 +652,7 @@ public interface ZooKeeperEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZooKeeperEndpointBuilder synchronous(String synchronous) {

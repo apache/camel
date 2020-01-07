@@ -61,6 +61,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XsltSaxonEndpointBuilder allowStAX(String allowStAX) {
@@ -92,6 +93,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XsltSaxonEndpointBuilder contentCache(String contentCache) {
@@ -122,6 +124,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XsltSaxonEndpointBuilder deleteOutputFile(
@@ -146,6 +149,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XsltSaxonEndpointBuilder failOnNullBody(String failOnNullBody) {
@@ -186,6 +190,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XsltSaxonEndpointBuilder lazyStartProducer(
@@ -224,6 +229,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
          * 
+         * Default: string
          * Group: producer
          */
         default XsltSaxonEndpointBuilder output(String output) {
@@ -250,6 +256,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default XsltSaxonEndpointBuilder transformerCacheSize(
@@ -345,6 +352,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder basicPropertyBinding(
@@ -463,6 +471,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder synchronous(String synchronous) {

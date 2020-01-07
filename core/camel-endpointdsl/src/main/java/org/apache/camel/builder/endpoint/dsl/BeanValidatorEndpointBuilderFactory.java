@@ -70,6 +70,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BeanValidatorEndpointBuilder ignoreXmlConfiguration(
@@ -111,6 +112,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BeanValidatorEndpointBuilder lazyStartProducer(
@@ -149,6 +151,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
@@ -228,6 +231,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder synchronous(

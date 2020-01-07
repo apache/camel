@@ -64,6 +64,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.ibatis.session.ExecutorType</code> type.
          * 
+         * Default: SIMPLE
          * Group: producer
          */
         default MyBatisBeanEndpointBuilder executorType(String executorType) {
@@ -119,6 +120,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MyBatisBeanEndpointBuilder lazyStartProducer(
@@ -175,6 +177,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMyBatisBeanEndpointBuilder basicPropertyBinding(
@@ -202,6 +205,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMyBatisBeanEndpointBuilder synchronous(

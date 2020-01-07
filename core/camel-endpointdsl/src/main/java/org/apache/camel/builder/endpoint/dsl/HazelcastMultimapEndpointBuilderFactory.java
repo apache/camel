@@ -144,6 +144,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HazelcastMultimapEndpointConsumerBuilder bridgeErrorHandler(
@@ -240,6 +241,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder basicPropertyBinding(
@@ -267,6 +269,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMultimapEndpointConsumerBuilder synchronous(
@@ -391,6 +394,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HazelcastMultimapEndpointProducerBuilder lazyStartProducer(
@@ -430,6 +434,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMultimapEndpointProducerBuilder basicPropertyBinding(
@@ -457,6 +462,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMultimapEndpointProducerBuilder synchronous(
@@ -578,6 +584,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMultimapEndpointBuilder basicPropertyBinding(
@@ -605,6 +612,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMultimapEndpointBuilder synchronous(

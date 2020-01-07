@@ -72,6 +72,7 @@ public interface RefEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RefEndpointConsumerBuilder bridgeErrorHandler(
@@ -167,6 +168,7 @@ public interface RefEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRefEndpointConsumerBuilder basicPropertyBinding(
@@ -194,6 +196,7 @@ public interface RefEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRefEndpointConsumerBuilder synchronous(
@@ -246,6 +249,7 @@ public interface RefEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RefEndpointProducerBuilder lazyStartProducer(
@@ -284,6 +288,7 @@ public interface RefEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRefEndpointProducerBuilder basicPropertyBinding(
@@ -311,6 +316,7 @@ public interface RefEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRefEndpointProducerBuilder synchronous(
@@ -360,6 +366,7 @@ public interface RefEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRefEndpointBuilder basicPropertyBinding(
@@ -386,6 +393,7 @@ public interface RefEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRefEndpointBuilder synchronous(String synchronous) {

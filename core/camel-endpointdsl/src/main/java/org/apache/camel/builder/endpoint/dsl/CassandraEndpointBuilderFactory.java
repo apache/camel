@@ -160,6 +160,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default CassandraEndpointConsumerBuilder prepareStatements(
@@ -259,6 +260,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CassandraEndpointConsumerBuilder bridgeErrorHandler(
@@ -286,6 +288,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CassandraEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -400,6 +403,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder delay(String delay) {
@@ -425,6 +429,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder greedy(String greedy) {
@@ -452,6 +457,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder initialDelay(
@@ -480,6 +486,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -507,6 +514,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder runLoggingLevel(
@@ -604,6 +612,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder startScheduler(
@@ -629,6 +638,7 @@ public interface CassandraEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -655,6 +665,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default CassandraEndpointConsumerBuilder useFixedDelay(
@@ -782,6 +793,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCassandraEndpointConsumerBuilder basicPropertyBinding(
@@ -809,6 +821,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCassandraEndpointConsumerBuilder synchronous(
@@ -940,6 +953,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default CassandraEndpointProducerBuilder prepareStatements(
@@ -1043,6 +1057,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CassandraEndpointProducerBuilder lazyStartProducer(
@@ -1081,6 +1096,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCassandraEndpointProducerBuilder basicPropertyBinding(
@@ -1108,6 +1124,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCassandraEndpointProducerBuilder synchronous(
@@ -1239,6 +1256,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default CassandraEndpointBuilder prepareStatements(
@@ -1339,6 +1357,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCassandraEndpointBuilder basicPropertyBinding(
@@ -1365,6 +1384,7 @@ public interface CassandraEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCassandraEndpointBuilder synchronous(String synchronous) {

@@ -128,6 +128,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ClientEndpointConsumerBuilder bridgeErrorHandler(
@@ -153,6 +154,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>short</code> type.
          * 
+         * Default: 10
          * Group: connection
          */
         default ClientEndpointConsumerBuilder acknowledgeWindow(
@@ -258,6 +260,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>short</code> type.
          * 
+         * Default: 15
          * Group: connection
          */
         default ClientEndpointConsumerBuilder maxUnacknowledged(
@@ -282,6 +285,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 15000
          * Group: connection
          */
         default ClientEndpointConsumerBuilder timeout1(String timeout1) {
@@ -305,6 +309,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: connection
          */
         default ClientEndpointConsumerBuilder timeout2(String timeout2) {
@@ -328,6 +333,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 20000
          * Group: connection
          */
         default ClientEndpointConsumerBuilder timeout3(String timeout3) {
@@ -376,6 +382,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: data
          */
         default ClientEndpointConsumerBuilder ignoreBackgroundScan(
@@ -401,6 +408,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: data
          */
         default ClientEndpointConsumerBuilder ignoreDaylightSavingTime(
@@ -426,6 +434,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.TimeZone</code>
          * type.
          * 
+         * Default: UTC
          * Group: data
          */
         default ClientEndpointConsumerBuilder timeZone(String timeZone) {
@@ -532,6 +541,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedClientEndpointConsumerBuilder basicPropertyBinding(
@@ -559,6 +569,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedClientEndpointConsumerBuilder synchronous(
@@ -665,6 +676,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ClientEndpointProducerBuilder lazyStartProducer(
@@ -690,6 +702,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>short</code> type.
          * 
+         * Default: 10
          * Group: connection
          */
         default ClientEndpointProducerBuilder acknowledgeWindow(
@@ -795,6 +808,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>short</code> type.
          * 
+         * Default: 15
          * Group: connection
          */
         default ClientEndpointProducerBuilder maxUnacknowledged(
@@ -819,6 +833,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 15000
          * Group: connection
          */
         default ClientEndpointProducerBuilder timeout1(String timeout1) {
@@ -842,6 +857,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: connection
          */
         default ClientEndpointProducerBuilder timeout2(String timeout2) {
@@ -865,6 +881,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 20000
          * Group: connection
          */
         default ClientEndpointProducerBuilder timeout3(String timeout3) {
@@ -913,6 +930,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: data
          */
         default ClientEndpointProducerBuilder ignoreBackgroundScan(
@@ -938,6 +956,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: data
          */
         default ClientEndpointProducerBuilder ignoreDaylightSavingTime(
@@ -963,6 +982,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.TimeZone</code>
          * type.
          * 
+         * Default: UTC
          * Group: data
          */
         default ClientEndpointProducerBuilder timeZone(String timeZone) {
@@ -1012,6 +1032,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedClientEndpointProducerBuilder basicPropertyBinding(
@@ -1039,6 +1060,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedClientEndpointProducerBuilder synchronous(
@@ -1124,6 +1146,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>short</code> type.
          * 
+         * Default: 10
          * Group: connection
          */
         default ClientEndpointBuilder acknowledgeWindow(String acknowledgeWindow) {
@@ -1226,6 +1249,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>short</code> type.
          * 
+         * Default: 15
          * Group: connection
          */
         default ClientEndpointBuilder maxUnacknowledged(String maxUnacknowledged) {
@@ -1249,6 +1273,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 15000
          * Group: connection
          */
         default ClientEndpointBuilder timeout1(String timeout1) {
@@ -1272,6 +1297,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: connection
          */
         default ClientEndpointBuilder timeout2(String timeout2) {
@@ -1295,6 +1321,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 20000
          * Group: connection
          */
         default ClientEndpointBuilder timeout3(String timeout3) {
@@ -1342,6 +1369,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: data
          */
         default ClientEndpointBuilder ignoreBackgroundScan(
@@ -1367,6 +1395,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: data
          */
         default ClientEndpointBuilder ignoreDaylightSavingTime(
@@ -1392,6 +1421,7 @@ public interface ClientEndpointBuilderFactory {
          * The option will be converted to a <code>java.util.TimeZone</code>
          * type.
          * 
+         * Default: UTC
          * Group: data
          */
         default ClientEndpointBuilder timeZone(String timeZone) {
@@ -1440,6 +1470,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedClientEndpointBuilder basicPropertyBinding(
@@ -1466,6 +1497,7 @@ public interface ClientEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedClientEndpointBuilder synchronous(String synchronous) {

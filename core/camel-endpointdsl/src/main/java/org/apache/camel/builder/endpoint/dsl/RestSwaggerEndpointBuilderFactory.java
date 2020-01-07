@@ -133,6 +133,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RestSwaggerEndpointBuilder lazyStartProducer(
@@ -211,6 +212,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestSwaggerEndpointBuilder basicPropertyBinding(
@@ -238,6 +240,7 @@ public interface RestSwaggerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestSwaggerEndpointBuilder synchronous(

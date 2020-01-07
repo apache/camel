@@ -72,6 +72,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ZooKeeperMasterEndpointBuilder bridgeErrorHandler(
@@ -167,6 +168,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZooKeeperMasterEndpointBuilder basicPropertyBinding(
@@ -194,6 +196,7 @@ public interface ZooKeeperMasterEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZooKeeperMasterEndpointBuilder synchronous(

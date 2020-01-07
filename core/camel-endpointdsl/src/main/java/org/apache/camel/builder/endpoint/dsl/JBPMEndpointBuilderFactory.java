@@ -441,6 +441,7 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JBPMEndpointConsumerBuilder bridgeErrorHandler(
@@ -582,6 +583,7 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder basicPropertyBinding(
@@ -685,6 +687,7 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJBPMEndpointConsumerBuilder synchronous(
@@ -1104,6 +1107,7 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JBPMEndpointProducerBuilder lazyStartProducer(
@@ -1200,6 +1204,7 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder basicPropertyBinding(
@@ -1303,6 +1308,7 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJBPMEndpointProducerBuilder synchronous(
@@ -1761,6 +1767,7 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder basicPropertyBinding(
@@ -1862,6 +1869,7 @@ public interface JBPMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJBPMEndpointBuilder synchronous(String synchronous) {

@@ -97,6 +97,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JSR356WebSocketEndpointConsumerBuilder bridgeErrorHandler(
@@ -193,6 +194,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder basicPropertyBinding(
@@ -220,6 +222,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointConsumerBuilder synchronous(
@@ -298,6 +301,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JSR356WebSocketEndpointProducerBuilder lazyStartProducer(
@@ -337,6 +341,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder basicPropertyBinding(
@@ -364,6 +369,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointProducerBuilder synchronous(
@@ -437,6 +443,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointBuilder basicPropertyBinding(
@@ -464,6 +471,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJSR356WebSocketEndpointBuilder synchronous(

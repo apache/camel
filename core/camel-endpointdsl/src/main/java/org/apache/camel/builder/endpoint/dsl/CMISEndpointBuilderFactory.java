@@ -59,6 +59,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: common
          */
         default CMISEndpointConsumerBuilder pageSize(String pageSize) {
@@ -84,6 +85,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CMISEndpointConsumerBuilder readContent(String readContent) {
@@ -154,6 +156,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CMISEndpointConsumerBuilder bridgeErrorHandler(
@@ -284,6 +287,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
@@ -341,6 +345,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder synchronous(
@@ -376,6 +381,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: common
          */
         default CMISEndpointProducerBuilder pageSize(String pageSize) {
@@ -401,6 +407,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CMISEndpointProducerBuilder readContent(String readContent) {
@@ -475,6 +482,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CMISEndpointProducerBuilder lazyStartProducer(
@@ -501,6 +509,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CMISEndpointProducerBuilder queryMode(String queryMode) {
@@ -560,6 +569,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
@@ -617,6 +627,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder synchronous(
@@ -652,6 +663,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: common
          */
         default CMISEndpointBuilder pageSize(String pageSize) {
@@ -677,6 +689,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CMISEndpointBuilder readContent(String readContent) {
@@ -770,6 +783,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointBuilder basicPropertyBinding(
@@ -826,6 +840,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointBuilder synchronous(String synchronous) {

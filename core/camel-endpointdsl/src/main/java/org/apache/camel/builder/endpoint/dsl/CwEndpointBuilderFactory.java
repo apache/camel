@@ -95,6 +95,7 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CwEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -164,6 +165,7 @@ public interface CwEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default CwEndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -292,6 +294,7 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCwEndpointBuilder basicPropertyBinding(
@@ -318,6 +321,7 @@ public interface CwEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCwEndpointBuilder synchronous(String synchronous) {

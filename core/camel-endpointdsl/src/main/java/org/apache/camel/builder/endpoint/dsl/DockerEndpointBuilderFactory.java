@@ -83,6 +83,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 2375
          * Group: common
          */
         default DockerEndpointConsumerBuilder port(String port) {
@@ -144,6 +145,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DockerEndpointConsumerBuilder bridgeErrorHandler(
@@ -190,6 +192,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointConsumerBuilder secure(String secure) {
@@ -213,6 +216,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointConsumerBuilder tlsVerify(String tlsVerify) {
@@ -318,6 +322,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder basicPropertyBinding(
@@ -357,6 +362,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(
@@ -382,6 +388,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder loggingFilter(
@@ -408,6 +415,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder maxPerRouteConnections(
@@ -434,6 +442,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder maxTotalConnections(
@@ -471,6 +480,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder socket(String socket) {
@@ -497,6 +507,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder synchronous(
@@ -557,6 +568,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 2375
          * Group: common
          */
         default DockerEndpointProducerBuilder port(String port) {
@@ -622,6 +634,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DockerEndpointProducerBuilder lazyStartProducer(
@@ -668,6 +681,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointProducerBuilder secure(String secure) {
@@ -691,6 +705,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointProducerBuilder tlsVerify(String tlsVerify) {
@@ -739,6 +754,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder basicPropertyBinding(
@@ -778,6 +794,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder followRedirectFilter(
@@ -803,6 +820,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder loggingFilter(
@@ -829,6 +847,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder maxPerRouteConnections(
@@ -855,6 +874,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder maxTotalConnections(
@@ -892,6 +912,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder socket(String socket) {
@@ -918,6 +939,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder synchronous(
@@ -978,6 +1000,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 2375
          * Group: common
          */
         default DockerEndpointBuilder port(String port) {
@@ -1046,6 +1069,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointBuilder secure(String secure) {
@@ -1069,6 +1093,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointBuilder tlsVerify(String tlsVerify) {
@@ -1117,6 +1142,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder basicPropertyBinding(
@@ -1156,6 +1182,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder followRedirectFilter(
@@ -1181,6 +1208,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder loggingFilter(String loggingFilter) {
@@ -1206,6 +1234,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder maxPerRouteConnections(
@@ -1232,6 +1261,7 @@ public interface DockerEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder maxTotalConnections(
@@ -1268,6 +1298,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder socket(String socket) {
@@ -1293,6 +1324,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder synchronous(String synchronous) {

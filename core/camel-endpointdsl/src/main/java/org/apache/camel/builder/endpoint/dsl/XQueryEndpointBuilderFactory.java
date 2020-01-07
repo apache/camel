@@ -64,6 +64,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default XQueryEndpointConsumerBuilder allowStAX(String allowStAX) {
@@ -131,6 +132,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * 
+         * Default: DOM
          * Group: common
          */
         default XQueryEndpointConsumerBuilder resultsFormat(String resultsFormat) {
@@ -180,6 +182,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XQueryEndpointConsumerBuilder stripsAllWhiteSpace(
@@ -217,6 +220,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default XQueryEndpointConsumerBuilder bridgeErrorHandler(
@@ -244,6 +248,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default XQueryEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -358,6 +363,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder delay(String delay) {
@@ -383,6 +389,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder greedy(String greedy) {
@@ -410,6 +417,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -437,6 +445,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -464,6 +473,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder runLoggingLevel(
@@ -561,6 +571,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder startScheduler(
@@ -586,6 +597,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -612,6 +624,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default XQueryEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -738,6 +751,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXQueryEndpointConsumerBuilder basicPropertyBinding(
@@ -921,6 +935,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXQueryEndpointConsumerBuilder synchronous(
@@ -956,6 +971,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default XQueryEndpointProducerBuilder allowStAX(String allowStAX) {
@@ -1023,6 +1039,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * 
+         * Default: DOM
          * Group: common
          */
         default XQueryEndpointProducerBuilder resultsFormat(String resultsFormat) {
@@ -1072,6 +1089,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XQueryEndpointProducerBuilder stripsAllWhiteSpace(
@@ -1113,6 +1131,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XQueryEndpointProducerBuilder lazyStartProducer(
@@ -1151,6 +1170,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXQueryEndpointProducerBuilder basicPropertyBinding(
@@ -1334,6 +1354,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXQueryEndpointProducerBuilder synchronous(
@@ -1369,6 +1390,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default XQueryEndpointBuilder allowStAX(String allowStAX) {
@@ -1434,6 +1456,7 @@ public interface XQueryEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xquery.ResultFormat</code> type.
          * 
+         * Default: DOM
          * Group: common
          */
         default XQueryEndpointBuilder resultsFormat(String resultsFormat) {
@@ -1482,6 +1505,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XQueryEndpointBuilder stripsAllWhiteSpace(
@@ -1520,6 +1544,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXQueryEndpointBuilder basicPropertyBinding(
@@ -1697,6 +1722,7 @@ public interface XQueryEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXQueryEndpointBuilder synchronous(String synchronous) {

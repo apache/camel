@@ -61,6 +61,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default Sjms2EndpointConsumerBuilder durable(String durable) {
@@ -84,6 +85,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default Sjms2EndpointConsumerBuilder shared(String shared) {
@@ -124,6 +126,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * 
+         * Default: AUTO_ACKNOWLEDGE
          * Group: common
          */
         default Sjms2EndpointConsumerBuilder acknowledgementMode(
@@ -161,6 +164,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default Sjms2EndpointConsumerBuilder bridgeErrorHandler(
@@ -185,6 +189,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default Sjms2EndpointConsumerBuilder consumerCount(String consumerCount) {
@@ -222,6 +227,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default Sjms2EndpointConsumerBuilder synchronous(String synchronous) {
@@ -249,6 +255,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: logging
          */
         default Sjms2EndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -276,6 +283,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: logging
          */
         default Sjms2EndpointConsumerBuilder errorHandlerLogStackTrace(
@@ -300,6 +308,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default Sjms2EndpointConsumerBuilder transacted(String transacted) {
@@ -326,6 +335,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction
          */
         default Sjms2EndpointConsumerBuilder transactionBatchCount(
@@ -353,6 +363,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: transaction
          */
         default Sjms2EndpointConsumerBuilder transactionBatchTimeout(
@@ -502,6 +513,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointConsumerBuilder asyncStartListener(
@@ -529,6 +541,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointConsumerBuilder asyncStopListener(
@@ -556,6 +569,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointConsumerBuilder basicPropertyBinding(
@@ -750,6 +764,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointConsumerBuilder includeAllJMSXProperties(
@@ -823,6 +838,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSjms2EndpointConsumerBuilder mapJmsMessage(
@@ -884,6 +900,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedSjms2EndpointConsumerBuilder sharedJMSSession(
@@ -924,6 +941,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * 
+         * Default: AUTO_ACKNOWLEDGE
          * Group: common
          */
         default Sjms2EndpointProducerBuilder acknowledgementMode(
@@ -965,6 +983,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default Sjms2EndpointProducerBuilder lazyStartProducer(
@@ -1002,6 +1021,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default Sjms2EndpointProducerBuilder persistent(String persistent) {
@@ -1025,6 +1045,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default Sjms2EndpointProducerBuilder producerCount(String producerCount) {
@@ -1048,6 +1069,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default Sjms2EndpointProducerBuilder ttl(String ttl) {
@@ -1111,6 +1133,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedSjms2EndpointProducerBuilder allowNullBody(
@@ -1138,6 +1161,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedSjms2EndpointProducerBuilder prefillPool(
@@ -1165,6 +1189,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: producer (advanced)
          */
         default AdvancedSjms2EndpointProducerBuilder responseTimeOut(
@@ -1208,6 +1233,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointProducerBuilder asyncStartListener(
@@ -1235,6 +1261,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointProducerBuilder asyncStopListener(
@@ -1262,6 +1289,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointProducerBuilder basicPropertyBinding(
@@ -1456,6 +1484,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointProducerBuilder includeAllJMSXProperties(
@@ -1529,6 +1558,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSjms2EndpointProducerBuilder mapJmsMessage(
@@ -1590,6 +1620,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedSjms2EndpointProducerBuilder sharedJMSSession(
@@ -1630,6 +1661,7 @@ public interface Sjms2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * 
+         * Default: AUTO_ACKNOWLEDGE
          * Group: common
          */
         default Sjms2EndpointBuilder acknowledgementMode(
@@ -1710,6 +1742,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointBuilder asyncStartListener(
@@ -1737,6 +1770,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointBuilder asyncStopListener(
@@ -1764,6 +1798,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointBuilder basicPropertyBinding(
@@ -1958,6 +1993,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjms2EndpointBuilder includeAllJMSXProperties(
@@ -2030,6 +2066,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSjms2EndpointBuilder mapJmsMessage(String mapJmsMessage) {
@@ -2090,6 +2127,7 @@ public interface Sjms2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedSjms2EndpointBuilder sharedJMSSession(

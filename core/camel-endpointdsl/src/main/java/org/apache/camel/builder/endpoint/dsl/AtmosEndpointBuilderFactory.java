@@ -115,6 +115,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtmosEndpointConsumerBuilder bridgeErrorHandler(
@@ -162,6 +163,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default AtmosEndpointConsumerBuilder sslValidation(String sslValidation) {
@@ -256,6 +258,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosEndpointConsumerBuilder basicPropertyBinding(
@@ -283,6 +286,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosEndpointConsumerBuilder synchronous(
@@ -390,6 +394,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AtmosEndpointProducerBuilder lazyStartProducer(
@@ -437,6 +442,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default AtmosEndpointProducerBuilder sslValidation(String sslValidation) {
@@ -474,6 +480,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosEndpointProducerBuilder basicPropertyBinding(
@@ -501,6 +508,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosEndpointProducerBuilder synchronous(
@@ -614,6 +622,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default AtmosEndpointBuilder sslValidation(String sslValidation) {
@@ -651,6 +660,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder basicPropertyBinding(
@@ -677,6 +687,7 @@ public interface AtmosEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtmosEndpointBuilder synchronous(String synchronous) {

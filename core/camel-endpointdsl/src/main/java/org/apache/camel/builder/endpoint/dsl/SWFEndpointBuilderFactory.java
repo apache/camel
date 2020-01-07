@@ -173,6 +173,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SWFEndpointConsumerBuilder bridgeErrorHandler(
@@ -209,6 +210,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: activity
          */
         default SWFEndpointConsumerBuilder activityThreadPoolSize(
@@ -416,6 +418,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder basicPropertyBinding(
@@ -530,6 +533,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder synchronous(
@@ -682,6 +686,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SWFEndpointProducerBuilder lazyStartProducer(
@@ -865,6 +870,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder basicPropertyBinding(
@@ -979,6 +985,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder synchronous(
@@ -1150,6 +1157,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder basicPropertyBinding(
@@ -1263,6 +1271,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder synchronous(String synchronous) {

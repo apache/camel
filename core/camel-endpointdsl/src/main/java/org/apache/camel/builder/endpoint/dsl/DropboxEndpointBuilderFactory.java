@@ -199,6 +199,7 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DropboxEndpointConsumerBuilder bridgeErrorHandler(
@@ -294,6 +295,7 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDropboxEndpointConsumerBuilder basicPropertyBinding(
@@ -321,6 +323,7 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDropboxEndpointConsumerBuilder synchronous(
@@ -500,6 +503,7 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DropboxEndpointProducerBuilder lazyStartProducer(
@@ -538,6 +542,7 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDropboxEndpointProducerBuilder basicPropertyBinding(
@@ -565,6 +570,7 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDropboxEndpointProducerBuilder synchronous(
@@ -738,6 +744,7 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDropboxEndpointBuilder basicPropertyBinding(
@@ -764,6 +771,7 @@ public interface DropboxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDropboxEndpointBuilder synchronous(String synchronous) {

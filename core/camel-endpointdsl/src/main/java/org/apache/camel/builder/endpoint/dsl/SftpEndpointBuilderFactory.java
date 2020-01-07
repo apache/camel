@@ -95,6 +95,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SftpEndpointConsumerBuilder disconnect(String disconnect) {
@@ -196,6 +197,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: common
          */
         default SftpEndpointConsumerBuilder jschLoggingLevel(
@@ -226,6 +228,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
+         * Default: UNIX
          * Group: common
          */
         default SftpEndpointConsumerBuilder separator(String separator) {
@@ -262,6 +265,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder bridgeErrorHandler(
@@ -286,6 +290,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder delete(String delete) {
@@ -344,6 +349,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder noop(String noop) {
@@ -404,6 +410,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder preSort(String preSort) {
@@ -429,6 +436,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder recursive(String recursive) {
@@ -455,6 +463,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -486,6 +495,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SftpEndpointConsumerBuilder streamDownload(String streamDownload) {
@@ -523,6 +533,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default SftpEndpointConsumerBuilder antFilterCaseSensitive(
@@ -570,6 +581,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default SftpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
@@ -698,6 +710,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: filter
          */
         default SftpEndpointConsumerBuilder idempotent(String idempotent) {
@@ -798,6 +811,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2147483647
          * Group: filter
          */
         default SftpEndpointConsumerBuilder maxDepth(String maxDepth) {
@@ -1014,6 +1028,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockCheckInterval(
@@ -1051,6 +1066,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
@@ -1080,6 +1096,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockIdempotentReleaseAsync(
@@ -1218,6 +1235,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockLoggingLevel(
@@ -1253,6 +1271,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMarkerFile(
@@ -1287,6 +1306,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
@@ -1317,6 +1337,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockMinLength(
@@ -1358,6 +1379,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnCommit(
@@ -1391,6 +1413,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockRemoveOnRollback(
@@ -1437,6 +1460,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: lock
          */
         default SftpEndpointConsumerBuilder readLockTimeout(
@@ -1551,6 +1575,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder delay(String delay) {
@@ -1576,6 +1601,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder greedy(String greedy) {
@@ -1603,6 +1629,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -1630,6 +1657,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -1657,6 +1685,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder runLoggingLevel(
@@ -1754,6 +1783,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -1778,6 +1808,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1803,6 +1834,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SftpEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -1826,6 +1858,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: sort
          */
         default SftpEndpointConsumerBuilder shuffle(String shuffle) {
@@ -2103,6 +2136,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default SftpEndpointConsumerBuilder useUserKnownHostsFile(
@@ -2153,6 +2187,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder fastExistsCheck(
@@ -2185,6 +2220,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder download(String download) {
@@ -2274,6 +2310,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
@@ -2457,6 +2494,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedSftpEndpointConsumerBuilder useList(String useList) {
@@ -2487,6 +2525,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder autoCreate(String autoCreate) {
@@ -2513,6 +2552,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder basicPropertyBinding(
@@ -2609,6 +2649,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder connectTimeout(
@@ -2717,6 +2758,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder serverAliveCountMax(
@@ -2777,6 +2819,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder soTimeout(String soTimeout) {
@@ -2808,6 +2851,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder stepwise(String stepwise) {
@@ -2834,6 +2878,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder synchronous(
@@ -2867,6 +2912,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder throwExceptionOnConnectFailed(
@@ -2891,6 +2937,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedSftpEndpointConsumerBuilder timeout(String timeout) {
@@ -2950,6 +2997,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SftpEndpointProducerBuilder disconnect(String disconnect) {
@@ -3051,6 +3099,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: common
          */
         default SftpEndpointProducerBuilder jschLoggingLevel(
@@ -3081,6 +3130,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
+         * Default: UNIX
          * Group: common
          */
         default SftpEndpointProducerBuilder separator(String separator) {
@@ -3134,6 +3184,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
+         * Default: Override
          * Group: producer
          */
         default SftpEndpointProducerBuilder fileExist(String fileExist) {
@@ -3167,6 +3218,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SftpEndpointProducerBuilder flatten(String flatten) {
@@ -3201,6 +3253,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default SftpEndpointProducerBuilder jailStartingDirectory(
@@ -3242,6 +3295,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SftpEndpointProducerBuilder lazyStartProducer(
@@ -3553,6 +3607,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default SftpEndpointProducerBuilder useUserKnownHostsFile(
@@ -3603,6 +3658,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder fastExistsCheck(
@@ -3640,6 +3696,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder allowNullBody(
@@ -3680,6 +3737,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder disconnectOnBatchComplete(
@@ -3729,6 +3787,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder eagerDeleteTargetFile(
@@ -3766,6 +3825,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder keepLastModified(
@@ -3828,6 +3888,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedSftpEndpointProducerBuilder sendNoop(String sendNoop) {
@@ -3858,6 +3919,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder autoCreate(String autoCreate) {
@@ -3884,6 +3946,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder basicPropertyBinding(
@@ -3980,6 +4043,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder connectTimeout(
@@ -4088,6 +4152,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder serverAliveCountMax(
@@ -4148,6 +4213,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder soTimeout(String soTimeout) {
@@ -4179,6 +4245,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder stepwise(String stepwise) {
@@ -4205,6 +4272,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder synchronous(
@@ -4238,6 +4306,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder throwExceptionOnConnectFailed(
@@ -4262,6 +4331,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedSftpEndpointProducerBuilder timeout(String timeout) {
@@ -4321,6 +4391,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SftpEndpointBuilder disconnect(String disconnect) {
@@ -4422,6 +4493,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: common
          */
         default SftpEndpointBuilder jschLoggingLevel(String jschLoggingLevel) {
@@ -4451,6 +4523,7 @@ public interface SftpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
+         * Default: UNIX
          * Group: common
          */
         default SftpEndpointBuilder separator(String separator) {
@@ -4674,6 +4747,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default SftpEndpointBuilder useUserKnownHostsFile(
@@ -4724,6 +4798,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedSftpEndpointBuilder fastExistsCheck(
@@ -4754,6 +4829,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder autoCreate(String autoCreate) {
@@ -4780,6 +4856,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder basicPropertyBinding(
@@ -4871,6 +4948,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder connectTimeout(String connectTimeout) {
@@ -4976,6 +5054,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder serverAliveCountMax(
@@ -5036,6 +5115,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder soTimeout(String soTimeout) {
@@ -5067,6 +5147,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder stepwise(String stepwise) {
@@ -5092,6 +5173,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder synchronous(String synchronous) {
@@ -5124,6 +5206,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder throwExceptionOnConnectFailed(
@@ -5148,6 +5231,7 @@ public interface SftpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedSftpEndpointBuilder timeout(String timeout) {

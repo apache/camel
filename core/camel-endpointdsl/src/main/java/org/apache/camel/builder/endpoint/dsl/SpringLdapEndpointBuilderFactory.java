@@ -74,6 +74,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SpringLdapEndpointBuilder lazyStartProducer(
@@ -152,6 +153,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringLdapEndpointBuilder basicPropertyBinding(
@@ -179,6 +181,7 @@ public interface SpringLdapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringLdapEndpointBuilder synchronous(String synchronous) {

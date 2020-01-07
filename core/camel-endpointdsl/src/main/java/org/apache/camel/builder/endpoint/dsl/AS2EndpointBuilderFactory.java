@@ -576,6 +576,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AS2EndpointConsumerBuilder bridgeErrorHandler(
@@ -603,6 +604,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AS2EndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -717,6 +719,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder delay(String delay) {
@@ -742,6 +745,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder greedy(String greedy) {
@@ -769,6 +773,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -796,6 +801,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -823,6 +829,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder runLoggingLevel(
@@ -919,6 +926,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -943,6 +951,7 @@ public interface AS2EndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -968,6 +977,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -1094,6 +1104,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointConsumerBuilder basicPropertyBinding(
@@ -1121,6 +1132,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointConsumerBuilder synchronous(
@@ -1670,6 +1682,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AS2EndpointProducerBuilder lazyStartProducer(
@@ -1708,6 +1721,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointProducerBuilder basicPropertyBinding(
@@ -1735,6 +1749,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointProducerBuilder synchronous(
@@ -2274,6 +2289,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointBuilder basicPropertyBinding(
@@ -2300,6 +2316,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointBuilder synchronous(String synchronous) {

@@ -100,6 +100,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder bridgeErrorHandler(
@@ -157,6 +158,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder markAsRead(String markAsRead) {
@@ -180,6 +182,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder maxResults(String maxResults) {
@@ -231,6 +234,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleMailStreamEndpointBuilder sendEmptyMessageWhenIdle(
@@ -345,6 +349,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder delay(String delay) {
@@ -370,6 +375,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder greedy(String greedy) {
@@ -397,6 +403,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder initialDelay(String initialDelay) {
@@ -424,6 +431,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder repeatCount(String repeatCount) {
@@ -451,6 +459,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder runLoggingLevel(
@@ -548,6 +557,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder startScheduler(
@@ -573,6 +583,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder timeUnit(String timeUnit) {
@@ -599,6 +610,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleMailStreamEndpointBuilder useFixedDelay(
@@ -726,6 +738,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleMailStreamEndpointBuilder basicPropertyBinding(
@@ -753,6 +766,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleMailStreamEndpointBuilder synchronous(

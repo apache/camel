@@ -130,6 +130,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default HazelcastTopicEndpointConsumerBuilder reliable(String reliable) {
@@ -166,6 +167,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HazelcastTopicEndpointConsumerBuilder bridgeErrorHandler(
@@ -262,6 +264,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointConsumerBuilder basicPropertyBinding(
@@ -289,6 +292,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointConsumerBuilder synchronous(
@@ -396,6 +400,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default HazelcastTopicEndpointProducerBuilder reliable(String reliable) {
@@ -436,6 +441,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HazelcastTopicEndpointProducerBuilder lazyStartProducer(
@@ -475,6 +481,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointProducerBuilder basicPropertyBinding(
@@ -502,6 +509,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointProducerBuilder synchronous(
@@ -609,6 +617,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default HazelcastTopicEndpointBuilder reliable(String reliable) {
@@ -646,6 +655,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointBuilder basicPropertyBinding(
@@ -673,6 +683,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointBuilder synchronous(

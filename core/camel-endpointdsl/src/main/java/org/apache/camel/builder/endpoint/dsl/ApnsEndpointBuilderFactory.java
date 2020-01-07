@@ -88,6 +88,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ApnsEndpointConsumerBuilder bridgeErrorHandler(
@@ -115,6 +116,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ApnsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -229,6 +231,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder delay(String delay) {
@@ -254,6 +257,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder greedy(String greedy) {
@@ -281,6 +285,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -308,6 +313,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -335,6 +341,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder runLoggingLevel(
@@ -432,6 +439,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -456,6 +464,7 @@ public interface ApnsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -481,6 +490,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default ApnsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -607,6 +617,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedApnsEndpointConsumerBuilder basicPropertyBinding(
@@ -634,6 +645,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedApnsEndpointConsumerBuilder synchronous(
@@ -698,6 +710,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ApnsEndpointProducerBuilder lazyStartProducer(
@@ -736,6 +749,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedApnsEndpointProducerBuilder basicPropertyBinding(
@@ -763,6 +777,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedApnsEndpointProducerBuilder synchronous(
@@ -824,6 +839,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedApnsEndpointBuilder basicPropertyBinding(
@@ -850,6 +866,7 @@ public interface ApnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedApnsEndpointBuilder synchronous(String synchronous) {

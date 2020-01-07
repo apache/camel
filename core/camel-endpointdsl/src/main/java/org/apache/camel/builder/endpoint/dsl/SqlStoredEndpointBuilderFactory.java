@@ -55,6 +55,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder batch(String batch) {
@@ -101,6 +102,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder function(String function) {
@@ -141,6 +143,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder lazyStartProducer(
@@ -167,6 +170,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder noop(String noop) {
@@ -211,6 +215,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder useMessageBodyForTemplate(
@@ -249,6 +254,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
@@ -275,6 +281,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder synchronous(String synchronous) {

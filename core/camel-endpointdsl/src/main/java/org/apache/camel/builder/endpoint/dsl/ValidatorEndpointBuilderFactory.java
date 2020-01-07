@@ -54,6 +54,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ValidatorEndpointBuilder failOnNullBody(String failOnNullBody) {
@@ -78,6 +79,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ValidatorEndpointBuilder failOnNullHeader(
@@ -130,6 +132,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ValidatorEndpointBuilder lazyStartProducer(
@@ -168,6 +171,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder basicPropertyBinding(
@@ -322,6 +326,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder synchronous(String synchronous) {
@@ -350,6 +355,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder useSharedSchema(

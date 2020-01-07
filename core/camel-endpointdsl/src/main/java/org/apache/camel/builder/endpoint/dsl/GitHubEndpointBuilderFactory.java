@@ -128,6 +128,7 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GitHubEndpointConsumerBuilder bridgeErrorHandler(
@@ -223,6 +224,7 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitHubEndpointConsumerBuilder basicPropertyBinding(
@@ -250,6 +252,7 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitHubEndpointConsumerBuilder synchronous(
@@ -370,6 +373,7 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GitHubEndpointProducerBuilder lazyStartProducer(
@@ -430,6 +434,7 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitHubEndpointProducerBuilder basicPropertyBinding(
@@ -457,6 +462,7 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitHubEndpointProducerBuilder synchronous(
@@ -563,6 +569,7 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitHubEndpointBuilder basicPropertyBinding(
@@ -589,6 +596,7 @@ public interface GitHubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitHubEndpointBuilder synchronous(String synchronous) {

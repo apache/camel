@@ -108,6 +108,7 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KeystoneEndpointBuilder lazyStartProducer(
@@ -205,6 +206,7 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
@@ -231,6 +233,7 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder synchronous(String synchronous) {

@@ -98,6 +98,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ZendeskEndpointConsumerBuilder bridgeErrorHandler(
@@ -125,6 +126,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ZendeskEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -239,6 +241,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder delay(String delay) {
@@ -264,6 +267,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder greedy(String greedy) {
@@ -291,6 +295,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -318,6 +323,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -345,6 +351,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder runLoggingLevel(
@@ -442,6 +449,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder startScheduler(
@@ -467,6 +475,7 @@ public interface ZendeskEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -493,6 +502,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default ZendeskEndpointConsumerBuilder useFixedDelay(
@@ -664,6 +674,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZendeskEndpointConsumerBuilder basicPropertyBinding(
@@ -691,6 +702,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZendeskEndpointConsumerBuilder synchronous(
@@ -765,6 +777,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ZendeskEndpointProducerBuilder lazyStartProducer(
@@ -847,6 +860,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZendeskEndpointProducerBuilder basicPropertyBinding(
@@ -874,6 +888,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZendeskEndpointProducerBuilder synchronous(
@@ -989,6 +1004,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZendeskEndpointBuilder basicPropertyBinding(
@@ -1015,6 +1031,7 @@ public interface ZendeskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedZendeskEndpointBuilder synchronous(String synchronous) {

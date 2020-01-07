@@ -81,6 +81,7 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DdbEndpointBuilder consistentRead(String consistentRead) {
@@ -142,6 +143,7 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DdbEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -167,6 +169,7 @@ public interface DdbEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.ddb.DdbOperations</code> type.
          * 
+         * Default: PutItem
          * Group: producer
          */
         default DdbEndpointBuilder operation(String operation) {
@@ -231,6 +234,7 @@ public interface DdbEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default DdbEndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -349,6 +353,7 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDdbEndpointBuilder basicPropertyBinding(
@@ -375,6 +380,7 @@ public interface DdbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDdbEndpointBuilder synchronous(String synchronous) {

@@ -61,6 +61,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ScpEndpointBuilder disconnect(String disconnect) {
@@ -159,6 +160,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ScpEndpointBuilder flatten(String flatten) {
@@ -193,6 +195,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ScpEndpointBuilder jailStartingDirectory(
@@ -233,6 +236,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ScpEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -376,6 +380,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default ScpEndpointBuilder useUserKnownHostsFile(
@@ -423,6 +428,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedScpEndpointBuilder allowNullBody(String allowNullBody) {
@@ -451,6 +457,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedScpEndpointBuilder disconnectOnBatchComplete(
@@ -508,6 +515,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder basicPropertyBinding(
@@ -534,6 +542,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder connectTimeout(String connectTimeout) {
@@ -565,6 +574,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder soTimeout(String soTimeout) {
@@ -590,6 +600,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder synchronous(String synchronous) {
@@ -613,6 +624,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder timeout(String timeout) {

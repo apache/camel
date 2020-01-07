@@ -54,6 +54,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default PrinterEndpointBuilder copies(String copies) {
@@ -128,6 +129,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PrinterEndpointBuilder lazyStartProducer(
@@ -216,6 +218,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default PrinterEndpointBuilder sendToPrinter(String sendToPrinter) {
@@ -266,6 +269,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder basicPropertyBinding(
@@ -292,6 +296,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder synchronous(String synchronous) {

@@ -70,6 +70,7 @@ public interface DnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DnsEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -107,6 +108,7 @@ public interface DnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDnsEndpointBuilder basicPropertyBinding(
@@ -133,6 +135,7 @@ public interface DnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDnsEndpointBuilder synchronous(String synchronous) {

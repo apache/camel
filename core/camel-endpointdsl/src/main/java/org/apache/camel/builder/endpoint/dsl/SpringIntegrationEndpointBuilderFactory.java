@@ -62,6 +62,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SpringIntegrationEndpointConsumerBuilder inOut(String inOut) {
@@ -98,6 +99,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SpringIntegrationEndpointConsumerBuilder bridgeErrorHandler(
@@ -207,6 +209,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder basicPropertyBinding(
@@ -234,6 +237,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointConsumerBuilder synchronous(
@@ -273,6 +277,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SpringIntegrationEndpointProducerBuilder inOut(String inOut) {
@@ -313,6 +318,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SpringIntegrationEndpointProducerBuilder lazyStartProducer(
@@ -365,6 +371,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder basicPropertyBinding(
@@ -392,6 +399,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointProducerBuilder synchronous(
@@ -431,6 +439,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SpringIntegrationEndpointBuilder inOut(String inOut) {
@@ -468,6 +477,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointBuilder basicPropertyBinding(
@@ -495,6 +505,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringIntegrationEndpointBuilder synchronous(

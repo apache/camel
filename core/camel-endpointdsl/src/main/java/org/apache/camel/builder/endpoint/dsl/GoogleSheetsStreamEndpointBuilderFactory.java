@@ -102,6 +102,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder bridgeErrorHandler(
@@ -150,6 +151,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder includeGridData(
@@ -191,6 +193,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(String maxResults) {
@@ -272,6 +275,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder sendEmptyMessageWhenIdle(
@@ -303,6 +307,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder splitResults(
@@ -443,6 +448,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder delay(String delay) {
@@ -468,6 +474,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder greedy(String greedy) {
@@ -495,6 +502,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder initialDelay(
@@ -523,6 +531,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder repeatCount(String repeatCount) {
@@ -550,6 +559,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder runLoggingLevel(
@@ -647,6 +657,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder startScheduler(
@@ -672,6 +683,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder timeUnit(String timeUnit) {
@@ -698,6 +710,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder useFixedDelay(
@@ -825,6 +838,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
@@ -852,6 +866,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(

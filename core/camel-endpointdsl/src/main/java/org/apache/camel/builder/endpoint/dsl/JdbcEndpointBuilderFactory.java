@@ -57,6 +57,7 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default JdbcEndpointBuilder allowNamedParameters(
@@ -97,6 +98,7 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JdbcEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -134,6 +136,7 @@ public interface JdbcEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jdbc.JdbcOutputType</code> type.
          * 
+         * Default: SelectList
          * Group: producer
          */
         default JdbcEndpointBuilder outputType(String outputType) {
@@ -222,6 +225,7 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default JdbcEndpointBuilder resetAutoCommit(String resetAutoCommit) {
@@ -245,6 +249,7 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JdbcEndpointBuilder transacted(String transacted) {
@@ -273,6 +278,7 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JdbcEndpointBuilder useGetBytesForBlob(String useGetBytesForBlob) {
@@ -303,6 +309,7 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JdbcEndpointBuilder useHeadersAsParameters(
@@ -338,6 +345,7 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default JdbcEndpointBuilder useJDBC4ColumnNameAndLabelSemantics(
@@ -376,6 +384,7 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder basicPropertyBinding(
@@ -462,6 +471,7 @@ public interface JdbcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJdbcEndpointBuilder synchronous(String synchronous) {

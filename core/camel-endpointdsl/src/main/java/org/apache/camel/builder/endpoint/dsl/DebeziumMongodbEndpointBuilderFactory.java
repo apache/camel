@@ -73,6 +73,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DebeziumMongodbEndpointBuilder bridgeErrorHandler(
@@ -150,6 +151,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default DebeziumMongodbEndpointBuilder offsetCommitTimeoutMs(
@@ -175,6 +177,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 60000
          * Group: consumer
          */
         default DebeziumMongodbEndpointBuilder offsetFlushIntervalMs(
@@ -321,6 +324,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder connectBackoffInitialDelayMs(
@@ -350,6 +354,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 120000
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder connectBackoffMaxDelayMs(
@@ -383,6 +388,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 16
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder connectMaxAttempts(
@@ -474,6 +480,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder heartbeatIntervalMs(
@@ -515,6 +522,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder initialSyncMaxThreads(
@@ -539,6 +547,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2048
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder maxBatchSize(String maxBatchSize) {
@@ -566,6 +575,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 8192
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder maxQueueSize(String maxQueueSize) {
@@ -608,6 +618,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder mongodbMembersAutoDiscover(
@@ -661,6 +672,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder mongodbSslEnabled(
@@ -688,6 +700,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder mongodbSslInvalidHostnameAllowed(
@@ -726,6 +739,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder pollIntervalMs(
@@ -751,6 +765,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder snapshotDelayMs(
@@ -839,6 +854,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: mongodb
          */
         default DebeziumMongodbEndpointBuilder tombstonesOnDelete(
@@ -935,6 +951,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumMongodbEndpointBuilder basicPropertyBinding(
@@ -962,6 +979,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumMongodbEndpointBuilder synchronous(

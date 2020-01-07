@@ -124,6 +124,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesPersistentVolumesEndpointBuilder lazyStartProducer(
@@ -357,6 +358,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder basicPropertyBinding(
@@ -411,6 +413,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(

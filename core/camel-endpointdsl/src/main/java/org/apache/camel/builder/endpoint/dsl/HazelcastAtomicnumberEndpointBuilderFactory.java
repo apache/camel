@@ -146,6 +146,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HazelcastAtomicnumberEndpointBuilder lazyStartProducer(
@@ -184,6 +185,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder basicPropertyBinding(
@@ -211,6 +213,7 @@ public interface HazelcastAtomicnumberEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastAtomicnumberEndpointBuilder synchronous(

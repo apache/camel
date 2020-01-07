@@ -73,6 +73,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 8
          * Group: producer
          */
         default CMEndpointBuilder defaultMaxNumberOfParts(
@@ -113,6 +114,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CMEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -149,6 +151,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CMEndpointBuilder testConnectionOnStartup(
@@ -187,6 +190,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMEndpointBuilder basicPropertyBinding(
@@ -213,6 +217,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMEndpointBuilder synchronous(String synchronous) {

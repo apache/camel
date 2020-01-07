@@ -64,6 +64,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default EtcdEndpointConsumerBuilder recursive(String recursive) {
@@ -146,6 +147,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default EtcdEndpointConsumerBuilder bridgeErrorHandler(
@@ -171,6 +173,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default EtcdEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
@@ -198,6 +201,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default EtcdEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -312,6 +316,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder delay(String delay) {
@@ -337,6 +342,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder greedy(String greedy) {
@@ -364,6 +370,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -391,6 +398,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -418,6 +426,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder runLoggingLevel(
@@ -515,6 +524,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -539,6 +549,7 @@ public interface EtcdEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -564,6 +575,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -703,6 +715,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: 0
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder fromIndex(String fromIndex) {
@@ -761,6 +774,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointConsumerBuilder basicPropertyBinding(
@@ -788,6 +802,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointConsumerBuilder synchronous(
@@ -823,6 +838,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default EtcdEndpointProducerBuilder recursive(String recursive) {
@@ -909,6 +925,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default EtcdEndpointProducerBuilder lazyStartProducer(
@@ -1018,6 +1035,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointProducerBuilder basicPropertyBinding(
@@ -1045,6 +1063,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointProducerBuilder synchronous(
@@ -1080,6 +1099,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default EtcdEndpointBuilder recursive(String recursive) {
@@ -1211,6 +1231,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointBuilder basicPropertyBinding(
@@ -1237,6 +1258,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointBuilder synchronous(String synchronous) {

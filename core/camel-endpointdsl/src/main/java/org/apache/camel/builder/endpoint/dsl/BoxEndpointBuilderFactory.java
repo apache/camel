@@ -121,6 +121,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default BoxEndpointConsumerBuilder bridgeErrorHandler(
@@ -148,6 +149,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default BoxEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -260,6 +262,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder greedy(String greedy) {
@@ -287,6 +290,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -314,6 +318,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder runLoggingLevel(
@@ -411,6 +416,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -436,6 +442,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -489,6 +496,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder delay(String delay) {
@@ -516,6 +524,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -539,6 +548,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default BoxEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -748,6 +758,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder basicPropertyBinding(
@@ -801,6 +812,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBoxEndpointConsumerBuilder synchronous(
@@ -854,6 +866,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
+         * Default: RSA_SHA_256
          * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder encryptionAlgorithm(
@@ -879,6 +892,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: security
          */
         default AdvancedBoxEndpointConsumerBuilder maxCacheEntries(
@@ -975,6 +989,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BoxEndpointProducerBuilder lazyStartProducer(
@@ -1122,6 +1137,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder basicPropertyBinding(
@@ -1175,6 +1191,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBoxEndpointProducerBuilder synchronous(
@@ -1228,6 +1245,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
+         * Default: RSA_SHA_256
          * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder encryptionAlgorithm(
@@ -1253,6 +1271,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: security
          */
         default AdvancedBoxEndpointProducerBuilder maxCacheEntries(
@@ -1453,6 +1472,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder basicPropertyBinding(
@@ -1505,6 +1525,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBoxEndpointBuilder synchronous(String synchronous) {
@@ -1557,6 +1578,7 @@ public interface BoxEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.box.sdk.EncryptionAlgorithm</code> type.
          * 
+         * Default: RSA_SHA_256
          * Group: security
          */
         default AdvancedBoxEndpointBuilder encryptionAlgorithm(
@@ -1581,6 +1603,7 @@ public interface BoxEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: security
          */
         default AdvancedBoxEndpointBuilder maxCacheEntries(

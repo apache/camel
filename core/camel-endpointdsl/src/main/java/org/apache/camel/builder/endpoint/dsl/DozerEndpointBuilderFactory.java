@@ -71,6 +71,7 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DozerEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -207,6 +208,7 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDozerEndpointBuilder basicPropertyBinding(
@@ -233,6 +235,7 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDozerEndpointBuilder synchronous(String synchronous) {

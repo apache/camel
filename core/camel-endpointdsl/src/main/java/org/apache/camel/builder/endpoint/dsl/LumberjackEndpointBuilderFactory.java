@@ -72,6 +72,7 @@ public interface LumberjackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default LumberjackEndpointBuilder bridgeErrorHandler(
@@ -193,6 +194,7 @@ public interface LumberjackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLumberjackEndpointBuilder basicPropertyBinding(
@@ -220,6 +222,7 @@ public interface LumberjackEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLumberjackEndpointBuilder synchronous(String synchronous) {

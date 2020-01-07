@@ -54,6 +54,7 @@ public interface VelocityEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default VelocityEndpointBuilder contentCache(String contentCache) {
@@ -105,6 +106,7 @@ public interface VelocityEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default VelocityEndpointBuilder lazyStartProducer(
@@ -131,6 +133,7 @@ public interface VelocityEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default VelocityEndpointBuilder loaderCache(String loaderCache) {
@@ -180,6 +183,7 @@ public interface VelocityEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder basicPropertyBinding(
@@ -206,6 +210,7 @@ public interface VelocityEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedVelocityEndpointBuilder synchronous(String synchronous) {

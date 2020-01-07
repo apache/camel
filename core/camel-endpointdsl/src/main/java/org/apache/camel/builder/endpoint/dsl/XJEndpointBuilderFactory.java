@@ -88,6 +88,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XJEndpointBuilder allowStAX(String allowStAX) {
@@ -119,6 +120,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XJEndpointBuilder contentCache(String contentCache) {
@@ -148,6 +150,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XJEndpointBuilder deleteOutputFile(String deleteOutputFile) {
@@ -171,6 +174,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XJEndpointBuilder failOnNullBody(String failOnNullBody) {
@@ -210,6 +214,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XJEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -247,6 +252,7 @@ public interface XJEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
          * 
+         * Default: string
          * Group: producer
          */
         default XJEndpointBuilder output(String output) {
@@ -272,6 +278,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default XJEndpointBuilder transformerCacheSize(
@@ -367,6 +374,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder basicPropertyBinding(
@@ -481,6 +489,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder synchronous(String synchronous) {

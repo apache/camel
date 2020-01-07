@@ -54,6 +54,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default FlinkEndpointBuilder collect(String collect) {
@@ -194,6 +195,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FlinkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -231,6 +233,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder basicPropertyBinding(
@@ -257,6 +260,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder synchronous(String synchronous) {

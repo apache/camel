@@ -72,6 +72,7 @@ public interface KuduEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KuduEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -133,6 +134,7 @@ public interface KuduEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKuduEndpointBuilder basicPropertyBinding(
@@ -159,6 +161,7 @@ public interface KuduEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKuduEndpointBuilder synchronous(String synchronous) {

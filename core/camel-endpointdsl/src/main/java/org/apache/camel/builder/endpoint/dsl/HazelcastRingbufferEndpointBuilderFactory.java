@@ -146,6 +146,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HazelcastRingbufferEndpointBuilder lazyStartProducer(
@@ -184,6 +185,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastRingbufferEndpointBuilder basicPropertyBinding(
@@ -211,6 +213,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastRingbufferEndpointBuilder synchronous(

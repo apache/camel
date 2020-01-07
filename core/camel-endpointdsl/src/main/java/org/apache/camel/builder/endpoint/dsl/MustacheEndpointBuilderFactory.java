@@ -54,6 +54,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MustacheEndpointBuilder contentCache(String contentCache) {
@@ -117,6 +118,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MustacheEndpointBuilder lazyStartProducer(
@@ -167,6 +169,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMustacheEndpointBuilder basicPropertyBinding(
@@ -193,6 +196,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMustacheEndpointBuilder synchronous(String synchronous) {

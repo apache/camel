@@ -77,6 +77,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default PahoEndpointConsumerBuilder automaticReconnect(
@@ -133,6 +134,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default PahoEndpointConsumerBuilder cleanSession(String cleanSession) {
@@ -178,6 +180,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30
          * Group: common
          */
         default PahoEndpointConsumerBuilder connectionTimeout(
@@ -232,6 +235,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
         default PahoEndpointConsumerBuilder keepAliveInterval(
@@ -258,6 +262,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: common
          */
         default PahoEndpointConsumerBuilder maxInflight(String maxInflight) {
@@ -282,6 +287,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 128000
          * Group: common
          */
         default PahoEndpointConsumerBuilder maxReconnectDelay(
@@ -337,6 +343,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
+         * Default: MEMORY
          * Group: common
          */
         default PahoEndpointConsumerBuilder persistence(String persistence) {
@@ -360,6 +367,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default PahoEndpointConsumerBuilder qos(String qos) {
@@ -383,6 +391,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default PahoEndpointConsumerBuilder retained(String retained) {
@@ -499,6 +508,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default PahoEndpointConsumerBuilder willRetained(String willRetained) {
@@ -551,6 +561,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PahoEndpointConsumerBuilder bridgeErrorHandler(
@@ -578,6 +589,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default PahoEndpointConsumerBuilder httpsHostnameVerificationEnabled(
@@ -855,6 +867,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPahoEndpointConsumerBuilder basicPropertyBinding(
@@ -933,6 +946,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedPahoEndpointConsumerBuilder executorServiceTimeout(
@@ -960,6 +974,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPahoEndpointConsumerBuilder synchronous(
@@ -1012,6 +1027,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default PahoEndpointProducerBuilder automaticReconnect(
@@ -1068,6 +1084,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default PahoEndpointProducerBuilder cleanSession(String cleanSession) {
@@ -1113,6 +1130,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30
          * Group: common
          */
         default PahoEndpointProducerBuilder connectionTimeout(
@@ -1167,6 +1185,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
         default PahoEndpointProducerBuilder keepAliveInterval(
@@ -1193,6 +1212,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: common
          */
         default PahoEndpointProducerBuilder maxInflight(String maxInflight) {
@@ -1217,6 +1237,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 128000
          * Group: common
          */
         default PahoEndpointProducerBuilder maxReconnectDelay(
@@ -1272,6 +1293,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
+         * Default: MEMORY
          * Group: common
          */
         default PahoEndpointProducerBuilder persistence(String persistence) {
@@ -1295,6 +1317,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default PahoEndpointProducerBuilder qos(String qos) {
@@ -1318,6 +1341,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default PahoEndpointProducerBuilder retained(String retained) {
@@ -1434,6 +1458,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default PahoEndpointProducerBuilder willRetained(String willRetained) {
@@ -1490,6 +1515,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PahoEndpointProducerBuilder lazyStartProducer(
@@ -1517,6 +1543,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default PahoEndpointProducerBuilder httpsHostnameVerificationEnabled(
@@ -1737,6 +1764,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPahoEndpointProducerBuilder basicPropertyBinding(
@@ -1815,6 +1843,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedPahoEndpointProducerBuilder executorServiceTimeout(
@@ -1842,6 +1871,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPahoEndpointProducerBuilder synchronous(
@@ -1894,6 +1924,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default PahoEndpointBuilder automaticReconnect(String automaticReconnect) {
@@ -1949,6 +1980,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default PahoEndpointBuilder cleanSession(String cleanSession) {
@@ -1993,6 +2025,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30
          * Group: common
          */
         default PahoEndpointBuilder connectionTimeout(String connectionTimeout) {
@@ -2045,6 +2078,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
         default PahoEndpointBuilder keepAliveInterval(String keepAliveInterval) {
@@ -2070,6 +2104,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: common
          */
         default PahoEndpointBuilder maxInflight(String maxInflight) {
@@ -2093,6 +2128,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 128000
          * Group: common
          */
         default PahoEndpointBuilder maxReconnectDelay(String maxReconnectDelay) {
@@ -2146,6 +2182,7 @@ public interface PahoEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.paho.PahoPersistence</code> type.
          * 
+         * Default: MEMORY
          * Group: common
          */
         default PahoEndpointBuilder persistence(String persistence) {
@@ -2169,6 +2206,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default PahoEndpointBuilder qos(String qos) {
@@ -2192,6 +2230,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default PahoEndpointBuilder retained(String retained) {
@@ -2308,6 +2347,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default PahoEndpointBuilder willRetained(String willRetained) {
@@ -2350,6 +2390,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default PahoEndpointBuilder httpsHostnameVerificationEnabled(
@@ -2569,6 +2610,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPahoEndpointBuilder basicPropertyBinding(
@@ -2647,6 +2689,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedPahoEndpointBuilder executorServiceTimeout(
@@ -2673,6 +2716,7 @@ public interface PahoEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPahoEndpointBuilder synchronous(String synchronous) {

@@ -62,6 +62,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default IgniteCacheEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
@@ -89,6 +90,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IgniteCacheEndpointConsumerBuilder treatCollectionsAsCacheObjects(
@@ -114,6 +116,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder autoUnsubscribe(
@@ -151,6 +154,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder bridgeErrorHandler(
@@ -178,6 +182,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder fireExistingQueryResults(
@@ -207,6 +212,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder oneExchangePerUpdate(
@@ -231,6 +237,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder pageSize(String pageSize) {
@@ -281,6 +288,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: consumer
          */
         default IgniteCacheEndpointConsumerBuilder timeInterval(
@@ -376,6 +384,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder basicPropertyBinding(
@@ -403,6 +412,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteCacheEndpointConsumerBuilder synchronous(
@@ -441,6 +451,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default IgniteCacheEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
@@ -468,6 +479,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IgniteCacheEndpointProducerBuilder treatCollectionsAsCacheObjects(
@@ -523,6 +535,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.ignite.cache.CachePeekMode</code> type.
          * 
+         * Default: ALL
          * Group: producer
          */
         default IgniteCacheEndpointProducerBuilder cachePeekMode(
@@ -548,6 +561,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IgniteCacheEndpointProducerBuilder failIfInexistentCache(
@@ -589,6 +603,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IgniteCacheEndpointProducerBuilder lazyStartProducer(
@@ -654,6 +669,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteCacheEndpointProducerBuilder basicPropertyBinding(
@@ -681,6 +697,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteCacheEndpointProducerBuilder synchronous(
@@ -719,6 +736,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default IgniteCacheEndpointBuilder propagateIncomingBodyIfNoReturnValue(
@@ -746,6 +764,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IgniteCacheEndpointBuilder treatCollectionsAsCacheObjects(
@@ -784,6 +803,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteCacheEndpointBuilder basicPropertyBinding(
@@ -811,6 +831,7 @@ public interface IgniteCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteCacheEndpointBuilder synchronous(

@@ -149,6 +149,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KubernetesReplicationControllersEndpointConsumerBuilder bridgeErrorHandler(
@@ -210,6 +211,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KubernetesReplicationControllersEndpointConsumerBuilder poolSize(
@@ -475,6 +477,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder basicPropertyBinding(
@@ -529,6 +532,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesReplicationControllersEndpointConsumerBuilder synchronous(
@@ -657,6 +661,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesReplicationControllersEndpointProducerBuilder lazyStartProducer(
@@ -865,6 +870,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesReplicationControllersEndpointProducerBuilder basicPropertyBinding(
@@ -919,6 +925,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesReplicationControllersEndpointProducerBuilder synchronous(
@@ -1201,6 +1208,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesReplicationControllersEndpointBuilder basicPropertyBinding(
@@ -1255,6 +1263,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesReplicationControllersEndpointBuilder synchronous(

@@ -146,6 +146,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KubernetesNodesEndpointConsumerBuilder bridgeErrorHandler(
@@ -205,6 +206,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KubernetesNodesEndpointConsumerBuilder poolSize(String poolSize) {
@@ -467,6 +469,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder basicPropertyBinding(
@@ -521,6 +524,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointConsumerBuilder synchronous(
@@ -647,6 +651,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesNodesEndpointProducerBuilder lazyStartProducer(
@@ -853,6 +858,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder basicPropertyBinding(
@@ -907,6 +913,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointProducerBuilder synchronous(
@@ -1177,6 +1184,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointBuilder basicPropertyBinding(
@@ -1231,6 +1239,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNodesEndpointBuilder synchronous(

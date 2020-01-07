@@ -97,6 +97,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PgEventEndpointConsumerBuilder bridgeErrorHandler(
@@ -216,6 +217,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
@@ -243,6 +245,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointConsumerBuilder synchronous(
@@ -320,6 +323,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PgEventEndpointProducerBuilder lazyStartProducer(
@@ -382,6 +386,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
@@ -409,6 +414,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointProducerBuilder synchronous(
@@ -506,6 +512,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder basicPropertyBinding(
@@ -532,6 +539,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder synchronous(String synchronous) {

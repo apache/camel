@@ -120,6 +120,7 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NeutronEndpointBuilder lazyStartProducer(
@@ -217,6 +218,7 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNeutronEndpointBuilder basicPropertyBinding(
@@ -243,6 +245,7 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNeutronEndpointBuilder synchronous(String synchronous) {

@@ -102,6 +102,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder lazyStartProducer(
@@ -167,6 +168,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default KinesisFirehoseEndpointBuilder proxyProtocol(
@@ -241,6 +243,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKinesisFirehoseEndpointBuilder basicPropertyBinding(
@@ -268,6 +271,7 @@ public interface KinesisFirehoseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKinesisFirehoseEndpointBuilder synchronous(

@@ -54,6 +54,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ChunkEndpointBuilder contentCache(String contentCache) {
@@ -115,6 +116,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ChunkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -185,6 +187,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedChunkEndpointBuilder basicPropertyBinding(
@@ -211,6 +214,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedChunkEndpointBuilder synchronous(String synchronous) {

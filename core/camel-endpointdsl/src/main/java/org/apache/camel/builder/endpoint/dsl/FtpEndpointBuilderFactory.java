@@ -71,6 +71,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointConsumerBuilder binary(String binary) {
@@ -119,6 +120,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointConsumerBuilder disconnect(String disconnect) {
@@ -216,6 +218,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointConsumerBuilder passiveMode(String passiveMode) {
@@ -245,6 +248,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
+         * Default: UNIX
          * Group: common
          */
         default FtpEndpointConsumerBuilder separator(String separator) {
@@ -273,6 +277,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5
          * Group: common
          */
         default FtpEndpointConsumerBuilder transferLoggingIntervalSeconds(
@@ -301,6 +306,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: common
          */
         default FtpEndpointConsumerBuilder transferLoggingLevel(
@@ -328,6 +334,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointConsumerBuilder transferLoggingVerbose(
@@ -365,6 +372,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpEndpointConsumerBuilder bridgeErrorHandler(
@@ -389,6 +397,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpEndpointConsumerBuilder delete(String delete) {
@@ -447,6 +456,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpEndpointConsumerBuilder noop(String noop) {
@@ -507,6 +517,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpEndpointConsumerBuilder preSort(String preSort) {
@@ -532,6 +543,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpEndpointConsumerBuilder recursive(String recursive) {
@@ -563,6 +575,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpEndpointConsumerBuilder resumeDownload(String resumeDownload) {
@@ -589,6 +602,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -619,6 +633,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpEndpointConsumerBuilder streamDownload(String streamDownload) {
@@ -656,6 +671,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default FtpEndpointConsumerBuilder antFilterCaseSensitive(
@@ -703,6 +719,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default FtpEndpointConsumerBuilder eagerMaxMessagesPerPoll(
@@ -831,6 +848,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: filter
          */
         default FtpEndpointConsumerBuilder idempotent(String idempotent) {
@@ -931,6 +949,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2147483647
          * Group: filter
          */
         default FtpEndpointConsumerBuilder maxDepth(String maxDepth) {
@@ -1147,6 +1166,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: lock
          */
         default FtpEndpointConsumerBuilder readLockCheckInterval(
@@ -1184,6 +1204,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default FtpEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
@@ -1218,6 +1239,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: lock
          */
         default FtpEndpointConsumerBuilder readLockLoggingLevel(
@@ -1253,6 +1275,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default FtpEndpointConsumerBuilder readLockMarkerFile(
@@ -1287,6 +1310,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: lock
          */
         default FtpEndpointConsumerBuilder readLockMinAge(String readLockMinAge) {
@@ -1317,6 +1341,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1
          * Group: lock
          */
         default FtpEndpointConsumerBuilder readLockMinLength(
@@ -1358,6 +1383,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: lock
          */
         default FtpEndpointConsumerBuilder readLockRemoveOnCommit(
@@ -1391,6 +1417,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default FtpEndpointConsumerBuilder readLockRemoveOnRollback(
@@ -1437,6 +1464,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: lock
          */
         default FtpEndpointConsumerBuilder readLockTimeout(
@@ -1551,6 +1579,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default FtpEndpointConsumerBuilder delay(String delay) {
@@ -1576,6 +1605,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default FtpEndpointConsumerBuilder greedy(String greedy) {
@@ -1603,6 +1633,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default FtpEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -1630,6 +1661,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default FtpEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -1657,6 +1689,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default FtpEndpointConsumerBuilder runLoggingLevel(
@@ -1753,6 +1786,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FtpEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -1777,6 +1811,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default FtpEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -1802,6 +1837,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FtpEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -1825,6 +1861,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: sort
          */
         default FtpEndpointConsumerBuilder shuffle(String shuffle) {
@@ -1961,6 +1998,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedFtpEndpointConsumerBuilder fastExistsCheck(
@@ -1993,6 +2031,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFtpEndpointConsumerBuilder download(String download) {
@@ -2082,6 +2121,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFtpEndpointConsumerBuilder handleDirectoryParserAbsoluteResult(
@@ -2115,6 +2155,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFtpEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
@@ -2298,6 +2339,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedFtpEndpointConsumerBuilder useList(String useList) {
@@ -2341,6 +2383,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder autoCreate(String autoCreate) {
@@ -2367,6 +2410,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder basicPropertyBinding(
@@ -2393,6 +2437,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 131072
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder bufferSize(String bufferSize) {
@@ -2419,6 +2464,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder connectTimeout(
@@ -2626,6 +2672,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder soTimeout(String soTimeout) {
@@ -2657,6 +2704,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder stepwise(String stepwise) {
@@ -2683,6 +2731,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder synchronous(
@@ -2716,6 +2765,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder throwExceptionOnConnectFailed(
@@ -2740,6 +2790,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedFtpEndpointConsumerBuilder timeout(String timeout) {
@@ -2776,6 +2827,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointProducerBuilder binary(String binary) {
@@ -2824,6 +2876,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointProducerBuilder disconnect(String disconnect) {
@@ -2921,6 +2974,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointProducerBuilder passiveMode(String passiveMode) {
@@ -2950,6 +3004,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
+         * Default: UNIX
          * Group: common
          */
         default FtpEndpointProducerBuilder separator(String separator) {
@@ -2978,6 +3033,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5
          * Group: common
          */
         default FtpEndpointProducerBuilder transferLoggingIntervalSeconds(
@@ -3006,6 +3062,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: common
          */
         default FtpEndpointProducerBuilder transferLoggingLevel(
@@ -3033,6 +3090,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointProducerBuilder transferLoggingVerbose(
@@ -3087,6 +3145,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
+         * Default: Override
          * Group: producer
          */
         default FtpEndpointProducerBuilder fileExist(String fileExist) {
@@ -3120,6 +3179,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FtpEndpointProducerBuilder flatten(String flatten) {
@@ -3154,6 +3214,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default FtpEndpointProducerBuilder jailStartingDirectory(
@@ -3195,6 +3256,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FtpEndpointProducerBuilder lazyStartProducer(
@@ -3365,6 +3427,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedFtpEndpointProducerBuilder fastExistsCheck(
@@ -3402,6 +3465,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedFtpEndpointProducerBuilder allowNullBody(
@@ -3442,6 +3506,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedFtpEndpointProducerBuilder disconnectOnBatchComplete(
@@ -3491,6 +3556,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedFtpEndpointProducerBuilder eagerDeleteTargetFile(
@@ -3528,6 +3594,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedFtpEndpointProducerBuilder keepLastModified(
@@ -3590,6 +3657,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedFtpEndpointProducerBuilder sendNoop(String sendNoop) {
@@ -3633,6 +3701,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder autoCreate(String autoCreate) {
@@ -3659,6 +3728,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder basicPropertyBinding(
@@ -3685,6 +3755,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 131072
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder bufferSize(String bufferSize) {
@@ -3711,6 +3782,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder connectTimeout(
@@ -3918,6 +3990,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder soTimeout(String soTimeout) {
@@ -3949,6 +4022,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder stepwise(String stepwise) {
@@ -3975,6 +4049,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder synchronous(
@@ -4008,6 +4083,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder throwExceptionOnConnectFailed(
@@ -4032,6 +4108,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedFtpEndpointProducerBuilder timeout(String timeout) {
@@ -4068,6 +4145,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointBuilder binary(String binary) {
@@ -4116,6 +4194,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointBuilder disconnect(String disconnect) {
@@ -4213,6 +4292,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointBuilder passiveMode(String passiveMode) {
@@ -4242,6 +4322,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
+         * Default: UNIX
          * Group: common
          */
         default FtpEndpointBuilder separator(String separator) {
@@ -4270,6 +4351,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5
          * Group: common
          */
         default FtpEndpointBuilder transferLoggingIntervalSeconds(
@@ -4298,6 +4380,7 @@ public interface FtpEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: common
          */
         default FtpEndpointBuilder transferLoggingLevel(
@@ -4325,6 +4408,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpEndpointBuilder transferLoggingVerbose(
@@ -4408,6 +4492,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedFtpEndpointBuilder fastExistsCheck(
@@ -4452,6 +4537,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder autoCreate(String autoCreate) {
@@ -4478,6 +4564,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder basicPropertyBinding(
@@ -4504,6 +4591,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 131072
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder bufferSize(String bufferSize) {
@@ -4529,6 +4617,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder connectTimeout(String connectTimeout) {
@@ -4732,6 +4821,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder soTimeout(String soTimeout) {
@@ -4763,6 +4853,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder stepwise(String stepwise) {
@@ -4788,6 +4879,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder synchronous(String synchronous) {
@@ -4820,6 +4912,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder throwExceptionOnConnectFailed(
@@ -4844,6 +4937,7 @@ public interface FtpEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedFtpEndpointBuilder timeout(String timeout) {

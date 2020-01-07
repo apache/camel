@@ -105,6 +105,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default SqsEndpointConsumerBuilder autoCreateQueue(
@@ -168,6 +169,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default SqsEndpointConsumerBuilder proxyProtocol(String proxyProtocol) {
@@ -244,6 +246,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder bridgeErrorHandler(
@@ -271,6 +274,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder concurrentConsumers(
@@ -321,6 +325,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder deleteAfterRead(
@@ -352,6 +357,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder deleteIfFiltered(
@@ -383,6 +389,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder extendMessageVisibility(
@@ -494,6 +501,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -519,6 +527,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder serverSideEncryptionEnabled(
@@ -695,6 +704,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder delay(String delay) {
@@ -720,6 +730,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder greedy(String greedy) {
@@ -747,6 +758,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -774,6 +786,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -801,6 +814,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder runLoggingLevel(
@@ -897,6 +911,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -921,6 +936,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -946,6 +962,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -1235,6 +1252,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder basicPropertyBinding(
@@ -1261,6 +1279,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder delayQueue(String delayQueue) {
@@ -1301,6 +1320,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder synchronous(
@@ -1376,6 +1396,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default SqsEndpointProducerBuilder autoCreateQueue(
@@ -1439,6 +1460,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default SqsEndpointProducerBuilder proxyProtocol(String proxyProtocol) {
@@ -1530,6 +1552,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqsEndpointProducerBuilder lazyStartProducer(
@@ -1563,6 +1586,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.sqs.MessageDeduplicationIdStrategy</code> type.
          * 
+         * Default: useExchangeId
          * Group: producer
          */
         default SqsEndpointProducerBuilder messageDeduplicationIdStrategy(
@@ -1822,6 +1846,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder basicPropertyBinding(
@@ -1848,6 +1873,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder delayQueue(String delayQueue) {
@@ -1888,6 +1914,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder synchronous(
@@ -1959,6 +1986,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default SqsEndpointBuilder autoCreateQueue(String autoCreateQueue) {
@@ -2021,6 +2049,7 @@ public interface SqsEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default SqsEndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -2246,6 +2275,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder basicPropertyBinding(
@@ -2272,6 +2302,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder delayQueue(String delayQueue) {
@@ -2311,6 +2342,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder synchronous(String synchronous) {

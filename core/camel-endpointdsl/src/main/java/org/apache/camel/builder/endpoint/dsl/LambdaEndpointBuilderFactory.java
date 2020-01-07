@@ -72,6 +72,7 @@ public interface LambdaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LambdaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -101,6 +102,7 @@ public interface LambdaEndpointBuilderFactory {
          * <code>org.apache.camel.component.aws.lambda.LambdaOperations</code>
          * type.
          * 
+         * Default: invokeFunction
          * Group: producer
          */
         default LambdaEndpointBuilder operation(String operation) {
@@ -172,6 +174,7 @@ public interface LambdaEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: proxy
          */
         default LambdaEndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -257,6 +260,7 @@ public interface LambdaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder basicPropertyBinding(
@@ -283,6 +287,7 @@ public interface LambdaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLambdaEndpointBuilder synchronous(String synchronous) {

@@ -105,6 +105,7 @@ public interface EC2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default EC2EndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -195,6 +196,7 @@ public interface EC2EndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default EC2EndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -257,6 +259,7 @@ public interface EC2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEC2EndpointBuilder basicPropertyBinding(
@@ -283,6 +286,7 @@ public interface EC2EndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEC2EndpointBuilder synchronous(String synchronous) {

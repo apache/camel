@@ -75,6 +75,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default SplunkEndpointConsumerBuilder connectionTimeout(
@@ -122,6 +123,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 8089
          * Group: common
          */
         default SplunkEndpointConsumerBuilder port(String port) {
@@ -170,6 +172,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder bridgeErrorHandler(
@@ -275,6 +278,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -301,6 +305,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SplunkEndpointConsumerBuilder streaming(String streaming) {
@@ -414,6 +419,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder delay(String delay) {
@@ -439,6 +445,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder greedy(String greedy) {
@@ -466,6 +473,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -493,6 +501,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -520,6 +529,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder runLoggingLevel(
@@ -617,6 +627,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder startScheduler(
@@ -642,6 +653,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -668,6 +680,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SplunkEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -704,6 +717,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.splunk.SSLSecurityProtocol</code> type.
          * 
+         * Default: TLSv1.2
          * Group: security
          */
         default SplunkEndpointConsumerBuilder sslProtocol(String sslProtocol) {
@@ -743,6 +757,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default SplunkEndpointConsumerBuilder useSunHttpsHandler(
@@ -870,6 +885,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSplunkEndpointConsumerBuilder basicPropertyBinding(
@@ -897,6 +913,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSplunkEndpointConsumerBuilder synchronous(
@@ -944,6 +961,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default SplunkEndpointProducerBuilder connectionTimeout(
@@ -991,6 +1009,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 8089
          * Group: common
          */
         default SplunkEndpointProducerBuilder port(String port) {
@@ -1065,6 +1084,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SplunkEndpointProducerBuilder lazyStartProducer(
@@ -1089,6 +1109,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SplunkEndpointProducerBuilder raw(String raw) {
@@ -1171,6 +1192,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.splunk.SSLSecurityProtocol</code> type.
          * 
+         * Default: TLSv1.2
          * Group: security
          */
         default SplunkEndpointProducerBuilder sslProtocol(String sslProtocol) {
@@ -1210,6 +1232,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default SplunkEndpointProducerBuilder useSunHttpsHandler(
@@ -1248,6 +1271,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSplunkEndpointProducerBuilder basicPropertyBinding(
@@ -1275,6 +1299,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSplunkEndpointProducerBuilder synchronous(
@@ -1321,6 +1346,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default SplunkEndpointBuilder connectionTimeout(String connectionTimeout) {
@@ -1367,6 +1393,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 8089
          * Group: common
          */
         default SplunkEndpointBuilder port(String port) {
@@ -1415,6 +1442,7 @@ public interface SplunkEndpointBuilderFactory {
          * The option will be converted to a
          * <code>com.splunk.SSLSecurityProtocol</code> type.
          * 
+         * Default: TLSv1.2
          * Group: security
          */
         default SplunkEndpointBuilder sslProtocol(String sslProtocol) {
@@ -1454,6 +1482,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default SplunkEndpointBuilder useSunHttpsHandler(
@@ -1492,6 +1521,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSplunkEndpointBuilder basicPropertyBinding(
@@ -1518,6 +1548,7 @@ public interface SplunkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSplunkEndpointBuilder synchronous(String synchronous) {

@@ -94,6 +94,7 @@ public interface DrillEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DrillEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -123,6 +124,7 @@ public interface DrillEndpointBuilderFactory {
          * <code>org.apache.camel.component.drill.DrillConnectionMode</code>
          * type.
          * 
+         * Default: ZK
          * Group: producer
          */
         default DrillEndpointBuilder mode(String mode) {
@@ -183,6 +185,7 @@ public interface DrillEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDrillEndpointBuilder basicPropertyBinding(
@@ -209,6 +212,7 @@ public interface DrillEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDrillEndpointBuilder synchronous(String synchronous) {

@@ -73,6 +73,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DirectVmEndpointConsumerBuilder bridgeErrorHandler(
@@ -168,6 +169,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectVmEndpointConsumerBuilder basicPropertyBinding(
@@ -195,6 +197,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDirectVmEndpointConsumerBuilder propagateProperties(
@@ -222,6 +225,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectVmEndpointConsumerBuilder synchronous(
@@ -261,6 +265,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default DirectVmEndpointProducerBuilder block(String block) {
@@ -287,6 +292,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DirectVmEndpointProducerBuilder failIfNoConsumers(
@@ -328,6 +334,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DirectVmEndpointProducerBuilder lazyStartProducer(
@@ -352,6 +359,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default DirectVmEndpointProducerBuilder timeout(String timeout) {
@@ -419,6 +427,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectVmEndpointProducerBuilder basicPropertyBinding(
@@ -446,6 +455,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDirectVmEndpointProducerBuilder propagateProperties(
@@ -473,6 +483,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectVmEndpointProducerBuilder synchronous(
@@ -522,6 +533,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder basicPropertyBinding(
@@ -549,6 +561,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder propagateProperties(
@@ -575,6 +588,7 @@ public interface DirectVmEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectVmEndpointBuilder synchronous(String synchronous) {

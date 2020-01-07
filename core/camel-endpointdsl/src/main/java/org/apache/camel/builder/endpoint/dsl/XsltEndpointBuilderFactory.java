@@ -62,6 +62,7 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XsltEndpointBuilder contentCache(String contentCache) {
@@ -91,6 +92,7 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XsltEndpointBuilder deleteOutputFile(String deleteOutputFile) {
@@ -114,6 +116,7 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XsltEndpointBuilder failOnNullBody(String failOnNullBody) {
@@ -153,6 +156,7 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XsltEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -190,6 +194,7 @@ public interface XsltEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
          * 
+         * Default: string
          * Group: producer
          */
         default XsltEndpointBuilder output(String output) {
@@ -216,6 +221,7 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default XsltEndpointBuilder transformerCacheSize(
@@ -254,6 +260,7 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder basicPropertyBinding(
@@ -368,6 +375,7 @@ public interface XsltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXsltEndpointBuilder synchronous(String synchronous) {
