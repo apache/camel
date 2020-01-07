@@ -47,6 +47,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AhcEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
@@ -73,6 +74,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4096
          * Group: producer
          */
         default AhcEndpointBuilder bufferSize(int bufferSize) {
@@ -97,6 +99,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AhcEndpointBuilder connectionClose(boolean connectionClose) {
@@ -180,6 +183,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AhcEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -212,6 +216,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
@@ -246,6 +251,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AhcEndpointBuilder transferException(boolean transferException) {
@@ -324,6 +330,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder basicPropertyBinding(
@@ -431,6 +438,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder synchronous(boolean synchronous) {

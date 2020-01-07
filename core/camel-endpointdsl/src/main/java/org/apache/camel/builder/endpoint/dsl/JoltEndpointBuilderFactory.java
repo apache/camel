@@ -43,6 +43,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JoltEndpointBuilder contentCache(boolean contentCache) {
@@ -67,6 +68,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
          * 
+         * Default: Hydrated
          * Group: producer
          */
         default JoltEndpointBuilder inputType(JoltInputOutputType inputType) {
@@ -99,6 +101,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JoltEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -131,6 +134,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
          * 
+         * Default: Hydrated
          * Group: producer
          */
         default JoltEndpointBuilder outputType(JoltInputOutputType outputType) {
@@ -157,6 +161,7 @@ public interface JoltEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
          * 
+         * Default: Chainr
          * Group: producer
          */
         default JoltEndpointBuilder transformDsl(JoltTransformType transformDsl) {
@@ -193,6 +198,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJoltEndpointBuilder basicPropertyBinding(
@@ -219,6 +225,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJoltEndpointBuilder synchronous(boolean synchronous) {

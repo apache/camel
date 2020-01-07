@@ -61,6 +61,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.redis.Command</code> type.
          * 
+         * Default: SET
          * Group: common
          */
         default RedisEndpointConsumerBuilder command(Command command) {
@@ -166,6 +167,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RedisEndpointConsumerBuilder bridgeErrorHandler(
@@ -293,6 +295,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRedisEndpointConsumerBuilder basicPropertyBinding(
@@ -319,6 +322,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRedisEndpointConsumerBuilder synchronous(
@@ -370,6 +374,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.redis.Command</code> type.
          * 
+         * Default: SET
          * Group: common
          */
         default RedisEndpointProducerBuilder command(Command command) {
@@ -477,6 +482,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RedisEndpointProducerBuilder lazyStartProducer(
@@ -521,6 +527,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRedisEndpointProducerBuilder basicPropertyBinding(
@@ -547,6 +554,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRedisEndpointProducerBuilder synchronous(
@@ -598,6 +606,7 @@ public interface RedisEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.redis.Command</code> type.
          * 
+         * Default: SET
          * Group: common
          */
         default RedisEndpointBuilder command(Command command) {
@@ -707,6 +716,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRedisEndpointBuilder basicPropertyBinding(
@@ -733,6 +743,7 @@ public interface RedisEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRedisEndpointBuilder synchronous(boolean synchronous) {

@@ -56,6 +56,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default JpaEndpointConsumerBuilder joinTransaction(
@@ -84,6 +85,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default JpaEndpointConsumerBuilder maximumResults(int maximumResults) {
@@ -130,6 +132,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default: camel
          * Group: common
          */
         default JpaEndpointConsumerBuilder persistenceUnit(
@@ -191,6 +194,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder bridgeErrorHandler(
@@ -222,6 +226,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder consumeDelete(boolean consumeDelete) {
@@ -246,6 +251,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder consumeLockEntity(
@@ -297,6 +303,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.persistence.LockModeType</code> type.
          * 
+         * Default: PESSIMISTIC_WRITE
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder lockModeType(
@@ -380,6 +387,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -406,6 +414,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder skipLockedEntity(
@@ -435,6 +444,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JpaEndpointConsumerBuilder transacted(boolean transacted) {
@@ -549,6 +559,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder delay(long delay) {
@@ -574,6 +585,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder greedy(boolean greedy) {
@@ -599,6 +611,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -625,6 +638,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -650,6 +664,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder runLoggingLevel(
@@ -707,6 +722,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder scheduler(String scheduler) {
@@ -747,6 +763,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder startScheduler(boolean startScheduler) {
@@ -769,6 +786,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -793,6 +811,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default JpaEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -955,6 +974,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder basicPropertyBinding(
@@ -1009,6 +1029,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder sharedEntityManager(
@@ -1036,6 +1057,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJpaEndpointConsumerBuilder synchronous(
@@ -1076,6 +1098,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default JpaEndpointProducerBuilder joinTransaction(
@@ -1104,6 +1127,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default JpaEndpointProducerBuilder maximumResults(int maximumResults) {
@@ -1150,6 +1174,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default: camel
          * Group: common
          */
         default JpaEndpointProducerBuilder persistenceUnit(
@@ -1207,6 +1232,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JpaEndpointProducerBuilder findEntity(boolean findEntity) {
@@ -1231,6 +1257,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default JpaEndpointProducerBuilder flushOnSend(boolean flushOnSend) {
@@ -1261,6 +1288,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JpaEndpointProducerBuilder lazyStartProducer(
@@ -1293,6 +1321,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JpaEndpointProducerBuilder remove(boolean remove) {
@@ -1347,6 +1376,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JpaEndpointProducerBuilder usePersist(boolean usePersist) {
@@ -1386,6 +1416,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedJpaEndpointProducerBuilder usePassedInEntityManager(
@@ -1414,6 +1445,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder basicPropertyBinding(
@@ -1468,6 +1500,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder sharedEntityManager(
@@ -1495,6 +1528,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJpaEndpointProducerBuilder synchronous(
@@ -1535,6 +1569,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default JpaEndpointBuilder joinTransaction(boolean joinTransaction) {
@@ -1561,6 +1596,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default JpaEndpointBuilder maximumResults(int maximumResults) {
@@ -1607,6 +1643,7 @@ public interface JpaEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default: camel
          * Group: common
          */
         default JpaEndpointBuilder persistenceUnit(String persistenceUnit) {
@@ -1673,6 +1710,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJpaEndpointBuilder basicPropertyBinding(
@@ -1727,6 +1765,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJpaEndpointBuilder sharedEntityManager(
@@ -1754,6 +1793,7 @@ public interface JpaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJpaEndpointBuilder synchronous(boolean synchronous) {

@@ -62,6 +62,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: postgres
          * Group: common
          */
         default PgReplicationSlotEndpointBuilder user(String user) {
@@ -79,6 +80,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PgReplicationSlotEndpointBuilder bridgeErrorHandler(
@@ -110,6 +112,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PgReplicationSlotEndpointBuilder sendEmptyMessageWhenIdle(
@@ -223,6 +226,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder delay(long delay) {
@@ -248,6 +252,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder greedy(boolean greedy) {
@@ -273,6 +278,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder initialDelay(long initialDelay) {
@@ -300,6 +306,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder repeatCount(long repeatCount) {
@@ -325,6 +332,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder runLoggingLevel(
@@ -382,6 +390,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder scheduler(String scheduler) {
@@ -422,6 +431,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder startScheduler(
@@ -446,6 +456,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -470,6 +481,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default PgReplicationSlotEndpointBuilder useFixedDelay(
@@ -596,6 +608,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder autoCreateSlot(
@@ -622,6 +635,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder basicPropertyBinding(
@@ -675,6 +689,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 10
          * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder statusInterval(
@@ -702,6 +717,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgReplicationSlotEndpointBuilder synchronous(

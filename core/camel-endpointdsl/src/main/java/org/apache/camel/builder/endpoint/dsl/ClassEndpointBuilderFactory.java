@@ -93,6 +93,7 @@ public interface ClassEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.BeanScope</code> type.
          * 
+         * Default: Singleton
          * Group: common
          */
         default ClassEndpointBuilder scope(BeanScope scope) {
@@ -137,6 +138,7 @@ public interface ClassEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ClassEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -179,6 +181,7 @@ public interface ClassEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedClassEndpointBuilder basicPropertyBinding(
@@ -231,6 +234,7 @@ public interface ClassEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedClassEndpointBuilder synchronous(boolean synchronous) {

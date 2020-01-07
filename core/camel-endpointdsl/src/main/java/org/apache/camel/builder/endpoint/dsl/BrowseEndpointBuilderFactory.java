@@ -53,6 +53,7 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default BrowseEndpointConsumerBuilder bridgeErrorHandler(
@@ -152,6 +153,7 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBrowseEndpointConsumerBuilder basicPropertyBinding(
@@ -178,6 +180,7 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBrowseEndpointConsumerBuilder synchronous(
@@ -222,6 +225,7 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BrowseEndpointProducerBuilder lazyStartProducer(
@@ -266,6 +270,7 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBrowseEndpointProducerBuilder basicPropertyBinding(
@@ -292,6 +297,7 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBrowseEndpointProducerBuilder synchronous(
@@ -340,6 +346,7 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBrowseEndpointBuilder basicPropertyBinding(
@@ -366,6 +373,7 @@ public interface BrowseEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBrowseEndpointBuilder synchronous(boolean synchronous) {

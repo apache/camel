@@ -53,6 +53,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TimerEndpointBuilder bridgeErrorHandler(
@@ -87,6 +88,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: consumer
          */
         default TimerEndpointBuilder delay(long delay) {
@@ -114,6 +116,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TimerEndpointBuilder fixedRate(boolean fixedRate) {
@@ -140,6 +143,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: consumer
          */
         default TimerEndpointBuilder period(long period) {
@@ -167,6 +171,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: consumer
          */
         default TimerEndpointBuilder repeatCount(long repeatCount) {
@@ -260,6 +265,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder basicPropertyBinding(
@@ -286,6 +292,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder daemon(boolean daemon) {
@@ -322,6 +329,7 @@ public interface TimerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTimerEndpointBuilder synchronous(boolean synchronous) {

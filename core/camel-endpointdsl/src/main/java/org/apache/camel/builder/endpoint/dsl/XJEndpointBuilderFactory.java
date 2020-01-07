@@ -73,6 +73,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XJEndpointBuilder allowStAX(boolean allowStAX) {
@@ -102,6 +103,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XJEndpointBuilder contentCache(boolean contentCache) {
@@ -131,6 +133,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XJEndpointBuilder deleteOutputFile(boolean deleteOutputFile) {
@@ -156,6 +159,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XJEndpointBuilder failOnNullBody(boolean failOnNullBody) {
@@ -186,6 +190,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XJEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -223,6 +228,7 @@ public interface XJEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
          * 
+         * Default: string
          * Group: producer
          */
         default XJEndpointBuilder output(XsltOutput output) {
@@ -253,6 +259,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default XJEndpointBuilder transformerCacheSize(int transformerCacheSize) {
@@ -346,6 +353,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder basicPropertyBinding(
@@ -460,6 +468,7 @@ public interface XJEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXJEndpointBuilder synchronous(boolean synchronous) {

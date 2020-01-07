@@ -48,6 +48,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default EventAdminEndpointConsumerBuilder send(boolean send) {
@@ -77,6 +78,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default EventAdminEndpointConsumerBuilder bridgeErrorHandler(
@@ -177,6 +179,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventAdminEndpointConsumerBuilder basicPropertyBinding(
@@ -203,6 +206,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventAdminEndpointConsumerBuilder synchronous(
@@ -240,6 +244,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default EventAdminEndpointProducerBuilder send(boolean send) {
@@ -271,6 +276,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default EventAdminEndpointProducerBuilder lazyStartProducer(
@@ -316,6 +322,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventAdminEndpointProducerBuilder basicPropertyBinding(
@@ -342,6 +349,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventAdminEndpointProducerBuilder synchronous(
@@ -379,6 +387,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default EventAdminEndpointBuilder send(boolean send) {
@@ -414,6 +423,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventAdminEndpointBuilder basicPropertyBinding(
@@ -440,6 +450,7 @@ public interface EventAdminEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventAdminEndpointBuilder synchronous(

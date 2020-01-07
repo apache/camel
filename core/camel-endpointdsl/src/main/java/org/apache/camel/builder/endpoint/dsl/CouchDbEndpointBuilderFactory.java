@@ -46,6 +46,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CouchDbEndpointConsumerBuilder createDatabase(
@@ -76,6 +77,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder bridgeErrorHandler(
@@ -106,6 +108,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder deletes(boolean deletes) {
@@ -128,6 +131,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder heartbeat(long heartbeat) {
@@ -165,6 +169,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: main_only
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder style(String style) {
@@ -176,6 +181,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default CouchDbEndpointConsumerBuilder updates(boolean updates) {
@@ -289,6 +295,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchDbEndpointConsumerBuilder basicPropertyBinding(
@@ -315,6 +322,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchDbEndpointConsumerBuilder synchronous(
@@ -351,6 +359,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CouchDbEndpointProducerBuilder createDatabase(
@@ -383,6 +392,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CouchDbEndpointProducerBuilder lazyStartProducer(
@@ -449,6 +459,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchDbEndpointProducerBuilder basicPropertyBinding(
@@ -475,6 +486,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchDbEndpointProducerBuilder synchronous(
@@ -511,6 +523,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CouchDbEndpointBuilder createDatabase(boolean createDatabase) {
@@ -567,6 +580,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchDbEndpointBuilder basicPropertyBinding(
@@ -593,6 +607,7 @@ public interface CouchDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchDbEndpointBuilder synchronous(boolean synchronous) {

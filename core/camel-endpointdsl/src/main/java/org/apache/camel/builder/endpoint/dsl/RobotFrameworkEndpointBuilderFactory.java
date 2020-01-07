@@ -89,6 +89,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder contentCache(
@@ -160,6 +161,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder dryrun(boolean dryrun) {
@@ -195,6 +197,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder exitOnFailure(
@@ -324,6 +327,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 78
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder monitorWidth(
@@ -360,6 +364,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder noStatusReturnCode(
@@ -491,6 +496,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder runEmptySuite(
@@ -553,6 +559,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder skipTeardownOnExit(
@@ -698,6 +705,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder timestampOutputs(
@@ -745,6 +753,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointConsumerBuilder warnOnSkippedFiles(
@@ -803,6 +812,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RobotFrameworkEndpointConsumerBuilder bridgeErrorHandler(
@@ -834,6 +844,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RobotFrameworkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -947,6 +958,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder delay(long delay) {
@@ -972,6 +984,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder greedy(boolean greedy) {
@@ -997,6 +1010,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder initialDelay(
@@ -1025,6 +1039,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder repeatCount(
@@ -1052,6 +1067,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder runLoggingLevel(
@@ -1109,6 +1125,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder scheduler(String scheduler) {
@@ -1149,6 +1166,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder startScheduler(
@@ -1173,6 +1191,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -1197,6 +1216,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default RobotFrameworkEndpointConsumerBuilder useFixedDelay(
@@ -1324,6 +1344,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder basicPropertyBinding(
@@ -1350,6 +1371,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRobotFrameworkEndpointConsumerBuilder synchronous(
@@ -1423,6 +1445,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder contentCache(
@@ -1494,6 +1517,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder dryrun(boolean dryrun) {
@@ -1529,6 +1553,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder exitOnFailure(
@@ -1658,6 +1683,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 78
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder monitorWidth(
@@ -1694,6 +1720,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder noStatusReturnCode(
@@ -1825,6 +1852,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder runEmptySuite(
@@ -1887,6 +1915,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder skipTeardownOnExit(
@@ -2032,6 +2061,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder timestampOutputs(
@@ -2079,6 +2109,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointProducerBuilder warnOnSkippedFiles(
@@ -2139,6 +2170,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RobotFrameworkEndpointProducerBuilder lazyStartProducer(
@@ -2184,6 +2216,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRobotFrameworkEndpointProducerBuilder basicPropertyBinding(
@@ -2210,6 +2243,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRobotFrameworkEndpointProducerBuilder synchronous(
@@ -2281,6 +2315,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointBuilder contentCache(boolean contentCache) {
@@ -2349,6 +2384,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointBuilder dryrun(boolean dryrun) {
@@ -2384,6 +2420,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointBuilder exitOnFailure(
@@ -2511,6 +2548,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 78
          * Group: common
          */
         default RobotFrameworkEndpointBuilder monitorWidth(String monitorWidth) {
@@ -2546,6 +2584,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointBuilder noStatusReturnCode(
@@ -2676,6 +2715,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointBuilder runEmptySuite(
@@ -2737,6 +2777,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointBuilder skipTeardownOnExit(
@@ -2879,6 +2920,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointBuilder timestampOutputs(
@@ -2925,6 +2967,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RobotFrameworkEndpointBuilder warnOnSkippedFiles(
@@ -2989,6 +3032,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRobotFrameworkEndpointBuilder basicPropertyBinding(
@@ -3015,6 +3059,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRobotFrameworkEndpointBuilder synchronous(

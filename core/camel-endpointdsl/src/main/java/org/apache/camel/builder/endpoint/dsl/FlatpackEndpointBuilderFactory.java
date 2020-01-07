@@ -53,6 +53,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder allowShortLines(
@@ -78,6 +79,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
+         * Default: ,
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder delimiter(char delimiter) {
@@ -101,6 +103,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder ignoreExtraColumns(
@@ -127,6 +130,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder ignoreFirstRecord(
@@ -153,6 +157,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default FlatpackEndpointConsumerBuilder splitRows(boolean splitRows) {
@@ -205,6 +210,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FlatpackEndpointConsumerBuilder bridgeErrorHandler(
@@ -236,6 +242,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FlatpackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -349,6 +356,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder delay(long delay) {
@@ -374,6 +382,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder greedy(boolean greedy) {
@@ -399,6 +408,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -425,6 +435,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -450,6 +461,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder runLoggingLevel(
@@ -507,6 +519,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder scheduler(String scheduler) {
@@ -547,6 +560,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder startScheduler(
@@ -571,6 +585,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -595,6 +610,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FlatpackEndpointConsumerBuilder useFixedDelay(
@@ -721,6 +737,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlatpackEndpointConsumerBuilder basicPropertyBinding(
@@ -747,6 +764,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlatpackEndpointConsumerBuilder synchronous(
@@ -784,6 +802,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FlatpackEndpointProducerBuilder allowShortLines(
@@ -809,6 +828,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
+         * Default: ,
          * Group: common
          */
         default FlatpackEndpointProducerBuilder delimiter(char delimiter) {
@@ -832,6 +852,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FlatpackEndpointProducerBuilder ignoreExtraColumns(
@@ -858,6 +879,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default FlatpackEndpointProducerBuilder ignoreFirstRecord(
@@ -884,6 +906,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default FlatpackEndpointProducerBuilder splitRows(boolean splitRows) {
@@ -938,6 +961,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FlatpackEndpointProducerBuilder lazyStartProducer(
@@ -982,6 +1006,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlatpackEndpointProducerBuilder basicPropertyBinding(
@@ -1008,6 +1033,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlatpackEndpointProducerBuilder synchronous(
@@ -1045,6 +1071,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FlatpackEndpointBuilder allowShortLines(boolean allowShortLines) {
@@ -1068,6 +1095,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
+         * Default: ,
          * Group: common
          */
         default FlatpackEndpointBuilder delimiter(char delimiter) {
@@ -1091,6 +1119,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FlatpackEndpointBuilder ignoreExtraColumns(
@@ -1117,6 +1146,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default FlatpackEndpointBuilder ignoreFirstRecord(
@@ -1143,6 +1173,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default FlatpackEndpointBuilder splitRows(boolean splitRows) {
@@ -1200,6 +1231,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlatpackEndpointBuilder basicPropertyBinding(
@@ -1226,6 +1258,7 @@ public interface FlatpackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlatpackEndpointBuilder synchronous(boolean synchronous) {

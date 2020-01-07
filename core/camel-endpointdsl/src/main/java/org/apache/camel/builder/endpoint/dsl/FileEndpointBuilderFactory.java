@@ -155,6 +155,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FileEndpointConsumerBuilder bridgeErrorHandler(
@@ -185,6 +186,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FileEndpointConsumerBuilder delete(boolean delete) {
@@ -239,6 +241,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FileEndpointConsumerBuilder noop(boolean noop) {
@@ -296,6 +299,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FileEndpointConsumerBuilder preSort(boolean preSort) {
@@ -324,6 +328,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FileEndpointConsumerBuilder recursive(boolean recursive) {
@@ -348,6 +353,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FileEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -386,6 +392,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default FileEndpointConsumerBuilder antFilterCaseSensitive(
@@ -427,6 +434,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default FileEndpointConsumerBuilder eagerMaxMessagesPerPoll(
@@ -556,6 +564,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: filter
          */
         default FileEndpointConsumerBuilder idempotent(Boolean idempotent) {
@@ -658,6 +667,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2147483647
          * Group: filter
          */
         default FileEndpointConsumerBuilder maxDepth(int maxDepth) {
@@ -847,6 +857,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLock(String readLock) {
@@ -868,6 +879,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockCheckInterval(
@@ -908,6 +920,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
@@ -940,6 +953,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockIdempotentReleaseAsync(
@@ -1074,6 +1088,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockLoggingLevel(
@@ -1108,6 +1123,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockMarkerFile(
@@ -1142,6 +1158,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
@@ -1172,6 +1189,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockMinLength(
@@ -1207,6 +1225,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockRemoveOnCommit(
@@ -1243,6 +1262,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockRemoveOnRollback(
@@ -1282,6 +1302,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: lock
          */
         default FileEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
@@ -1404,6 +1425,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder delay(long delay) {
@@ -1429,6 +1451,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder greedy(boolean greedy) {
@@ -1454,6 +1477,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -1480,6 +1504,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -1505,6 +1530,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder runLoggingLevel(
@@ -1562,6 +1588,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder scheduler(String scheduler) {
@@ -1602,6 +1629,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder startScheduler(
@@ -1625,6 +1653,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -1649,6 +1678,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FileEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -1672,6 +1702,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: sort
          */
         default FileEndpointConsumerBuilder shuffle(boolean shuffle) {
@@ -1760,6 +1791,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder directoryMustExist(
@@ -1970,6 +2002,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder probeContentType(
@@ -2037,6 +2070,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustExist(
@@ -2068,6 +2102,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFileEndpointConsumerBuilder startingDirectoryMustHaveAccess(
@@ -2098,6 +2133,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFileEndpointConsumerBuilder autoCreate(
@@ -2125,6 +2161,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileEndpointConsumerBuilder basicPropertyBinding(
@@ -2151,6 +2188,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 131072
          * Group: advanced
          */
         default AdvancedFileEndpointConsumerBuilder bufferSize(int bufferSize) {
@@ -2176,6 +2214,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFileEndpointConsumerBuilder copyAndDeleteOnRenameFail(
@@ -2207,6 +2246,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileEndpointConsumerBuilder renameUsingCopy(
@@ -2237,6 +2277,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileEndpointConsumerBuilder synchronous(
@@ -2398,6 +2439,7 @@ public interface FileEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
+         * Default: Override
          * Group: producer
          */
         default FileEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
@@ -2442,6 +2484,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FileEndpointProducerBuilder flatten(boolean flatten) {
@@ -2474,6 +2517,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default FileEndpointProducerBuilder jailStartingDirectory(
@@ -2511,6 +2555,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FileEndpointProducerBuilder lazyStartProducer(
@@ -2647,6 +2692,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedFileEndpointProducerBuilder allowNullBody(
@@ -2716,6 +2762,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedFileEndpointProducerBuilder eagerDeleteTargetFile(
@@ -2755,6 +2802,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedFileEndpointProducerBuilder forceWrites(
@@ -2788,6 +2836,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedFileEndpointProducerBuilder keepLastModified(
@@ -2851,6 +2900,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFileEndpointProducerBuilder autoCreate(
@@ -2878,6 +2928,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileEndpointProducerBuilder basicPropertyBinding(
@@ -2904,6 +2955,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 131072
          * Group: advanced
          */
         default AdvancedFileEndpointProducerBuilder bufferSize(int bufferSize) {
@@ -2929,6 +2981,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFileEndpointProducerBuilder copyAndDeleteOnRenameFail(
@@ -2960,6 +3013,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileEndpointProducerBuilder renameUsingCopy(
@@ -2990,6 +3044,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileEndpointProducerBuilder synchronous(
@@ -3133,6 +3188,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder autoCreate(boolean autoCreate) {
@@ -3159,6 +3215,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder basicPropertyBinding(
@@ -3185,6 +3242,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 131072
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder bufferSize(int bufferSize) {
@@ -3210,6 +3268,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder copyAndDeleteOnRenameFail(
@@ -3241,6 +3300,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder renameUsingCopy(
@@ -3271,6 +3331,7 @@ public interface FileEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileEndpointBuilder synchronous(boolean synchronous) {

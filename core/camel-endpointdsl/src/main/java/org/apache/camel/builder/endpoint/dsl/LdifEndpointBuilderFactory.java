@@ -51,6 +51,7 @@ public interface LdifEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LdifEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -93,6 +94,7 @@ public interface LdifEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLdifEndpointBuilder basicPropertyBinding(
@@ -119,6 +121,7 @@ public interface LdifEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLdifEndpointBuilder synchronous(boolean synchronous) {

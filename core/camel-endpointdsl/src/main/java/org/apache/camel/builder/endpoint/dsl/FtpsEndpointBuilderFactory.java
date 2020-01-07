@@ -58,6 +58,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointConsumerBuilder binary(boolean binary) {
@@ -103,6 +104,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointConsumerBuilder disconnect(boolean disconnect) {
@@ -202,6 +204,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointConsumerBuilder passiveMode(boolean passiveMode) {
@@ -227,6 +230,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
+         * Default: UNIX
          * Group: common
          */
         default FtpsEndpointConsumerBuilder separator(PathSeparator separator) {
@@ -254,6 +258,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5
          * Group: common
          */
         default FtpsEndpointConsumerBuilder transferLoggingIntervalSeconds(
@@ -281,6 +286,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: common
          */
         default FtpsEndpointConsumerBuilder transferLoggingLevel(
@@ -308,6 +314,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointConsumerBuilder transferLoggingVerbose(
@@ -339,6 +346,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder bridgeErrorHandler(
@@ -369,6 +377,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder delete(boolean delete) {
@@ -423,6 +432,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder noop(boolean noop) {
@@ -480,6 +490,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder preSort(boolean preSort) {
@@ -508,6 +519,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder recursive(boolean recursive) {
@@ -535,6 +547,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder resumeDownload(
@@ -563,6 +576,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -591,6 +605,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FtpsEndpointConsumerBuilder streamDownload(
@@ -630,6 +645,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder antFilterCaseSensitive(
@@ -671,6 +687,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder eagerMaxMessagesPerPoll(
@@ -800,6 +817,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder idempotent(Boolean idempotent) {
@@ -902,6 +920,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2147483647
          * Group: filter
          */
         default FtpsEndpointConsumerBuilder maxDepth(int maxDepth) {
@@ -1085,6 +1104,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLock(String readLock) {
@@ -1106,6 +1126,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockCheckInterval(
@@ -1146,6 +1167,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockDeleteOrphanLockFiles(
@@ -1180,6 +1202,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockLoggingLevel(
@@ -1214,6 +1237,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockMarkerFile(
@@ -1248,6 +1272,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockMinAge(long readLockMinAge) {
@@ -1278,6 +1303,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockMinLength(
@@ -1313,6 +1339,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnCommit(
@@ -1349,6 +1376,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockRemoveOnRollback(
@@ -1388,6 +1416,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: lock
          */
         default FtpsEndpointConsumerBuilder readLockTimeout(long readLockTimeout) {
@@ -1510,6 +1539,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder delay(long delay) {
@@ -1535,6 +1565,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder greedy(boolean greedy) {
@@ -1560,6 +1591,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -1586,6 +1618,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -1611,6 +1644,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder runLoggingLevel(
@@ -1668,6 +1702,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder scheduler(String scheduler) {
@@ -1708,6 +1743,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder startScheduler(
@@ -1731,6 +1767,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -1755,6 +1792,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FtpsEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -1778,6 +1816,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: sort
          */
         default FtpsEndpointConsumerBuilder shuffle(boolean shuffle) {
@@ -1867,6 +1906,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default FtpsEndpointConsumerBuilder disableSecureDataChannelDefaults(
@@ -1984,6 +2024,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default FtpsEndpointConsumerBuilder implicit(boolean implicit) {
@@ -2018,6 +2059,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.2
          * Group: security
          */
         default FtpsEndpointConsumerBuilder securityProtocol(
@@ -2091,6 +2133,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder fastExistsCheck(
@@ -2126,6 +2169,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder download(boolean download) {
@@ -2213,6 +2257,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder handleDirectoryParserAbsoluteResult(
@@ -2245,6 +2290,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder ignoreFileNotFoundOrPermissionError(
@@ -2426,6 +2472,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedFtpsEndpointConsumerBuilder useList(boolean useList) {
@@ -2471,6 +2518,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder autoCreate(
@@ -2498,6 +2546,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder basicPropertyBinding(
@@ -2524,6 +2573,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 131072
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder bufferSize(int bufferSize) {
@@ -2548,6 +2598,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder connectTimeout(
@@ -2752,6 +2803,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder soTimeout(int soTimeout) {
@@ -2782,6 +2834,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder stepwise(boolean stepwise) {
@@ -2809,6 +2862,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder synchronous(
@@ -2838,6 +2892,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder throwExceptionOnConnectFailed(
@@ -2866,6 +2921,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedFtpsEndpointConsumerBuilder timeout(int timeout) {
@@ -2900,6 +2956,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointProducerBuilder binary(boolean binary) {
@@ -2945,6 +3002,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointProducerBuilder disconnect(boolean disconnect) {
@@ -3044,6 +3102,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointProducerBuilder passiveMode(boolean passiveMode) {
@@ -3069,6 +3128,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
+         * Default: UNIX
          * Group: common
          */
         default FtpsEndpointProducerBuilder separator(PathSeparator separator) {
@@ -3096,6 +3156,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5
          * Group: common
          */
         default FtpsEndpointProducerBuilder transferLoggingIntervalSeconds(
@@ -3123,6 +3184,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: common
          */
         default FtpsEndpointProducerBuilder transferLoggingLevel(
@@ -3150,6 +3212,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointProducerBuilder transferLoggingVerbose(
@@ -3190,6 +3253,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.GenericFileExist</code> type.
          * 
+         * Default: Override
          * Group: producer
          */
         default FtpsEndpointProducerBuilder fileExist(GenericFileExist fileExist) {
@@ -3232,6 +3296,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FtpsEndpointProducerBuilder flatten(boolean flatten) {
@@ -3264,6 +3329,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default FtpsEndpointProducerBuilder jailStartingDirectory(
@@ -3301,6 +3367,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FtpsEndpointProducerBuilder lazyStartProducer(
@@ -3433,6 +3500,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default FtpsEndpointProducerBuilder disableSecureDataChannelDefaults(
@@ -3550,6 +3618,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default FtpsEndpointProducerBuilder implicit(boolean implicit) {
@@ -3584,6 +3653,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.2
          * Group: security
          */
         default FtpsEndpointProducerBuilder securityProtocol(
@@ -3657,6 +3727,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder fastExistsCheck(
@@ -3694,6 +3765,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder allowNullBody(
@@ -3737,6 +3809,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder disconnectOnBatchComplete(
@@ -3775,6 +3848,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder eagerDeleteTargetFile(
@@ -3817,6 +3891,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder keepLastModified(
@@ -3881,6 +3956,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedFtpsEndpointProducerBuilder sendNoop(boolean sendNoop) {
@@ -3924,6 +4000,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder autoCreate(
@@ -3951,6 +4028,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder basicPropertyBinding(
@@ -3977,6 +4055,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 131072
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder bufferSize(int bufferSize) {
@@ -4001,6 +4080,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder connectTimeout(
@@ -4205,6 +4285,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder soTimeout(int soTimeout) {
@@ -4235,6 +4316,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder stepwise(boolean stepwise) {
@@ -4262,6 +4344,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder synchronous(
@@ -4291,6 +4374,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder throwExceptionOnConnectFailed(
@@ -4319,6 +4403,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedFtpsEndpointProducerBuilder timeout(int timeout) {
@@ -4353,6 +4438,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointBuilder binary(boolean binary) {
@@ -4398,6 +4484,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointBuilder disconnect(boolean disconnect) {
@@ -4497,6 +4584,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointBuilder passiveMode(boolean passiveMode) {
@@ -4522,6 +4610,7 @@ public interface FtpsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.file.remote.RemoteFileConfiguration$PathSeparator</code> type.
          * 
+         * Default: UNIX
          * Group: common
          */
         default FtpsEndpointBuilder separator(PathSeparator separator) {
@@ -4549,6 +4638,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5
          * Group: common
          */
         default FtpsEndpointBuilder transferLoggingIntervalSeconds(
@@ -4576,6 +4666,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: common
          */
         default FtpsEndpointBuilder transferLoggingLevel(
@@ -4603,6 +4694,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FtpsEndpointBuilder transferLoggingVerbose(
@@ -4641,6 +4733,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default FtpsEndpointBuilder disableSecureDataChannelDefaults(
@@ -4758,6 +4851,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default FtpsEndpointBuilder implicit(boolean implicit) {
@@ -4792,6 +4886,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.2
          * Group: security
          */
         default FtpsEndpointBuilder securityProtocol(String securityProtocol) {
@@ -4864,6 +4959,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedFtpsEndpointBuilder fastExistsCheck(
@@ -4912,6 +5008,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder autoCreate(boolean autoCreate) {
@@ -4938,6 +5035,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder basicPropertyBinding(
@@ -4964,6 +5062,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 131072
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder bufferSize(int bufferSize) {
@@ -4988,6 +5087,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder connectTimeout(int connectTimeout) {
@@ -5187,6 +5287,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder soTimeout(int soTimeout) {
@@ -5217,6 +5318,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder stepwise(boolean stepwise) {
@@ -5244,6 +5346,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder synchronous(boolean synchronous) {
@@ -5271,6 +5374,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder throwExceptionOnConnectFailed(
@@ -5299,6 +5403,7 @@ public interface FtpsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedFtpsEndpointBuilder timeout(int timeout) {

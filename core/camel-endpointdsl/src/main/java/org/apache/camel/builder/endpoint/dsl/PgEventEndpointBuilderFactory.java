@@ -78,6 +78,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PgEventEndpointConsumerBuilder bridgeErrorHandler(
@@ -119,6 +120,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: postgres
          * Group: security
          */
         default PgEventEndpointConsumerBuilder user(String user) {
@@ -200,6 +202,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointConsumerBuilder basicPropertyBinding(
@@ -226,6 +229,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointConsumerBuilder synchronous(
@@ -295,6 +299,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PgEventEndpointProducerBuilder lazyStartProducer(
@@ -338,6 +343,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: postgres
          * Group: security
          */
         default PgEventEndpointProducerBuilder user(String user) {
@@ -362,6 +368,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointProducerBuilder basicPropertyBinding(
@@ -388,6 +395,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointProducerBuilder synchronous(
@@ -460,6 +468,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: postgres
          * Group: security
          */
         default PgEventEndpointBuilder user(String user) {
@@ -483,6 +492,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder basicPropertyBinding(
@@ -509,6 +519,7 @@ public interface PgEventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPgEventEndpointBuilder synchronous(boolean synchronous) {

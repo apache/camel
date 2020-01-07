@@ -43,6 +43,7 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: ou=system
          * Group: producer
          */
         default LdapEndpointBuilder base(String base) {
@@ -62,6 +63,7 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LdapEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -136,6 +138,7 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: subtree
          * Group: producer
          */
         default LdapEndpointBuilder scope(String scope) {
@@ -159,6 +162,7 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLdapEndpointBuilder basicPropertyBinding(
@@ -185,6 +189,7 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLdapEndpointBuilder synchronous(boolean synchronous) {

@@ -65,6 +65,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PubNubEndpointConsumerBuilder bridgeErrorHandler(
@@ -95,6 +96,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PubNubEndpointConsumerBuilder withPresence(boolean withPresence) {
@@ -164,6 +166,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default PubNubEndpointConsumerBuilder secure(boolean secure) {
@@ -267,6 +270,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointConsumerBuilder basicPropertyBinding(
@@ -316,6 +320,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointConsumerBuilder synchronous(
@@ -372,6 +377,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PubNubEndpointProducerBuilder lazyStartProducer(
@@ -473,6 +479,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default PubNubEndpointProducerBuilder secure(boolean secure) {
@@ -519,6 +526,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointProducerBuilder basicPropertyBinding(
@@ -568,6 +576,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointProducerBuilder synchronous(
@@ -663,6 +672,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default PubNubEndpointBuilder secure(boolean secure) {
@@ -709,6 +719,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder basicPropertyBinding(
@@ -758,6 +769,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder synchronous(boolean synchronous) {

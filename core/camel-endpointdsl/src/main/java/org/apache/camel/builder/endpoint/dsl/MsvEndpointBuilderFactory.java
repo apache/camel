@@ -42,6 +42,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default MsvEndpointBuilder failOnNullBody(boolean failOnNullBody) {
@@ -64,6 +65,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default MsvEndpointBuilder failOnNullHeader(boolean failOnNullHeader) {
@@ -105,6 +107,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MsvEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -147,6 +150,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder basicPropertyBinding(
@@ -283,6 +287,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://www.w3.org/2001/XMLSchema
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder schemaLanguage(String schemaLanguage) {
@@ -295,6 +300,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder synchronous(boolean synchronous) {
@@ -320,6 +326,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder useSharedSchema(

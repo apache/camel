@@ -53,6 +53,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PlatformHttpEndpointBuilder bridgeErrorHandler(
@@ -204,6 +205,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPlatformHttpEndpointBuilder basicPropertyBinding(
@@ -286,6 +288,7 @@ public interface PlatformHttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPlatformHttpEndpointBuilder synchronous(

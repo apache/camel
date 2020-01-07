@@ -107,6 +107,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesPodsEndpointConsumerBuilder portProtocol(
@@ -125,6 +126,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder bridgeErrorHandler(
@@ -189,6 +191,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KubernetesPodsEndpointConsumerBuilder poolSize(int poolSize) {
@@ -448,6 +451,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder basicPropertyBinding(
@@ -501,6 +505,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointConsumerBuilder synchronous(
@@ -597,6 +602,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesPodsEndpointProducerBuilder portProtocol(
@@ -617,6 +623,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesPodsEndpointProducerBuilder lazyStartProducer(
@@ -828,6 +835,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder basicPropertyBinding(
@@ -881,6 +889,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointProducerBuilder synchronous(
@@ -976,6 +985,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesPodsEndpointBuilder portProtocol(String portProtocol) {
@@ -1146,6 +1156,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointBuilder basicPropertyBinding(
@@ -1199,6 +1210,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPodsEndpointBuilder synchronous(

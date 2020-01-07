@@ -124,6 +124,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder bridgeErrorHandler(
@@ -154,6 +155,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder pollingTimeout(
@@ -178,6 +180,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder poolSize(int poolSize) {
@@ -201,6 +204,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.hazelcast.queue.HazelcastQueueConsumerMode</code> type.
          * 
+         * Default: Listen
          * Group: consumer
          */
         default HazelcastQueueEndpointConsumerBuilder queueConsumerMode(
@@ -296,6 +300,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder basicPropertyBinding(
@@ -322,6 +327,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointConsumerBuilder synchronous(
@@ -438,6 +444,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HazelcastQueueEndpointProducerBuilder lazyStartProducer(
@@ -483,6 +490,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointProducerBuilder basicPropertyBinding(
@@ -509,6 +517,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointProducerBuilder synchronous(
@@ -629,6 +638,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointBuilder basicPropertyBinding(
@@ -655,6 +665,7 @@ public interface HazelcastQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastQueueEndpointBuilder synchronous(

@@ -51,6 +51,7 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DozerEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -119,6 +120,7 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: dozerBeanMapping.xml
          * Group: producer
          */
         default DozerEndpointBuilder mappingFile(String mappingFile) {
@@ -191,6 +193,7 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDozerEndpointBuilder basicPropertyBinding(
@@ -217,6 +220,7 @@ public interface DozerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDozerEndpointBuilder synchronous(boolean synchronous) {

@@ -85,6 +85,7 @@ public interface MQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MQEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -177,6 +178,7 @@ public interface MQEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default MQEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -237,6 +239,7 @@ public interface MQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMQEndpointBuilder basicPropertyBinding(
@@ -263,6 +266,7 @@ public interface MQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMQEndpointBuilder synchronous(boolean synchronous) {

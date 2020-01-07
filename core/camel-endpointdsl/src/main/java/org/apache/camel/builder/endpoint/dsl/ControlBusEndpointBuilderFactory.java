@@ -67,6 +67,7 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ControlBusEndpointBuilder async(boolean async) {
@@ -99,6 +100,7 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ControlBusEndpointBuilder lazyStartProducer(
@@ -132,6 +134,7 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: INFO
          * Group: producer
          */
         default ControlBusEndpointBuilder loggingLevel(LoggingLevel loggingLevel) {
@@ -156,6 +159,7 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1000
          * Group: producer
          */
         default ControlBusEndpointBuilder restartDelay(int restartDelay) {
@@ -202,6 +206,7 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedControlBusEndpointBuilder basicPropertyBinding(
@@ -228,6 +233,7 @@ public interface ControlBusEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedControlBusEndpointBuilder synchronous(

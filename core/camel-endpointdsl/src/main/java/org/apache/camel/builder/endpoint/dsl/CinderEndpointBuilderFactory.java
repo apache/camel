@@ -43,6 +43,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: V3
          * Group: producer
          */
         default CinderEndpointBuilder apiVersion(String apiVersion) {
@@ -78,6 +79,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: default
          * Group: producer
          */
         default CinderEndpointBuilder domain(String domain) {
@@ -97,6 +99,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CinderEndpointBuilder lazyStartProducer(
@@ -199,6 +202,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCinderEndpointBuilder basicPropertyBinding(
@@ -225,6 +229,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCinderEndpointBuilder synchronous(boolean synchronous) {

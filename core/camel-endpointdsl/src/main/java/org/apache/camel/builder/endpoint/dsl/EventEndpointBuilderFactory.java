@@ -52,6 +52,7 @@ public interface EventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default EventEndpointConsumerBuilder bridgeErrorHandler(
@@ -151,6 +152,7 @@ public interface EventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventEndpointConsumerBuilder basicPropertyBinding(
@@ -177,6 +179,7 @@ public interface EventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventEndpointConsumerBuilder synchronous(
@@ -221,6 +224,7 @@ public interface EventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default EventEndpointProducerBuilder lazyStartProducer(
@@ -265,6 +269,7 @@ public interface EventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventEndpointProducerBuilder basicPropertyBinding(
@@ -291,6 +296,7 @@ public interface EventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventEndpointProducerBuilder synchronous(
@@ -339,6 +345,7 @@ public interface EventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventEndpointBuilder basicPropertyBinding(
@@ -365,6 +372,7 @@ public interface EventEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEventEndpointBuilder synchronous(boolean synchronous) {

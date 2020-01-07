@@ -107,6 +107,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesJobEndpointConsumerBuilder portProtocol(
@@ -125,6 +126,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KubernetesJobEndpointConsumerBuilder bridgeErrorHandler(
@@ -189,6 +191,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KubernetesJobEndpointConsumerBuilder poolSize(int poolSize) {
@@ -447,6 +450,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder basicPropertyBinding(
@@ -500,6 +504,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesJobEndpointConsumerBuilder synchronous(
@@ -596,6 +601,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesJobEndpointProducerBuilder portProtocol(
@@ -616,6 +622,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesJobEndpointProducerBuilder lazyStartProducer(
@@ -826,6 +833,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesJobEndpointProducerBuilder basicPropertyBinding(
@@ -879,6 +887,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesJobEndpointProducerBuilder synchronous(
@@ -974,6 +983,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesJobEndpointBuilder portProtocol(String portProtocol) {
@@ -1144,6 +1154,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesJobEndpointBuilder basicPropertyBinding(
@@ -1197,6 +1208,7 @@ public interface KubernetesJobEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesJobEndpointBuilder synchronous(

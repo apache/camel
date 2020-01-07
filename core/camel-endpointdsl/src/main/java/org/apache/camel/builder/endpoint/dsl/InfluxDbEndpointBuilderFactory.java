@@ -43,6 +43,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default InfluxDbEndpointBuilder batch(boolean batch) {
@@ -84,6 +85,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default InfluxDbEndpointBuilder lazyStartProducer(
@@ -116,6 +118,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: insert
          * Group: producer
          */
         default InfluxDbEndpointBuilder operation(String operation) {
@@ -139,6 +142,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: default
          * Group: producer
          */
         default InfluxDbEndpointBuilder retentionPolicy(String retentionPolicy) {
@@ -162,6 +166,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
@@ -188,6 +193,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(boolean synchronous) {

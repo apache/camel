@@ -61,6 +61,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ServletEndpointBuilder disableStreamCache(
@@ -128,6 +129,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ServletEndpointBuilder async(boolean async) {
@@ -156,6 +158,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ServletEndpointBuilder bridgeErrorHandler(
@@ -187,6 +190,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default ServletEndpointBuilder chunked(boolean chunked) {
@@ -225,6 +229,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ServletEndpointBuilder matchOnUriPrefix(boolean matchOnUriPrefix) {
@@ -249,6 +254,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ServletEndpointBuilder muteException(boolean muteException) {
@@ -297,6 +303,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: CamelServlet
          * Group: consumer
          */
         default ServletEndpointBuilder servletName(String servletName) {
@@ -316,6 +323,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ServletEndpointBuilder transferException(
@@ -390,6 +398,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedServletEndpointBuilder attachmentMultipartBinding(
@@ -421,6 +430,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedServletEndpointBuilder eagerCheckContentAvailable(
@@ -519,6 +529,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedServletEndpointBuilder optionsEnabled(
@@ -545,6 +556,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedServletEndpointBuilder traceEnabled(boolean traceEnabled) {
@@ -569,6 +581,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServletEndpointBuilder basicPropertyBinding(
@@ -596,6 +609,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedServletEndpointBuilder mapHttpMessageBody(
@@ -624,6 +638,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedServletEndpointBuilder mapHttpMessageFormUrlEncodedBody(
@@ -652,6 +667,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedServletEndpointBuilder mapHttpMessageHeaders(
@@ -679,6 +695,7 @@ public interface ServletEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServletEndpointBuilder synchronous(boolean synchronous) {

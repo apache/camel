@@ -85,6 +85,7 @@ public interface EKSEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default EKSEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -175,6 +176,7 @@ public interface EKSEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default EKSEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -235,6 +237,7 @@ public interface EKSEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEKSEndpointBuilder basicPropertyBinding(
@@ -261,6 +264,7 @@ public interface EKSEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEKSEndpointBuilder synchronous(boolean synchronous) {

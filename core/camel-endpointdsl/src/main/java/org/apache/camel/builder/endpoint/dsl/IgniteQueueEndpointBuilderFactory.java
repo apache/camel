@@ -105,6 +105,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IgniteQueueEndpointBuilder lazyStartProducer(
@@ -169,6 +170,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default IgniteQueueEndpointBuilder propagateIncomingBodyIfNoReturnValue(
@@ -217,6 +219,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IgniteQueueEndpointBuilder treatCollectionsAsCacheObjects(
@@ -254,6 +257,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteQueueEndpointBuilder basicPropertyBinding(
@@ -280,6 +284,7 @@ public interface IgniteQueueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteQueueEndpointBuilder synchronous(

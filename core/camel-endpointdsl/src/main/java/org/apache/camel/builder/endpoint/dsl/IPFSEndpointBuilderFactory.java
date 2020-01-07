@@ -51,6 +51,7 @@ public interface IPFSEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IPFSEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -104,6 +105,7 @@ public interface IPFSEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder basicPropertyBinding(
@@ -130,6 +132,7 @@ public interface IPFSEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder synchronous(boolean synchronous) {

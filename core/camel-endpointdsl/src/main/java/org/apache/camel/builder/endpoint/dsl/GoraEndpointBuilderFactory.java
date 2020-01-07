@@ -86,6 +86,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder bridgeErrorHandler(
@@ -116,6 +117,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default GoraEndpointConsumerBuilder concurrentConsumers(
@@ -452,6 +454,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoraEndpointConsumerBuilder basicPropertyBinding(
@@ -504,6 +507,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoraEndpointConsumerBuilder synchronous(
@@ -573,6 +577,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default GoraEndpointProducerBuilder flushOnEveryOperation(
@@ -605,6 +610,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GoraEndpointProducerBuilder lazyStartProducer(
@@ -649,6 +655,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoraEndpointProducerBuilder basicPropertyBinding(
@@ -701,6 +708,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoraEndpointProducerBuilder synchronous(
@@ -782,6 +790,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoraEndpointBuilder basicPropertyBinding(
@@ -834,6 +843,7 @@ public interface GoraEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoraEndpointBuilder synchronous(boolean synchronous) {

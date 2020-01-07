@@ -42,6 +42,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MustacheEndpointBuilder contentCache(boolean contentCache) {
@@ -75,6 +76,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: }}
          * Group: producer
          */
         default MustacheEndpointBuilder endDelimiter(String endDelimiter) {
@@ -94,6 +96,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MustacheEndpointBuilder lazyStartProducer(
@@ -126,6 +129,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: {{
          * Group: producer
          */
         default MustacheEndpointBuilder startDelimiter(String startDelimiter) {
@@ -149,6 +153,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMustacheEndpointBuilder basicPropertyBinding(
@@ -175,6 +180,7 @@ public interface MustacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMustacheEndpointBuilder synchronous(boolean synchronous) {

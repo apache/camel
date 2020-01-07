@@ -83,6 +83,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder bridgeErrorHandler(
@@ -136,6 +137,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder includeGridData(
@@ -160,6 +162,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: ROWS
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder majorDimension(
@@ -174,6 +177,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder maxResults(int maxResults) {
@@ -254,6 +258,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder sendEmptyMessageWhenIdle(
@@ -282,6 +287,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder splitResults(
@@ -322,6 +328,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: FORMATTED_VALUE
          * Group: consumer
          */
         default GoogleSheetsStreamEndpointBuilder valueRenderOption(
@@ -422,6 +429,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder delay(long delay) {
@@ -447,6 +455,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder greedy(boolean greedy) {
@@ -472,6 +481,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder initialDelay(long initialDelay) {
@@ -499,6 +509,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder repeatCount(long repeatCount) {
@@ -524,6 +535,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder runLoggingLevel(
@@ -581,6 +593,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder scheduler(String scheduler) {
@@ -621,6 +634,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder startScheduler(
@@ -645,6 +659,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -669,6 +684,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleSheetsStreamEndpointBuilder useFixedDelay(
@@ -795,6 +811,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder basicPropertyBinding(
@@ -821,6 +838,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsStreamEndpointBuilder synchronous(

@@ -121,6 +121,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MetricsEndpointBuilder lazyStartProducer(
@@ -231,6 +232,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder basicPropertyBinding(
@@ -257,6 +259,7 @@ public interface MetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMetricsEndpointBuilder synchronous(boolean synchronous) {

@@ -53,6 +53,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SshEndpointConsumerBuilder failOnUnknownHost(
@@ -91,6 +92,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SshEndpointConsumerBuilder timeout(long timeout) {
@@ -120,6 +122,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SshEndpointConsumerBuilder bridgeErrorHandler(
@@ -165,6 +168,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SshEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -278,6 +282,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder delay(long delay) {
@@ -303,6 +308,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder greedy(boolean greedy) {
@@ -328,6 +334,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -354,6 +361,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -379,6 +387,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder runLoggingLevel(
@@ -436,6 +445,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder scheduler(String scheduler) {
@@ -476,6 +486,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder startScheduler(boolean startScheduler) {
@@ -498,6 +509,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -522,6 +534,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SshEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -738,6 +751,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder basicPropertyBinding(
@@ -764,6 +778,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: exec
          * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder channelType(
@@ -790,6 +805,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder sleepForShellPrompt(
@@ -816,6 +832,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSshEndpointConsumerBuilder synchronous(
@@ -853,6 +870,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SshEndpointProducerBuilder failOnUnknownHost(
@@ -891,6 +909,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SshEndpointProducerBuilder timeout(long timeout) {
@@ -922,6 +941,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SshEndpointProducerBuilder lazyStartProducer(
@@ -1058,6 +1078,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder basicPropertyBinding(
@@ -1084,6 +1105,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: exec
          * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder channelType(
@@ -1110,6 +1132,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder sleepForShellPrompt(
@@ -1136,6 +1159,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSshEndpointProducerBuilder synchronous(
@@ -1173,6 +1197,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SshEndpointBuilder failOnUnknownHost(boolean failOnUnknownHost) {
@@ -1208,6 +1233,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SshEndpointBuilder timeout(long timeout) {
@@ -1333,6 +1359,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSshEndpointBuilder basicPropertyBinding(
@@ -1359,6 +1386,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: exec
          * Group: advanced
          */
         default AdvancedSshEndpointBuilder channelType(String channelType) {
@@ -1383,6 +1411,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedSshEndpointBuilder sleepForShellPrompt(
@@ -1409,6 +1438,7 @@ public interface SshEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSshEndpointBuilder synchronous(boolean synchronous) {

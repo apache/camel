@@ -54,6 +54,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder bridgeErrorHandler(
@@ -85,6 +86,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder internalKeyConverter(
@@ -98,6 +100,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder internalValueConverter(
@@ -114,6 +117,8 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
+         * io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetCommitPolicy(
@@ -129,6 +134,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetCommitTimeoutMs(
@@ -156,6 +162,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 60000
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetFlushIntervalMs(
@@ -181,6 +188,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetStorage(
@@ -299,6 +307,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.debezium.relational.history.FileDatabaseHistory
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistory(
@@ -343,6 +352,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 100
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryAttempts(
@@ -371,6 +381,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 100
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -434,6 +445,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1433
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databasePort(int databasePort) {
@@ -493,6 +505,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: precise
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder decimalHandlingMode(
@@ -507,6 +520,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder heartbeatIntervalMs(
@@ -534,6 +548,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: __debezium-heartbeat
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder heartbeatTopicsPrefix(
@@ -546,6 +561,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2048
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder maxBatchSize(int maxBatchSize) {
@@ -571,6 +587,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 8192
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder maxQueueSize(int maxQueueSize) {
@@ -617,6 +634,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder pollIntervalMs(
@@ -642,6 +660,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotDelayMs(
@@ -694,6 +713,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotLockTimeoutMs(
@@ -725,6 +745,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: initial
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotMode(
@@ -761,6 +782,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: v2
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder sourceStructVersion(
@@ -786,6 +808,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder tableIgnoreBuiltin(
@@ -829,6 +852,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: adaptive
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder timePrecisionMode(
@@ -911,6 +935,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumSqlserverEndpointBuilder basicPropertyBinding(
@@ -937,6 +962,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumSqlserverEndpointBuilder synchronous(

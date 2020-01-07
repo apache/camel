@@ -59,6 +59,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default HttpEndpointBuilder disableStreamCache(
@@ -128,6 +129,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder bridgeEndpoint(boolean bridgeEndpoint) {
@@ -154,6 +156,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default HttpEndpointBuilder chunked(boolean chunked) {
@@ -179,6 +182,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default HttpEndpointBuilder clearExpiredCookies(
@@ -206,6 +210,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder connectionClose(boolean connectionClose) {
@@ -232,6 +237,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default HttpEndpointBuilder copyHeaders(boolean copyHeaders) {
@@ -297,6 +303,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder ignoreResponseBody(
@@ -329,6 +336,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -364,6 +372,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder preserveHostHeader(
@@ -394,6 +403,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default HttpEndpointBuilder throwExceptionOnFailure(
@@ -428,6 +438,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HttpEndpointBuilder transferException(boolean transferException) {
@@ -591,6 +602,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default HttpEndpointBuilder authenticationPreemptive(
@@ -833,6 +845,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedHttpEndpointBuilder deleteWithBody(
@@ -860,6 +873,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedHttpEndpointBuilder getWithBody(boolean getWithBody) {
@@ -887,6 +901,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 200-299
          * Group: producer (advanced)
          */
         default AdvancedHttpEndpointBuilder okStatusCodeRange(
@@ -900,6 +915,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder basicPropertyBinding(
@@ -979,6 +995,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 20
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder connectionsPerRoute(
@@ -1111,6 +1128,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageBody(
@@ -1139,6 +1157,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageFormUrlEncodedBody(
@@ -1167,6 +1186,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder mapHttpMessageHeaders(
@@ -1193,6 +1213,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 200
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder maxTotalConnections(
@@ -1218,6 +1239,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder synchronous(boolean synchronous) {
@@ -1241,6 +1263,7 @@ public interface HttpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHttpEndpointBuilder useSystemProperties(

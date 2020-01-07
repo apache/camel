@@ -47,6 +47,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: common
          */
         default GrpcEndpointConsumerBuilder flowControlWindow(
@@ -71,6 +72,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4194304
          * Group: common
          */
         default GrpcEndpointConsumerBuilder maxMessageSize(int maxMessageSize) {
@@ -99,6 +101,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GrpcEndpointConsumerBuilder bridgeErrorHandler(
@@ -137,6 +140,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcConsumerStrategy</code>
          * type.
          * 
+         * Default: PROPAGATION
          * Group: consumer
          */
         default GrpcEndpointConsumerBuilder consumerStrategy(
@@ -169,6 +173,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GrpcEndpointConsumerBuilder forwardOnCompleted(
@@ -194,6 +199,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GrpcEndpointConsumerBuilder forwardOnError(
@@ -219,6 +225,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2147483647
          * Group: consumer
          */
         default GrpcEndpointConsumerBuilder maxConcurrentCallsPerConnection(
@@ -245,6 +252,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
+         * Default: NONE
          * Group: security
          */
         default GrpcEndpointConsumerBuilder authenticationType(
@@ -272,6 +280,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
          * 
+         * Default: HMAC256
          * Group: security
          */
         default GrpcEndpointConsumerBuilder jwtAlgorithm(
@@ -365,6 +374,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
          * 
+         * Default: PLAINTEXT
          * Group: security
          */
         default GrpcEndpointConsumerBuilder negotiationType(
@@ -486,6 +496,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGrpcEndpointConsumerBuilder basicPropertyBinding(
@@ -512,6 +523,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGrpcEndpointConsumerBuilder synchronous(
@@ -548,6 +560,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: common
          */
         default GrpcEndpointProducerBuilder flowControlWindow(
@@ -572,6 +585,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4194304
          * Group: common
          */
         default GrpcEndpointProducerBuilder maxMessageSize(int maxMessageSize) {
@@ -602,6 +616,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GrpcEndpointProducerBuilder lazyStartProducer(
@@ -651,6 +666,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.GrpcProducerStrategy</code>
          * type.
          * 
+         * Default: SIMPLE
          * Group: producer
          */
         default GrpcEndpointProducerBuilder producerStrategy(
@@ -706,6 +722,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
+         * Default: NONE
          * Group: security
          */
         default GrpcEndpointProducerBuilder authenticationType(
@@ -733,6 +750,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
          * 
+         * Default: HMAC256
          * Group: security
          */
         default GrpcEndpointProducerBuilder jwtAlgorithm(
@@ -826,6 +844,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
          * 
+         * Default: PLAINTEXT
          * Group: security
          */
         default GrpcEndpointProducerBuilder negotiationType(
@@ -890,6 +909,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGrpcEndpointProducerBuilder basicPropertyBinding(
@@ -916,6 +936,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGrpcEndpointProducerBuilder synchronous(
@@ -952,6 +973,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: common
          */
         default GrpcEndpointBuilder flowControlWindow(int flowControlWindow) {
@@ -974,6 +996,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4194304
          * Group: common
          */
         default GrpcEndpointBuilder maxMessageSize(int maxMessageSize) {
@@ -997,6 +1020,7 @@ public interface GrpcEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.grpc.GrpcAuthType</code> type.
          * 
+         * Default: NONE
          * Group: security
          */
         default GrpcEndpointBuilder authenticationType(
@@ -1023,6 +1047,7 @@ public interface GrpcEndpointBuilderFactory {
          * <code>org.apache.camel.component.grpc.auth.jwt.JwtAlgorithm</code>
          * type.
          * 
+         * Default: HMAC256
          * Group: security
          */
         default GrpcEndpointBuilder jwtAlgorithm(JwtAlgorithm jwtAlgorithm) {
@@ -1115,6 +1140,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>io.grpc.netty.NegotiationType</code> type.
          * 
+         * Default: PLAINTEXT
          * Group: security
          */
         default GrpcEndpointBuilder negotiationType(
@@ -1178,6 +1204,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGrpcEndpointBuilder basicPropertyBinding(
@@ -1204,6 +1231,7 @@ public interface GrpcEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGrpcEndpointBuilder synchronous(boolean synchronous) {

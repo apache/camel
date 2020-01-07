@@ -108,6 +108,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 1.1
          * Group: common
          */
         default AS2EndpointConsumerBuilder as2Version(String as2Version) {
@@ -120,6 +121,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel.apache.org
          * Group: common
          */
         default AS2EndpointConsumerBuilder clientFqdn(String clientFqdn) {
@@ -319,6 +321,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /
          * Group: common
          */
         default AS2EndpointConsumerBuilder requestUri(String requestUri) {
@@ -331,6 +334,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Camel AS2 Server Endpoint
          * Group: common
          */
         default AS2EndpointConsumerBuilder server(String server) {
@@ -343,6 +347,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel.apache.org
          * Group: common
          */
         default AS2EndpointConsumerBuilder serverFqdn(String serverFqdn) {
@@ -534,6 +539,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Camel AS2 Client Endpoint
          * Group: common
          */
         default AS2EndpointConsumerBuilder userAgent(String userAgent) {
@@ -551,6 +557,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AS2EndpointConsumerBuilder bridgeErrorHandler(
@@ -582,6 +589,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AS2EndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -695,6 +703,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder delay(long delay) {
@@ -720,6 +729,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder greedy(boolean greedy) {
@@ -745,6 +755,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -771,6 +782,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -796,6 +808,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder runLoggingLevel(
@@ -853,6 +866,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder scheduler(String scheduler) {
@@ -893,6 +907,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder startScheduler(boolean startScheduler) {
@@ -915,6 +930,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -939,6 +955,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default AS2EndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -1063,6 +1080,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointConsumerBuilder basicPropertyBinding(
@@ -1089,6 +1107,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointConsumerBuilder synchronous(
@@ -1179,6 +1198,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 1.1
          * Group: common
          */
         default AS2EndpointProducerBuilder as2Version(String as2Version) {
@@ -1191,6 +1211,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel.apache.org
          * Group: common
          */
         default AS2EndpointProducerBuilder clientFqdn(String clientFqdn) {
@@ -1390,6 +1411,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /
          * Group: common
          */
         default AS2EndpointProducerBuilder requestUri(String requestUri) {
@@ -1402,6 +1424,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Camel AS2 Server Endpoint
          * Group: common
          */
         default AS2EndpointProducerBuilder server(String server) {
@@ -1414,6 +1437,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel.apache.org
          * Group: common
          */
         default AS2EndpointProducerBuilder serverFqdn(String serverFqdn) {
@@ -1605,6 +1629,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Camel AS2 Client Endpoint
          * Group: common
          */
         default AS2EndpointProducerBuilder userAgent(String userAgent) {
@@ -1624,6 +1649,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AS2EndpointProducerBuilder lazyStartProducer(
@@ -1668,6 +1694,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointProducerBuilder basicPropertyBinding(
@@ -1694,6 +1721,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointProducerBuilder synchronous(
@@ -1784,6 +1812,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 1.1
          * Group: common
          */
         default AS2EndpointBuilder as2Version(String as2Version) {
@@ -1796,6 +1825,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel.apache.org
          * Group: common
          */
         default AS2EndpointBuilder clientFqdn(String clientFqdn) {
@@ -1994,6 +2024,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /
          * Group: common
          */
         default AS2EndpointBuilder requestUri(String requestUri) {
@@ -2006,6 +2037,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Camel AS2 Server Endpoint
          * Group: common
          */
         default AS2EndpointBuilder server(String server) {
@@ -2018,6 +2050,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel.apache.org
          * Group: common
          */
         default AS2EndpointBuilder serverFqdn(String serverFqdn) {
@@ -2203,6 +2236,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Camel AS2 Client Endpoint
          * Group: common
          */
         default AS2EndpointBuilder userAgent(String userAgent) {
@@ -2226,6 +2260,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointBuilder basicPropertyBinding(
@@ -2252,6 +2287,7 @@ public interface AS2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAS2EndpointBuilder synchronous(boolean synchronous) {

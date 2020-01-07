@@ -44,6 +44,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LanguageEndpointBuilder binary(boolean binary) {
@@ -69,6 +70,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LanguageEndpointBuilder cacheScript(boolean cacheScript) {
@@ -93,6 +95,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default LanguageEndpointBuilder contentCache(boolean contentCache) {
@@ -123,6 +126,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LanguageEndpointBuilder lazyStartProducer(
@@ -167,6 +171,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default LanguageEndpointBuilder transform(boolean transform) {
@@ -202,6 +207,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder basicPropertyBinding(
@@ -228,6 +234,7 @@ public interface LanguageEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLanguageEndpointBuilder synchronous(boolean synchronous) {

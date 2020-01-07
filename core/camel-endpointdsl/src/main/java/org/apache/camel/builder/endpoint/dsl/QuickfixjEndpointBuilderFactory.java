@@ -52,6 +52,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default QuickfixjEndpointConsumerBuilder lazyCreateEngine(
@@ -114,6 +115,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default QuickfixjEndpointConsumerBuilder bridgeErrorHandler(
@@ -213,6 +215,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuickfixjEndpointConsumerBuilder basicPropertyBinding(
@@ -239,6 +242,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuickfixjEndpointConsumerBuilder synchronous(
@@ -280,6 +284,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default QuickfixjEndpointProducerBuilder lazyCreateEngine(
@@ -344,6 +349,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default QuickfixjEndpointProducerBuilder lazyStartProducer(
@@ -388,6 +394,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuickfixjEndpointProducerBuilder basicPropertyBinding(
@@ -414,6 +421,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuickfixjEndpointProducerBuilder synchronous(
@@ -455,6 +463,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default QuickfixjEndpointBuilder lazyCreateEngine(
@@ -523,6 +532,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuickfixjEndpointBuilder basicPropertyBinding(
@@ -549,6 +559,7 @@ public interface QuickfixjEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuickfixjEndpointBuilder synchronous(boolean synchronous) {

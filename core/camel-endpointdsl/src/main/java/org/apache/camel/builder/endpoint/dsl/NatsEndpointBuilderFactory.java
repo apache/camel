@@ -46,6 +46,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2000
          * Group: common
          */
         default NatsEndpointConsumerBuilder connectionTimeout(
@@ -70,6 +71,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointConsumerBuilder flushConnection(
@@ -94,6 +96,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default NatsEndpointConsumerBuilder flushTimeout(int flushTimeout) {
@@ -117,6 +120,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default NatsEndpointConsumerBuilder maxPingsOut(int maxPingsOut) {
@@ -140,6 +144,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
         default NatsEndpointConsumerBuilder maxReconnectAttempts(
@@ -167,6 +172,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointConsumerBuilder noEcho(boolean noEcho) {
@@ -193,6 +199,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointConsumerBuilder noRandomizeServers(
@@ -218,6 +225,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointConsumerBuilder pedantic(boolean pedantic) {
@@ -241,6 +249,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 120000
          * Group: common
          */
         default NatsEndpointConsumerBuilder pingInterval(int pingInterval) {
@@ -264,6 +273,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NatsEndpointConsumerBuilder reconnect(boolean reconnect) {
@@ -286,6 +296,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2000
          * Group: common
          */
         default NatsEndpointConsumerBuilder reconnectTimeWait(
@@ -310,6 +321,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default NatsEndpointConsumerBuilder requestCleanupInterval(
@@ -346,6 +358,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointConsumerBuilder verbose(boolean verbose) {
@@ -374,6 +387,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NatsEndpointConsumerBuilder bridgeErrorHandler(
@@ -416,6 +430,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default NatsEndpointConsumerBuilder poolSize(int poolSize) {
@@ -449,6 +464,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NatsEndpointConsumerBuilder replyToDisabled(
@@ -473,6 +489,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NatsEndpointConsumerBuilder secure(boolean secure) {
@@ -590,6 +607,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNatsEndpointConsumerBuilder basicPropertyBinding(
@@ -639,6 +657,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNatsEndpointConsumerBuilder synchronous(
@@ -675,6 +694,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2000
          * Group: common
          */
         default NatsEndpointProducerBuilder connectionTimeout(
@@ -699,6 +719,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointProducerBuilder flushConnection(
@@ -723,6 +744,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default NatsEndpointProducerBuilder flushTimeout(int flushTimeout) {
@@ -746,6 +768,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default NatsEndpointProducerBuilder maxPingsOut(int maxPingsOut) {
@@ -769,6 +792,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
         default NatsEndpointProducerBuilder maxReconnectAttempts(
@@ -796,6 +820,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointProducerBuilder noEcho(boolean noEcho) {
@@ -822,6 +847,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointProducerBuilder noRandomizeServers(
@@ -847,6 +873,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointProducerBuilder pedantic(boolean pedantic) {
@@ -870,6 +897,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 120000
          * Group: common
          */
         default NatsEndpointProducerBuilder pingInterval(int pingInterval) {
@@ -893,6 +921,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NatsEndpointProducerBuilder reconnect(boolean reconnect) {
@@ -915,6 +944,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2000
          * Group: common
          */
         default NatsEndpointProducerBuilder reconnectTimeWait(
@@ -939,6 +969,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default NatsEndpointProducerBuilder requestCleanupInterval(
@@ -975,6 +1006,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointProducerBuilder verbose(boolean verbose) {
@@ -1005,6 +1037,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NatsEndpointProducerBuilder lazyStartProducer(
@@ -1048,6 +1081,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NatsEndpointProducerBuilder secure(boolean secure) {
@@ -1108,6 +1142,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNatsEndpointProducerBuilder basicPropertyBinding(
@@ -1157,6 +1192,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNatsEndpointProducerBuilder synchronous(
@@ -1193,6 +1229,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2000
          * Group: common
          */
         default NatsEndpointBuilder connectionTimeout(int connectionTimeout) {
@@ -1215,6 +1252,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointBuilder flushConnection(boolean flushConnection) {
@@ -1237,6 +1275,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default NatsEndpointBuilder flushTimeout(int flushTimeout) {
@@ -1260,6 +1299,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default NatsEndpointBuilder maxPingsOut(int maxPingsOut) {
@@ -1283,6 +1323,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
         default NatsEndpointBuilder maxReconnectAttempts(
@@ -1310,6 +1351,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointBuilder noEcho(boolean noEcho) {
@@ -1336,6 +1378,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointBuilder noRandomizeServers(
@@ -1360,6 +1403,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointBuilder pedantic(boolean pedantic) {
@@ -1383,6 +1427,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 120000
          * Group: common
          */
         default NatsEndpointBuilder pingInterval(int pingInterval) {
@@ -1406,6 +1451,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NatsEndpointBuilder reconnect(boolean reconnect) {
@@ -1428,6 +1474,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2000
          * Group: common
          */
         default NatsEndpointBuilder reconnectTimeWait(int reconnectTimeWait) {
@@ -1450,6 +1497,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default NatsEndpointBuilder requestCleanupInterval(
@@ -1486,6 +1534,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NatsEndpointBuilder verbose(boolean verbose) {
@@ -1508,6 +1557,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NatsEndpointBuilder secure(boolean secure) {
@@ -1568,6 +1618,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNatsEndpointBuilder basicPropertyBinding(
@@ -1617,6 +1668,7 @@ public interface NatsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNatsEndpointBuilder synchronous(boolean synchronous) {

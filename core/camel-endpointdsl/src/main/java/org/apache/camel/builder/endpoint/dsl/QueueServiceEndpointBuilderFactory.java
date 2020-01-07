@@ -106,6 +106,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default QueueServiceEndpointConsumerBuilder bridgeErrorHandler(
@@ -206,6 +207,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQueueServiceEndpointConsumerBuilder basicPropertyBinding(
@@ -232,6 +234,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQueueServiceEndpointConsumerBuilder synchronous(
@@ -329,6 +332,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder lazyStartProducer(
@@ -410,6 +414,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.azure.queue.QueueServiceOperations</code> type.
          * 
+         * Default: listQueues
          * Group: producer
          */
         default QueueServiceEndpointProducerBuilder operation(
@@ -459,6 +464,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQueueServiceEndpointProducerBuilder basicPropertyBinding(
@@ -485,6 +491,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQueueServiceEndpointProducerBuilder synchronous(
@@ -584,6 +591,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQueueServiceEndpointBuilder basicPropertyBinding(
@@ -610,6 +618,7 @@ public interface QueueServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQueueServiceEndpointBuilder synchronous(

@@ -101,6 +101,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder lazyStartProducer(
@@ -155,6 +156,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: producer
          */
         default KubernetesConfigMapsEndpointBuilder portProtocol(
@@ -330,6 +332,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder basicPropertyBinding(
@@ -383,6 +386,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesConfigMapsEndpointBuilder synchronous(

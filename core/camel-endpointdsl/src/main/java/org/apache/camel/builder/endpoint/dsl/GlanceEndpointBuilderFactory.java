@@ -43,6 +43,7 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: V3
          * Group: producer
          */
         default GlanceEndpointBuilder apiVersion(String apiVersion) {
@@ -78,6 +79,7 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: default
          * Group: producer
          */
         default GlanceEndpointBuilder domain(String domain) {
@@ -97,6 +99,7 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GlanceEndpointBuilder lazyStartProducer(
@@ -187,6 +190,7 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder basicPropertyBinding(
@@ -213,6 +217,7 @@ public interface GlanceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGlanceEndpointBuilder synchronous(boolean synchronous) {

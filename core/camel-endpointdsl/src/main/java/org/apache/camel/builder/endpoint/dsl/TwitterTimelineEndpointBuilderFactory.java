@@ -69,6 +69,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TwitterTimelineEndpointConsumerBuilder bridgeErrorHandler(
@@ -100,6 +101,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TwitterTimelineEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -127,6 +129,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * <code>org.apache.camel.component.twitter.data.EndpointType</code>
          * type.
          * 
+         * Default: polling
          * Group: consumer
          */
         default TwitterTimelineEndpointConsumerBuilder type(EndpointType type) {
@@ -151,6 +154,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5
          * Group: filter
          */
         default TwitterTimelineEndpointConsumerBuilder count(Integer count) {
@@ -175,6 +179,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default TwitterTimelineEndpointConsumerBuilder filterOld(
@@ -211,6 +216,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: filter
          */
         default TwitterTimelineEndpointConsumerBuilder numberOfPages(
@@ -237,6 +243,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1
          * Group: filter
          */
         default TwitterTimelineEndpointConsumerBuilder sinceId(long sinceId) {
@@ -358,6 +365,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder delay(long delay) {
@@ -381,6 +389,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder greedy(boolean greedy) {
@@ -406,6 +415,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder initialDelay(
@@ -434,6 +444,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder repeatCount(
@@ -461,6 +472,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder runLoggingLevel(
@@ -518,6 +530,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder scheduler(
@@ -559,6 +572,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder startScheduler(
@@ -583,6 +597,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder timeUnit(
@@ -608,6 +623,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TwitterTimelineEndpointConsumerBuilder useFixedDelay(
@@ -633,6 +649,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: sort
          */
         default TwitterTimelineEndpointConsumerBuilder sortById(boolean sortById) {
@@ -788,6 +805,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: km
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder distanceMetric(
@@ -858,6 +876,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder extendedMode(
@@ -1014,6 +1033,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder basicPropertyBinding(
@@ -1040,6 +1060,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterTimelineEndpointConsumerBuilder synchronous(
@@ -1095,6 +1116,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default TwitterTimelineEndpointProducerBuilder lazyStartProducer(
@@ -1258,6 +1280,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterTimelineEndpointProducerBuilder basicPropertyBinding(
@@ -1284,6 +1307,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterTimelineEndpointProducerBuilder synchronous(
@@ -1459,6 +1483,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterTimelineEndpointBuilder basicPropertyBinding(
@@ -1485,6 +1510,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterTimelineEndpointBuilder synchronous(

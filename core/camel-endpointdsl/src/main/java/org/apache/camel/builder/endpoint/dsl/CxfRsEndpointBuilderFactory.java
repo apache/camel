@@ -75,6 +75,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder loggingFeatureEnabled(
@@ -224,6 +225,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CxfRsEndpointConsumerBuilder skipFaultLogging(
@@ -264,6 +266,7 @@ public interface CxfRsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.jaxrs.BindingStyle</code> type.
          * 
+         * Default: Default
          * Group: consumer
          */
         default CxfRsEndpointConsumerBuilder bindingStyle(
@@ -308,6 +311,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CxfRsEndpointConsumerBuilder bridgeErrorHandler(
@@ -434,6 +438,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder basicPropertyBinding(
@@ -510,6 +515,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder continuationTimeout(
@@ -572,6 +578,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder defaultBus(
@@ -626,6 +633,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder performInvocation(
@@ -655,6 +663,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder propagateContexts(
@@ -683,6 +692,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointConsumerBuilder synchronous(
@@ -746,6 +756,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CxfRsEndpointProducerBuilder loggingFeatureEnabled(
@@ -895,6 +906,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CxfRsEndpointProducerBuilder skipFaultLogging(
@@ -979,6 +991,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder lazyStartProducer(
@@ -1040,6 +1053,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default CxfRsEndpointProducerBuilder throwExceptionOnFailure(
@@ -1078,6 +1092,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedCxfRsEndpointProducerBuilder httpClientAPI(
@@ -1105,6 +1120,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedCxfRsEndpointProducerBuilder ignoreDeleteMethodMessageBody(
@@ -1132,6 +1148,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10
          * Group: producer (advanced)
          */
         default AdvancedCxfRsEndpointProducerBuilder maxClientCacheSize(
@@ -1159,6 +1176,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder basicPropertyBinding(
@@ -1235,6 +1253,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder continuationTimeout(
@@ -1297,6 +1316,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder defaultBus(
@@ -1351,6 +1371,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder performInvocation(
@@ -1380,6 +1401,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder propagateContexts(
@@ -1408,6 +1430,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointProducerBuilder synchronous(
@@ -1471,6 +1494,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CxfRsEndpointBuilder loggingFeatureEnabled(
@@ -1616,6 +1640,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CxfRsEndpointBuilder skipFaultLogging(boolean skipFaultLogging) {
@@ -1651,6 +1676,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder basicPropertyBinding(
@@ -1727,6 +1753,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder continuationTimeout(
@@ -1789,6 +1816,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder defaultBus(boolean defaultBus) {
@@ -1841,6 +1869,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder performInvocation(
@@ -1870,6 +1899,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder propagateContexts(
@@ -1898,6 +1928,7 @@ public interface CxfRsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfRsEndpointBuilder synchronous(boolean synchronous) {

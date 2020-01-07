@@ -51,6 +51,7 @@ public interface SagaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SagaEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -93,6 +94,7 @@ public interface SagaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSagaEndpointBuilder basicPropertyBinding(
@@ -119,6 +121,7 @@ public interface SagaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSagaEndpointBuilder synchronous(boolean synchronous) {

@@ -118,6 +118,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default HazelcastTopicEndpointConsumerBuilder reliable(boolean reliable) {
@@ -146,6 +147,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HazelcastTopicEndpointConsumerBuilder bridgeErrorHandler(
@@ -246,6 +248,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointConsumerBuilder basicPropertyBinding(
@@ -272,6 +275,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointConsumerBuilder synchronous(
@@ -380,6 +384,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default HazelcastTopicEndpointProducerBuilder reliable(boolean reliable) {
@@ -410,6 +415,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HazelcastTopicEndpointProducerBuilder lazyStartProducer(
@@ -455,6 +461,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointProducerBuilder basicPropertyBinding(
@@ -481,6 +488,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointProducerBuilder synchronous(
@@ -589,6 +597,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default HazelcastTopicEndpointBuilder reliable(boolean reliable) {
@@ -623,6 +632,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointBuilder basicPropertyBinding(
@@ -649,6 +659,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastTopicEndpointBuilder synchronous(

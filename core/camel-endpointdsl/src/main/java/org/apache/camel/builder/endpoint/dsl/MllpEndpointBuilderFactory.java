@@ -48,6 +48,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointConsumerBuilder autoAck(boolean autoAck) {
@@ -72,6 +73,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         @Deprecated
@@ -98,6 +100,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointConsumerBuilder hl7Headers(boolean hl7Headers) {
@@ -125,6 +128,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointConsumerBuilder requireEndOfData(
@@ -159,6 +163,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointConsumerBuilder stringPayload(boolean stringPayload) {
@@ -192,6 +197,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MllpEndpointConsumerBuilder validatePayload(
@@ -226,6 +232,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default MllpEndpointConsumerBuilder bridgeErrorHandler(
@@ -309,6 +316,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.ExchangePattern</code> type.
          * 
+         * Default: InOut
          * Group: consumer (advanced)
          */
         default AdvancedMllpEndpointConsumerBuilder exchangePattern(
@@ -335,6 +343,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMllpEndpointConsumerBuilder basicPropertyBinding(
@@ -361,6 +370,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedMllpEndpointConsumerBuilder synchronous(
@@ -388,6 +398,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5
          * Group: tcp
          */
         default AdvancedMllpEndpointConsumerBuilder backlog(Integer backlog) {
@@ -415,6 +426,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: tcp
          */
         default AdvancedMllpEndpointConsumerBuilder lenientBind(
@@ -444,6 +456,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5
          * Group: tcp
          */
         default AdvancedMllpEndpointConsumerBuilder maxConcurrentConsumers(
@@ -471,6 +484,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: tcp
          */
         default AdvancedMllpEndpointConsumerBuilder reuseAddress(
@@ -497,6 +511,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60000
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder acceptTimeout(
@@ -523,6 +538,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5000
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder bindRetryInterval(
@@ -549,6 +565,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder bindTimeout(int bindTimeout) {
@@ -631,6 +648,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 8192
          * Group: tcp
          */
         default AdvancedMllpEndpointConsumerBuilder receiveBufferSize(
@@ -656,6 +674,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 8192
          * Group: tcp
          */
         default AdvancedMllpEndpointConsumerBuilder sendBufferSize(
@@ -682,6 +701,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5000
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder readTimeout(int readTimeout) {
@@ -707,6 +727,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 15000
          * Group: timeout
          */
         default AdvancedMllpEndpointConsumerBuilder receiveTimeout(
@@ -744,6 +765,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointProducerBuilder autoAck(boolean autoAck) {
@@ -768,6 +790,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         @Deprecated
@@ -794,6 +817,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointProducerBuilder hl7Headers(boolean hl7Headers) {
@@ -821,6 +845,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointProducerBuilder requireEndOfData(
@@ -855,6 +880,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointProducerBuilder stringPayload(boolean stringPayload) {
@@ -888,6 +914,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MllpEndpointProducerBuilder validatePayload(
@@ -925,6 +952,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MllpEndpointProducerBuilder lazyStartProducer(
@@ -980,6 +1008,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMllpEndpointProducerBuilder basicPropertyBinding(
@@ -1006,6 +1035,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedMllpEndpointProducerBuilder synchronous(
@@ -1032,6 +1062,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: timeout
          */
         default AdvancedMllpEndpointProducerBuilder connectTimeout(
@@ -1086,6 +1117,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: tcp
          */
         default AdvancedMllpEndpointProducerBuilder keepAlive(Boolean keepAlive) {
@@ -1109,6 +1141,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 8192
          * Group: tcp
          */
         default AdvancedMllpEndpointProducerBuilder receiveBufferSize(
@@ -1134,6 +1167,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 8192
          * Group: tcp
          */
         default AdvancedMllpEndpointProducerBuilder sendBufferSize(
@@ -1159,6 +1193,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: tcp
          */
         default AdvancedMllpEndpointProducerBuilder tcpNoDelay(
@@ -1184,6 +1219,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5000
          * Group: timeout
          */
         default AdvancedMllpEndpointProducerBuilder readTimeout(int readTimeout) {
@@ -1209,6 +1245,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 15000
          * Group: timeout
          */
         default AdvancedMllpEndpointProducerBuilder receiveTimeout(
@@ -1246,6 +1283,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointBuilder autoAck(boolean autoAck) {
@@ -1270,6 +1308,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         @Deprecated
@@ -1296,6 +1335,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointBuilder hl7Headers(boolean hl7Headers) {
@@ -1323,6 +1363,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointBuilder requireEndOfData(boolean requireEndOfData) {
@@ -1355,6 +1396,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MllpEndpointBuilder stringPayload(boolean stringPayload) {
@@ -1388,6 +1430,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MllpEndpointBuilder validatePayload(boolean validatePayload) {
@@ -1438,6 +1481,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMllpEndpointBuilder basicPropertyBinding(
@@ -1464,6 +1508,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedMllpEndpointBuilder synchronous(boolean synchronous) {
@@ -1514,6 +1559,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 8192
          * Group: tcp
          */
         default AdvancedMllpEndpointBuilder receiveBufferSize(
@@ -1539,6 +1585,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 8192
          * Group: tcp
          */
         default AdvancedMllpEndpointBuilder sendBufferSize(
@@ -1564,6 +1611,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 5000
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder readTimeout(int readTimeout) {
@@ -1588,6 +1636,7 @@ public interface MllpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 15000
          * Group: timeout
          */
         default AdvancedMllpEndpointBuilder receiveTimeout(int receiveTimeout) {

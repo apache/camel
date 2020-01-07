@@ -56,6 +56,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SchedulerEndpointBuilder bridgeErrorHandler(
@@ -87,6 +88,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SchedulerEndpointBuilder sendEmptyMessageWhenIdle(
@@ -198,6 +200,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: scheduler
          */
         default SchedulerEndpointBuilder concurrentTasks(int concurrentTasks) {
@@ -223,6 +226,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default SchedulerEndpointBuilder delay(long delay) {
@@ -248,6 +252,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default SchedulerEndpointBuilder greedy(boolean greedy) {
@@ -273,6 +278,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default SchedulerEndpointBuilder initialDelay(long initialDelay) {
@@ -299,6 +305,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default SchedulerEndpointBuilder repeatCount(long repeatCount) {
@@ -324,6 +331,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default SchedulerEndpointBuilder runLoggingLevel(
@@ -380,6 +388,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default SchedulerEndpointBuilder scheduler(String scheduler) {
@@ -420,6 +429,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SchedulerEndpointBuilder startScheduler(boolean startScheduler) {
@@ -442,6 +452,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default SchedulerEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -466,6 +477,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SchedulerEndpointBuilder useFixedDelay(boolean useFixedDelay) {
@@ -590,6 +602,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSchedulerEndpointBuilder basicPropertyBinding(
@@ -616,6 +629,7 @@ public interface SchedulerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSchedulerEndpointBuilder synchronous(boolean synchronous) {

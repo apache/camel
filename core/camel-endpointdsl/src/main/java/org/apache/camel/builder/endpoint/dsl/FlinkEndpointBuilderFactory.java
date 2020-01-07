@@ -42,6 +42,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default FlinkEndpointBuilder collect(boolean collect) {
@@ -173,6 +174,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FlinkEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -215,6 +217,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder basicPropertyBinding(
@@ -241,6 +244,7 @@ public interface FlinkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFlinkEndpointBuilder synchronous(boolean synchronous) {

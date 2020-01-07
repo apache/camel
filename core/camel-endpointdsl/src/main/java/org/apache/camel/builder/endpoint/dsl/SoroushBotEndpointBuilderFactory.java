@@ -46,6 +46,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SoroushBotEndpointConsumerBuilder connectionTimeout(
@@ -72,6 +73,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4
          * Group: common
          */
         default SoroushBotEndpointConsumerBuilder maxConnectionRetry(
@@ -104,6 +106,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SoroushBotEndpointConsumerBuilder bridgeErrorHandler(
@@ -138,6 +141,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default SoroushBotEndpointConsumerBuilder concurrentConsumers(
@@ -172,6 +176,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: consumer
          */
         default SoroushBotEndpointConsumerBuilder queueCapacityPerThread(
@@ -207,6 +212,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Exponential
          * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder backOffStrategy(
@@ -220,6 +226,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 3600000
          * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder maxRetryWaitingTime(
@@ -247,6 +254,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 300000
          * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder reconnectIdleConnectionTimeout(
@@ -274,6 +282,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 2
          * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder retryExponentialCoefficient(
@@ -300,6 +309,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder retryLinearIncrement(
@@ -328,6 +338,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduling
          */
         default SoroushBotEndpointConsumerBuilder retryWaitingTime(
@@ -437,6 +448,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSoroushBotEndpointConsumerBuilder basicPropertyBinding(
@@ -463,6 +475,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSoroushBotEndpointConsumerBuilder synchronous(
@@ -499,6 +512,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SoroushBotEndpointProducerBuilder connectionTimeout(
@@ -525,6 +539,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4
          * Group: common
          */
         default SoroushBotEndpointProducerBuilder maxConnectionRetry(
@@ -553,6 +568,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SoroushBotEndpointProducerBuilder autoDownload(
@@ -582,6 +598,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default SoroushBotEndpointProducerBuilder autoUploadFile(
@@ -611,6 +628,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default SoroushBotEndpointProducerBuilder downloadThumbnail(
@@ -639,6 +657,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SoroushBotEndpointProducerBuilder forceDownload(
@@ -668,6 +687,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SoroushBotEndpointProducerBuilder forceUpload(
@@ -702,6 +722,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SoroushBotEndpointProducerBuilder lazyStartProducer(
@@ -739,6 +760,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Exponential
          * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder backOffStrategy(
@@ -752,6 +774,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 3600000
          * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder maxRetryWaitingTime(
@@ -779,6 +802,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 300000
          * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder reconnectIdleConnectionTimeout(
@@ -806,6 +830,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 2
          * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder retryExponentialCoefficient(
@@ -832,6 +857,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder retryLinearIncrement(
@@ -860,6 +886,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduling
          */
         default SoroushBotEndpointProducerBuilder retryWaitingTime(
@@ -912,6 +939,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSoroushBotEndpointProducerBuilder basicPropertyBinding(
@@ -938,6 +966,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSoroushBotEndpointProducerBuilder synchronous(
@@ -974,6 +1003,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default SoroushBotEndpointBuilder connectionTimeout(
@@ -1000,6 +1030,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4
          * Group: common
          */
         default SoroushBotEndpointBuilder maxConnectionRetry(
@@ -1031,6 +1062,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Exponential
          * Group: scheduling
          */
         default SoroushBotEndpointBuilder backOffStrategy(String backOffStrategy) {
@@ -1043,6 +1075,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 3600000
          * Group: scheduling
          */
         default SoroushBotEndpointBuilder maxRetryWaitingTime(
@@ -1070,6 +1103,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 300000
          * Group: scheduling
          */
         default SoroushBotEndpointBuilder reconnectIdleConnectionTimeout(
@@ -1097,6 +1131,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 2
          * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryExponentialCoefficient(
@@ -1123,6 +1158,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryLinearIncrement(
@@ -1151,6 +1187,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduling
          */
         default SoroushBotEndpointBuilder retryWaitingTime(long retryWaitingTime) {
@@ -1202,6 +1239,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSoroushBotEndpointBuilder basicPropertyBinding(
@@ -1228,6 +1266,7 @@ public interface SoroushBotEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSoroushBotEndpointBuilder synchronous(

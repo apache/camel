@@ -77,6 +77,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://mq-aws-us-east-1-1.iron.io
          * Group: common
          */
         default IronMQEndpointConsumerBuilder ironMQCloud(String ironMQCloud) {
@@ -91,6 +92,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IronMQEndpointConsumerBuilder preserveHeaders(
@@ -143,6 +145,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder batchDelete(boolean batchDelete) {
@@ -174,6 +177,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder bridgeErrorHandler(
@@ -204,6 +208,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder concurrentConsumers(
@@ -228,6 +233,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder maxMessagesPerPoll(
@@ -253,6 +259,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -278,6 +285,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: consumer
          */
         default IronMQEndpointConsumerBuilder timeout(int timeout) {
@@ -412,6 +420,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder delay(long delay) {
@@ -437,6 +446,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder greedy(boolean greedy) {
@@ -462,6 +472,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -488,6 +499,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -513,6 +525,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder runLoggingLevel(
@@ -570,6 +583,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder scheduler(String scheduler) {
@@ -610,6 +624,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder startScheduler(
@@ -634,6 +649,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -658,6 +674,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default IronMQEndpointConsumerBuilder useFixedDelay(
@@ -783,6 +800,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIronMQEndpointConsumerBuilder basicPropertyBinding(
@@ -809,6 +827,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIronMQEndpointConsumerBuilder synchronous(
@@ -870,6 +889,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://mq-aws-us-east-1-1.iron.io
          * Group: common
          */
         default IronMQEndpointProducerBuilder ironMQCloud(String ironMQCloud) {
@@ -884,6 +904,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IronMQEndpointProducerBuilder preserveHeaders(
@@ -941,6 +962,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IronMQEndpointProducerBuilder lazyStartProducer(
@@ -1011,6 +1033,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIronMQEndpointProducerBuilder basicPropertyBinding(
@@ -1037,6 +1060,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIronMQEndpointProducerBuilder synchronous(
@@ -1098,6 +1122,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://mq-aws-us-east-1-1.iron.io
          * Group: common
          */
         default IronMQEndpointBuilder ironMQCloud(String ironMQCloud) {
@@ -1112,6 +1137,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IronMQEndpointBuilder preserveHeaders(boolean preserveHeaders) {
@@ -1171,6 +1197,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIronMQEndpointBuilder basicPropertyBinding(
@@ -1197,6 +1224,7 @@ public interface IronMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIronMQEndpointBuilder synchronous(boolean synchronous) {

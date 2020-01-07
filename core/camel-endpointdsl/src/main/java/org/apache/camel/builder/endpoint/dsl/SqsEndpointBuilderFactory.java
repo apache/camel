@@ -54,6 +54,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: amazonaws.com
          * Group: common
          */
         default SqsEndpointConsumerBuilder amazonAWSHost(String amazonAWSHost) {
@@ -91,6 +92,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default SqsEndpointConsumerBuilder autoCreateQueue(
@@ -141,6 +143,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https
          * Group: common
          */
         default SqsEndpointConsumerBuilder protocol(String protocol) {
@@ -152,6 +155,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default SqsEndpointConsumerBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -221,6 +225,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder bridgeErrorHandler(
@@ -252,6 +257,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder concurrentConsumers(
@@ -302,6 +308,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder deleteAfterRead(
@@ -329,6 +336,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder deleteIfFiltered(
@@ -359,6 +367,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder extendMessageVisibility(
@@ -471,6 +480,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -496,6 +506,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqsEndpointConsumerBuilder serverSideEncryptionEnabled(
@@ -670,6 +681,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder delay(long delay) {
@@ -695,6 +707,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder greedy(boolean greedy) {
@@ -720,6 +733,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -746,6 +760,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -771,6 +786,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder runLoggingLevel(
@@ -828,6 +844,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder scheduler(String scheduler) {
@@ -868,6 +885,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder startScheduler(boolean startScheduler) {
@@ -890,6 +908,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -914,6 +933,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SqsEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -1201,6 +1221,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder basicPropertyBinding(
@@ -1227,6 +1248,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder delayQueue(boolean delayQueue) {
@@ -1265,6 +1287,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointConsumerBuilder synchronous(
@@ -1302,6 +1325,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: amazonaws.com
          * Group: common
          */
         default SqsEndpointProducerBuilder amazonAWSHost(String amazonAWSHost) {
@@ -1339,6 +1363,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default SqsEndpointProducerBuilder autoCreateQueue(
@@ -1389,6 +1414,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https
          * Group: common
          */
         default SqsEndpointProducerBuilder protocol(String protocol) {
@@ -1400,6 +1426,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default SqsEndpointProducerBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -1482,6 +1509,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqsEndpointProducerBuilder lazyStartProducer(
@@ -1518,6 +1546,7 @@ public interface SqsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.sqs.MessageDeduplicationIdStrategy</code> type.
          * 
+         * Default: useExchangeId
          * Group: producer
          */
         default SqsEndpointProducerBuilder messageDeduplicationIdStrategy(
@@ -1779,6 +1808,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder basicPropertyBinding(
@@ -1805,6 +1835,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder delayQueue(boolean delayQueue) {
@@ -1843,6 +1874,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointProducerBuilder synchronous(
@@ -1879,6 +1911,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: amazonaws.com
          * Group: common
          */
         default SqsEndpointBuilder amazonAWSHost(String amazonAWSHost) {
@@ -1914,6 +1947,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default SqsEndpointBuilder autoCreateQueue(boolean autoCreateQueue) {
@@ -1962,6 +1996,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https
          * Group: common
          */
         default SqsEndpointBuilder protocol(String protocol) {
@@ -1973,6 +2008,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default SqsEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -2196,6 +2232,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder basicPropertyBinding(
@@ -2222,6 +2259,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder delayQueue(boolean delayQueue) {
@@ -2260,6 +2298,7 @@ public interface SqsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqsEndpointBuilder synchronous(boolean synchronous) {

@@ -44,6 +44,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GeoCoderEndpointBuilder headersOnly(boolean headersOnly) {
@@ -67,6 +68,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: en
          * Group: producer
          */
         default GeoCoderEndpointBuilder language(String language) {
@@ -86,6 +88,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GeoCoderEndpointBuilder lazyStartProducer(
@@ -254,6 +257,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
@@ -280,6 +284,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGeoCoderEndpointBuilder synchronous(boolean synchronous) {

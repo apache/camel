@@ -93,6 +93,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder bridgeErrorHandler(
@@ -123,6 +124,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder clusteredListener(
@@ -147,6 +149,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PUT
          * Group: consumer
          */
         @Deprecated
@@ -224,6 +227,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default InfinispanEndpointConsumerBuilder sync(boolean sync) {
@@ -315,6 +319,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder basicPropertyBinding(
@@ -526,6 +531,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfinispanEndpointConsumerBuilder synchronous(
@@ -607,6 +613,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default InfinispanEndpointProducerBuilder lazyStartProducer(
@@ -640,6 +647,7 @@ public interface InfinispanEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.infinispan.InfinispanOperation</code> type.
          * 
+         * Default: PUT
          * Group: producer
          */
         default InfinispanEndpointProducerBuilder operation(
@@ -676,6 +684,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder basicPropertyBinding(
@@ -887,6 +896,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfinispanEndpointProducerBuilder synchronous(
@@ -970,6 +980,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder basicPropertyBinding(
@@ -1181,6 +1192,7 @@ public interface InfinispanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfinispanEndpointBuilder synchronous(

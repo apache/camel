@@ -50,6 +50,7 @@ public interface DnsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DnsEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -92,6 +93,7 @@ public interface DnsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDnsEndpointBuilder basicPropertyBinding(
@@ -118,6 +120,7 @@ public interface DnsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDnsEndpointBuilder synchronous(boolean synchronous) {

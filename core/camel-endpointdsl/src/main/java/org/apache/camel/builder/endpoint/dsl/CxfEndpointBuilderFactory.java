@@ -49,6 +49,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
          * 
+         * Default: POJO
          * Group: common
          */
         default CxfEndpointConsumerBuilder dataFormat(DataFormat dataFormat) {
@@ -107,6 +108,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CxfEndpointConsumerBuilder bridgeErrorHandler(
@@ -138,6 +140,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: logging
          */
         default CxfEndpointConsumerBuilder loggingFeatureEnabled(
@@ -164,6 +167,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 49152
          * Group: logging
          */
         default CxfEndpointConsumerBuilder loggingSizeLimit(int loggingSizeLimit) {
@@ -189,6 +193,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: logging
          */
         default CxfEndpointConsumerBuilder skipFaultLogging(
@@ -426,6 +431,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder basicPropertyBinding(
@@ -476,6 +482,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder continuationTimeout(
@@ -562,6 +569,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder defaultBus(boolean defaultBus) {
@@ -614,6 +622,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder mergeProtocolHeaders(
@@ -641,6 +650,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder mtomEnabled(
@@ -696,6 +706,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder skipPayloadMessagePartCheck(
@@ -721,6 +732,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointConsumerBuilder synchronous(
@@ -758,6 +770,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
          * 
+         * Default: POJO
          * Group: common
          */
         default CxfEndpointProducerBuilder dataFormat(DataFormat dataFormat) {
@@ -895,6 +908,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CxfEndpointProducerBuilder lazyStartProducer(
@@ -955,6 +969,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CxfEndpointProducerBuilder wrapped(boolean wrapped) {
@@ -978,6 +993,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: logging
          */
         default CxfEndpointProducerBuilder loggingFeatureEnabled(
@@ -1004,6 +1020,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 49152
          * Group: logging
          */
         default CxfEndpointProducerBuilder loggingSizeLimit(int loggingSizeLimit) {
@@ -1029,6 +1046,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: logging
          */
         default CxfEndpointProducerBuilder skipFaultLogging(
@@ -1209,6 +1227,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder basicPropertyBinding(
@@ -1259,6 +1278,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder continuationTimeout(
@@ -1345,6 +1365,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder defaultBus(boolean defaultBus) {
@@ -1397,6 +1418,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder mergeProtocolHeaders(
@@ -1424,6 +1446,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder mtomEnabled(
@@ -1479,6 +1502,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder skipPayloadMessagePartCheck(
@@ -1504,6 +1528,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointProducerBuilder synchronous(
@@ -1541,6 +1566,7 @@ public interface CxfEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.cxf.DataFormat</code> type.
          * 
+         * Default: POJO
          * Group: common
          */
         default CxfEndpointBuilder dataFormat(DataFormat dataFormat) {
@@ -1594,6 +1620,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: logging
          */
         default CxfEndpointBuilder loggingFeatureEnabled(
@@ -1620,6 +1647,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 49152
          * Group: logging
          */
         default CxfEndpointBuilder loggingSizeLimit(int loggingSizeLimit) {
@@ -1644,6 +1672,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: logging
          */
         default CxfEndpointBuilder skipFaultLogging(boolean skipFaultLogging) {
@@ -1819,6 +1848,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder basicPropertyBinding(
@@ -1869,6 +1899,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder continuationTimeout(
@@ -1953,6 +1984,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder defaultBus(boolean defaultBus) {
@@ -2005,6 +2037,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder mergeProtocolHeaders(
@@ -2032,6 +2065,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder mtomEnabled(boolean mtomEnabled) {
@@ -2085,6 +2119,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder skipPayloadMessagePartCheck(
@@ -2110,6 +2145,7 @@ public interface CxfEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCxfEndpointBuilder synchronous(boolean synchronous) {

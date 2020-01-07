@@ -56,6 +56,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RssEndpointBuilder bridgeErrorHandler(boolean bridgeErrorHandler) {
@@ -84,6 +85,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default RssEndpointBuilder feedHeader(boolean feedHeader) {
@@ -106,6 +108,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default RssEndpointBuilder filter(boolean filter) {
@@ -165,6 +168,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RssEndpointBuilder sendEmptyMessageWhenIdle(
@@ -191,6 +195,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RssEndpointBuilder sortEntries(boolean sortEntries) {
@@ -215,6 +220,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default RssEndpointBuilder splitEntries(boolean splitEntries) {
@@ -240,6 +246,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default RssEndpointBuilder throttleEntries(boolean throttleEntries) {
@@ -361,6 +368,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default RssEndpointBuilder delay(long delay) {
@@ -386,6 +394,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default RssEndpointBuilder greedy(boolean greedy) {
@@ -411,6 +420,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default RssEndpointBuilder initialDelay(long initialDelay) {
@@ -437,6 +447,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default RssEndpointBuilder repeatCount(long repeatCount) {
@@ -462,6 +473,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default RssEndpointBuilder runLoggingLevel(LoggingLevel runLoggingLevel) {
@@ -517,6 +529,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default RssEndpointBuilder scheduler(String scheduler) {
@@ -557,6 +570,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default RssEndpointBuilder startScheduler(boolean startScheduler) {
@@ -579,6 +593,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default RssEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -603,6 +618,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default RssEndpointBuilder useFixedDelay(boolean useFixedDelay) {
@@ -726,6 +742,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRssEndpointBuilder basicPropertyBinding(
@@ -752,6 +769,7 @@ public interface RssEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRssEndpointBuilder synchronous(boolean synchronous) {

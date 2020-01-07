@@ -114,6 +114,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default BraintreeEndpointConsumerBuilder bridgeErrorHandler(
@@ -145,6 +146,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default BraintreeEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -258,6 +260,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder delay(long delay) {
@@ -283,6 +286,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder greedy(boolean greedy) {
@@ -308,6 +312,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -335,6 +340,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -360,6 +366,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder runLoggingLevel(
@@ -417,6 +424,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder scheduler(String scheduler) {
@@ -457,6 +465,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder startScheduler(
@@ -481,6 +490,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -505,6 +515,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default BraintreeEndpointConsumerBuilder useFixedDelay(
@@ -679,6 +690,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder basicPropertyBinding(
@@ -730,6 +742,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBraintreeEndpointConsumerBuilder synchronous(
@@ -854,6 +867,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BraintreeEndpointProducerBuilder lazyStartProducer(
@@ -946,6 +960,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder basicPropertyBinding(
@@ -997,6 +1012,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBraintreeEndpointProducerBuilder synchronous(
@@ -1172,6 +1188,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder basicPropertyBinding(
@@ -1223,6 +1240,7 @@ public interface BraintreeEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBraintreeEndpointBuilder synchronous(boolean synchronous) {

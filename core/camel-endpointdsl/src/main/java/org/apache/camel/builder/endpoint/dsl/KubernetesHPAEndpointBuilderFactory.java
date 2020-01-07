@@ -107,6 +107,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesHPAEndpointConsumerBuilder portProtocol(
@@ -125,6 +126,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
@@ -189,6 +191,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder poolSize(int poolSize) {
@@ -447,6 +450,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
@@ -500,6 +504,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
@@ -596,6 +601,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesHPAEndpointProducerBuilder portProtocol(
@@ -616,6 +622,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
@@ -826,6 +833,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
@@ -879,6 +887,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
@@ -974,6 +983,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesHPAEndpointBuilder portProtocol(String portProtocol) {
@@ -1144,6 +1154,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
@@ -1197,6 +1208,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder synchronous(

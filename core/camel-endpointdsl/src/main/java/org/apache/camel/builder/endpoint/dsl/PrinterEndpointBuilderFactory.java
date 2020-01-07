@@ -42,6 +42,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default PrinterEndpointBuilder copies(int copies) {
@@ -106,6 +107,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PrinterEndpointBuilder lazyStartProducer(
@@ -141,6 +143,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: na-letter
          * Group: producer
          */
         default PrinterEndpointBuilder mediaSize(String mediaSize) {
@@ -175,6 +178,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: portrait
          * Group: producer
          */
         default PrinterEndpointBuilder orientation(String orientation) {
@@ -199,6 +203,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default PrinterEndpointBuilder sendToPrinter(boolean sendToPrinter) {
@@ -223,6 +228,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: one-sided
          * Group: producer
          */
         default PrinterEndpointBuilder sides(String sides) {
@@ -246,6 +252,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder basicPropertyBinding(
@@ -272,6 +279,7 @@ public interface PrinterEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPrinterEndpointBuilder synchronous(boolean synchronous) {

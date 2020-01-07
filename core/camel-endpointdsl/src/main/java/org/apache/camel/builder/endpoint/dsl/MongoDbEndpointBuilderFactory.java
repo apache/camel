@@ -71,6 +71,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MongoDbEndpointConsumerBuilder createCollection(
@@ -198,6 +199,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MongoDbEndpointConsumerBuilder bridgeErrorHandler(
@@ -266,6 +268,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: tail
          */
         default MongoDbEndpointConsumerBuilder persistentTailTracking(
@@ -421,6 +424,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointConsumerBuilder basicPropertyBinding(
@@ -452,6 +456,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedMongoDbEndpointConsumerBuilder cursorRegenerationDelay(
@@ -487,6 +492,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointConsumerBuilder dynamicity(
@@ -518,6 +524,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PRIMARY
          * Group: advanced
          */
         default AdvancedMongoDbEndpointConsumerBuilder readPreference(
@@ -531,6 +538,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointConsumerBuilder synchronous(
@@ -559,6 +567,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: ACKNOWLEDGED
          * Group: advanced
          */
         default AdvancedMongoDbEndpointConsumerBuilder writeConcern(
@@ -573,6 +582,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointConsumerBuilder writeResultAsHeader(
@@ -635,6 +645,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MongoDbEndpointProducerBuilder createCollection(
@@ -764,6 +775,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MongoDbEndpointProducerBuilder lazyStartProducer(
@@ -823,6 +835,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: tail
          */
         default MongoDbEndpointProducerBuilder persistentTailTracking(
@@ -921,6 +934,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointProducerBuilder basicPropertyBinding(
@@ -952,6 +966,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedMongoDbEndpointProducerBuilder cursorRegenerationDelay(
@@ -987,6 +1002,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointProducerBuilder dynamicity(
@@ -1018,6 +1034,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PRIMARY
          * Group: advanced
          */
         default AdvancedMongoDbEndpointProducerBuilder readPreference(
@@ -1031,6 +1048,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointProducerBuilder synchronous(
@@ -1059,6 +1077,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: ACKNOWLEDGED
          * Group: advanced
          */
         default AdvancedMongoDbEndpointProducerBuilder writeConcern(
@@ -1073,6 +1092,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointProducerBuilder writeResultAsHeader(
@@ -1134,6 +1154,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default MongoDbEndpointBuilder createCollection(boolean createCollection) {
@@ -1276,6 +1297,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: tail
          */
         default MongoDbEndpointBuilder persistentTailTracking(
@@ -1373,6 +1395,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder basicPropertyBinding(
@@ -1404,6 +1427,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder cursorRegenerationDelay(
@@ -1439,6 +1463,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder dynamicity(boolean dynamicity) {
@@ -1468,6 +1493,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PRIMARY
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder readPreference(
@@ -1481,6 +1507,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder synchronous(boolean synchronous) {
@@ -1507,6 +1534,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: ACKNOWLEDGED
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder writeConcern(String writeConcern) {
@@ -1520,6 +1548,7 @@ public interface MongoDbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMongoDbEndpointBuilder writeResultAsHeader(

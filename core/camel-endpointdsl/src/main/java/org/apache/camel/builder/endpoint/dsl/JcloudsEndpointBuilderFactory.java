@@ -52,6 +52,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JcloudsEndpointConsumerBuilder bridgeErrorHandler(
@@ -173,6 +174,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcloudsEndpointConsumerBuilder basicPropertyBinding(
@@ -199,6 +201,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcloudsEndpointConsumerBuilder synchronous(
@@ -243,6 +246,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JcloudsEndpointProducerBuilder lazyStartProducer(
@@ -402,6 +406,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcloudsEndpointProducerBuilder basicPropertyBinding(
@@ -428,6 +433,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcloudsEndpointProducerBuilder synchronous(
@@ -487,6 +493,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcloudsEndpointBuilder basicPropertyBinding(
@@ -513,6 +520,7 @@ public interface JcloudsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcloudsEndpointBuilder synchronous(boolean synchronous) {

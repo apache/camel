@@ -47,6 +47,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default WordpressEndpointConsumerBuilder apiVersion(String apiVersion) {
@@ -84,6 +85,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default WordpressEndpointConsumerBuilder force(boolean force) {
@@ -198,6 +200,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default WordpressEndpointConsumerBuilder bridgeErrorHandler(
@@ -297,6 +300,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointConsumerBuilder basicPropertyBinding(
@@ -323,6 +327,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointConsumerBuilder synchronous(
@@ -359,6 +364,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default WordpressEndpointProducerBuilder apiVersion(String apiVersion) {
@@ -396,6 +402,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default WordpressEndpointProducerBuilder force(boolean force) {
@@ -512,6 +519,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WordpressEndpointProducerBuilder lazyStartProducer(
@@ -556,6 +564,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointProducerBuilder basicPropertyBinding(
@@ -582,6 +591,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointProducerBuilder synchronous(
@@ -618,6 +628,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 2
          * Group: common
          */
         default WordpressEndpointBuilder apiVersion(String apiVersion) {
@@ -654,6 +665,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default WordpressEndpointBuilder force(boolean force) {
@@ -772,6 +784,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointBuilder basicPropertyBinding(
@@ -798,6 +811,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointBuilder synchronous(boolean synchronous) {

@@ -109,6 +109,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesServicesEndpointConsumerBuilder portProtocol(
@@ -127,6 +128,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KubernetesServicesEndpointConsumerBuilder bridgeErrorHandler(
@@ -193,6 +195,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KubernetesServicesEndpointConsumerBuilder poolSize(int poolSize) {
@@ -455,6 +458,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServicesEndpointConsumerBuilder basicPropertyBinding(
@@ -508,6 +512,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServicesEndpointConsumerBuilder synchronous(
@@ -606,6 +611,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesServicesEndpointProducerBuilder portProtocol(
@@ -626,6 +632,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesServicesEndpointProducerBuilder lazyStartProducer(
@@ -840,6 +847,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServicesEndpointProducerBuilder basicPropertyBinding(
@@ -893,6 +901,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServicesEndpointProducerBuilder synchronous(
@@ -988,6 +997,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesServicesEndpointBuilder portProtocol(
@@ -1162,6 +1172,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServicesEndpointBuilder basicPropertyBinding(
@@ -1215,6 +1226,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServicesEndpointBuilder synchronous(

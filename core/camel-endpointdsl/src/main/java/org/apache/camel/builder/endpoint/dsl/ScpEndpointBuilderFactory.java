@@ -46,6 +46,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ScpEndpointBuilder disconnect(boolean disconnect) {
@@ -71,6 +72,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 664
          * Group: producer
          */
         default ScpEndpointBuilder chmod(String chmod) {
@@ -140,6 +142,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ScpEndpointBuilder flatten(boolean flatten) {
@@ -172,6 +175,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ScpEndpointBuilder jailStartingDirectory(
@@ -209,6 +213,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ScpEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -240,6 +245,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: no
          * Group: producer
          */
         default ScpEndpointBuilder strictHostKeyChecking(
@@ -356,6 +362,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default ScpEndpointBuilder useUserKnownHostsFile(
@@ -398,6 +405,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedScpEndpointBuilder allowNullBody(boolean allowNullBody) {
@@ -428,6 +436,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedScpEndpointBuilder disconnectOnBatchComplete(
@@ -485,6 +494,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder basicPropertyBinding(
@@ -511,6 +521,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder connectTimeout(int connectTimeout) {
@@ -538,6 +549,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder soTimeout(int soTimeout) {
@@ -565,6 +577,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder synchronous(boolean synchronous) {
@@ -588,6 +601,7 @@ public interface ScpEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedScpEndpointBuilder timeout(int timeout) {

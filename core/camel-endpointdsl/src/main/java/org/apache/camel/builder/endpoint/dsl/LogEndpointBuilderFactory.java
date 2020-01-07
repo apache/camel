@@ -44,6 +44,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default LogEndpointBuilder groupActiveOnly(Boolean groupActiveOnly) {
@@ -145,6 +146,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LogEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -175,6 +177,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: INFO
          * Group: producer
          */
         default LogEndpointBuilder level(String level) {
@@ -222,6 +225,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: formatting
          */
         default LogEndpointBuilder maxChars(int maxChars) {
@@ -244,6 +248,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder multiline(boolean multiline) {
@@ -267,6 +272,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showAll(boolean showAll) {
@@ -290,6 +296,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: formatting
          */
         default LogEndpointBuilder showBody(boolean showBody) {
@@ -312,6 +319,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: formatting
          */
         default LogEndpointBuilder showBodyType(boolean showBodyType) {
@@ -337,6 +345,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showCaughtException(
@@ -365,6 +374,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showException(boolean showException) {
@@ -388,6 +398,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showExchangeId(boolean showExchangeId) {
@@ -410,6 +421,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: formatting
          */
         default LogEndpointBuilder showExchangePattern(
@@ -434,6 +446,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showFiles(boolean showFiles) {
@@ -457,6 +470,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showFuture(boolean showFuture) {
@@ -480,6 +494,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showHeaders(boolean showHeaders) {
@@ -502,6 +517,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showProperties(boolean showProperties) {
@@ -525,6 +541,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showStackTrace(boolean showStackTrace) {
@@ -552,6 +569,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: formatting
          */
         default LogEndpointBuilder showStreams(boolean showStreams) {
@@ -581,6 +599,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: formatting
          */
         default LogEndpointBuilder skipBodyLineSeparator(
@@ -609,6 +628,7 @@ public interface LogEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.support.processor.DefaultExchangeFormatter$OutputStyle</code> type.
          * 
+         * Default: Default
          * Group: formatting
          */
         default LogEndpointBuilder style(OutputStyle style) {
@@ -644,6 +664,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLogEndpointBuilder basicPropertyBinding(
@@ -696,6 +717,7 @@ public interface LogEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLogEndpointBuilder synchronous(boolean synchronous) {

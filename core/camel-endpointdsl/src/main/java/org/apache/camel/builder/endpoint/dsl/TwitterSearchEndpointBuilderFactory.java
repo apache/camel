@@ -57,6 +57,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TwitterSearchEndpointConsumerBuilder bridgeErrorHandler(
@@ -88,6 +89,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TwitterSearchEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -115,6 +117,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * <code>org.apache.camel.component.twitter.data.EndpointType</code>
          * type.
          * 
+         * Default: polling
          * Group: consumer
          */
         default TwitterSearchEndpointConsumerBuilder type(EndpointType type) {
@@ -139,6 +142,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder count(Integer count) {
@@ -163,6 +167,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder filterOld(boolean filterOld) {
@@ -197,6 +202,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder numberOfPages(
@@ -223,6 +229,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1
          * Group: filter
          */
         default TwitterSearchEndpointConsumerBuilder sinceId(long sinceId) {
@@ -344,6 +351,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder delay(long delay) {
@@ -367,6 +375,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder greedy(boolean greedy) {
@@ -392,6 +401,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder initialDelay(
@@ -420,6 +430,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder repeatCount(
@@ -447,6 +458,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder runLoggingLevel(
@@ -504,6 +516,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder scheduler(String scheduler) {
@@ -544,6 +557,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder startScheduler(
@@ -568,6 +582,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -592,6 +607,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TwitterSearchEndpointConsumerBuilder useFixedDelay(
@@ -617,6 +633,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: sort
          */
         default TwitterSearchEndpointConsumerBuilder sortById(boolean sortById) {
@@ -771,6 +788,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: km
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder distanceMetric(
@@ -841,6 +859,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder extendedMode(
@@ -997,6 +1016,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder basicPropertyBinding(
@@ -1023,6 +1043,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterSearchEndpointConsumerBuilder synchronous(
@@ -1067,6 +1088,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default TwitterSearchEndpointProducerBuilder lazyStartProducer(
@@ -1229,6 +1251,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterSearchEndpointProducerBuilder basicPropertyBinding(
@@ -1255,6 +1278,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterSearchEndpointProducerBuilder synchronous(
@@ -1415,6 +1439,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterSearchEndpointBuilder basicPropertyBinding(
@@ -1441,6 +1466,7 @@ public interface TwitterSearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterSearchEndpointBuilder synchronous(

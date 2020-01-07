@@ -50,6 +50,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default: tcp://localhost:61613
          * Group: common
          */
         default StompEndpointConsumerBuilder brokerURL(String brokerURL) {
@@ -113,6 +114,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default StompEndpointConsumerBuilder bridgeErrorHandler(
@@ -260,6 +262,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointConsumerBuilder basicPropertyBinding(
@@ -314,6 +317,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointConsumerBuilder synchronous(
@@ -351,6 +355,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default: tcp://localhost:61613
          * Group: common
          */
         default StompEndpointProducerBuilder brokerURL(String brokerURL) {
@@ -416,6 +421,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StompEndpointProducerBuilder lazyStartProducer(
@@ -508,6 +514,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointProducerBuilder basicPropertyBinding(
@@ -562,6 +569,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointProducerBuilder synchronous(
@@ -599,6 +607,7 @@ public interface StompEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default: tcp://localhost:61613
          * Group: common
          */
         default StompEndpointBuilder brokerURL(String brokerURL) {
@@ -715,6 +724,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointBuilder basicPropertyBinding(
@@ -769,6 +779,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointBuilder synchronous(boolean synchronous) {

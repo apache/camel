@@ -60,6 +60,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MiloClientEndpointConsumerBuilder defaultAwaitWrites(
@@ -160,6 +161,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MiloClientEndpointConsumerBuilder bridgeErrorHandler(
@@ -218,6 +220,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Apache Camel adapter for Eclipse Milo
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder applicationName(
@@ -230,6 +233,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://camel.apache.org/EclipseMilo/Client
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder applicationUri(
@@ -372,6 +376,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder overrideHost(
@@ -397,6 +402,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://camel.apache.org/EclipseMilo
          * Group: client
          */
         default MiloClientEndpointConsumerBuilder productUri(String productUri) {
@@ -536,6 +542,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloClientEndpointConsumerBuilder basicPropertyBinding(
@@ -562,6 +569,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloClientEndpointConsumerBuilder synchronous(
@@ -610,6 +618,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MiloClientEndpointProducerBuilder defaultAwaitWrites(
@@ -712,6 +721,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MiloClientEndpointProducerBuilder lazyStartProducer(
@@ -772,6 +782,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Apache Camel adapter for Eclipse Milo
          * Group: client
          */
         default MiloClientEndpointProducerBuilder applicationName(
@@ -784,6 +795,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://camel.apache.org/EclipseMilo/Client
          * Group: client
          */
         default MiloClientEndpointProducerBuilder applicationUri(
@@ -926,6 +938,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: client
          */
         default MiloClientEndpointProducerBuilder overrideHost(
@@ -951,6 +964,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://camel.apache.org/EclipseMilo
          * Group: client
          */
         default MiloClientEndpointProducerBuilder productUri(String productUri) {
@@ -1033,6 +1047,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloClientEndpointProducerBuilder basicPropertyBinding(
@@ -1059,6 +1074,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloClientEndpointProducerBuilder synchronous(
@@ -1107,6 +1123,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default MiloClientEndpointBuilder defaultAwaitWrites(
@@ -1229,6 +1246,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Apache Camel adapter for Eclipse Milo
          * Group: client
          */
         default MiloClientEndpointBuilder applicationName(String applicationName) {
@@ -1240,6 +1258,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://camel.apache.org/EclipseMilo/Client
          * Group: client
          */
         default MiloClientEndpointBuilder applicationUri(String applicationUri) {
@@ -1378,6 +1397,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: client
          */
         default MiloClientEndpointBuilder overrideHost(boolean overrideHost) {
@@ -1401,6 +1421,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://camel.apache.org/EclipseMilo
          * Group: client
          */
         default MiloClientEndpointBuilder productUri(String productUri) {
@@ -1479,6 +1500,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloClientEndpointBuilder basicPropertyBinding(
@@ -1505,6 +1527,7 @@ public interface MiloClientEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloClientEndpointBuilder synchronous(

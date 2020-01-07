@@ -54,6 +54,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder bridgeErrorHandler(
@@ -85,6 +86,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder internalKeyConverter(
@@ -98,6 +100,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.connect.json.JsonConverter
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder internalValueConverter(
@@ -114,6 +117,8 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
+         * io.debezium.embedded.spi.OffsetCommitPolicy.PeriodicCommitOffsetPolicy
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetCommitPolicy(
@@ -129,6 +134,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetCommitTimeoutMs(
@@ -156,6 +162,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 60000
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetFlushIntervalMs(
@@ -181,6 +188,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.connect.storage.FileOffsetBackingStore
          * Group: consumer
          */
         default DebeziumMySqlEndpointBuilder offsetStorage(String offsetStorage) {
@@ -276,6 +284,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: long
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder bigintUnsignedHandlingMode(
@@ -291,6 +300,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder binlogBufferSize(
@@ -332,6 +342,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder connectKeepAlive(
@@ -358,6 +369,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 60000
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder connectKeepAliveIntervalMs(
@@ -384,6 +396,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder connectTimeoutMs(
@@ -424,6 +437,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.debezium.relational.history.FileDatabaseHistory
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistory(
@@ -468,6 +482,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 100
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryKafkaRecoveryAttempts(
@@ -496,6 +511,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 100
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -537,6 +553,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistorySkipUnparseableDdl(
@@ -567,6 +584,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseHistoryStoreOnlyMonitoredTablesDdl(
@@ -623,6 +641,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: class com.mysql.cj.jdbc.Driver
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseJdbcDriver(
@@ -649,6 +668,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 3306
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databasePort(int databasePort) {
@@ -706,6 +726,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseServerIdOffset(
@@ -788,6 +809,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: disabled
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder databaseSslMode(
@@ -858,6 +880,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: precise
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder decimalHandlingMode(
@@ -873,6 +896,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder enableTimeAdjuster(
@@ -906,6 +930,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: fail
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder eventDeserializationFailureHandlingMode(
@@ -921,6 +946,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: latest
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder gtidNewChannelPosition(
@@ -949,6 +975,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder gtidSourceFilterDmlEvents(
@@ -991,6 +1018,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder heartbeatIntervalMs(
@@ -1018,6 +1046,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: __debezium-heartbeat
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder heartbeatTopicsPrefix(
@@ -1036,6 +1065,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder includeQuery(boolean includeQuery) {
@@ -1069,6 +1099,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder includeSchemaChanges(
@@ -1104,6 +1135,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: fail
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder inconsistentSchemaHandlingMode(
@@ -1116,6 +1148,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2048
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder maxBatchSize(int maxBatchSize) {
@@ -1140,6 +1173,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 8192
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder maxQueueSize(int maxQueueSize) {
@@ -1185,6 +1219,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder pollIntervalMs(long pollIntervalMs) {
@@ -1209,6 +1244,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder snapshotDelayMs(
@@ -1274,6 +1310,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: minimal
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder snapshotLockingMode(
@@ -1296,6 +1333,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: initial
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder snapshotMode(String snapshotMode) {
@@ -1318,6 +1356,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: off
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder snapshotNewTables(
@@ -1354,6 +1393,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: v2
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder sourceStructVersion(
@@ -1379,6 +1419,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder tableIgnoreBuiltin(
@@ -1421,6 +1462,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: adaptive_time_microseconds
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder timePrecisionMode(
@@ -1437,6 +1479,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: mysql
          */
         default DebeziumMySqlEndpointBuilder tombstonesOnDelete(
@@ -1534,6 +1577,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumMySqlEndpointBuilder basicPropertyBinding(
@@ -1560,6 +1604,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumMySqlEndpointBuilder synchronous(

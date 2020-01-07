@@ -86,6 +86,7 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MicrometerEndpointBuilder lazyStartProducer(
@@ -141,6 +142,7 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMicrometerEndpointBuilder basicPropertyBinding(
@@ -167,6 +169,7 @@ public interface MicrometerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMicrometerEndpointBuilder synchronous(

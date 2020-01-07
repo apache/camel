@@ -52,6 +52,7 @@ public interface KuduEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KuduEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -118,6 +119,7 @@ public interface KuduEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKuduEndpointBuilder basicPropertyBinding(
@@ -144,6 +146,7 @@ public interface KuduEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKuduEndpointBuilder synchronous(boolean synchronous) {

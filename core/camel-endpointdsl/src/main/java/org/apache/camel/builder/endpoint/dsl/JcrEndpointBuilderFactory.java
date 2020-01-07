@@ -48,6 +48,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JcrEndpointConsumerBuilder deep(boolean deep) {
@@ -112,6 +113,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JcrEndpointConsumerBuilder noLocal(boolean noLocal) {
@@ -148,6 +150,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 60000
          * Group: common
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckInterval(
@@ -174,6 +177,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 3000
          * Group: common
          */
         default JcrEndpointConsumerBuilder sessionLiveCheckIntervalOnStart(
@@ -241,6 +245,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JcrEndpointConsumerBuilder bridgeErrorHandler(
@@ -340,6 +345,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcrEndpointConsumerBuilder basicPropertyBinding(
@@ -366,6 +372,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcrEndpointConsumerBuilder synchronous(
@@ -403,6 +410,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JcrEndpointProducerBuilder deep(boolean deep) {
@@ -467,6 +475,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JcrEndpointProducerBuilder noLocal(boolean noLocal) {
@@ -503,6 +512,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 60000
          * Group: common
          */
         default JcrEndpointProducerBuilder sessionLiveCheckInterval(
@@ -529,6 +539,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 3000
          * Group: common
          */
         default JcrEndpointProducerBuilder sessionLiveCheckIntervalOnStart(
@@ -598,6 +609,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JcrEndpointProducerBuilder lazyStartProducer(
@@ -642,6 +654,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcrEndpointProducerBuilder basicPropertyBinding(
@@ -668,6 +681,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcrEndpointProducerBuilder synchronous(
@@ -705,6 +719,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JcrEndpointBuilder deep(boolean deep) {
@@ -769,6 +784,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JcrEndpointBuilder noLocal(boolean noLocal) {
@@ -805,6 +821,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 60000
          * Group: common
          */
         default JcrEndpointBuilder sessionLiveCheckInterval(
@@ -831,6 +848,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 3000
          * Group: common
          */
         default JcrEndpointBuilder sessionLiveCheckIntervalOnStart(
@@ -904,6 +922,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcrEndpointBuilder basicPropertyBinding(
@@ -930,6 +949,7 @@ public interface JcrEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJcrEndpointBuilder synchronous(boolean synchronous) {

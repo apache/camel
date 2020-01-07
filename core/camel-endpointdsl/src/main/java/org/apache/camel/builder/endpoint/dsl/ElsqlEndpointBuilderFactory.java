@@ -52,6 +52,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder allowNamedParameters(
@@ -180,6 +181,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
+         * Default: SelectList
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder outputType(SqlOutputType outputType) {
@@ -218,6 +220,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
+         * Default: ,
          * Group: common
          */
         default ElsqlEndpointConsumerBuilder separator(char separator) {
@@ -243,6 +246,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder breakBatchOnConsumeFail(
@@ -273,6 +277,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder bridgeErrorHandler(
@@ -303,6 +308,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder expectedUpdateCount(
@@ -392,6 +398,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder routeEmptyResultSet(
@@ -418,6 +425,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -445,6 +453,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder transacted(boolean transacted) {
@@ -470,6 +479,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default ElsqlEndpointConsumerBuilder useIterator(boolean useIterator) {
@@ -581,6 +591,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder delay(long delay) {
@@ -606,6 +617,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder greedy(boolean greedy) {
@@ -631,6 +643,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -657,6 +670,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -682,6 +696,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder runLoggingLevel(
@@ -739,6 +754,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder scheduler(String scheduler) {
@@ -779,6 +795,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder startScheduler(
@@ -803,6 +820,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -827,6 +845,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default ElsqlEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -987,6 +1006,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder alwaysPopulateStatement(
@@ -1017,6 +1037,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder basicPropertyBinding(
@@ -1101,6 +1122,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: #
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder placeholder(
@@ -1144,6 +1166,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder synchronous(
@@ -1197,6 +1220,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedElsqlEndpointConsumerBuilder usePlaceholder(
@@ -1233,6 +1257,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default ElsqlEndpointProducerBuilder allowNamedParameters(
@@ -1361,6 +1386,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
+         * Default: SelectList
          * Group: common
          */
         default ElsqlEndpointProducerBuilder outputType(SqlOutputType outputType) {
@@ -1399,6 +1425,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
+         * Default: ,
          * Group: common
          */
         default ElsqlEndpointProducerBuilder separator(char separator) {
@@ -1424,6 +1451,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElsqlEndpointProducerBuilder batch(boolean batch) {
@@ -1454,6 +1482,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElsqlEndpointProducerBuilder lazyStartProducer(
@@ -1487,6 +1516,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElsqlEndpointProducerBuilder noop(boolean noop) {
@@ -1512,6 +1542,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElsqlEndpointProducerBuilder useMessageBodyForSql(
@@ -1554,6 +1585,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder alwaysPopulateStatement(
@@ -1584,6 +1616,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder basicPropertyBinding(
@@ -1668,6 +1701,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: #
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder placeholder(
@@ -1711,6 +1745,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder synchronous(
@@ -1764,6 +1799,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedElsqlEndpointProducerBuilder usePlaceholder(
@@ -1800,6 +1836,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default ElsqlEndpointBuilder allowNamedParameters(
@@ -1927,6 +1964,7 @@ public interface ElsqlEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
+         * Default: SelectList
          * Group: common
          */
         default ElsqlEndpointBuilder outputType(SqlOutputType outputType) {
@@ -1965,6 +2003,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>char</code> type.
          * 
+         * Default: ,
          * Group: common
          */
         default ElsqlEndpointBuilder separator(char separator) {
@@ -2006,6 +2045,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder alwaysPopulateStatement(
@@ -2036,6 +2076,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder basicPropertyBinding(
@@ -2117,6 +2158,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: #
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder placeholder(String placeholder) {
@@ -2159,6 +2201,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder synchronous(boolean synchronous) {
@@ -2210,6 +2253,7 @@ public interface ElsqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedElsqlEndpointBuilder usePlaceholder(

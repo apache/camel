@@ -50,6 +50,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SipEndpointConsumerBuilder cacheConnections(
@@ -76,6 +77,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: plain
          * Group: common
          */
         default SipEndpointConsumerBuilder contentSubType(String contentSubType) {
@@ -87,6 +89,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: text
          * Group: common
          */
         default SipEndpointConsumerBuilder contentType(String contentType) {
@@ -171,6 +174,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 3600
          * Group: common
          */
         default SipEndpointConsumerBuilder msgExpiration(int msgExpiration) {
@@ -195,6 +199,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: common
          */
         default SipEndpointConsumerBuilder receiveTimeoutMillis(
@@ -220,6 +225,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: NAME_NOT_SET
          * Group: common
          */
         default SipEndpointConsumerBuilder stackName(String stackName) {
@@ -280,6 +286,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default SipEndpointConsumerBuilder transport(String transport) {
@@ -297,6 +304,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SipEndpointConsumerBuilder bridgeErrorHandler(
@@ -328,6 +336,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SipEndpointConsumerBuilder consumer(boolean consumer) {
@@ -354,6 +363,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SipEndpointConsumerBuilder presenceAgent(boolean presenceAgent) {
@@ -403,6 +413,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 0
          * Group: logging
          */
         default SipEndpointConsumerBuilder implementationTraceLevel(
@@ -438,6 +449,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: proxy
          */
         default SipEndpointConsumerBuilder useRouterForAllUris(
@@ -557,6 +569,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder basicPropertyBinding(
@@ -852,6 +865,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder maxMessageSize(
@@ -973,6 +987,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder synchronous(
@@ -1067,6 +1082,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SipEndpointProducerBuilder cacheConnections(
@@ -1093,6 +1109,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: plain
          * Group: common
          */
         default SipEndpointProducerBuilder contentSubType(String contentSubType) {
@@ -1104,6 +1121,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: text
          * Group: common
          */
         default SipEndpointProducerBuilder contentType(String contentType) {
@@ -1188,6 +1206,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 3600
          * Group: common
          */
         default SipEndpointProducerBuilder msgExpiration(int msgExpiration) {
@@ -1212,6 +1231,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: common
          */
         default SipEndpointProducerBuilder receiveTimeoutMillis(
@@ -1237,6 +1257,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: NAME_NOT_SET
          * Group: common
          */
         default SipEndpointProducerBuilder stackName(String stackName) {
@@ -1297,6 +1318,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default SipEndpointProducerBuilder transport(String transport) {
@@ -1316,6 +1338,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SipEndpointProducerBuilder lazyStartProducer(
@@ -1372,6 +1395,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 0
          * Group: logging
          */
         default SipEndpointProducerBuilder implementationTraceLevel(
@@ -1407,6 +1431,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: proxy
          */
         default SipEndpointProducerBuilder useRouterForAllUris(
@@ -1469,6 +1494,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder basicPropertyBinding(
@@ -1764,6 +1790,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder maxMessageSize(
@@ -1885,6 +1912,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder synchronous(
@@ -1979,6 +2007,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SipEndpointBuilder cacheConnections(boolean cacheConnections) {
@@ -2003,6 +2032,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: plain
          * Group: common
          */
         default SipEndpointBuilder contentSubType(String contentSubType) {
@@ -2014,6 +2044,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: text
          * Group: common
          */
         default SipEndpointBuilder contentType(String contentType) {
@@ -2097,6 +2128,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 3600
          * Group: common
          */
         default SipEndpointBuilder msgExpiration(int msgExpiration) {
@@ -2121,6 +2153,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 10000
          * Group: common
          */
         default SipEndpointBuilder receiveTimeoutMillis(
@@ -2146,6 +2179,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: NAME_NOT_SET
          * Group: common
          */
         default SipEndpointBuilder stackName(String stackName) {
@@ -2206,6 +2240,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default SipEndpointBuilder transport(String transport) {
@@ -2241,6 +2276,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 0
          * Group: logging
          */
         default SipEndpointBuilder implementationTraceLevel(
@@ -2276,6 +2312,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: proxy
          */
         default SipEndpointBuilder useRouterForAllUris(
@@ -2336,6 +2373,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder basicPropertyBinding(
@@ -2619,6 +2657,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder maxMessageSize(int maxMessageSize) {
@@ -2736,6 +2775,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder synchronous(boolean synchronous) {

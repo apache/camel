@@ -52,6 +52,7 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CordaEndpointConsumerBuilder bridgeErrorHandler(
@@ -173,6 +174,7 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCordaEndpointConsumerBuilder basicPropertyBinding(
@@ -199,6 +201,7 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCordaEndpointConsumerBuilder synchronous(
@@ -243,6 +246,7 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CordaEndpointProducerBuilder lazyStartProducer(
@@ -320,6 +324,7 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCordaEndpointProducerBuilder basicPropertyBinding(
@@ -346,6 +351,7 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCordaEndpointProducerBuilder synchronous(
@@ -416,6 +422,7 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCordaEndpointBuilder basicPropertyBinding(
@@ -442,6 +449,7 @@ public interface CordaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCordaEndpointBuilder synchronous(boolean synchronous) {

@@ -75,6 +75,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default ServerEndpointConsumerBuilder filterNonExecute(
@@ -133,6 +134,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ServerEndpointConsumerBuilder bridgeErrorHandler(
@@ -163,6 +165,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>short</code> type.
          * 
+         * Default: 10
          * Group: connection
          */
         default ServerEndpointConsumerBuilder acknowledgeWindow(
@@ -267,6 +270,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>short</code> type.
          * 
+         * Default: 15
          * Group: connection
          */
         default ServerEndpointConsumerBuilder maxUnacknowledged(
@@ -291,6 +295,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 15000
          * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout1(int timeout1) {
@@ -313,6 +318,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout2(int timeout2) {
@@ -335,6 +341,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 20000
          * Group: connection
          */
         default ServerEndpointConsumerBuilder timeout3(int timeout3) {
@@ -381,6 +388,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: data
          */
         default ServerEndpointConsumerBuilder ignoreBackgroundScan(
@@ -405,6 +413,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: data
          */
         default ServerEndpointConsumerBuilder ignoreDaylightSavingTime(
@@ -429,6 +438,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.TimeZone</code> type.
          * 
+         * Default: UTC
          * Group: data
          */
         default ServerEndpointConsumerBuilder timeZone(TimeZone timeZone) {
@@ -533,6 +543,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServerEndpointConsumerBuilder basicPropertyBinding(
@@ -559,6 +570,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServerEndpointConsumerBuilder synchronous(
@@ -621,6 +633,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default ServerEndpointProducerBuilder filterNonExecute(
@@ -681,6 +694,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ServerEndpointProducerBuilder lazyStartProducer(
@@ -713,6 +727,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>short</code> type.
          * 
+         * Default: 10
          * Group: connection
          */
         default ServerEndpointProducerBuilder acknowledgeWindow(
@@ -817,6 +832,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>short</code> type.
          * 
+         * Default: 15
          * Group: connection
          */
         default ServerEndpointProducerBuilder maxUnacknowledged(
@@ -841,6 +857,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 15000
          * Group: connection
          */
         default ServerEndpointProducerBuilder timeout1(int timeout1) {
@@ -863,6 +880,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: connection
          */
         default ServerEndpointProducerBuilder timeout2(int timeout2) {
@@ -885,6 +903,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 20000
          * Group: connection
          */
         default ServerEndpointProducerBuilder timeout3(int timeout3) {
@@ -931,6 +950,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: data
          */
         default ServerEndpointProducerBuilder ignoreBackgroundScan(
@@ -955,6 +975,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: data
          */
         default ServerEndpointProducerBuilder ignoreDaylightSavingTime(
@@ -979,6 +1000,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.TimeZone</code> type.
          * 
+         * Default: UTC
          * Group: data
          */
         default ServerEndpointProducerBuilder timeZone(TimeZone timeZone) {
@@ -1026,6 +1048,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServerEndpointProducerBuilder basicPropertyBinding(
@@ -1052,6 +1075,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServerEndpointProducerBuilder synchronous(
@@ -1112,6 +1136,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default ServerEndpointBuilder filterNonExecute(boolean filterNonExecute) {
@@ -1160,6 +1185,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>short</code> type.
          * 
+         * Default: 10
          * Group: connection
          */
         default ServerEndpointBuilder acknowledgeWindow(short acknowledgeWindow) {
@@ -1261,6 +1287,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>short</code> type.
          * 
+         * Default: 15
          * Group: connection
          */
         default ServerEndpointBuilder maxUnacknowledged(short maxUnacknowledged) {
@@ -1283,6 +1310,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 15000
          * Group: connection
          */
         default ServerEndpointBuilder timeout1(int timeout1) {
@@ -1305,6 +1333,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: connection
          */
         default ServerEndpointBuilder timeout2(int timeout2) {
@@ -1327,6 +1356,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 20000
          * Group: connection
          */
         default ServerEndpointBuilder timeout3(int timeout3) {
@@ -1372,6 +1402,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: data
          */
         default ServerEndpointBuilder ignoreBackgroundScan(
@@ -1396,6 +1427,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: data
          */
         default ServerEndpointBuilder ignoreDaylightSavingTime(
@@ -1420,6 +1452,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.TimeZone</code> type.
          * 
+         * Default: UTC
          * Group: data
          */
         default ServerEndpointBuilder timeZone(TimeZone timeZone) {
@@ -1466,6 +1499,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServerEndpointBuilder basicPropertyBinding(
@@ -1492,6 +1526,7 @@ public interface ServerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServerEndpointBuilder synchronous(boolean synchronous) {

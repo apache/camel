@@ -92,6 +92,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default SnsEndpointBuilder autoCreateTopic(boolean autoCreateTopic) {
@@ -160,6 +161,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SnsEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -246,6 +248,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default SnsEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -294,6 +297,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
@@ -331,6 +335,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SnsEndpointBuilder subscribeSNStoSQS(boolean subscribeSNStoSQS) {
@@ -389,6 +394,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnsEndpointBuilder basicPropertyBinding(
@@ -415,6 +421,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnsEndpointBuilder synchronous(boolean synchronous) {

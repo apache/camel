@@ -67,6 +67,7 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: default
          * Group: producer
          */
         default KeystoneEndpointBuilder domain(String domain) {
@@ -86,6 +87,7 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KeystoneEndpointBuilder lazyStartProducer(
@@ -189,6 +191,7 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder basicPropertyBinding(
@@ -215,6 +218,7 @@ public interface KeystoneEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKeystoneEndpointBuilder synchronous(boolean synchronous) {

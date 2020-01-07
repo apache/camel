@@ -77,6 +77,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
          * 
+         * Default: en
          * Group: common
          */
         default WeatherEndpointConsumerBuilder language(WeatherLanguage language) {
@@ -101,6 +102,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
+         * Default: JSON
          * Group: common
          */
         default WeatherEndpointConsumerBuilder mode(WeatherMode mode) {
@@ -194,6 +196,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default WeatherEndpointConsumerBuilder bridgeErrorHandler(
@@ -225,6 +228,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default WeatherEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -338,6 +342,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder delay(long delay) {
@@ -363,6 +368,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder greedy(boolean greedy) {
@@ -388,6 +394,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -414,6 +421,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -439,6 +447,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder runLoggingLevel(
@@ -496,6 +505,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder scheduler(String scheduler) {
@@ -536,6 +546,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder startScheduler(
@@ -560,6 +571,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -584,6 +596,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default WeatherEndpointConsumerBuilder useFixedDelay(
@@ -982,6 +995,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeatherEndpointConsumerBuilder basicPropertyBinding(
@@ -1036,6 +1050,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeatherEndpointConsumerBuilder synchronous(
@@ -1097,6 +1112,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
          * 
+         * Default: en
          * Group: common
          */
         default WeatherEndpointProducerBuilder language(WeatherLanguage language) {
@@ -1121,6 +1137,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
+         * Default: JSON
          * Group: common
          */
         default WeatherEndpointProducerBuilder mode(WeatherMode mode) {
@@ -1216,6 +1233,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WeatherEndpointProducerBuilder lazyStartProducer(
@@ -1532,6 +1550,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeatherEndpointProducerBuilder basicPropertyBinding(
@@ -1586,6 +1605,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeatherEndpointProducerBuilder synchronous(
@@ -1647,6 +1667,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherLanguage</code> type.
          * 
+         * Default: en
          * Group: common
          */
         default WeatherEndpointBuilder language(WeatherLanguage language) {
@@ -1671,6 +1692,7 @@ public interface WeatherEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.weather.WeatherMode</code> type.
          * 
+         * Default: JSON
          * Group: common
          */
         default WeatherEndpointBuilder mode(WeatherMode mode) {
@@ -2039,6 +2061,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder basicPropertyBinding(
@@ -2093,6 +2116,7 @@ public interface WeatherEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeatherEndpointBuilder synchronous(boolean synchronous) {
