@@ -1464,7 +1464,6 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:javax.jcr/jcr/${jcr-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.jackrabbit/jackrabbit-jcr-commons/${jackrabbit-version}</bundle>
-    <bundle dependency='true'>mvn:com.google.guava/guava/${jackrabbit-guava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jcr/${project.version}</bundle>
   </feature>
   <feature name='camel-jdbc' version='${project.version}' start-level='50'>
