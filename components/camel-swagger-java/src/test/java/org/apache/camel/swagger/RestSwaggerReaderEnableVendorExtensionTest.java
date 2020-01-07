@@ -41,6 +41,9 @@ public class RestSwaggerReaderEnableVendorExtensionTest extends CamelTestSupport
     @BindToRegistry("dummy-rest")
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
 
+    @BindToRegistry("userService")
+    private Object dummy = new Object();
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

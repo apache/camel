@@ -14,20 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.beanclass;
+package org.apache.camel.component.bean;
 
-import org.apache.camel.Component;
-import org.apache.camel.component.bean.BeanEndpoint;
-import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.BeanScope;
+import org.apache.camel.builder.RouteBuilder;
 
-/**
- * The Class component is for invoking Java classes (Java beans) from Camel.
- */
-@UriEndpoint(firstVersion = "2.4.0", scheme = "class", title = "Class", syntax = "class:beanName", producerOnly = true, label = "core,java")
-public class ClassEndpoint extends BeanEndpoint {
+public class RequestScopedBeanEIPTest extends RequestScopedBeanComponentTest {
 
-    public ClassEndpoint(String endpointUri, Component component) {
-        super(endpointUri, component);
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .bean(MyRequestBean.class, BeanScope.Request)
+                    .to("mock:a")
+                    .bean(MyRequestBean.class, BeanScope.Request)
+                    .to("mock:b");
+            }
+        };
     }
-
 }

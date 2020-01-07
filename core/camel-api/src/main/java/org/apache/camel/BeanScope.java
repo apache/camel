@@ -14,20 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.beanclass;
+package org.apache.camel;
 
-import org.apache.camel.Component;
-import org.apache.camel.component.bean.BeanEndpoint;
-import org.apache.camel.spi.UriEndpoint;
+import javax.xml.bind.annotation.XmlEnum;
 
-/**
- * The Class component is for invoking Java classes (Java beans) from Camel.
- */
-@UriEndpoint(firstVersion = "2.4.0", scheme = "class", title = "Class", syntax = "class:beanName", producerOnly = true, label = "core,java")
-public class ClassEndpoint extends BeanEndpoint {
+@XmlEnum
+public enum BeanScope {
 
-    public ClassEndpoint(String endpointUri, Component component) {
-        super(endpointUri, component);
-    }
+    Singleton, Request, Prototype;
 
 }

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
@@ -40,7 +41,11 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private String beanType;
     @XmlAttribute
     @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
+    @Deprecated
     private String cache;
+    @XmlAttribute
+    @Metadata(defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
+    private String scope;
     @XmlTransient
     private Class<?> beanClass;
     @XmlTransient
@@ -147,17 +152,46 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
 
     public String getCache() {
-        return cache;
+        if (scope == null || BeanScope.Singleton.name().equals(scope)) {
+            return "true";
+        } else {
+            return "false";
+        }
     }
 
     /**
-     * Caches the bean lookup, to avoid lookup up bean on every usage.
+     * Use singleton option instead
      */
     public void setCache(String cache) {
-        this.cache = cache;
+        if ("true".equals(cache)) {
+            scope = BeanScope.Singleton.name();
+        } else {
+            scope = BeanScope.Prototype.name();
+        }
     }
 
-    // Fluent API
-    // -------------------------------------------------------------------------
+    public String getScope() {
+        return scope;
+    }
+
+    public void setScope(String scope) {
+        this.scope = scope;
+    }
+
+    /**
+     * Scope of bean.
+     *
+     * When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint.
+     * The bean should be thread-safe in case concurrent threads is calling the bean at the same time.
+     * When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean
+     * while processing a request and you want to call the same bean instance multiple times while processing the request.
+     * The bean does not have to be thread-safe as the instance is only called from the same request.
+     * When using delegate scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated
+     * to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope.
+     * so when using delegate then this depends on the delegated registry.
+     */
+    public void setScope(BeanScope scope) {
+        this.scope = scope.name();
+    }
 
 }

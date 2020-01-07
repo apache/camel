@@ -151,7 +151,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
                 if (e instanceof RuntimeBeanExpressionException) {
                     throw (RuntimeBeanExpressionException) e;
                 }
-                throw new RuntimeBeanExpressionException(exchange, getBeanName(beanName, beanHolder), method, e);
+                throw new RuntimeBeanExpressionException(exchange, getBeanName(exchange, beanName, beanHolder), method, e);
             }
         } else {
             // regular non ognl invocation
@@ -161,7 +161,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
                 if (e instanceof RuntimeBeanExpressionException) {
                     throw (RuntimeBeanExpressionException) e;
                 }
-                throw new RuntimeBeanExpressionException(exchange, getBeanName(beanName, beanHolder), method, e);
+                throw new RuntimeBeanExpressionException(exchange, getBeanName(exchange, beanName, beanHolder), method, e);
             }
         }
     }
@@ -262,10 +262,10 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         return holder;
     }
 
-    private static String getBeanName(String beanName, BeanHolder beanHolder) {
+    private static String getBeanName(Exchange exchange, String beanName, BeanHolder beanHolder) {
         String name = beanName;
-        if (name == null && beanHolder != null && beanHolder.getBean() != null) {
-            name = beanHolder.getBean().getClass().getCanonicalName();
+        if (name == null && beanHolder != null && beanHolder.getBean(exchange) != null) {
+            name = beanHolder.getBean(exchange).getClass().getCanonicalName();
         }
         if (name == null && beanHolder != null && beanHolder.getBeanInfo() != null && beanHolder.getBeanInfo().getType() != null) {
             name = beanHolder.getBeanInfo().getType().getCanonicalName();
@@ -326,7 +326,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
     private static Object invokeOgnlMethod(BeanHolder beanHolder, String beanName, String ognl, Exchange exchange) {
 
         // we must start with having bean as the result
-        Object result = beanHolder.getBean();
+        Object result = beanHolder.getBean(exchange);
 
         // copy the original exchange to avoid side effects on it
         Exchange resultExchange = ExchangeHelper.createCopy(exchange, true);
@@ -342,7 +342,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         String ognlPath = "";
 
         // loop and invoke each method
-        Object beanToCall = beanHolder.getBean();
+        Object beanToCall = beanHolder.getBean(exchange);
         Class<?> beanType = beanHolder.getBeanInfo().getType();
 
         // there must be a bean to call with, we currently does not support OGNL expressions on using purely static methods
@@ -373,7 +373,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
             boolean nullSafe = OgnlHelper.isNullSafeOperator(methodName);
 
             if (holder == null) {
-                String name = getBeanName(null, beanHolder);
+                String name = getBeanName(exchange, null, beanHolder);
                 throw new RuntimeBeanExpressionException(exchange, name, ognl, "last method returned null and therefore cannot continue to invoke method " + methodName + " on a null instance");
             }
 
@@ -411,7 +411,7 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
                     key = lan.createExpression(key).evaluate(exchange, String.class);
                 }
                 if (key != null) {
-                    result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean());
+                    result = lookupResult(resultExchange, key, result, nullSafe, ognlPath, holder.getBean(exchange));
                 }
             }
 
