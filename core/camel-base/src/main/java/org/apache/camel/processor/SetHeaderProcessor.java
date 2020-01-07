@@ -68,7 +68,7 @@ public class SetHeaderProcessor extends AsyncProcessorSupport implements Traceab
 
     @Override
     public String toString() {
-        return "SetHeader(" + headerName + ", " + expression + ")";
+        return id;
     }
 
     @Override

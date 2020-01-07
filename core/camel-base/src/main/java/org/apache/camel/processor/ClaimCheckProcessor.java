@@ -206,7 +206,7 @@ public class ClaimCheckProcessor extends AsyncProcessorSupport implements IdAwar
 
     @Override
     public String toString() {
-        return "ClaimCheck[" + operation + "]";
+        return id;
     }
 
     protected AggregationStrategy createAggregationStrategy() {

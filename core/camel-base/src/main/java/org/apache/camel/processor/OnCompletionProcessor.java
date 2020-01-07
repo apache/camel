@@ -358,7 +358,7 @@ public class OnCompletionProcessor extends AsyncProcessorSupport implements Trac
 
     @Override
     public String toString() {
-        return "OnCompletionProcessor[" + processor + "]";
+        return id;
     }
 
     @Override

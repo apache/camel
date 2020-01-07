@@ -49,7 +49,7 @@ public class RemovePropertyProcessor extends AsyncProcessorSupport implements Tr
 
     @Override
     public String toString() {
-        return "RemoveProperty(" + propertyName + ")";
+        return id;
     }
 
     @Override

@@ -64,7 +64,7 @@ public class SendDynamicProcessor extends AsyncProcessorSupport implements IdAwa
 
     @Override
     public String toString() {
-        return "sendTo(" + getExpression() + ")";
+        return id;
     }
 
     @Override

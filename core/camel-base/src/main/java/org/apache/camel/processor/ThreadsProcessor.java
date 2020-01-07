@@ -153,7 +153,7 @@ public class ThreadsProcessor extends AsyncProcessorSupport implements IdAware, 
 
     @Override
     public String toString() {
-        return "Threads";
+        return id;
     }
 
     @Override

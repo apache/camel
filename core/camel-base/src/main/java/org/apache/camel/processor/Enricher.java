@@ -343,7 +343,7 @@ public class Enricher extends AsyncProcessorSupport implements IdAware, RouteIdA
 
     @Override
     public String toString() {
-        return "Enrich[" + expression + "]";
+        return id;
     }
 
     @Override

@@ -282,11 +282,6 @@ public class RecipientListProcessor extends MulticastProcessor {
     }
 
     @Override
-    public String toString() {
-        return "RecipientList";
-    }
-
-    @Override
     public String getTraceLabel() {
         return "recipientList";
     }

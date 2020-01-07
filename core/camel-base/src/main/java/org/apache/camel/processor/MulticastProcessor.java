@@ -194,7 +194,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
 
     @Override
     public String toString() {
-        return "Multicast[" + getProcessors() + "]";
+        return id;
     }
 
     @Override

@@ -22,16 +22,22 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Traceable;
 import org.apache.camel.saga.CamelSagaCoordinator;
 import org.apache.camel.saga.CamelSagaService;
 import org.apache.camel.saga.CamelSagaStep;
+import org.apache.camel.spi.IdAware;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.support.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Processor for handling sagas.
  */
-public abstract class SagaProcessor extends DelegateAsyncProcessor {
+public abstract class SagaProcessor extends DelegateAsyncProcessor implements Traceable, IdAware, RouteIdAware {
+
+    private String id;
+    private String routeId;
 
     protected CamelContext camelContext;
 
@@ -92,7 +98,32 @@ public abstract class SagaProcessor extends DelegateAsyncProcessor {
     }
 
     @Override
+    public String getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    @Override
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @Override
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
+
+    @Override
     public String toString() {
+        return "id";
+    }
+
+    @Override
+    public String getTraceLabel() {
         return "saga";
     }
 

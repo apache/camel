@@ -49,7 +49,7 @@ public class RemoveHeaderProcessor extends AsyncProcessorSupport implements Trac
 
     @Override
     public String toString() {
-        return "RemoveHeader(" + headerName + ")";
+        return id;
     }
 
     @Override

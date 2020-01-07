@@ -64,7 +64,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
 
     @Override
     public String toString() {
-        return "Logger[" + logger + "]";
+        return id;
     }
 
     @Override

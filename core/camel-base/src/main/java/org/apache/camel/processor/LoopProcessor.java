@@ -194,10 +194,6 @@ public class LoopProcessor extends DelegateAsyncProcessor implements Traceable, 
 
     @Override
     public String toString() {
-        if (predicate != null) {
-            return "Loop[while: " + predicate + " do: " + getProcessor() + "]";
-        } else {
-            return "Loop[for: " + expression + " times do: " + getProcessor() + "]";
-        }
+        return id;
     }
 }

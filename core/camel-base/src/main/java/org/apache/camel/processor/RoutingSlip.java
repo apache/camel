@@ -162,7 +162,7 @@ public class RoutingSlip extends AsyncProcessorSupport implements Traceable, IdA
 
     @Override
     public String toString() {
-        return "RoutingSlip[expression=" + expression + " uriDelimiter=" + uriDelimiter + "]";
+        return id;
     }
 
     @Override

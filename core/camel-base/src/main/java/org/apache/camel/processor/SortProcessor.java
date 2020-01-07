@@ -60,7 +60,7 @@ public class SortProcessor<T> extends AsyncProcessorSupport implements IdAware, 
 
     @Override
     public String toString() {
-        return "Sort[" + expression + "]";
+        return id;
     }
 
     @Override

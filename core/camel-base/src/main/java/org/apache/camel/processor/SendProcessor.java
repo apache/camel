@@ -77,7 +77,7 @@ public class SendProcessor extends AsyncProcessorSupport implements Traceable, E
 
     @Override
     public String toString() {
-        return "sendTo(" + destination + ")";
+        return id;
     }
 
     @Override

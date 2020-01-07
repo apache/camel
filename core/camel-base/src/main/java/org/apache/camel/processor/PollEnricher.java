@@ -358,7 +358,7 @@ public class PollEnricher extends AsyncProcessorSupport implements IdAware, Rout
 
     @Override
     public String toString() {
-        return "PollEnrich[" + expression + "]";
+        return id;
     }
 
     @Override

@@ -75,7 +75,7 @@ public class ExchangePatternProcessor extends AsyncProcessorSupport implements I
 
     @Override
     public String toString() {
-        return "SetExchangePattern[" + exchangePattern + "]";
+        return id;
     }
 
     @Override

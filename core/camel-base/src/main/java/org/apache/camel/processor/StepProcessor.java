@@ -81,9 +81,4 @@ public class StepProcessor extends Pipeline {
         return "step";
     }
 
-    @Override
-    public String toString() {
-        return "Step[" + stepId + "]";
-    }
-
 }

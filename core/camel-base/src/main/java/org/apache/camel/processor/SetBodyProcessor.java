@@ -77,7 +77,7 @@ public class SetBodyProcessor extends AsyncProcessorSupport implements Traceable
 
     @Override
     public String toString() {
-        return "SetBody(" + expression + ")";
+        return id;
     }
 
     @Override

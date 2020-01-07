@@ -130,7 +130,7 @@ public class ThrowExceptionProcessor extends AsyncProcessorSupport implements Tr
 
     @Override
     public String toString() {
-        return "ThrowException";
+        return id;
     }
 
     @Override

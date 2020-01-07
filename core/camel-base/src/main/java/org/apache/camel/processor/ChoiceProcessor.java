@@ -118,23 +118,7 @@ public class ChoiceProcessor extends AsyncProcessorSupport implements Navigate<P
 
     @Override
     public String toString() {
-        StringBuilder builder = new StringBuilder("choice{");
-        boolean first = true;
-        for (Processor processor : filters) {
-            if (first) {
-                first = false;
-            } else {
-                builder.append(", ");
-            }
-            builder.append("when ");
-            builder.append(processor);
-        }
-        if (otherwise != null) {
-            builder.append(", otherwise: ");
-            builder.append(otherwise);
-        }
-        builder.append("}");
-        return builder.toString();
+        return id;
     }
 
     @Override

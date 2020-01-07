@@ -16,14 +16,12 @@
  */
 package org.apache.camel.management;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.management.openmbean.CompositeData;
-import javax.management.openmbean.TabularData;
 
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
@@ -31,11 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataType;
 import org.apache.camel.spi.Validator;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ManagedValidatorRegistryTest extends ManagementTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(ManagedValidatorRegistryTest.class);
 
     @Test
     public void testManageValidatorRegistry() throws Exception {
@@ -80,29 +75,7 @@ public class ManagedValidatorRegistryTest extends ManagementTestSupport {
         assertTrue(source.startsWith("ValidatorRegistry"));
         assertTrue(source.endsWith("capacity: 1000"));
 
-        
         TabularData data = (TabularData) mbeanServer.invoke(on, "listValidators", null, null);
-        for (Object row : data.values()) {
-            CompositeData composite = (CompositeData)row;
-            String type = (String)composite.get("type");
-            String description = (String)composite.get("description");
-            boolean isStatic = (boolean)composite.get("static");
-            boolean isDynamic = (boolean)composite.get("dynamic");
-            LOG.info("[{}][{}][{}][{}]", type, isStatic, isDynamic, description);
-            if (description.startsWith("ProcessorValidator")) {
-                if (description.contains("direct://transformer")) {
-                    assertEquals("xml:foo", type);
-                } else if (description.contains("validate(simple{${body}} is not null")) {
-                    assertEquals("json:test", type);
-                } else {
-                    fail("Unexpected validator:" + description);
-                }
-            } else if (description.startsWith("MyValidator")) {
-                assertEquals("custom", type);
-            } else {
-                fail("Unexpected validator:" + description);
-            }
-        }
         assertEquals(3, data.size());
     }
 

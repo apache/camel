@@ -30,6 +30,7 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.IdAware;
 import org.apache.camel.spi.IdempotentRepository;
+import org.apache.camel.spi.RouteIdAware;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.AsyncProcessorSupport;
@@ -43,7 +44,7 @@ import org.apache.camel.support.service.ServiceHelper;
  *
  * @see org.apache.camel.spi.IdempotentRepository
  */
-public class IdempotentConsumer extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, IdAware {
+public class IdempotentConsumer extends AsyncProcessorSupport implements CamelContextAware, Navigate<Processor>, IdAware, RouteIdAware {
 
     private CamelContext camelContext;
     private String id;
@@ -70,7 +71,7 @@ public class IdempotentConsumer extends AsyncProcessorSupport implements CamelCo
 
     @Override
     public String toString() {
-        return "IdempotentConsumer[" + messageIdExpression + " -> " + processor + "]";
+        return id;
     }
 
     @Override

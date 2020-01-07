@@ -72,11 +72,7 @@ public class RollbackProcessor extends AsyncProcessorSupport implements Traceabl
 
     @Override
     public String toString() {
-        if (message != null) {
-            return "Rollback[" + message + "]";
-        } else {
-            return "Rollback";
-        }
+        return id;
     }
 
     @Override

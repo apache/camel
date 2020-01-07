@@ -56,7 +56,7 @@ public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcess
 
     @Override
     public String toString() {
-        return "convertBodyTo[" + type.getCanonicalName() + "]";
+        return id;
     }
 
     @Override

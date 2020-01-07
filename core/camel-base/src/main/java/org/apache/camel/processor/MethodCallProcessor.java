@@ -28,9 +28,12 @@ import org.apache.camel.support.DefaultMessage;
 import org.apache.camel.support.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
+// TODO: delete me
+
 /**
  * A processor which are used when calling a method and setting the response as the message body
  */
+@Deprecated
 public class MethodCallProcessor extends AsyncProcessorSupport implements Traceable, IdAware, RouteIdAware {
     private String id;
     private String routeId;
