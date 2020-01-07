@@ -85,8 +85,8 @@ public class SqsProducerTest {
         when(sqsEndpoint.getConfiguration()).thenReturn(sqsConfiguration);
         when(sqsEndpoint.getQueueUrl()).thenReturn(QUEUE_URL);
         when(sqsEndpoint.getHeaderFilterStrategy()).thenReturn(new SqsHeaderFilterStrategy());
+        when(exchange.getMessage()).thenReturn(inMessage);
         when(exchange.getIn()).thenReturn(inMessage);
-        when(exchange.getPattern()).thenReturn(ExchangePattern.InOnly);
         when(exchange.getExchangeId()).thenReturn(SAMPLE_EXCHANGE_ID);
         when(inMessage.getBody(String.class)).thenReturn(SAMPLE_MESSAGE_BODY);
         underTest = new SqsProducer(sqsEndpoint);
