@@ -123,7 +123,7 @@
         <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
         <cometd-java-server>4.0.4</cometd-java-server>
         <commons-beanutils-version>1.9.4</commons-beanutils-version>
-        <commons-codec-version>1.13</commons-codec-version>
+        <commons-codec-version>1.14</commons-codec-version>
         <commons-collections-version>3.2.2</commons-collections-version>
         <commons-collections4-version>4.4</commons-collections4-version>
         <commons-compress-version>1.19</commons-compress-version>
