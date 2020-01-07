@@ -569,7 +569,7 @@ int responseCode = out.getHeader(Exchange.HTTP_RESPONSE_CODE, Integer.class);
 To disable cookies you can set the HTTP Client to ignore cookies by
 adding this URI option:
 
- `httpClient.cookiePolicy=ignoreCookies`
+ `httpClient.cookieSpec=ignoreCookies`
 
 == Advanced Usage
 
