@@ -57,6 +57,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 8
          * Group: producer
          */
         default CMEndpointBuilder defaultMaxNumberOfParts(
@@ -92,6 +93,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CMEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -134,6 +136,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CMEndpointBuilder testConnectionOnStartup(
@@ -170,6 +173,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMEndpointBuilder basicPropertyBinding(
@@ -196,6 +200,7 @@ public interface CMEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMEndpointBuilder synchronous(boolean synchronous) {

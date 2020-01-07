@@ -129,6 +129,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleMailEndpointConsumerBuilder bridgeErrorHandler(
@@ -160,6 +161,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleMailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -273,6 +275,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder delay(long delay) {
@@ -298,6 +301,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder greedy(boolean greedy) {
@@ -323,6 +327,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -350,6 +355,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -375,6 +381,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder runLoggingLevel(
@@ -432,6 +439,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder scheduler(String scheduler) {
@@ -472,6 +480,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder startScheduler(
@@ -496,6 +505,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -520,6 +530,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleMailEndpointConsumerBuilder useFixedDelay(
@@ -646,6 +657,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleMailEndpointConsumerBuilder basicPropertyBinding(
@@ -672,6 +684,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleMailEndpointConsumerBuilder synchronous(
@@ -788,6 +801,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GoogleMailEndpointProducerBuilder lazyStartProducer(
@@ -832,6 +846,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleMailEndpointProducerBuilder basicPropertyBinding(
@@ -858,6 +873,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleMailEndpointProducerBuilder synchronous(
@@ -975,6 +991,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleMailEndpointBuilder basicPropertyBinding(
@@ -1001,6 +1018,7 @@ public interface GoogleMailEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleMailEndpointBuilder synchronous(

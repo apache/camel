@@ -47,6 +47,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default WebhookEndpointBuilder webhookAutoRegister(
@@ -128,6 +129,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default WebhookEndpointBuilder bridgeErrorHandler(
@@ -227,6 +229,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWebhookEndpointBuilder basicPropertyBinding(
@@ -253,6 +256,7 @@ public interface WebhookEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWebhookEndpointBuilder synchronous(boolean synchronous) {

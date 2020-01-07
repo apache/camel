@@ -58,6 +58,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default: localhost
          * Group: common
          */
         default DockerEndpointConsumerBuilder host(String host) {
@@ -69,6 +70,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 2375
          * Group: common
          */
         default DockerEndpointConsumerBuilder port(Integer port) {
@@ -123,6 +125,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DockerEndpointConsumerBuilder bridgeErrorHandler(
@@ -175,6 +178,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointConsumerBuilder secure(boolean secure) {
@@ -197,6 +201,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointConsumerBuilder tlsVerify(boolean tlsVerify) {
@@ -299,6 +304,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder basicPropertyBinding(
@@ -325,6 +331,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: com.github.dockerjava.netty.NettyDockerCmdExecFactory
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder cmdExecFactory(
@@ -337,6 +344,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder followRedirectFilter(
@@ -361,6 +369,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder loggingFilter(
@@ -385,6 +394,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder maxPerRouteConnections(
@@ -410,6 +420,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder maxTotalConnections(
@@ -435,6 +446,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://index.docker.io/v1/
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder serverAddress(
@@ -447,6 +459,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder socket(boolean socket) {
@@ -470,6 +483,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointConsumerBuilder synchronous(
@@ -518,6 +532,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default: localhost
          * Group: common
          */
         default DockerEndpointProducerBuilder host(String host) {
@@ -529,6 +544,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 2375
          * Group: common
          */
         default DockerEndpointProducerBuilder port(Integer port) {
@@ -585,6 +601,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DockerEndpointProducerBuilder lazyStartProducer(
@@ -639,6 +656,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointProducerBuilder secure(boolean secure) {
@@ -661,6 +679,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointProducerBuilder tlsVerify(boolean tlsVerify) {
@@ -706,6 +725,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder basicPropertyBinding(
@@ -732,6 +752,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: com.github.dockerjava.netty.NettyDockerCmdExecFactory
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder cmdExecFactory(
@@ -744,6 +765,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder followRedirectFilter(
@@ -768,6 +790,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder loggingFilter(
@@ -792,6 +815,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder maxPerRouteConnections(
@@ -817,6 +841,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder maxTotalConnections(
@@ -842,6 +867,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://index.docker.io/v1/
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder serverAddress(
@@ -854,6 +880,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder socket(boolean socket) {
@@ -877,6 +904,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointProducerBuilder synchronous(
@@ -925,6 +953,7 @@ public interface DockerEndpointBuilderFactory {
          * The option is a: <code>java.lang.String</code> type.
          * 
          * Required: true
+         * Default: localhost
          * Group: common
          */
         default DockerEndpointBuilder host(String host) {
@@ -936,6 +965,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 2375
          * Group: common
          */
         default DockerEndpointBuilder port(Integer port) {
@@ -1004,6 +1034,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointBuilder secure(boolean secure) {
@@ -1026,6 +1057,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default DockerEndpointBuilder tlsVerify(boolean tlsVerify) {
@@ -1071,6 +1103,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder basicPropertyBinding(
@@ -1097,6 +1130,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: com.github.dockerjava.netty.NettyDockerCmdExecFactory
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder cmdExecFactory(
@@ -1109,6 +1143,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder followRedirectFilter(
@@ -1133,6 +1168,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder loggingFilter(
@@ -1156,6 +1192,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder maxPerRouteConnections(
@@ -1181,6 +1218,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder maxTotalConnections(
@@ -1206,6 +1244,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://index.docker.io/v1/
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder serverAddress(String serverAddress) {
@@ -1217,6 +1256,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder socket(boolean socket) {
@@ -1240,6 +1280,7 @@ public interface DockerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDockerEndpointBuilder synchronous(boolean synchronous) {

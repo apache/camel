@@ -51,6 +51,7 @@ public interface MasterEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MasterEndpointBuilder bridgeErrorHandler(
@@ -150,6 +151,7 @@ public interface MasterEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMasterEndpointBuilder basicPropertyBinding(
@@ -176,6 +178,7 @@ public interface MasterEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMasterEndpointBuilder synchronous(boolean synchronous) {

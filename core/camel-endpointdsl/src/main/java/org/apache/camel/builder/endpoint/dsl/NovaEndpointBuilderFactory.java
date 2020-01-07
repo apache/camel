@@ -43,6 +43,7 @@ public interface NovaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: V3
          * Group: producer
          */
         default NovaEndpointBuilder apiVersion(String apiVersion) {
@@ -78,6 +79,7 @@ public interface NovaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: default
          * Group: producer
          */
         default NovaEndpointBuilder domain(String domain) {
@@ -97,6 +99,7 @@ public interface NovaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NovaEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -198,6 +201,7 @@ public interface NovaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNovaEndpointBuilder basicPropertyBinding(
@@ -224,6 +228,7 @@ public interface NovaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNovaEndpointBuilder synchronous(boolean synchronous) {

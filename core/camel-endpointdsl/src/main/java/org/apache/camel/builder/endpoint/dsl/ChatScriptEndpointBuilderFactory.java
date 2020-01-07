@@ -64,6 +64,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ChatScriptEndpointBuilder lazyStartProducer(
@@ -96,6 +97,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ChatScriptEndpointBuilder resetChat(boolean resetChat) {
@@ -130,6 +132,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
@@ -156,6 +159,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder synchronous(

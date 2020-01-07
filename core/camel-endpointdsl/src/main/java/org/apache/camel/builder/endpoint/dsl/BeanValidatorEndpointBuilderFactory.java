@@ -45,6 +45,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: javax.validation.groups.Default
          * Group: producer
          */
         default BeanValidatorEndpointBuilder group(String group) {
@@ -56,6 +57,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BeanValidatorEndpointBuilder ignoreXmlConfiguration(
@@ -88,6 +90,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BeanValidatorEndpointBuilder lazyStartProducer(
@@ -132,6 +135,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder basicPropertyBinding(
@@ -210,6 +214,7 @@ public interface BeanValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanValidatorEndpointBuilder synchronous(

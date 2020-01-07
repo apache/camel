@@ -53,6 +53,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IgniteEventsEndpointBuilder bridgeErrorHandler(
@@ -113,6 +114,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: EVTS_ALL
          * Group: consumer
          */
         default IgniteEventsEndpointBuilder events(String events) {
@@ -125,6 +127,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default IgniteEventsEndpointBuilder propagateIncomingBodyIfNoReturnValue(
@@ -151,6 +154,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IgniteEventsEndpointBuilder treatCollectionsAsCacheObjects(
@@ -245,6 +249,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteEventsEndpointBuilder basicPropertyBinding(
@@ -271,6 +276,7 @@ public interface IgniteEventsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteEventsEndpointBuilder synchronous(

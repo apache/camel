@@ -110,6 +110,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default EhcacheEndpointConsumerBuilder createCacheIfNotExist(
@@ -141,6 +142,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder bridgeErrorHandler(
@@ -171,6 +173,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.event.EventFiring</code> type.
          * 
+         * Default: ASYNCHRONOUS
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventFiring(
@@ -195,6 +198,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>org.ehcache.event.EventOrdering</code> type.
          * 
+         * Default: ORDERED
          * Group: consumer
          */
         default EhcacheEndpointConsumerBuilder eventOrdering(
@@ -302,6 +306,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder basicPropertyBinding(
@@ -394,6 +399,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEhcacheEndpointConsumerBuilder synchronous(
@@ -504,6 +510,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default EhcacheEndpointProducerBuilder createCacheIfNotExist(
@@ -573,6 +580,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default EhcacheEndpointProducerBuilder lazyStartProducer(
@@ -617,6 +625,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder basicPropertyBinding(
@@ -709,6 +718,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEhcacheEndpointProducerBuilder synchronous(
@@ -818,6 +828,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default EhcacheEndpointBuilder createCacheIfNotExist(
@@ -855,6 +866,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder basicPropertyBinding(
@@ -947,6 +959,7 @@ public interface EhcacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEhcacheEndpointBuilder synchronous(boolean synchronous) {

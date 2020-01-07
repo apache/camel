@@ -84,6 +84,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.multimap.AtomixMultiMap$Action</code> type.
          * 
+         * Default: PUT
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder defaultAction(Action defaultAction) {
@@ -139,6 +140,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder lazyStartProducer(
@@ -206,6 +208,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: producer
          */
         default AtomixMultiMapEndpointBuilder transportClassName(
@@ -252,6 +255,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder basicPropertyBinding(
@@ -329,6 +333,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder ephemeral(
@@ -435,6 +440,7 @@ public interface AtomixMultiMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMultiMapEndpointBuilder synchronous(

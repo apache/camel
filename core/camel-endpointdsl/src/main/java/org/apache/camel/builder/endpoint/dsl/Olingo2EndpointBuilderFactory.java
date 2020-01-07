@@ -52,6 +52,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder connectTimeout(int connectTimeout) {
@@ -77,6 +78,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: application/json;charset=utf-8
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder contentType(String contentType) {
@@ -89,6 +91,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder filterAlreadySeen(
@@ -255,6 +258,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default Olingo2EndpointConsumerBuilder socketTimeout(int socketTimeout) {
@@ -311,6 +315,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default Olingo2EndpointConsumerBuilder bridgeErrorHandler(
@@ -342,6 +347,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default Olingo2EndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -369,6 +375,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default Olingo2EndpointConsumerBuilder splitResult(boolean splitResult) {
@@ -481,6 +488,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder delay(long delay) {
@@ -506,6 +514,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder greedy(boolean greedy) {
@@ -531,6 +540,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -557,6 +567,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -582,6 +593,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder runLoggingLevel(
@@ -639,6 +651,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder scheduler(String scheduler) {
@@ -679,6 +692,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder startScheduler(
@@ -703,6 +717,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -727,6 +742,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default Olingo2EndpointConsumerBuilder useFixedDelay(
@@ -853,6 +869,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOlingo2EndpointConsumerBuilder basicPropertyBinding(
@@ -879,6 +896,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOlingo2EndpointConsumerBuilder synchronous(
@@ -916,6 +934,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default Olingo2EndpointProducerBuilder connectTimeout(int connectTimeout) {
@@ -941,6 +960,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: application/json;charset=utf-8
          * Group: common
          */
         default Olingo2EndpointProducerBuilder contentType(String contentType) {
@@ -953,6 +973,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Olingo2EndpointProducerBuilder filterAlreadySeen(
@@ -1119,6 +1140,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default Olingo2EndpointProducerBuilder socketTimeout(int socketTimeout) {
@@ -1177,6 +1199,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default Olingo2EndpointProducerBuilder lazyStartProducer(
@@ -1221,6 +1244,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOlingo2EndpointProducerBuilder basicPropertyBinding(
@@ -1247,6 +1271,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOlingo2EndpointProducerBuilder synchronous(
@@ -1284,6 +1309,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default Olingo2EndpointBuilder connectTimeout(int connectTimeout) {
@@ -1308,6 +1334,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: application/json;charset=utf-8
          * Group: common
          */
         default Olingo2EndpointBuilder contentType(String contentType) {
@@ -1320,6 +1347,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Olingo2EndpointBuilder filterAlreadySeen(
@@ -1486,6 +1514,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: common
          */
         default Olingo2EndpointBuilder socketTimeout(int socketTimeout) {
@@ -1547,6 +1576,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOlingo2EndpointBuilder basicPropertyBinding(
@@ -1573,6 +1603,7 @@ public interface Olingo2EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOlingo2EndpointBuilder synchronous(boolean synchronous) {

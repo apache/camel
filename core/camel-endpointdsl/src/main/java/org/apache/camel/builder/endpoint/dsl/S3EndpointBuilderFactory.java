@@ -76,6 +76,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default S3EndpointConsumerBuilder autoCreateBucket(
@@ -100,6 +101,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default S3EndpointConsumerBuilder pathStyleAccess(
@@ -169,6 +171,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default S3EndpointConsumerBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -207,6 +210,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default S3EndpointConsumerBuilder useIAMCredentials(
@@ -238,6 +242,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default S3EndpointConsumerBuilder bridgeErrorHandler(
@@ -274,6 +279,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default S3EndpointConsumerBuilder deleteAfterRead(
@@ -333,6 +339,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default S3EndpointConsumerBuilder includeBody(boolean includeBody) {
@@ -361,6 +368,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: consumer
          */
         default S3EndpointConsumerBuilder maxConnections(int maxConnections) {
@@ -386,6 +394,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default S3EndpointConsumerBuilder maxMessagesPerPoll(
@@ -427,6 +436,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default S3EndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -540,6 +550,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder delay(long delay) {
@@ -565,6 +576,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder greedy(boolean greedy) {
@@ -590,6 +602,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -616,6 +629,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -641,6 +655,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder runLoggingLevel(
@@ -697,6 +712,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder scheduler(String scheduler) {
@@ -737,6 +753,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder startScheduler(boolean startScheduler) {
@@ -759,6 +776,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -783,6 +801,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default S3EndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -870,6 +889,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder useEncryption(
@@ -899,6 +919,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedS3EndpointConsumerBuilder autocloseBody(
@@ -1018,6 +1039,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedS3EndpointConsumerBuilder basicPropertyBinding(
@@ -1044,6 +1066,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedS3EndpointConsumerBuilder synchronous(
@@ -1068,6 +1091,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder accelerateModeEnabled(
@@ -1092,6 +1116,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder chunkedEncodingDisabled(
@@ -1116,6 +1141,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder dualstackEnabled(
@@ -1140,6 +1166,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder forceGlobalBucketAccessEnabled(
@@ -1164,6 +1191,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointConsumerBuilder payloadSigningEnabled(
@@ -1223,6 +1251,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default S3EndpointProducerBuilder autoCreateBucket(
@@ -1247,6 +1276,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default S3EndpointProducerBuilder pathStyleAccess(
@@ -1316,6 +1346,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default S3EndpointProducerBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -1354,6 +1385,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default S3EndpointProducerBuilder useIAMCredentials(
@@ -1379,6 +1411,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default S3EndpointProducerBuilder deleteAfterWrite(
@@ -1423,6 +1456,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default S3EndpointProducerBuilder lazyStartProducer(
@@ -1456,6 +1490,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default S3EndpointProducerBuilder multiPartUpload(
@@ -1505,6 +1540,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 26214400
          * Group: producer
          */
         default S3EndpointProducerBuilder partSize(long partSize) {
@@ -1617,6 +1653,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedS3EndpointProducerBuilder useEncryption(
@@ -1652,6 +1689,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedS3EndpointProducerBuilder useAwsKMS(boolean useAwsKMS) {
@@ -1675,6 +1713,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedS3EndpointProducerBuilder basicPropertyBinding(
@@ -1701,6 +1740,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedS3EndpointProducerBuilder synchronous(
@@ -1725,6 +1765,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder accelerateModeEnabled(
@@ -1749,6 +1790,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder chunkedEncodingDisabled(
@@ -1773,6 +1815,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder dualstackEnabled(
@@ -1797,6 +1840,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder forceGlobalBucketAccessEnabled(
@@ -1821,6 +1865,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointProducerBuilder payloadSigningEnabled(
@@ -1880,6 +1925,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default S3EndpointBuilder autoCreateBucket(boolean autoCreateBucket) {
@@ -1902,6 +1948,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default S3EndpointBuilder pathStyleAccess(boolean pathStyleAccess) {
@@ -1970,6 +2017,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default S3EndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -2008,6 +2056,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default S3EndpointBuilder useIAMCredentials(boolean useIAMCredentials) {
@@ -2094,6 +2143,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedS3EndpointBuilder useEncryption(boolean useEncryption) {
@@ -2117,6 +2167,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedS3EndpointBuilder basicPropertyBinding(
@@ -2143,6 +2194,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedS3EndpointBuilder synchronous(boolean synchronous) {
@@ -2166,6 +2218,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointBuilder accelerateModeEnabled(
@@ -2190,6 +2243,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointBuilder chunkedEncodingDisabled(
@@ -2214,6 +2268,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointBuilder dualstackEnabled(
@@ -2238,6 +2293,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointBuilder forceGlobalBucketAccessEnabled(
@@ -2262,6 +2318,7 @@ public interface S3EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group:  advanced
          */
         default AdvancedS3EndpointBuilder payloadSigningEnabled(

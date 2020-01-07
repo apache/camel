@@ -51,6 +51,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default StubEndpointConsumerBuilder size(int size) {
@@ -81,6 +82,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default StubEndpointConsumerBuilder bridgeErrorHandler(
@@ -111,6 +113,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default StubEndpointConsumerBuilder concurrentConsumers(
@@ -206,6 +209,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedStubEndpointConsumerBuilder limitConcurrentConsumers(
@@ -237,6 +241,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedStubEndpointConsumerBuilder multipleConsumers(
@@ -267,6 +272,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1000
          * Group: consumer (advanced)
          */
         default AdvancedStubEndpointConsumerBuilder pollTimeout(int pollTimeout) {
@@ -294,6 +300,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedStubEndpointConsumerBuilder purgeWhenStopping(
@@ -321,6 +328,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStubEndpointConsumerBuilder basicPropertyBinding(
@@ -375,6 +383,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStubEndpointConsumerBuilder synchronous(
@@ -413,6 +422,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default StubEndpointProducerBuilder size(int size) {
@@ -441,6 +451,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StubEndpointProducerBuilder blockWhenFull(boolean blockWhenFull) {
@@ -470,6 +481,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StubEndpointProducerBuilder discardIfNoConsumers(
@@ -501,6 +513,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StubEndpointProducerBuilder discardWhenFull(
@@ -532,6 +545,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StubEndpointProducerBuilder failIfNoConsumers(
@@ -567,6 +581,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StubEndpointProducerBuilder lazyStartProducer(
@@ -627,6 +642,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default StubEndpointProducerBuilder timeout(long timeout) {
@@ -657,6 +673,7 @@ public interface StubEndpointBuilderFactory {
          * The option is a: <code>org.apache.camel.WaitForTaskToComplete</code>
          * type.
          * 
+         * Default: IfReplyExpected
          * Group: producer
          */
         default StubEndpointProducerBuilder waitForTaskToComplete(
@@ -699,6 +716,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStubEndpointProducerBuilder basicPropertyBinding(
@@ -753,6 +771,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStubEndpointProducerBuilder synchronous(
@@ -791,6 +810,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default StubEndpointBuilder size(int size) {
@@ -827,6 +847,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStubEndpointBuilder basicPropertyBinding(
@@ -881,6 +902,7 @@ public interface StubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStubEndpointBuilder synchronous(boolean synchronous) {

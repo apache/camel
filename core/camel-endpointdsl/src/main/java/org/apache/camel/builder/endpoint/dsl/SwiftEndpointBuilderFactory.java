@@ -43,6 +43,7 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: V3
          * Group: producer
          */
         default SwiftEndpointBuilder apiVersion(String apiVersion) {
@@ -78,6 +79,7 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: default
          * Group: producer
          */
         default SwiftEndpointBuilder domain(String domain) {
@@ -97,6 +99,7 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SwiftEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -198,6 +201,7 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSwiftEndpointBuilder basicPropertyBinding(
@@ -224,6 +228,7 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSwiftEndpointBuilder synchronous(boolean synchronous) {

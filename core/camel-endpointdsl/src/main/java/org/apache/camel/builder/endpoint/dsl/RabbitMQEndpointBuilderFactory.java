@@ -62,6 +62,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder autoDelete(boolean autoDelete) {
@@ -87,6 +88,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder automaticRecoveryEnabled(
@@ -156,6 +158,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: direct
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder deadLetterExchangeType(
@@ -194,6 +197,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder declare(boolean declare) {
@@ -219,6 +223,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder durable(boolean durable) {
@@ -242,6 +247,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: direct
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder exchangeType(String exchangeType) {
@@ -254,6 +260,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder exclusive(boolean exclusive) {
@@ -289,6 +296,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder passive(boolean passive) {
@@ -360,6 +368,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder skipExchangeDeclare(
@@ -386,6 +395,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder skipQueueBind(
@@ -412,6 +422,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder skipQueueDeclare(
@@ -437,6 +448,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /
          * Group: common
          */
         default RabbitMQEndpointConsumerBuilder vhost(String vhost) {
@@ -448,6 +460,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder autoAck(boolean autoAck) {
@@ -476,6 +489,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder bridgeErrorHandler(
@@ -507,6 +521,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder concurrentConsumers(
@@ -534,6 +549,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder exclusiveConsumer(
@@ -589,6 +605,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder prefetchEnabled(
@@ -617,6 +634,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RabbitMQEndpointConsumerBuilder prefetchGlobal(
@@ -669,6 +687,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: guest
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder password(String password) {
@@ -716,6 +735,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: guest
          * Group: security
          */
         default RabbitMQEndpointConsumerBuilder username(String username) {
@@ -796,6 +816,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer (advanced)
          */
         default AdvancedRabbitMQEndpointConsumerBuilder threadPoolSize(
@@ -856,6 +877,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder basicPropertyBinding(
@@ -910,6 +932,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder connectionTimeout(
@@ -935,6 +958,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder networkRecoveryInterval(
@@ -961,6 +985,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2047
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedChannelMax(
@@ -985,6 +1010,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedFrameMax(
@@ -1009,6 +1035,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestedHeartbeat(
@@ -1034,6 +1061,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 20000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeout(
@@ -1059,6 +1087,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
@@ -1084,6 +1113,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder synchronous(
@@ -1137,6 +1167,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointConsumerBuilder transferException(
@@ -1187,6 +1218,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder autoDelete(boolean autoDelete) {
@@ -1212,6 +1244,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder automaticRecoveryEnabled(
@@ -1281,6 +1314,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: direct
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder deadLetterExchangeType(
@@ -1319,6 +1353,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder declare(boolean declare) {
@@ -1344,6 +1379,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder durable(boolean durable) {
@@ -1367,6 +1403,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: direct
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder exchangeType(String exchangeType) {
@@ -1379,6 +1416,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder exclusive(boolean exclusive) {
@@ -1414,6 +1452,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder passive(boolean passive) {
@@ -1485,6 +1524,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder skipExchangeDeclare(
@@ -1511,6 +1551,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder skipQueueBind(
@@ -1537,6 +1578,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder skipQueueDeclare(
@@ -1562,6 +1604,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /
          * Group: common
          */
         default RabbitMQEndpointProducerBuilder vhost(String vhost) {
@@ -1573,6 +1616,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder allowNullHeaders(
@@ -1598,6 +1642,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder bridgeEndpoint(
@@ -1623,6 +1668,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxSize(
@@ -1648,6 +1694,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder channelPoolMaxWait(
@@ -1676,6 +1723,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder guaranteedDeliveries(
@@ -1708,6 +1756,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder immediate(boolean immediate) {
@@ -1743,6 +1792,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder lazyStartProducer(
@@ -1779,6 +1829,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder mandatory(boolean mandatory) {
@@ -1806,6 +1857,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RabbitMQEndpointProducerBuilder publisherAcknowledgements(
@@ -1857,6 +1909,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: guest
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder password(String password) {
@@ -1904,6 +1957,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: guest
          * Group: security
          */
         default RabbitMQEndpointProducerBuilder username(String username) {
@@ -1961,6 +2015,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder basicPropertyBinding(
@@ -2015,6 +2070,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder connectionTimeout(
@@ -2040,6 +2096,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder networkRecoveryInterval(
@@ -2066,6 +2123,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2047
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedChannelMax(
@@ -2090,6 +2148,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedFrameMax(
@@ -2114,6 +2173,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestedHeartbeat(
@@ -2139,6 +2199,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 20000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeout(
@@ -2164,6 +2225,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder requestTimeoutCheckerInterval(
@@ -2189,6 +2251,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder synchronous(
@@ -2242,6 +2305,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointProducerBuilder transferException(
@@ -2292,6 +2356,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointBuilder autoDelete(boolean autoDelete) {
@@ -2317,6 +2382,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointBuilder automaticRecoveryEnabled(
@@ -2386,6 +2452,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: direct
          * Group: common
          */
         default RabbitMQEndpointBuilder deadLetterExchangeType(
@@ -2423,6 +2490,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointBuilder declare(boolean declare) {
@@ -2448,6 +2516,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default RabbitMQEndpointBuilder durable(boolean durable) {
@@ -2471,6 +2540,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: direct
          * Group: common
          */
         default RabbitMQEndpointBuilder exchangeType(String exchangeType) {
@@ -2483,6 +2553,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointBuilder exclusive(boolean exclusive) {
@@ -2518,6 +2589,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointBuilder passive(boolean passive) {
@@ -2589,6 +2661,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointBuilder skipExchangeDeclare(
@@ -2615,6 +2688,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointBuilder skipQueueBind(boolean skipQueueBind) {
@@ -2639,6 +2713,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default RabbitMQEndpointBuilder skipQueueDeclare(
@@ -2663,6 +2738,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /
          * Group: common
          */
         default RabbitMQEndpointBuilder vhost(String vhost) {
@@ -2674,6 +2750,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: guest
          * Group: security
          */
         default RabbitMQEndpointBuilder password(String password) {
@@ -2721,6 +2798,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: guest
          * Group: security
          */
         default RabbitMQEndpointBuilder username(String username) {
@@ -2777,6 +2855,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder basicPropertyBinding(
@@ -2831,6 +2910,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder connectionTimeout(
@@ -2856,6 +2936,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder networkRecoveryInterval(
@@ -2882,6 +2963,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2047
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder requestedChannelMax(
@@ -2906,6 +2988,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder requestedFrameMax(
@@ -2930,6 +3013,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder requestedHeartbeat(
@@ -2955,6 +3039,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 20000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeout(
@@ -2980,6 +3065,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder requestTimeoutCheckerInterval(
@@ -3005,6 +3091,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder synchronous(boolean synchronous) {
@@ -3056,6 +3143,7 @@ public interface RabbitMQEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRabbitMQEndpointBuilder transferException(

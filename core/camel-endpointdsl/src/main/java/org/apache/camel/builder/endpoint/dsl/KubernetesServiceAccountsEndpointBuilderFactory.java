@@ -103,6 +103,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder lazyStartProducer(
@@ -159,6 +160,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder portProtocol(
@@ -341,6 +343,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
@@ -394,6 +397,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(

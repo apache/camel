@@ -49,6 +49,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ServiceNowEndpointBuilder display(String display) {
@@ -61,6 +62,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ServiceNowEndpointBuilder displayValue(String displayValue) {
@@ -329,6 +331,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ServiceNowEndpointBuilder lazyStartProducer(
@@ -388,6 +391,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 10
          * Group: producer
          */
         default ServiceNowEndpointBuilder perPage(Integer perPage) {
@@ -415,6 +419,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>org.apache.camel.component.servicenow.ServiceNowRelease</code>
          * type.
          * 
+         * Default: HELSINKI
          * Group: producer
          */
         default ServiceNowEndpointBuilder release(ServiceNowRelease release) {
@@ -818,6 +823,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
@@ -843,6 +849,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: yyyy-MM-dd
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder dateFormat(String dateFormat) {
@@ -854,6 +861,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: yyyy-MM-dd HH:mm:ss
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder dateTimeFormat(
@@ -944,6 +952,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
@@ -972,6 +981,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder synchronous(
@@ -996,6 +1006,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: HH:mm:ss
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder timeFormat(String timeFormat) {

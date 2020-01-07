@@ -51,6 +51,7 @@ public interface TikaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default TikaEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -133,6 +134,7 @@ public interface TikaEndpointBuilderFactory {
          * <code>org.apache.camel.component.tika.TikaParseOutputFormat</code>
          * type.
          * 
+         * Default: xml
          * Group: producer
          */
         default TikaEndpointBuilder tikaParseOutputFormat(
@@ -174,6 +176,7 @@ public interface TikaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTikaEndpointBuilder basicPropertyBinding(
@@ -200,6 +203,7 @@ public interface TikaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTikaEndpointBuilder synchronous(boolean synchronous) {

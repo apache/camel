@@ -170,6 +170,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default CoAPEndpointConsumerBuilder recommendedCipherSuitesOnly(
@@ -258,6 +259,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CoAPEndpointConsumerBuilder bridgeErrorHandler(
@@ -370,6 +372,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCoAPEndpointConsumerBuilder basicPropertyBinding(
@@ -396,6 +399,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCoAPEndpointConsumerBuilder synchronous(
@@ -553,6 +557,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default CoAPEndpointProducerBuilder recommendedCipherSuitesOnly(
@@ -643,6 +648,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CoAPEndpointProducerBuilder lazyStartProducer(
@@ -687,6 +693,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCoAPEndpointProducerBuilder basicPropertyBinding(
@@ -713,6 +720,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCoAPEndpointProducerBuilder synchronous(
@@ -870,6 +878,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default CoAPEndpointBuilder recommendedCipherSuitesOnly(
@@ -962,6 +971,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCoAPEndpointBuilder basicPropertyBinding(
@@ -988,6 +998,7 @@ public interface CoAPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCoAPEndpointBuilder synchronous(boolean synchronous) {

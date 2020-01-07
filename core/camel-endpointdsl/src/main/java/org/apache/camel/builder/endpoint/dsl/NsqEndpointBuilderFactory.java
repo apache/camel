@@ -70,6 +70,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder autoFinish(Boolean autoFinish) {
@@ -100,6 +101,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder bridgeErrorHandler(
@@ -141,6 +143,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder lookupInterval(long lookupInterval) {
@@ -163,6 +166,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4161
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder lookupServerPort(int lookupServerPort) {
@@ -186,6 +190,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: -1
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder messageTimeout(long messageTimeout) {
@@ -208,6 +213,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder poolSize(int poolSize) {
@@ -230,6 +236,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: -1
          * Group: consumer
          */
         default NsqEndpointConsumerBuilder requeueInterval(long requeueInterval) {
@@ -253,6 +260,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NsqEndpointConsumerBuilder secure(boolean secure) {
@@ -370,6 +378,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNsqEndpointConsumerBuilder basicPropertyBinding(
@@ -396,6 +405,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNsqEndpointConsumerBuilder synchronous(
@@ -463,6 +473,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NsqEndpointProducerBuilder lazyStartProducer(
@@ -495,6 +506,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4150
          * Group: producer
          */
         default NsqEndpointProducerBuilder port(int port) {
@@ -517,6 +529,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NsqEndpointProducerBuilder secure(boolean secure) {
@@ -577,6 +590,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNsqEndpointProducerBuilder basicPropertyBinding(
@@ -603,6 +617,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNsqEndpointProducerBuilder synchronous(
@@ -662,6 +677,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NsqEndpointBuilder secure(boolean secure) {
@@ -722,6 +738,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNsqEndpointBuilder basicPropertyBinding(
@@ -748,6 +765,7 @@ public interface NsqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNsqEndpointBuilder synchronous(boolean synchronous) {

@@ -103,6 +103,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder lazyStartProducer(
@@ -158,6 +159,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: producer
          */
         default KubernetesResourcesQuotaEndpointBuilder portProtocol(
@@ -338,6 +340,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder basicPropertyBinding(
@@ -391,6 +394,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesResourcesQuotaEndpointBuilder synchronous(

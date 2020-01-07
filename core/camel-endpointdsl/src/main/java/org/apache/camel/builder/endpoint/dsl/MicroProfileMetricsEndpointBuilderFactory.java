@@ -183,6 +183,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MicroProfileMetricsEndpointBuilder lazyStartProducer(
@@ -294,6 +295,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMicroProfileMetricsEndpointBuilder basicPropertyBinding(
@@ -320,6 +322,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMicroProfileMetricsEndpointBuilder synchronous(

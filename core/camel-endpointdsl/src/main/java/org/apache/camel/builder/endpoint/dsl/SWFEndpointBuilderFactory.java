@@ -154,6 +154,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SWFEndpointConsumerBuilder bridgeErrorHandler(
@@ -195,6 +196,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 100
          * Group: activity
          */
         default SWFEndpointConsumerBuilder activityThreadPoolSize(
@@ -400,6 +402,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder basicPropertyBinding(
@@ -513,6 +516,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointConsumerBuilder synchronous(
@@ -657,6 +661,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SWFEndpointProducerBuilder lazyStartProducer(
@@ -726,6 +731,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 3600
          * Group: workflow
          */
         default SWFEndpointProducerBuilder executionStartToCloseTimeout(
@@ -738,6 +744,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: START
          * Group: workflow
          */
         default SWFEndpointProducerBuilder operation(String operation) {
@@ -772,6 +779,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 600
          * Group: workflow
          */
         default SWFEndpointProducerBuilder taskStartToCloseTimeout(
@@ -843,6 +851,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder basicPropertyBinding(
@@ -956,6 +965,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointProducerBuilder synchronous(
@@ -1126,6 +1136,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder basicPropertyBinding(
@@ -1239,6 +1250,7 @@ public interface SWFEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSWFEndpointBuilder synchronous(boolean synchronous) {

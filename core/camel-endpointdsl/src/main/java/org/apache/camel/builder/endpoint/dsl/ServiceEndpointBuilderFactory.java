@@ -51,6 +51,7 @@ public interface ServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ServiceEndpointBuilder bridgeErrorHandler(
@@ -150,6 +151,7 @@ public interface ServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServiceEndpointBuilder basicPropertyBinding(
@@ -176,6 +178,7 @@ public interface ServiceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServiceEndpointBuilder synchronous(boolean synchronous) {

@@ -109,6 +109,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesNamespacesEndpointConsumerBuilder portProtocol(
@@ -127,6 +128,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KubernetesNamespacesEndpointConsumerBuilder bridgeErrorHandler(
@@ -193,6 +195,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KubernetesNamespacesEndpointConsumerBuilder poolSize(
@@ -456,6 +459,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointConsumerBuilder basicPropertyBinding(
@@ -509,6 +513,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointConsumerBuilder synchronous(
@@ -607,6 +612,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesNamespacesEndpointProducerBuilder portProtocol(
@@ -627,6 +633,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesNamespacesEndpointProducerBuilder lazyStartProducer(
@@ -841,6 +848,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointProducerBuilder basicPropertyBinding(
@@ -894,6 +902,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointProducerBuilder synchronous(
@@ -989,6 +998,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: common
          */
         default KubernetesNamespacesEndpointBuilder portProtocol(
@@ -1164,6 +1174,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointBuilder basicPropertyBinding(
@@ -1217,6 +1228,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesNamespacesEndpointBuilder synchronous(

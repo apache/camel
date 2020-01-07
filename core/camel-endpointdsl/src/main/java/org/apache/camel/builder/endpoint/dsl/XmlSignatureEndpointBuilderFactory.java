@@ -59,6 +59,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XmlSignatureEndpointBuilder clearHeaders(Boolean clearHeaders) {
@@ -125,6 +126,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XmlSignatureEndpointBuilder disallowDoctypeDecl(
@@ -153,6 +155,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default XmlSignatureEndpointBuilder omitXmlDeclaration(
@@ -218,6 +221,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XmlSignatureEndpointBuilder lazyStartProducer(
@@ -253,6 +257,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: sign
          */
         default XmlSignatureEndpointBuilder addKeyInfoReference(
@@ -285,6 +290,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>javax.xml.crypto.AlgorithmMethod</code> type.
          * 
+         * Default: http://www.w3.org/TR/2001/REC-xml-c14n-20010315
          * Group: sign
          */
         default XmlSignatureEndpointBuilder canonicalizationMethod(
@@ -487,6 +493,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: sign
          */
         default XmlSignatureEndpointBuilder plainText(Boolean plainText) {
@@ -514,6 +521,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: UTF-8
          * Group: sign
          */
         default XmlSignatureEndpointBuilder plainTextEncoding(
@@ -531,6 +539,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: ds
          * Group: sign
          */
         default XmlSignatureEndpointBuilder prefixForXmlSignatureNamespace(
@@ -572,6 +581,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://www.w3.org/2001/04/xmldsig-more#rsa-sha256
          * Group: sign
          */
         default XmlSignatureEndpointBuilder signatureAlgorithm(
@@ -740,6 +750,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Default
          * Group: verify
          */
         default XmlSignatureEndpointBuilder outputNodeSearchType(
@@ -759,6 +770,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: verify
          */
         default XmlSignatureEndpointBuilder removeSignatureElements(
@@ -791,6 +803,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: verify
          */
         default XmlSignatureEndpointBuilder secureValidation(
@@ -966,6 +979,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXmlSignatureEndpointBuilder basicPropertyBinding(
@@ -992,6 +1006,7 @@ public interface XmlSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXmlSignatureEndpointBuilder synchronous(

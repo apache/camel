@@ -43,6 +43,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder batch(boolean batch) {
@@ -88,6 +89,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder function(boolean function) {
@@ -118,6 +120,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder lazyStartProducer(
@@ -151,6 +154,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder noop(boolean noop) {
@@ -192,6 +196,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlStoredEndpointBuilder useMessageBodyForTemplate(
@@ -230,6 +235,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder basicPropertyBinding(
@@ -256,6 +262,7 @@ public interface SqlStoredEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlStoredEndpointBuilder synchronous(boolean synchronous) {

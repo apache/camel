@@ -85,6 +85,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> type.
          * 
+         * Default: PUT
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder defaultAction(
@@ -170,6 +171,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
          */
         default AtomixMapEndpointConsumerBuilder transportClassName(
@@ -210,6 +212,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtomixMapEndpointConsumerBuilder bridgeErrorHandler(
@@ -309,6 +312,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder basicPropertyBinding(
@@ -386,6 +390,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder ephemeral(
@@ -493,6 +498,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointConsumerBuilder synchronous(
@@ -565,6 +571,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> type.
          * 
+         * Default: PUT
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder defaultAction(
@@ -650,6 +657,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
          */
         default AtomixMapEndpointProducerBuilder transportClassName(
@@ -692,6 +700,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AtomixMapEndpointProducerBuilder lazyStartProducer(
@@ -736,6 +745,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder basicPropertyBinding(
@@ -813,6 +823,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder ephemeral(
@@ -920,6 +931,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointProducerBuilder synchronous(
@@ -992,6 +1004,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.map.AtomixMap$Action</code> type.
          * 
+         * Default: PUT
          * Group: common
          */
         default AtomixMapEndpointBuilder defaultAction(Action defaultAction) {
@@ -1074,6 +1087,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
          */
         default AtomixMapEndpointBuilder transportClassName(
@@ -1120,6 +1134,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder basicPropertyBinding(
@@ -1197,6 +1212,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder ephemeral(boolean ephemeral) {
@@ -1302,6 +1318,7 @@ public interface AtomixMapEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMapEndpointBuilder synchronous(boolean synchronous) {

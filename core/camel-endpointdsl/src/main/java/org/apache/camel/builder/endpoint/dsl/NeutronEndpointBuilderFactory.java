@@ -43,6 +43,7 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: V3
          * Group: producer
          */
         default NeutronEndpointBuilder apiVersion(String apiVersion) {
@@ -78,6 +79,7 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: default
          * Group: producer
          */
         default NeutronEndpointBuilder domain(String domain) {
@@ -97,6 +99,7 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NeutronEndpointBuilder lazyStartProducer(
@@ -200,6 +203,7 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNeutronEndpointBuilder basicPropertyBinding(
@@ -226,6 +230,7 @@ public interface NeutronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNeutronEndpointBuilder synchronous(boolean synchronous) {

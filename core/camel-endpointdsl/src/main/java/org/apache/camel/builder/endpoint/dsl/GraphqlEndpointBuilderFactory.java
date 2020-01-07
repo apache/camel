@@ -50,6 +50,7 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GraphqlEndpointBuilder lazyStartProducer(
@@ -195,6 +196,7 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGraphqlEndpointBuilder basicPropertyBinding(
@@ -221,6 +223,7 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGraphqlEndpointBuilder synchronous(boolean synchronous) {

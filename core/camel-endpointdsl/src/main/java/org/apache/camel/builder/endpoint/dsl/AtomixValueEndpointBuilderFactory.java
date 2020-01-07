@@ -85,6 +85,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
+         * Default: SET
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder defaultAction(
@@ -146,6 +147,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder transportClassName(
@@ -186,6 +188,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtomixValueEndpointConsumerBuilder bridgeErrorHandler(
@@ -285,6 +288,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointConsumerBuilder basicPropertyBinding(
@@ -362,6 +366,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointConsumerBuilder ephemeral(
@@ -469,6 +474,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointConsumerBuilder synchronous(
@@ -541,6 +547,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
+         * Default: SET
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder defaultAction(
@@ -602,6 +609,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder transportClassName(
@@ -644,6 +652,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AtomixValueEndpointProducerBuilder lazyStartProducer(
@@ -688,6 +697,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointProducerBuilder basicPropertyBinding(
@@ -765,6 +775,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointProducerBuilder ephemeral(
@@ -872,6 +883,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointProducerBuilder synchronous(
@@ -944,6 +956,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
+         * Default: SET
          * Group: common
          */
         default AtomixValueEndpointBuilder defaultAction(Action defaultAction) {
@@ -1002,6 +1015,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
          */
         default AtomixValueEndpointBuilder transportClassName(
@@ -1048,6 +1062,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointBuilder basicPropertyBinding(
@@ -1125,6 +1140,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointBuilder ephemeral(boolean ephemeral) {
@@ -1230,6 +1246,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointBuilder synchronous(

@@ -153,6 +153,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://www.googleapis.com/auth/calendar
          * Group: common
          */
         default GoogleCalendarEndpointConsumerBuilder scopes(String scopes) {
@@ -182,6 +183,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleCalendarEndpointConsumerBuilder bridgeErrorHandler(
@@ -213,6 +215,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleCalendarEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -326,6 +329,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder delay(long delay) {
@@ -351,6 +355,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder greedy(boolean greedy) {
@@ -376,6 +381,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder initialDelay(
@@ -404,6 +410,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder repeatCount(
@@ -431,6 +438,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder runLoggingLevel(
@@ -488,6 +496,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder scheduler(String scheduler) {
@@ -528,6 +537,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder startScheduler(
@@ -552,6 +562,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -576,6 +587,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleCalendarEndpointConsumerBuilder useFixedDelay(
@@ -703,6 +715,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder basicPropertyBinding(
@@ -729,6 +742,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointConsumerBuilder synchronous(
@@ -867,6 +881,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://www.googleapis.com/auth/calendar
          * Group: common
          */
         default GoogleCalendarEndpointProducerBuilder scopes(String scopes) {
@@ -898,6 +913,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GoogleCalendarEndpointProducerBuilder lazyStartProducer(
@@ -943,6 +959,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder basicPropertyBinding(
@@ -969,6 +986,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointProducerBuilder synchronous(
@@ -1102,6 +1120,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://www.googleapis.com/auth/calendar
          * Group: common
          */
         default GoogleCalendarEndpointBuilder scopes(String scopes) {
@@ -1137,6 +1156,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointBuilder basicPropertyBinding(
@@ -1163,6 +1183,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleCalendarEndpointBuilder synchronous(

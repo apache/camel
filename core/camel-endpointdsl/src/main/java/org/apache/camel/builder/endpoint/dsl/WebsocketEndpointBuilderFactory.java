@@ -49,6 +49,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default WebsocketEndpointConsumerBuilder maxBinaryMessageSize(
@@ -82,6 +83,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default WebsocketEndpointConsumerBuilder bridgeErrorHandler(
@@ -113,6 +115,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default WebsocketEndpointConsumerBuilder sessionSupport(
@@ -167,6 +170,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: cors
          */
         default WebsocketEndpointConsumerBuilder crossOriginFilterOn(
@@ -203,6 +207,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: monitoring
          */
         default WebsocketEndpointConsumerBuilder enableJmx(boolean enableJmx) {
@@ -322,6 +327,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWebsocketEndpointConsumerBuilder basicPropertyBinding(
@@ -348,6 +354,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 8192
          * Group: advanced
          */
         default AdvancedWebsocketEndpointConsumerBuilder bufferSize(
@@ -375,6 +382,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedWebsocketEndpointConsumerBuilder maxIdleTime(
@@ -429,6 +437,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 13
          * Group: advanced
          */
         default AdvancedWebsocketEndpointConsumerBuilder minVersion(
@@ -456,6 +465,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWebsocketEndpointConsumerBuilder synchronous(
@@ -494,6 +504,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default WebsocketEndpointProducerBuilder maxBinaryMessageSize(
@@ -529,6 +540,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WebsocketEndpointProducerBuilder lazyStartProducer(
@@ -562,6 +574,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default WebsocketEndpointProducerBuilder sendTimeout(Integer sendTimeout) {
@@ -625,6 +638,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: cors
          */
         default WebsocketEndpointProducerBuilder crossOriginFilterOn(
@@ -661,6 +675,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: monitoring
          */
         default WebsocketEndpointProducerBuilder enableJmx(boolean enableJmx) {
@@ -723,6 +738,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWebsocketEndpointProducerBuilder basicPropertyBinding(
@@ -749,6 +765,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 8192
          * Group: advanced
          */
         default AdvancedWebsocketEndpointProducerBuilder bufferSize(
@@ -776,6 +793,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedWebsocketEndpointProducerBuilder maxIdleTime(
@@ -830,6 +848,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 13
          * Group: advanced
          */
         default AdvancedWebsocketEndpointProducerBuilder minVersion(
@@ -857,6 +876,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWebsocketEndpointProducerBuilder synchronous(
@@ -895,6 +915,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: -1
          * Group: common
          */
         default WebsocketEndpointBuilder maxBinaryMessageSize(
@@ -933,6 +954,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: cors
          */
         default WebsocketEndpointBuilder crossOriginFilterOn(
@@ -969,6 +991,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: monitoring
          */
         default WebsocketEndpointBuilder enableJmx(boolean enableJmx) {
@@ -1030,6 +1053,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder basicPropertyBinding(
@@ -1056,6 +1080,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 8192
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder bufferSize(Integer bufferSize) {
@@ -1081,6 +1106,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 300000
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder maxIdleTime(Integer maxIdleTime) {
@@ -1133,6 +1159,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 13
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder minVersion(Integer minVersion) {
@@ -1158,6 +1185,7 @@ public interface WebsocketEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWebsocketEndpointBuilder synchronous(boolean synchronous) {

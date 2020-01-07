@@ -126,6 +126,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointConsumerBuilder managementEnabled(
@@ -150,6 +151,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointConsumerBuilder readThrough(boolean readThrough) {
@@ -172,6 +174,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointConsumerBuilder statisticsEnabled(
@@ -196,6 +199,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default JCacheEndpointConsumerBuilder storeByValue(boolean storeByValue) {
@@ -218,6 +222,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointConsumerBuilder writeThrough(boolean writeThrough) {
@@ -246,6 +251,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JCacheEndpointConsumerBuilder bridgeErrorHandler(
@@ -290,6 +296,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JCacheEndpointConsumerBuilder oldValueRequired(
@@ -314,6 +321,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JCacheEndpointConsumerBuilder synchronous(boolean synchronous) {
@@ -433,6 +441,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJCacheEndpointConsumerBuilder basicPropertyBinding(
@@ -511,6 +520,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJCacheEndpointConsumerBuilder createCacheIfNotExists(
@@ -563,6 +573,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJCacheEndpointConsumerBuilder lookupProviders(
@@ -676,6 +687,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointProducerBuilder managementEnabled(
@@ -700,6 +712,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointProducerBuilder readThrough(boolean readThrough) {
@@ -722,6 +735,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointProducerBuilder statisticsEnabled(
@@ -746,6 +760,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default JCacheEndpointProducerBuilder storeByValue(boolean storeByValue) {
@@ -768,6 +783,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointProducerBuilder writeThrough(boolean writeThrough) {
@@ -811,6 +827,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JCacheEndpointProducerBuilder lazyStartProducer(
@@ -855,6 +872,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJCacheEndpointProducerBuilder basicPropertyBinding(
@@ -933,6 +951,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJCacheEndpointProducerBuilder createCacheIfNotExists(
@@ -985,6 +1004,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJCacheEndpointProducerBuilder lookupProviders(
@@ -1096,6 +1116,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointBuilder managementEnabled(
@@ -1119,6 +1140,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointBuilder readThrough(boolean readThrough) {
@@ -1141,6 +1163,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointBuilder statisticsEnabled(
@@ -1164,6 +1187,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default JCacheEndpointBuilder storeByValue(boolean storeByValue) {
@@ -1186,6 +1210,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JCacheEndpointBuilder writeThrough(boolean writeThrough) {
@@ -1220,6 +1245,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJCacheEndpointBuilder basicPropertyBinding(
@@ -1298,6 +1324,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJCacheEndpointBuilder createCacheIfNotExists(
@@ -1350,6 +1377,7 @@ public interface JCacheEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJCacheEndpointBuilder lookupProviders(

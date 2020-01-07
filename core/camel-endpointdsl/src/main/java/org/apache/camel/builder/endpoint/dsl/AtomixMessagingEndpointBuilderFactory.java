@@ -73,6 +73,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * 
+         * Default: ALL
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder broadcastType(
@@ -123,6 +124,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * 
+         * Default: DIRECT
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder defaultAction(
@@ -196,6 +198,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
          */
         default AtomixMessagingEndpointConsumerBuilder transportClassName(
@@ -214,6 +217,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtomixMessagingEndpointConsumerBuilder bridgeErrorHandler(
@@ -314,6 +318,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder basicPropertyBinding(
@@ -391,6 +396,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder ephemeral(
@@ -498,6 +504,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMessagingEndpointConsumerBuilder synchronous(
@@ -558,6 +565,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * 
+         * Default: ALL
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder broadcastType(
@@ -608,6 +616,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * 
+         * Default: DIRECT
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder defaultAction(
@@ -681,6 +690,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
          */
         default AtomixMessagingEndpointProducerBuilder transportClassName(
@@ -701,6 +711,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AtomixMessagingEndpointProducerBuilder lazyStartProducer(
@@ -746,6 +757,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder basicPropertyBinding(
@@ -823,6 +835,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder ephemeral(
@@ -930,6 +943,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMessagingEndpointProducerBuilder synchronous(
@@ -990,6 +1004,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$BroadcastType</code> type.
          * 
+         * Default: ALL
          * Group: common
          */
         default AtomixMessagingEndpointBuilder broadcastType(
@@ -1039,6 +1054,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.atomix.client.messaging.AtomixMessaging$Action</code> type.
          * 
+         * Default: DIRECT
          * Group: common
          */
         default AtomixMessagingEndpointBuilder defaultAction(
@@ -1110,6 +1126,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: io.atomix.catalyst.transport.netty.NettyTransport
          * Group: common
          */
         default AtomixMessagingEndpointBuilder transportClassName(
@@ -1134,6 +1151,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMessagingEndpointBuilder basicPropertyBinding(
@@ -1211,6 +1229,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMessagingEndpointBuilder ephemeral(
@@ -1318,6 +1337,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixMessagingEndpointBuilder synchronous(

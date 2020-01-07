@@ -113,6 +113,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CryptoCmsEndpointBuilder lazyStartProducer(
@@ -174,6 +175,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: decrypt_verify
          */
         default CryptoCmsEndpointBuilder fromBase64(boolean fromBase64) {
@@ -338,6 +340,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: encrypt_sign
          */
         default CryptoCmsEndpointBuilder toBase64(Boolean toBase64) {
@@ -364,6 +367,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: sign
          */
         default CryptoCmsEndpointBuilder includeContent(Boolean includeContent) {
@@ -420,6 +424,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: verify
          */
         default CryptoCmsEndpointBuilder signedDataHeaderBase64(
@@ -450,6 +455,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: verify
          */
         default CryptoCmsEndpointBuilder verifySignaturesOfAllSigners(
@@ -489,6 +495,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder basicPropertyBinding(
@@ -515,6 +522,7 @@ public interface CryptoCmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCryptoCmsEndpointBuilder synchronous(boolean synchronous) {

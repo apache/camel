@@ -95,6 +95,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AvroEndpointConsumerBuilder reflectionProtocol(
@@ -122,6 +123,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AvroEndpointConsumerBuilder singleParameter(
@@ -164,6 +166,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AvroEndpointConsumerBuilder bridgeErrorHandler(
@@ -263,6 +266,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAvroEndpointConsumerBuilder basicPropertyBinding(
@@ -289,6 +293,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAvroEndpointConsumerBuilder synchronous(
@@ -374,6 +379,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AvroEndpointProducerBuilder reflectionProtocol(
@@ -401,6 +407,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AvroEndpointProducerBuilder singleParameter(
@@ -445,6 +452,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AvroEndpointProducerBuilder lazyStartProducer(
@@ -489,6 +497,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAvroEndpointProducerBuilder basicPropertyBinding(
@@ -515,6 +524,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAvroEndpointProducerBuilder synchronous(
@@ -598,6 +608,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AvroEndpointBuilder reflectionProtocol(
@@ -624,6 +635,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AvroEndpointBuilder singleParameter(boolean singleParameter) {
@@ -670,6 +682,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAvroEndpointBuilder basicPropertyBinding(
@@ -696,6 +709,7 @@ public interface AvroEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAvroEndpointBuilder synchronous(boolean synchronous) {

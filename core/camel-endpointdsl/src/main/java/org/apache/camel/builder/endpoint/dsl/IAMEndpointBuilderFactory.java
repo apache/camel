@@ -85,6 +85,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IAMEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -175,6 +176,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default IAMEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -235,6 +237,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIAMEndpointBuilder basicPropertyBinding(
@@ -261,6 +264,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIAMEndpointBuilder synchronous(boolean synchronous) {

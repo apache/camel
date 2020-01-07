@@ -47,6 +47,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: fs
          * Group: common
          */
         default GridFsEndpointConsumerBuilder bucket(String bucket) {
@@ -138,6 +139,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder bridgeErrorHandler(
@@ -168,6 +170,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder delay(long delay) {
@@ -191,6 +194,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel-processed
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder fileAttributeName(
@@ -204,6 +208,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -228,6 +233,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel-timestamps
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder persistentTSCollection(
@@ -241,6 +247,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: camel-timestamp
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder persistentTSObject(
@@ -268,6 +275,7 @@ public interface GridFsEndpointBuilderFactory {
          * <code>org.apache.camel.component.mongodb.gridfs.QueryStrategy</code>
          * type.
          * 
+         * Default: TimeStamp
          * Group: consumer
          */
         default GridFsEndpointConsumerBuilder queryStrategy(
@@ -363,6 +371,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointConsumerBuilder basicPropertyBinding(
@@ -389,6 +398,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointConsumerBuilder synchronous(
@@ -426,6 +436,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: fs
          * Group: common
          */
         default GridFsEndpointProducerBuilder bucket(String bucket) {
@@ -519,6 +530,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GridFsEndpointProducerBuilder lazyStartProducer(
@@ -574,6 +586,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointProducerBuilder basicPropertyBinding(
@@ -600,6 +613,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointProducerBuilder synchronous(
@@ -637,6 +651,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: fs
          * Group: common
          */
         default GridFsEndpointBuilder bucket(String bucket) {
@@ -732,6 +747,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointBuilder basicPropertyBinding(
@@ -758,6 +774,7 @@ public interface GridFsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGridFsEndpointBuilder synchronous(boolean synchronous) {

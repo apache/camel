@@ -42,6 +42,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ChunkEndpointBuilder contentCache(boolean contentCache) {
@@ -94,6 +95,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ChunkEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -169,6 +171,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedChunkEndpointBuilder basicPropertyBinding(
@@ -195,6 +198,7 @@ public interface ChunkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedChunkEndpointBuilder synchronous(boolean synchronous) {

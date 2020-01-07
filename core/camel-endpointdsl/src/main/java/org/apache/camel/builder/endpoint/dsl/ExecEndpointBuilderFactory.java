@@ -112,6 +112,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: producer
          */
         default ExecEndpointBuilder commandLogLevel(LoggingLevel commandLogLevel) {
@@ -145,6 +146,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ExecEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -216,6 +218,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ExecEndpointBuilder useStderrOnEmptyStdout(
@@ -266,6 +269,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedExecEndpointBuilder basicPropertyBinding(
@@ -292,6 +296,7 @@ public interface ExecEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedExecEndpointBuilder synchronous(boolean synchronous) {

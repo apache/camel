@@ -85,6 +85,7 @@ public interface ECSEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ECSEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -175,6 +176,7 @@ public interface ECSEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default ECSEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -235,6 +237,7 @@ public interface ECSEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedECSEndpointBuilder basicPropertyBinding(
@@ -261,6 +264,7 @@ public interface ECSEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedECSEndpointBuilder synchronous(boolean synchronous) {

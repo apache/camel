@@ -53,6 +53,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JGroupsRaftEndpointConsumerBuilder bridgeErrorHandler(
@@ -85,6 +86,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JGroupsRaftEndpointConsumerBuilder enableRoleChangeEvents(
@@ -180,6 +182,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder basicPropertyBinding(
@@ -206,6 +209,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointConsumerBuilder synchronous(
@@ -250,6 +254,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JGroupsRaftEndpointProducerBuilder lazyStartProducer(
@@ -294,6 +299,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder basicPropertyBinding(
@@ -320,6 +326,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointProducerBuilder synchronous(
@@ -368,6 +375,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointBuilder basicPropertyBinding(
@@ -394,6 +402,7 @@ public interface JGroupsRaftEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsRaftEndpointBuilder synchronous(

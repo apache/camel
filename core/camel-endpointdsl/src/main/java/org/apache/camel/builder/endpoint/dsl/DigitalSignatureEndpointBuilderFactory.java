@@ -51,6 +51,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: SHA256withRSA
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder algorithm(String algorithm) {
@@ -143,6 +144,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DigitalSignatureEndpointBuilder lazyStartProducer(
@@ -285,6 +287,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder basicPropertyBinding(
@@ -310,6 +313,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 2048
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder bufferSize(
@@ -365,6 +369,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder clearHeaders(
@@ -483,6 +488,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDigitalSignatureEndpointBuilder synchronous(

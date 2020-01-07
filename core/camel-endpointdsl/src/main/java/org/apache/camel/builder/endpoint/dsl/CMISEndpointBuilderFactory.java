@@ -47,6 +47,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 100
          * Group: common
          */
         default CMISEndpointConsumerBuilder pageSize(int pageSize) {
@@ -70,6 +71,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CMISEndpointConsumerBuilder readContent(boolean readContent) {
@@ -133,6 +135,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CMISEndpointConsumerBuilder bridgeErrorHandler(
@@ -267,6 +270,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder basicPropertyBinding(
@@ -323,6 +327,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointConsumerBuilder synchronous(
@@ -359,6 +364,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 100
          * Group: common
          */
         default CMISEndpointProducerBuilder pageSize(int pageSize) {
@@ -382,6 +388,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CMISEndpointProducerBuilder readContent(boolean readContent) {
@@ -447,6 +454,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CMISEndpointProducerBuilder lazyStartProducer(
@@ -480,6 +488,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CMISEndpointProducerBuilder queryMode(boolean queryMode) {
@@ -537,6 +546,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder basicPropertyBinding(
@@ -593,6 +603,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointProducerBuilder synchronous(
@@ -629,6 +640,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 100
          * Group: common
          */
         default CMISEndpointBuilder pageSize(int pageSize) {
@@ -652,6 +664,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default CMISEndpointBuilder readContent(boolean readContent) {
@@ -743,6 +756,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointBuilder basicPropertyBinding(
@@ -799,6 +813,7 @@ public interface CMISEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCMISEndpointBuilder synchronous(boolean synchronous) {

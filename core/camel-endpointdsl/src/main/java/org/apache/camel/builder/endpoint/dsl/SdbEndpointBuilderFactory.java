@@ -79,6 +79,7 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SdbEndpointBuilder consistentRead(boolean consistentRead) {
@@ -110,6 +111,7 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SdbEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -166,6 +168,7 @@ public interface SdbEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.aws.sdb.SdbOperations</code> type.
          * 
+         * Default: PutAttributes
          * Group: producer
          */
         default SdbEndpointBuilder operation(SdbOperations operation) {
@@ -223,6 +226,7 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default SdbEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -283,6 +287,7 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSdbEndpointBuilder basicPropertyBinding(
@@ -309,6 +314,7 @@ public interface SdbEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSdbEndpointBuilder synchronous(boolean synchronous) {

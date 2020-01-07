@@ -53,6 +53,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DigitalOceanEndpointBuilder lazyStartProducer(
@@ -85,6 +86,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default DigitalOceanEndpointBuilder page(Integer page) {
@@ -109,6 +111,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 25
          * Group: producer
          */
         default DigitalOceanEndpointBuilder perPage(Integer perPage) {
@@ -240,6 +243,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder basicPropertyBinding(
@@ -292,6 +296,7 @@ public interface DigitalOceanEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDigitalOceanEndpointBuilder synchronous(

@@ -101,6 +101,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AMQPEndpointConsumerBuilder disableReplyTo(
@@ -181,6 +182,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AMQPEndpointConsumerBuilder testConnectionOnStartup(
@@ -210,6 +212,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: AUTO_ACKNOWLEDGE
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder acknowledgementModeName(
@@ -231,6 +234,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder asyncConsumer(boolean asyncConsumer) {
@@ -262,6 +266,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder autoStartup(boolean autoStartup) {
@@ -312,6 +317,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: CACHE_AUTO
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder cacheLevelName(String cacheLevelName) {
@@ -328,6 +334,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder concurrentConsumers(
@@ -403,6 +410,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder replyToDeliveryPersistent(
@@ -445,6 +453,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder subscriptionDurable(
@@ -504,6 +513,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AMQPEndpointConsumerBuilder subscriptionShared(
@@ -539,6 +549,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: logging
          */
         default AMQPEndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -566,6 +577,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: logging
          */
         default AMQPEndpointConsumerBuilder errorHandlerLogStackTrace(
@@ -615,6 +627,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default AMQPEndpointConsumerBuilder transacted(boolean transacted) {
@@ -655,6 +668,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder acceptMessagesWhileStopping(
@@ -692,6 +706,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder allowReplyManagerQuickStop(
@@ -732,6 +747,7 @@ public interface AMQPEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
+         * Default: Default
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder consumerType(
@@ -816,6 +832,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder eagerLoadingOfProperties(
@@ -849,6 +866,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Poison JMS message due to ${exception.message}
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder eagerPoisonBody(
@@ -919,6 +937,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder exposeListenerSession(
@@ -947,6 +966,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder replyToSameDestinationAllowed(
@@ -1003,6 +1023,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder allowSerializedHeaders(
@@ -1039,6 +1060,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder asyncStartListener(
@@ -1073,6 +1095,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder asyncStopListener(
@@ -1099,6 +1122,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder basicPropertyBinding(
@@ -1250,6 +1274,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder idleConsumerLimit(
@@ -1279,6 +1304,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder idleTaskExecutionLimit(
@@ -1310,6 +1336,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder includeAllJMSXProperties(
@@ -1382,6 +1409,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder mapJmsMessage(
@@ -1410,6 +1438,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder maxMessagesPerTask(
@@ -1503,6 +1532,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder messageIdEnabled(
@@ -1569,6 +1599,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder messageTimestampEnabled(
@@ -1598,6 +1629,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder pubSubNoLocal(
@@ -1623,6 +1655,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder receiveTimeout(
@@ -1649,6 +1682,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder recoveryInterval(
@@ -1679,6 +1713,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder requestTimeoutCheckerInterval(
@@ -1708,6 +1743,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder synchronous(
@@ -1746,6 +1782,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder transferException(
@@ -1794,6 +1831,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder transferExchange(
@@ -1830,6 +1868,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder useMessageIDAsCorrelationID(
@@ -1857,6 +1896,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 50
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
@@ -1884,6 +1924,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedAMQPEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
@@ -1910,6 +1951,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder lazyCreateTransactionManager(
@@ -1974,6 +2016,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointConsumerBuilder transactionTimeout(
@@ -2063,6 +2106,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AMQPEndpointProducerBuilder disableReplyTo(
@@ -2143,6 +2187,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AMQPEndpointProducerBuilder testConnectionOnStartup(
@@ -2172,6 +2217,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default AMQPEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
@@ -2222,6 +2268,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default AMQPEndpointProducerBuilder deliveryPersistent(
@@ -2251,6 +2298,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AMQPEndpointProducerBuilder explicitQosEnabled(
@@ -2282,6 +2330,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AMQPEndpointProducerBuilder formatDateHeadersToIso8601(
@@ -2315,6 +2364,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AMQPEndpointProducerBuilder lazyStartProducer(
@@ -2355,6 +2405,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AMQPEndpointProducerBuilder preserveMessageQos(
@@ -2390,6 +2441,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4
          * Group: producer
          */
         default AMQPEndpointProducerBuilder priority(int priority) {
@@ -2417,6 +2469,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default AMQPEndpointProducerBuilder replyToConcurrentConsumers(
@@ -2472,6 +2525,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default AMQPEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
@@ -2556,6 +2610,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 20000
          * Group: producer
          */
         default AMQPEndpointProducerBuilder requestTimeout(long requestTimeout) {
@@ -2583,6 +2638,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default AMQPEndpointProducerBuilder timeToLive(long timeToLive) {
@@ -2630,6 +2686,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default AMQPEndpointProducerBuilder transacted(boolean transacted) {
@@ -2681,6 +2738,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder allowNullBody(
@@ -2711,6 +2769,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder alwaysCopyMessage(
@@ -2766,6 +2825,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder disableTimeToLive(
@@ -2801,6 +2861,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder forceSendOriginalMessage(
@@ -2831,6 +2892,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder includeSentJMSMessageID(
@@ -2898,6 +2960,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder streamMessageTypeEnabled(
@@ -2931,6 +2994,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder allowSerializedHeaders(
@@ -2967,6 +3031,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder asyncStartListener(
@@ -3001,6 +3066,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder asyncStopListener(
@@ -3027,6 +3093,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder basicPropertyBinding(
@@ -3178,6 +3245,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder idleConsumerLimit(
@@ -3207,6 +3275,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder idleTaskExecutionLimit(
@@ -3238,6 +3307,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder includeAllJMSXProperties(
@@ -3310,6 +3380,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder mapJmsMessage(
@@ -3338,6 +3409,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder maxMessagesPerTask(
@@ -3431,6 +3503,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder messageIdEnabled(
@@ -3497,6 +3570,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder messageTimestampEnabled(
@@ -3526,6 +3600,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder pubSubNoLocal(
@@ -3551,6 +3626,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder receiveTimeout(
@@ -3577,6 +3653,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder recoveryInterval(
@@ -3607,6 +3684,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder requestTimeoutCheckerInterval(
@@ -3636,6 +3714,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder synchronous(
@@ -3674,6 +3753,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder transferException(
@@ -3722,6 +3802,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder transferExchange(
@@ -3758,6 +3839,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder useMessageIDAsCorrelationID(
@@ -3785,6 +3867,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 50
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
@@ -3812,6 +3895,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedAMQPEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
@@ -3838,6 +3922,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder lazyCreateTransactionManager(
@@ -3902,6 +3987,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointProducerBuilder transactionTimeout(
@@ -3989,6 +4075,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AMQPEndpointBuilder disableReplyTo(boolean disableReplyTo) {
@@ -4067,6 +4154,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default AMQPEndpointBuilder testConnectionOnStartup(
@@ -4119,6 +4207,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default AMQPEndpointBuilder transacted(boolean transacted) {
@@ -4155,6 +4244,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder allowSerializedHeaders(
@@ -4191,6 +4281,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder asyncStartListener(
@@ -4225,6 +4316,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder asyncStopListener(
@@ -4251,6 +4343,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder basicPropertyBinding(
@@ -4400,6 +4493,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder idleConsumerLimit(
@@ -4429,6 +4523,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder idleTaskExecutionLimit(
@@ -4460,6 +4555,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder includeAllJMSXProperties(
@@ -4532,6 +4628,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
@@ -4558,6 +4655,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder maxMessagesPerTask(
@@ -4651,6 +4749,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder messageIdEnabled(
@@ -4717,6 +4816,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder messageTimestampEnabled(
@@ -4746,6 +4846,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder pubSubNoLocal(boolean pubSubNoLocal) {
@@ -4769,6 +4870,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder receiveTimeout(long receiveTimeout) {
@@ -4793,6 +4895,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder recoveryInterval(
@@ -4823,6 +4926,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder requestTimeoutCheckerInterval(
@@ -4852,6 +4956,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder synchronous(boolean synchronous) {
@@ -4888,6 +4993,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder transferException(
@@ -4936,6 +5042,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder transferExchange(
@@ -4972,6 +5079,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder useMessageIDAsCorrelationID(
@@ -4999,6 +5107,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 50
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
@@ -5026,6 +5135,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedAMQPEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
@@ -5052,6 +5162,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointBuilder lazyCreateTransactionManager(
@@ -5116,6 +5227,7 @@ public interface AMQPEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction (advanced)
          */
         default AdvancedAMQPEndpointBuilder transactionTimeout(

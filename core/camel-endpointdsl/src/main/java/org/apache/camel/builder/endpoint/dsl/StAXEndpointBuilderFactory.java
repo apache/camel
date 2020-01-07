@@ -51,6 +51,7 @@ public interface StAXEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StAXEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -93,6 +94,7 @@ public interface StAXEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStAXEndpointBuilder basicPropertyBinding(
@@ -119,6 +121,7 @@ public interface StAXEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStAXEndpointBuilder synchronous(boolean synchronous) {

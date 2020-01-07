@@ -44,6 +44,7 @@ public interface SchematronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SchematronEndpointBuilder abort(boolean abort) {
@@ -74,6 +75,7 @@ public interface SchematronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SchematronEndpointBuilder lazyStartProducer(
@@ -141,6 +143,7 @@ public interface SchematronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder basicPropertyBinding(
@@ -167,6 +170,7 @@ public interface SchematronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSchematronEndpointBuilder synchronous(

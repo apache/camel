@@ -51,6 +51,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyEndpointConsumerBuilder disconnect(boolean disconnect) {
@@ -74,6 +75,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointConsumerBuilder keepAlive(boolean keepAlive) {
@@ -96,6 +98,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointConsumerBuilder reuseAddress(boolean reuseAddress) {
@@ -126,6 +129,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyEndpointConsumerBuilder reuseChannel(boolean reuseChannel) {
@@ -156,6 +160,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointConsumerBuilder sync(boolean sync) {
@@ -178,6 +183,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointConsumerBuilder tcpNoDelay(boolean tcpNoDelay) {
@@ -206,6 +212,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder bridgeErrorHandler(
@@ -236,6 +243,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder broadcast(boolean broadcast) {
@@ -259,6 +267,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder clientMode(boolean clientMode) {
@@ -283,6 +292,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder reconnect(boolean reconnect) {
@@ -307,6 +317,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: consumer
          */
         default NettyEndpointConsumerBuilder reconnectInterval(
@@ -335,6 +346,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: codec
          */
         default NettyEndpointConsumerBuilder allowDefaultCodec(
@@ -363,6 +375,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: codec
          */
         default NettyEndpointConsumerBuilder autoAppendDelimiter(
@@ -388,6 +401,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1024
          * Group: codec
          */
         default NettyEndpointConsumerBuilder decoderMaxLineLength(
@@ -446,6 +460,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
+         * Default: LINE
          * Group: codec
          */
         default NettyEndpointConsumerBuilder delimiter(
@@ -517,6 +532,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: codec
          */
         default NettyEndpointConsumerBuilder textline(boolean textline) {
@@ -541,6 +557,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1,TLSv1.1,TLSv1.2
          * Group: security
          */
         default NettyEndpointConsumerBuilder enabledProtocols(
@@ -603,6 +620,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyEndpointConsumerBuilder needClientAuth(
@@ -654,6 +672,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyEndpointConsumerBuilder ssl(boolean ssl) {
@@ -680,6 +699,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyEndpointConsumerBuilder sslClientCertHeaders(
@@ -836,6 +856,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder bossCount(int bossCount) {
@@ -886,6 +907,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder disconnectOnNoReply(
@@ -1008,6 +1030,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder noReplyLogLevel(
@@ -1038,6 +1061,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: DEBUG
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder serverClosedChannelExceptionCaughtLogLevel(
@@ -1068,6 +1092,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder serverExceptionCaughtLogLevel(
@@ -1121,6 +1146,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedNettyEndpointConsumerBuilder usingExecutorService(
@@ -1149,6 +1175,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder allowSerializedHeaders(
@@ -1177,6 +1204,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder basicPropertyBinding(
@@ -1232,6 +1260,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder nativeTransport(
@@ -1293,6 +1322,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder receiveBufferSize(
@@ -1345,6 +1375,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder sendBufferSize(
@@ -1371,6 +1402,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder synchronous(
@@ -1401,6 +1433,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder transferExchange(
@@ -1431,6 +1464,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointConsumerBuilder udpByteArrayCodec(
@@ -1526,6 +1560,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyEndpointProducerBuilder disconnect(boolean disconnect) {
@@ -1549,6 +1584,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointProducerBuilder keepAlive(boolean keepAlive) {
@@ -1571,6 +1607,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointProducerBuilder reuseAddress(boolean reuseAddress) {
@@ -1601,6 +1638,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyEndpointProducerBuilder reuseChannel(boolean reuseChannel) {
@@ -1631,6 +1669,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointProducerBuilder sync(boolean sync) {
@@ -1653,6 +1692,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointProducerBuilder tcpNoDelay(boolean tcpNoDelay) {
@@ -1676,6 +1716,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10000
          * Group: producer
          */
         default NettyEndpointProducerBuilder connectTimeout(int connectTimeout) {
@@ -1708,6 +1749,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NettyEndpointProducerBuilder lazyStartProducer(
@@ -1772,6 +1814,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: codec
          */
         default NettyEndpointProducerBuilder allowDefaultCodec(
@@ -1800,6 +1843,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: codec
          */
         default NettyEndpointProducerBuilder autoAppendDelimiter(
@@ -1825,6 +1869,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1024
          * Group: codec
          */
         default NettyEndpointProducerBuilder decoderMaxLineLength(
@@ -1883,6 +1928,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
+         * Default: LINE
          * Group: codec
          */
         default NettyEndpointProducerBuilder delimiter(
@@ -1954,6 +2000,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: codec
          */
         default NettyEndpointProducerBuilder textline(boolean textline) {
@@ -1978,6 +2025,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1,TLSv1.1,TLSv1.2
          * Group: security
          */
         default NettyEndpointProducerBuilder enabledProtocols(
@@ -2065,6 +2113,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyEndpointProducerBuilder ssl(boolean ssl) {
@@ -2091,6 +2140,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyEndpointProducerBuilder sslClientCertHeaders(
@@ -2292,6 +2342,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedNettyEndpointProducerBuilder lazyChannelCreation(
@@ -2327,6 +2378,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolEnabled(
@@ -2363,6 +2415,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer (advanced)
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMaxActive(
@@ -2389,6 +2442,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 100
          * Group: producer (advanced)
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMaxIdle(
@@ -2415,6 +2469,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 300000
          * Group: producer (advanced)
          */
         default AdvancedNettyEndpointProducerBuilder producerPoolMinEvictableIdle(
@@ -2469,6 +2524,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedNettyEndpointProducerBuilder udpConnectionlessSending(
@@ -2496,6 +2552,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedNettyEndpointProducerBuilder useByteBuf(
@@ -2524,6 +2581,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder allowSerializedHeaders(
@@ -2552,6 +2610,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder basicPropertyBinding(
@@ -2607,6 +2666,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder nativeTransport(
@@ -2668,6 +2728,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder receiveBufferSize(
@@ -2720,6 +2781,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder sendBufferSize(
@@ -2746,6 +2808,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder synchronous(
@@ -2776,6 +2839,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder transferExchange(
@@ -2806,6 +2870,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointProducerBuilder udpByteArrayCodec(
@@ -2901,6 +2966,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyEndpointBuilder disconnect(boolean disconnect) {
@@ -2924,6 +2990,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointBuilder keepAlive(boolean keepAlive) {
@@ -2946,6 +3013,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointBuilder reuseAddress(boolean reuseAddress) {
@@ -2976,6 +3044,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default NettyEndpointBuilder reuseChannel(boolean reuseChannel) {
@@ -3006,6 +3075,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointBuilder sync(boolean sync) {
@@ -3028,6 +3098,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default NettyEndpointBuilder tcpNoDelay(boolean tcpNoDelay) {
@@ -3053,6 +3124,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: codec
          */
         default NettyEndpointBuilder allowDefaultCodec(boolean allowDefaultCodec) {
@@ -3079,6 +3151,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: codec
          */
         default NettyEndpointBuilder autoAppendDelimiter(
@@ -3104,6 +3177,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1024
          * Group: codec
          */
         default NettyEndpointBuilder decoderMaxLineLength(
@@ -3162,6 +3236,7 @@ public interface NettyEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.netty.TextLineDelimiter</code> type.
          * 
+         * Default: LINE
          * Group: codec
          */
         default NettyEndpointBuilder delimiter(TextLineDelimiter delimiter) {
@@ -3232,6 +3307,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: codec
          */
         default NettyEndpointBuilder textline(boolean textline) {
@@ -3256,6 +3332,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1,TLSv1.1,TLSv1.2
          * Group: security
          */
         default NettyEndpointBuilder enabledProtocols(String enabledProtocols) {
@@ -3339,6 +3416,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyEndpointBuilder ssl(boolean ssl) {
@@ -3365,6 +3443,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default NettyEndpointBuilder sslClientCertHeaders(
@@ -3491,6 +3570,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder allowSerializedHeaders(
@@ -3519,6 +3599,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder basicPropertyBinding(
@@ -3572,6 +3653,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder nativeTransport(
@@ -3632,6 +3714,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder receiveBufferSize(
@@ -3684,6 +3767,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 65536
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder sendBufferSize(int sendBufferSize) {
@@ -3709,6 +3793,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder synchronous(boolean synchronous) {
@@ -3737,6 +3822,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder transferExchange(
@@ -3767,6 +3853,7 @@ public interface NettyEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNettyEndpointBuilder udpByteArrayCodec(

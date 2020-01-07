@@ -48,6 +48,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: **
          * Group: consumer
          */
         default FileWatchEndpointBuilder antInclude(String antInclude) {
@@ -59,6 +60,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default FileWatchEndpointBuilder autoCreate(boolean autoCreate) {
@@ -87,6 +89,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FileWatchEndpointBuilder bridgeErrorHandler(
@@ -118,6 +121,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default FileWatchEndpointBuilder concurrentConsumers(
@@ -144,6 +148,7 @@ public interface FileWatchEndpointBuilderFactory {
          * The option is a:
          * <code>java.util.Set&lt;org.apache.camel.component.file.watch.constants.FileEventEnum&gt;</code> type.
          * 
+         * Default: CREATE,MODIFY,DELETE
          * Group: consumer
          */
         default FileWatchEndpointBuilder events(Set<FileEventEnum> events) {
@@ -172,6 +177,7 @@ public interface FileWatchEndpointBuilderFactory {
          * The option is a: <code>io.methvin.watcher.hashing.FileHasher</code>
          * type.
          * 
+         * Default: #murmur3FFileHasher
          * Group: consumer
          */
         default FileWatchEndpointBuilder fileHasher(Object fileHasher) {
@@ -200,6 +206,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default FileWatchEndpointBuilder pollThreads(int pollThreads) {
@@ -224,6 +231,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2147483647
          * Group: consumer
          */
         default FileWatchEndpointBuilder queueSize(int queueSize) {
@@ -248,6 +256,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default FileWatchEndpointBuilder recursive(boolean recursive) {
@@ -274,6 +283,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default FileWatchEndpointBuilder useFileHashing(boolean useFileHashing) {
@@ -368,6 +378,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileWatchEndpointBuilder basicPropertyBinding(
@@ -394,6 +405,7 @@ public interface FileWatchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFileWatchEndpointBuilder synchronous(boolean synchronous) {

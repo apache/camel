@@ -103,6 +103,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesPersistentVolumesEndpointBuilder lazyStartProducer(
@@ -159,6 +160,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: producer
          */
         default KubernetesPersistentVolumesEndpointBuilder portProtocol(
@@ -341,6 +343,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder basicPropertyBinding(
@@ -394,6 +397,7 @@ public interface KubernetesPersistentVolumesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPersistentVolumesEndpointBuilder synchronous(

@@ -105,6 +105,7 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default NitriteEndpointConsumerBuilder bridgeErrorHandler(
@@ -228,6 +229,7 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNitriteEndpointConsumerBuilder basicPropertyBinding(
@@ -254,6 +256,7 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNitriteEndpointConsumerBuilder synchronous(
@@ -351,6 +354,7 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NitriteEndpointProducerBuilder lazyStartProducer(
@@ -419,6 +423,7 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNitriteEndpointProducerBuilder basicPropertyBinding(
@@ -445,6 +450,7 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNitriteEndpointProducerBuilder synchronous(
@@ -568,6 +574,7 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNitriteEndpointBuilder basicPropertyBinding(
@@ -594,6 +601,7 @@ public interface NitriteEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNitriteEndpointBuilder synchronous(boolean synchronous) {

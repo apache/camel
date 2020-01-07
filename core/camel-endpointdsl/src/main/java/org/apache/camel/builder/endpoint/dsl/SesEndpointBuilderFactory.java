@@ -75,6 +75,7 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SesEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -139,6 +140,7 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default SesEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -287,6 +289,7 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSesEndpointBuilder basicPropertyBinding(
@@ -313,6 +316,7 @@ public interface SesEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSesEndpointBuilder synchronous(boolean synchronous) {

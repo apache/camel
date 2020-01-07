@@ -63,6 +63,7 @@ public interface RestApiEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RestApiEndpointBuilder bridgeErrorHandler(
@@ -179,6 +180,7 @@ public interface RestApiEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestApiEndpointBuilder basicPropertyBinding(
@@ -205,6 +207,7 @@ public interface RestApiEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestApiEndpointBuilder synchronous(boolean synchronous) {

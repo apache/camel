@@ -44,6 +44,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default NetWeaverEndpointBuilder flatternMap(boolean flatternMap) {
@@ -68,6 +69,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default NetWeaverEndpointBuilder json(boolean json) {
@@ -91,6 +93,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default NetWeaverEndpointBuilder jsonAsMap(boolean jsonAsMap) {
@@ -121,6 +124,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NetWeaverEndpointBuilder lazyStartProducer(
@@ -189,6 +193,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
@@ -215,6 +220,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(boolean synchronous) {

@@ -52,6 +52,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default EtcdEndpointConsumerBuilder recursive(boolean recursive) {
@@ -74,6 +75,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /services/
          * Group: common
          */
         default EtcdEndpointConsumerBuilder servicePath(String servicePath) {
@@ -107,6 +109,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://localhost:2379,http://localhost:4001
          * Group: common
          */
         default EtcdEndpointConsumerBuilder uris(String uris) {
@@ -124,6 +127,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default EtcdEndpointConsumerBuilder bridgeErrorHandler(
@@ -154,6 +158,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default EtcdEndpointConsumerBuilder sendEmptyExchangeOnTimeout(
@@ -179,6 +184,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default EtcdEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -292,6 +298,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder delay(long delay) {
@@ -317,6 +324,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder greedy(boolean greedy) {
@@ -342,6 +350,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -368,6 +377,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -393,6 +403,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder runLoggingLevel(
@@ -450,6 +461,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder scheduler(String scheduler) {
@@ -490,6 +502,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder startScheduler(
@@ -513,6 +526,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -537,6 +551,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default EtcdEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -676,6 +691,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: 0
          * Group: consumer (advanced)
          */
         default AdvancedEtcdEndpointConsumerBuilder fromIndex(Long fromIndex) {
@@ -731,6 +747,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointConsumerBuilder basicPropertyBinding(
@@ -757,6 +774,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointConsumerBuilder synchronous(
@@ -793,6 +811,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default EtcdEndpointProducerBuilder recursive(boolean recursive) {
@@ -815,6 +834,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /services/
          * Group: common
          */
         default EtcdEndpointProducerBuilder servicePath(String servicePath) {
@@ -848,6 +868,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://localhost:2379,http://localhost:4001
          * Group: common
          */
         default EtcdEndpointProducerBuilder uris(String uris) {
@@ -867,6 +888,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default EtcdEndpointProducerBuilder lazyStartProducer(
@@ -982,6 +1004,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointProducerBuilder basicPropertyBinding(
@@ -1008,6 +1031,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointProducerBuilder synchronous(
@@ -1044,6 +1068,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default EtcdEndpointBuilder recursive(boolean recursive) {
@@ -1066,6 +1091,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /services/
          * Group: common
          */
         default EtcdEndpointBuilder servicePath(String servicePath) {
@@ -1099,6 +1125,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://localhost:2379,http://localhost:4001
          * Group: common
          */
         default EtcdEndpointBuilder uris(String uris) {
@@ -1170,6 +1197,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointBuilder basicPropertyBinding(
@@ -1196,6 +1224,7 @@ public interface EtcdEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedEtcdEndpointBuilder synchronous(boolean synchronous) {

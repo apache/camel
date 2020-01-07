@@ -91,6 +91,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder jobDelay(int jobDelay) {
@@ -113,6 +114,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder jobPriority(long jobPriority) {
@@ -136,6 +138,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
         default BeanstalkEndpointConsumerBuilder jobTimeToRun(int jobTimeToRun) {
@@ -161,6 +164,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder awaitJob(boolean awaitJob) {
@@ -190,6 +194,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder bridgeErrorHandler(
@@ -248,6 +253,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -273,6 +279,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default BeanstalkEndpointConsumerBuilder useBlockIO(boolean useBlockIO) {
@@ -383,6 +390,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder delay(long delay) {
@@ -408,6 +416,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder greedy(boolean greedy) {
@@ -433,6 +442,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -460,6 +470,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -485,6 +496,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder runLoggingLevel(
@@ -542,6 +554,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder scheduler(String scheduler) {
@@ -582,6 +595,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder startScheduler(
@@ -606,6 +620,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -630,6 +645,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default BeanstalkEndpointConsumerBuilder useFixedDelay(
@@ -756,6 +772,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanstalkEndpointConsumerBuilder basicPropertyBinding(
@@ -782,6 +799,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanstalkEndpointConsumerBuilder synchronous(
@@ -857,6 +875,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder jobDelay(int jobDelay) {
@@ -879,6 +898,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder jobPriority(long jobPriority) {
@@ -902,6 +922,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
         default BeanstalkEndpointProducerBuilder jobTimeToRun(int jobTimeToRun) {
@@ -934,6 +955,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BeanstalkEndpointProducerBuilder lazyStartProducer(
@@ -978,6 +1000,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanstalkEndpointProducerBuilder basicPropertyBinding(
@@ -1004,6 +1027,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanstalkEndpointProducerBuilder synchronous(
@@ -1078,6 +1102,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: common
          */
         default BeanstalkEndpointBuilder jobDelay(int jobDelay) {
@@ -1100,6 +1125,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default BeanstalkEndpointBuilder jobPriority(long jobPriority) {
@@ -1123,6 +1149,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60
          * Group: common
          */
         default BeanstalkEndpointBuilder jobTimeToRun(int jobTimeToRun) {
@@ -1158,6 +1185,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanstalkEndpointBuilder basicPropertyBinding(
@@ -1184,6 +1212,7 @@ public interface BeanstalkEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBeanstalkEndpointBuilder synchronous(boolean synchronous) {

@@ -48,6 +48,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default SmppEndpointConsumerBuilder initialReconnectDelay(
@@ -74,6 +75,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2147483647
          * Group: common
          */
         default SmppEndpointConsumerBuilder maxReconnect(int maxReconnect) {
@@ -99,6 +101,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default SmppEndpointConsumerBuilder reconnectDelay(long reconnectDelay) {
@@ -132,6 +135,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
+         * Default: ALLOW
          * Group: common
          */
         default SmppEndpointConsumerBuilder splittingPolicy(
@@ -197,6 +201,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SmppEndpointConsumerBuilder bridgeErrorHandler(
@@ -282,6 +287,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: ISO-8859-1
          * Group: codec
          */
         default SmppEndpointConsumerBuilder encoding(String encoding) {
@@ -319,6 +325,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 3128
          * Group: proxy
          */
         default SmppEndpointConsumerBuilder httpProxyPort(Integer httpProxyPort) {
@@ -395,6 +402,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: smppclient
          * Group: security
          */
         default SmppEndpointConsumerBuilder systemId(String systemId) {
@@ -406,6 +414,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default SmppEndpointConsumerBuilder usingSSL(boolean usingSSL) {
@@ -497,6 +506,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSmppEndpointConsumerBuilder basicPropertyBinding(
@@ -524,6 +534,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedSmppEndpointConsumerBuilder enquireLinkTimer(
@@ -580,6 +591,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSmppEndpointConsumerBuilder synchronous(
@@ -608,6 +620,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedSmppEndpointConsumerBuilder transactionTimer(
@@ -648,6 +661,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default SmppEndpointProducerBuilder initialReconnectDelay(
@@ -674,6 +688,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2147483647
          * Group: common
          */
         default SmppEndpointProducerBuilder maxReconnect(int maxReconnect) {
@@ -699,6 +714,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default SmppEndpointProducerBuilder reconnectDelay(long reconnectDelay) {
@@ -732,6 +748,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
+         * Default: ALLOW
          * Group: common
          */
         default SmppEndpointProducerBuilder splittingPolicy(
@@ -779,6 +796,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 1717
          * Group: producer
          */
         default SmppEndpointProducerBuilder destAddr(String destAddr) {
@@ -856,6 +874,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SmppEndpointProducerBuilder lazySessionCreation(
@@ -892,6 +911,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SmppEndpointProducerBuilder lazyStartProducer(
@@ -1091,6 +1111,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 1616
          * Group: producer
          */
         default SmppEndpointProducerBuilder sourceAddr(String sourceAddr) {
@@ -1241,6 +1262,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: ISO-8859-1
          * Group: codec
          */
         default SmppEndpointProducerBuilder encoding(String encoding) {
@@ -1278,6 +1300,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 3128
          * Group: proxy
          */
         default SmppEndpointProducerBuilder httpProxyPort(Integer httpProxyPort) {
@@ -1354,6 +1377,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: smppclient
          * Group: security
          */
         default SmppEndpointProducerBuilder systemId(String systemId) {
@@ -1365,6 +1389,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default SmppEndpointProducerBuilder usingSSL(boolean usingSSL) {
@@ -1399,6 +1424,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSmppEndpointProducerBuilder basicPropertyBinding(
@@ -1426,6 +1452,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedSmppEndpointProducerBuilder enquireLinkTimer(
@@ -1482,6 +1509,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSmppEndpointProducerBuilder synchronous(
@@ -1510,6 +1538,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedSmppEndpointProducerBuilder transactionTimer(
@@ -1550,6 +1579,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default SmppEndpointBuilder initialReconnectDelay(
@@ -1576,6 +1606,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 2147483647
          * Group: common
          */
         default SmppEndpointBuilder maxReconnect(int maxReconnect) {
@@ -1601,6 +1632,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default SmppEndpointBuilder reconnectDelay(long reconnectDelay) {
@@ -1634,6 +1666,7 @@ public interface SmppEndpointBuilderFactory {
          * <code>org.apache.camel.component.smpp.SmppSplittingPolicy</code>
          * type.
          * 
+         * Default: ALLOW
          * Group: common
          */
         default SmppEndpointBuilder splittingPolicy(
@@ -1733,6 +1766,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: ISO-8859-1
          * Group: codec
          */
         default SmppEndpointBuilder encoding(String encoding) {
@@ -1769,6 +1803,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 3128
          * Group: proxy
          */
         default SmppEndpointBuilder httpProxyPort(Integer httpProxyPort) {
@@ -1844,6 +1879,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: smppclient
          * Group: security
          */
         default SmppEndpointBuilder systemId(String systemId) {
@@ -1855,6 +1891,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default SmppEndpointBuilder usingSSL(boolean usingSSL) {
@@ -1889,6 +1926,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSmppEndpointBuilder basicPropertyBinding(
@@ -1916,6 +1954,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedSmppEndpointBuilder enquireLinkTimer(
@@ -1972,6 +2011,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSmppEndpointBuilder synchronous(boolean synchronous) {
@@ -1998,6 +2038,7 @@ public interface SmppEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedSmppEndpointBuilder transactionTimer(

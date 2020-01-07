@@ -46,6 +46,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: DEFAULT_SOLVER
          * Group: common
          */
         default OptaPlannerEndpointConsumerBuilder solverId(String solverId) {
@@ -63,6 +64,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default OptaPlannerEndpointConsumerBuilder bridgeErrorHandler(
@@ -162,6 +164,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder basicPropertyBinding(
@@ -188,6 +191,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOptaPlannerEndpointConsumerBuilder synchronous(
@@ -224,6 +228,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: DEFAULT_SOLVER
          * Group: common
          */
         default OptaPlannerEndpointProducerBuilder solverId(String solverId) {
@@ -235,6 +240,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder async(boolean async) {
@@ -265,6 +271,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder lazyStartProducer(
@@ -297,6 +304,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10
          * Group: producer
          */
         default OptaPlannerEndpointProducerBuilder threadPoolSize(
@@ -333,6 +341,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOptaPlannerEndpointProducerBuilder basicPropertyBinding(
@@ -359,6 +368,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOptaPlannerEndpointProducerBuilder synchronous(
@@ -395,6 +405,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: DEFAULT_SOLVER
          * Group: common
          */
         default OptaPlannerEndpointBuilder solverId(String solverId) {
@@ -418,6 +429,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOptaPlannerEndpointBuilder basicPropertyBinding(
@@ -444,6 +456,7 @@ public interface OptaPlannerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOptaPlannerEndpointBuilder synchronous(

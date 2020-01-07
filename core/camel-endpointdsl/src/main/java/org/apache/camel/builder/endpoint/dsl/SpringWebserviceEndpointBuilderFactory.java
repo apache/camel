@@ -82,6 +82,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SpringWebserviceEndpointConsumerBuilder bridgeErrorHandler(
@@ -278,6 +279,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder basicPropertyBinding(
@@ -304,6 +306,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringWebserviceEndpointConsumerBuilder synchronous(
@@ -372,6 +375,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder allowResponseAttachmentOverride(
@@ -404,6 +408,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder allowResponseHeaderOverride(
@@ -490,6 +495,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SpringWebserviceEndpointProducerBuilder lazyStartProducer(
@@ -816,6 +822,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringWebserviceEndpointProducerBuilder basicPropertyBinding(
@@ -842,6 +849,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringWebserviceEndpointProducerBuilder synchronous(
@@ -944,6 +952,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringWebserviceEndpointBuilder basicPropertyBinding(
@@ -970,6 +979,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSpringWebserviceEndpointBuilder synchronous(

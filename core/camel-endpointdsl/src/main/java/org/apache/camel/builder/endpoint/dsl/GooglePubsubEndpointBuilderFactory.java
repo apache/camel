@@ -48,6 +48,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
          * 
+         * Default: AUTO
          * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder ackMode(AckMode ackMode) {
@@ -72,6 +73,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder concurrentConsumers(
@@ -137,6 +139,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default GooglePubsubEndpointConsumerBuilder maxMessagesPerPoll(
@@ -169,6 +172,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GooglePubsubEndpointConsumerBuilder bridgeErrorHandler(
@@ -268,6 +272,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder basicPropertyBinding(
@@ -294,6 +299,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGooglePubsubEndpointConsumerBuilder synchronous(
@@ -332,6 +338,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
          * 
+         * Default: AUTO
          * Group: common
          */
         default GooglePubsubEndpointProducerBuilder ackMode(AckMode ackMode) {
@@ -356,6 +363,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default GooglePubsubEndpointProducerBuilder concurrentConsumers(
@@ -421,6 +429,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default GooglePubsubEndpointProducerBuilder maxMessagesPerPoll(
@@ -455,6 +464,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GooglePubsubEndpointProducerBuilder lazyStartProducer(
@@ -499,6 +509,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGooglePubsubEndpointProducerBuilder basicPropertyBinding(
@@ -525,6 +536,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGooglePubsubEndpointProducerBuilder synchronous(
@@ -563,6 +575,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.google.pubsub.GooglePubsubConstants$AckMode</code> type.
          * 
+         * Default: AUTO
          * Group: common
          */
         default GooglePubsubEndpointBuilder ackMode(AckMode ackMode) {
@@ -587,6 +600,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default GooglePubsubEndpointBuilder concurrentConsumers(
@@ -652,6 +666,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: common
          */
         default GooglePubsubEndpointBuilder maxMessagesPerPoll(
@@ -690,6 +705,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGooglePubsubEndpointBuilder basicPropertyBinding(
@@ -716,6 +732,7 @@ public interface GooglePubsubEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGooglePubsubEndpointBuilder synchronous(

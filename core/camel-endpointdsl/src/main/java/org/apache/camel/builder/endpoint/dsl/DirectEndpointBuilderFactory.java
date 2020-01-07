@@ -53,6 +53,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DirectEndpointConsumerBuilder bridgeErrorHandler(
@@ -152,6 +153,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectEndpointConsumerBuilder basicPropertyBinding(
@@ -178,6 +180,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectEndpointConsumerBuilder synchronous(
@@ -216,6 +219,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default DirectEndpointProducerBuilder block(boolean block) {
@@ -241,6 +245,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DirectEndpointProducerBuilder failIfNoConsumers(
@@ -274,6 +279,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DirectEndpointProducerBuilder lazyStartProducer(
@@ -306,6 +312,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default DirectEndpointProducerBuilder timeout(long timeout) {
@@ -340,6 +347,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectEndpointProducerBuilder basicPropertyBinding(
@@ -366,6 +374,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectEndpointProducerBuilder synchronous(
@@ -414,6 +423,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectEndpointBuilder basicPropertyBinding(
@@ -440,6 +450,7 @@ public interface DirectEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDirectEndpointBuilder synchronous(boolean synchronous) {

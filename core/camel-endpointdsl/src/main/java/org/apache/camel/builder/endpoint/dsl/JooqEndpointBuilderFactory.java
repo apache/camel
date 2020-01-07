@@ -58,6 +58,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JooqEndpointConsumerBuilder bridgeErrorHandler(
@@ -88,6 +89,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default JooqEndpointConsumerBuilder consumeDelete(boolean consumeDelete) {
@@ -111,6 +113,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JooqEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -224,6 +227,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder delay(long delay) {
@@ -249,6 +253,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder greedy(boolean greedy) {
@@ -274,6 +279,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -300,6 +306,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -325,6 +332,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder runLoggingLevel(
@@ -382,6 +390,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder scheduler(String scheduler) {
@@ -422,6 +431,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder startScheduler(
@@ -445,6 +455,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -469,6 +480,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default JooqEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -593,6 +605,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJooqEndpointConsumerBuilder basicPropertyBinding(
@@ -619,6 +632,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJooqEndpointConsumerBuilder synchronous(
@@ -663,6 +677,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JooqEndpointProducerBuilder lazyStartProducer(
@@ -696,6 +711,7 @@ public interface JooqEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jooq.JooqOperation</code> type.
          * 
+         * Default: NONE
          * Group: producer
          */
         default JooqEndpointProducerBuilder operation(JooqOperation operation) {
@@ -742,6 +758,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJooqEndpointProducerBuilder basicPropertyBinding(
@@ -768,6 +785,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJooqEndpointProducerBuilder synchronous(
@@ -816,6 +834,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJooqEndpointBuilder basicPropertyBinding(
@@ -842,6 +861,7 @@ public interface JooqEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJooqEndpointBuilder synchronous(boolean synchronous) {

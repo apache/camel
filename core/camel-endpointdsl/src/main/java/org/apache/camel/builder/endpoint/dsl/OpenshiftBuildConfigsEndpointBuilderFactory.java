@@ -102,6 +102,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default OpenshiftBuildConfigsEndpointBuilder lazyStartProducer(
@@ -156,6 +157,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: producer
          */
         default OpenshiftBuildConfigsEndpointBuilder portProtocol(
@@ -335,6 +337,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder basicPropertyBinding(
@@ -388,6 +391,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder synchronous(

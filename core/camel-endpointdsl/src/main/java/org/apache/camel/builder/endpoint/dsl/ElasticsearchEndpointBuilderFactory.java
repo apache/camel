@@ -45,6 +45,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default ElasticsearchEndpointBuilder connectionTimeout(
@@ -69,6 +70,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElasticsearchEndpointBuilder disconnect(boolean disconnect) {
@@ -92,6 +94,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElasticsearchEndpointBuilder enableSniffer(boolean enableSniffer) {
@@ -115,6 +118,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElasticsearchEndpointBuilder enableSSL(boolean enableSSL) {
@@ -169,6 +173,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElasticsearchEndpointBuilder lazyStartProducer(
@@ -201,6 +206,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default ElasticsearchEndpointBuilder maxRetryTimeout(int maxRetryTimeout) {
@@ -249,6 +255,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60000
          * Group: producer
          */
         default ElasticsearchEndpointBuilder scrollKeepAliveMs(
@@ -274,6 +281,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 60000
          * Group: producer
          */
         default ElasticsearchEndpointBuilder sniffAfterFailureDelay(
@@ -301,6 +309,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 300000
          * Group: producer
          */
         default ElasticsearchEndpointBuilder snifferInterval(int snifferInterval) {
@@ -326,6 +335,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default ElasticsearchEndpointBuilder socketTimeout(int socketTimeout) {
@@ -348,6 +358,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElasticsearchEndpointBuilder useScroll(boolean useScroll) {
@@ -371,6 +382,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default ElasticsearchEndpointBuilder waitForActiveShards(
@@ -408,6 +420,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElasticsearchEndpointBuilder basicPropertyBinding(
@@ -434,6 +447,7 @@ public interface ElasticsearchEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElasticsearchEndpointBuilder synchronous(

@@ -50,6 +50,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default MockEndpointBuilder assertPeriod(long assertPeriod) {
@@ -90,6 +91,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default MockEndpointBuilder expectedCount(int expectedCount) {
@@ -127,6 +129,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MockEndpointBuilder failFast(boolean failFast) {
@@ -161,6 +164,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MockEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -216,6 +220,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default MockEndpointBuilder resultMinimumWaitTime(
@@ -242,6 +247,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default MockEndpointBuilder resultWaitTime(long resultWaitTime) {
@@ -278,6 +284,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default MockEndpointBuilder retainFirst(int retainFirst) {
@@ -326,6 +333,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default MockEndpointBuilder retainLast(int retainLast) {
@@ -362,6 +370,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default MockEndpointBuilder sleepForEmptyTest(long sleepForEmptyTest) {
@@ -397,6 +406,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedMockEndpointBuilder copyOnExchange(
@@ -422,6 +432,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMockEndpointBuilder basicPropertyBinding(
@@ -448,6 +459,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMockEndpointBuilder synchronous(boolean synchronous) {

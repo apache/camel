@@ -83,6 +83,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DdbStreamEndpointBuilder bridgeErrorHandler(
@@ -117,6 +118,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * The option is a:
          * <code>com.amazonaws.services.dynamodbv2.model.ShardIteratorType</code> type.
          * 
+         * Default: LATEST
          * Group: consumer
          */
         default DdbStreamEndpointBuilder iteratorType(
@@ -202,6 +204,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: consumer
          */
         default DdbStreamEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -237,6 +240,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DdbStreamEndpointBuilder sendEmptyMessageWhenIdle(
@@ -379,6 +383,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder delay(long delay) {
@@ -404,6 +409,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder greedy(boolean greedy) {
@@ -429,6 +435,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder initialDelay(long initialDelay) {
@@ -455,6 +462,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder repeatCount(long repeatCount) {
@@ -480,6 +488,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder runLoggingLevel(
@@ -536,6 +545,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder scheduler(String scheduler) {
@@ -576,6 +586,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder startScheduler(boolean startScheduler) {
@@ -598,6 +609,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder timeUnit(TimeUnit timeUnit) {
@@ -622,6 +634,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default DdbStreamEndpointBuilder useFixedDelay(boolean useFixedDelay) {
@@ -768,6 +781,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDdbStreamEndpointBuilder basicPropertyBinding(
@@ -794,6 +808,7 @@ public interface DdbStreamEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDdbStreamEndpointBuilder synchronous(boolean synchronous) {

@@ -44,6 +44,7 @@ public interface JingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JingEndpointBuilder compactSyntax(boolean compactSyntax) {
@@ -76,6 +77,7 @@ public interface JingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JingEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -118,6 +120,7 @@ public interface JingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJingEndpointBuilder basicPropertyBinding(
@@ -144,6 +147,7 @@ public interface JingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJingEndpointBuilder synchronous(boolean synchronous) {

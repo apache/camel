@@ -42,6 +42,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ValidatorEndpointBuilder failOnNullBody(boolean failOnNullBody) {
@@ -64,6 +65,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ValidatorEndpointBuilder failOnNullHeader(
@@ -107,6 +109,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ValidatorEndpointBuilder lazyStartProducer(
@@ -151,6 +154,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder basicPropertyBinding(
@@ -291,6 +295,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: http://www.w3.org/2001/XMLSchema
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder schemaLanguage(
@@ -304,6 +309,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder synchronous(boolean synchronous) {
@@ -329,6 +335,7 @@ public interface ValidatorEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedValidatorEndpointBuilder useSharedSchema(

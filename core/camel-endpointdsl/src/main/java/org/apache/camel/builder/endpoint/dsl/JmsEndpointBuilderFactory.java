@@ -102,6 +102,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JmsEndpointConsumerBuilder disableReplyTo(boolean disableReplyTo) {
@@ -181,6 +182,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JmsEndpointConsumerBuilder testConnectionOnStartup(
@@ -210,6 +212,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: AUTO_ACKNOWLEDGE
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder acknowledgementModeName(
@@ -231,6 +234,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder asyncConsumer(boolean asyncConsumer) {
@@ -262,6 +266,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder autoStartup(boolean autoStartup) {
@@ -312,6 +317,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: CACHE_AUTO
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder cacheLevelName(String cacheLevelName) {
@@ -328,6 +334,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder concurrentConsumers(
@@ -403,6 +410,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder replyToDeliveryPersistent(
@@ -445,6 +453,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder subscriptionDurable(
@@ -504,6 +513,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JmsEndpointConsumerBuilder subscriptionShared(
@@ -539,6 +549,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: logging
          */
         default JmsEndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -566,6 +577,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: logging
          */
         default JmsEndpointConsumerBuilder errorHandlerLogStackTrace(
@@ -615,6 +627,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default JmsEndpointConsumerBuilder transacted(boolean transacted) {
@@ -655,6 +668,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder acceptMessagesWhileStopping(
@@ -692,6 +706,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder allowReplyManagerQuickStop(
@@ -732,6 +747,7 @@ public interface JmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
+         * Default: Default
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder consumerType(
@@ -816,6 +832,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder eagerLoadingOfProperties(
@@ -849,6 +866,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: Poison JMS message due to ${exception.message}
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder eagerPoisonBody(
@@ -919,6 +937,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder exposeListenerSession(
@@ -947,6 +966,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder replyToSameDestinationAllowed(
@@ -1003,6 +1023,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder allowSerializedHeaders(
@@ -1039,6 +1060,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder asyncStartListener(
@@ -1073,6 +1095,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder asyncStopListener(
@@ -1099,6 +1122,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder basicPropertyBinding(
@@ -1250,6 +1274,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder idleConsumerLimit(
@@ -1279,6 +1304,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder idleTaskExecutionLimit(
@@ -1310,6 +1336,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder includeAllJMSXProperties(
@@ -1382,6 +1409,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder mapJmsMessage(
@@ -1410,6 +1438,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder maxMessagesPerTask(
@@ -1503,6 +1532,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder messageIdEnabled(
@@ -1569,6 +1599,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder messageTimestampEnabled(
@@ -1598,6 +1629,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder pubSubNoLocal(
@@ -1623,6 +1655,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder receiveTimeout(
@@ -1649,6 +1682,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder recoveryInterval(
@@ -1679,6 +1713,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder requestTimeoutCheckerInterval(
@@ -1708,6 +1743,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder synchronous(
@@ -1746,6 +1782,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder transferException(
@@ -1794,6 +1831,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder transferExchange(
@@ -1830,6 +1868,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder useMessageIDAsCorrelationID(
@@ -1857,6 +1896,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 50
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
@@ -1884,6 +1924,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedJmsEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
@@ -1910,6 +1951,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder lazyCreateTransactionManager(
@@ -1974,6 +2016,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointConsumerBuilder transactionTimeout(
@@ -2063,6 +2106,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JmsEndpointProducerBuilder disableReplyTo(boolean disableReplyTo) {
@@ -2142,6 +2186,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JmsEndpointProducerBuilder testConnectionOnStartup(
@@ -2171,6 +2216,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default JmsEndpointProducerBuilder deliveryDelay(long deliveryDelay) {
@@ -2221,6 +2267,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default JmsEndpointProducerBuilder deliveryPersistent(
@@ -2250,6 +2297,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JmsEndpointProducerBuilder explicitQosEnabled(
@@ -2281,6 +2329,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JmsEndpointProducerBuilder formatDateHeadersToIso8601(
@@ -2314,6 +2363,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JmsEndpointProducerBuilder lazyStartProducer(
@@ -2354,6 +2404,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JmsEndpointProducerBuilder preserveMessageQos(
@@ -2389,6 +2440,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4
          * Group: producer
          */
         default JmsEndpointProducerBuilder priority(int priority) {
@@ -2416,6 +2468,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default JmsEndpointProducerBuilder replyToConcurrentConsumers(
@@ -2471,6 +2524,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default JmsEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
@@ -2555,6 +2609,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 20000
          * Group: producer
          */
         default JmsEndpointProducerBuilder requestTimeout(long requestTimeout) {
@@ -2582,6 +2637,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default JmsEndpointProducerBuilder timeToLive(long timeToLive) {
@@ -2629,6 +2685,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default JmsEndpointProducerBuilder transacted(boolean transacted) {
@@ -2680,6 +2737,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder allowNullBody(
@@ -2710,6 +2768,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder alwaysCopyMessage(
@@ -2765,6 +2824,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder disableTimeToLive(
@@ -2800,6 +2860,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder forceSendOriginalMessage(
@@ -2830,6 +2891,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder includeSentJMSMessageID(
@@ -2897,6 +2959,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder streamMessageTypeEnabled(
@@ -2930,6 +2993,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder allowSerializedHeaders(
@@ -2966,6 +3030,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder asyncStartListener(
@@ -3000,6 +3065,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder asyncStopListener(
@@ -3026,6 +3092,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder basicPropertyBinding(
@@ -3177,6 +3244,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder idleConsumerLimit(
@@ -3206,6 +3274,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder idleTaskExecutionLimit(
@@ -3237,6 +3306,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder includeAllJMSXProperties(
@@ -3309,6 +3379,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder mapJmsMessage(
@@ -3337,6 +3408,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder maxMessagesPerTask(
@@ -3430,6 +3502,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder messageIdEnabled(
@@ -3496,6 +3569,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder messageTimestampEnabled(
@@ -3525,6 +3599,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder pubSubNoLocal(
@@ -3550,6 +3625,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder receiveTimeout(
@@ -3576,6 +3652,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder recoveryInterval(
@@ -3606,6 +3683,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder requestTimeoutCheckerInterval(
@@ -3635,6 +3713,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder synchronous(
@@ -3673,6 +3752,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder transferException(
@@ -3721,6 +3801,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder transferExchange(
@@ -3757,6 +3838,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder useMessageIDAsCorrelationID(
@@ -3784,6 +3866,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 50
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
@@ -3811,6 +3894,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedJmsEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
@@ -3837,6 +3921,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder lazyCreateTransactionManager(
@@ -3901,6 +3986,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointProducerBuilder transactionTimeout(
@@ -3988,6 +4074,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JmsEndpointBuilder disableReplyTo(boolean disableReplyTo) {
@@ -4066,6 +4153,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JmsEndpointBuilder testConnectionOnStartup(
@@ -4118,6 +4206,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default JmsEndpointBuilder transacted(boolean transacted) {
@@ -4154,6 +4243,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder allowSerializedHeaders(
@@ -4190,6 +4280,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder asyncStartListener(
@@ -4224,6 +4315,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder asyncStopListener(
@@ -4250,6 +4342,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder basicPropertyBinding(
@@ -4399,6 +4492,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder idleConsumerLimit(
@@ -4428,6 +4522,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder idleTaskExecutionLimit(
@@ -4459,6 +4554,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder includeAllJMSXProperties(
@@ -4531,6 +4627,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
@@ -4557,6 +4654,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder maxMessagesPerTask(
@@ -4650,6 +4748,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder messageIdEnabled(
@@ -4716,6 +4815,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder messageTimestampEnabled(
@@ -4745,6 +4845,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder pubSubNoLocal(boolean pubSubNoLocal) {
@@ -4768,6 +4869,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder receiveTimeout(long receiveTimeout) {
@@ -4792,6 +4894,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder recoveryInterval(
@@ -4822,6 +4925,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder requestTimeoutCheckerInterval(
@@ -4851,6 +4955,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder synchronous(boolean synchronous) {
@@ -4887,6 +4992,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder transferException(
@@ -4935,6 +5041,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder transferExchange(
@@ -4971,6 +5078,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder useMessageIDAsCorrelationID(
@@ -4998,6 +5106,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 50
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
@@ -5025,6 +5134,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedJmsEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
@@ -5051,6 +5161,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointBuilder lazyCreateTransactionManager(
@@ -5115,6 +5226,7 @@ public interface JmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction (advanced)
          */
         default AdvancedJmsEndpointBuilder transactionTimeout(

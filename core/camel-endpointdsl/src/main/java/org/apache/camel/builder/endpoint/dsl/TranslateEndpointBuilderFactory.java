@@ -53,6 +53,7 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default TranslateEndpointBuilder autodetectSourceLanguage(
@@ -85,6 +86,7 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default TranslateEndpointBuilder lazyStartProducer(
@@ -177,6 +179,7 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>com.amazonaws.Protocol</code> type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default TranslateEndpointBuilder proxyProtocol(Protocol proxyProtocol) {
@@ -283,6 +286,7 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTranslateEndpointBuilder basicPropertyBinding(
@@ -309,6 +313,7 @@ public interface TranslateEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTranslateEndpointBuilder synchronous(boolean synchronous) {

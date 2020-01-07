@@ -109,6 +109,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default KafkaEndpointConsumerBuilder reconnectBackoffMaxMs(
@@ -141,6 +142,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder allowManualCommit(
@@ -171,6 +173,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder autoCommitEnable(
@@ -200,6 +203,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder autoCommitIntervalMs(
@@ -229,6 +233,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: sync
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder autoCommitOnStop(
@@ -244,6 +249,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: latest
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder autoOffsetReset(
@@ -264,6 +270,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder breakOnFirstError(
@@ -302,6 +309,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder bridgeErrorHandler(
@@ -335,6 +343,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder checkCrcs(Boolean checkCrcs) {
@@ -364,6 +373,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 40000
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder consumerRequestTimeoutMs(
@@ -392,6 +402,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder consumersCount(int consumersCount) {
@@ -415,6 +426,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder consumerStreams(int consumerStreams) {
@@ -445,6 +457,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 52428800
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder fetchMaxBytes(Integer fetchMaxBytes) {
@@ -477,6 +490,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder fetchMinBytes(Integer fetchMinBytes) {
@@ -504,6 +518,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 500
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder fetchWaitMaxMs(
@@ -551,6 +566,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 3000
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder heartbeatIntervalMs(
@@ -611,6 +627,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringDeserializer
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder keyDeserializer(
@@ -629,6 +646,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1048576
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder maxPartitionFetchBytes(
@@ -694,6 +712,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 500
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder maxPollRecords(
@@ -753,6 +772,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.clients.consumer.RangeAssignor
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder partitionAssignor(
@@ -765,6 +785,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Long</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder pollTimeoutMs(Long pollTimeoutMs) {
@@ -801,6 +822,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 10000
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder sessionTimeoutMs(
@@ -830,6 +852,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder specificAvroReader(
@@ -858,6 +881,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder topicIsPattern(
@@ -884,6 +908,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringDeserializer
          * Group: consumer
          */
         default KafkaEndpointConsumerBuilder valueDeserializer(
@@ -914,6 +939,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 60000
          * Group: security
          */
         default KafkaEndpointConsumerBuilder kerberosBeforeReloginMinTime(
@@ -939,6 +965,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /usr/bin/kinit
          * Group: security
          */
         default KafkaEndpointConsumerBuilder kerberosInitCmd(
@@ -958,6 +985,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: DEFAULT
          * Group: security
          */
         default KafkaEndpointConsumerBuilder kerberosPrincipalToLocalRules(
@@ -970,6 +998,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default: 0.05
          * Group: security
          */
         default KafkaEndpointConsumerBuilder kerberosRenewJitter(
@@ -996,6 +1025,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default: 0.8
          * Group: security
          */
         default KafkaEndpointConsumerBuilder kerberosRenewWindowFactor(
@@ -1051,6 +1081,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: GSSAPI
          * Group: security
          */
         default KafkaEndpointConsumerBuilder saslMechanism(String saslMechanism) {
@@ -1063,6 +1094,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PLAINTEXT
          * Group: security
          */
         default KafkaEndpointConsumerBuilder securityProtocol(
@@ -1120,6 +1152,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.2,TLSv1.1,TLSv1
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslEnabledProtocols(
@@ -1147,6 +1180,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: SunX509
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslKeymanagerAlgorithm(
@@ -1160,6 +1194,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: JKS
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslKeystoreType(
@@ -1176,6 +1211,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLS
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslProtocol(String sslProtocol) {
@@ -1201,6 +1237,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PKIX
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslTrustmanagerAlgorithm(
@@ -1213,6 +1250,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: JKS
          * Group: security
          */
         default KafkaEndpointConsumerBuilder sslTruststoreType(
@@ -1310,6 +1348,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKafkaEndpointConsumerBuilder basicPropertyBinding(
@@ -1336,6 +1375,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKafkaEndpointConsumerBuilder synchronous(
@@ -1431,6 +1471,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default KafkaEndpointProducerBuilder reconnectBackoffMaxMs(
@@ -1468,6 +1509,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 33554432
          * Group: producer
          */
         default KafkaEndpointProducerBuilder bufferMemorySize(
@@ -1503,6 +1545,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: producer
          */
         default KafkaEndpointProducerBuilder compressionCodec(
@@ -1516,6 +1559,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 540000
          * Group: producer
          */
         default KafkaEndpointProducerBuilder connectionMaxIdleMs(
@@ -1547,6 +1591,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KafkaEndpointProducerBuilder enableIdempotence(
@@ -1618,6 +1663,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
          */
         default KafkaEndpointProducerBuilder keySerializerClass(
@@ -1638,6 +1684,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KafkaEndpointProducerBuilder lazyStartProducer(
@@ -1687,6 +1734,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default KafkaEndpointProducerBuilder lingerMs(Integer lingerMs) {
@@ -1733,6 +1781,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 60000
          * Group: producer
          */
         default KafkaEndpointProducerBuilder maxBlockMs(Integer maxBlockMs) {
@@ -1765,6 +1814,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 5
          * Group: producer
          */
         default KafkaEndpointProducerBuilder maxInFlightRequest(
@@ -1797,6 +1847,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1048576
          * Group: producer
          */
         default KafkaEndpointProducerBuilder maxRequestSize(
@@ -1828,6 +1879,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 300000
          * Group: producer
          */
         default KafkaEndpointProducerBuilder metadataMaxAgeMs(
@@ -1870,6 +1922,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 30000
          * Group: producer
          */
         default KafkaEndpointProducerBuilder metricsSampleWindowMs(
@@ -1895,6 +1948,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 2
          * Group: producer
          */
         default KafkaEndpointProducerBuilder noOfMetricsSample(
@@ -1921,6 +1975,8 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default:
+         * org.apache.kafka.clients.producer.internals.DefaultPartitioner
          * Group: producer
          */
         default KafkaEndpointProducerBuilder partitioner(String partitioner) {
@@ -1969,6 +2025,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 16384
          * Group: producer
          */
         default KafkaEndpointProducerBuilder producerBatchSize(
@@ -2006,6 +2063,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 10000
          * Group: producer
          */
         default KafkaEndpointProducerBuilder queueBufferingMaxMessages(
@@ -2034,6 +2092,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 65536
          * Group: producer
          */
         default KafkaEndpointProducerBuilder receiveBufferBytes(
@@ -2063,6 +2122,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 50
          * Group: producer
          */
         default KafkaEndpointProducerBuilder reconnectBackoffMs(
@@ -2094,6 +2154,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default KafkaEndpointProducerBuilder recordMetadata(
@@ -2138,6 +2199,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default KafkaEndpointProducerBuilder requestRequiredAcks(
@@ -2152,6 +2214,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 305000
          * Group: producer
          */
         default KafkaEndpointProducerBuilder requestTimeoutMs(
@@ -2185,6 +2248,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default KafkaEndpointProducerBuilder retries(Integer retries) {
@@ -2217,6 +2281,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 100
          * Group: producer
          */
         default KafkaEndpointProducerBuilder retryBackoffMs(
@@ -2245,6 +2310,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 131072
          * Group: producer
          */
         default KafkaEndpointProducerBuilder sendBufferBytes(
@@ -2270,6 +2336,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: org.apache.kafka.common.serialization.StringSerializer
          * Group: producer
          */
         default KafkaEndpointProducerBuilder serializerClass(
@@ -2313,6 +2380,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 10
          * Group: producer
          */
         default KafkaEndpointProducerBuilder workerPoolCoreSize(
@@ -2342,6 +2410,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 20
          * Group: producer
          */
         default KafkaEndpointProducerBuilder workerPoolMaxSize(
@@ -2387,6 +2456,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 60000
          * Group: security
          */
         default KafkaEndpointProducerBuilder kerberosBeforeReloginMinTime(
@@ -2412,6 +2482,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /usr/bin/kinit
          * Group: security
          */
         default KafkaEndpointProducerBuilder kerberosInitCmd(
@@ -2431,6 +2502,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: DEFAULT
          * Group: security
          */
         default KafkaEndpointProducerBuilder kerberosPrincipalToLocalRules(
@@ -2443,6 +2515,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default: 0.05
          * Group: security
          */
         default KafkaEndpointProducerBuilder kerberosRenewJitter(
@@ -2469,6 +2542,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default: 0.8
          * Group: security
          */
         default KafkaEndpointProducerBuilder kerberosRenewWindowFactor(
@@ -2524,6 +2598,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: GSSAPI
          * Group: security
          */
         default KafkaEndpointProducerBuilder saslMechanism(String saslMechanism) {
@@ -2536,6 +2611,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PLAINTEXT
          * Group: security
          */
         default KafkaEndpointProducerBuilder securityProtocol(
@@ -2593,6 +2669,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.2,TLSv1.1,TLSv1
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslEnabledProtocols(
@@ -2620,6 +2697,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: SunX509
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslKeymanagerAlgorithm(
@@ -2672,6 +2750,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: JKS
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslKeystoreType(
@@ -2688,6 +2767,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLS
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslProtocol(String sslProtocol) {
@@ -2713,6 +2793,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PKIX
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslTrustmanagerAlgorithm(
@@ -2737,6 +2818,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: JKS
          * Group: security
          */
         default KafkaEndpointProducerBuilder sslTruststoreType(
@@ -2789,6 +2871,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKafkaEndpointProducerBuilder basicPropertyBinding(
@@ -2815,6 +2898,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKafkaEndpointProducerBuilder synchronous(
@@ -2910,6 +2994,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 1000
          * Group: common
          */
         default KafkaEndpointBuilder reconnectBackoffMaxMs(
@@ -2957,6 +3042,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 60000
          * Group: security
          */
         default KafkaEndpointBuilder kerberosBeforeReloginMinTime(
@@ -2982,6 +3068,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: /usr/bin/kinit
          * Group: security
          */
         default KafkaEndpointBuilder kerberosInitCmd(String kerberosInitCmd) {
@@ -3000,6 +3087,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: DEFAULT
          * Group: security
          */
         default KafkaEndpointBuilder kerberosPrincipalToLocalRules(
@@ -3012,6 +3100,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default: 0.05
          * Group: security
          */
         default KafkaEndpointBuilder kerberosRenewJitter(
@@ -3038,6 +3127,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Double</code> type.
          * 
+         * Default: 0.8
          * Group: security
          */
         default KafkaEndpointBuilder kerberosRenewWindowFactor(
@@ -3092,6 +3182,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: GSSAPI
          * Group: security
          */
         default KafkaEndpointBuilder saslMechanism(String saslMechanism) {
@@ -3104,6 +3195,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PLAINTEXT
          * Group: security
          */
         default KafkaEndpointBuilder securityProtocol(String securityProtocol) {
@@ -3159,6 +3251,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLSv1.2,TLSv1.1,TLSv1
          * Group: security
          */
         default KafkaEndpointBuilder sslEnabledProtocols(
@@ -3186,6 +3279,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: SunX509
          * Group: security
          */
         default KafkaEndpointBuilder sslKeymanagerAlgorithm(
@@ -3199,6 +3293,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: JKS
          * Group: security
          */
         default KafkaEndpointBuilder sslKeystoreType(String sslKeystoreType) {
@@ -3214,6 +3309,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: TLS
          * Group: security
          */
         default KafkaEndpointBuilder sslProtocol(String sslProtocol) {
@@ -3239,6 +3335,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: PKIX
          * Group: security
          */
         default KafkaEndpointBuilder sslTrustmanagerAlgorithm(
@@ -3251,6 +3348,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: JKS
          * Group: security
          */
         default KafkaEndpointBuilder sslTruststoreType(String sslTruststoreType) {
@@ -3289,6 +3387,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKafkaEndpointBuilder basicPropertyBinding(
@@ -3315,6 +3414,7 @@ public interface KafkaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKafkaEndpointBuilder synchronous(boolean synchronous) {

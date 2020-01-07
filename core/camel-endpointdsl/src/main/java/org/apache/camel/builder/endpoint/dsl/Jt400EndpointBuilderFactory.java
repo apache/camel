@@ -75,6 +75,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
          * 
+         * Default: text
          * Group: common
          */
         default Jt400EndpointConsumerBuilder format(Format format) {
@@ -99,6 +100,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Jt400EndpointConsumerBuilder guiAvailable(boolean guiAvailable) {
@@ -122,6 +124,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Jt400EndpointConsumerBuilder keyed(boolean keyed) {
@@ -161,6 +164,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder bridgeErrorHandler(
@@ -192,6 +196,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 30000
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder readTimeout(int readTimeout) {
@@ -216,6 +221,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$SearchType</code> type.
          * 
+         * Default: EQ
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder searchType(SearchType searchType) {
@@ -240,6 +246,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default Jt400EndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -353,6 +360,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder delay(long delay) {
@@ -378,6 +386,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder greedy(boolean greedy) {
@@ -403,6 +412,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -429,6 +439,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -454,6 +465,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder runLoggingLevel(
@@ -511,6 +523,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder scheduler(String scheduler) {
@@ -551,6 +564,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder startScheduler(
@@ -575,6 +589,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -599,6 +614,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default Jt400EndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -622,6 +638,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default Jt400EndpointConsumerBuilder secured(boolean secured) {
@@ -745,6 +762,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJt400EndpointConsumerBuilder basicPropertyBinding(
@@ -771,6 +789,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJt400EndpointConsumerBuilder synchronous(
@@ -830,6 +849,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
          * 
+         * Default: text
          * Group: common
          */
         default Jt400EndpointProducerBuilder format(Format format) {
@@ -854,6 +874,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Jt400EndpointProducerBuilder guiAvailable(boolean guiAvailable) {
@@ -877,6 +898,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Jt400EndpointProducerBuilder keyed(boolean keyed) {
@@ -918,6 +940,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default Jt400EndpointProducerBuilder lazyStartProducer(
@@ -1013,6 +1036,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default Jt400EndpointProducerBuilder secured(boolean secured) {
@@ -1047,6 +1071,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJt400EndpointProducerBuilder basicPropertyBinding(
@@ -1073,6 +1098,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJt400EndpointProducerBuilder synchronous(
@@ -1132,6 +1158,7 @@ public interface Jt400EndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.jt400.Jt400Configuration$Format</code> type.
          * 
+         * Default: text
          * Group: common
          */
         default Jt400EndpointBuilder format(Format format) {
@@ -1156,6 +1183,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Jt400EndpointBuilder guiAvailable(boolean guiAvailable) {
@@ -1179,6 +1207,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Jt400EndpointBuilder keyed(boolean keyed) {
@@ -1212,6 +1241,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: security
          */
         default Jt400EndpointBuilder secured(boolean secured) {
@@ -1246,6 +1276,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJt400EndpointBuilder basicPropertyBinding(
@@ -1272,6 +1303,7 @@ public interface Jt400EndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJt400EndpointBuilder synchronous(boolean synchronous) {

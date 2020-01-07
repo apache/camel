@@ -53,6 +53,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PaxLoggingEndpointBuilder bridgeErrorHandler(
@@ -152,6 +153,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPaxLoggingEndpointBuilder basicPropertyBinding(
@@ -178,6 +180,7 @@ public interface PaxLoggingEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPaxLoggingEndpointBuilder synchronous(

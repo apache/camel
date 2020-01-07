@@ -587,6 +587,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder rawPayload(boolean rawPayload) {
@@ -766,6 +767,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SalesforceEndpointConsumerBuilder updateTopic(
@@ -796,6 +798,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SalesforceEndpointConsumerBuilder bridgeErrorHandler(
@@ -917,6 +920,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSalesforceEndpointConsumerBuilder basicPropertyBinding(
@@ -943,6 +947,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSalesforceEndpointConsumerBuilder synchronous(
@@ -1518,6 +1523,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SalesforceEndpointProducerBuilder rawPayload(boolean rawPayload) {
@@ -1697,6 +1703,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SalesforceEndpointProducerBuilder updateTopic(
@@ -1729,6 +1736,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SalesforceEndpointProducerBuilder lazyStartProducer(
@@ -1773,6 +1781,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSalesforceEndpointProducerBuilder basicPropertyBinding(
@@ -1799,6 +1808,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSalesforceEndpointProducerBuilder synchronous(
@@ -2364,6 +2374,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SalesforceEndpointBuilder rawPayload(boolean rawPayload) {
@@ -2535,6 +2546,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SalesforceEndpointBuilder updateTopic(boolean updateTopic) {
@@ -2570,6 +2582,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSalesforceEndpointBuilder basicPropertyBinding(
@@ -2596,6 +2609,7 @@ public interface SalesforceEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSalesforceEndpointBuilder synchronous(

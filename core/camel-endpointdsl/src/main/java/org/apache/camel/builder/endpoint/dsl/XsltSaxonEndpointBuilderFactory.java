@@ -46,6 +46,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XsltSaxonEndpointBuilder allowStAX(boolean allowStAX) {
@@ -75,6 +76,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XsltSaxonEndpointBuilder contentCache(boolean contentCache) {
@@ -104,6 +106,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XsltSaxonEndpointBuilder deleteOutputFile(
@@ -131,6 +134,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default XsltSaxonEndpointBuilder failOnNullBody(boolean failOnNullBody) {
@@ -161,6 +165,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XsltSaxonEndpointBuilder lazyStartProducer(
@@ -200,6 +205,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.xslt.XsltOutput</code> type.
          * 
+         * Default: string
          * Group: producer
          */
         default XsltSaxonEndpointBuilder output(XsltOutput output) {
@@ -230,6 +236,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default XsltSaxonEndpointBuilder transformerCacheSize(
@@ -324,6 +331,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder basicPropertyBinding(
@@ -442,6 +450,7 @@ public interface XsltSaxonEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXsltSaxonEndpointBuilder synchronous(boolean synchronous) {

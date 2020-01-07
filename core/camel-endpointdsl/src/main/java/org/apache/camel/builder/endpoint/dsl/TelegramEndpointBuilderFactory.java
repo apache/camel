@@ -57,6 +57,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TelegramEndpointConsumerBuilder bridgeErrorHandler(
@@ -88,6 +89,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 100
          * Group: consumer
          */
         default TelegramEndpointConsumerBuilder limit(Integer limit) {
@@ -113,6 +115,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TelegramEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -140,6 +143,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 30
          * Group: consumer
          */
         default TelegramEndpointConsumerBuilder timeout(Integer timeout) {
@@ -253,6 +257,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder delay(long delay) {
@@ -278,6 +283,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder greedy(boolean greedy) {
@@ -303,6 +309,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -329,6 +336,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -354,6 +362,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder runLoggingLevel(
@@ -411,6 +420,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder scheduler(String scheduler) {
@@ -451,6 +461,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder startScheduler(
@@ -475,6 +486,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -499,6 +511,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TelegramEndpointConsumerBuilder useFixedDelay(
@@ -684,6 +697,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder basicPropertyBinding(
@@ -710,6 +724,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4096
          * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder bufferSize(
@@ -764,6 +779,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTelegramEndpointConsumerBuilder synchronous(
@@ -824,6 +840,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default TelegramEndpointProducerBuilder lazyStartProducer(
@@ -927,6 +944,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder basicPropertyBinding(
@@ -953,6 +971,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4096
          * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder bufferSize(
@@ -1007,6 +1026,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTelegramEndpointProducerBuilder synchronous(
@@ -1114,6 +1134,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder basicPropertyBinding(
@@ -1140,6 +1161,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 4096
          * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder bufferSize(int bufferSize) {
@@ -1190,6 +1212,7 @@ public interface TelegramEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTelegramEndpointBuilder synchronous(boolean synchronous) {

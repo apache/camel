@@ -67,6 +67,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FreemarkerEndpointBuilder contentCache(boolean contentCache) {
@@ -108,6 +109,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FreemarkerEndpointBuilder lazyStartProducer(
@@ -178,6 +180,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFreemarkerEndpointBuilder basicPropertyBinding(
@@ -204,6 +207,7 @@ public interface FreemarkerEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFreemarkerEndpointBuilder synchronous(

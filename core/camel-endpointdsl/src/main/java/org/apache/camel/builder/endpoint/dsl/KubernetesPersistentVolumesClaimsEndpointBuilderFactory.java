@@ -104,6 +104,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder lazyStartProducer(
@@ -160,6 +161,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: producer
          */
         default KubernetesPersistentVolumesClaimsEndpointBuilder portProtocol(
@@ -342,6 +344,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder basicPropertyBinding(
@@ -395,6 +398,7 @@ public interface KubernetesPersistentVolumesClaimsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesPersistentVolumesClaimsEndpointBuilder synchronous(

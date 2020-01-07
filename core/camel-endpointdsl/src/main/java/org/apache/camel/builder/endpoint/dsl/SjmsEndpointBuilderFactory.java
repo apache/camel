@@ -51,6 +51,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * 
+         * Default: AUTO_ACKNOWLEDGE
          * Group: common
          */
         default SjmsEndpointConsumerBuilder acknowledgementMode(
@@ -83,6 +84,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SjmsEndpointConsumerBuilder bridgeErrorHandler(
@@ -113,6 +115,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default SjmsEndpointConsumerBuilder consumerCount(int consumerCount) {
@@ -148,6 +151,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default SjmsEndpointConsumerBuilder synchronous(boolean synchronous) {
@@ -172,6 +176,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: logging
          */
         default SjmsEndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -199,6 +204,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: logging
          */
         default SjmsEndpointConsumerBuilder errorHandlerLogStackTrace(
@@ -224,6 +230,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default SjmsEndpointConsumerBuilder transacted(boolean transacted) {
@@ -247,6 +254,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction
          */
         default SjmsEndpointConsumerBuilder transactionBatchCount(
@@ -273,6 +281,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: transaction
          */
         default SjmsEndpointConsumerBuilder transactionBatchTimeout(
@@ -413,6 +422,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder asyncStartListener(
@@ -447,6 +457,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder asyncStopListener(
@@ -473,6 +484,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder basicPropertyBinding(
@@ -664,6 +676,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder includeAllJMSXProperties(
@@ -737,6 +750,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSjmsEndpointConsumerBuilder mapJmsMessage(
@@ -796,6 +810,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedSjmsEndpointConsumerBuilder sharedJMSSession(
@@ -836,6 +851,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * 
+         * Default: AUTO_ACKNOWLEDGE
          * Group: common
          */
         default SjmsEndpointProducerBuilder acknowledgementMode(
@@ -870,6 +886,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SjmsEndpointProducerBuilder lazyStartProducer(
@@ -915,6 +932,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default SjmsEndpointProducerBuilder persistent(boolean persistent) {
@@ -937,6 +955,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default SjmsEndpointProducerBuilder producerCount(int producerCount) {
@@ -959,6 +978,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default SjmsEndpointProducerBuilder ttl(long ttl) {
@@ -1019,6 +1039,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedSjmsEndpointProducerBuilder allowNullBody(
@@ -1045,6 +1066,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedSjmsEndpointProducerBuilder prefillPool(
@@ -1071,6 +1093,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 5000
          * Group: producer (advanced)
          */
         default AdvancedSjmsEndpointProducerBuilder responseTimeOut(
@@ -1105,6 +1128,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder asyncStartListener(
@@ -1139,6 +1163,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder asyncStopListener(
@@ -1165,6 +1190,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder basicPropertyBinding(
@@ -1356,6 +1382,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder includeAllJMSXProperties(
@@ -1429,6 +1456,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSjmsEndpointProducerBuilder mapJmsMessage(
@@ -1488,6 +1516,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedSjmsEndpointProducerBuilder sharedJMSSession(
@@ -1528,6 +1557,7 @@ public interface SjmsEndpointBuilderFactory {
          * The option is a:
          * <code>org.apache.camel.component.sjms.jms.SessionAcknowledgementType</code> type.
          * 
+         * Default: AUTO_ACKNOWLEDGE
          * Group: common
          */
         default SjmsEndpointBuilder acknowledgementMode(
@@ -1600,6 +1630,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder asyncStartListener(
@@ -1634,6 +1665,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder asyncStopListener(
@@ -1660,6 +1692,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder basicPropertyBinding(
@@ -1851,6 +1884,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder includeAllJMSXProperties(
@@ -1924,6 +1958,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSjmsEndpointBuilder mapJmsMessage(boolean mapJmsMessage) {
@@ -1981,6 +2016,7 @@ public interface SjmsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedSjmsEndpointBuilder sharedJMSSession(

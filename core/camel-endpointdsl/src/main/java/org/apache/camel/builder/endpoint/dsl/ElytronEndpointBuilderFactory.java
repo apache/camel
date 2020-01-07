@@ -66,6 +66,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ElytronEndpointConsumerBuilder useStreaming(boolean useStreaming) {
@@ -94,6 +95,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElytronEndpointConsumerBuilder accessLog(Boolean accessLog) {
@@ -123,6 +125,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElytronEndpointConsumerBuilder bridgeErrorHandler(
@@ -168,6 +171,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElytronEndpointConsumerBuilder matchOnUriPrefix(
@@ -195,6 +199,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElytronEndpointConsumerBuilder muteException(
@@ -221,6 +226,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ElytronEndpointConsumerBuilder optionsEnabled(
@@ -248,6 +254,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: websocket
          */
         default ElytronEndpointConsumerBuilder fireWebSocketChannelEvents(
@@ -436,6 +443,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElytronEndpointConsumerBuilder basicPropertyBinding(
@@ -490,6 +498,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElytronEndpointConsumerBuilder synchronous(
@@ -573,6 +582,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ElytronEndpointProducerBuilder useStreaming(boolean useStreaming) {
@@ -627,6 +637,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ElytronEndpointProducerBuilder keepAlive(Boolean keepAlive) {
@@ -658,6 +669,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElytronEndpointProducerBuilder lazyStartProducer(
@@ -727,6 +739,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ElytronEndpointProducerBuilder preserveHostHeader(
@@ -756,6 +769,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ElytronEndpointProducerBuilder reuseAddresses(
@@ -781,6 +795,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ElytronEndpointProducerBuilder tcpNoDelay(Boolean tcpNoDelay) {
@@ -806,6 +821,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ElytronEndpointProducerBuilder throwExceptionOnFailure(
@@ -840,6 +856,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ElytronEndpointProducerBuilder transferException(
@@ -873,6 +890,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.Integer</code> type.
          * 
+         * Default: 30000
          * Group: websocket
          */
         default ElytronEndpointProducerBuilder sendTimeout(Integer sendTimeout) {
@@ -992,6 +1010,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElytronEndpointProducerBuilder basicPropertyBinding(
@@ -1046,6 +1065,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElytronEndpointProducerBuilder synchronous(
@@ -1129,6 +1149,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ElytronEndpointBuilder useStreaming(boolean useStreaming) {
@@ -1225,6 +1246,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElytronEndpointBuilder basicPropertyBinding(
@@ -1279,6 +1301,7 @@ public interface ElytronEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedElytronEndpointBuilder synchronous(boolean synchronous) {

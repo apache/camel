@@ -42,6 +42,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: localhost
          * Group: producer
          */
         default BonitaEndpointBuilder hostname(String hostname) {
@@ -61,6 +62,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BonitaEndpointBuilder lazyStartProducer(
@@ -92,6 +94,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 8080
          * Group: producer
          */
         default BonitaEndpointBuilder port(String port) {
@@ -148,6 +151,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder basicPropertyBinding(
@@ -174,6 +178,7 @@ public interface BonitaEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBonitaEndpointBuilder synchronous(boolean synchronous) {

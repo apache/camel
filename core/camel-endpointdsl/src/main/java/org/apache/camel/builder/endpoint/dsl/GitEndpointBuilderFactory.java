@@ -118,6 +118,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GitEndpointConsumerBuilder bridgeErrorHandler(
@@ -241,6 +242,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitEndpointConsumerBuilder basicPropertyBinding(
@@ -267,6 +269,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitEndpointConsumerBuilder synchronous(
@@ -369,6 +372,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default GitEndpointProducerBuilder allowEmpty(boolean allowEmpty) {
@@ -399,6 +403,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GitEndpointProducerBuilder lazyStartProducer(
@@ -454,6 +459,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitEndpointProducerBuilder basicPropertyBinding(
@@ -480,6 +486,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitEndpointProducerBuilder synchronous(
@@ -594,6 +601,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitEndpointBuilder basicPropertyBinding(
@@ -620,6 +628,7 @@ public interface GitEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGitEndpointBuilder synchronous(boolean synchronous) {

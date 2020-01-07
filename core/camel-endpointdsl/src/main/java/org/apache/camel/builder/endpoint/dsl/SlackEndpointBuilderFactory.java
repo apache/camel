@@ -57,6 +57,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SlackEndpointConsumerBuilder bridgeErrorHandler(
@@ -87,6 +88,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default SlackEndpointConsumerBuilder maxResults(String maxResults) {
@@ -99,6 +101,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SlackEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -124,6 +127,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: https://slack.com
          * Group: consumer
          */
         default SlackEndpointConsumerBuilder serverUrl(String serverUrl) {
@@ -234,6 +238,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder delay(long delay) {
@@ -259,6 +264,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder greedy(boolean greedy) {
@@ -284,6 +290,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder initialDelay(long initialDelay) {
@@ -310,6 +317,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder repeatCount(long repeatCount) {
@@ -335,6 +343,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder runLoggingLevel(
@@ -392,6 +401,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: none
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder scheduler(String scheduler) {
@@ -432,6 +442,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder startScheduler(
@@ -456,6 +467,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder timeUnit(TimeUnit timeUnit) {
@@ -480,6 +492,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SlackEndpointConsumerBuilder useFixedDelay(boolean useFixedDelay) {
@@ -604,6 +617,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSlackEndpointConsumerBuilder basicPropertyBinding(
@@ -630,6 +644,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSlackEndpointConsumerBuilder synchronous(
@@ -697,6 +712,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SlackEndpointProducerBuilder lazyStartProducer(
@@ -764,6 +780,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSlackEndpointProducerBuilder basicPropertyBinding(
@@ -790,6 +807,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSlackEndpointProducerBuilder synchronous(
@@ -838,6 +856,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSlackEndpointBuilder basicPropertyBinding(
@@ -864,6 +883,7 @@ public interface SlackEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSlackEndpointBuilder synchronous(boolean synchronous) {

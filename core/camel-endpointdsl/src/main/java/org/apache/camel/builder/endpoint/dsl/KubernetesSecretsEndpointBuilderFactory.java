@@ -101,6 +101,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder lazyStartProducer(
@@ -155,6 +156,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>java.lang.String</code> type.
          * 
+         * Default: tcp
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder portProtocol(
@@ -329,6 +331,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesSecretsEndpointBuilder basicPropertyBinding(
@@ -382,6 +385,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesSecretsEndpointBuilder synchronous(

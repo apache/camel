@@ -76,6 +76,7 @@ public interface FopEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FopEndpointBuilder lazyStartProducer(boolean lazyStartProducer) {
@@ -130,6 +131,7 @@ public interface FopEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFopEndpointBuilder basicPropertyBinding(
@@ -156,6 +158,7 @@ public interface FopEndpointBuilderFactory {
          * 
          * The option is a: <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFopEndpointBuilder synchronous(boolean synchronous) {
