@@ -18,6 +18,7 @@ package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.Map;
 import javax.annotation.Generated;
+import org.apache.camel.BeanScope;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -39,28 +40,26 @@ public interface BeanEndpointBuilderFactory {
             return (AdvancedBeanEndpointBuilder) this;
         }
         /**
-         * If enabled, Camel will cache the result of the first Registry
-         * look-up. Cache can be enabled if the bean in the Registry is defined
-         * as a singleton scope.
+         * Use scope option instead.
          * 
          * The option is a: <code>java.lang.Boolean</code> type.
          * 
          * Group: common
          */
+        @Deprecated
         default BeanEndpointBuilder cache(Boolean cache) {
             doSetProperty("cache", cache);
             return this;
         }
         /**
-         * If enabled, Camel will cache the result of the first Registry
-         * look-up. Cache can be enabled if the bean in the Registry is defined
-         * as a singleton scope.
+         * Use scope option instead.
          * 
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
          * Group: common
          */
+        @Deprecated
         default BeanEndpointBuilder cache(String cache) {
             doSetProperty("cache", cache);
             return this;
@@ -77,28 +76,52 @@ public interface BeanEndpointBuilderFactory {
             return this;
         }
         /**
-         * Used for configuring additional properties on the bean.
+         * Scope of bean. When using singleton scope (default) the bean is
+         * created or looked up only once and reused for the lifetime of the
+         * endpoint. The bean should be thread-safe in case concurrent threads
+         * is calling the bean at the same time. When using request scope the
+         * bean is created or looked up once per request (exchange). This can be
+         * used if you want to store state on a bean while processing a request
+         * and you want to call the same bean instance multiple times while
+         * processing the request. The bean does not have to be thread-safe as
+         * the instance is only called from the same request. When using
+         * prototype scope, then the bean will be looked up or created per call.
+         * However in case of lookup then this is delegated to the bean registry
+         * such as Spring or CDI (if in use), which depends on their
+         * configuration can act as either singleton or prototype scope. so when
+         * using prototype then this depends on the delegated registry.
          * 
-         * The option is a: <code>java.util.Map&lt;java.lang.String,
-         * java.lang.Object&gt;</code> type.
+         * The option is a: <code>org.apache.camel.BeanScope</code> type.
          * 
          * Group: common
          */
-        default BeanEndpointBuilder parameters(Map<String, Object> parameters) {
-            doSetProperty("parameters", parameters);
+        default BeanEndpointBuilder scope(BeanScope scope) {
+            doSetProperty("scope", scope);
             return this;
         }
         /**
-         * Used for configuring additional properties on the bean.
+         * Scope of bean. When using singleton scope (default) the bean is
+         * created or looked up only once and reused for the lifetime of the
+         * endpoint. The bean should be thread-safe in case concurrent threads
+         * is calling the bean at the same time. When using request scope the
+         * bean is created or looked up once per request (exchange). This can be
+         * used if you want to store state on a bean while processing a request
+         * and you want to call the same bean instance multiple times while
+         * processing the request. The bean does not have to be thread-safe as
+         * the instance is only called from the same request. When using
+         * prototype scope, then the bean will be looked up or created per call.
+         * However in case of lookup then this is delegated to the bean registry
+         * such as Spring or CDI (if in use), which depends on their
+         * configuration can act as either singleton or prototype scope. so when
+         * using prototype then this depends on the delegated registry.
          * 
          * The option will be converted to a
-         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
-         * type.
+         * <code>org.apache.camel.BeanScope</code> type.
          * 
          * Group: common
          */
-        default BeanEndpointBuilder parameters(String parameters) {
-            doSetProperty("parameters", parameters);
+        default BeanEndpointBuilder scope(String scope) {
+            doSetProperty("scope", scope);
             return this;
         }
         /**
@@ -174,6 +197,32 @@ public interface BeanEndpointBuilderFactory {
         default AdvancedBeanEndpointBuilder basicPropertyBinding(
                 String basicPropertyBinding) {
             doSetProperty("basicPropertyBinding", basicPropertyBinding);
+            return this;
+        }
+        /**
+         * Used for configuring additional properties on the bean.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanEndpointBuilder parameters(
+                Map<String, Object> parameters) {
+            doSetProperty("parameters", parameters);
+            return this;
+        }
+        /**
+         * Used for configuring additional properties on the bean.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: advanced
+         */
+        default AdvancedBeanEndpointBuilder parameters(String parameters) {
+            doSetProperty("parameters", parameters);
             return this;
         }
         /**

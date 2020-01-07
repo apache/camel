@@ -17,7 +17,7 @@ the xref:registry.adoc[Registry]
 == EIP options
 
 // eip options: START
-The Bean EIP supports 4 options which are listed below:
+The Bean EIP supports 5 options which are listed below:
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
@@ -25,9 +25,21 @@ The Bean EIP supports 4 options which are listed below:
 | *ref* | Sets a reference to a bean to use |  | String
 | *method* | Sets the method name on the bean to use |  | String
 | *beanType* | Sets the Class of the bean |  | String
-| *cache* | Caches the bean lookup, to avoid lookup up bean on every usage. | true | Boolean
+| *cache* | *Deprecated* Use scope option instead. |  | Boolean
+| *scope* | Scope of bean. See below for more details. | Singleton | String |
 |===
 // eip options: END
+
+=== Bean scope
+
+When using `singleton` scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint.
+The bean should be thread-safe in case concurrent threads is calling the bean at the same time.
+When using `request` scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean
+while processing a request and you want to call the same bean instance multiple times while processing the request.
+The bean does not have to be thread-safe as the instance is only called from the same request.
+When using `prototype` scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated
+to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope.
+so when using `prototype` then this depends on the delegated registry.
 
 == Bean as endpoint
 

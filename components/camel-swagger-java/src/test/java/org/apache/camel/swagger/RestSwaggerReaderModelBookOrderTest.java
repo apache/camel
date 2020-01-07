@@ -40,6 +40,9 @@ public class RestSwaggerReaderModelBookOrderTest extends CamelTestSupport {
     @BindToRegistry("dummy-rest")
     private DummyRestConsumerFactory factory = new DummyRestConsumerFactory();
 
+    @BindToRegistry("bookService")
+    private Object dummy = new Object();
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

@@ -18,6 +18,7 @@ package org.apache.camel.component.bean;
 
 import java.util.Map;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -30,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The <a href="http://camel.apache.org/bean.html">bean component</a> is for invoking Java beans from Camel.
+ * The bean component is for invoking Java beans from Camel.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
 public class BeanEndpoint extends DefaultEndpoint {
@@ -40,10 +41,20 @@ public class BeanEndpoint extends DefaultEndpoint {
     private String beanName;
     @UriParam(label = "common", description = "Sets the name of the method to invoke on the bean")
     private String method;
-    @UriParam(label = "common", description = "If enabled, Camel will cache the result of the first Registry look-up."
-            + " Cache can be enabled if the bean in the Registry is defined as a singleton scope.")
+    @Deprecated
+    @UriParam(label = "common", description = "Use scope option instead.")
     private Boolean cache;
-    @UriParam(prefix = "bean.", label = "common", description = "Used for configuring additional properties on the bean", multiValue = true)
+    @UriParam(label = "common", defaultValue = "Singleton", description = "Scope of bean."
+            + " When using singleton scope (default) the bean is created or looked up only once and reused for the lifetime of the endpoint."
+            + " The bean should be thread-safe in case concurrent threads is calling the bean at the same time."
+            + " When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean"
+            + " while processing a request and you want to call the same bean instance multiple times while processing the request."
+            + " The bean does not have to be thread-safe as the instance is only called from the same request."
+            + " When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated "
+            + " to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope."
+            + " so when using prototype then this depends on the delegated registry.")
+    private BeanScope scope = BeanScope.Singleton;
+    @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean", multiValue = true)
     private Map<String, Object> parameters;
 
     public BeanEndpoint() {
@@ -83,17 +94,22 @@ public class BeanEndpoint extends DefaultEndpoint {
             BeanHolder holder = getBeanHolder();
             if (holder == null) {
                 RegistryBean registryBean = new RegistryBean(getCamelContext(), beanName);
-                if (isCache()) {
+                if (scope == BeanScope.Singleton) {
+                    // if singleton then create a cached holder that use the same singleton instance
                     holder = registryBean.createCacheHolder();
                 } else {
                     holder = registryBean;
                 }
             }
+            if (scope == BeanScope.Request) {
+                // wrap in registry scoped
+                holder = new RequestBeanHolder(holder);
+            }
             processor = new BeanProcessor(holder);
             if (method != null) {
                 processor.setMethod(method);
             }
-            processor.setCache(cache);
+            processor.setScope(scope);
             if (parameters != null) {
                 setProperties(processor, parameters);
             }
@@ -113,36 +129,36 @@ public class BeanEndpoint extends DefaultEndpoint {
         return beanName;
     }
 
-    /**
-     * Sets the name of the bean to invoke
-     */
     public void setBeanName(String beanName) {
         this.beanName = beanName;
     }
 
-    public boolean isCache() {
-        return cache != null ? cache : false;
-    }
-
+    @Deprecated
     public Boolean getCache() {
-        return cache;
+        return scope == BeanScope.Singleton;
     }
 
-    /**
-     * If enabled, Camel will cache the result of the first Registry look-up.
-     * Cache can be enabled if the bean in the Registry is defined as a singleton scope.
-     */
+    @Deprecated
     public void setCache(Boolean cache) {
-        this.cache = cache;
+        if (cache) {
+            scope = BeanScope.Singleton;
+        } else {
+            scope = BeanScope.Prototype;
+        }
+    }
+
+    public BeanScope getScope() {
+        return scope;
+    }
+
+    public void setScope(BeanScope scope) {
+        this.scope = scope;
     }
 
     public String getMethod() {
         return method;
     }
 
-    /**
-     * Sets the name of the method to invoke on the bean
-     */
     public void setMethod(String method) {
         this.method = method;
     }
@@ -159,9 +175,6 @@ public class BeanEndpoint extends DefaultEndpoint {
         return parameters;
     }
 
-    /**
-     * Used for configuring additional properties on the bean
-     */
     public void setParameters(Map<String, Object> parameters) {
         this.parameters = parameters;
     }

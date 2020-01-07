@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.bean;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 
@@ -29,7 +30,7 @@ public interface BeanHolder {
      *
      * @throws NoSuchBeanException is thrown if the bean cannot be found.
      */
-    Object getBean() throws NoSuchBeanException;
+    Object getBean(Exchange exchange) throws NoSuchBeanException;
 
     /**
      * Gets a {@link Processor} for this bean, if supported.

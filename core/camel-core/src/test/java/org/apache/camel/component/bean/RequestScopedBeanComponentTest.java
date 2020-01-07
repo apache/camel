@@ -16,24 +16,21 @@
  */
 package org.apache.camel.component.bean;
 
-import java.util.concurrent.atomic.AtomicInteger;
-
-import org.apache.camel.BeanScope;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class BeanNoCacheTest extends ContextTestSupport {
-
-    private static final AtomicInteger COUNTER = new AtomicInteger();
+public class RequestScopedBeanComponentTest extends ContextTestSupport {
 
     @Test
-    public void testBeanRefNoCache() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello1", "Bye2", "Camel3");
+    public void testRequestScope() throws Exception {
+        // creates a new instance so the counter starts from 1
+        getMockEndpoint("mock:a").expectedBodiesReceived("Hello1", "World1");
+        // and on the 2nd call its the same instance (request) so counter is now 2
+        getMockEndpoint("mock:b").expectedBodiesReceived("Hello12", "World12");
 
         template.sendBody("direct:start", "Hello");
-        template.sendBody("direct:start", "Bye");
-        template.sendBody("direct:start", "Camel");
+        template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
     }
@@ -43,25 +40,12 @@ public class BeanNoCacheTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").bean(MyCoolBean.class, "doSomething", BeanScope.Prototype).to("mock:result");
+                from("direct:start")
+                    .to("bean:org.apache.camel.component.bean.MyRequestBean?scope=Request")
+                    .to("mock:a")
+                    .to("bean:org.apache.camel.component.bean.MyRequestBean?scope=Request")
+                    .to("mock:b");
             }
         };
-    }
-
-    public static class MyCoolBean {
-
-        private final int count;
-
-        public MyCoolBean() {
-            count = COUNTER.incrementAndGet();
-        }
-
-        public int getCount() {
-            return count;
-        }
-
-        public String doSomething(String s) {
-            return s + count;
-        }
     }
 }

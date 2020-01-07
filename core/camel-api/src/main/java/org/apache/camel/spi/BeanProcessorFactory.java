@@ -18,6 +18,7 @@ package org.apache.camel.spi;
 
 import java.lang.reflect.Method;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 
@@ -50,10 +51,10 @@ public interface BeanProcessorFactory {
      * @param beanClass     or the bean class
      * @param ref           or bean reference to lookup the bean from the registry
      * @param method        optional name of method to invoke
-     * @param cacheBean    whether to cache lookup up the bean
+     * @param scope         the scope of the bean
      * @return the created processor
      * @throws Exception is thrown if error creating the processor
      */
     Processor createBeanProcessor(CamelContext camelContext, Object bean, String beanType, Class<?> beanClass, String ref,
-                                         String method, boolean cacheBean) throws Exception;
+                                         String method, BeanScope scope) throws Exception;
 }

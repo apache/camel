@@ -36,7 +36,6 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
 
     @Test
     public void testReaderRead() throws Exception {
-        
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[]{"http"});
@@ -75,13 +74,12 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         assertTrue(json.contains("\"type\" : \"string\""));
         assertTrue(json.contains("\"format\" : \"date\""));
         assertFalse(json.contains("\"enum\""));
+
         context.stop();
-        
     }
     
     @Test
     public void testReaderReadV3() throws Exception {
-        
         BeanConfig config = new BeanConfig();
         config.setHost("localhost:8080");
         config.setSchemes(new String[]{"http"});
@@ -120,7 +118,7 @@ public class SpringRestOpenApiReaderModelApiSecurityTest extends CamelSpringTest
         assertTrue(json.contains("\"type\" : \"string\""));
         assertTrue(json.contains("\"format\" : \"date\""));
         assertFalse(json.contains("\"enum\""));
+
         context.stop();
-        
     }
 }
