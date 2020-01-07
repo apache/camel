@@ -49,7 +49,7 @@ public class SnsTopicWithKmsEncryptionIntegrationTest extends CamelTestSupport {
             }
         });
         
-        assertNotNull(exchange.getOut().getHeader(SnsConstants.MESSAGE_ID));
+        assertNotNull(exchange.getMessage().getHeader(SnsConstants.MESSAGE_ID));
     }
     
     @Override

@@ -50,7 +50,7 @@ public class SnsComponentTest extends CamelTestSupport {
             }
         });
         
-        assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getOut().getHeader(SnsConstants.MESSAGE_ID));
+        assertEquals("dcc8ce7a-7f18-4385-bedd-b97984b4363c", exchange.getMessage().getHeader(SnsConstants.MESSAGE_ID));
     }
 
     @Override
