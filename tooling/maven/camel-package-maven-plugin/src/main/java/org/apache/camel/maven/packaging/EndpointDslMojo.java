@@ -408,6 +408,10 @@ public class EndpointDslMojo extends AbstractMojo {
                         if ("parameter".equals(option.getKind()) && "true".equals(option.getRequired())) {
                             desc += "\nRequired: true";
                         }
+                        // include default value (if any)
+                        if (!option.getDefaultValue().isEmpty()) {
+                            desc += "\nDefault: " + option.getDefaultValue();
+                        }
                         desc += "\nGroup: " + option.getGroup();
                         fluent.getJavaDoc().setFullText(desc);
                     }
