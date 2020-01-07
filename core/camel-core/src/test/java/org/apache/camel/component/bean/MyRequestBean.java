@@ -16,22 +16,15 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
+public class MyRequestBean {
 
-/**
- * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class
- * where the intention is to only invoke static methods, without the need for creating an instance of the type.
- */
-public class ConstantStaticTypeBeanHolder extends ConstantTypeBeanHolder {
+    private int counter;
 
-    public ConstantStaticTypeBeanHolder(Class<?> type, CamelContext context) {
-        super(type, context);
+    public MyRequestBean() {
     }
 
-    @Override
-    public Object getBean(Exchange exchange) {
-        // we cannot create a bean as there is no default constructor
-        return null;
+    public String doSomething(String body) {
+        counter++;
+        return body + counter;
     }
 }

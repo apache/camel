@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
 
@@ -45,7 +46,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
      * @return a new {@link org.apache.camel.component.bean.BeanHolder} that has cached the lookup of the bean.
      */
     public ConstantBeanHolder createCacheHolder() throws Exception {
-        Object bean = getBean();
+        Object bean = getBean(null);
         return new ConstantBeanHolder(bean, beanInfo);
     }
 
@@ -55,7 +56,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
     }
 
     @Override
-    public Object getBean()  {
+    public Object getBean(Exchange exchange)  {
         // only create a bean if we have a default no-arg constructor
         if (beanInfo.hasPublicNoArgConstructors()) {
             return getBeanInfo().getCamelContext().getInjector().newInstance(type, false);

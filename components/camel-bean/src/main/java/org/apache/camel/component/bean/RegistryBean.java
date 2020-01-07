@@ -17,6 +17,7 @@
 package org.apache.camel.component.bean;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Registry;
@@ -62,13 +63,13 @@ public class RegistryBean implements BeanHolder {
      * Creates a singleton (cached and constant) {@link org.apache.camel.component.bean.BeanHolder} from this holder.
      */
     public ConstantBeanHolder createCacheHolder() {
-        Object bean = getBean();
+        Object bean = getBean(null);
         BeanInfo info = createBeanInfo(bean);
         return new ConstantBeanHolder(bean, info);
     }
 
     @Override
-    public Object getBean() throws NoSuchBeanException {
+    public Object getBean(Exchange exchange) throws NoSuchBeanException {
         // must always lookup bean first
         Object value = lookupBean();
 
@@ -108,7 +109,7 @@ public class RegistryBean implements BeanHolder {
     @Override
     public BeanInfo getBeanInfo() {
         if (beanInfo == null) {
-            Object bean = getBean();
+            Object bean = getBean(null);
             this.beanInfo = createBeanInfo(bean);
         }
         return beanInfo;

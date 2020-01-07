@@ -27,7 +27,7 @@ import org.apache.camel.support.LRUCacheFactory;
 import org.apache.camel.util.PropertiesHelper;
 
 /**
- * The Bean component is for invoking Java beans from Camel.
+ * The bean component is for invoking Java beans from Camel.
  */
 @org.apache.camel.spi.annotations.Component("bean")
 public class BeanComponent extends DefaultComponent {

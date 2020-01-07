@@ -54,10 +54,14 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
                 // cache the registry lookup which avoids repeat lookup in the registry
                 beanHolder = new RegistryBean(camelContext, ref).createCacheHolder();
                 // bean holder will check if the bean exists
-                bean = beanHolder.getBean();
+                bean = beanHolder.getBean(null);
             } else {
                 // we do not cache so we invoke on-demand
                 beanHolder = new RegistryBean(camelContext, ref);
+            }
+            if (scope == BeanScope.Request) {
+                // wrap in registry scoped holder
+                beanHolder = new RequestBeanHolder(beanHolder);
             }
             answer = new BeanProcessor(beanHolder);
         } else {
@@ -117,6 +121,10 @@ public final class DefaultBeanProcessorFactory implements BeanProcessorFactory {
                         beanHolder = new ConstantStaticTypeBeanHolder(clazz, camelContext);
                     }
                 }
+            }
+            if (scope == BeanScope.Request) {
+                // wrap in registry scoped holder
+                beanHolder = new RequestBeanHolder(beanHolder);
             }
             answer = new BeanProcessor(beanHolder);
         }

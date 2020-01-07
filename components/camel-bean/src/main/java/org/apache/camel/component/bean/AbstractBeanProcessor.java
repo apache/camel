@@ -69,7 +69,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
         Object bean;
         BeanInfo beanInfo;
         try {
-            bean = beanHolder.getBean();
+            bean = beanHolder.getBean(exchange);
             // get bean info for this bean instance (to avoid thread issue)
             beanInfo = beanHolder.getBeanInfo(bean);
             if (beanInfo == null) {
@@ -159,7 +159,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
     }
 
     public Object getBean() {
-        return beanHolder.getBean();
+        return beanHolder.getBean(null);
     }
 
     // Properties
@@ -210,7 +210,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
             try {
                 // Start the bean if it implements Service interface and if cached
                 // so meant to be reused
-                ServiceHelper.startService(beanHolder.getBean());
+                ServiceHelper.startService(beanHolder.getBean(null));
             } catch (NoSuchBeanException e) {
                 // ignore
             }
@@ -225,7 +225,7 @@ public abstract class AbstractBeanProcessor extends AsyncProcessorSupport {
             try {
                 // Stop the bean if it implements Service interface and if cached
                 // so meant to be reused
-                ServiceHelper.stopService(beanHolder.getBean());
+                ServiceHelper.stopService(beanHolder.getBean(null));
             } catch (NoSuchBeanException e) {
                 // ignore
             }

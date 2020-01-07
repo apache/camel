@@ -16,22 +16,22 @@
  */
 package org.apache.camel.component.bean;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Exchange;
+import org.apache.camel.BeanScope;
+import org.apache.camel.builder.RouteBuilder;
 
-/**
- * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class
- * where the intention is to only invoke static methods, without the need for creating an instance of the type.
- */
-public class ConstantStaticTypeBeanHolder extends ConstantTypeBeanHolder {
-
-    public ConstantStaticTypeBeanHolder(Class<?> type, CamelContext context) {
-        super(type, context);
-    }
+public class RequestScopedBeanEIPTest extends RequestScopedBeanComponentTest {
 
     @Override
-    public Object getBean(Exchange exchange) {
-        // we cannot create a bean as there is no default constructor
-        return null;
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .bean(MyRequestBean.class, BeanScope.Request)
+                    .to("mock:a")
+                    .bean(MyRequestBean.class, BeanScope.Request)
+                    .to("mock:b");
+            }
+        };
     }
 }

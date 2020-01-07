@@ -31,7 +31,7 @@ import org.apache.camel.spi.UriPath;
 import org.apache.camel.support.DefaultEndpoint;
 
 /**
- * The <a href="http://camel.apache.org/bean.html">bean component</a> is for invoking Java beans from Camel.
+ * The bean component is for invoking Java beans from Camel.
  */
 @UriEndpoint(firstVersion = "1.0.0", scheme = "bean", title = "Bean", syntax = "bean:beanName", producerOnly = true, label = "core,java")
 public class BeanEndpoint extends DefaultEndpoint {
@@ -100,6 +100,10 @@ public class BeanEndpoint extends DefaultEndpoint {
                 } else {
                     holder = registryBean;
                 }
+            }
+            if (scope == BeanScope.Request) {
+                // wrap in registry scoped
+                holder = new RequestBeanHolder(holder);
             }
             processor = new BeanProcessor(holder);
             if (method != null) {
