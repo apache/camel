@@ -18,6 +18,7 @@ package org.apache.camel.component.bean;
 
 import java.util.Map;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.ExchangePattern;
@@ -93,7 +94,7 @@ public class BeanEndpoint extends DefaultEndpoint {
             BeanHolder holder = getBeanHolder();
             if (holder == null) {
                 RegistryBean registryBean = new RegistryBean(getCamelContext(), beanName);
-                if (isSingleton()) {
+                if (scope == BeanScope.Singleton) {
                     // if singleton then create a cached holder that use the same singleton instance
                     holder = registryBean.createCacheHolder();
                 } else {
@@ -143,7 +144,7 @@ public class BeanEndpoint extends DefaultEndpoint {
         if (cache) {
             scope = BeanScope.Singleton;
         } else {
-            scope = BeanScope.Delegate;
+            scope = BeanScope.Prototype;
         }
     }
 

@@ -18,6 +18,7 @@ package org.apache.camel.builder.endpoint.dsl;
 
 import java.util.Map;
 import javax.annotation.Generated;
+import org.apache.camel.BeanScope;
 import org.apache.camel.builder.EndpointConsumerBuilder;
 import org.apache.camel.builder.EndpointProducerBuilder;
 import org.apache.camel.builder.endpoint.AbstractEndpointBuilder;
@@ -90,8 +91,7 @@ public interface ClassEndpointBuilderFactory {
          * act as either singleton or prototype scope. so when using delegate
          * then this depends on the delegated registry.
          * 
-         * The option is a:
-         * <code>org.apache.camel.component.bean.BeanScope</code> type.
+         * The option is a: <code>org.apache.camel.BeanScope</code> type.
          * 
          * Group: common
          */
@@ -116,7 +116,7 @@ public interface ClassEndpointBuilderFactory {
          * then this depends on the delegated registry.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.component.bean.BeanScope</code> type.
+         * <code>org.apache.camel.BeanScope</code> type.
          * 
          * Group: common
          */
@@ -249,16 +249,6 @@ public interface ClassEndpointBuilderFactory {
             doSetProperty("synchronous", synchronous);
             return this;
         }
-    }
-
-    /**
-     * Proxy enum for <code>org.apache.camel.component.bean.BeanScope</code>
-     * enum.
-     */
-    enum BeanScope {
-        Singleton,
-        Delegate,
-        Request;
     }
     /**
      * Class (camel-bean)

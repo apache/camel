@@ -37,6 +37,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.namespace.QName;
 
 import org.apache.camel.AggregationStrategy;
+import org.apache.camel.BeanScope;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -2476,10 +2477,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * Translator EIP:</a> Adds a bean which is invoked which could be a final
      * destination, or could be a transformation in a pipeline
      *
-     * @param bean the bean to invoke, or a reference to a bean if the type is a
-     *            String
-     * @param method the method name to invoke on the bean (can be used to avoid
-     *            ambiguity)
+     * @param bean the bean to invoke, or a reference to a bean if the type is a String
+     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
      * @return the builder
      */
     public Type bean(Object bean, String method) {
@@ -2513,17 +2512,31 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * destination, or could be a transformation in a pipeline
      *
      * @param bean the bean to invoke, or a reference to a bean if the type is a String
-     * @param singleton whether to use singleton scoped beans, or not
+     * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param scope bean scope to use (singleton, request, prototype)
      * @return the builder
      */
-    public Type bean(Object bean, boolean singleton) {
+    public Type bean(Supplier<Object> bean, String method, BeanScope scope) {
+        return bean(bean.get(), method, scope);
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message
+     * Translator EIP:</a> Adds a bean which is invoked which could be a final
+     * destination, or could be a transformation in a pipeline
+     *
+     * @param bean the bean to invoke, or a reference to a bean if the type is a String
+     * @param scope bean scope to use (singleton, request, prototype)
+     * @return the builder
+     */
+    public Type bean(Object bean, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
         if (bean instanceof String) {
             answer.setRef((String)bean);
         } else {
             answer.setBean(bean);
         }
-        answer.setSingleton(Boolean.toString(singleton));
+        answer.setScope(scope);
         addOutput(answer);
         return asType();
     }
@@ -2535,10 +2548,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param bean the bean to invoke, or a reference to a bean if the type is a String
      * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @param singleton whether to use singleton scoped beans, or not
+     * @param scope bean scope to use (singleton, request, prototype)
      * @return the builder
      */
-    public Type bean(Object bean, String method, boolean singleton) {
+    public Type bean(Object bean, String method, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
         if (bean instanceof String) {
             answer.setRef((String)bean);
@@ -2546,7 +2559,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             answer.setBean(bean);
         }
         answer.setMethod(method);
-        answer.setSingleton(Boolean.toString(singleton));
+        answer.setScope(scope);
         addOutput(answer);
         return asType();
     }
@@ -2562,6 +2575,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type bean(Class<?> beanType) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
+        addOutput(answer);
+        return asType();
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message
+     * Translator EIP:</a> Adds a bean which is invoked which could be a final
+     * destination, or could be a transformation in a pipeline
+     *
+     * @param beanType the bean class, Camel will instantiate an object at runtime
+     * @param scope bean scope to use (singleton, request, prototype)
+     * @return the builder
+     */
+    public Type bean(Class<?> beanType, BeanScope scope) {
+        BeanDefinition answer = new BeanDefinition();
+        answer.setBeanType(beanType);
+        answer.setScope(scope);
         addOutput(answer);
         return asType();
     }
@@ -2590,14 +2620,14 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param beanType the bean class, Camel will instantiate an object at runtime
      * @param method the method name to invoke on the bean (can be used to avoid ambiguity)
-     * @param singleton whether to use singleton scoped beans, or not
+     * @param scope bean scope to use (singleton, request, prototype)
      * @return the builder
      */
-    public Type bean(Class<?> beanType, String method, boolean singleton) {
+    public Type bean(Class<?> beanType, String method, BeanScope scope) {
         BeanDefinition answer = new BeanDefinition();
         answer.setBeanType(beanType);
         answer.setMethod(method);
-        answer.setSingleton(Boolean.toString(singleton));
+        answer.setScope(scope);
         addOutput(answer);
         return asType();
     }

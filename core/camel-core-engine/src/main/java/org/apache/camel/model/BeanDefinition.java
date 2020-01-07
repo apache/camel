@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.util.ObjectHelper;
 
@@ -43,8 +44,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     @Deprecated
     private String cache;
     @XmlAttribute
-    @Metadata(defaultValue = "true", javaType = "java.lang.Boolean")
-    private String singleton;
+    @Metadata(defaultValue = "Singleton", enums = "Singleton,Request,Prototype")
+    private String scope;
     @XmlTransient
     private Class<?> beanClass;
     @XmlTransient
@@ -151,32 +152,34 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     }
 
     public String getCache() {
-        return getSingleton();
+        if (scope == null || BeanScope.Singleton.name().equals(scope)) {
+            return "true";
+        } else {
+            return "false";
+        }
     }
 
     /**
      * Use singleton option instead
      */
     public void setCache(String cache) {
-        setSingleton(cache);
+        if ("true".equals(cache)) {
+            scope = BeanScope.Singleton.name();
+        } else {
+            scope = BeanScope.Prototype.name();
+        }
     }
 
-    public String getSingleton() {
-        return singleton;
+    public String getScope() {
+        return scope;
     }
 
-    /**
-     * Whether to use singleton scoped beans. If enabled then the bean is created or looked up once and reused (the bean should be thread-safe).
-     * Setting this to false will let Camel create/lookup a new bean instance, per use; which acts as prototype scoped.
-     * However beware that if you lookup the bean, then the registry that holds the bean, would return a bean
-     * accordingly to its configuration, which can be singleton or prototype scoped.
-     * For example if you use Spring, or CDI, which has their own settings for setting bean scopes.
-     */
-    public void setSingleton(String singleton) {
-        this.singleton = singleton;
+    public void setScope(String scope) {
+        this.scope = scope;
     }
 
-    // Fluent API
-    // -------------------------------------------------------------------------
+    public void setScope(BeanScope scope) {
+        this.scope = scope.name();
+    }
 
 }

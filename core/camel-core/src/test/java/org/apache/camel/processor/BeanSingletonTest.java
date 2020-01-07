@@ -36,7 +36,7 @@ public class BeanSingletonTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:noCache").to("bean:something?scope=Delegate");
+                from("direct:noCache").to("bean:something?scope=Prototype");
                 from("direct:cached").to("bean:something?scope=Singleton");
             }
         };

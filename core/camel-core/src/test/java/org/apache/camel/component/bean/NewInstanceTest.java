@@ -18,6 +18,7 @@ package org.apache.camel.component.bean;
 
 import javax.naming.Context;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ExchangePattern;
@@ -60,7 +61,7 @@ public class NewInstanceTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("direct:start").bean("myBean", false).to("mock:result");
+                from("direct:start").bean("myBean", BeanScope.Prototype).to("mock:result");
             }
         };
     }

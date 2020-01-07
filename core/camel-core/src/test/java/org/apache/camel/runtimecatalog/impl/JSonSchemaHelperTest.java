@@ -58,10 +58,10 @@ public class JSonSchemaHelperTest extends ContextTestSupport {
         assertEquals("beanName", rows.get(0).values().iterator().next());
         assertEquals("cache", rows.get(1).values().iterator().next());
         assertEquals("method", rows.get(2).values().iterator().next());
-        assertEquals("parameters", rows.get(3).values().iterator().next());
-        assertEquals("singleton", rows.get(4).values().iterator().next());
-        assertEquals("lazyStartProducer", rows.get(5).values().iterator().next());
-        assertEquals("basicPropertyBinding", rows.get(6).values().iterator().next());
+        assertEquals("scope", rows.get(3).values().iterator().next());
+        assertEquals("lazyStartProducer", rows.get(4).values().iterator().next());
+        assertEquals("basicPropertyBinding", rows.get(5).values().iterator().next());
+        assertEquals("parameters", rows.get(6).values().iterator().next());
         assertEquals("synchronous", rows.get(7).values().iterator().next());
     }
 

@@ -14,14 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.bean;
+package org.apache.camel;
 
-/**
- * Bean scopes.
- */
+import javax.xml.bind.annotation.XmlEnum;
+
+@XmlEnum
 public enum BeanScope {
 
-    Singleton,
-    Delegate,
-    Request;
+    Singleton, Request, Prototype;
+
 }

@@ -18,6 +18,7 @@ package org.apache.camel.component.bean;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Service;
@@ -83,9 +84,9 @@ public class BeanLifecycleTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:foo").routeId("foo").bean(statefulInstance, "doSomething", false).bean(MyStatefulBean.class, "doSomething")
-                    .bean(MyStatefulBean.class.getName(), "doSomething", true).bean(MyStatelessBean.class.getName(), "doSomething", false)
-                    .to("bean:statefulInstanceInRegistry?method=doSomething&singleton=true").to("bean:statefulInstanceInRegistryNoCache?method=doSomething&singleton=false")
+                from("direct:foo").routeId("foo").bean(statefulInstance, "doSomething", BeanScope.Prototype).bean(MyStatefulBean.class, "doSomething")
+                    .bean(MyStatefulBean.class.getName(), "doSomething", BeanScope.Singleton).bean(MyStatelessBean.class.getName(), "doSomething", BeanScope.Prototype)
+                    .to("bean:statefulInstanceInRegistry?method=doSomething&scope=Singleton").to("bean:statefulInstanceInRegistryNoCache?method=doSomething&scope=Prototype")
                     .to("mock:result");
             }
         };

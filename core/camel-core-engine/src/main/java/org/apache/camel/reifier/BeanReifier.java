@@ -16,6 +16,7 @@
  */
 package org.apache.camel.reifier;
 
+import org.apache.camel.BeanScope;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.Processor;
@@ -23,6 +24,7 @@ import org.apache.camel.model.BeanDefinition;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.BeanProcessorFactory;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.support.CamelContextHelper;
 
 public class BeanReifier extends ProcessorReifier<BeanDefinition> {
 
@@ -44,11 +46,12 @@ public class BeanReifier extends ProcessorReifier<BeanDefinition> {
         if (fac == null) {
             throw new IllegalStateException("Cannot find BeanProcessorFactory. Make sure camel-bean is on the classpath.");
         }
-        return fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, isSingletonBean());
-    }
-
-    private boolean isSingletonBean() {
-        return definition.getSingleton() == null || Boolean.parseBoolean(definition.getSingleton());
+        // use singleton as default scope
+        BeanScope scope = BeanScope.Singleton;
+        if (definition.getScope() != null) {
+            scope = CamelContextHelper.parse(routeContext.getCamelContext(), BeanScope.class, definition.getScope());
+        }
+        return fac.createBeanProcessor(camelContext, bean, beanType, beanClass, ref, method, scope);
     }
 
 }

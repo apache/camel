@@ -114,7 +114,7 @@ Number of Components: 307 in 245 JAR artifacts (1 deprecated)
 
 | xref:chunk-component.adoc[Chunk] (camel-chunk) | 2.15 | Transforms the message using a Chunk template.
 
-| xref:class-component.adoc[Class] (camel-bean) | 2.4 | The class component is for invoking Java classes (Java beans) from Camel.
+| xref:class-component.adoc[Class] (camel-bean) | 2.4 | The Class component is for invoking Java classes (Java beans) from Camel.
 
 | xref:cm-sms-component.adoc[CM SMS Gateway] (camel-cm-sms) | 2.18 | The cm-sms component allows to integrate with CM SMS Gateway.
 
