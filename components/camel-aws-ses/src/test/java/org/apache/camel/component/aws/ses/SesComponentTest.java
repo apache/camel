@@ -71,7 +71,7 @@ public class SesComponentTest extends CamelTestSupport {
             }
         });
         
-        assertEquals("1", exchange.getOut().getHeader(SesConstants.MESSAGE_ID));
+        assertEquals("1", exchange.getMessage().getHeader(SesConstants.MESSAGE_ID));
     }
 
     @Test
