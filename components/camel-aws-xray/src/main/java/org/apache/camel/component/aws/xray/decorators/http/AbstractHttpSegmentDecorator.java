@@ -46,11 +46,9 @@ public abstract class AbstractHttpSegmentDecorator extends AbstractSegmentDecora
     public void post(Entity segment, Exchange exchange, Endpoint endpoint) {
         super.post(segment, exchange, endpoint);
 
-        if (exchange.hasOut()) {
-            Object responseCode = exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE);
-            if (responseCode instanceof Integer) {
-                segment.putMetadata("htt.response.code", responseCode);
-            }
+        Object responseCode = exchange.getMessage().getHeader(Exchange.HTTP_RESPONSE_CODE);
+        if (responseCode instanceof Integer) {
+            segment.putMetadata("htt.response.code", responseCode);
         }
     }
 
