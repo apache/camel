@@ -134,11 +134,6 @@ public class BeanEndpoint extends DefaultEndpoint {
     }
 
     @Deprecated
-    public boolean isCache() {
-        return isSingleton();
-    }
-
-    @Deprecated
     public Boolean getCache() {
         return scope == BeanScope.Singleton;
     }
