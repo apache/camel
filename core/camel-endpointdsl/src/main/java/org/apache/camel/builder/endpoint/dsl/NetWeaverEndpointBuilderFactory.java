@@ -57,6 +57,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default NetWeaverEndpointBuilder flatternMap(String flatternMap) {
@@ -82,6 +83,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default NetWeaverEndpointBuilder json(String json) {
@@ -105,6 +107,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default NetWeaverEndpointBuilder jsonAsMap(String jsonAsMap) {
@@ -145,6 +148,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NetWeaverEndpointBuilder lazyStartProducer(
@@ -207,6 +211,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder basicPropertyBinding(
@@ -233,6 +238,7 @@ public interface NetWeaverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNetWeaverEndpointBuilder synchronous(String synchronous) {

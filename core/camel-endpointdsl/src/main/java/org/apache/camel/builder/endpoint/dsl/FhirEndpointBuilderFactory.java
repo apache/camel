@@ -89,6 +89,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
          * 
+         * Default: R4
          * Group: common
          */
         default FhirEndpointConsumerBuilder fhirVersion(String fhirVersion) {
@@ -123,6 +124,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FhirEndpointConsumerBuilder log(String log) {
@@ -146,6 +148,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FhirEndpointConsumerBuilder prettyPrint(String prettyPrint) {
@@ -193,6 +196,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FhirEndpointConsumerBuilder bridgeErrorHandler(
@@ -220,6 +224,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FhirEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -334,6 +339,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder delay(String delay) {
@@ -359,6 +365,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder greedy(String greedy) {
@@ -386,6 +393,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -413,6 +421,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -440,6 +449,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder runLoggingLevel(
@@ -537,6 +547,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -561,6 +572,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -586,6 +598,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default FhirEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -801,6 +814,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder basicPropertyBinding(
@@ -875,6 +889,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder compress(String compress) {
@@ -900,6 +915,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder connectionTimeout(
@@ -929,6 +945,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder deferModelScanning(
@@ -981,6 +998,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder forceConformanceCheck(
@@ -1019,6 +1037,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder socketTimeout(
@@ -1069,6 +1088,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder synchronous(
@@ -1098,6 +1118,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
          * 
+         * Default: ONCE
          * Group: advanced
          */
         default AdvancedFhirEndpointConsumerBuilder validationMode(
@@ -1159,6 +1180,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
          * 
+         * Default: R4
          * Group: common
          */
         default FhirEndpointProducerBuilder fhirVersion(String fhirVersion) {
@@ -1193,6 +1215,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FhirEndpointProducerBuilder log(String log) {
@@ -1216,6 +1239,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FhirEndpointProducerBuilder prettyPrint(String prettyPrint) {
@@ -1267,6 +1291,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FhirEndpointProducerBuilder lazyStartProducer(
@@ -1394,6 +1419,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder basicPropertyBinding(
@@ -1468,6 +1494,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder compress(String compress) {
@@ -1493,6 +1520,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder connectionTimeout(
@@ -1522,6 +1550,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder deferModelScanning(
@@ -1574,6 +1603,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder forceConformanceCheck(
@@ -1612,6 +1642,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder socketTimeout(
@@ -1662,6 +1693,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder synchronous(
@@ -1691,6 +1723,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
          * 
+         * Default: ONCE
          * Group: advanced
          */
         default AdvancedFhirEndpointProducerBuilder validationMode(
@@ -1751,6 +1784,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a
          * <code>ca.uhn.fhir.context.FhirVersionEnum</code> type.
          * 
+         * Default: R4
          * Group: common
          */
         default FhirEndpointBuilder fhirVersion(String fhirVersion) {
@@ -1785,6 +1819,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FhirEndpointBuilder log(String log) {
@@ -1808,6 +1843,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default FhirEndpointBuilder prettyPrint(String prettyPrint) {
@@ -1945,6 +1981,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder basicPropertyBinding(
@@ -2017,6 +2054,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder compress(String compress) {
@@ -2042,6 +2080,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder connectionTimeout(
@@ -2071,6 +2110,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder deferModelScanning(
@@ -2121,6 +2161,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder forceConformanceCheck(
@@ -2157,6 +2198,7 @@ public interface FhirEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder socketTimeout(String socketTimeout) {
@@ -2205,6 +2247,7 @@ public interface FhirEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder synchronous(String synchronous) {
@@ -2233,6 +2276,7 @@ public interface FhirEndpointBuilderFactory {
          * <code>ca.uhn.fhir.rest.client.api.ServerValidationModeEnum</code>
          * type.
          * 
+         * Default: ONCE
          * Group: advanced
          */
         default AdvancedFhirEndpointBuilder validationMode(String validationMode) {

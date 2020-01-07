@@ -70,6 +70,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JMXEndpointBuilder bridgeErrorHandler(String bridgeErrorHandler) {
@@ -109,6 +110,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: consumer
          */
         default JMXEndpointBuilder granularityPeriod(String granularityPeriod) {
@@ -185,6 +187,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: string
          */
         default JMXEndpointBuilder notifyDiffer(String notifyDiffer) {
@@ -214,6 +217,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: string
          */
         default JMXEndpointBuilder notifyMatch(String notifyMatch) {
@@ -326,6 +330,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: gauge
          */
         default JMXEndpointBuilder differenceMode(String differenceMode) {
@@ -351,6 +356,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: gauge
          */
         default JMXEndpointBuilder notifyHigh(String notifyHigh) {
@@ -376,6 +382,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: gauge
          */
         default JMXEndpointBuilder notifyLow(String notifyLow) {
@@ -536,6 +543,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder basicPropertyBinding(
@@ -673,6 +681,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder reconnectDelay(String reconnectDelay) {
@@ -703,6 +712,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder reconnectOnConnectionFailure(
@@ -729,6 +739,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder synchronous(String synchronous) {
@@ -759,6 +770,7 @@ public interface JMXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJMXEndpointBuilder testConnectionOnStartup(

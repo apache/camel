@@ -142,6 +142,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GuavaEventBusEndpointConsumerBuilder bridgeErrorHandler(
@@ -237,6 +238,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder basicPropertyBinding(
@@ -264,6 +266,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGuavaEventBusEndpointConsumerBuilder synchronous(
@@ -386,6 +389,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GuavaEventBusEndpointProducerBuilder lazyStartProducer(
@@ -424,6 +428,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGuavaEventBusEndpointProducerBuilder basicPropertyBinding(
@@ -451,6 +456,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGuavaEventBusEndpointProducerBuilder synchronous(
@@ -568,6 +574,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGuavaEventBusEndpointBuilder basicPropertyBinding(
@@ -595,6 +602,7 @@ public interface GuavaEventBusEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGuavaEventBusEndpointBuilder synchronous(

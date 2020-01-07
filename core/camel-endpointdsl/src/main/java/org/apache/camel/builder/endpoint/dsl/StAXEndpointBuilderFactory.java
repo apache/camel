@@ -71,6 +71,7 @@ public interface StAXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StAXEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -108,6 +109,7 @@ public interface StAXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStAXEndpointBuilder basicPropertyBinding(
@@ -134,6 +136,7 @@ public interface StAXEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStAXEndpointBuilder synchronous(String synchronous) {

@@ -107,6 +107,7 @@ public interface XChangeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XChangeEndpointBuilder lazyStartProducer(
@@ -197,6 +198,7 @@ public interface XChangeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder basicPropertyBinding(
@@ -223,6 +225,7 @@ public interface XChangeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXChangeEndpointBuilder synchronous(String synchronous) {

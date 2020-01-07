@@ -164,6 +164,7 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SolrEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -273,6 +274,7 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: producer
          */
         default SolrEndpointBuilder streamingQueueSize(String streamingQueueSize) {
@@ -297,6 +299,7 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2
          * Group: producer
          */
         default SolrEndpointBuilder streamingThreadCount(
@@ -380,6 +383,7 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSolrEndpointBuilder basicPropertyBinding(
@@ -406,6 +410,7 @@ public interface SolrEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSolrEndpointBuilder synchronous(String synchronous) {

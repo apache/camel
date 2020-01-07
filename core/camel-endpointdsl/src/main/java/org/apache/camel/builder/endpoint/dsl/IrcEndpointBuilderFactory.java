@@ -58,6 +58,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default IrcEndpointConsumerBuilder autoRejoin(String autoRejoin) {
@@ -83,6 +84,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default IrcEndpointConsumerBuilder commandTimeout(String commandTimeout) {
@@ -110,6 +112,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IrcEndpointConsumerBuilder namesOnJoin(String namesOnJoin) {
@@ -145,6 +148,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         @Deprecated
@@ -193,6 +197,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IrcEndpointConsumerBuilder bridgeErrorHandler(
@@ -217,6 +222,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onJoin(String onJoin) {
@@ -240,6 +246,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onKick(String onKick) {
@@ -263,6 +270,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onMode(String onMode) {
@@ -286,6 +294,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onNick(String onNick) {
@@ -309,6 +318,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onPart(String onPart) {
@@ -332,6 +342,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onPrivmsg(String onPrivmsg) {
@@ -355,6 +366,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onQuit(String onQuit) {
@@ -380,6 +392,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onReply(String onReply) {
@@ -403,6 +416,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointConsumerBuilder onTopic(String onTopic) {
@@ -588,6 +602,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder basicPropertyBinding(
@@ -612,6 +627,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder colors(String colors) {
@@ -638,6 +654,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIrcEndpointConsumerBuilder synchronous(
@@ -673,6 +690,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default IrcEndpointProducerBuilder autoRejoin(String autoRejoin) {
@@ -698,6 +716,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default IrcEndpointProducerBuilder commandTimeout(String commandTimeout) {
@@ -725,6 +744,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IrcEndpointProducerBuilder namesOnJoin(String namesOnJoin) {
@@ -760,6 +780,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         @Deprecated
@@ -812,6 +833,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IrcEndpointProducerBuilder lazyStartProducer(
@@ -836,6 +858,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointProducerBuilder onJoin(String onJoin) {
@@ -859,6 +882,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointProducerBuilder onKick(String onKick) {
@@ -882,6 +906,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointProducerBuilder onMode(String onMode) {
@@ -905,6 +930,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointProducerBuilder onNick(String onNick) {
@@ -928,6 +954,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointProducerBuilder onPart(String onPart) {
@@ -951,6 +978,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointProducerBuilder onPrivmsg(String onPrivmsg) {
@@ -974,6 +1002,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointProducerBuilder onQuit(String onQuit) {
@@ -999,6 +1028,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: filter
          */
         default IrcEndpointProducerBuilder onReply(String onReply) {
@@ -1022,6 +1052,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointProducerBuilder onTopic(String onTopic) {
@@ -1150,6 +1181,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder basicPropertyBinding(
@@ -1174,6 +1206,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder colors(String colors) {
@@ -1200,6 +1233,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIrcEndpointProducerBuilder synchronous(
@@ -1235,6 +1269,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default IrcEndpointBuilder autoRejoin(String autoRejoin) {
@@ -1260,6 +1295,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: common
          */
         default IrcEndpointBuilder commandTimeout(String commandTimeout) {
@@ -1287,6 +1323,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IrcEndpointBuilder namesOnJoin(String namesOnJoin) {
@@ -1322,6 +1359,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         @Deprecated
@@ -1357,6 +1395,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointBuilder onJoin(String onJoin) {
@@ -1380,6 +1419,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointBuilder onKick(String onKick) {
@@ -1403,6 +1443,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointBuilder onMode(String onMode) {
@@ -1426,6 +1467,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointBuilder onNick(String onNick) {
@@ -1449,6 +1491,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointBuilder onPart(String onPart) {
@@ -1472,6 +1515,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointBuilder onPrivmsg(String onPrivmsg) {
@@ -1495,6 +1539,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointBuilder onQuit(String onQuit) {
@@ -1520,6 +1565,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: filter
          */
         default IrcEndpointBuilder onReply(String onReply) {
@@ -1543,6 +1589,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default IrcEndpointBuilder onTopic(String onTopic) {
@@ -1671,6 +1718,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIrcEndpointBuilder basicPropertyBinding(
@@ -1695,6 +1743,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedIrcEndpointBuilder colors(String colors) {
@@ -1720,6 +1769,7 @@ public interface IrcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIrcEndpointBuilder synchronous(String synchronous) {

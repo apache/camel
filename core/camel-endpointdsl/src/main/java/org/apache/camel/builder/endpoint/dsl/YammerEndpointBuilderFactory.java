@@ -66,6 +66,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default YammerEndpointConsumerBuilder useJson(String useJson) {
@@ -102,6 +103,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder bridgeErrorHandler(
@@ -126,6 +128,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder delay(String delay) {
@@ -151,6 +154,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder limit(String limit) {
@@ -184,6 +188,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: -1
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder newerThan(String newerThan) {
@@ -215,6 +220,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: -1
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder olderThan(String olderThan) {
@@ -241,6 +247,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default YammerEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -380,6 +387,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder greedy(String greedy) {
@@ -407,6 +415,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -434,6 +443,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -461,6 +471,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder runLoggingLevel(
@@ -558,6 +569,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder startScheduler(
@@ -583,6 +595,7 @@ public interface YammerEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -609,6 +622,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default YammerEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -772,6 +786,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedYammerEndpointConsumerBuilder basicPropertyBinding(
@@ -799,6 +814,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedYammerEndpointConsumerBuilder synchronous(
@@ -836,6 +852,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default YammerEndpointProducerBuilder useJson(String useJson) {
@@ -876,6 +893,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default YammerEndpointProducerBuilder lazyStartProducer(
@@ -951,6 +969,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedYammerEndpointProducerBuilder basicPropertyBinding(
@@ -978,6 +997,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedYammerEndpointProducerBuilder synchronous(
@@ -1015,6 +1035,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default YammerEndpointBuilder useJson(String useJson) {
@@ -1088,6 +1109,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedYammerEndpointBuilder basicPropertyBinding(
@@ -1114,6 +1136,7 @@ public interface YammerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedYammerEndpointBuilder synchronous(String synchronous) {

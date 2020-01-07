@@ -123,6 +123,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default OpenshiftBuildConfigsEndpointBuilder lazyStartProducer(
@@ -351,6 +352,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder basicPropertyBinding(
@@ -405,6 +407,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedOpenshiftBuildConfigsEndpointBuilder synchronous(

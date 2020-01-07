@@ -64,6 +64,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
          * type.
          * 
+         * Default: NONE
          * Group: common
          */
         default ThriftEndpointConsumerBuilder compressionType(
@@ -93,6 +94,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
          * type.
          * 
+         * Default: BINARY
          * Group: common
          */
         default ThriftEndpointConsumerBuilder exchangeProtocol(
@@ -130,6 +132,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder bridgeErrorHandler(
@@ -176,6 +179,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder maxPoolSize(String maxPoolSize) {
@@ -199,6 +203,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default ThriftEndpointConsumerBuilder poolSize(String poolSize) {
@@ -227,6 +232,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
          * type.
          * 
+         * Default: PLAINTEXT
          * Group: security
          */
         default ThriftEndpointConsumerBuilder negotiationType(
@@ -346,6 +352,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedThriftEndpointConsumerBuilder basicPropertyBinding(
@@ -373,6 +380,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedThriftEndpointConsumerBuilder synchronous(
@@ -413,6 +421,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
          * type.
          * 
+         * Default: NONE
          * Group: common
          */
         default ThriftEndpointProducerBuilder compressionType(
@@ -442,6 +451,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
          * type.
          * 
+         * Default: BINARY
          * Group: common
          */
         default ThriftEndpointProducerBuilder exchangeProtocol(
@@ -483,6 +493,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ThriftEndpointProducerBuilder lazyStartProducer(
@@ -523,6 +534,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
          * type.
          * 
+         * Default: PLAINTEXT
          * Group: security
          */
         default ThriftEndpointProducerBuilder negotiationType(
@@ -585,6 +597,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedThriftEndpointProducerBuilder basicPropertyBinding(
@@ -612,6 +625,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedThriftEndpointProducerBuilder synchronous(
@@ -652,6 +666,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftCompressionType</code>
          * type.
          * 
+         * Default: NONE
          * Group: common
          */
         default ThriftEndpointBuilder compressionType(String compressionType) {
@@ -680,6 +695,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftExchangeProtocol</code>
          * type.
          * 
+         * Default: BINARY
          * Group: common
          */
         default ThriftEndpointBuilder exchangeProtocol(String exchangeProtocol) {
@@ -708,6 +724,7 @@ public interface ThriftEndpointBuilderFactory {
          * <code>org.apache.camel.component.thrift.ThriftNegotiationType</code>
          * type.
          * 
+         * Default: PLAINTEXT
          * Group: security
          */
         default ThriftEndpointBuilder negotiationType(String negotiationType) {
@@ -769,6 +786,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedThriftEndpointBuilder basicPropertyBinding(
@@ -795,6 +813,7 @@ public interface ThriftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedThriftEndpointBuilder synchronous(String synchronous) {

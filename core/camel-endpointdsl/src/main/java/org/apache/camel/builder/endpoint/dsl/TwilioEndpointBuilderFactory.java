@@ -88,6 +88,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TwilioEndpointConsumerBuilder bridgeErrorHandler(
@@ -115,6 +116,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TwilioEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -229,6 +231,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder delay(String delay) {
@@ -254,6 +257,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder greedy(String greedy) {
@@ -281,6 +285,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -308,6 +313,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -335,6 +341,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder runLoggingLevel(
@@ -432,6 +439,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder startScheduler(
@@ -457,6 +465,7 @@ public interface TwilioEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -483,6 +492,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TwilioEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -609,6 +619,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwilioEndpointConsumerBuilder basicPropertyBinding(
@@ -636,6 +647,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwilioEndpointConsumerBuilder synchronous(
@@ -699,6 +711,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default TwilioEndpointProducerBuilder lazyStartProducer(
@@ -737,6 +750,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwilioEndpointProducerBuilder basicPropertyBinding(
@@ -764,6 +778,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwilioEndpointProducerBuilder synchronous(
@@ -824,6 +839,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwilioEndpointBuilder basicPropertyBinding(
@@ -850,6 +866,7 @@ public interface TwilioEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwilioEndpointBuilder synchronous(String synchronous) {

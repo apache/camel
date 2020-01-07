@@ -73,6 +73,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder bridgeErrorHandler(
@@ -150,6 +151,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetCommitTimeoutMs(
@@ -175,6 +177,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 60000
          * Group: consumer
          */
         default DebeziumPostgresEndpointBuilder offsetFlushIntervalMs(
@@ -372,6 +375,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5432
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databasePort(String databasePort) {
@@ -501,6 +505,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder databaseTcpkeepalive(
@@ -562,6 +567,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder heartbeatIntervalMs(
@@ -622,6 +628,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder includeUnknownDatatypes(
@@ -646,6 +653,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2048
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder maxBatchSize(String maxBatchSize) {
@@ -673,6 +681,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 8192
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder maxQueueSize(String maxQueueSize) {
@@ -733,6 +742,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder pollIntervalMs(
@@ -824,6 +834,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder slotDropOnStop(
@@ -851,6 +862,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 6
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder slotMaxRetries(
@@ -891,6 +903,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder slotRetryDelayMs(
@@ -946,6 +959,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder snapshotDelayMs(
@@ -1001,6 +1015,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder snapshotLockTimeoutMs(
@@ -1089,6 +1104,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder statusUpdateIntervalMs(
@@ -1183,6 +1199,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder tombstonesOnDelete(
@@ -1222,6 +1239,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: postgres
          */
         default DebeziumPostgresEndpointBuilder xminFetchIntervalMs(
@@ -1318,6 +1336,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumPostgresEndpointBuilder basicPropertyBinding(
@@ -1345,6 +1364,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumPostgresEndpointBuilder synchronous(

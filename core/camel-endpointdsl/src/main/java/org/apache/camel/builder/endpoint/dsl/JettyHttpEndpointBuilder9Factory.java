@@ -92,6 +92,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default JettyHttpEndpointBuilder9 disableStreamCache(
@@ -144,6 +145,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 async(String async) {
@@ -180,6 +182,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 bridgeErrorHandler(
@@ -206,6 +209,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 chunked(String chunked) {
@@ -240,6 +244,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: 30000
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 continuationTimeout(
@@ -266,6 +271,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 enableCORS(String enableCORS) {
@@ -291,6 +297,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 enableJmx(String enableJmx) {
@@ -319,6 +326,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 enableMultipartFilter(
@@ -360,6 +368,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 matchOnUriPrefix(
@@ -386,6 +395,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 muteException(String muteException) {
@@ -440,6 +450,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 sendDateHeader(String sendDateHeader) {
@@ -470,6 +481,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 sendServerVersion(
@@ -496,6 +508,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 sessionSupport(String sessionSupport) {
@@ -536,6 +549,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JettyHttpEndpointBuilder9 transferException(
@@ -651,6 +665,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder9 eagerCheckContentAvailable(
@@ -853,6 +868,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder9 optionsEnabled(
@@ -880,6 +896,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedJettyHttpEndpointBuilder9 traceEnabled(
@@ -907,6 +924,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 basicPropertyBinding(
@@ -936,6 +954,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageBody(
@@ -965,6 +984,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageFormUrlEncodedBody(
@@ -994,6 +1014,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 mapHttpMessageHeaders(
@@ -1021,6 +1042,7 @@ public interface JettyHttpEndpointBuilder9Factory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJettyHttpEndpointBuilder9 synchronous(String synchronous) {

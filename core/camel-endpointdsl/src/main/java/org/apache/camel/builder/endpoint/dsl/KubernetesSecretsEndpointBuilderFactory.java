@@ -122,6 +122,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesSecretsEndpointBuilder lazyStartProducer(
@@ -345,6 +346,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesSecretsEndpointBuilder basicPropertyBinding(
@@ -399,6 +401,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesSecretsEndpointBuilder synchronous(

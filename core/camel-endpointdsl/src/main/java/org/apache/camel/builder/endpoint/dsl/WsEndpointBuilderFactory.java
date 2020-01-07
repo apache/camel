@@ -61,6 +61,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default WsEndpointConsumerBuilder sendMessageOnError(
@@ -91,6 +92,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WsEndpointConsumerBuilder bridgeEndpoint(String bridgeEndpoint) {
@@ -116,6 +118,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 4096
          * Group: producer
          */
         default WsEndpointConsumerBuilder bufferSize(String bufferSize) {
@@ -172,6 +175,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default WsEndpointConsumerBuilder throwExceptionOnFailure(
@@ -213,6 +217,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WsEndpointConsumerBuilder transferException(
@@ -287,6 +292,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder basicPropertyBinding(
@@ -397,6 +403,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWsEndpointConsumerBuilder synchronous(String synchronous) {
@@ -460,6 +467,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WsEndpointProducerBuilder useStreaming(String useStreaming) {
@@ -489,6 +497,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WsEndpointProducerBuilder bridgeEndpoint(String bridgeEndpoint) {
@@ -514,6 +523,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 4096
          * Group: producer
          */
         default WsEndpointProducerBuilder bufferSize(String bufferSize) {
@@ -540,6 +550,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WsEndpointProducerBuilder connectionClose(String connectionClose) {
@@ -632,6 +643,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WsEndpointProducerBuilder lazyStartProducer(
@@ -661,6 +673,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default WsEndpointProducerBuilder throwExceptionOnFailure(
@@ -702,6 +715,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WsEndpointProducerBuilder transferException(
@@ -776,6 +790,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder basicPropertyBinding(
@@ -886,6 +901,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWsEndpointProducerBuilder synchronous(String synchronous) {
@@ -955,6 +971,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WsEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
@@ -980,6 +997,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 4096
          * Group: producer
          */
         default WsEndpointBuilder bufferSize(String bufferSize) {
@@ -1036,6 +1054,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default WsEndpointBuilder throwExceptionOnFailure(
@@ -1076,6 +1095,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WsEndpointBuilder transferException(String transferException) {
@@ -1149,6 +1169,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder basicPropertyBinding(
@@ -1256,6 +1277,7 @@ public interface WsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWsEndpointBuilder synchronous(String synchronous) {

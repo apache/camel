@@ -352,6 +352,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ServiceNowEndpointBuilder lazyStartProducer(
@@ -405,6 +406,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 10
          * Group: producer
          */
         default ServiceNowEndpointBuilder perPage(String perPage) {
@@ -434,6 +436,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * <code>org.apache.camel.component.servicenow.ServiceNowRelease</code>
          * type.
          * 
+         * Default: HELSINKI
          * Group: producer
          */
         default ServiceNowEndpointBuilder release(String release) {
@@ -837,6 +840,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder basicPropertyBinding(
@@ -968,6 +972,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder retrieveTargetRecordOnImport(
@@ -995,6 +1000,7 @@ public interface ServiceNowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedServiceNowEndpointBuilder synchronous(String synchronous) {

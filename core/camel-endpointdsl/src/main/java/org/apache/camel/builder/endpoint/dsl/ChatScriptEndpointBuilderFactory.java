@@ -85,6 +85,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ChatScriptEndpointBuilder lazyStartProducer(
@@ -109,6 +110,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ChatScriptEndpointBuilder resetChat(String resetChat) {
@@ -146,6 +148,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder basicPropertyBinding(
@@ -173,6 +176,7 @@ public interface ChatScriptEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedChatScriptEndpointBuilder synchronous(String synchronous) {

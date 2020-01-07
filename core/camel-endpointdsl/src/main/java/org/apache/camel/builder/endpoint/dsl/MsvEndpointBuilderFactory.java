@@ -54,6 +54,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default MsvEndpointBuilder failOnNullBody(String failOnNullBody) {
@@ -77,6 +78,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default MsvEndpointBuilder failOnNullHeader(String failOnNullHeader) {
@@ -127,6 +129,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MsvEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -164,6 +167,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder basicPropertyBinding(
@@ -313,6 +317,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder synchronous(String synchronous) {
@@ -341,6 +346,7 @@ public interface MsvEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedMsvEndpointBuilder useSharedSchema(

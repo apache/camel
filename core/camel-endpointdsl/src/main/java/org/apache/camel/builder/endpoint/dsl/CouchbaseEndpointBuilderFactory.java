@@ -99,6 +99,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder bridgeErrorHandler(
@@ -136,6 +137,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder descending(String descending) {
@@ -172,6 +174,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder limit(String limit) {
@@ -221,6 +224,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -245,6 +249,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: consumer
          */
         default CouchbaseEndpointConsumerBuilder skip(String skip) {
@@ -370,6 +375,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder delay(String delay) {
@@ -395,6 +401,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder greedy(String greedy) {
@@ -422,6 +429,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder initialDelay(
@@ -450,6 +458,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -477,6 +486,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder runLoggingLevel(
@@ -574,6 +584,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder startScheduler(
@@ -599,6 +610,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -625,6 +637,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default CouchbaseEndpointConsumerBuilder useFixedDelay(
@@ -786,6 +799,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder basicPropertyBinding(
@@ -811,6 +825,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder maxReconnectDelay(
@@ -836,6 +851,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 400
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder obsPollInterval(
@@ -861,6 +877,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder obsTimeout(
@@ -886,6 +903,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder opQueueMaxBlockTime(
@@ -911,6 +929,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 2500
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder opTimeOut(
@@ -936,6 +955,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 16384
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder readBufferSize(
@@ -961,6 +981,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder shouldOptimize(
@@ -988,6 +1009,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder synchronous(
@@ -1013,6 +1035,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 998
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointConsumerBuilder timeoutExceptionThreshold(
@@ -1073,6 +1096,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder autoStartIdForInserts(
@@ -1114,6 +1138,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder lazyStartProducer(
@@ -1150,6 +1175,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder persistTo(String persistTo) {
@@ -1174,6 +1200,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder producerRetryAttempts(
@@ -1199,6 +1226,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder producerRetryPause(
@@ -1223,6 +1251,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default CouchbaseEndpointProducerBuilder replicateTo(String replicateTo) {
@@ -1318,6 +1347,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder basicPropertyBinding(
@@ -1343,6 +1373,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder maxReconnectDelay(
@@ -1368,6 +1399,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 400
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder obsPollInterval(
@@ -1393,6 +1425,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder obsTimeout(
@@ -1418,6 +1451,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder opQueueMaxBlockTime(
@@ -1443,6 +1477,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 2500
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder opTimeOut(
@@ -1468,6 +1503,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 16384
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder readBufferSize(
@@ -1493,6 +1529,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder shouldOptimize(
@@ -1520,6 +1557,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder synchronous(
@@ -1545,6 +1583,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 998
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointProducerBuilder timeoutExceptionThreshold(
@@ -1650,6 +1689,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder basicPropertyBinding(
@@ -1675,6 +1715,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder maxReconnectDelay(
@@ -1700,6 +1741,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 400
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder obsPollInterval(
@@ -1724,6 +1766,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder obsTimeout(String obsTimeout) {
@@ -1748,6 +1791,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder opQueueMaxBlockTime(
@@ -1772,6 +1816,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 2500
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder opTimeOut(String opTimeOut) {
@@ -1796,6 +1841,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 16384
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder readBufferSize(
@@ -1821,6 +1867,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder shouldOptimize(
@@ -1847,6 +1894,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder synchronous(String synchronous) {
@@ -1871,6 +1919,7 @@ public interface CouchbaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 998
          * Group: advanced
          */
         default AdvancedCouchbaseEndpointBuilder timeoutExceptionThreshold(

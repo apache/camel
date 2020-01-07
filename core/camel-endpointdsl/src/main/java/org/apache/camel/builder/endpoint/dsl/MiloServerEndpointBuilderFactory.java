@@ -71,6 +71,7 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MiloServerEndpointConsumerBuilder bridgeErrorHandler(
@@ -166,6 +167,7 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloServerEndpointConsumerBuilder basicPropertyBinding(
@@ -193,6 +195,7 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloServerEndpointConsumerBuilder synchronous(
@@ -245,6 +248,7 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MiloServerEndpointProducerBuilder lazyStartProducer(
@@ -283,6 +287,7 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloServerEndpointProducerBuilder basicPropertyBinding(
@@ -310,6 +315,7 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloServerEndpointProducerBuilder synchronous(
@@ -359,6 +365,7 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloServerEndpointBuilder basicPropertyBinding(
@@ -386,6 +393,7 @@ public interface MiloServerEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMiloServerEndpointBuilder synchronous(String synchronous) {

@@ -71,6 +71,7 @@ public interface GrapeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GrapeEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -108,6 +109,7 @@ public interface GrapeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGrapeEndpointBuilder basicPropertyBinding(
@@ -134,6 +136,7 @@ public interface GrapeEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGrapeEndpointBuilder synchronous(String synchronous) {

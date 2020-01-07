@@ -84,6 +84,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PubNubEndpointConsumerBuilder bridgeErrorHandler(
@@ -108,6 +109,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default PubNubEndpointConsumerBuilder withPresence(String withPresence) {
@@ -178,6 +180,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default PubNubEndpointConsumerBuilder secure(String secure) {
@@ -284,6 +287,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointConsumerBuilder basicPropertyBinding(
@@ -334,6 +338,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointConsumerBuilder synchronous(
@@ -398,6 +403,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PubNubEndpointProducerBuilder lazyStartProducer(
@@ -491,6 +497,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default PubNubEndpointProducerBuilder secure(String secure) {
@@ -540,6 +547,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointProducerBuilder basicPropertyBinding(
@@ -590,6 +598,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointProducerBuilder synchronous(
@@ -684,6 +693,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: security
          */
         default PubNubEndpointBuilder secure(String secure) {
@@ -733,6 +743,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder basicPropertyBinding(
@@ -782,6 +793,7 @@ public interface PubNubEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPubNubEndpointBuilder synchronous(String synchronous) {

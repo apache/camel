@@ -107,6 +107,7 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AsteriskEndpointConsumerBuilder bridgeErrorHandler(
@@ -202,6 +203,7 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAsteriskEndpointConsumerBuilder basicPropertyBinding(
@@ -229,6 +231,7 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAsteriskEndpointConsumerBuilder synchronous(
@@ -343,6 +346,7 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AsteriskEndpointProducerBuilder lazyStartProducer(
@@ -381,6 +385,7 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAsteriskEndpointProducerBuilder basicPropertyBinding(
@@ -408,6 +413,7 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAsteriskEndpointProducerBuilder synchronous(
@@ -493,6 +499,7 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAsteriskEndpointBuilder basicPropertyBinding(
@@ -519,6 +526,7 @@ public interface AsteriskEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAsteriskEndpointBuilder synchronous(String synchronous) {

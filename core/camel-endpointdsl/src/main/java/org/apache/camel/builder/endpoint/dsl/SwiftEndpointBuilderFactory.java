@@ -119,6 +119,7 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SwiftEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -215,6 +216,7 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSwiftEndpointBuilder basicPropertyBinding(
@@ -241,6 +243,7 @@ public interface SwiftEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSwiftEndpointBuilder synchronous(String synchronous) {

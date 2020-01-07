@@ -122,6 +122,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ActiveMQEndpointConsumerBuilder disableReplyTo(
@@ -202,6 +203,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ActiveMQEndpointConsumerBuilder testConnectionOnStartup(
@@ -259,6 +261,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ActiveMQEndpointConsumerBuilder asyncConsumer(
@@ -283,6 +286,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default ActiveMQEndpointConsumerBuilder autoStartup(String autoStartup) {
@@ -358,6 +362,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default ActiveMQEndpointConsumerBuilder concurrentConsumers(
@@ -429,6 +434,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default ActiveMQEndpointConsumerBuilder replyToDeliveryPersistent(
@@ -479,6 +485,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ActiveMQEndpointConsumerBuilder subscriptionDurable(
@@ -542,6 +549,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ActiveMQEndpointConsumerBuilder subscriptionShared(
@@ -570,6 +578,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: WARN
          * Group: logging
          */
         default ActiveMQEndpointConsumerBuilder errorHandlerLoggingLevel(
@@ -597,6 +606,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: logging
          */
         default ActiveMQEndpointConsumerBuilder errorHandlerLogStackTrace(
@@ -645,6 +655,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default ActiveMQEndpointConsumerBuilder transacted(String transacted) {
@@ -694,6 +705,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedActiveMQEndpointConsumerBuilder acceptMessagesWhileStopping(
@@ -731,6 +743,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedActiveMQEndpointConsumerBuilder allowReplyManagerQuickStop(
@@ -776,6 +789,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jms.ConsumerType</code> type.
          * 
+         * Default: Default
          * Group: consumer (advanced)
          */
         default AdvancedActiveMQEndpointConsumerBuilder consumerType(
@@ -855,6 +869,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedActiveMQEndpointConsumerBuilder eagerLoadingOfProperties(
@@ -957,6 +972,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedActiveMQEndpointConsumerBuilder exposeListenerSession(
@@ -988,6 +1004,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer (advanced)
          */
         default AdvancedActiveMQEndpointConsumerBuilder replyToSameDestinationAllowed(
@@ -1045,6 +1062,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder allowSerializedHeaders(
@@ -1088,6 +1106,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder asyncStartListener(
@@ -1115,6 +1134,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder asyncStopListener(
@@ -1142,6 +1162,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder basicPropertyBinding(
@@ -1294,6 +1315,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder idleConsumerLimit(
@@ -1327,6 +1349,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder idleTaskExecutionLimit(
@@ -1358,6 +1381,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder includeAllJMSXProperties(
@@ -1429,6 +1453,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder mapJmsMessage(
@@ -1460,6 +1485,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder maxMessagesPerTask(
@@ -1555,6 +1581,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder messageIdEnabled(
@@ -1622,6 +1649,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder messageTimestampEnabled(
@@ -1649,6 +1677,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder pubSubNoLocal(
@@ -1674,6 +1703,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder receiveTimeout(
@@ -1703,6 +1733,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder recoveryInterval(
@@ -1736,6 +1767,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder requestTimeoutCheckerInterval(
@@ -1763,6 +1795,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder synchronous(
@@ -1814,6 +1847,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder transferException(
@@ -1861,6 +1895,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder transferExchange(
@@ -1888,6 +1923,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder useMessageIDAsCorrelationID(
@@ -1917,6 +1953,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 50
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
@@ -1944,6 +1981,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedActiveMQEndpointConsumerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
@@ -1971,6 +2009,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedActiveMQEndpointConsumerBuilder lazyCreateTransactionManager(
@@ -2036,6 +2075,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction (advanced)
          */
         default AdvancedActiveMQEndpointConsumerBuilder transactionTimeout(
@@ -2132,6 +2172,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ActiveMQEndpointProducerBuilder disableReplyTo(
@@ -2212,6 +2253,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ActiveMQEndpointProducerBuilder testConnectionOnStartup(
@@ -2238,6 +2280,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder deliveryDelay(
@@ -2291,6 +2334,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder deliveryPersistent(
@@ -2327,6 +2371,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder explicitQosEnabled(
@@ -2354,6 +2399,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder formatDateHeadersToIso8601(
@@ -2395,6 +2441,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder lazyStartProducer(
@@ -2436,6 +2483,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder preserveMessageQos(
@@ -2466,6 +2514,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 4
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder priority(String priority) {
@@ -2494,6 +2543,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder replyToConcurrentConsumers(
@@ -2549,6 +2599,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder replyToOnTimeoutMaxConcurrentConsumers(
@@ -2638,6 +2689,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 20000
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder requestTimeout(
@@ -2664,6 +2716,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default ActiveMQEndpointProducerBuilder timeToLive(String timeToLive) {
@@ -2711,6 +2764,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default ActiveMQEndpointProducerBuilder transacted(String transacted) {
@@ -2765,6 +2819,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedActiveMQEndpointProducerBuilder allowNullBody(
@@ -2800,6 +2855,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedActiveMQEndpointProducerBuilder alwaysCopyMessage(
@@ -2859,6 +2915,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedActiveMQEndpointProducerBuilder disableTimeToLive(
@@ -2890,6 +2947,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedActiveMQEndpointProducerBuilder forceSendOriginalMessage(
@@ -2921,6 +2979,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedActiveMQEndpointProducerBuilder includeSentJMSMessageID(
@@ -2992,6 +3051,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer (advanced)
          */
         default AdvancedActiveMQEndpointProducerBuilder streamMessageTypeEnabled(
@@ -3023,6 +3083,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder allowSerializedHeaders(
@@ -3066,6 +3127,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder asyncStartListener(
@@ -3093,6 +3155,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder asyncStopListener(
@@ -3120,6 +3183,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder basicPropertyBinding(
@@ -3272,6 +3336,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder idleConsumerLimit(
@@ -3305,6 +3370,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder idleTaskExecutionLimit(
@@ -3336,6 +3402,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder includeAllJMSXProperties(
@@ -3407,6 +3474,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder mapJmsMessage(
@@ -3438,6 +3506,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder maxMessagesPerTask(
@@ -3533,6 +3602,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder messageIdEnabled(
@@ -3600,6 +3670,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder messageTimestampEnabled(
@@ -3627,6 +3698,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder pubSubNoLocal(
@@ -3652,6 +3724,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder receiveTimeout(
@@ -3681,6 +3754,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder recoveryInterval(
@@ -3714,6 +3788,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder requestTimeoutCheckerInterval(
@@ -3741,6 +3816,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder synchronous(
@@ -3792,6 +3868,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder transferException(
@@ -3839,6 +3916,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder transferExchange(
@@ -3866,6 +3944,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder useMessageIDAsCorrelationID(
@@ -3895,6 +3974,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 50
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedCounter(
@@ -3922,6 +4002,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedActiveMQEndpointProducerBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
@@ -3949,6 +4030,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedActiveMQEndpointProducerBuilder lazyCreateTransactionManager(
@@ -4014,6 +4096,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction (advanced)
          */
         default AdvancedActiveMQEndpointProducerBuilder transactionTimeout(
@@ -4109,6 +4192,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ActiveMQEndpointBuilder disableReplyTo(String disableReplyTo) {
@@ -4187,6 +4271,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default ActiveMQEndpointBuilder testConnectionOnStartup(
@@ -4235,6 +4320,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: transaction
          */
         default ActiveMQEndpointBuilder transacted(String transacted) {
@@ -4276,6 +4362,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder allowSerializedHeaders(
@@ -4319,6 +4406,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder asyncStartListener(
@@ -4346,6 +4434,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder asyncStopListener(
@@ -4373,6 +4462,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder basicPropertyBinding(
@@ -4523,6 +4613,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder idleConsumerLimit(
@@ -4556,6 +4647,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder idleTaskExecutionLimit(
@@ -4587,6 +4679,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder includeAllJMSXProperties(
@@ -4658,6 +4751,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder mapJmsMessage(
@@ -4689,6 +4783,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder maxMessagesPerTask(
@@ -4784,6 +4879,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder messageIdEnabled(
@@ -4851,6 +4947,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder messageTimestampEnabled(
@@ -4878,6 +4975,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder pubSubNoLocal(
@@ -4903,6 +5001,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder receiveTimeout(
@@ -4932,6 +5031,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder recoveryInterval(
@@ -4965,6 +5065,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder requestTimeoutCheckerInterval(
@@ -4991,6 +5092,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder synchronous(String synchronous) {
@@ -5041,6 +5143,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder transferException(
@@ -5088,6 +5191,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder transferExchange(
@@ -5115,6 +5219,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder useMessageIDAsCorrelationID(
@@ -5144,6 +5249,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 50
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedCounter(
@@ -5171,6 +5277,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 100
          * Group: advanced
          */
         default AdvancedActiveMQEndpointBuilder waitForProvisionCorrelationToBeUpdatedThreadSleepingTime(
@@ -5198,6 +5305,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: transaction (advanced)
          */
         default AdvancedActiveMQEndpointBuilder lazyCreateTransactionManager(
@@ -5263,6 +5371,7 @@ public interface ActiveMQEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: transaction (advanced)
          */
         default AdvancedActiveMQEndpointBuilder transactionTimeout(

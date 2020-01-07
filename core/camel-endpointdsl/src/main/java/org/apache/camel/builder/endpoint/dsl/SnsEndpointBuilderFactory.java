@@ -104,6 +104,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default SnsEndpointBuilder autoCreateTopic(String autoCreateTopic) {
@@ -181,6 +182,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SnsEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -261,6 +263,7 @@ public interface SnsEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default SnsEndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -310,6 +313,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SnsEndpointBuilder serverSideEncryptionEnabled(
@@ -348,6 +352,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SnsEndpointBuilder subscribeSNStoSQS(String subscribeSNStoSQS) {
@@ -408,6 +413,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnsEndpointBuilder basicPropertyBinding(
@@ -434,6 +440,7 @@ public interface SnsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSnsEndpointBuilder synchronous(String synchronous) {

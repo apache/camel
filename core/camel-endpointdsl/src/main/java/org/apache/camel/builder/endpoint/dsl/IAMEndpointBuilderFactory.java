@@ -105,6 +105,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IAMEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -189,6 +190,7 @@ public interface IAMEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default IAMEndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -251,6 +253,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIAMEndpointBuilder basicPropertyBinding(
@@ -277,6 +280,7 @@ public interface IAMEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIAMEndpointBuilder synchronous(String synchronous) {

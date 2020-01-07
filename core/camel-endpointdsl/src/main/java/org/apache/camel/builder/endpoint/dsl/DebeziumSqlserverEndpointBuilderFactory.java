@@ -73,6 +73,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder bridgeErrorHandler(
@@ -150,6 +151,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 5000
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetCommitTimeoutMs(
@@ -175,6 +177,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 60000
          * Group: consumer
          */
         default DebeziumSqlserverEndpointBuilder offsetFlushIntervalMs(
@@ -368,6 +371,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryAttempts(
@@ -395,6 +399,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databaseHistoryKafkaRecoveryPollIntervalMs(
@@ -457,6 +462,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1433
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder databasePort(
@@ -535,6 +541,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder heartbeatIntervalMs(
@@ -573,6 +580,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 2048
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder maxBatchSize(
@@ -601,6 +609,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 8192
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder maxQueueSize(
@@ -648,6 +657,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder pollIntervalMs(
@@ -673,6 +683,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotDelayMs(
@@ -728,6 +739,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder snapshotLockTimeoutMs(
@@ -821,6 +833,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: sqlserver
          */
         default DebeziumSqlserverEndpointBuilder tableIgnoreBuiltin(
@@ -949,6 +962,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumSqlserverEndpointBuilder basicPropertyBinding(
@@ -976,6 +990,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDebeziumSqlserverEndpointBuilder synchronous(

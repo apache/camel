@@ -77,6 +77,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder bridgeErrorHandler(
@@ -104,6 +105,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -133,6 +135,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * <code>org.apache.camel.component.twitter.data.EndpointType</code>
          * type.
          * 
+         * Default: polling
          * Group: consumer
          */
         default TwitterDirectMessageEndpointConsumerBuilder type(String type) {
@@ -157,6 +160,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 5
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder count(String count) {
@@ -183,6 +187,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder filterOld(
@@ -220,6 +225,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 1
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder numberOfPages(
@@ -246,6 +252,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1
          * Group: filter
          */
         default TwitterDirectMessageEndpointConsumerBuilder sinceId(
@@ -369,6 +376,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 30000
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder delay(String delay) {
@@ -395,6 +403,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder greedy(String greedy) {
@@ -423,6 +432,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder initialDelay(
@@ -452,6 +462,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder repeatCount(
@@ -480,6 +491,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder runLoggingLevel(
@@ -578,6 +590,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder startScheduler(
@@ -604,6 +617,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder timeUnit(
@@ -631,6 +645,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default TwitterDirectMessageEndpointConsumerBuilder useFixedDelay(
@@ -656,6 +671,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: sort
          */
         default TwitterDirectMessageEndpointConsumerBuilder sortById(
@@ -886,6 +902,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder extendedMode(
@@ -1043,6 +1060,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder basicPropertyBinding(
@@ -1070,6 +1088,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointConsumerBuilder synchronous(
@@ -1122,6 +1141,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default TwitterDirectMessageEndpointProducerBuilder lazyStartProducer(
@@ -1279,6 +1299,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder basicPropertyBinding(
@@ -1306,6 +1327,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointProducerBuilder synchronous(
@@ -1473,6 +1495,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointBuilder basicPropertyBinding(
@@ -1500,6 +1523,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedTwitterDirectMessageEndpointBuilder synchronous(

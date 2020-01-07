@@ -71,6 +71,7 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GraphqlEndpointBuilder lazyStartProducer(
@@ -210,6 +211,7 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGraphqlEndpointBuilder basicPropertyBinding(
@@ -236,6 +238,7 @@ public interface GraphqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGraphqlEndpointBuilder synchronous(String synchronous) {

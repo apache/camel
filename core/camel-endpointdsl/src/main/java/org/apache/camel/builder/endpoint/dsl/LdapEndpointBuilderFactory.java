@@ -83,6 +83,7 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default LdapEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -176,6 +177,7 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLdapEndpointBuilder basicPropertyBinding(
@@ -202,6 +204,7 @@ public interface LdapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedLdapEndpointBuilder synchronous(String synchronous) {

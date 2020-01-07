@@ -56,6 +56,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StringTemplateEndpointBuilder contentCache(String contentCache) {
@@ -79,6 +80,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
+         * Default: <
          * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStart(
@@ -103,6 +105,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
+         * Default: >
          * Group: producer
          */
         default StringTemplateEndpointBuilder delimiterStop(String delimiterStop) {
@@ -143,6 +146,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StringTemplateEndpointBuilder lazyStartProducer(
@@ -181,6 +185,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStringTemplateEndpointBuilder basicPropertyBinding(
@@ -208,6 +213,7 @@ public interface StringTemplateEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStringTemplateEndpointBuilder synchronous(

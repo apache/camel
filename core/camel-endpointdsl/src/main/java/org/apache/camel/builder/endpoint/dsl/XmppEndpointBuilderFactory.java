@@ -59,6 +59,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XmppEndpointConsumerBuilder login(String login) {
@@ -94,6 +95,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default XmppEndpointConsumerBuilder pubsub(String pubsub) {
@@ -160,6 +162,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XmppEndpointConsumerBuilder testConnectionOnStartup(
@@ -197,6 +200,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default XmppEndpointConsumerBuilder bridgeErrorHandler(
@@ -228,6 +232,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10
          * Group: consumer
          */
         default XmppEndpointConsumerBuilder connectionPollDelay(
@@ -256,6 +261,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default XmppEndpointConsumerBuilder doc(String doc) {
@@ -355,6 +361,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedXmppEndpointConsumerBuilder createAccount(
@@ -451,6 +458,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXmppEndpointConsumerBuilder basicPropertyBinding(
@@ -508,6 +516,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXmppEndpointConsumerBuilder synchronous(
@@ -543,6 +552,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XmppEndpointProducerBuilder login(String login) {
@@ -578,6 +588,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default XmppEndpointProducerBuilder pubsub(String pubsub) {
@@ -644,6 +655,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XmppEndpointProducerBuilder testConnectionOnStartup(
@@ -685,6 +697,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default XmppEndpointProducerBuilder lazyStartProducer(
@@ -785,6 +798,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedXmppEndpointProducerBuilder createAccount(
@@ -824,6 +838,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXmppEndpointProducerBuilder basicPropertyBinding(
@@ -881,6 +896,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXmppEndpointProducerBuilder synchronous(
@@ -916,6 +932,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XmppEndpointBuilder login(String login) {
@@ -951,6 +968,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default XmppEndpointBuilder pubsub(String pubsub) {
@@ -1017,6 +1035,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default XmppEndpointBuilder testConnectionOnStartup(
@@ -1116,6 +1135,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common (advanced)
          */
         default AdvancedXmppEndpointBuilder createAccount(String createAccount) {
@@ -1154,6 +1174,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXmppEndpointBuilder basicPropertyBinding(
@@ -1210,6 +1231,7 @@ public interface XmppEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedXmppEndpointBuilder synchronous(String synchronous) {

@@ -89,6 +89,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: 0
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder blobOffset(String blobOffset) {
@@ -114,6 +115,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
          * 
+         * Default: blockblob
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder blobType(String blobType) {
@@ -138,6 +140,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder closeStreamAfterRead(
@@ -224,6 +227,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default BlobServiceEndpointConsumerBuilder publicForRead(
@@ -285,6 +289,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default BlobServiceEndpointConsumerBuilder bridgeErrorHandler(
@@ -381,6 +386,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBlobServiceEndpointConsumerBuilder basicPropertyBinding(
@@ -408,6 +414,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBlobServiceEndpointConsumerBuilder synchronous(
@@ -472,6 +479,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: 0
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder blobOffset(String blobOffset) {
@@ -497,6 +505,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
          * 
+         * Default: blockblob
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder blobType(String blobType) {
@@ -521,6 +530,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterRead(
@@ -607,6 +617,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default BlobServiceEndpointProducerBuilder publicForRead(
@@ -694,6 +705,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder closeStreamAfterWrite(
@@ -735,6 +747,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder lazyStartProducer(
@@ -762,6 +775,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.blob.BlobServiceOperations</code> type.
          * 
+         * Default: listBlobs
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder operation(String operation) {
@@ -810,6 +824,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default BlobServiceEndpointProducerBuilder useFlatListing(
@@ -849,6 +864,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBlobServiceEndpointProducerBuilder basicPropertyBinding(
@@ -876,6 +892,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBlobServiceEndpointProducerBuilder synchronous(
@@ -939,6 +956,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: 0
          * Group: common
          */
         default BlobServiceEndpointBuilder blobOffset(String blobOffset) {
@@ -964,6 +982,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.azure.blob.BlobType</code> type.
          * 
+         * Default: blockblob
          * Group: common
          */
         default BlobServiceEndpointBuilder blobType(String blobType) {
@@ -988,6 +1007,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default BlobServiceEndpointBuilder closeStreamAfterRead(
@@ -1071,6 +1091,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default BlobServiceEndpointBuilder publicForRead(String publicForRead) {
@@ -1131,6 +1152,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBlobServiceEndpointBuilder basicPropertyBinding(
@@ -1158,6 +1180,7 @@ public interface BlobServiceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedBlobServiceEndpointBuilder synchronous(

@@ -71,6 +71,7 @@ public interface IPFSEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IPFSEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -119,6 +120,7 @@ public interface IPFSEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder basicPropertyBinding(
@@ -145,6 +147,7 @@ public interface IPFSEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIPFSEndpointBuilder synchronous(String synchronous) {

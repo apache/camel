@@ -85,6 +85,7 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JGroupsEndpointConsumerBuilder bridgeErrorHandler(
@@ -114,6 +115,7 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default JGroupsEndpointConsumerBuilder enableViewMessages(
@@ -209,6 +211,7 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsEndpointConsumerBuilder basicPropertyBinding(
@@ -236,6 +239,7 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsEndpointConsumerBuilder synchronous(
@@ -301,6 +305,7 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JGroupsEndpointProducerBuilder lazyStartProducer(
@@ -339,6 +344,7 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsEndpointProducerBuilder basicPropertyBinding(
@@ -366,6 +372,7 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsEndpointProducerBuilder synchronous(
@@ -428,6 +435,7 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsEndpointBuilder basicPropertyBinding(
@@ -454,6 +462,7 @@ public interface JGroupsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJGroupsEndpointBuilder synchronous(String synchronous) {

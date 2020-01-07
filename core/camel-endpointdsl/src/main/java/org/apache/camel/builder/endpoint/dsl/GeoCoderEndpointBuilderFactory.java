@@ -57,6 +57,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GeoCoderEndpointBuilder headersOnly(String headersOnly) {
@@ -109,6 +110,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GeoCoderEndpointBuilder lazyStartProducer(
@@ -271,6 +273,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGeoCoderEndpointBuilder basicPropertyBinding(
@@ -297,6 +300,7 @@ public interface GeoCoderEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGeoCoderEndpointBuilder synchronous(String synchronous) {

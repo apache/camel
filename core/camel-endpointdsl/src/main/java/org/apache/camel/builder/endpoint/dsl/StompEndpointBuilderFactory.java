@@ -133,6 +133,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default StompEndpointConsumerBuilder bridgeErrorHandler(
@@ -276,6 +277,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointConsumerBuilder basicPropertyBinding(
@@ -331,6 +333,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointConsumerBuilder synchronous(
@@ -442,6 +445,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StompEndpointProducerBuilder lazyStartProducer(
@@ -528,6 +532,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointProducerBuilder basicPropertyBinding(
@@ -583,6 +588,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointProducerBuilder synchronous(
@@ -738,6 +744,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointBuilder basicPropertyBinding(
@@ -792,6 +799,7 @@ public interface StompEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStompEndpointBuilder synchronous(String synchronous) {

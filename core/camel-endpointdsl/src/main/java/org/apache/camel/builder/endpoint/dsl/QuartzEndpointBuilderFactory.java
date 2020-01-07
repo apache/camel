@@ -70,6 +70,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default QuartzEndpointBuilder bridgeErrorHandler(
@@ -113,6 +114,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default QuartzEndpointBuilder deleteJob(String deleteJob) {
@@ -138,6 +140,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default QuartzEndpointBuilder durableJob(String durableJob) {
@@ -169,6 +172,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default QuartzEndpointBuilder pauseJob(String pauseJob) {
@@ -194,6 +198,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default QuartzEndpointBuilder recoverableJob(String recoverableJob) {
@@ -219,6 +224,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default QuartzEndpointBuilder stateful(String stateful) {
@@ -243,6 +249,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default QuartzEndpointBuilder autoStartScheduler(
@@ -269,6 +276,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default QuartzEndpointBuilder fireNow(String fireNow) {
@@ -320,6 +328,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default QuartzEndpointBuilder triggerStartDelay(String triggerStartDelay) {
@@ -414,6 +423,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder basicPropertyBinding(
@@ -490,6 +500,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder prefixJobNameWithEndpointId(
@@ -516,6 +527,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder synchronous(String synchronous) {
@@ -573,6 +585,7 @@ public interface QuartzEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedQuartzEndpointBuilder usingFixedCamelContextName(

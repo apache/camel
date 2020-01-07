@@ -75,6 +75,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtomEndpointBuilder bridgeErrorHandler(String bridgeErrorHandler) {
@@ -98,6 +99,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default AtomEndpointBuilder feedHeader(String feedHeader) {
@@ -121,6 +123,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default AtomEndpointBuilder filter(String filter) {
@@ -183,6 +186,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtomEndpointBuilder sendEmptyMessageWhenIdle(
@@ -209,6 +213,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtomEndpointBuilder sortEntries(String sortEntries) {
@@ -234,6 +239,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default AtomEndpointBuilder splitEntries(String splitEntries) {
@@ -261,6 +267,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default AtomEndpointBuilder throttleEntries(String throttleEntries) {
@@ -384,6 +391,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default AtomEndpointBuilder delay(String delay) {
@@ -409,6 +417,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default AtomEndpointBuilder greedy(String greedy) {
@@ -436,6 +445,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default AtomEndpointBuilder initialDelay(String initialDelay) {
@@ -463,6 +473,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default AtomEndpointBuilder repeatCount(String repeatCount) {
@@ -489,6 +500,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default AtomEndpointBuilder runLoggingLevel(String runLoggingLevel) {
@@ -584,6 +596,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default AtomEndpointBuilder startScheduler(String startScheduler) {
@@ -608,6 +621,7 @@ public interface AtomEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default AtomEndpointBuilder timeUnit(String timeUnit) {
@@ -633,6 +647,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default AtomEndpointBuilder useFixedDelay(String useFixedDelay) {
@@ -758,6 +773,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomEndpointBuilder basicPropertyBinding(
@@ -784,6 +800,7 @@ public interface AtomEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomEndpointBuilder synchronous(String synchronous) {

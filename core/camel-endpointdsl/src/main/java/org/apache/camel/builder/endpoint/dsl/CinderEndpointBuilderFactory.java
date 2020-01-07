@@ -120,6 +120,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CinderEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -216,6 +217,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCinderEndpointBuilder basicPropertyBinding(
@@ -242,6 +244,7 @@ public interface CinderEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCinderEndpointBuilder synchronous(String synchronous) {

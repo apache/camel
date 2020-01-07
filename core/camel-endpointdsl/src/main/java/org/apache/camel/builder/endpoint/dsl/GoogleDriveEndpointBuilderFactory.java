@@ -208,6 +208,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleDriveEndpointConsumerBuilder bridgeErrorHandler(
@@ -235,6 +236,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleDriveEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -349,6 +351,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder delay(String delay) {
@@ -374,6 +377,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder greedy(String greedy) {
@@ -402,6 +406,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder initialDelay(
@@ -430,6 +435,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder repeatCount(
@@ -458,6 +464,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder runLoggingLevel(
@@ -555,6 +562,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder startScheduler(
@@ -580,6 +588,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -606,6 +615,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleDriveEndpointConsumerBuilder useFixedDelay(
@@ -733,6 +743,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder basicPropertyBinding(
@@ -760,6 +771,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleDriveEndpointConsumerBuilder synchronous(
@@ -942,6 +954,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GoogleDriveEndpointProducerBuilder lazyStartProducer(
@@ -980,6 +993,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleDriveEndpointProducerBuilder basicPropertyBinding(
@@ -1007,6 +1021,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleDriveEndpointProducerBuilder synchronous(
@@ -1181,6 +1196,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleDriveEndpointBuilder basicPropertyBinding(
@@ -1208,6 +1224,7 @@ public interface GoogleDriveEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleDriveEndpointBuilder synchronous(

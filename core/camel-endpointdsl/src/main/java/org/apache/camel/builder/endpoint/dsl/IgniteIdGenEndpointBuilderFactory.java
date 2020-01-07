@@ -80,6 +80,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>java.lang.Long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default IgniteIdGenEndpointBuilder initialValue(String initialValue) {
@@ -120,6 +121,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IgniteIdGenEndpointBuilder lazyStartProducer(
@@ -178,6 +180,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default IgniteIdGenEndpointBuilder propagateIncomingBodyIfNoReturnValue(
@@ -205,6 +208,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IgniteIdGenEndpointBuilder treatCollectionsAsCacheObjects(
@@ -243,6 +247,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteIdGenEndpointBuilder basicPropertyBinding(
@@ -270,6 +275,7 @@ public interface IgniteIdGenEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteIdGenEndpointBuilder synchronous(

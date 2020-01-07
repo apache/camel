@@ -145,6 +145,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder bridgeErrorHandler(
@@ -203,6 +204,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KubernetesHPAEndpointConsumerBuilder poolSize(String poolSize) {
@@ -464,6 +466,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder basicPropertyBinding(
@@ -518,6 +521,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointConsumerBuilder synchronous(
@@ -643,6 +647,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesHPAEndpointProducerBuilder lazyStartProducer(
@@ -847,6 +852,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder basicPropertyBinding(
@@ -901,6 +907,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointProducerBuilder synchronous(
@@ -1168,6 +1175,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder basicPropertyBinding(
@@ -1222,6 +1230,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesHPAEndpointBuilder synchronous(

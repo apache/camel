@@ -81,6 +81,7 @@ public interface MSKEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MSKEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -189,6 +190,7 @@ public interface MSKEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: producer
          */
         default MSKEndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -251,6 +253,7 @@ public interface MSKEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMSKEndpointBuilder basicPropertyBinding(
@@ -277,6 +280,7 @@ public interface MSKEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMSKEndpointBuilder synchronous(String synchronous) {

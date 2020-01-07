@@ -99,6 +99,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
+         * Default: SET
          * Group: common
          */
         default AtomixValueEndpointConsumerBuilder defaultAction(
@@ -207,6 +208,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default AtomixValueEndpointConsumerBuilder bridgeErrorHandler(
@@ -302,6 +304,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointConsumerBuilder basicPropertyBinding(
@@ -381,6 +384,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointConsumerBuilder ephemeral(
@@ -488,6 +492,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointConsumerBuilder synchronous(
@@ -561,6 +566,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
+         * Default: SET
          * Group: common
          */
         default AtomixValueEndpointProducerBuilder defaultAction(
@@ -673,6 +679,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AtomixValueEndpointProducerBuilder lazyStartProducer(
@@ -711,6 +718,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointProducerBuilder basicPropertyBinding(
@@ -790,6 +798,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointProducerBuilder ephemeral(
@@ -897,6 +906,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointProducerBuilder synchronous(
@@ -969,6 +979,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.atomix.client.value.AtomixValue$Action</code> type.
          * 
+         * Default: SET
          * Group: common
          */
         default AtomixValueEndpointBuilder defaultAction(String defaultAction) {
@@ -1076,6 +1087,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointBuilder basicPropertyBinding(
@@ -1154,6 +1166,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointBuilder ephemeral(String ephemeral) {
@@ -1260,6 +1273,7 @@ public interface AtomixValueEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAtomixValueEndpointBuilder synchronous(

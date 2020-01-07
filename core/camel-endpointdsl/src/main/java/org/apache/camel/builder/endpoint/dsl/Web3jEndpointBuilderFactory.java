@@ -113,6 +113,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Web3jEndpointConsumerBuilder fullTransactionObjects(
@@ -184,6 +185,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Web3jEndpointConsumerBuilder quorumAPI(String quorumAPI) {
@@ -293,6 +295,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default Web3jEndpointConsumerBuilder bridgeErrorHandler(
@@ -389,6 +392,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeb3jEndpointConsumerBuilder basicPropertyBinding(
@@ -416,6 +420,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeb3jEndpointConsumerBuilder synchronous(
@@ -503,6 +508,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Web3jEndpointProducerBuilder fullTransactionObjects(
@@ -574,6 +580,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Web3jEndpointProducerBuilder quorumAPI(String quorumAPI) {
@@ -859,6 +866,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default Web3jEndpointProducerBuilder lazyStartProducer(
@@ -1074,6 +1082,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeb3jEndpointProducerBuilder basicPropertyBinding(
@@ -1101,6 +1110,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeb3jEndpointProducerBuilder synchronous(
@@ -1187,6 +1197,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Web3jEndpointBuilder fullTransactionObjects(
@@ -1258,6 +1269,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default Web3jEndpointBuilder quorumAPI(String quorumAPI) {
@@ -1369,6 +1381,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeb3jEndpointBuilder basicPropertyBinding(
@@ -1395,6 +1408,7 @@ public interface Web3jEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWeb3jEndpointBuilder synchronous(String synchronous) {

@@ -72,6 +72,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HazelcastInstanceEndpointBuilder bridgeErrorHandler(
@@ -239,6 +240,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastInstanceEndpointBuilder basicPropertyBinding(
@@ -266,6 +268,7 @@ public interface HazelcastInstanceEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastInstanceEndpointBuilder synchronous(

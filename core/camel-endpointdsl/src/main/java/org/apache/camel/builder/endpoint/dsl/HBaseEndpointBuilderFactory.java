@@ -246,6 +246,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder bridgeErrorHandler(
@@ -311,6 +312,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default HBaseEndpointConsumerBuilder remove(String remove) {
@@ -433,6 +435,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHBaseEndpointConsumerBuilder basicPropertyBinding(
@@ -460,6 +463,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHBaseEndpointConsumerBuilder synchronous(
@@ -685,6 +689,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HBaseEndpointProducerBuilder lazyStartProducer(
@@ -709,6 +714,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 100
          * Group: producer
          */
         default HBaseEndpointProducerBuilder maxResults(String maxResults) {
@@ -746,6 +752,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHBaseEndpointProducerBuilder basicPropertyBinding(
@@ -773,6 +780,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHBaseEndpointProducerBuilder synchronous(
@@ -994,6 +1002,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHBaseEndpointBuilder basicPropertyBinding(
@@ -1020,6 +1029,7 @@ public interface HBaseEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHBaseEndpointBuilder synchronous(String synchronous) {

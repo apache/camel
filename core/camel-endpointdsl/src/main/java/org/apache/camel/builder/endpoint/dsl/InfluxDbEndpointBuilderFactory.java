@@ -55,6 +55,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default InfluxDbEndpointBuilder batch(String batch) {
@@ -106,6 +107,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default InfluxDbEndpointBuilder lazyStartProducer(
@@ -180,6 +182,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder basicPropertyBinding(
@@ -206,6 +209,7 @@ public interface InfluxDbEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedInfluxDbEndpointBuilder synchronous(String synchronous) {

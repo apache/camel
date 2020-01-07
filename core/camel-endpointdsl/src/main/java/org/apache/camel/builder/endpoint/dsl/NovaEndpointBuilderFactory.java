@@ -119,6 +119,7 @@ public interface NovaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default NovaEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -215,6 +216,7 @@ public interface NovaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNovaEndpointBuilder basicPropertyBinding(
@@ -241,6 +243,7 @@ public interface NovaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedNovaEndpointBuilder synchronous(String synchronous) {

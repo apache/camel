@@ -77,6 +77,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder bridgeErrorHandler(
@@ -112,6 +113,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder maxMessagesPerPoll(
@@ -148,6 +150,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder routeEmptyResultSet(
@@ -175,6 +178,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -203,6 +207,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder transacted(String transacted) {
@@ -226,6 +231,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default MyBatisEndpointConsumerBuilder useIterator(String useIterator) {
@@ -339,6 +345,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder delay(String delay) {
@@ -364,6 +371,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder greedy(String greedy) {
@@ -391,6 +399,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -418,6 +427,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -445,6 +455,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder runLoggingLevel(
@@ -542,6 +553,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder startScheduler(
@@ -567,6 +579,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -593,6 +606,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default MyBatisEndpointConsumerBuilder useFixedDelay(
@@ -746,6 +760,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMyBatisEndpointConsumerBuilder basicPropertyBinding(
@@ -773,6 +788,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMyBatisEndpointConsumerBuilder synchronous(
@@ -815,6 +831,7 @@ public interface MyBatisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.ibatis.session.ExecutorType</code> type.
          * 
+         * Default: SIMPLE
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder executorType(String executorType) {
@@ -870,6 +887,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MyBatisEndpointProducerBuilder lazyStartProducer(
@@ -954,6 +972,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMyBatisEndpointProducerBuilder basicPropertyBinding(
@@ -981,6 +1000,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMyBatisEndpointProducerBuilder synchronous(
@@ -1030,6 +1050,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMyBatisEndpointBuilder basicPropertyBinding(
@@ -1056,6 +1077,7 @@ public interface MyBatisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMyBatisEndpointBuilder synchronous(String synchronous) {

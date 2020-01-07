@@ -71,6 +71,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder bridgeErrorHandler(
@@ -96,6 +97,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder concurrentConsumers(
@@ -137,6 +139,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>double</code> type.
          * 
+         * Default: 0.25
          * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder exchangesRefillLowWatermark(
@@ -162,6 +165,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnComplete(
@@ -189,6 +193,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder forwardOnError(
@@ -219,6 +224,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 128
          * Group: consumer
          */
         default ReactiveStreamsEndpointConsumerBuilder maxInflightExchanges(
@@ -315,6 +321,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder basicPropertyBinding(
@@ -342,6 +349,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointConsumerBuilder synchronous(
@@ -422,6 +430,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default ReactiveStreamsEndpointProducerBuilder lazyStartProducer(
@@ -461,6 +470,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder basicPropertyBinding(
@@ -488,6 +498,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointProducerBuilder synchronous(
@@ -537,6 +548,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointBuilder basicPropertyBinding(
@@ -564,6 +576,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedReactiveStreamsEndpointBuilder synchronous(

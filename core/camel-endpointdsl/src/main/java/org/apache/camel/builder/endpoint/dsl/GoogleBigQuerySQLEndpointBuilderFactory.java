@@ -101,6 +101,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GoogleBigQuerySQLEndpointBuilder lazyStartProducer(
@@ -140,6 +141,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder basicPropertyBinding(
@@ -167,6 +169,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleBigQuerySQLEndpointBuilder synchronous(

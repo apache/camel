@@ -124,6 +124,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KubernetesServiceAccountsEndpointBuilder lazyStartProducer(
@@ -357,6 +358,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder basicPropertyBinding(
@@ -411,6 +413,7 @@ public interface KubernetesServiceAccountsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKubernetesServiceAccountsEndpointBuilder synchronous(

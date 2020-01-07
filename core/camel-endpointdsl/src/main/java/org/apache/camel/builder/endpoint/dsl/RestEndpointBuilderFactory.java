@@ -129,6 +129,7 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default RestEndpointConsumerBuilder bridgeErrorHandler(
@@ -252,6 +253,7 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestEndpointConsumerBuilder basicPropertyBinding(
@@ -279,6 +281,7 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestEndpointConsumerBuilder synchronous(
@@ -445,6 +448,7 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default RestEndpointProducerBuilder lazyStartProducer(
@@ -512,6 +516,7 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestEndpointProducerBuilder basicPropertyBinding(
@@ -539,6 +544,7 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestEndpointProducerBuilder synchronous(
@@ -645,6 +651,7 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestEndpointBuilder basicPropertyBinding(
@@ -671,6 +678,7 @@ public interface RestEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedRestEndpointBuilder synchronous(String synchronous) {

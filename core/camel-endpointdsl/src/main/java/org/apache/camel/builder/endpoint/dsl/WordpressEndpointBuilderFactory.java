@@ -97,6 +97,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default WordpressEndpointConsumerBuilder force(String force) {
@@ -219,6 +220,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default WordpressEndpointConsumerBuilder bridgeErrorHandler(
@@ -314,6 +316,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointConsumerBuilder basicPropertyBinding(
@@ -341,6 +344,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointConsumerBuilder synchronous(
@@ -414,6 +418,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default WordpressEndpointProducerBuilder force(String force) {
@@ -540,6 +545,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default WordpressEndpointProducerBuilder lazyStartProducer(
@@ -578,6 +584,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointProducerBuilder basicPropertyBinding(
@@ -605,6 +612,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointProducerBuilder synchronous(
@@ -677,6 +685,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default WordpressEndpointBuilder force(String force) {
@@ -798,6 +807,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointBuilder basicPropertyBinding(
@@ -824,6 +834,7 @@ public interface WordpressEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedWordpressEndpointBuilder synchronous(String synchronous) {

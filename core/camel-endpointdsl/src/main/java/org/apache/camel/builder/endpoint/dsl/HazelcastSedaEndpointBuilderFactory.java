@@ -143,6 +143,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HazelcastSedaEndpointConsumerBuilder bridgeErrorHandler(
@@ -168,6 +169,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: seda
          */
         default HazelcastSedaEndpointConsumerBuilder concurrentConsumers(
@@ -195,6 +197,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: seda
          */
         default HazelcastSedaEndpointConsumerBuilder onErrorDelay(
@@ -225,6 +228,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: seda
          */
         default HazelcastSedaEndpointConsumerBuilder pollTimeout(
@@ -254,6 +258,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: seda
          */
         default HazelcastSedaEndpointConsumerBuilder transacted(
@@ -281,6 +286,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: seda
          */
         default HazelcastSedaEndpointConsumerBuilder transferExchange(
@@ -376,6 +382,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder basicPropertyBinding(
@@ -403,6 +410,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastSedaEndpointConsumerBuilder synchronous(
@@ -527,6 +535,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HazelcastSedaEndpointProducerBuilder lazyStartProducer(
@@ -552,6 +561,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: seda
          */
         default HazelcastSedaEndpointProducerBuilder concurrentConsumers(
@@ -579,6 +589,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: seda
          */
         default HazelcastSedaEndpointProducerBuilder onErrorDelay(
@@ -609,6 +620,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: seda
          */
         default HazelcastSedaEndpointProducerBuilder pollTimeout(
@@ -638,6 +650,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: seda
          */
         default HazelcastSedaEndpointProducerBuilder transacted(
@@ -665,6 +678,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: seda
          */
         default HazelcastSedaEndpointProducerBuilder transferExchange(
@@ -703,6 +717,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastSedaEndpointProducerBuilder basicPropertyBinding(
@@ -730,6 +745,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastSedaEndpointProducerBuilder synchronous(
@@ -838,6 +854,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder concurrentConsumers(
@@ -864,6 +881,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder onErrorDelay(String onErrorDelay) {
@@ -893,6 +911,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder pollTimeout(String pollTimeout) {
@@ -920,6 +939,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder transacted(String transacted) {
@@ -946,6 +966,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: seda
          */
         default HazelcastSedaEndpointBuilder transferExchange(
@@ -984,6 +1005,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastSedaEndpointBuilder basicPropertyBinding(
@@ -1011,6 +1033,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastSedaEndpointBuilder synchronous(

@@ -75,6 +75,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -98,6 +99,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 0
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder minRate(String minRate) {
@@ -123,6 +125,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder preloadSize(String preloadSize) {
@@ -148,6 +151,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 3
          * Group: consumer
          */
         default DataSetEndpointConsumerBuilder produceDelay(String produceDelay) {
@@ -185,6 +189,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDataSetEndpointConsumerBuilder basicPropertyBinding(
@@ -212,6 +217,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDataSetEndpointConsumerBuilder synchronous(
@@ -267,6 +273,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default DataSetEndpointProducerBuilder consumeDelay(String consumeDelay) {
@@ -304,6 +311,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default DataSetEndpointProducerBuilder assertPeriod(String assertPeriod) {
@@ -349,6 +357,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default DataSetEndpointProducerBuilder expectedCount(
@@ -381,6 +390,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DataSetEndpointProducerBuilder failFast(String failFast) {
@@ -421,6 +431,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default DataSetEndpointProducerBuilder lazyStartProducer(
@@ -472,6 +483,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default DataSetEndpointProducerBuilder resultMinimumWaitTime(
@@ -499,6 +511,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default DataSetEndpointProducerBuilder resultWaitTime(
@@ -549,6 +562,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default DataSetEndpointProducerBuilder retainFirst(String retainFirst) {
@@ -598,6 +612,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default DataSetEndpointProducerBuilder retainLast(String retainLast) {
@@ -624,6 +639,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default DataSetEndpointProducerBuilder sleepForEmptyTest(
@@ -662,6 +678,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedDataSetEndpointProducerBuilder copyOnExchange(
@@ -689,6 +706,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDataSetEndpointProducerBuilder basicPropertyBinding(
@@ -716,6 +734,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDataSetEndpointProducerBuilder synchronous(
@@ -783,6 +802,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDataSetEndpointBuilder basicPropertyBinding(
@@ -809,6 +829,7 @@ public interface DataSetEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedDataSetEndpointBuilder synchronous(String synchronous) {

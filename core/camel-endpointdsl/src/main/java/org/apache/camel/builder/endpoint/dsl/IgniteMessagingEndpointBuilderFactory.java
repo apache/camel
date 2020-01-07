@@ -62,6 +62,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default IgniteMessagingEndpointConsumerBuilder propagateIncomingBodyIfNoReturnValue(
@@ -89,6 +90,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IgniteMessagingEndpointConsumerBuilder treatCollectionsAsCacheObjects(
@@ -126,6 +128,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default IgniteMessagingEndpointConsumerBuilder bridgeErrorHandler(
@@ -222,6 +225,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder basicPropertyBinding(
@@ -249,6 +253,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteMessagingEndpointConsumerBuilder synchronous(
@@ -287,6 +292,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default IgniteMessagingEndpointProducerBuilder propagateIncomingBodyIfNoReturnValue(
@@ -314,6 +320,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IgniteMessagingEndpointProducerBuilder treatCollectionsAsCacheObjects(
@@ -383,6 +390,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder lazyStartProducer(
@@ -410,6 +418,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.ignite.messaging.IgniteMessagingSendMode</code> type.
          * 
+         * Default: UNORDERED
          * Group: producer
          */
         default IgniteMessagingEndpointProducerBuilder sendMode(String sendMode) {
@@ -470,6 +479,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteMessagingEndpointProducerBuilder basicPropertyBinding(
@@ -497,6 +507,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteMessagingEndpointProducerBuilder synchronous(
@@ -535,6 +546,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default IgniteMessagingEndpointBuilder propagateIncomingBodyIfNoReturnValue(
@@ -562,6 +574,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default IgniteMessagingEndpointBuilder treatCollectionsAsCacheObjects(
@@ -600,6 +613,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteMessagingEndpointBuilder basicPropertyBinding(
@@ -627,6 +641,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedIgniteMessagingEndpointBuilder synchronous(

@@ -75,6 +75,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default UndertowEndpointConsumerBuilder useStreaming(String useStreaming) {
@@ -99,6 +100,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: consumer
          */
         default UndertowEndpointConsumerBuilder accessLog(String accessLog) {
@@ -135,6 +137,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default UndertowEndpointConsumerBuilder bridgeErrorHandler(
@@ -177,6 +180,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: consumer
          */
         default UndertowEndpointConsumerBuilder matchOnUriPrefix(
@@ -204,6 +208,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default UndertowEndpointConsumerBuilder muteException(
@@ -231,6 +236,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default UndertowEndpointConsumerBuilder optionsEnabled(
@@ -260,6 +266,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: websocket
          */
         default UndertowEndpointConsumerBuilder fireWebSocketChannelEvents(
@@ -448,6 +455,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder basicPropertyBinding(
@@ -503,6 +511,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedUndertowEndpointConsumerBuilder synchronous(
@@ -581,6 +590,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default UndertowEndpointProducerBuilder useStreaming(String useStreaming) {
@@ -631,6 +641,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: producer
          */
         default UndertowEndpointProducerBuilder keepAlive(String keepAlive) {
@@ -671,6 +682,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default UndertowEndpointProducerBuilder lazyStartProducer(
@@ -738,6 +750,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default UndertowEndpointProducerBuilder preserveHostHeader(
@@ -764,6 +777,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: producer
          */
         default UndertowEndpointProducerBuilder reuseAddresses(
@@ -789,6 +803,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: producer
          */
         default UndertowEndpointProducerBuilder tcpNoDelay(String tcpNoDelay) {
@@ -818,6 +833,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: producer
          */
         default UndertowEndpointProducerBuilder throwExceptionOnFailure(
@@ -858,6 +874,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: producer
          */
         default UndertowEndpointProducerBuilder transferException(
@@ -885,6 +902,7 @@ public interface UndertowEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 30000
          * Group: websocket
          */
         default UndertowEndpointProducerBuilder sendTimeout(String sendTimeout) {
@@ -1005,6 +1023,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder basicPropertyBinding(
@@ -1060,6 +1079,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedUndertowEndpointProducerBuilder synchronous(
@@ -1137,6 +1157,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default UndertowEndpointBuilder useStreaming(String useStreaming) {
@@ -1230,6 +1251,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder basicPropertyBinding(
@@ -1284,6 +1306,7 @@ public interface UndertowEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedUndertowEndpointBuilder synchronous(String synchronous) {

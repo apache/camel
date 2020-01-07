@@ -65,6 +65,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SipEndpointConsumerBuilder cacheConnections(
@@ -187,6 +188,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 3600
          * Group: common
          */
         default SipEndpointConsumerBuilder msgExpiration(String msgExpiration) {
@@ -213,6 +215,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: common
          */
         default SipEndpointConsumerBuilder receiveTimeoutMillis(
@@ -323,6 +326,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SipEndpointConsumerBuilder bridgeErrorHandler(
@@ -349,6 +353,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SipEndpointConsumerBuilder consumer(String consumer) {
@@ -378,6 +383,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SipEndpointConsumerBuilder presenceAgent(String presenceAgent) {
@@ -463,6 +469,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: proxy
          */
         default SipEndpointConsumerBuilder useRouterForAllUris(
@@ -583,6 +590,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder basicPropertyBinding(
@@ -878,6 +886,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder maxMessageSize(
@@ -1001,6 +1010,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointConsumerBuilder synchronous(
@@ -1097,6 +1107,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SipEndpointProducerBuilder cacheConnections(
@@ -1219,6 +1230,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 3600
          * Group: common
          */
         default SipEndpointProducerBuilder msgExpiration(String msgExpiration) {
@@ -1245,6 +1257,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: common
          */
         default SipEndpointProducerBuilder receiveTimeoutMillis(
@@ -1359,6 +1372,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SipEndpointProducerBuilder lazyStartProducer(
@@ -1445,6 +1459,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: proxy
          */
         default SipEndpointProducerBuilder useRouterForAllUris(
@@ -1508,6 +1523,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder basicPropertyBinding(
@@ -1803,6 +1819,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder maxMessageSize(
@@ -1926,6 +1943,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointProducerBuilder synchronous(
@@ -2021,6 +2039,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: common
          */
         default SipEndpointBuilder cacheConnections(String cacheConnections) {
@@ -2141,6 +2160,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 3600
          * Group: common
          */
         default SipEndpointBuilder msgExpiration(String msgExpiration) {
@@ -2167,6 +2187,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 10000
          * Group: common
          */
         default SipEndpointBuilder receiveTimeoutMillis(
@@ -2326,6 +2347,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: proxy
          */
         default SipEndpointBuilder useRouterForAllUris(
@@ -2387,6 +2409,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder basicPropertyBinding(
@@ -2669,6 +2692,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1048576
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder maxMessageSize(String maxMessageSize) {
@@ -2788,6 +2812,7 @@ public interface SipEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSipEndpointBuilder synchronous(String synchronous) {

@@ -55,6 +55,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JoltEndpointBuilder contentCache(String contentCache) {
@@ -82,6 +83,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
          * 
+         * Default: Hydrated
          * Group: producer
          */
         default JoltEndpointBuilder inputType(String inputType) {
@@ -121,6 +123,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default JoltEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -148,6 +151,7 @@ public interface JoltEndpointBuilderFactory {
          * <code>org.apache.camel.component.jolt.JoltInputOutputType</code>
          * type.
          * 
+         * Default: Hydrated
          * Group: producer
          */
         default JoltEndpointBuilder outputType(String outputType) {
@@ -175,6 +179,7 @@ public interface JoltEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.jolt.JoltTransformType</code> type.
          * 
+         * Default: Chainr
          * Group: producer
          */
         default JoltEndpointBuilder transformDsl(String transformDsl) {
@@ -212,6 +217,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJoltEndpointBuilder basicPropertyBinding(
@@ -238,6 +244,7 @@ public interface JoltEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedJoltEndpointBuilder synchronous(String synchronous) {

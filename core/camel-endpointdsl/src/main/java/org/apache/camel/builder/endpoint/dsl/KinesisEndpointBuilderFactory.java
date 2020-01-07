@@ -126,6 +126,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default KinesisEndpointConsumerBuilder proxyProtocol(
@@ -177,6 +178,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder bridgeErrorHandler(
@@ -206,6 +208,7 @@ public interface KinesisEndpointBuilderFactory {
          * <code>com.amazonaws.services.kinesis.model.ShardIteratorType</code>
          * type.
          * 
+         * Default: TRIM_HORIZON
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder iteratorType(String iteratorType) {
@@ -230,6 +233,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder maxResultsPerRequest(
@@ -257,6 +261,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -307,6 +312,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.aws.kinesis.KinesisShardClosedStrategyEnum</code> type.
          * 
+         * Default: ignore
          * Group: consumer
          */
         default KinesisEndpointConsumerBuilder shardClosed(String shardClosed) {
@@ -431,6 +437,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder delay(String delay) {
@@ -456,6 +463,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder greedy(String greedy) {
@@ -483,6 +491,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -510,6 +519,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -537,6 +547,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder runLoggingLevel(
@@ -634,6 +645,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder startScheduler(
@@ -659,6 +671,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -685,6 +698,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default KinesisEndpointConsumerBuilder useFixedDelay(
@@ -834,6 +848,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKinesisEndpointConsumerBuilder basicPropertyBinding(
@@ -861,6 +876,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKinesisEndpointConsumerBuilder synchronous(
@@ -958,6 +974,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default KinesisEndpointProducerBuilder proxyProtocol(
@@ -1013,6 +1030,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default KinesisEndpointProducerBuilder lazyStartProducer(
@@ -1073,6 +1091,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKinesisEndpointProducerBuilder basicPropertyBinding(
@@ -1100,6 +1119,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKinesisEndpointProducerBuilder synchronous(
@@ -1196,6 +1216,7 @@ public interface KinesisEndpointBuilderFactory {
          * The option will be converted to a <code>com.amazonaws.Protocol</code>
          * type.
          * 
+         * Default: HTTPS
          * Group: common
          */
         default KinesisEndpointBuilder proxyProtocol(String proxyProtocol) {
@@ -1269,6 +1290,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKinesisEndpointBuilder basicPropertyBinding(
@@ -1295,6 +1317,7 @@ public interface KinesisEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedKinesisEndpointBuilder synchronous(String synchronous) {

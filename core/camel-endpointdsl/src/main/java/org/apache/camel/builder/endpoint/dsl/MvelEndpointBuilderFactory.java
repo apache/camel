@@ -54,6 +54,7 @@ public interface MvelEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MvelEndpointBuilder contentCache(String contentCache) {
@@ -104,6 +105,7 @@ public interface MvelEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MvelEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -141,6 +143,7 @@ public interface MvelEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMvelEndpointBuilder basicPropertyBinding(
@@ -167,6 +170,7 @@ public interface MvelEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMvelEndpointBuilder synchronous(String synchronous) {

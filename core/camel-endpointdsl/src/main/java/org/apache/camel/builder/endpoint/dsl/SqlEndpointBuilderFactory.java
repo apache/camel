@@ -64,6 +64,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default SqlEndpointConsumerBuilder allowNamedParameters(
@@ -171,6 +172,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
+         * Default: SelectList
          * Group: common
          */
         default SqlEndpointConsumerBuilder outputType(String outputType) {
@@ -200,6 +202,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
+         * Default: ,
          * Group: common
          */
         default SqlEndpointConsumerBuilder separator(String separator) {
@@ -224,6 +227,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder breakBatchOnConsumeFail(
@@ -261,6 +265,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder bridgeErrorHandler(
@@ -286,6 +291,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder expectedUpdateCount(
@@ -377,6 +383,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder routeEmptyResultSet(
@@ -404,6 +411,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -432,6 +440,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder transacted(String transacted) {
@@ -457,6 +466,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default SqlEndpointConsumerBuilder useIterator(String useIterator) {
@@ -570,6 +580,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder delay(String delay) {
@@ -595,6 +606,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder greedy(String greedy) {
@@ -622,6 +634,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -649,6 +662,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -676,6 +690,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder runLoggingLevel(
@@ -772,6 +787,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -796,6 +812,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -821,6 +838,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default SqlEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -987,6 +1005,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder alwaysPopulateStatement(
@@ -1014,6 +1033,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder basicPropertyBinding(
@@ -1116,6 +1136,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder synchronous(
@@ -1170,6 +1191,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSqlEndpointConsumerBuilder usePlaceholder(
@@ -1206,6 +1228,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default SqlEndpointProducerBuilder allowNamedParameters(
@@ -1313,6 +1336,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
+         * Default: SelectList
          * Group: common
          */
         default SqlEndpointProducerBuilder outputType(String outputType) {
@@ -1342,6 +1366,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
+         * Default: ,
          * Group: common
          */
         default SqlEndpointProducerBuilder separator(String separator) {
@@ -1365,6 +1390,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlEndpointProducerBuilder batch(String batch) {
@@ -1405,6 +1431,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlEndpointProducerBuilder lazyStartProducer(
@@ -1431,6 +1458,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlEndpointProducerBuilder noop(String noop) {
@@ -1459,6 +1487,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SqlEndpointProducerBuilder useMessageBodyForSql(
@@ -1505,6 +1534,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder alwaysPopulateStatement(
@@ -1532,6 +1562,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder basicPropertyBinding(
@@ -1634,6 +1665,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder synchronous(
@@ -1688,6 +1720,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSqlEndpointProducerBuilder usePlaceholder(
@@ -1724,6 +1757,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: common
          */
         default SqlEndpointBuilder allowNamedParameters(
@@ -1831,6 +1865,7 @@ public interface SqlEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.sql.SqlOutputType</code> type.
          * 
+         * Default: SelectList
          * Group: common
          */
         default SqlEndpointBuilder outputType(String outputType) {
@@ -1860,6 +1895,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>char</code> type.
          * 
+         * Default: ,
          * Group: common
          */
         default SqlEndpointBuilder separator(String separator) {
@@ -1905,6 +1941,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder alwaysPopulateStatement(
@@ -1932,6 +1969,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder basicPropertyBinding(
@@ -2031,6 +2069,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder synchronous(String synchronous) {
@@ -2083,6 +2122,7 @@ public interface SqlEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: advanced
          */
         default AdvancedSqlEndpointBuilder usePlaceholder(String usePlaceholder) {

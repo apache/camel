@@ -62,6 +62,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AhcEndpointBuilder bridgeEndpoint(String bridgeEndpoint) {
@@ -87,6 +88,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 4096
          * Group: producer
          */
         default AhcEndpointBuilder bufferSize(String bufferSize) {
@@ -112,6 +114,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AhcEndpointBuilder connectionClose(String connectionClose) {
@@ -203,6 +206,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AhcEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -231,6 +235,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default AhcEndpointBuilder throwExceptionOnFailure(
@@ -271,6 +276,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default AhcEndpointBuilder transferException(String transferException) {
@@ -344,6 +350,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder basicPropertyBinding(
@@ -451,6 +458,7 @@ public interface AhcEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedAhcEndpointBuilder synchronous(String synchronous) {

@@ -119,6 +119,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder createCacheIfNotExist(
@@ -146,6 +147,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.component.caffeine.EvictionType</code> type.
          * 
+         * Default: SIZE_BASED
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder evictionType(String evictionType) {
@@ -172,6 +174,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 300
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder expireAfterAccessTime(
@@ -199,6 +202,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 300
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder expireAfterWriteTime(
@@ -223,6 +227,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder initialCapacity(
@@ -288,6 +293,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder lazyStartProducer(
@@ -312,6 +318,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 10000
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder maximumSize(String maximumSize) {
@@ -387,6 +394,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default CaffeineCacheEndpointBuilder statsEnabled(String statsEnabled) {
@@ -424,6 +432,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder basicPropertyBinding(
@@ -462,6 +471,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedCaffeineCacheEndpointBuilder synchronous(

@@ -57,6 +57,7 @@ public interface PdfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.pdfbox.pdmodel.font.PDFont</code> type.
          * 
+         * Default: Helvetica
          * Group: producer
          */
         default PdfEndpointBuilder font(String font) {
@@ -80,6 +81,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>float</code> type.
          * 
+         * Default: 14
          * Group: producer
          */
         default PdfEndpointBuilder fontSize(String fontSize) {
@@ -119,6 +121,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default PdfEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -142,6 +145,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 20
          * Group: producer
          */
         default PdfEndpointBuilder marginBottom(String marginBottom) {
@@ -165,6 +169,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 20
          * Group: producer
          */
         default PdfEndpointBuilder marginLeft(String marginLeft) {
@@ -188,6 +193,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 40
          * Group: producer
          */
         default PdfEndpointBuilder marginRight(String marginRight) {
@@ -211,6 +217,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 20
          * Group: producer
          */
         default PdfEndpointBuilder marginTop(String marginTop) {
@@ -236,6 +243,7 @@ public interface PdfEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.pdfbox.pdmodel.common.PDRectangle</code> type.
          * 
+         * Default: A4
          * Group: producer
          */
         default PdfEndpointBuilder pageSize(String pageSize) {
@@ -276,6 +284,7 @@ public interface PdfEndpointBuilderFactory {
          * <code>org.apache.camel.component.pdf.TextProcessingFactory</code>
          * type.
          * 
+         * Default: lineTermination
          * Group: producer
          */
         default PdfEndpointBuilder textProcessingFactory(
@@ -314,6 +323,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPdfEndpointBuilder basicPropertyBinding(
@@ -340,6 +350,7 @@ public interface PdfEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedPdfEndpointBuilder synchronous(String synchronous) {

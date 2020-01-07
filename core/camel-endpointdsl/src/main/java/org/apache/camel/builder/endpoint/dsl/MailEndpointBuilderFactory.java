@@ -79,6 +79,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MailEndpointConsumerBuilder bridgeErrorHandler(
@@ -107,6 +108,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default MailEndpointConsumerBuilder closeFolder(String closeFolder) {
@@ -152,6 +154,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MailEndpointConsumerBuilder delete(String delete) {
@@ -177,6 +180,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MailEndpointConsumerBuilder disconnect(String disconnect) {
@@ -211,6 +215,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MailEndpointConsumerBuilder handleFailedMessage(
@@ -268,6 +273,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MailEndpointConsumerBuilder mimeDecodeHeaders(
@@ -300,6 +306,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default MailEndpointConsumerBuilder peek(String peek) {
@@ -326,6 +333,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MailEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -359,6 +367,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default MailEndpointConsumerBuilder skipFailedMessage(
@@ -383,6 +392,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default MailEndpointConsumerBuilder unseen(String unseen) {
@@ -455,6 +465,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: filter
          */
         default MailEndpointConsumerBuilder idempotentRepositoryRemoveOnCommit(
@@ -592,6 +603,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 60000
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder delay(String delay) {
@@ -617,6 +629,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder greedy(String greedy) {
@@ -644,6 +657,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder initialDelay(String initialDelay) {
@@ -671,6 +685,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder repeatCount(String repeatCount) {
@@ -698,6 +713,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder runLoggingLevel(
@@ -795,6 +811,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder startScheduler(String startScheduler) {
@@ -819,6 +836,7 @@ public interface MailEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -844,6 +862,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default MailEndpointConsumerBuilder useFixedDelay(String useFixedDelay) {
@@ -1020,6 +1039,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder fetchSize(String fetchSize) {
@@ -1098,6 +1118,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer (advanced)
          */
         default AdvancedMailEndpointConsumerBuilder mapMailMessage(
@@ -1263,6 +1284,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder basicPropertyBinding(
@@ -1314,6 +1336,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder connectionTimeout(
@@ -1381,6 +1404,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder debugMode(String debugMode) {
@@ -1439,6 +1463,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUnsupportedCharset(
@@ -1470,6 +1495,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder ignoreUriScheme(
@@ -1528,6 +1554,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder synchronous(
@@ -1553,6 +1580,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointConsumerBuilder useInlineAttachments(
@@ -1641,6 +1669,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MailEndpointProducerBuilder lazyStartProducer(
@@ -1867,6 +1896,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder basicPropertyBinding(
@@ -1918,6 +1948,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder connectionTimeout(
@@ -1985,6 +2016,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder debugMode(String debugMode) {
@@ -2043,6 +2075,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder ignoreUnsupportedCharset(
@@ -2074,6 +2107,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder ignoreUriScheme(
@@ -2132,6 +2166,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder synchronous(
@@ -2157,6 +2192,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointProducerBuilder useInlineAttachments(
@@ -2330,6 +2366,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder basicPropertyBinding(
@@ -2381,6 +2418,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 30000
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder connectionTimeout(
@@ -2447,6 +2485,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder debugMode(String debugMode) {
@@ -2505,6 +2544,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder ignoreUnsupportedCharset(
@@ -2536,6 +2576,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder ignoreUriScheme(
@@ -2593,6 +2634,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder synchronous(String synchronous) {
@@ -2617,6 +2659,7 @@ public interface MailEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMailEndpointBuilder useInlineAttachments(

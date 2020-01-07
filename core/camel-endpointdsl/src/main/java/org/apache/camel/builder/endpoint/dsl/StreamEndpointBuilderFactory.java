@@ -97,6 +97,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder bridgeErrorHandler(
@@ -123,6 +124,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder fileWatcher(String fileWatcher) {
@@ -203,6 +205,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 2000
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder initialPromptDelay(
@@ -265,6 +268,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder retry(String retry) {
@@ -290,6 +294,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default StreamEndpointConsumerBuilder scanStream(String scanStream) {
@@ -408,6 +413,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder basicPropertyBinding(
@@ -469,6 +475,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStreamEndpointConsumerBuilder synchronous(
@@ -564,6 +571,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StreamEndpointProducerBuilder closeOnDone(String closeOnDone) {
@@ -626,6 +634,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default StreamEndpointProducerBuilder lazyStartProducer(
@@ -664,6 +673,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder basicPropertyBinding(
@@ -725,6 +735,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStreamEndpointProducerBuilder synchronous(
@@ -799,6 +810,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder basicPropertyBinding(
@@ -857,6 +869,7 @@ public interface StreamEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedStreamEndpointBuilder synchronous(String synchronous) {

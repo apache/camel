@@ -55,6 +55,7 @@ public interface SparkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer
          */
         default SparkEndpointBuilder collect(String collect) {
@@ -142,6 +143,7 @@ public interface SparkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default SparkEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -227,6 +229,7 @@ public interface SparkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSparkEndpointBuilder basicPropertyBinding(
@@ -253,6 +256,7 @@ public interface SparkEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSparkEndpointBuilder synchronous(String synchronous) {

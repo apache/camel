@@ -93,6 +93,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder allowNullBody(String allowNullBody) {
@@ -129,6 +130,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder bridgeErrorHandler(
@@ -162,6 +164,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder completionInterval(
@@ -221,6 +224,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 200
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder completionSize(String completionSize) {
@@ -252,6 +256,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 500
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder completionTimeout(
@@ -276,6 +281,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder consumerCount(String consumerCount) {
@@ -306,6 +312,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder eagerCheckCompletion(
@@ -337,6 +344,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder includeAllJMSXProperties(
@@ -365,6 +373,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder mapJmsMessage(String mapJmsMessage) {
@@ -392,6 +401,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 1000
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder pollDuration(String pollDuration) {
@@ -422,6 +432,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default SjmsBatchEndpointBuilder sendEmptyMessageWhenIdle(
@@ -533,6 +544,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder asyncStartListener(
@@ -560,6 +572,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder basicPropertyBinding(
@@ -671,6 +684,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder keepAliveDelay(
@@ -730,6 +744,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: 5000
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder recoveryInterval(
@@ -756,6 +771,7 @@ public interface SjmsBatchEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedSjmsBatchEndpointBuilder synchronous(String synchronous) {

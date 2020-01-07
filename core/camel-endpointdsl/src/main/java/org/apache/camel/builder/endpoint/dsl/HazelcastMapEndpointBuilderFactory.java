@@ -143,6 +143,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default HazelcastMapEndpointConsumerBuilder bridgeErrorHandler(
@@ -238,6 +239,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder basicPropertyBinding(
@@ -265,6 +267,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMapEndpointConsumerBuilder synchronous(
@@ -389,6 +392,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default HazelcastMapEndpointProducerBuilder lazyStartProducer(
@@ -427,6 +431,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMapEndpointProducerBuilder basicPropertyBinding(
@@ -454,6 +459,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMapEndpointProducerBuilder synchronous(
@@ -575,6 +581,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMapEndpointBuilder basicPropertyBinding(
@@ -602,6 +609,7 @@ public interface HazelcastMapEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedHazelcastMapEndpointBuilder synchronous(

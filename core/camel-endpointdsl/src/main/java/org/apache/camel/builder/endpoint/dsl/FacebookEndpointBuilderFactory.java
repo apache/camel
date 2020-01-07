@@ -256,6 +256,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointConsumerBuilder debugEnabled(String debugEnabled) {
@@ -451,6 +452,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: common
          */
         default FacebookEndpointConsumerBuilder gzipEnabled(String gzipEnabled) {
@@ -476,6 +478,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 20000
          * Group: common
          */
         default FacebookEndpointConsumerBuilder httpConnectionTimeout(
@@ -502,6 +505,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 2
          * Group: common
          */
         default FacebookEndpointConsumerBuilder httpDefaultMaxPerRoute(
@@ -528,6 +532,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 20
          * Group: common
          */
         default FacebookEndpointConsumerBuilder httpMaxTotalConnections(
@@ -554,6 +559,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 120000
          * Group: common
          */
         default FacebookEndpointConsumerBuilder httpReadTimeout(
@@ -580,6 +586,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 0
          * Group: common
          */
         default FacebookEndpointConsumerBuilder httpRetryCount(
@@ -606,6 +613,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 5
          * Group: common
          */
         default FacebookEndpointConsumerBuilder httpRetryIntervalSeconds(
@@ -632,6 +640,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 40000
          * Group: common
          */
         default FacebookEndpointConsumerBuilder httpStreamingReadTimeout(
@@ -741,6 +750,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointConsumerBuilder jsonStoreEnabled(
@@ -822,6 +832,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointConsumerBuilder mbeanEnabled(String mbeanEnabled) {
@@ -1119,6 +1130,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointConsumerBuilder prettyDebugEnabled(
@@ -1538,6 +1550,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: common
          */
         default FacebookEndpointConsumerBuilder useSSL(String useSSL) {
@@ -1597,6 +1610,7 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default FacebookEndpointConsumerBuilder bridgeErrorHandler(
@@ -1828,6 +1842,7 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFacebookEndpointConsumerBuilder basicPropertyBinding(
@@ -1855,6 +1870,7 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFacebookEndpointConsumerBuilder synchronous(
@@ -2083,6 +2099,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointProducerBuilder debugEnabled(String debugEnabled) {
@@ -2278,6 +2295,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: common
          */
         default FacebookEndpointProducerBuilder gzipEnabled(String gzipEnabled) {
@@ -2303,6 +2321,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 20000
          * Group: common
          */
         default FacebookEndpointProducerBuilder httpConnectionTimeout(
@@ -2329,6 +2348,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 2
          * Group: common
          */
         default FacebookEndpointProducerBuilder httpDefaultMaxPerRoute(
@@ -2355,6 +2375,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 20
          * Group: common
          */
         default FacebookEndpointProducerBuilder httpMaxTotalConnections(
@@ -2381,6 +2402,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 120000
          * Group: common
          */
         default FacebookEndpointProducerBuilder httpReadTimeout(
@@ -2407,6 +2429,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 0
          * Group: common
          */
         default FacebookEndpointProducerBuilder httpRetryCount(
@@ -2433,6 +2456,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 5
          * Group: common
          */
         default FacebookEndpointProducerBuilder httpRetryIntervalSeconds(
@@ -2459,6 +2483,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 40000
          * Group: common
          */
         default FacebookEndpointProducerBuilder httpStreamingReadTimeout(
@@ -2568,6 +2593,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointProducerBuilder jsonStoreEnabled(
@@ -2649,6 +2675,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointProducerBuilder mbeanEnabled(String mbeanEnabled) {
@@ -2946,6 +2973,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointProducerBuilder prettyDebugEnabled(
@@ -3365,6 +3393,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: common
          */
         default FacebookEndpointProducerBuilder useSSL(String useSSL) {
@@ -3428,6 +3457,7 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default FacebookEndpointProducerBuilder lazyStartProducer(
@@ -3602,6 +3632,7 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFacebookEndpointProducerBuilder basicPropertyBinding(
@@ -3629,6 +3660,7 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFacebookEndpointProducerBuilder synchronous(
@@ -3849,6 +3881,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointBuilder debugEnabled(String debugEnabled) {
@@ -4042,6 +4075,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: common
          */
         default FacebookEndpointBuilder gzipEnabled(String gzipEnabled) {
@@ -4067,6 +4101,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 20000
          * Group: common
          */
         default FacebookEndpointBuilder httpConnectionTimeout(
@@ -4093,6 +4128,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 2
          * Group: common
          */
         default FacebookEndpointBuilder httpDefaultMaxPerRoute(
@@ -4119,6 +4155,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 20
          * Group: common
          */
         default FacebookEndpointBuilder httpMaxTotalConnections(
@@ -4144,6 +4181,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 120000
          * Group: common
          */
         default FacebookEndpointBuilder httpReadTimeout(String httpReadTimeout) {
@@ -4168,6 +4206,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 0
          * Group: common
          */
         default FacebookEndpointBuilder httpRetryCount(String httpRetryCount) {
@@ -4193,6 +4232,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 5
          * Group: common
          */
         default FacebookEndpointBuilder httpRetryIntervalSeconds(
@@ -4219,6 +4259,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Integer</code>
          * type.
          * 
+         * Default: 40000
          * Group: common
          */
         default FacebookEndpointBuilder httpStreamingReadTimeout(
@@ -4328,6 +4369,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointBuilder jsonStoreEnabled(String jsonStoreEnabled) {
@@ -4407,6 +4449,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointBuilder mbeanEnabled(String mbeanEnabled) {
@@ -4701,6 +4744,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: false
          * Group: common
          */
         default FacebookEndpointBuilder prettyDebugEnabled(
@@ -5118,6 +5162,7 @@ public interface FacebookEndpointBuilderFactory {
          * The option will be converted to a <code>java.lang.Boolean</code>
          * type.
          * 
+         * Default: true
          * Group: common
          */
         default FacebookEndpointBuilder useSSL(String useSSL) {
@@ -5307,6 +5352,7 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFacebookEndpointBuilder basicPropertyBinding(
@@ -5333,6 +5379,7 @@ public interface FacebookEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedFacebookEndpointBuilder synchronous(String synchronous) {

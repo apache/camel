@@ -69,6 +69,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default MockEndpointBuilder assertPeriod(String assertPeriod) {
@@ -114,6 +115,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default MockEndpointBuilder expectedCount(String expectedCount) {
@@ -145,6 +147,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MockEndpointBuilder failFast(String failFast) {
@@ -184,6 +187,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default MockEndpointBuilder lazyStartProducer(String lazyStartProducer) {
@@ -234,6 +238,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default MockEndpointBuilder resultMinimumWaitTime(
@@ -260,6 +265,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default MockEndpointBuilder resultWaitTime(String resultWaitTime) {
@@ -309,6 +315,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default MockEndpointBuilder retainFirst(String retainFirst) {
@@ -358,6 +365,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>int</code> type.
          * 
+         * Default: -1
          * Group: producer
          */
         default MockEndpointBuilder retainLast(String retainLast) {
@@ -383,6 +391,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: producer
          */
         default MockEndpointBuilder sleepForEmptyTest(String sleepForEmptyTest) {
@@ -420,6 +429,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: producer (advanced)
          */
         default AdvancedMockEndpointBuilder copyOnExchange(String copyOnExchange) {
@@ -446,6 +456,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMockEndpointBuilder basicPropertyBinding(
@@ -472,6 +483,7 @@ public interface MockEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedMockEndpointBuilder synchronous(String synchronous) {

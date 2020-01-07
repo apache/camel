@@ -150,6 +150,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsEndpointConsumerBuilder bridgeErrorHandler(
@@ -177,6 +178,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: consumer
          */
         default GoogleSheetsEndpointConsumerBuilder sendEmptyMessageWhenIdle(
@@ -291,6 +293,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 500
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder delay(String delay) {
@@ -316,6 +319,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder greedy(String greedy) {
@@ -344,6 +348,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 1000
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder initialDelay(
@@ -372,6 +377,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>long</code> type.
          * 
+         * Default: 0
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder repeatCount(
@@ -400,6 +406,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>org.apache.camel.LoggingLevel</code> type.
          * 
+         * Default: TRACE
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder runLoggingLevel(
@@ -497,6 +504,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder startScheduler(
@@ -522,6 +530,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * The option will be converted to a
          * <code>java.util.concurrent.TimeUnit</code> type.
          * 
+         * Default: MILLISECONDS
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder timeUnit(String timeUnit) {
@@ -548,6 +557,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: true
          * Group: scheduler
          */
         default GoogleSheetsEndpointConsumerBuilder useFixedDelay(
@@ -675,6 +685,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder basicPropertyBinding(
@@ -702,6 +713,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointConsumerBuilder synchronous(
@@ -828,6 +840,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: producer
          */
         default GoogleSheetsEndpointProducerBuilder lazyStartProducer(
@@ -866,6 +879,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointProducerBuilder basicPropertyBinding(
@@ -893,6 +907,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointProducerBuilder synchronous(
@@ -1013,6 +1028,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointBuilder basicPropertyBinding(
@@ -1040,6 +1056,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
          * 
          * The option will be converted to a <code>boolean</code> type.
          * 
+         * Default: false
          * Group: advanced
          */
         default AdvancedGoogleSheetsEndpointBuilder synchronous(
