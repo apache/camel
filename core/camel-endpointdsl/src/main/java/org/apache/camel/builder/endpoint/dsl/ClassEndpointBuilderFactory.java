@@ -83,13 +83,13 @@ public interface ClassEndpointBuilderFactory {
          * bean is created or looked up once per request (exchange). This can be
          * used if you want to store state on a bean while processing a request
          * and you want to call the same bean instance multiple times while
-         * processing the request. The bean should not be thread-safe as the
-         * instance is only called from the same request. When using prototype
-         * scope, then the bean will be looked up or created per call. However
-         * in case of lookup then this is delegated to the bean registry such as
-         * Spring or CDI (if in use), which depends on their configuration can
-         * act as either singleton or prototype scope. so when using prototype
-         * then this depends on the delegated registry.
+         * processing the request. The bean does not have to be thread-safe as
+         * the instance is only called from the same request. When using
+         * prototype scope, then the bean will be looked up or created per call.
+         * However in case of lookup then this is delegated to the bean registry
+         * such as Spring or CDI (if in use), which depends on their
+         * configuration can act as either singleton or prototype scope. so when
+         * using prototype then this depends on the delegated registry.
          * 
          * The option is a: <code>org.apache.camel.BeanScope</code> type.
          * 
@@ -107,13 +107,13 @@ public interface ClassEndpointBuilderFactory {
          * bean is created or looked up once per request (exchange). This can be
          * used if you want to store state on a bean while processing a request
          * and you want to call the same bean instance multiple times while
-         * processing the request. The bean should not be thread-safe as the
-         * instance is only called from the same request. When using prototype
-         * scope, then the bean will be looked up or created per call. However
-         * in case of lookup then this is delegated to the bean registry such as
-         * Spring or CDI (if in use), which depends on their configuration can
-         * act as either singleton or prototype scope. so when using prototype
-         * then this depends on the delegated registry.
+         * processing the request. The bean does not have to be thread-safe as
+         * the instance is only called from the same request. When using
+         * prototype scope, then the bean will be looked up or created per call.
+         * However in case of lookup then this is delegated to the bean registry
+         * such as Spring or CDI (if in use), which depends on their
+         * configuration can act as either singleton or prototype scope. so when
+         * using prototype then this depends on the delegated registry.
          * 
          * The option will be converted to a
          * <code>org.apache.camel.BeanScope</code> type.
