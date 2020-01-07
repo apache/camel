@@ -35,13 +35,13 @@ public class GetProcessor implements Processor {
         Object body = exchange.getIn().getBody();
         if (body instanceof Key) {
             Value v = keyValue.get((Key) body);
-            exchange.getOut().setBody(v);
+            exchange.getMessage().setBody(v);
         }
         if (body instanceof Object[]) {
             Object[] args = (Object[]) body;
             if (args.length == 1 && args[0] instanceof Key) {
                 Value v = keyValue.get((Key) args[0]);
-                exchange.getOut().setBody(v);
+                exchange.getMessage().setBody(v);
             }
         }
     }
