@@ -38,8 +38,8 @@ import org.apache.camel.Message;
 import org.apache.camel.component.kafka.serde.KafkaHeaderSerializer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.support.DefaultAsyncProducer;
+import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.URISupport;
-import org.apache.commons.lang3.tuple.Pair;
 import org.apache.kafka.clients.producer.Callback;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
@@ -141,7 +141,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     }
 
     @SuppressWarnings({"unchecked", "rawtypes"})
-    protected Iterator<Pair<Object, ProducerRecord>> createRecorder(Exchange exchange) throws Exception {
+    protected Iterator<KeyValueHolder<Object, ProducerRecord>> createRecorder(Exchange exchange) throws Exception {
         String topic = endpoint.getConfiguration().getTopic();
 
         // must remove header so its not propagated
@@ -171,14 +171,14 @@ public class KafkaProducer extends DefaultAsyncProducer {
         if (iterator != null) {
             final Iterator<Object> msgList = iterator;
             final String msgTopic = topic;
-            return new Iterator<Pair<Object, ProducerRecord>>() {
+            return new Iterator<KeyValueHolder<Object, ProducerRecord>>() {
                 @Override
                 public boolean hasNext() {
                     return msgList.hasNext();
                 }
 
                 @Override
-                public Pair<Object, ProducerRecord> next() {
+                public KeyValueHolder<Object, ProducerRecord> next() {
                     // must convert each entry of the iterator into the value according to the serializer
                     Object next = msgList.next();
                     String innerTopic = msgTopic;
@@ -227,11 +227,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     }
 
                     if (hasPartitionKey && hasMessageKey) {
-                        return Pair.of(body, new ProducerRecord(innerTopic, innerPartitionKey, null, innerKey, value, propagatedHeaders));
+                        return new KeyValueHolder(body, new ProducerRecord(innerTopic, innerPartitionKey, null, innerKey, value, propagatedHeaders));
                     } else if (hasMessageKey) {
-                        return Pair.of(body, new ProducerRecord(innerTopic, null, null, innerKey, value, propagatedHeaders));
+                        return new KeyValueHolder(body, new ProducerRecord(innerTopic, null, null, innerKey, value, propagatedHeaders));
                     } else {
-                        return Pair.of(body, new ProducerRecord(innerTopic, null, null, null, value, propagatedHeaders));
+                        return new KeyValueHolder(body, new ProducerRecord(innerTopic, null, null, null, value, propagatedHeaders));
                     }
                 }
 
@@ -265,7 +265,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
         } else {
             record = new ProducerRecord(topic, null, null, null, value, propagatedHeaders);
         }
-        return Collections.singletonList(Pair.of((Object)exchange, record)).iterator();
+        return Collections.singletonList(new KeyValueHolder<Object, ProducerRecord>((Object)exchange, record)).iterator();
     }
 
     private List<Header> getPropagatedHeaders(Exchange exchange, KafkaConfiguration getConfiguration) {
@@ -294,8 +294,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
     @SuppressWarnings({"unchecked", "rawtypes"})
     // Camel calls this method if the endpoint isSynchronous(), as the KafkaEndpoint creates a SynchronousDelegateProducer for it
     public void process(Exchange exchange) throws Exception {
-        Iterator<Pair<Object, ProducerRecord>> c = createRecorder(exchange);
-        List<Pair<Object, Future<RecordMetadata>>> futures = new LinkedList<>();
+        Iterator<KeyValueHolder<Object, ProducerRecord>> c = createRecorder(exchange);
+        List<KeyValueHolder<Object, Future<RecordMetadata>>> futures = new LinkedList<>();
         List<RecordMetadata> recordMetadatas = new ArrayList<>();
 
         if (endpoint.getConfiguration().isRecordMetadata()) {
@@ -307,20 +307,20 @@ public class KafkaProducer extends DefaultAsyncProducer {
         }
 
         while (c.hasNext()) {
-            Pair<Object, ProducerRecord> exrec = c.next();
-            ProducerRecord rec = exrec.getRight();
+            KeyValueHolder<Object, ProducerRecord> exrec = c.next();
+            ProducerRecord rec = exrec.getValue();
             if (log.isDebugEnabled()) {
                 log.debug("Sending message to topic: {}, partition: {}, key: {}", rec.topic(), rec.partition(), rec.key());
             }
-            futures.add(Pair.of(exrec.getLeft(), kafkaProducer.send(rec)));
+            futures.add(new KeyValueHolder(exrec.getKey(), kafkaProducer.send(rec)));
         }
-        for (Pair<Object, Future<RecordMetadata>> f : futures) {
+        for (KeyValueHolder<Object, Future<RecordMetadata>> f : futures) {
             //wait for them all to be sent
-            List<RecordMetadata> metadata = Collections.singletonList(f.getRight().get());
+            List<RecordMetadata> metadata = Collections.singletonList(f.getValue().get());
             recordMetadatas.addAll(metadata);
             Exchange innerExchange = null;
-            if(f.getLeft() instanceof  Exchange) {
-                innerExchange = (Exchange) f.getLeft();
+            if(f.getKey() instanceof  Exchange) {
+                innerExchange = (Exchange) f.getKey();
                 if (innerExchange != null) {
                     if (endpoint.getConfiguration().isRecordMetadata()) {
                         if (innerExchange.hasOut()) {
@@ -332,8 +332,8 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 }
             }
             Message innerMessage = null;
-            if(f.getLeft() instanceof  Message) {
-                innerMessage = (Message) f.getLeft();
+            if(f.getKey() instanceof  Message) {
+                innerMessage = (Message) f.getKey();
                 if (innerMessage != null) {
                     if (endpoint.getConfiguration().isRecordMetadata()) {
                         innerMessage.setHeader(KafkaConstants.KAFKA_RECORDMETA, metadata);
@@ -347,18 +347,18 @@ public class KafkaProducer extends DefaultAsyncProducer {
     @SuppressWarnings({"unchecked", "rawtypes"})
     public boolean process(Exchange exchange, AsyncCallback callback) {
         try {
-            Iterator<Pair<Object, ProducerRecord>> c = createRecorder(exchange);
+            Iterator<KeyValueHolder<Object, ProducerRecord>> c = createRecorder(exchange);
             KafkaProducerCallBack cb = new KafkaProducerCallBack(exchange, callback);
             while (c.hasNext()) {
                 cb.increment();
-                Pair<Object, ProducerRecord> exrec = c.next();
-                ProducerRecord rec = exrec.getRight();
+                KeyValueHolder<Object, ProducerRecord> exrec = c.next();
+                ProducerRecord rec = exrec.getValue();
                 if (log.isDebugEnabled()) {
                     log.debug("Sending message to topic: {}, partition: {}, key: {}", rec.topic(), rec.partition(), rec.key());
                 }
                 List<Callback> delegates = new ArrayList<>(Arrays.asList(cb));
-                if(exrec.getLeft() != null) {
-                    delegates.add(new KafkaProducerCallBack(exrec.getLeft()));
+                if(exrec.getKey() != null) {
+                    delegates.add(new KafkaProducerCallBack(exrec.getKey()));
                 }
                 kafkaProducer.send(rec, new DelegatingCallback(delegates.toArray(new Callback[0])));
             }
