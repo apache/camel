@@ -51,7 +51,7 @@ public class RemovePropertiesProcessor extends AsyncProcessorSupport implements 
 
     @Override
     public String toString() {
-        return "RemoveProperties(" + pattern + ")";
+        return id;
     }
 
     @Override

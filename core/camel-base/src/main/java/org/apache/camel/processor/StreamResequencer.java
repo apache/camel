@@ -172,7 +172,7 @@ public class StreamResequencer extends AsyncProcessorSupport implements Sequence
 
     @Override
     public String toString() {
-        return "StreamResequencer[to: " + processor + "]";
+        return id;
     }
 
     @Override

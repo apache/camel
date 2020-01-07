@@ -48,7 +48,7 @@ public class CatchProcessor extends DelegateAsyncProcessor implements Traceable,
 
     @Override
     public String toString() {
-        return "Catch[" + exceptions + " -> " + getProcessor() + "]";
+        return id;
     }
 
     @Override

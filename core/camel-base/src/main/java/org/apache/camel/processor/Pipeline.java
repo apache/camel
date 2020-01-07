@@ -141,7 +141,7 @@ public class Pipeline extends AsyncProcessorSupport implements Navigate<Processo
 
     @Override
     public String toString() {
-        return "Pipeline[" + getProcessors() + "]";
+        return id;
     }
 
     public List<Processor> getProcessors() {

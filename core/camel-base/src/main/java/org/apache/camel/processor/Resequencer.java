@@ -107,7 +107,7 @@ public class Resequencer extends AsyncProcessorSupport implements Navigate<Proce
 
     @Override
     public String toString() {
-        return "Resequencer[to: " + getProcessor() + "]";
+        return id;
     }
 
     @Override

@@ -91,7 +91,7 @@ public class LogProcessor extends AsyncProcessorSupport implements Traceable, Id
 
     @Override
     public String toString() {
-        return "Log(" + logger.getLog().getName() + ")[" + expression + "]";
+        return id;
     }
 
     @Override

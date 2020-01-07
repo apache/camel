@@ -72,11 +72,7 @@ public class SamplingThrottler extends AsyncProcessorSupport implements Traceabl
 
     @Override
     public String toString() {
-        if (messageFrequency > 0) {
-            return "SamplingThrottler[1 exchange per: " + messageFrequency + " messages received]";
-        } else {
-            return "SamplingThrottler[1 exchange per: " + samplePeriod + " " + units.toString().toLowerCase(Locale.ENGLISH) + "]";
-        }
+        return id;
     }
 
     @Override

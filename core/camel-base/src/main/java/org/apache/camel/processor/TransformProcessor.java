@@ -84,7 +84,7 @@ public class TransformProcessor extends AsyncProcessorSupport implements Traceab
 
     @Override
     public String toString() {
-        return "Transform(" + expression + ")";
+        return id;
     }
 
     @Override

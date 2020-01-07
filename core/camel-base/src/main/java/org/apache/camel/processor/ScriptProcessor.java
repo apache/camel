@@ -52,7 +52,7 @@ public class ScriptProcessor extends AsyncProcessorSupport implements Traceable,
 
     @Override
     public String toString() {
-        return "Script(" + expression + ")";
+        return id;
     }
 
     @Override

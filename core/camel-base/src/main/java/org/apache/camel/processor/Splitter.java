@@ -72,11 +72,6 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     @Override
-    public String toString() {
-        return "Splitter[on: " + expression + " to: " + getProcessors().iterator().next() + " aggregate: " + getAggregationStrategy() + "]";
-    }
-
-    @Override
     public String getTraceLabel() {
         return "split[" + expression + "]";
     }

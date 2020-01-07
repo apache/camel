@@ -77,7 +77,7 @@ public class FilterProcessor extends DelegateAsyncProcessor implements Traceable
 
     @Override
     public String toString() {
-        return "Filter[if: " + predicate + " do: " + getProcessor() + "]";
+        return id;
     }
 
     @Override

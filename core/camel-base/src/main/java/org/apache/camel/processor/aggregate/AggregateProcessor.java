@@ -264,7 +264,7 @@ public class AggregateProcessor extends AsyncProcessorSupport implements Navigat
 
     @Override
     public String toString() {
-        return "AggregateProcessor[to: " + processor + "]";
+        return id;
     }
 
     @Override

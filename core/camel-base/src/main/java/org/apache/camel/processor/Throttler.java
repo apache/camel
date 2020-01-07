@@ -439,6 +439,6 @@ public class Throttler extends AsyncProcessorSupport implements Traceable, IdAwa
 
     @Override
     public String toString() {
-        return "Throttler[requests: " + maxRequestsPerPeriodExpression + " per: " + timePeriodMillis + " (ms)]";
+        return id;
     }
 }

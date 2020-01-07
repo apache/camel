@@ -51,7 +51,7 @@ public class RemoveHeadersProcessor extends AsyncProcessorSupport implements Tra
 
     @Override
     public String toString() {
-        return "RemoveHeaders(" + pattern + ")";
+        return id;
     }
 
     @Override

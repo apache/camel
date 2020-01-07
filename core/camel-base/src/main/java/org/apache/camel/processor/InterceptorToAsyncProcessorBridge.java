@@ -27,10 +27,13 @@ import org.apache.camel.support.AsyncProcessorConverterHelper;
 import org.apache.camel.support.service.ServiceHelper;
 import org.apache.camel.support.service.ServiceSupport;
 
+// TODO: delete me
+
 /**
  * A bridge to have regular interceptors implemented as {@link org.apache.camel.Processor}
  * work with the asynchronous routing engine without causing side effects.
  */
+@Deprecated
 public class InterceptorToAsyncProcessorBridge extends ServiceSupport implements AsyncProcessor {
 
     private final AsyncProcessor interceptor;

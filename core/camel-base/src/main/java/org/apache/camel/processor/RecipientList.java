@@ -98,7 +98,7 @@ public class RecipientList extends AsyncProcessorSupport implements IdAware, Rou
 
     @Override
     public String toString() {
-        return "RecipientList[" + (expression != null ? expression : "") + "]";
+        return id;
     }
 
     @Override

@@ -41,7 +41,7 @@ public class StopProcessor extends AsyncProcessorSupport implements IdAware, Rou
 
     @Override
     public String toString() {
-        return "Stop";
+        return id;
     }
 
     @Override

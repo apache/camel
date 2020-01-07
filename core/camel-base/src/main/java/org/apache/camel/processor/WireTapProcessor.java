@@ -83,7 +83,7 @@ public class WireTapProcessor extends AsyncProcessorSupport implements Traceable
 
     @Override
     public String toString() {
-        return "WireTap[" + uri + "]";
+        return id;
     }
 
     @Override

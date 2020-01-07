@@ -52,9 +52,7 @@ public class TryProcessor extends AsyncProcessorSupport implements Navigate<Proc
 
     @Override
     public String toString() {
-        String catchText = catchClauses == null || catchClauses.isEmpty() ? "" : " Catches {" + catchClauses + "}";
-        String finallyText = (finallyProcessor == null) ? "" : " Finally {" + finallyProcessor + "}";
-        return "Try {" + tryProcessor + "}" + catchText + finallyText;
+        return id;
     }
 
     @Override

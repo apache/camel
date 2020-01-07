@@ -47,7 +47,7 @@ public class Delayer extends DelayProcessorSupport implements Traceable, IdAware
 
     @Override
     public String toString() {
-        return "Delayer[" + delay + " to: " + getProcessor() + "]";
+        return id;
     }
 
     @Override

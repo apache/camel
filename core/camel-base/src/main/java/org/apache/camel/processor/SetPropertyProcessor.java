@@ -64,7 +64,7 @@ public class SetPropertyProcessor extends AsyncProcessorSupport implements Trace
 
     @Override
     public String toString() {
-        return "SetProperty(" + propertyName + ", " + expression + ")";
+        return id;
     }
 
     @Override

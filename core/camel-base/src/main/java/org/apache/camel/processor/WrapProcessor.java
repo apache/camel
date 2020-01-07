@@ -35,7 +35,7 @@ public class WrapProcessor extends DelegateAsyncProcessor {
 
     @Override
     public String toString() {
-        return "Wrap[" + wrapped + "] -> " + processor;
+        return "WrapDelegateAsyncProcessor[" + processor + "]";
     }
 
     @Override
