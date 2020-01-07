@@ -48,7 +48,7 @@ public class BeanComponent extends DefaultComponent {
             + " The bean should not be thread-safe as the instance is only called from the same request.  "
             + " When using delegate scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated "
             + " to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope."
-            + " so when using delegate then this depends on the delegated registry.")
+            + " so when using prototype then this depends on the delegated registry.")
     private BeanScope scope = BeanScope.Singleton;
 
     public BeanComponent() {

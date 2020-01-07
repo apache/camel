@@ -50,9 +50,9 @@ public class BeanEndpoint extends DefaultEndpoint {
             + " When using request scope the bean is created or looked up once per request (exchange). This can be used if you want to store state on a bean"
             + " while processing a request and you want to call the same bean instance multiple times while processing the request."
             + " The bean should not be thread-safe as the instance is only called from the same request.  "
-            + " When using delegate scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated "
+            + " When using prototype scope, then the bean will be looked up or created per call. However in case of lookup then this is delegated "
             + " to the bean registry such as Spring or CDI (if in use), which depends on their configuration can act as either singleton or prototype scope."
-            + " so when using delegate then this depends on the delegated registry.")
+            + " so when using prototype then this depends on the delegated registry.")
     private BeanScope scope = BeanScope.Singleton;
     @UriParam(prefix = "bean.", label = "advanced", description = "Used for configuring additional properties on the bean", multiValue = true)
     private Map<String, Object> parameters;
