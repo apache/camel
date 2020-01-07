@@ -61,8 +61,8 @@ public class AhcProduce500Test extends BaseAhcTest {
                 from(getTestServerEndpointUri())
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
-                                exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
-                                exchange.getOut().setBody("Does not work");
+                                exchange.getMessage().setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
+                                exchange.getMessage().setBody("Does not work");
                             }
                         });
 

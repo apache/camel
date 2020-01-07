@@ -39,8 +39,8 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
 
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not fail");
-        assertEquals("OK", out.getOut().getBody(String.class));
-        assertEquals("yes", out.getOut().getHeader("bar"));
+        assertEquals("OK", out.getMessage().getBody(String.class));
+        assertEquals("yes", out.getMessage().getHeader("bar"));
     }
 
     @Test
@@ -58,8 +58,8 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
 
         assertNotNull(out);
         assertFalse(out.isFailed(), "Should not fail");
-        assertEquals("OK", out.getOut().getBody(String.class));
-        assertEquals("yes", out.getOut().getHeader("bar"));
+        assertEquals("OK", out.getMessage().getBody(String.class));
+        assertEquals("yes", out.getMessage().getHeader("bar"));
 
 
     }
@@ -81,13 +81,13 @@ public class AhcProducerTwoParametersWithSameKeyTest extends BaseAhcTest {
                         assertEquals("bar", to.get(1));
 
                         // response
-                        exchange.getOut().setBody("OK");
+                        exchange.getMessage().setBody("OK");
                         // use multiple values for the foo header in the reply
                         List<Integer> list = new ArrayList<>();
                         list.add(123);
                         list.add(456);
-                        exchange.getOut().setHeader("foo", list);
-                        exchange.getOut().setHeader("bar", "yes");
+                        exchange.getMessage().setHeader("foo", list);
+                        exchange.getMessage().setHeader("bar", "yes");
                     }
                 });
             }
