@@ -794,7 +794,7 @@ public interface HttpEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer (advanced)
          */
@@ -806,7 +806,7 @@ public interface HttpEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer (advanced)
          */

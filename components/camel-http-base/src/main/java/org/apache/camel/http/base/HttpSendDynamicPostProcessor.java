@@ -14,36 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.http.common;
+package org.apache.camel.http.base;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * Pre {@link Processor} used by {@link HttpSendDynamicAware}.
+ * Post {@link Processor} used by {@link HttpSendDynamicAware}.
  */
-public class HttpSendDynamicPreProcessor implements Processor {
-
-    private final String path;
-    private final String query;
-
-    public HttpSendDynamicPreProcessor(String path, String query) {
-        this.path = path;
-        this.query = query;
-    }
+public class HttpSendDynamicPostProcessor implements Processor {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        if (path != null) {
-            exchange.getIn().setHeader(Exchange.HTTP_PATH, path);
-        } else {
-            exchange.getIn().removeHeader(Exchange.HTTP_PATH);
-        }
-        if (query != null) {
-            exchange.getIn().setHeader(Exchange.HTTP_QUERY, query);
-        } else {
-            exchange.getIn().removeHeader(Exchange.HTTP_QUERY);
-        }
+        // cleanup and remove the headers we used
+        exchange.getMessage().removeHeader(Exchange.HTTP_PATH);
+        exchange.getMessage().removeHeader(Exchange.HTTP_QUERY);
     }
 
 }

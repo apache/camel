@@ -89,7 +89,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http-common</artifactId>
+            <artifactId>camel-http-base</artifactId>
         </dependency>
 
         <dependency>

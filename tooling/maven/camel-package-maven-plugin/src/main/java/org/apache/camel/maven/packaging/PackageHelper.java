@@ -165,6 +165,7 @@ public final class PackageHelper {
             String name = pathname.getName();
             boolean special = "camel-core-osgi".equals(name)
                 || "camel-core-xml".equals(name)
+                || "camel-http-base".equals(name)
                 || "camel-http-common".equals(name)
                 || "camel-jetty-common".equals(name);
             boolean special2 = "camel-as2".equals(name)

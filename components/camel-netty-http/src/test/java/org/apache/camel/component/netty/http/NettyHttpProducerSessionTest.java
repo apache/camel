@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.http.common.HttpMessage;
-import org.apache.camel.http.common.cookie.ExchangeCookieHandler;
-import org.apache.camel.http.common.cookie.InstanceCookieHandler;
+import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
+import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.junit.Test;
 
 public class NettyHttpProducerSessionTest extends BaseNettyTest {

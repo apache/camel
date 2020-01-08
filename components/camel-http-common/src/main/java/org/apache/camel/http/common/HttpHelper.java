@@ -16,6 +16,8 @@
  */
 package org.apache.camel.http.common;
 
+import javax.servlet.ServletResponse;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -24,12 +26,8 @@ import java.io.OutputStream;
 import java.net.ProtocolException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -37,77 +35,29 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.support.CamelObjectInputStream;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public final class HttpHelper {
-
-    private static final Logger LOG = LoggerFactory.getLogger(HttpHelper.class);
 
     private HttpHelper() {
         // Helper class
     }
 
     public static boolean isSecureConnection(String uri) {
-        return uri.startsWith("https");
+        return org.apache.camel.http.base.HttpHelper.isSecureConnection(uri);
     }
 
     public static int[] parserHttpVersion(String s) throws ProtocolException {
-        int major;
-        int minor;
-        if (s == null) {
-            throw new IllegalArgumentException("String may not be null");
-        }
-        if (!s.startsWith("HTTP/")) {
-            throw new ProtocolException("Invalid HTTP version string: " + s);
-        }
-        int i1 = "HTTP/".length();
-        int i2 = s.indexOf(".", i1);
-        if (i2 == -1) {
-            throw new ProtocolException("Invalid HTTP version number: " + s);
-        }
-        try {
-            major = Integer.parseInt(s.substring(i1, i2));
-        } catch (NumberFormatException e) {
-            throw new ProtocolException("Invalid HTTP major version number: " + s);
-        }
-        i1 = i2 + 1;
-        i2 = s.length();
-        try {
-            minor = Integer.parseInt(s.substring(i1, i2));
-        } catch (NumberFormatException e) {
-            throw new ProtocolException("Invalid HTTP minor version number: " + s);
-        }
-        return new int[]{major, minor};
+        return org.apache.camel.http.base.HttpHelper.parserHttpVersion(s);
     }
 
     public static void setCharsetFromContentType(String contentType, Exchange exchange) {
-        if (contentType != null) {
-            String charset = getCharsetFromContentType(contentType);
-            if (charset != null) {
-                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(charset));
-            }
-        }
+        org.apache.camel.http.base.HttpHelper.setCharsetFromContentType(contentType, exchange);
     }
 
     public static String getCharsetFromContentType(String contentType) {
-        if (contentType != null) {
-            // find the charset and set it to the Exchange
-            int index = contentType.indexOf("charset=");
-            if (index > 0) {
-                String charset = contentType.substring(index + 8);
-                // there may be another parameter after a semi colon, so skip that
-                if (charset.contains(";")) {
-                    charset = StringHelper.before(charset, ";");
-                }
-                return IOHelper.normalizeCharset(charset);
-            }
-        }
-        return null;
+        return org.apache.camel.http.base.HttpHelper.getCharsetFromContentType(contentType);
     }
 
     /**
@@ -342,20 +292,8 @@ public final class HttpHelper {
      */
     @SuppressWarnings("unchecked")
     public static void appendHeader(Map<String, Object> headers, String key, Object value) {
-        if (headers.containsKey(key)) {
-            Object existing = headers.get(key);
-            List<Object> list;
-            if (existing instanceof List) {
-                list = (List<Object>) existing;
-            } else {
-                list = new ArrayList<>();
-                list.add(existing);
-            }
-            list.add(value);
-            value = list;
-        }
+        org.apache.camel.http.base.HttpHelper.appendHeader(headers, key, value);
 
-        headers.put(key, value);
     }
 
     /**
@@ -371,25 +309,7 @@ public final class HttpHelper {
      * @return the extracted parameter value, see more details in javadoc.
      */
     public static Object extractHttpParameterValue(String value) {
-        if (value == null || ObjectHelper.isEmpty(value)) {
-            return value;
-        }
-
-        // trim value before checking for multiple parameters
-        String trimmed = value.trim();
-
-        if (trimmed.startsWith("[") && trimmed.endsWith("]")) {
-            // remove the [ ] markers
-            trimmed = trimmed.substring(1, trimmed.length() - 1);
-            List<String> list = new ArrayList<>();
-            String[] values = trimmed.split(",");
-            for (String s : values) {
-                list.add(s.trim());
-            }
-            return list;
-        }
-
-        return value;
+        return org.apache.camel.http.base.HttpHelper.extractHttpParameterValue(value);
     }
 
     /**
@@ -450,22 +370,7 @@ public final class HttpHelper {
      * @return <tt>true</tt> if ok, <tt>false</tt> otherwise
      */
     public static boolean isStatusCodeOk(int statusCode, String okStatusCodeRange) {
-        String[] ranges = okStatusCodeRange.split(",");
-        for (String range : ranges) {
-            boolean ok;
-            if (range.contains("-")) {
-                int from = Integer.valueOf(StringHelper.before(range, "-"));
-                int to = Integer.valueOf(StringHelper.after(range, "-"));
-                ok =  statusCode >= from && statusCode <= to;
-            } else {
-                int exact = Integer.valueOf(range);
-                ok = exact == statusCode;
-            }
-            if (ok) {
-                return true;
-            }
-        }
-        return false;
+        return org.apache.camel.http.base.HttpHelper.isStatusCodeOk(statusCode, okStatusCodeRange);
     }
 
 }

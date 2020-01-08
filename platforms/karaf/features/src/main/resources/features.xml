@@ -149,9 +149,7 @@
     <bundle dependency='true'>mvn:io.netty/netty-handler-proxy/${netty-version}</bundle>
     <bundle dependency='true'>wrap:mvn:com.typesafe.netty/netty-reactive-streams/${netty-reactive-streams-version}</bundle>
     <bundle dependency='true'>mvn:org.reactivestreams/reactive-streams/${reactive-streams-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ahc/${project.version}</bundle>
   </feature>
   <feature name='camel-ahc-ws' version='${project.version}' start-level='50'>
@@ -797,7 +795,7 @@
     <feature version='${cxf-version-range}'>cxf-bindings-soap</feature>
     <feature version='${cxf-version-range}'>cxf-features-logging</feature>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${project.version}</bundle>
   </feature>
@@ -1282,6 +1280,7 @@
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
     <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http/${project.version}</bundle>
   </feature>
@@ -1475,6 +1474,7 @@
     <feature>jetty</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jetty-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jetty/${project.version}</bundle>
@@ -1824,14 +1824,13 @@
     <bundle dependency='true'>mvn:io.netty/netty-transport-native-unix-common/${netty-version}</bundle>
     <bundle dependency='true'>mvn:io.netty/netty-codec/${netty-version}</bundle>
     <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty/${project.version}</bundle>
   </feature>
   <feature name='camel-netty-http' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-netty</feature>
     <bundle dependency='true'>mvn:io.netty/netty-codec-http/${netty-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-netty-http/${project.version}</bundle>
   </feature>
   <feature name='camel-nitrite' version='${project.version}' start-level='50'>
@@ -2200,6 +2199,7 @@
     <feature version='${project.version}'>camel-core</feature>
     <feature>http</feature>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-servlet/${project.version}</bundle>
   </feature>
@@ -2571,10 +2571,9 @@
     <bundle dependency='true'>mvn:io.undertow/undertow-core/${undertow-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.xnio/xnio-api/${jboss-xnio-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.xnio/xnio-nio/${jboss-xnio-version}</bundle>
-    <bundle dependency='true'>mvn:javax.servlet/javax.servlet-api/${javax-servlet-api-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-attachments/${project.version}</bundle>
-    <bundle>mvn:org.apache.camel/camel-http-common/${project.version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-http-base/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-undertow/${project.version}</bundle>
   </feature>
   <feature name='camel-univocity-parsers' version='${project.version}' start-level='50'>

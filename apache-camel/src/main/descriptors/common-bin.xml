@@ -170,6 +170,7 @@
         <include>org.apache.camel:camel-hipchat</include>
         <include>org.apache.camel:camel-hl7</include>
         <include>org.apache.camel:camel-http</include>
+        <include>org.apache.camel:camel-http-base</include>
         <include>org.apache.camel:camel-http-common</include>
         <include>org.apache.camel:camel-hystrix</include>
         <include>org.apache.camel:camel-ical</include>

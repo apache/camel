@@ -943,7 +943,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option is a:
-         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer
          */
@@ -955,7 +955,7 @@ public interface CxfRsEndpointBuilderFactory {
          * Configure a cookie handler to maintain a HTTP session.
          * 
          * The option will be converted to a
-         * <code>org.apache.camel.http.common.cookie.CookieHandler</code> type.
+         * <code>org.apache.camel.http.base.cookie.CookieHandler</code> type.
          * 
          * Group: producer
          */

@@ -407,6 +407,7 @@ public class PrepareCatalogKarafMojo extends AbstractMojo {
                     // skip these special cases
                     boolean special = "camel-core-osgi".equals(dir.getName())
                         || "camel-core-xml".equals(dir.getName())
+                        || "camel-http-base".equals(dir.getName())
                         || "camel-http-common".equals(dir.getName())
                         || "camel-jetty-common".equals(dir.getName());
                     boolean special2 = "camel-as2".equals(dir.getName())

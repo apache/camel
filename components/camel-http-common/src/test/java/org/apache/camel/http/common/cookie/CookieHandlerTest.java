@@ -27,6 +27,9 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.http.base.cookie.CookieHandler;
+import org.apache.camel.http.base.cookie.ExchangeCookieHandler;
+import org.apache.camel.http.base.cookie.InstanceCookieHandler;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
