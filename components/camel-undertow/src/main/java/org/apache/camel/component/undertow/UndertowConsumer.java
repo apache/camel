@@ -35,6 +35,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
@@ -47,7 +48,7 @@ import org.slf4j.LoggerFactory;
 /**
  * The Undertow consumer which is also an Undertow HttpHandler implementation to handle incoming request.
  */
-public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
+public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Suspendable {
 
     private static final Logger LOG = LoggerFactory.getLogger(UndertowConsumer.class);
     private CamelWebSocketHandler webSocketHandler;
