@@ -68,6 +68,6 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.createAlias.toString(), "createAlias");
         assertEquals(LambdaOperations.deleteAlias.toString(), "deleteAlias");
         assertEquals(LambdaOperations.getAlias.toString(), "getAlias");
-        assertEquals(LambdaOperations.getAlias.toString(), "listAliases");
+        assertEquals(LambdaOperations.listAliases.toString(), "listAliases");
     }
 }
