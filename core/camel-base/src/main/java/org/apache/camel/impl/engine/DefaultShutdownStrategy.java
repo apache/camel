@@ -363,7 +363,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             }
 
             for (Consumer consumer : order.getInputs()) {
-                shutdownNow(consumer);
+                shutdownNow(order.getRoute().getId(), consumer);
             }
         }
     }
@@ -371,27 +371,29 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     /**
      * Shutdown all the consumers immediately.
      *
+     * @param routeId  the route id to suspend
      * @param consumers the consumers to shutdown
      */
-    protected void shutdownNow(List<Consumer> consumers) {
+    protected void shutdownNow(String routeId, List<Consumer> consumers) {
         for (Consumer consumer : consumers) {
-            shutdownNow(consumer);
+            shutdownNow(routeId, consumer);
         }
     }
 
     /**
      * Shutdown the consumer immediately.
      *
+     * @param routeId  the route id to suspend
      * @param consumer the consumer to shutdown
      */
-    protected void shutdownNow(Consumer consumer) {
+    protected void shutdownNow(String routeId, Consumer consumer) {
         log.trace("Shutting down: {}", consumer);
 
         // allow us to do custom work before delegating to service helper
         try {
             ServiceHelper.stopService(consumer);
         } catch (Throwable e) {
-            log.warn("Error occurred while shutting down route: " + consumer + ". This exception will be ignored.", e);
+            log.warn("Error occurred while shutting down route: " + routeId + ". This exception will be ignored.", e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
@@ -402,16 +404,17 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     /**
      * Suspends/stops the consumer immediately.
      *
+     * @param routeId  the route id to suspend
      * @param consumer the consumer to suspend
      */
-    protected void suspendNow(Consumer consumer) {
+    protected void suspendNow(String routeId, Consumer consumer) {
         log.trace("Suspending: {}", consumer);
 
         // allow us to do custom work before delegating to service helper
         try {
             ServiceHelper.suspendService(consumer);
         } catch (Throwable e) {
-            log.warn("Error occurred while suspending route: " + consumer + ". This exception will be ignored.", e);
+            log.warn("Error occurred while suspending route: " + routeId + ". This exception will be ignored.", e);
             // fire event
             EventHelper.notifyServiceStopFailure(consumer.getEndpoint().getCamelContext(), consumer, e);
         }
@@ -581,13 +584,17 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     // log at info level when a route has been shutdown (otherwise log at debug level to not be too noisy)
                     if (suspend) {
                         // only suspend it and then later shutdown it
-                        suspendNow(consumer);
+                        suspendNow(order.getRoute().getId(), consumer);
                         // add it to the deferred list so the route will be shutdown later
                         deferredConsumers.add(new ShutdownDeferredConsumer(order.getRoute(), consumer));
-                        log.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(), order.getRoute().getEndpoint());
+                        // use basic endpoint uri to not log verbose details or potential sensitive data
+                        String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
+                        log.debug("Route: {} suspended and shutdown deferred, was consuming from: {}", order.getRoute().getId(), uri);
                     } else if (shutdown) {
-                        shutdownNow(consumer);
-                        log.info("Route: {} shutdown complete, was consuming from: {}", order.getRoute().getId(), order.getRoute().getEndpoint());
+                        shutdownNow(order.getRoute().getId(), consumer);
+                        // use basic endpoint uri to not log verbose details or potential sensitive data
+                        String uri = order.getRoute().getEndpoint().getEndpointBaseUri();
+                        log.info("Route: {} shutdown complete, was consuming from: {}", order.getRoute().getId(), uri);
                     } else {
                         // we will stop it later, but for now it must run to be able to help all inflight messages
                         // be safely completed
@@ -676,11 +683,15 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
             for (ShutdownDeferredConsumer deferred : deferredConsumers) {
                 Consumer consumer = deferred.getConsumer();
                 if (suspendOnly) {
-                    suspendNow(consumer);
-                    log.info("Route: {} suspend complete, was consuming from: {}", deferred.getRoute().getId(), deferred.getConsumer().getEndpoint());
+                    suspendNow(deferred.getRoute().getId(), consumer);
+                    // use basic endpoint uri to not log verbose details or potential sensitive data
+                    String uri = deferred.getRoute().getEndpoint().getEndpointBaseUri();
+                    log.info("Route: {} suspend complete, was consuming from: {}", deferred.getRoute().getId(), uri);
                 } else {
-                    shutdownNow(consumer);
-                    log.info("Route: {} shutdown complete, was consuming from: {}", deferred.getRoute().getId(), deferred.getConsumer().getEndpoint());
+                    shutdownNow(deferred.getRoute().getId(), consumer);
+                    // use basic endpoint uri to not log verbose details or potential sensitive data
+                    String uri = deferred.getRoute().getEndpoint().getEndpointBaseUri();
+                    log.info("Route: {} shutdown complete, was consuming from: {}", deferred.getRoute().getId(), uri);
                 }
             }
 

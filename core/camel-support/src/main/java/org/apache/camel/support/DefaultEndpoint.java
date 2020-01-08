@@ -52,7 +52,7 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     private final String id = EndpointHelper.createEndpointId();
     private transient String endpointUriToString;
-    private String endpointUri;
+    private volatile String endpointUri;
     private CamelContext camelContext;
     private Component component;
     @UriParam(label = "producer",
