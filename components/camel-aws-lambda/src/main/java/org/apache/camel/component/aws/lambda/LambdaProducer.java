@@ -46,6 +46,8 @@ import com.amazonaws.services.lambda.model.GetFunctionRequest;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
 import com.amazonaws.services.lambda.model.InvokeRequest;
 import com.amazonaws.services.lambda.model.InvokeResult;
+import com.amazonaws.services.lambda.model.ListAliasesRequest;
+import com.amazonaws.services.lambda.model.ListAliasesResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsRequest;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
@@ -134,6 +136,9 @@ public class LambdaProducer extends DefaultProducer {
             break;
         case getAlias:
             getAlias(getEndpoint().getAwsLambdaClient(), exchange);
+            break;
+        case listAliases:
+        	listAliases(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
@@ -629,6 +634,24 @@ public class LambdaProducer extends DefaultProducer {
             result = lambdaClient.getAlias(request);
         } catch (AmazonServiceException ase) {
             log.trace("getAlias command returned the error code {}", ase.getErrorCode());
+            throw ase;
+        }
+        Message message = getMessageForResponse(exchange);
+        message.setBody(result);
+    }
+    
+    private void listAliases(AWSLambda lambdaClient, Exchange exchange) {
+        ListAliasesResult result;
+        try {
+            ListAliasesRequest request = new ListAliasesRequest().withFunctionName(getEndpoint().getFunction());
+            String version = exchange.getIn().getHeader(LambdaConstants.FUNCTION_VERSION, String.class);
+            if (ObjectHelper.isEmpty(version)) {
+                throw new IllegalArgumentException("Function Version must be specified to list aliases for a function");
+            }
+            request.withFunctionVersion(version);
+            result = lambdaClient.listAliases(request);
+        } catch (AmazonServiceException ase) {
+            log.trace("listAliases command returned the error code {}", ase.getErrorCode());
             throw ase;
         }
         Message message = getMessageForResponse(exchange);
