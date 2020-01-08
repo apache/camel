@@ -521,7 +521,7 @@
         <pgjdbc-driver-version>42.2.6</pgjdbc-driver-version>
         <pgjdbc-ng-driver-version>0.8.3</pgjdbc-ng-driver-version>
         <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
-        <protobuf-version>3.10.0</protobuf-version>
+        <protobuf-version>3.11.1</protobuf-version>
         <protobuf-guava-version>28.1-jre</protobuf-guava-version>
         <protobuf-javanano-version>3.1.0</protobuf-javanano-version>
         <protobuf-maven-plugin-version>0.6.1</protobuf-maven-plugin-version>
