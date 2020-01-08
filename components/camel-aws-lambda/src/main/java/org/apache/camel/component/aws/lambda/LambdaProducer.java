@@ -138,7 +138,7 @@ public class LambdaProducer extends DefaultProducer {
             getAlias(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         case listAliases:
-        	listAliases(getEndpoint().getAwsLambdaClient(), exchange);
+            listAliases(getEndpoint().getAwsLambdaClient(), exchange);
             break;
         default:
             throw new IllegalArgumentException("Unsupported operation");
