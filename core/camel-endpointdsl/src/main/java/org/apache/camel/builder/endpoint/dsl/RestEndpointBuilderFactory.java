@@ -358,7 +358,7 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * The swagger api doc resource to use. The resource is loaded from
+         * The openapi api doc resource to use. The resource is loaded from
          * classpath by default and must be in JSon format.
          * 
          * The option is a: <code>java.lang.String</code> type.
@@ -403,7 +403,7 @@ public interface RestEndpointBuilderFactory {
             return this;
         }
         /**
-         * Host and port of HTTP service to use (override host in swagger
+         * Host and port of HTTP service to use (override host in openapi
          * schema).
          * 
          * The option is a: <code>java.lang.String</code> type.
