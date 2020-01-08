@@ -306,6 +306,7 @@ public interface LambdaEndpointBuilderFactory {
         createAlias,
         deleteAlias,
         getAlias,
+        listAliases,
         createFunction,
         deleteFunction,
         invokeFunction,
