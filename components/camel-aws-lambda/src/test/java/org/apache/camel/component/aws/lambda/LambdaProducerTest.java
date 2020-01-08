@@ -31,6 +31,7 @@ import com.amazonaws.services.lambda.model.DeleteEventSourceMappingResult;
 import com.amazonaws.services.lambda.model.DeleteFunctionResult;
 import com.amazonaws.services.lambda.model.GetAliasResult;
 import com.amazonaws.services.lambda.model.GetFunctionResult;
+import com.amazonaws.services.lambda.model.ListAliasesResult;
 import com.amazonaws.services.lambda.model.ListEventSourceMappingsResult;
 import com.amazonaws.services.lambda.model.ListFunctionsResult;
 import com.amazonaws.services.lambda.model.ListTagsResult;
@@ -349,6 +350,24 @@ public class LambdaProducerTest extends CamelTestSupport {
         assertEquals("alias", result.getName());
         assertEquals("1", result.getFunctionVersion());
     }
+    
+    @Test
+    public void listAliasesTest() throws Exception {
+
+        Exchange exchange = template.send("direct:listAliases", ExchangePattern.InOut, new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(LambdaConstants.FUNCTION_VERSION, "1");
+            }
+        });
+        assertMockEndpointsSatisfied();
+
+        ListAliasesResult result = (ListAliasesResult)exchange.getMessage().getBody();
+        assertNotNull(result);
+        assertEquals("an alias", result.getAliases().get(0).getDescription());
+        assertEquals("alias", result.getAliases().get(0).getName());
+        assertEquals("1", result.getAliases().get(0).getFunctionVersion());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -388,6 +407,8 @@ public class LambdaProducerTest extends CamelTestSupport {
                 from("direct:deleteAlias").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=deleteAlias").to("mock:result");
                 
                 from("direct:getAlias").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=getAlias").to("mock:result");
+                
+                from("direct:listAliases").to("aws-lambda://GetHelloWithName?awsLambdaClient=#awsLambdaClient&operation=listAliases").to("mock:result");
             }
         };
     }
