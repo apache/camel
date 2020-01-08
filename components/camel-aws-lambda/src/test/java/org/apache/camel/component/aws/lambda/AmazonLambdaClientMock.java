@@ -27,6 +27,7 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.services.lambda.AbstractAWSLambda;
 import com.amazonaws.services.lambda.model.AddPermissionRequest;
 import com.amazonaws.services.lambda.model.AddPermissionResult;
+import com.amazonaws.services.lambda.model.AliasConfiguration;
 import com.amazonaws.services.lambda.model.CreateAliasRequest;
 import com.amazonaws.services.lambda.model.CreateAliasResult;
 import com.amazonaws.services.lambda.model.CreateEventSourceMappingRequest;
@@ -241,7 +242,15 @@ public class AmazonLambdaClientMock extends AbstractAWSLambda {
 
     @Override
     public ListAliasesResult listAliases(ListAliasesRequest listAliasesRequest) {
-        throw new UnsupportedOperationException();
+        ListAliasesResult result = new ListAliasesResult();
+        AliasConfiguration conf = new AliasConfiguration();
+        List<AliasConfiguration> list = new ArrayList<AliasConfiguration>();
+        conf.setName("alias");
+        conf.setDescription("an alias");
+        conf.setFunctionVersion("1");
+        list.add(conf);
+        result.setAliases(list);
+        return result;
     }
 
     @Override
