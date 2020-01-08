@@ -16,12 +16,13 @@
  */
 package org.apache.camel.management;
 
-import javax.management.MBeanServer;
-import javax.management.ObjectName;
-import javax.management.openmbean.TabularData;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+import javax.management.openmbean.TabularData;
 
 import org.apache.camel.Message;
 import org.apache.camel.ValidationException;
