@@ -59,13 +59,13 @@ public class PullRequestStateProducerTest extends GitHubComponentTestBase {
         exchange.getIn().setBody(text);
         Exchange response = template.send(stateProducerEndpoint, exchange);
 
-        assertNotNull(response.getOut().getBody());
+        assertNotNull(response.getMessage().getBody());
 
-        if (!(response.getOut().getBody() instanceof CommitStatus)) {
+        if (!(response.getMessage().getBody() instanceof CommitStatus)) {
             fail("Expecting CommitStatus");
         }
 
-        CommitStatus status = response.getOut().getBody(CommitStatus.class);
+        CommitStatus status = response.getMessage().getBody(CommitStatus.class);
 
         // Check status set on commit service
         if (commitService.getCommitStatus(commitsha) != status) {

@@ -72,7 +72,7 @@ public class PullRequestFilesProducerTest extends GitHubComponentTestBase {
 
         Exchange resp = template.send(filesProducerEndpoint, exchange);
 
-        assertEquals(resp.getOut().getBody(), commitFiles);
+        assertEquals(resp.getMessage().getBody(), commitFiles);
     }
 
 
