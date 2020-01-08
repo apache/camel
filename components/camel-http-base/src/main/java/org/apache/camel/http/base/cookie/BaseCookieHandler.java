@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.http.common.cookie;
+package org.apache.camel.http.base.cookie;
 
 import java.io.IOException;
 import java.net.CookieManager;

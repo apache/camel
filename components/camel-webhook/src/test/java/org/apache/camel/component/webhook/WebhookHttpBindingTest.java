@@ -23,7 +23,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.webhook.support.TestComponent;
-import org.apache.camel.http.common.HttpMethods;
 import org.apache.camel.spi.Registry;
 import org.junit.Test;
 
@@ -36,14 +35,14 @@ public class WebhookHttpBindingTest extends WebhookTestBase {
         assertEquals("msg: webhook", result);
 
         result = template.requestBodyAndHeader("netty-http:http://localhost:" + port
-                + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"), "", Exchange.HTTP_METHOD, HttpMethods.PUT, String.class);
+                + WebhookConfiguration.computeDefaultPath("wb-delegate://xx"), "", Exchange.HTTP_METHOD, "PUT", String.class);
         assertEquals("msg: webhook", result);
     }
 
     @Test(expected = CamelExecutionException.class)
     public void testGetError() {
         template.requestBodyAndHeader("netty-http:http://localhost:" + port, "",
-                Exchange.HTTP_METHOD, HttpMethods.GET, String.class);
+                Exchange.HTTP_METHOD, "GET", String.class);
     }
 
     @Override

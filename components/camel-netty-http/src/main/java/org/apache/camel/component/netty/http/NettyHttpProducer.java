@@ -29,7 +29,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyProducer;
-import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.support.SynchronizationAdapter;
 
 /**

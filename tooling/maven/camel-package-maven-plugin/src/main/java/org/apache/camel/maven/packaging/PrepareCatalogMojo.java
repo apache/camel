@@ -60,7 +60,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
 
     private static final String[] EXCLUDE_DOC_FILES = {
         "camel-core-osgi", "camel-core-xml",
-        "camel-http-common", "camel-jetty-common",
+        "camel-http-common", "camel-http-base", "camel-jetty-common",
         "camel-debezium-common"
     };
 
@@ -851,6 +851,7 @@ public class PrepareCatalogMojo extends AbstractMojo {
                     boolean special = "camel-core-osgi".equals(dir.getName())
                         || "camel-core-xml".equals(dir.getName())
                         || "camel-box".equals(dir.getName())
+                        || "camel-http-base".equals(dir.getName())
                         || "camel-http-common".equals(dir.getName())
                         || "camel-jetty-common".equals(dir.getName());
                     boolean special2 = "camel-as2".equals(dir.getName())

@@ -18,6 +18,7 @@ package org.apache.camel.component.netty.http.handlers;
 
 import java.nio.channels.ClosedChannelException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
@@ -39,7 +40,6 @@ import org.apache.camel.component.netty.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty.http.InboundStreamHttpRequest;
 import org.apache.camel.component.netty.http.NettyHttpConfiguration;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
-import org.apache.camel.http.common.CamelServlet;
 import org.apache.camel.support.RestConsumerContextPathMatcher;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.slf4j.Logger;
@@ -57,6 +57,8 @@ import static io.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  */
 @Sharable
 public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandler<Object> implements HttpServerConsumerChannelFactory {
+
+    private static final List<String> METHODS = Arrays.asList("GET", "HEAD", "POST", "PUT", "DELETE", "TRACE", "OPTIONS", "CONNECT", "PATCH");
 
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
@@ -125,7 +127,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
             boolean isRestrictedToOptions = handler.getConsumer().getEndpoint().getHttpMethodRestrict() != null
                 && handler.getConsumer().getEndpoint().getHttpMethodRestrict().contains("OPTIONS");
             if ("OPTIONS".equals(request.method().name()) && !isRestrictedToOptions) {
-                String allowedMethods = CamelServlet.METHODS.stream().filter(m -> isHttpMethodAllowed(request, m)).collect(Collectors.joining(","));
+                String allowedMethods = METHODS.stream().filter(m -> isHttpMethodAllowed(request, m)).collect(Collectors.joining(","));
                 if (allowedMethods == null && handler.getConsumer().getEndpoint().getHttpMethodRestrict() != null) {
                     allowedMethods = handler.getConsumer().getEndpoint().getHttpMethodRestrict();
                 }
@@ -158,8 +160,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelInboundHandl
         } else {
             // okay we cannot process this requires so return either 404 or 405.
             // to know if its 405 then we need to check if any other HTTP method would have a consumer for the "same" request
-            boolean hasAnyMethod = CamelServlet.METHODS.stream().anyMatch(m -> isHttpMethodAllowed(request, m));
-            HttpResponse response = null;
+            boolean hasAnyMethod = METHODS.stream().anyMatch(m -> isHttpMethodAllowed(request, m));
+            HttpResponse response;
             if (hasAnyMethod) {
                 //method match error, return 405
                 response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);

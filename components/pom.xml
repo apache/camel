@@ -72,6 +72,7 @@
         <module>camel-spring</module>
         <module>camel-groovy</module>
         <module>camel-attachments</module>
+        <module>camel-http-base</module>
         <module>camel-http-common</module>
         <module>camel-http</module>
         <module>camel-hystrix</module>

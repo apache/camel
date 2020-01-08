@@ -44,12 +44,11 @@
         </dependency>
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-http-common</artifactId>
+            <artifactId>camel-attachments</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>${javax-servlet-api-version}</version>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-http-base</artifactId>
         </dependency>
         <dependency>
             <groupId>io.undertow</groupId>

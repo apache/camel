@@ -41,7 +41,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
-import org.apache.camel.http.common.cookie.CookieHandler;
+import org.apache.camel.http.base.cookie.CookieHandler;
 import org.apache.camel.support.DefaultAsyncProducer;
 import org.apache.camel.util.URISupport;
 import org.xnio.OptionMap;

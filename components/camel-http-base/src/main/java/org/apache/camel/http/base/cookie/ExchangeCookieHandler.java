@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.http.common.cookie;
+package org.apache.camel.http.base.cookie;
 
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -23,7 +23,7 @@ import org.apache.camel.Exchange;
 
 /**
  * This implementation of the
- * {@link org.apache.camel.http.common.cookie.CookieHandler} interface keeps the
+ * {@link org.apache.camel.http.base.cookie.CookieHandler} interface keeps the
  * cookies with the {@link org.apache.camel.Exchange}. As this implementation
  * does not keep any state you can share it between different endpoints without
  * limitation.

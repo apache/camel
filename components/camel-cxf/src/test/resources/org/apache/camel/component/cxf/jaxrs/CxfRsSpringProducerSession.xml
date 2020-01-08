@@ -87,6 +87,6 @@
     </route>
   </camelContext>
 
-  <bean id="instanceCookieHandler" class="org.apache.camel.http.common.cookie.InstanceCookieHandler"/>
-  <bean id="exchangeCookieHandler" class="org.apache.camel.http.common.cookie.ExchangeCookieHandler"/>  
+  <bean id="instanceCookieHandler" class="org.apache.camel.http.base.cookie.InstanceCookieHandler"/>
+  <bean id="exchangeCookieHandler" class="org.apache.camel.http.base.cookie.ExchangeCookieHandler"/>
 </beans>

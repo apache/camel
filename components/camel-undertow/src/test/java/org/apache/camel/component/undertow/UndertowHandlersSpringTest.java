@@ -25,7 +25,7 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -85,7 +85,7 @@ public class UndertowHandlersSpringTest {
             mockEndpoint.assertIsSatisfied();
          
         } catch (CamelExecutionException e) {
-            org.apache.camel.http.common.HttpOperationFailedException cause = (HttpOperationFailedException)e.getCause();
+            HttpOperationFailedException cause = (HttpOperationFailedException)e.getCause();
             assertEquals(401, cause.getStatusCode());
         }
 
