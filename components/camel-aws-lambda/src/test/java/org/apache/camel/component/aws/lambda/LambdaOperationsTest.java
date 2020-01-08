@@ -24,7 +24,7 @@ public class LambdaOperationsTest {
 
     @Test
     public void supportedOperationCount() {
-        assertEquals(17, LambdaOperations.values().length);
+        assertEquals(18, LambdaOperations.values().length);
     }
 
     @Test
@@ -46,6 +46,7 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.createAlias, LambdaOperations.valueOf("createAlias"));
         assertEquals(LambdaOperations.deleteAlias, LambdaOperations.valueOf("deleteAlias"));
         assertEquals(LambdaOperations.getAlias, LambdaOperations.valueOf("getAlias"));
+        assertEquals(LambdaOperations.listAliases, LambdaOperations.valueOf("listAliases"));
     }
 
     @Test
@@ -67,5 +68,6 @@ public class LambdaOperationsTest {
         assertEquals(LambdaOperations.createAlias.toString(), "createAlias");
         assertEquals(LambdaOperations.deleteAlias.toString(), "deleteAlias");
         assertEquals(LambdaOperations.getAlias.toString(), "getAlias");
+        assertEquals(LambdaOperations.getAlias.toString(), "listAliases");
     }
 }
