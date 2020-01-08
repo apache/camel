@@ -42,6 +42,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Processor;
+import org.apache.camel.Suspendable;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.component.undertow.UndertowConstants.EventType;
 import org.apache.camel.component.undertow.handlers.CamelWebSocketHandler;
@@ -55,7 +56,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * The Undertow consumer which is also an Undertow HttpHandler implementation to handle incoming request.
  */
-public class UndertowConsumer extends DefaultConsumer implements HttpHandler {
+public class UndertowConsumer extends DefaultConsumer implements HttpHandler, Suspendable {
 
     private CamelWebSocketHandler webSocketHandler;
 
