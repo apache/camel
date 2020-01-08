@@ -2952,7 +2952,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
     protected void logRouteState(Route route, String state) {
         if (log.isInfoEnabled()) {
             if (route.getConsumer() != null) {
-                log.info("Route: {} is {}, was consuming from: {}", route.getId(), state, route.getConsumer().getEndpoint());
+                // use basic endpoint uri to not log verbose details or potential sensitive data
+                String uri = route.getEndpoint().getEndpointBaseUri();
+                log.info("Route: {} is {}, was consuming from: {}", route.getId(), state, uri);
             } else {
                 log.info("Route: {} is {}.", route.getId(), state);
             }
@@ -3188,7 +3190,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                 if (resumeOnly && route.supportsSuspension()) {
                     // if we are resuming and the route can be resumed
                     ServiceHelper.resumeService(consumer);
-                    log.info("Route: {} resumed and consuming from: {}", route.getId(), endpoint);
+                    // use basic endpoint uri to not log verbose details or potential sensitive data
+                    String uri = endpoint.getEndpointBaseUri();
+                    log.info("Route: {} resumed and consuming from: {}", route.getId(), uri);
                 } else {
                     // when starting we should invoke the lifecycle strategies
                     for (LifecycleStrategy strategy : lifecycleStrategies) {
@@ -3202,7 +3206,9 @@ public abstract class AbstractCamelContext extends ServiceSupport implements Ext
                         throw e;
                     }
 
-                    log.info("Route: {} started and consuming from: {}", route.getId(), endpoint);
+                    // use basic endpoint uri to not log verbose details or potential sensitive data
+                    String uri = endpoint.getEndpointBaseUri();
+                    log.info("Route: {} started and consuming from: {}", route.getId(), uri);
                 }
 
                 routeInputs.add(endpoint);
