@@ -64,7 +64,7 @@ The Quartz component supports 13 options, which are listed below.
 | *properties* (consumer) | Properties to configure the Quartz scheduler. |  | Map
 | *propertiesFile* (consumer) | File name of the properties to load from the classpath |  | String
 | *prefixInstanceName* (consumer) | Whether to prefix the Quartz Scheduler instance name with the CamelContext name. This is enabled by default, to let each CamelContext use its own Quartz scheduler instance by default. You can set this option to false to reuse Quartz scheduler instances between multiple CamelContext's. | true | boolean
-| *interruptJobsOn Shutdown* (scheduler) | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | boolean
+| *interruptJobsOnShutdown* (scheduler) | Whether to interrupt jobs on shutdown which forces the scheduler to shutdown quicker and attempt to interrupt any running jobs. If this is enabled then any running jobs can fail due to being interrupted. | false | boolean
 | *schedulerFactory* (advanced) | To use the custom SchedulerFactory which is used to create the Scheduler. |  | SchedulerFactory
 | *scheduler* (advanced) | To use the custom configured Quartz scheduler, instead of creating a new Scheduler. |  | Scheduler
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
@@ -113,7 +113,7 @@ with the following path and query parameters:
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *customCalendar* (advanced) | Specifies a custom calendar to avoid specific range of date |  | Calendar
 | *jobParameters* (advanced) | To configure additional options on the job. |  | Map
-| *prefixJobNameWithEndpoint Id* (advanced) | Whether the job name should be prefixed with endpoint id | false | boolean
+| *prefixJobNameWithEndpointId* (advanced) | Whether the job name should be prefixed with endpoint id | false | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *triggerParameters* (advanced) | To configure additional options on the trigger. |  | Map
 | *usingFixedCamelContextName* (advanced) | If it is true, JobDataMap uses the CamelContext name directly to reference the CamelContext, if it is false, JobDataMap uses use the CamelContext management name which could be changed during the deploy time. | false | boolean

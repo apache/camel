@@ -48,7 +48,7 @@ The ZooKeeper Master component supports 8 options, which are listed below.
 | *containerIdFactory* (consumer) | To use a custom ContainerIdFactory for creating container ids. |  | ContainerIdFactory
 | *zkRoot* (consumer) | The root path to use in zookeeper where information is stored which nodes are master/slave etc. Will by default use: /camel/zookeepermaster/clusters/master | /camel/zookeepermaster/clusters/master | String
 | *curator* (advanced) | To use a custom configured CuratorFramework as connection to zookeeper ensemble. |  | CuratorFramework
-| *maximumConnection Timeout* (consumer) | Timeout in millis to use when connecting to the zookeeper ensemble | 10000 | int
+| *maximumConnectionTimeout* (consumer) | Timeout in millis to use when connecting to the zookeeper ensemble | 10000 | int
 | *zooKeeperUrl* (consumer) | The url for the zookeeper ensemble | localhost:2181 | String
 | *zooKeeperPassword* (security) | The password to use when connecting to the zookeeper ensemble |  | String
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean

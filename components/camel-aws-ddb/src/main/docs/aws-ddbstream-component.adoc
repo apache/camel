@@ -77,7 +77,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *amazonDynamoDbStreams Client* (consumer) | Amazon DynamoDB client to use for all requests for this endpoint |  | AmazonDynamoDBStreams
+| *amazonDynamoDbStreamsClient* (consumer) | Amazon DynamoDB client to use for all requests for this endpoint |  | AmazonDynamoDBStreams
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 | *iteratorType* (consumer) | Defines where in the DynaboDB stream to start getting records. Note that using TRIM_HORIZON can cause a significant delay before the stream has caught up to real-time. if {AT,AFTER}_SEQUENCE_NUMBER are used, then a sequenceNumberProvider MUST be supplied. | LATEST | ShardIteratorType
 | *maxResultsPerRequest* (consumer) | Maximum number of records that will be fetched in each poll |  | int
