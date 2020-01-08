@@ -31,15 +31,18 @@
     <name>Camel :: Netty HTTP</name>
     <description>Camel Netty HTTP support</description>
 
-    <properties>
-    </properties>
-
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-netty</artifactId>
         </dependency>
-        <!-- we use netty-all as dependency which has HTTP included -->
+
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-codec-http</artifactId>
+            <version>${netty-version}</version>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-http-common</artifactId>
