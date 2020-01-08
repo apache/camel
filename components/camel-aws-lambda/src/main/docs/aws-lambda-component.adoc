@@ -214,6 +214,8 @@ The default is 3 seconds.|No
 
 |getAlias |`CamelAwsLambdaAliasFunctionName` |`String` |The function name of the alias|Yes
 
+|listAliases |`CamelAwsLambdaFunctionVersion` |`String` |The function version to set in the alias|Yes
+
 |=======================================================================
 
 == List of Avalaible Operations
@@ -235,6 +237,7 @@ The default is 3 seconds.|No
 - createAlias
 - deleteAlias
 - getAlias
+- listAliases
 
 == Example
 
