@@ -31,10 +31,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ImmediateConsumerTest extends BeanstalkMockTestSupport {
-    String testMessage = "hello, world";
+    final String testMessage = "hello, world";
     boolean shouldIdie;
 
-    Processor processor = new Processor() {
+    final Processor processor = new Processor() {
         @Override
         public void process(Exchange exchange) throws InterruptedException {
             if (shouldIdie) {

@@ -77,11 +77,7 @@ public class BeanstalkProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
         executor = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "Beanstalk-Producer");
-        executor.execute(new Runnable() {
-            public void run() {
-                initClient();
-            }
-        });
+        executor.execute(() -> initClient());
     }
 
     @Override

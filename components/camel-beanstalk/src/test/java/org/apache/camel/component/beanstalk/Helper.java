@@ -67,7 +67,7 @@ public final class Helper {
 }
 
 class MockConnectionSettings extends ConnectionSettings {
-    final Client client;
+    private final Client client;
 
     MockConnectionSettings(Client client) {
         super("tube");

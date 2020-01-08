@@ -37,9 +37,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class ConsumerCompletionTest extends BeanstalkMockTestSupport {
-    private String testMessage = "hello, world";
+    private final String testMessage = "hello, world";
     private boolean shouldIdie;
-    private Processor processor = new Processor() {
+    private final Processor processor = new Processor() {
         @Override
         public void process(Exchange exchange) throws InterruptedException {
             if (shouldIdie) {

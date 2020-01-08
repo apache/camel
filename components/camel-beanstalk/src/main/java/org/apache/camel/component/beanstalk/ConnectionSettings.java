@@ -18,6 +18,7 @@ package org.apache.camel.component.beanstalk;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Scanner;
@@ -52,11 +53,7 @@ public class ConnectionSettings {
         final ArrayList<String> buffer = new ArrayList<>();
         while (scanner.hasNext()) {
             final String tubeRaw = scanner.next();
-            try {
-                buffer.add(URLDecoder.decode(tubeRaw, "UTF-8"));
-            } catch (UnsupportedEncodingException e) {
-                buffer.add(tubeRaw);
-            }
+            buffer.add(URLDecoder.decode(tubeRaw, StandardCharsets.UTF_8));
         }
         this.tubes = buffer.toArray(new String[buffer.size()]);
         scanner.close();
