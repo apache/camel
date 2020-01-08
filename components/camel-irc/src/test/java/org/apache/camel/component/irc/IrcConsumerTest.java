@@ -50,7 +50,7 @@ public class IrcConsumerTest {
         channels.add(new IrcChannel("#chan1", null));
         channels.add(new IrcChannel("#chan2", "chan2key"));
 
-        when(configuration.getChannels()).thenReturn(channels);
+        when(configuration.getChannelList()).thenReturn(channels);
         when(endpoint.getConfiguration()).thenReturn(configuration);
 
         consumer = new IrcConsumer(endpoint, processor, connection);

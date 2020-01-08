@@ -24,17 +24,6 @@ for this component:
 </dependency>
 ------------------------------------------------------------
 
-== URI format
-
-[source,java]
----------------------------------------------------------------------
-irc:nick@host[:port]/#room[?options]
-irc:nick@host[:port]?channels=#channel1,#channel2,#channel3[?options]
----------------------------------------------------------------------
-
-You can append query options to the URI in the following format,
-`?option=value&option=value&...`
-
 == Options
 
 
@@ -79,14 +68,16 @@ with the following path and query parameters:
 |===
 
 
-=== Query Parameters (27 parameters):
+=== Query Parameters (29 parameters):
 
 
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
 | *autoRejoin* (common) | Whether to auto re-join when being kicked | true | boolean
+| *channels* (common) | Comma separated list of IRC channels. |  | String
 | *commandTimeout* (common) | Delay in milliseconds before sending commands after the connection is established. | 5000 | long
+| *keys* (common) | Comma separated list of keys for channels. |  | String
 | *namesOnJoin* (common) | Sends NAMES command to channel after joining it. onReply has to be true in order to process the result which will have the header value irc.num = '353'. | false | boolean
 | *nickname* (common) | The nickname used in chat. |  | String
 | *persistent* (common) | *Deprecated* Use persistent messages. | true | boolean

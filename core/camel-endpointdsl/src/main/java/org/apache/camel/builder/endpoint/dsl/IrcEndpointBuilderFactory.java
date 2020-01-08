@@ -66,6 +66,17 @@ public interface IrcEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma separated list of IRC channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default IrcEndpointConsumerBuilder channels(String channels) {
+            doSetProperty("channels", channels);
+            return this;
+        }
+        /**
          * Delay in milliseconds before sending commands after the connection is
          * established.
          * 
@@ -89,6 +100,17 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointConsumerBuilder commandTimeout(String commandTimeout) {
             doSetProperty("commandTimeout", commandTimeout);
+            return this;
+        }
+        /**
+         * Comma separated list of keys for channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default IrcEndpointConsumerBuilder keys(String keys) {
+            doSetProperty("keys", keys);
             return this;
         }
         /**
@@ -698,6 +720,17 @@ public interface IrcEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma separated list of IRC channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default IrcEndpointProducerBuilder channels(String channels) {
+            doSetProperty("channels", channels);
+            return this;
+        }
+        /**
          * Delay in milliseconds before sending commands after the connection is
          * established.
          * 
@@ -721,6 +754,17 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointProducerBuilder commandTimeout(String commandTimeout) {
             doSetProperty("commandTimeout", commandTimeout);
+            return this;
+        }
+        /**
+         * Comma separated list of keys for channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default IrcEndpointProducerBuilder keys(String keys) {
+            doSetProperty("keys", keys);
             return this;
         }
         /**
@@ -1277,6 +1321,17 @@ public interface IrcEndpointBuilderFactory {
             return this;
         }
         /**
+         * Comma separated list of IRC channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default IrcEndpointBuilder channels(String channels) {
+            doSetProperty("channels", channels);
+            return this;
+        }
+        /**
          * Delay in milliseconds before sending commands after the connection is
          * established.
          * 
@@ -1300,6 +1355,17 @@ public interface IrcEndpointBuilderFactory {
          */
         default IrcEndpointBuilder commandTimeout(String commandTimeout) {
             doSetProperty("commandTimeout", commandTimeout);
+            return this;
+        }
+        /**
+         * Comma separated list of keys for channels.
+         * 
+         * The option is a: <code>java.lang.String</code> type.
+         * 
+         * Group: common
+         */
+        default IrcEndpointBuilder keys(String keys) {
+            doSetProperty("keys", keys);
             return this;
         }
         /**
