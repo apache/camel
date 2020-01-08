@@ -62,6 +62,28 @@ public class KafkaComponentTest extends CamelTestSupport {
     }
 
     @Test
+    public void testCreateAdditionalProperties() {
+        String uri = "kafka:mytopic?brokers=broker1:12345,broker2:12566&partitioner=com.class.Party&additionalProperties.extra.1=123&additionalProperties.extra.2=test";
+
+        KafkaEndpoint endpoint = context.getEndpoint(uri, KafkaEndpoint.class);
+        assertEquals("broker1:12345,broker2:12566", endpoint.getConfiguration().getBrokers());
+        assertEquals("mytopic", endpoint.getConfiguration().getTopic());
+        assertEquals("com.class.Party", endpoint.getConfiguration().getPartitioner());
+        assertEquals("123", endpoint.getConfiguration().getAdditionalProperties().get("extra.1"));
+        assertEquals("test", endpoint.getConfiguration().getAdditionalProperties().get("extra.2"));
+
+        // test properties on producer keys
+        final Properties producerProperties = endpoint.getConfiguration().createProducerProperties();
+        assertEquals("123", producerProperties.getProperty("extra.1"));
+        assertEquals("test", producerProperties.getProperty("extra.2"));
+
+        // test properties on consumer keys
+        final Properties consumerProperties = endpoint.getConfiguration().createConsumerProperties();
+        assertEquals("123", consumerProperties.getProperty("extra.1"));
+        assertEquals("test", consumerProperties.getProperty("extra.2"));
+    }
+
+    @Test
     public void testAllProducerConfigProperty() throws Exception {
         Map<String, Object> params = new HashMap<>();
         setProducerProperty(params);
