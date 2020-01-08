@@ -18,6 +18,7 @@ package org.apache.camel.component.netty4;
 
 import io.netty.handler.timeout.ReadTimeoutException;
 import org.apache.camel.CamelExecutionException;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -38,6 +39,20 @@ public class NettyRequestTimeoutTest extends BaseNettyTest {
     public void testRequestTimeout() throws Exception {
         try {
             template.requestBody("netty4:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100", "Hello Camel", String.class);
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
+            assertNotNull(cause);
+        }
+    }
+
+    @Test
+    public void testKeepingTimeoutHeader() throws Exception {
+        Endpoint endpoint = this.resolveMandatoryEndpoint("netty4:tcp://localhost:{{port}}?textline=true&sync=true&requestTimeout=100");
+        try {
+            String out = template.requestBody(endpoint, "Hello", String.class);
+            assertEquals("Bye World", out);
+            template.requestBody(endpoint, "Hello Camel", String.class);
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             ReadTimeoutException cause = assertIsInstanceOf(ReadTimeoutException.class, e.getCause());
