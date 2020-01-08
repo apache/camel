@@ -41,14 +41,13 @@ public class ConsumerToProducerHeadersTest extends BeanstalkMockTestSupport {
     @EndpointInject("mock:result")
     protected MockEndpoint resultEndpoint;
 
-    private String testMessage = "hello, world";
-    
     private Processor a;
     private Processor b;
 
     @Test
     public void testBeanstalkConsumerToProducer() throws Exception {
         final long jobId = 111;
+        String testMessage = "hello, world";
         final byte[] payload = Helper.stringToBytes(testMessage);
         final Job jobMock = mock(Job.class);
         // stats that may be set in the consumer:
