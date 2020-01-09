@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.braintree.internal.BraintreeApiCollection;
 import org.apache.camel.component.braintree.internal.BraintreeApiName;
+import org.apache.camel.spi.Metadata;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.component.AbstractApiComponent;
 
@@ -32,6 +33,10 @@ import org.apache.camel.support.component.AbstractApiComponent;
  */
 @Component("braintree")
 public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, BraintreeConfiguration, BraintreeApiCollection> {
+
+    @Metadata(label = "advanced,logging", defaultValue = "true")
+    private boolean logHandlerEnabled = true;
+
     private final Map<String, BraintreeGateway> gateways;
 
     public BraintreeComponent() {
@@ -53,6 +58,7 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     protected Endpoint createEndpoint(String uri, String methodName, BraintreeApiName apiName, BraintreeConfiguration endpointConfiguration) {
         endpointConfiguration.setApiName(apiName);
         endpointConfiguration.setMethodName(methodName);
+        endpointConfiguration.setLogHandlerEnabled(logHandlerEnabled);
         return new BraintreeEndpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
@@ -67,6 +73,18 @@ public class BraintreeComponent extends AbstractApiComponent<BraintreeApiName, B
     @Override
     public BraintreeConfiguration getConfiguration() {
         return super.getConfiguration();
+    }
+
+    /**
+     * Sets whether to enable the BraintreeLogHandler. It may be desirable to set this to
+     * 'false' where an existing JUL - SLF4J logger bridge is on the classpath.
+     */
+    public void setLogHandlerEnabled(boolean logHandlerEnabled) {
+        this.logHandlerEnabled = logHandlerEnabled;
+    }
+
+    public boolean isLogHandlerEnabled() {
+        return logHandlerEnabled;
     }
 
     public synchronized BraintreeGateway getGateway(BraintreeConfiguration configuration) {
