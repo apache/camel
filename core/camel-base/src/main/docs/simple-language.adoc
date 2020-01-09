@@ -192,6 +192,8 @@ Exchange is being routed.
 |threadName |String |Returns the name of the current thread. Can be used for
 logging purpose.
 
+|hostname |String |Returns the local hostname (may be empty if not possible to resolve).
+
 |ref:xxx |Object |To lookup a bean from the Registry with
 the given id.
 
