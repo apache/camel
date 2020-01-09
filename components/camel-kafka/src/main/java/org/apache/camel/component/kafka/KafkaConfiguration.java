@@ -17,6 +17,7 @@
 package org.apache.camel.component.kafka;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -317,7 +318,7 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
 
     // Additional properties
     @UriParam(label = "common", prefix = "additionalProperties.", multiValue = true)
-    private Map<String, Object> additionalProperties;
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     public KafkaConfiguration() {
     }

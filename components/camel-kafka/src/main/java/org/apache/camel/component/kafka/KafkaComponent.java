@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.kafka;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -81,7 +82,10 @@ public class KafkaComponent extends DefaultComponent implements SSLContextParame
 
         // extract the additional properties map
         if (PropertiesHelper.hasProperties(params, "additionalProperties.")) {
-            endpoint.getConfiguration().setAdditionalProperties(PropertiesHelper.extractProperties(params, "additionalProperties."));
+            final Map<String, Object> additionalProperties = endpoint.getConfiguration().getAdditionalProperties();
+
+            // add and overwrite additional properties from endpoint to pre-configured properties
+            additionalProperties.putAll(PropertiesHelper.extractProperties(params, "additionalProperties."));
         }
 
         return endpoint;
