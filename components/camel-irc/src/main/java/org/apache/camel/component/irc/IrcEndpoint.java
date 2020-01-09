@@ -36,7 +36,7 @@ import org.schwering.irc.lib.IRCUser;
     firstVersion = "1.1.0", 
     scheme = "irc", 
     title = "IRC", 
-    syntax = "irc:hostname:port", 
+    syntax = "irc:hostname:port",
     alternativeSyntax = "irc:username:password@hostname:port", 
     label = "chat")
 public class IrcEndpoint extends DefaultEndpoint {
@@ -185,7 +185,7 @@ public class IrcEndpoint extends DefaultEndpoint {
     }
 
     public void joinChannels() {
-        for (IrcChannel channel : configuration.getChannels()) {
+        for (IrcChannel channel : configuration.getChannelList()) {
             joinChannel(channel);
         }
     }
