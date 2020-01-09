@@ -471,7 +471,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 if (body instanceof Exchange) {
                     ((Exchange)body).setException(e);
                 }
-                if (body instanceof Message) {
+                if (body instanceof Message && ((Message)body).getExchange() != null) {
                     ((Message)body).getExchange().setException(e);
                 }
             }
