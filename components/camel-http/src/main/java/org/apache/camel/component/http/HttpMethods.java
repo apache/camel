@@ -41,11 +41,9 @@ public enum HttpMethods implements Expression {
     OPTIONS(HttpOptions.class),
     TRACE(HttpTrace.class);
 
-    final Class<? extends HttpRequestBase> clazz;
     final boolean entity;
 
     HttpMethods(Class<? extends HttpRequestBase> clazz) {
-        this.clazz = clazz;
         entity = HttpEntityEnclosingRequestBase.class.isAssignableFrom(clazz);
     }
 
