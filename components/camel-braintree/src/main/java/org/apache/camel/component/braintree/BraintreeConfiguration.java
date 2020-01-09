@@ -78,6 +78,10 @@ public class BraintreeConfiguration {
     @Metadata(label = "advanced,logging")
     private String httpLogName;
 
+    @UriParam(defaultValue = "true")
+    @Metadata(label = "advanced,logging")
+    private boolean logHandlerEnabled = true;
+
     @UriParam
     @Metadata(label = "advanced")
     private Integer httpReadTimeout;
@@ -216,6 +220,20 @@ public class BraintreeConfiguration {
     }
 
     /**
+     * Sets whether to enable the BraintreeLogHandler. It may be desirable to set this to
+     * 'false' where an existing JUL - SLF4J logger bridge is on the classpath.
+     *
+     * This option can also be configured globally on the BraintreeComponent.
+     */
+    public void setLogHandlerEnabled(boolean logHandlerEnabled) {
+        this.logHandlerEnabled = logHandlerEnabled;
+    }
+
+    public boolean isLogHandlerEnabled() {
+        return logHandlerEnabled;
+    }
+
+    /**
      * Set read timeout for http calls.
      */
     public void setHttpReadTimeout(Integer httpReadTimeout) {
@@ -280,7 +298,9 @@ public class BraintreeConfiguration {
             logger.removeHandler(handler);
         }
 
-        logger.addHandler(new BraintreeLogHandler());
+        if (isLogHandlerEnabled()) {
+            logger.addHandler(new BraintreeLogHandler());
+        }
 
         if (httpLogLevel != null) {
             logger.setLevel(httpLogLevel);
