@@ -800,6 +800,38 @@ public interface BraintreeEndpointBuilderFactory {
             doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default AdvancedBraintreeEndpointConsumerBuilder logHandlerEnabled(
+                boolean logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default AdvancedBraintreeEndpointConsumerBuilder logHandlerEnabled(
+                String logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
     }
 
     /**
@@ -1073,6 +1105,38 @@ public interface BraintreeEndpointBuilderFactory {
             doSetProperty("httpLogLevel", httpLogLevel);
             return this;
         }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default AdvancedBraintreeEndpointProducerBuilder logHandlerEnabled(
+                boolean logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default AdvancedBraintreeEndpointProducerBuilder logHandlerEnabled(
+                String logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
     }
 
     /**
@@ -1298,6 +1362,38 @@ public interface BraintreeEndpointBuilderFactory {
         default AdvancedBraintreeEndpointBuilder httpLogLevel(
                 String httpLogLevel) {
             doSetProperty("httpLogLevel", httpLogLevel);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option is a: <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default AdvancedBraintreeEndpointBuilder logHandlerEnabled(
+                boolean logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
+            return this;
+        }
+        /**
+         * Sets whether to enable the BraintreeLogHandler. It may be desirable
+         * to set this to 'false' where an existing JUL - SLF4J logger bridge is
+         * on the classpath. This option can also be configured globally on the
+         * BraintreeComponent.
+         * 
+         * The option will be converted to a <code>boolean</code> type.
+         * 
+         * Default: true
+         * Group: logging
+         */
+        default AdvancedBraintreeEndpointBuilder logHandlerEnabled(
+                String logHandlerEnabled) {
+            doSetProperty("logHandlerEnabled", logHandlerEnabled);
             return this;
         }
     }
