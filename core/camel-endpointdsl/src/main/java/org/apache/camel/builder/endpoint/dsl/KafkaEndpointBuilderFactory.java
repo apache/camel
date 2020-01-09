@@ -16,6 +16,7 @@
  */
 package org.apache.camel.builder.endpoint.dsl;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import javax.annotation.Generated;
 import org.apache.camel.ExchangePattern;
@@ -44,6 +45,43 @@ public interface KafkaEndpointBuilderFactory {
                 EndpointConsumerBuilder {
         default AdvancedKafkaEndpointConsumerBuilder advanced() {
             return (AdvancedKafkaEndpointConsumerBuilder) this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: common
+         */
+        default KafkaEndpointConsumerBuilder additionalProperties(
+                Map<String, Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default KafkaEndpointConsumerBuilder additionalProperties(
+                String additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
         }
         /**
          * URL of the Kafka brokers to use. The format is
@@ -1431,6 +1469,43 @@ public interface KafkaEndpointBuilderFactory {
                 EndpointProducerBuilder {
         default AdvancedKafkaEndpointProducerBuilder advanced() {
             return (AdvancedKafkaEndpointProducerBuilder) this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: common
+         */
+        default KafkaEndpointProducerBuilder additionalProperties(
+                Map<String, Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default KafkaEndpointProducerBuilder additionalProperties(
+                String additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
         }
         /**
          * URL of the Kafka brokers to use. The format is
@@ -2982,6 +3057,43 @@ public interface KafkaEndpointBuilderFactory {
                 KafkaEndpointConsumerBuilder, KafkaEndpointProducerBuilder {
         default AdvancedKafkaEndpointBuilder advanced() {
             return (AdvancedKafkaEndpointBuilder) this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option is a: <code>java.util.Map&lt;java.lang.String,
+         * java.lang.Object&gt;</code> type.
+         * 
+         * Group: common
+         */
+        default KafkaEndpointBuilder additionalProperties(
+                Map<String, Object> additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
+        }
+        /**
+         * Sets additional properties for either kafka consumer or kafka
+         * producer in case they can't be set directly on the camel
+         * configurations (e.g: new Kafka properties that are not reflected yet
+         * in Camel configurations), the properties have to be prefixed with
+         * additionalProperties.. E.g:
+         * additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro.
+         * 
+         * The option will be converted to a
+         * <code>java.util.Map&lt;java.lang.String, java.lang.Object&gt;</code>
+         * type.
+         * 
+         * Group: common
+         */
+        default KafkaEndpointBuilder additionalProperties(
+                String additionalProperties) {
+            doSetProperty("additionalProperties", additionalProperties);
+            return this;
         }
         /**
          * URL of the Kafka brokers to use. The format is
