@@ -201,17 +201,17 @@ public class KafkaProducer extends DefaultAsyncProducer {
                             innerMmessage = (Message) next;
                         }
 
-                        if(innerMmessage.getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
+                        if (innerMmessage.getHeader(KafkaConstants.OVERRIDE_TOPIC) != null) {
                             innerTopic = (String) innerMmessage.removeHeader(KafkaConstants.OVERRIDE_TOPIC);
                         }
 
-                        if(innerMmessage.getHeader(KafkaConstants.PARTITION_KEY) != null) {
+                        if (innerMmessage.getHeader(KafkaConstants.PARTITION_KEY) != null) {
                             innerPartitionKey = endpoint.getConfiguration().getPartitionKey() != null
                                 ? endpoint.getConfiguration().getPartitionKey() : innerMmessage.getHeader(KafkaConstants.PARTITION_KEY, Integer.class);
                             hasPartitionKey = innerPartitionKey != null;
                         }
 
-                        if(innerMmessage.getHeader(KafkaConstants.KEY) != null) {
+                        if (innerMmessage.getHeader(KafkaConstants.KEY) != null) {
                             innerKey = endpoint.getConfiguration().getKey() != null
                                 ? endpoint.getConfiguration().getKey() : innerMmessage.getHeader(KafkaConstants.KEY);
 
@@ -319,7 +319,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
             List<RecordMetadata> metadata = Collections.singletonList(f.getValue().get());
             recordMetadatas.addAll(metadata);
             Exchange innerExchange = null;
-            if(f.getKey() instanceof  Exchange) {
+            if (f.getKey() instanceof  Exchange) {
                 innerExchange = (Exchange) f.getKey();
                 if (innerExchange != null) {
                     if (endpoint.getConfiguration().isRecordMetadata()) {
@@ -332,7 +332,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                 }
             }
             Message innerMessage = null;
-            if(f.getKey() instanceof  Message) {
+            if (f.getKey() instanceof  Message) {
                 innerMessage = (Message) f.getKey();
                 if (innerMessage != null) {
                     if (endpoint.getConfiguration().isRecordMetadata()) {
@@ -357,7 +357,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     log.debug("Sending message to topic: {}, partition: {}, key: {}", rec.topic(), rec.partition(), rec.key());
                 }
                 List<Callback> delegates = new ArrayList<>(Arrays.asList(cb));
-                if(exrec.getKey() != null) {
+                if (exrec.getKey() != null) {
                     delegates.add(new KafkaProducerCallBack(exrec.getKey()));
                 }
                 kafkaProducer.send(rec, new DelegatingCallback(delegates.toArray(new Callback[0])));
@@ -376,7 +376,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
     protected Object tryConvertToSerializedType(Exchange exchange, Object object, String serializerClass) {
         Object answer = null;
 
-        if(exchange == null) {
+        if (exchange == null) {
             return object;
         }
 
@@ -457,7 +457,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
             if (count.decrementAndGet() == 0) {
                 log.trace("All messages sent, continue routing.");
                 //was able to get all the work done while queuing the requests
-                if(callback != null) {
+                if (callback != null) {
                     callback.done(true);
                 }
                 return true;
@@ -468,8 +468,11 @@ public class KafkaProducer extends DefaultAsyncProducer {
         @Override
         public void onCompletion(RecordMetadata recordMetadata, Exception e) {
             if (e != null) {
-                if(body instanceof Exchange) {
+                if (body instanceof Exchange) {
                     ((Exchange)body).setException(e);
+                }
+                if (body instanceof Message) {
+                    ((Message)body).getExchange().setException(e);
                 }
             }
 
@@ -482,7 +485,7 @@ public class KafkaProducer extends DefaultAsyncProducer {
                     @Override
                     public void run() {
                         log.trace("All messages sent, continue routing.");
-                        if(callback != null) {
+                        if (callback != null) {
                             callback.done(false);
                         }
                     }
