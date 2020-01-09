@@ -24,16 +24,16 @@ import info.ganglia.gmetric4j.gmetric.GMetricSlope;
 import info.ganglia.gmetric4j.gmetric.GMetricType;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GangliaProducerTest {
 
     private static final String BODY = "2.0";
@@ -61,7 +61,7 @@ public class GangliaProducerTest {
     private GangliaEndpoint mockEndpoint;
     @Mock
     private Exchange mockExchange;
-    @Mock
+    @Mock(lenient = true)
     private Message mockMessage;
     @Mock
     private GangliaConfiguration mockConf;
@@ -69,7 +69,7 @@ public class GangliaProducerTest {
 
     private GangliaProducer gangliaProducer;
 
-    @Before
+    @BeforeEach
     public void setup() {
         when(mockEndpoint.getConfiguration()).thenReturn(mockConf);
 
