@@ -540,7 +540,7 @@
     <olingo2-version>2.0.10</olingo2-version>
     <olingo-odata2-core-bundle-version>2.0.10_1</olingo-odata2-core-bundle-version>
     <olingo2-gson-version>2.4</olingo2-gson-version>
-    <olingo4-version>4.7.0</olingo4-version>
+    <olingo4-version>4.7.1</olingo4-version>
     <ognl-version>3.1.12</ognl-version>
     <ognl-bundle-version>3.1.12_1</ognl-bundle-version>
     <opencensus-api-version>0.12.3</opencensus-api-version>
