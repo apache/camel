@@ -25,6 +25,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Predicate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.bean.BeanExpressionProcessor;
@@ -126,6 +127,16 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
     }
 
     public Object evaluate(Exchange exchange) {
+        if (bean == null && type == null && beanName != null && beanName.startsWith("type:")) {
+            // its a reference to a fqn class so load the class and use type instead
+            String fqn = beanName.substring(5);
+            try {
+                type = exchange.getContext().getClassResolver().resolveMandatoryClass(fqn);
+                beanName = null;
+            } catch (ClassNotFoundException e) {
+                throw new NoSuchBeanException(beanName, e);
+            }
+        }
 
         // if the bean holder doesn't exist then create it using the context from the exchange
         if (beanHolder == null) {
@@ -188,7 +199,18 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         // lets see if we can do additional validation that the bean has valid method during creation of the expression
         Object target = bean;
         if (bean == null && type == null && beanName != null) {
-            target = CamelContextHelper.mandatoryLookup(camelContext, beanName);
+            if (beanName.startsWith("type:")) {
+                // its a reference to a fqn class so load the class and use type instead
+                String fqn = beanName.substring(5);
+                try {
+                    type = camelContext.getClassResolver().resolveMandatoryClass(fqn);
+                    beanName = null;
+                } catch (ClassNotFoundException e) {
+                    throw new NoSuchBeanException(beanName, e);
+                }
+            } else {
+                target = CamelContextHelper.mandatoryLookup(camelContext, beanName);
+            }
         }
         validateHasMethod(camelContext, target, type, method);
 
@@ -253,6 +275,10 @@ public class BeanExpression implements Expression, Predicate, AfterPropertiesCon
         if (bean != null) {
             holder = new ConstantBeanHolder(bean, context);
         } else if (beanName != null) {
+            // it may refer to a type such as when used with bean language
+            if (context.getRegistry().lookupByName(beanName) == null) {
+
+            }
             holder = new RegistryBean(context, beanName);
         } else if (type != null) {
             holder = new ConstantTypeBeanHolder(type, context);

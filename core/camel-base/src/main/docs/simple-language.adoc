@@ -177,7 +177,8 @@ Command accepts offsets such as: *now-24h* or *in.header.xxx+1h* or even *now+1h
 |bean:_bean expression_ |Object |Invoking a bean expression using the xref:components::bean-component.adoc[Bean] language.
 Specifying a method name you must use dot as separator. We also support
 the ?method=methodname syntax that is used by the xref:components::bean-component.adoc[Bean]
-component.
+component. Camel will by default lookup a bean by the given name. However if you need to refer
+to a bean class then you can prefix with type, such as `bean:type:fqnClassName`.
 
 |`properties:key:default` |String |Lookup a property with the given key. If the key does
 not exists or has no value, then an optional default value can be
