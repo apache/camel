@@ -77,45 +77,46 @@ public class PdfProducer extends DefaultProducer {
     private Object doAppend(Exchange exchange) throws IOException {
         log.debug("Got {} operation, going to append text to provided pdf.", pdfConfiguration.getOperation());
         String body = exchange.getIn().getBody(String.class);
-        PDDocument document = exchange.getIn().getHeader(PDF_DOCUMENT_HEADER_NAME, PDDocument.class);
-        if (document == null) {
-            throw new IllegalArgumentException(String.format("%s header is expected for append operation",
-                    PDF_DOCUMENT_HEADER_NAME));
+        try (PDDocument document = exchange.getIn().getHeader(PDF_DOCUMENT_HEADER_NAME, PDDocument.class)) {
+            if (document == null) {
+                throw new IllegalArgumentException(String.format("%s header is expected for append operation",
+                        PDF_DOCUMENT_HEADER_NAME));
+            }
+
+            if (document.isEncrypted()) {
+                document.setAllSecurityToBeRemoved(true);
+            }
+
+            ProtectionPolicy protectionPolicy = exchange.getIn().getHeader(
+                    PROTECTION_POLICY_HEADER_NAME, ProtectionPolicy.class);
+
+            appendToPdfDocument(body, document, protectionPolicy);
+            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            document.save(byteArrayOutputStream);
+            return byteArrayOutputStream;
         }
-
-        if (document.isEncrypted()) {
-            document.setAllSecurityToBeRemoved(true);
-        }
-
-        ProtectionPolicy protectionPolicy = exchange.getIn().getHeader(
-                PROTECTION_POLICY_HEADER_NAME, ProtectionPolicy.class);
-
-        appendToPdfDocument(body, document, protectionPolicy);
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        document.save(byteArrayOutputStream);
-        return byteArrayOutputStream;
     }
 
     private String doExtractText(Exchange exchange) throws IOException {
         log.debug("Got {} operation, going to extract text from provided pdf.", pdfConfiguration.getOperation());
-        PDDocument document = exchange.getIn().getBody(PDDocument.class);
-
-
-        PDFTextStripper pdfTextStripper = new PDFTextStripper();
-        return pdfTextStripper.getText(document);
+        try (PDDocument document = exchange.getIn().getBody(PDDocument.class)) {
+            PDFTextStripper pdfTextStripper = new PDFTextStripper();
+            return pdfTextStripper.getText(document);
+        }
     }
 
     private OutputStream doCreate(Exchange exchange) throws IOException {
         log.debug("Got {} operation, going to create and write provided string to pdf document.",
                 pdfConfiguration.getOperation());
         String body = exchange.getIn().getBody(String.class);
-        PDDocument document = new PDDocument();
-        StandardProtectionPolicy protectionPolicy = exchange.getIn().getHeader(
-                PROTECTION_POLICY_HEADER_NAME, StandardProtectionPolicy.class);
-        appendToPdfDocument(body, document, protectionPolicy);
-        OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        document.save(byteArrayOutputStream);
-        return byteArrayOutputStream;
+        try (PDDocument document = new PDDocument()) {
+            StandardProtectionPolicy protectionPolicy = exchange.getIn().getHeader(
+                    PROTECTION_POLICY_HEADER_NAME, StandardProtectionPolicy.class);
+            appendToPdfDocument(body, document, protectionPolicy);
+            OutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            document.save(byteArrayOutputStream);
+            return byteArrayOutputStream;
+        }
     }
 
     private void appendToPdfDocument(String text, PDDocument document, ProtectionPolicy protectionPolicy) throws IOException {
