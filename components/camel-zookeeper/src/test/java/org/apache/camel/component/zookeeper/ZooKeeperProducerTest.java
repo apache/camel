@@ -144,7 +144,7 @@ public class ZooKeeperProducerTest extends ZooKeeperTestSupport {
         exchange.getIn().setHeader(ZOOKEEPER_NODE, "/set-listing/firstborn");
         exchange.setPattern(ExchangePattern.InOut);
         template.send("zookeeper://localhost:" + getServerPort() + "/set-listing?create=true&listChildren=true", exchange);
-        List<?> children = exchange.getOut().getMandatoryBody(List.class);
+        List<?> children = exchange.getMessage().getMandatoryBody(List.class);
         assertEquals(1, children.size());
         assertEquals("firstborn", children.get(0));
     }
