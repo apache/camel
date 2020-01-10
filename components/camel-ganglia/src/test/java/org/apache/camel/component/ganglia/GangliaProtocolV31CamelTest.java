@@ -21,6 +21,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import info.ganglia.gmetric4j.xdr.v31x.Ganglia_metadata_msg;
+import info.ganglia.gmetric4j.xdr.v31x.Ganglia_value_msg;
+import io.netty.channel.ChannelHandler.Sharable;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.socket.DatagramPacket;
+import io.netty.handler.codec.MessageToMessageDecoder;
 import org.acplt.oncrpc.OncRpcException;
 import org.acplt.oncrpc.XdrAble;
 import org.acplt.oncrpc.XdrBufferDecodingStream;
@@ -34,6 +40,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.jupiter.api.Test;
 
+import static info.ganglia.gmetric4j.gmetric.GMetricSlope.NEGATIVE;
+import static info.ganglia.gmetric4j.gmetric.GMetricType.FLOAT;
+import static info.ganglia.gmetric4j.xdr.v31x.Ganglia_msg_formats.gmetadata_full;
+import static info.ganglia.gmetric4j.xdr.v31x.Ganglia_msg_formats.gmetric_string;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_DMAX;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_METRIC_NAME;
 import static org.apache.camel.component.ganglia.GangliaConfiguration.DEFAULT_SLOPE;
@@ -50,18 +60,6 @@ import static org.apache.camel.component.ganglia.GangliaConstants.METRIC_UNITS;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.fail;
-
-import static info.ganglia.gmetric4j.gmetric.GMetricSlope.NEGATIVE;
-import static info.ganglia.gmetric4j.gmetric.GMetricType.FLOAT;
-import static info.ganglia.gmetric4j.xdr.v31x.Ganglia_msg_formats.gmetadata_full;
-import static info.ganglia.gmetric4j.xdr.v31x.Ganglia_msg_formats.gmetric_string;
-
-import info.ganglia.gmetric4j.xdr.v31x.Ganglia_metadata_msg;
-import info.ganglia.gmetric4j.xdr.v31x.Ganglia_value_msg;
-import io.netty.channel.ChannelHandler.Sharable;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.socket.DatagramPacket;
-import io.netty.handler.codec.MessageToMessageDecoder;
 
 /**
  * {@code GangliaProtocolV31CamelTest} is not shipped with an embedded gmond
