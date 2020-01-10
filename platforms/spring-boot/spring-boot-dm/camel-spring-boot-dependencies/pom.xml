@@ -4281,7 +4281,7 @@
   <!-- Force the reactor build order -->
   <dependencies>
     <dependency>
-      <groupId>org.apache.camel</groupId>
+      <groupId>org.apache.camel.springboot</groupId>
       <artifactId>camel-spring-boot-dependencies-generator</artifactId>
       <version>${project.version}</version>
       <type>pom</type>
