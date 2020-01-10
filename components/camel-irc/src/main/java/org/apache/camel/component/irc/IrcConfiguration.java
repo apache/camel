@@ -295,7 +295,7 @@ public class IrcConfiguration implements Cloneable {
     private void createChannels() {
         channelList.clear();
 
-        if(channels == null) {
+        if (channels == null) {
             return;
         }
 
