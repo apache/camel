@@ -18,6 +18,7 @@ package org.apache.camel.component.exec.impl;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -84,7 +85,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
         // Strange that Sun Java 1.5 writes the -version in the syserr
         assertNull(out);
         assertNotNull(err);
-        String outString = IOUtils.toString(err);
+        String outString = IOUtils.toString(err, Charset.defaultCharset());
         log.info("Received stdout: " + outString);
         assertTrue(outString.contains("java version"));
     }
@@ -98,7 +99,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
         // Strange that Sun Java 1.5 writes the -version in the syserr
         assertNull(out);
         assertNotNull(err);
-        String outerr = IOUtils.toString(err);
+        String outerr = IOUtils.toString(err, Charset.defaultCharset());
         log.info("Received stderr: " + outerr);
         assertTrue(outerr.contains("java version"));
     }
@@ -111,10 +112,10 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
     public void testExecWinAnt() throws Exception {
         File f = new File(ANT_BUILD_FILE_NAME);
         f.createNewFile();
-        FileUtils.writeStringToFile(f, ANT_BUILD_FILE_CONTENT);
+        FileUtils.writeStringToFile(f, ANT_BUILD_FILE_CONTENT, Charset.defaultCharset());
         assertTrue("You must create a sample build file!", f.exists());
         ExecResult body = templateExecAnt.requestBody((Object)"test", ExecResult.class);
-        String stdout = IOUtils.toString(body.getStdout());
+        String stdout = IOUtils.toString(body.getStdout(), Charset.defaultCharset());
         assertNull(body.getStderr());
         assertTrue("The ant script should print" + TEST_MSG, stdout.contains(TEST_MSG));
         f.delete();
@@ -128,11 +129,11 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
     public void testExecWinAntWithOutFile() throws Exception {
         File f = new File(ANT_BUILD_FILE_NAME);
         f.createNewFile();
-        FileUtils.writeStringToFile(f, ANT_BUILD_FILE_CONTENT);
+        FileUtils.writeStringToFile(f, ANT_BUILD_FILE_CONTENT, Charset.defaultCharset());
         assertTrue("You must create a sample build file!", f.exists());
         // use type conversion here
         InputStream body = templateExecAntWithOutFile.requestBody((Object)"test", InputStream.class);
-        String bodyString = IOUtils.toString(body);
+        String bodyString = IOUtils.toString(body, Charset.defaultCharset());
         assertTrue("The ant script should print" + TEST_MSG, bodyString.contains(TEST_MSG));
         f.delete();
     }
@@ -171,7 +172,7 @@ public class ExecDocumentationExamplesTest extends CamelTestSupport {
                         public void process(Exchange exchange) throws Exception {
                             InputStream outFile = exchange.getIn().getBody(InputStream.class);
                             // do something with the out file here
-                            log.info(IOUtils.toString(outFile));
+                            log.info(IOUtils.toString(outFile, Charset.defaultCharset()));
                         }
 
                     });
