@@ -763,6 +763,10 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.couchbase-client/${couchbase-client-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-couchbase/${project.version}</bundle>
   </feature>
+  <feature name='camel-cron' version='${project.version}' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-cron/${project.version}</bundle>
+  </feature>
   <feature name='camel-crypto' version='${project.version}' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>

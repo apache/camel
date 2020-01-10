@@ -71,6 +71,7 @@ public interface EndpointBuilderFactory extends
         CordaEndpointBuilderFactory,
         CouchDbEndpointBuilderFactory,
         CouchbaseEndpointBuilderFactory,
+        CronEndpointBuilderFactory,
         CryptoCmsEndpointBuilderFactory,
         CwEndpointBuilderFactory,
         CxfEndpointBuilderFactory,
