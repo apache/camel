@@ -468,3 +468,28 @@ use the following as well:
     from("file:inbox?scheduler=spring&scheduler.cron=0/2+*+*+*+*+?")
        .to("bean:process");
 ----
+
+== Cron Component Support
+
+The Quartz component can be used as implementation of the Camel Cron component.
+
+
+Maven users will need to add the following additional dependency to their `pom.xml`:
+
+[source,xml]
+------------------------------------------------------------
+<dependency>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-cron</artifactId>
+    <version>x.x.x</version>
+    <!-- use the same version as your Camel core version -->
+</dependency>
+------------------------------------------------------------
+
+Users can then use the cron component instead of the quartz component, as in the following route:
+
+[source,java]
+----
+    from("cron://name?schedule=0+0/5+12-18+?+*+MON-FRI")
+    .to("activemq:Totally.Rocks");
+----
