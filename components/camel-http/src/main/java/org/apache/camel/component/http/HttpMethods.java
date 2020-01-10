@@ -32,14 +32,46 @@ import org.apache.http.client.methods.HttpTrace;
 
 public enum HttpMethods implements Expression {
 
-    GET(HttpGet.class),
-    PATCH(HttpPatch.class),
-    POST(HttpPost.class),
-    PUT(HttpPut.class),
-    DELETE(HttpDelete.class),
-    HEAD(HttpHead.class),
-    OPTIONS(HttpOptions.class),
-    TRACE(HttpTrace.class);
+    GET(HttpGet.class) {
+        public HttpRequestBase createMethod(String url) {
+            return new HttpGet(url);
+        }
+    },
+    PATCH(HttpPatch.class) {
+        public HttpRequestBase createMethod(String url) {
+            return new HttpPatch(url);
+        }
+    },
+    POST(HttpPost.class) {
+        public HttpRequestBase createMethod(String url) {
+            return new HttpPost(url);
+        }
+    },
+    PUT(HttpPut.class) {
+        public HttpRequestBase createMethod(String url) {
+            return new HttpPut(url);
+        }
+    },
+    DELETE(HttpDelete.class) {
+        public HttpRequestBase createMethod(String url) {
+            return new HttpDelete(url);
+        }
+    },
+    HEAD(HttpHead.class) {
+        public HttpRequestBase createMethod(String url) {
+            return new HttpHead(url);
+        }
+    },
+    OPTIONS(HttpOptions.class) {
+        public HttpRequestBase createMethod(String url) {
+            return new HttpOptions(url);
+        }
+    },
+    TRACE(HttpTrace.class) {
+        public HttpRequestBase createMethod(String url) {
+            return new HttpTrace(url);
+        }
+    };
 
     final boolean entity;
 
@@ -47,28 +79,7 @@ public enum HttpMethods implements Expression {
         entity = HttpEntityEnclosingRequestBase.class.isAssignableFrom(clazz);
     }
 
-    public HttpRequestBase createMethod(final String url) {
-        switch (this) {
-        case GET:
-            return new HttpGet(url);
-        case PATCH:
-            return new HttpPatch(url);
-        case POST:
-            return new HttpPost(url);
-        case PUT:
-            return new HttpPut(url);
-        case DELETE:
-            return new HttpDelete(url);
-        case HEAD:
-            return new HttpHead(url);
-        case OPTIONS:
-            return new HttpOptions(url);
-        case TRACE:
-            return new HttpTrace(url);
-        default:
-            throw new RuntimeException("no such method " + this);
-        }
-    }
+    public abstract HttpRequestBase createMethod(String url);
 
     public final boolean isEntityEnclosing() {
         return entity;
