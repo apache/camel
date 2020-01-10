@@ -53,11 +53,8 @@ public final class ExecResultConverter {
 
     @Converter
     public static byte[] convertToByteArray(ExecResult result, Exchange exchange) throws FileNotFoundException, IOException {
-        InputStream stream = toInputStream(result);
-        try {
+    	try (InputStream stream = toInputStream(result)) {
             return IOUtils.toByteArray(stream);
-        } finally {
-            IOUtils.closeQuietly(stream);
         }
     }
 

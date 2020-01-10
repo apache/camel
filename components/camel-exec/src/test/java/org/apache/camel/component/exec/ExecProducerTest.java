@@ -17,6 +17,7 @@
 package org.apache.camel.component.exec;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
 
@@ -122,7 +123,7 @@ public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
                 exchange.getIn().setBody(input);
             }
         });
-        assertEquals(input, IOUtils.toString(execCommandExecutorMock.lastCommandResult.getCommand().getInput()));
+        assertEquals(input, IOUtils.toString(execCommandExecutorMock.lastCommandResult.getCommand().getInput(), Charset.defaultCharset()));
     }
 
     @Test
