@@ -83,6 +83,10 @@ public class CronComponent extends DefaultComponent {
         }
     }
 
+    public CamelCronService getService() {
+        return service;
+    }
+
     public String getCronService() {
         return cronService;
     }
