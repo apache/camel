@@ -120,7 +120,7 @@ public class FopEndpointTest extends CamelTestSupport {
         exchange.getIn().setBody(FopHelper.decorateTextWithXSLFO("Test Content"));
 
         producer.process(exchange);
-        try (InputStream inputStream = exchange.getOut().getBody(InputStream.class)) {
+        try (InputStream inputStream = exchange.getMessage().getBody(InputStream.class)) {
             PDDocument document = PDDocument.load(inputStream, password);
             assertTrue(document.isEncrypted());
         }
@@ -141,12 +141,12 @@ public class FopEndpointTest extends CamelTestSupport {
         exchange.getIn().setBody(FopHelper.decorateTextWithXSLFO("Test Content"));
 
         producer.process(exchange);
-        String plainText = exchange.getOut().getBody(String.class).trim();
+        String plainText = exchange.getMessage().getBody(String.class).trim();
         assertEquals("Test Content", plainText);
     }
 
     private PDDocument getDocumentFrom(Exchange exchange) throws IOException {
-        InputStream inputStream = exchange.getOut().getBody(InputStream.class);
+        InputStream inputStream = exchange.getMessage().getBody(InputStream.class);
         return PDDocument.load(inputStream);
     }
 }
