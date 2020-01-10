@@ -27,6 +27,16 @@ public class DummyCamelCronService implements CamelCronService, CamelContextAwar
 
     private CamelContext camelContext;
 
+    private String id;
+
+    public DummyCamelCronService() {
+        this("dummy");
+    }
+
+    public DummyCamelCronService(String id) {
+        this.id = id;
+    }
+
     @Override
     public Endpoint createEndpoint(CamelCronConfiguration configuration) throws Exception {
         TimerComponent timerComponent = camelContext.getComponent("timer", TimerComponent.class);
@@ -35,7 +45,7 @@ public class DummyCamelCronService implements CamelCronService, CamelContextAwar
 
     @Override
     public String getId() {
-        return "dummy";
+        return id;
     }
 
     @Override
