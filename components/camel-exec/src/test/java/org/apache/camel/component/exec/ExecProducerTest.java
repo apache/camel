@@ -194,7 +194,7 @@ public class ExecProducerTest extends AbstractJUnit4SpringContextTests {
             }
         });
         // test the conversion
-        ExecResult result = exchange.getOut().getBody(ExecResult.class);
+        ExecResult result = exchange.getMessage().getBody(ExecResult.class);
         assertNotNull(result);
     }
 }
