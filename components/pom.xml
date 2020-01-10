@@ -38,6 +38,7 @@
         <module>camel-bean</module>
         <module>camel-browse</module>
         <module>camel-controlbus</module>
+        <module>camel-cron</module>
         <module>camel-dataformat</module>
         <module>camel-dataset</module>
         <module>camel-direct</module>
