@@ -669,9 +669,18 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                 }
 
                 String group = EndpointHelper.labelAsGroupName(label, componentModel.isConsumerOnly(), componentModel.isProducerOnly());
-                ComponentOption option = new ComponentOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
-                        docComment.trim(), deprecated, deprecationNote, secret, group, label, isEnum, enums, nestedTypeName, nestedFieldName);
-                componentOptions.add(option);
+                // filter out consumer/producer only
+                boolean accept = true;
+                if (componentModel.isConsumerOnly() && "producer".equals(group)) {
+                    accept = false;
+                } else if (componentModel.isProducerOnly() && "consumer".equals(group)) {
+                    accept = false;
+                }
+                if (accept) {
+                    ComponentOption option = new ComponentOption(name, displayName, fieldTypeName, required, defaultValue, defaultValueNote,
+                            docComment.trim(), deprecated, deprecationNote, secret, group, label, isEnum, enums, nestedTypeName, nestedFieldName);
+                    componentOptions.add(option);
+                }
             }
 
             // check super classes which may also have fields
