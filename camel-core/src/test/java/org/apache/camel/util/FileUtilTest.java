@@ -272,4 +272,12 @@ public class FileUtilTest extends Assert {
         assertTrue("File not copied", target.exists());
         assertFalse("File not deleted", file.exists());
     }
+
+    @Test
+    public void testCompactHttpPath() {
+        String in = "http://foo.com/apps/func/schemas/part/myap/dummy-schema.xsd";
+        String out = FileUtil.compactPath(in, "/");
+        assertEquals(in, out);
+    }
+
 }
