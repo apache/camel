@@ -17,6 +17,7 @@ public enum Case_PickListQuotationMarkEnum {
     // No apretar "miralo"
     NO_APRETAR__MIRALO_("No apretar \"miralo\"");
 
+
     final String value;
 
     private Case_PickListQuotationMarkEnum(String value) {
