@@ -28,10 +28,8 @@ import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
 import io.undertow.util.Headers;
 import org.apache.camel.CamelExecutionException;
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.http.common.HttpOperationFailedException;
+import org.apache.camel.http.base.HttpOperationFailedException;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,22 +72,18 @@ public class ElytronBearerTokenTest extends BaseElytronTest {
 
     @Test
     public void testBearerTokenBadRole() throws Exception {
-        HttpOperationFailedException httpOperationFailedException = null;
         try {
             String response = template.requestBodyAndHeader("elytron:http://localhost:{{port}}/myapp",
                     "empty body",
                     Headers.AUTHORIZATION.toString(),
                     "Bearer " + createToken("alice", "guest", new Date(new Date().getTime() + 10000), getKeyPair().getPrivate()),
                     String.class);
+            fail("Should throw exception");
 
-        } catch (CamelExecutionException exception) {
-            if (exception.getCause() instanceof  HttpOperationFailedException) {
-                httpOperationFailedException = (HttpOperationFailedException)exception.getCause();
-            }
+        } catch (CamelExecutionException e) {
+            HttpOperationFailedException he = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+            assertEquals(403, he.getStatusCode());
         }
-
-        assertNotNull(httpOperationFailedException);
-        assertEquals(403, httpOperationFailedException.getStatusCode());
     }
 
     @Override
