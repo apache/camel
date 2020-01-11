@@ -49,8 +49,9 @@ public class SedaDefaultDiscardWhenFullTest extends ContextTestSupport {
             public void configure() throws Exception {
                 SedaComponent seda = context.getComponent("seda", SedaComponent.class);
                 seda.setDefaultDiscardWhenFull(true);
+                seda.setQueueSize(2);
 
-                from("seda:foo?size=2").routeId("foo").noAutoStartup()
+                from("seda:foo").routeId("foo").noAutoStartup()
                         .to("mock:result");
             }
         };
