@@ -225,4 +225,7 @@ We use `async=true` to stop Camel asynchronously as otherwise we
 would be trying to stop Camel while it was in-flight processing the
 message we sent to the control bus component.
 
-TIP: You can also use other languages such as xref:groovy-language.adoc[Groovy], etc.
+[TIP]
+====
+You can also use other languages such as xref:groovy-language.adoc[Groovy], etc.
+====
