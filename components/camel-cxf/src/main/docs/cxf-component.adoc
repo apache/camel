@@ -7,8 +7,11 @@
 *Both producer and consumer is supported*
 // HEADER END
 
-TIP: When using CXF in streaming modes (see DataFormat option), then also
+[TIP]
+====
+When using CXF in streaming modes (see DataFormat option), then also
 read about Stream caching.
+====
 
 The CXF component provides integration with
 http://cxf.apache.org[Apache CXF] for connecting to http://cxf.apache.org/docs/jax-ws.html[JAX-WS] services
