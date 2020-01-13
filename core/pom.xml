@@ -44,6 +44,7 @@
         <module>camel-base</module>
         <module>camel-jaxp</module>
         <module>camel-core-engine</module>
+        <module>camel-xml-io</module>
         <module>camel-core</module>
         <module>camel-endpointdsl</module>
         <module>camel-core-osgi</module>
