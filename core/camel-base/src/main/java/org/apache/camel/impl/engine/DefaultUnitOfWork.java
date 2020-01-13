@@ -58,7 +58,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
     //   requires API changes and thus is best kept for Camel 3.0
 
     private String id;
-    private CamelContext context;
+    private final CamelContext context;
     private List<Synchronization> synchronizations;
     private Message originalInMessage;
     private Set<Object> transactedBy;
@@ -98,7 +98,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         }
 
         // inject breadcrumb header if enabled
-        if (exchange.getContext().isUseBreadcrumb()) {
+        if (context.isUseBreadcrumb()) {
             // create or use existing breadcrumb
             String breadcrumbId = exchange.getIn().getHeader(Exchange.BREADCRUMB_ID, String.class);
             if (breadcrumbId == null) {
@@ -121,16 +121,14 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
         // fire event
         try {
-            EventHelper.notifyExchangeCreated(exchange.getContext(), exchange);
+            EventHelper.notifyExchangeCreated(context, exchange);
         } catch (Throwable e) {
             // must catch exceptions to ensure the exchange is not failing due to notification event failed
             log.warn("Exception occurred during event notification. This exception will be ignored.", e);
         }
 
         // register to inflight registry
-        if (exchange.getContext() != null) {
-            exchange.getContext().getInflightRepository().add(exchange);
-        }
+        context.getInflightRepository().add(exchange);
     }
 
     UnitOfWork newInstance(Exchange exchange) {
@@ -287,7 +285,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
 
     @Override
     public boolean isTransactedBy(Object key) {
-        return getTransactedBy().contains(key);
+        return transactedBy != null && getTransactedBy().contains(key);
     }
 
     @Override
