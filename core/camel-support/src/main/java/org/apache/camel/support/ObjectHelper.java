@@ -202,7 +202,9 @@ public final class ObjectHelper {
      */
     public static Object invokeMethodSafe(Method method, Object instance, Object... parameters) throws InvocationTargetException, IllegalAccessException {
         Object answer;
-        method.setAccessible(true);
+        if (!method.isAccessible()) {
+            method.setAccessible(true);
+        }
         if (parameters != null) {
             answer = method.invoke(instance, parameters);
         } else {
