@@ -96,7 +96,10 @@ Some Ignite operations can deal with multiple elements at once, if passed a Coll
 [[Ignite-OsgiSupport]]
 == OSGi Support
 
-TIP: Apache Ignite supports OSGi from version 1.5.0.final onwards.
+[TIP]
+====
+Apache Ignite supports OSGi from version 1.5.0.final onwards.
+====
 
 When installing on Apache Karaf:
 
