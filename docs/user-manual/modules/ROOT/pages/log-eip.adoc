@@ -45,8 +45,12 @@ from("direct:start")
 
 Which will construct a String message at runtime using the Simple language. The log message will by logged at INFO level using the route id as the log name. By default a route is named route-1, route-2 etc. But you can use the routeId("myCoolRoute") to set a route name of choice.
 
-TIP: *Logging message body with streamed messages:*
+[TIP]
+====
+*Logging message body with streamed messages:*
+
 If the message body is stream based, then logging the message body, may cause the message body to be empty afterwards. See this FAQ. For streamed messages you can use Stream caching to allow logging the message body and be able to read the message body afterwards again.
+====
 
 The log DSL have overloaded methods to set the logging level and/or name as well.
 [source,java]

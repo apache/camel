@@ -23,7 +23,12 @@ by default perform these actions
 using the JMSCorrelationID (as you may be performing many concurrent
 request/responses).
 
-TIP: *Related* See the related Event Message message
+[TIP]
+====
+*Related* 
+
+See the related Event Message message
+====
 
 [[RequestReply-ExplicitlyspecifyingInOut]]
 == Explicitly specifying InOut
