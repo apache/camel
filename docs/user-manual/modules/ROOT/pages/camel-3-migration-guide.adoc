@@ -151,7 +151,7 @@ The implementation is still named `org.apache.camel.component.properties.Propert
 
 === Removed components
 
-We have removed all deprecated components from Camel 2.x, including the old `camel-http`, `camel-hdfs`, `camel-mina`, `camel-mongodb`, `camel-netty`, `camel-netty-http`, `camel-quartz` and `camel-rxjava` components.
+We have removed all deprecated components from Camel 2.x, including the old `camel-http`, `camel-hdfs`, `camel-mina`, `camel-mongodb`, `camel-netty`, `camel-netty-http`, `camel-quartz` and `camel-rx` components.
 
 We removed `camel-jibx` component which wasn't working on JDK 8.
 
