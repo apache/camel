@@ -165,7 +165,10 @@ XML DSL. The schematrion rules file is sourced from the file system:
 </route>
 -----------------------------------------------------------------------------------------------
 
-TIP: *Where to store schematron rules?*
+[TIP]
+====
+*Where to store schematron rules?*
+
 Schematron rules can change with business requirement, as such it is
 recommended to store these rules somewhere in file system. When the
 schematron component endpoint is started, the rules are compiled into
@@ -178,6 +181,7 @@ So if you happen to store the rules in the file system, in the event of
 an update, all you need is to restart the route or the component. No
 harm in storing these rules in the class path though, but you will have
 to build and deploy the component to pick up the changes.
+====
 
 == Schematron rules and report samples
 
@@ -223,9 +227,13 @@ Here is an example of schematron report:
 </svrl:schematron-output>
 ------------------------------------------------------------------------
 
-TIP: *Useful Links and resources*
+[TIP]
+====
+*Useful Links and resources*
+
 * http://www.mulberrytech.com/papers/schematron-Philly.pdf[Introduction
 to Schematron] by Mulleberry technologies. An excellent document in PDF
 to get you started on Schematron.
 * http://www.schematron.com[Schematron official site]. This contains
 links to other resources
+====
