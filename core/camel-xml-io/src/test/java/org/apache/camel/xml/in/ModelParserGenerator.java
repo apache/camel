@@ -42,8 +42,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
+import java.util.SortedMap;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -63,14 +64,9 @@ import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
-import org.apache.camel.model.ExpressionNode;
-import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.OutputDefinition;
-import org.apache.camel.model.OutputExpressionNode;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.cloud.ServiceCallConfiguration;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.apache.camel.tooling.util.srcgen.GenericType;
@@ -115,8 +111,8 @@ public class ModelParserGenerator {
                 .distinct()
                 .map(this::forName)
                 .flatMap(this::references)
+                .flatMap(this::fieldReferences)
                 .distinct()
-                .filter(c -> c != OptionalIdentifiedDefinition.class)
                 .collect(Collectors.toList());
         JavaClass parser = generateParser(model);
         return  "/*\n" +
@@ -138,7 +134,15 @@ public class ModelParserGenerator {
     }
 
     private Stream<Class<?>> references(Class<?> clazz) {
-        return Stream.concat(Stream.of(clazz),
+        List<Class<?>> allClasses = new ArrayList<>();
+        for (Class<?> cl = clazz; cl != Object.class; cl = cl.getSuperclass()) {
+            allClasses.add(cl);
+        }
+        return allClasses.stream();
+    }
+    private Stream<Class<?>> fieldReferences(Class<?> clazz) {
+        return Stream.concat(
+            Stream.of(clazz),
             Stream.of(clazz.getDeclaredFields())
                 .filter(f -> f.getAnnotation(XmlTransient.class) == null)
                 .map(f -> {
@@ -208,77 +212,32 @@ public class ModelParserGenerator {
                 .addThrows(XmlPullParserException.class)
                 .setBody("super(reader, namespace);");
 
-        // XmlRootElement
         for (Class<?> clazz : model) {
-            if ((clazz.getModifiers() & Modifier.ABSTRACT) != 0) {
-                continue;
-            }
-            if (clazz.getAnnotation(XmlEnum.class) != null) {
+            if (clazz.getAnnotation(XmlEnum.class) != null || clazz.isInterface()) {
                 continue;
             }
             String name = clazz.getSimpleName();
+            boolean hasDerived = model.stream().anyMatch(cl -> cl.getSuperclass() == clazz);
 
-            List<Class<?>> allClasses = new ArrayList<>();
-            for (Class<?> cl = clazz; cl != Object.class; cl = cl.getSuperclass()) {
-                allClasses.add(0, cl);
-            }
-            List<Member> members = Stream.concat(
-                        allClasses.stream().flatMap(this::findFieldsForClass),
-                        allClasses.stream().flatMap(this::findMethodsForClass))
-                    .filter(m -> ((AnnotatedElement) m).getAnnotation(XmlTransient.class) == null)
-                    .sorted(Comparator.comparing(member -> member instanceof Method ? propname(member.getName()) : member.getName()))
-                    .collect(Collectors.toList());
+            List<Member> members = getMembers(clazz);
 
-            if (allClasses.contains(OutputDefinition.class) || allClasses.contains(OutputExpressionNode.class)) {
-                members.removeIf(m -> "setOutputs".equals(m.getName()));
-                members.removeIf(m -> "outputs".equals(m.getName()));
-            }
-            if (allClasses.contains(ExpressionNode.class) || allClasses.contains(OutputExpressionNode.class)) {
-                members.removeIf(m -> "setExpression".equals(m.getName()));
-                members.removeIf(m -> "expression".equals(m.getName()));
-            }
-            if (allClasses.contains(OptionalIdentifiedDefinition.class)) {
-                members.removeIf(m -> "setDescription".equals(m.getName()));
-                members.removeIf(m -> "setId".equals(m.getName()));
-                members.removeIf(m -> "setCustomId".equals(m.getName()));
-            }
-            if (allClasses.contains(ProcessorDefinition.class)) {
-                members.removeIf(m -> "inheritErrorHandler".equals(m.getName()));
-            }
-            if (allClasses.contains(IdentifiedType.class)) {
-                members.removeIf(m -> "id".equals(m.getName()));
-            }
-            if (allClasses.contains(ServiceCallConfiguration.class)) {
-                members.removeIf(m -> "properties".equals(m.getName()));
-            }
-            if (allClasses.contains(ExpressionDefinition.class)) {
-                members.removeIf(m -> "id".equals(m.getName()));
-                members.removeIf(m -> "trim".equals(m.getName()));
-            }
-
+            // XmlAttribute
             List<Member> attributeMembers = members.stream()
                     .filter(member -> ((AccessibleObject) member).getAnnotation(XmlAttribute.class) != null)
                     .collect(Collectors.toList());
-            String baseAttributeHandler;
-            if (allClasses.contains(ProcessorDefinition.class)) {
-                baseAttributeHandler = "processorDefinitionAttributeHandler()";
-            } else if (allClasses.contains(OptionalIdentifiedDefinition.class)) {
-                baseAttributeHandler = "optionalIdentifiedDefinitionAttributeHandler()";
-            } else if (allClasses.contains(IdentifiedType.class)) {
-                baseAttributeHandler = "identifiedTypeAttributeHandler()";
-            } else if (allClasses.contains(ExpressionDefinition.class)) {
-                baseAttributeHandler = "expressionDefinitionAttributeHandler()";
-            } else {
-                baseAttributeHandler = null;
+            String baseAttributeHandler = null;
+            for (Class<?> parent = clazz.getSuperclass(); parent != Object.class; parent = parent.getSuperclass()) {
+                if (getMembers(parent).stream()
+                        .anyMatch(member -> ((AccessibleObject) member).getAnnotation(XmlAttribute.class) != null)) {
+                    baseAttributeHandler = lowercase(parent.getSimpleName()) + "AttributeHandler()";
+                    break;
+                }
             }
             String attributes;
             if (attributeMembers.isEmpty()) {
-                attributes = "\n    " +
-                        (baseAttributeHandler != null ? baseAttributeHandler : "noAttributeHandler()");
+                attributes = "\n    " + (baseAttributeHandler != null ? baseAttributeHandler : "noAttributeHandler()");
             } else {
-                StringBuilder sb = new StringBuilder();
-                sb.append(" (def, key, val) -> {\n" +
-                          "    switch (key) {\n");
+                SortedMap<String, String> cases = new TreeMap<>();
                 for (Member member : attributeMembers) {
                     Type pt = member instanceof Method ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
                     GenericType type = new GenericType(pt);
@@ -288,178 +247,202 @@ public class ModelParserGenerator {
                         an = member instanceof Method ? propname(mn) : mn;
                     }
                     String sn = member instanceof Method ? mn : "set" + uppercase(mn);
-                    if (pt == String.class) {
-                        sb.append("        case \"" + an + "\": def." + sn + "(val); break;\n");
-                    } else if (type.getRawClass().isEnum() || pt == Integer.class || pt == Long.class || pt == Boolean.class || pt == Float.class) {
-                        sb.append("        case \"" + an + "\": def." + sn + "(" + type.getRawClass().getName() + ".valueOf(val)); break;\n");
-                    } else if (type.getRawClass() == List.class && type.getActualTypeArgument(0).getRawClass() == String.class) {
-                        sb.append("        case \"" + an + "\": def." + sn + "(asStringList(val)); break;\n");
-                    } else if (type.getRawClass() == Set.class && type.getActualTypeArgument(0).getRawClass() == String.class) {
-                        sb.append("        case \"" + an + "\": def." + sn + "(asStringSet(val)); break;\n");
-                    } else if (type.getRawClass() == Class.class) {
-                        sb.append("        case \"" + an + "\": def." + sn + "(asClass(val)); break;\n");
-                    } else if (type.getRawClass() == Class[].class) {
-                        sb.append("        case \"" + an + "\": def." + sn + "(asClassArray(val)); break;\n");
-                    } else if (type.getRawClass() == byte[].class) {
-                        sb.append("        case \"" + an + "\": def." + sn + "(asByteArray(val)); break;\n");
-                    } else {
-                        System.err.println("Class " + clazz.getName() + " / member " + member + ": unsupported type: " + pt);
-                    }
+                    cases.put(an, "def." + sn + "(" + conversion(parser, type, "val") + ");");
                 }
-                sb.append("        default: return " +
-                                (baseAttributeHandler != null
-                                        ? baseAttributeHandler + ".accept(def, key, val)" : "false") + ";\n" +
-                          "    }\n" +
-                          "    return true;\n" +
-                          "}");
-                attributes = sb.toString();
+                String defaultCase = baseAttributeHandler != null ? baseAttributeHandler + ".accept(def, key, val)" : "false";
+                if (attributeMembers.size() == 1) {
+                    Map.Entry<String, String> entry = cases.entrySet().iterator().next();
+                    attributes =
+                            " (def, key, val) -> {\n" +
+                            "    if (\"" + entry.getKey() + "\".equals(key)) {\n" +
+                            "        " + entry.getValue() + "\n" +
+                            "        return true;\n" +
+                            "    } else {\n" +
+                            "        return " + defaultCase + ";\n" +
+                            "    }\n" +
+                            "}";
+                } else {
+                    StringBuilder sb = new StringBuilder();
+                    sb.append(" (def, key, val) -> {\n"
+                            + "    switch (key) {\n");
+                    for (Map.Entry<String, String> entry : cases.entrySet()) {
+                        sb.append("        case \"").append(entry.getKey()).append("\": ").append(entry.getValue()).append(" break;\n");
+                    }
+                    sb.append("        default: return ").append(defaultCase).append(";\n"
+                            + "    }\n"
+                            + "    return true;\n"
+                            + "}");
+                    attributes = sb.toString();
+                }
             }
 
-            String elements = members.stream()
-                    .filter(member -> ((AccessibleObject) member).getAnnotation(XmlAttribute.class) == null)
-                    .filter(member -> ((AccessibleObject) member).getAnnotation(XmlValue.class) == null)
-                    .map(member -> {
-                        AccessibleObject ao = (AccessibleObject) member;
-                        if (ao.getAnnotation(XmlElementRef.class) != null) {
-                            Type pt = member instanceof Method ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
-                            GenericType type = new GenericType(pt);
-                            boolean list = type.getRawClass() == List.class;
-                            Class<?> root = list ? type.getActualTypeArgument(0).getRawClass() : type.getRawClass();
-                            return model.stream()
-                                    .filter(root::isAssignableFrom)
-                                    .filter(cl -> cl.getAnnotation(XmlRootElement.class) != null)
-                                    .map(cl -> {
-                                        String fn = member.getName();
-                                        String en = cl.getAnnotation(XmlRootElement.class).name();
-                                        if ("##default".equals(en)) {
-                                            en = lowercase(cl.getSimpleName());
-                                        }
-                                        String sn = member instanceof Method ? fn : "set" + uppercase(fn);
-                                        String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
-                                        String tn = cl.getSimpleName();
-                                        if (list) {
-                                            return "        case \"" + en + "\": doAdd(doParse" + tn + "(), def." + gn + "(), def::" + sn + "); break;\n";
-                                        } else {
-                                            return "        case \"" + en + "\": def." + sn + "(doParse" + tn + "()); break;\n";
-                                        }
-                                    })
-                                    .collect(Collectors.joining());
-                        } else if (ao.getAnnotation(XmlElements.class) != null) {
-                            Type pt = member instanceof Method ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
-                            GenericType type = new GenericType(pt);
-                            boolean list = type.getRawClass() == List.class;
-                            String fn = member.getName();
-                            String sn = member instanceof Method ? fn : "set" + uppercase(fn);
-                            String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
-                            return Stream.of(ao.getAnnotation(XmlElements.class).value())
-                                    .map(xe -> {
-                                        if (list) {
-                                            return "        case \"" + xe.name() + "\": doAdd(doParse" + xe.type().getSimpleName() + "(), def." + gn + "(), def::" + sn + "); break;\n";
-                                        } else {
-                                            return "        case \"" + xe.name() + "\": def." + sn + "(doParse" + xe.type().getSimpleName() + "()); break;\n";
-                                        }
-                                    })
-                                    .collect(Collectors.joining());
-                        } else if (ao.getAnnotation(XmlAnyAttribute.class) != null) {
-                            if (!"otherAttributes".equals(member.getName())) {
-                                System.err.println("Class " + clazz.getName() + " / member " + member + ": unsupported @XmlAnyAttribute");
-                            }
-                            // ignore
-                            return "";
-                        } else {
-                            Type pt = member instanceof Method ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
-                            GenericType type = new GenericType(pt);
-                            boolean list;
-                            Class<?> root;
-                            if (type.getRawClass() == List.class) {
-                                list = true;
-                                root = type.getActualTypeArgument(0).getRawClass();
-                            } else if (type.getRawClass().isArray()) {
-                                list = true;
-                                root = type.getRawClass().getComponentType();
-                            } else {
-                                list = false;
-                                root = type.getRawClass();
-                            }
-                            String fn = member.getName();
-                            String en = Optional.ofNullable(((AccessibleObject) member).getAnnotation(XmlElement.class))
-                                            .map(XmlElement::name).orElse("##default");
-                            if ("##default".equals(en)) {
-                                en = member instanceof Method ? propname(fn) : fn;
-                            }
-                            String sn = member instanceof Method ? fn : "set" + uppercase(fn);
-                            String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
-                            String tn = root.getSimpleName();
-                            String pc;
-                            if (((AccessibleObject) member).getAnnotation(XmlJavaTypeAdapter.class) != null) {
-                                Class<? extends XmlAdapter> adapter = ((AccessibleObject) member).getAnnotation(XmlJavaTypeAdapter.class).value();
-                                Class<?> cl = adapter;
-                                while (cl.getSuperclass() != XmlAdapter.class) {
-                                    cl = cl.getSuperclass();
-                                }
-                                Type t = ((ParameterizedType) cl.getGenericSuperclass()).getActualTypeArguments()[0];
-                                Class<?> c = new GenericType(t).getRawClass();
-                                if (c == String.class) {
-                                    pc = "unmarshal(new " + adapter.getName().replace('$', '.') + "(), doParseText())";
-                                } else if (model.contains(c)) {
-                                    pc = "unmarshal(new " + adapter.getName().replace('$', '.') + "(), doParse" + c.getSimpleName() + "())";
-                                } else{
-                                    System.err.println("Class " + clazz.getName() + " / member " + member + ": unsupported @XmlJavaTypeAdapter");
-                                    return "";
-                                }
-                                if (list && type.equals(new GenericType(((ParameterizedType) cl.getGenericSuperclass()).getActualTypeArguments()[1]))) {
-                                    list = false;
-                                }
-                            } else if (model.contains(root)) {
-                                pc = "doParse" + tn + "()";
-                            } else if (root == String.class) {
-                                pc = "doParseText()";
-                            } else {
-                                String n = root.getName();
-                                if (n.startsWith("java.lang.")) {
-                                    n = tn;
-                                }
-                                pc = n + ".valueOf(doParseText())";
-                            }
-                            if (list) {
-                                return "        case \"" + en + "\": doAdd(" + pc + ", def." + gn + "(), def::" + sn + "); break;\n";
-                            } else {
-                                return "        case \"" + en + "\": def." + sn + "(" + pc + "); break;\n";
-                            }
+            // @XmlAnyAttribute
+            members.stream()
+                    .filter(member -> ((AccessibleObject) member).getAnnotation(XmlAnyAttribute.class) != null)
+                    .forEach(member -> {
+                        if (!"otherAttributes".equals(member.getName())) {
+                            throw new UnsupportedOperationException("Class " + clazz.getName() + " / member " + member + ": unsupported @XmlAnyAttribute");
                         }
-                    })
-                    .collect(Collectors.joining());
-            String baseElementHandlers;
-            if (allClasses.contains(OutputDefinition.class)) {
-                baseElementHandlers = "outputDefinitionElementHandler()";
-            } else if (allClasses.contains(OutputExpressionNode.class)) {
-                baseElementHandlers = "outputExpressionNodeElementHandler()";
-            } else if (allClasses.contains(ExpressionNode.class)) {
-                baseElementHandlers = "expressionNodeElementHandler()";
-            } else if (allClasses.contains(OptionalIdentifiedDefinition.class)) {
-                baseElementHandlers = "optionalIdentifiedDefinitionElementHandler()";
-            } else if (allClasses.contains(ServiceCallConfiguration.class)) {
-                baseElementHandlers = "serviceCallConfigurationElementHandler()";
-            } else {
-                baseElementHandlers = null;
+                    });
+
+
+            // @XmlElementRef @XmlElement @XmlElements
+            List<Member> elementMembers = members.stream()
+                    .filter(member -> ((AccessibleObject) member).getAnnotation(XmlAttribute.class) == null)
+                    .filter(member -> ((AccessibleObject) member).getAnnotation(XmlAnyAttribute.class) == null)
+                    .filter(member -> ((AccessibleObject) member).getAnnotation(XmlValue.class) == null)
+                    .collect(Collectors.toList());
+            SortedMap<String, String> cases = new TreeMap<>();
+            // XmlElementRef
+            elementMembers.stream()
+                .filter(member -> ((AccessibleObject) member).getAnnotation(XmlElementRef.class) != null
+                                || (clazz == OutputDefinition.class && "setOutputs".equals(member.getName())))
+                .forEach(member -> {
+                    Type pt = member instanceof Method ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
+                    GenericType type = new GenericType(pt);
+                    boolean list = type.getRawClass() == List.class;
+                    Class<?> root = list ? type.getActualTypeArgument(0).getRawClass() : type.getRawClass();
+                    model.stream()
+                        .filter(root::isAssignableFrom)
+                        .filter(cl -> cl.getAnnotation(XmlRootElement.class) != null)
+                        .forEach(cl -> {
+                            String fn = member.getName();
+                            String en = cl.getAnnotation(XmlRootElement.class).name();
+                            if ("##default".equals(en)) {
+                                en = lowercase(cl.getSimpleName());
+                            }
+                            String sn = member instanceof Method ? fn : "set" + uppercase(fn);
+                            String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
+                            String tn = cl.getSimpleName();
+                            cases.put(en, list
+                                ? "doAdd(doParse" + tn + "(), def." + gn + "(), def::" + sn + ");"
+                                : "def." + sn + "(doParse" + tn + "());");
+                        });
+                });
+            // @XmlElements
+            elementMembers.stream()
+                .filter(member -> ((AccessibleObject) member).getAnnotation(XmlElements.class) != null)
+                .forEach(member -> {
+                    Type pt = member instanceof Method ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
+                    GenericType type = new GenericType(pt);
+                    boolean list = type.getRawClass() == List.class;
+                    String fn = member.getName();
+                    String sn = member instanceof Method ? fn : "set" + uppercase(fn);
+                    String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
+                    Stream.of(((AccessibleObject) member).getAnnotation(XmlElements.class).value()).forEach(xe ->
+                        cases.put(xe.name(), list
+                            ? "doAdd(doParse" + xe.type().getSimpleName() + "(), def." + gn + "(), def::" + sn + ");"
+                            : "def." + sn + "(doParse" + xe.type().getSimpleName() + "());"));
+                });
+            elementMembers.stream()
+                .filter(member -> ((AccessibleObject) member).getAnnotation(XmlElementRef.class) == null)
+                .filter(member -> ((AccessibleObject) member).getAnnotation(XmlElements.class) == null)
+                .filter(member -> clazz != OutputDefinition.class || !"setOutputs".equals(member.getName()))
+                .forEach(member -> {
+                    Type pt = member instanceof Method ? ((Method) member).getGenericParameterTypes()[0] : ((Field) member).getGenericType();
+                    GenericType type = new GenericType(pt);
+                    boolean list;
+                    Class<?> root;
+                    if (type.getRawClass() == List.class) {
+                        list = true;
+                        root = type.getActualTypeArgument(0).getRawClass();
+                    } else if (type.getRawClass().isArray()) {
+                        list = true;
+                        root = type.getRawClass().getComponentType();
+                    } else {
+                        list = false;
+                        root = type.getRawClass();
+                    }
+                    String fn = member.getName();
+                    String en = "##default";
+                    if (((AccessibleObject) member).getAnnotation(XmlElement.class) != null) {
+                        en = ((AccessibleObject) member).getAnnotation(XmlElement.class).name();
+                    }
+                    if ("##default".equals(en)) {
+                        en = member instanceof Method ? propname(fn) : fn;
+                    }
+                    String sn = member instanceof Method ? fn : "set" + uppercase(fn);
+                    String gn = member instanceof Method ? "g" + sn.substring(1) : "get" + uppercase(fn);
+                    String tn = root.getSimpleName();
+                    String pc;
+                    if (((AccessibleObject) member).getAnnotation(XmlJavaTypeAdapter.class) != null) {
+                        Class<? extends XmlAdapter> adapter = ((AccessibleObject) member).getAnnotation(XmlJavaTypeAdapter.class).value();
+                        Class<?> cl = adapter;
+                        while (cl.getSuperclass() != XmlAdapter.class) {
+                            cl = cl.getSuperclass();
+                        }
+                        Type t = ((ParameterizedType) cl.getGenericSuperclass()).getActualTypeArguments()[0];
+                        Class<?> c = new GenericType(t).getRawClass();
+                        String n = adapter.getDeclaringClass() != null
+                                ? adapter.getDeclaringClass().getSimpleName() + "." + adapter.getSimpleName()
+                                : adapter.getSimpleName();
+                        if (c == String.class) {
+                            pc = "unmarshal(new " + n + "(), doParseText())";
+                        } else if (model.contains(c)) {
+                            pc = "unmarshal(new " + n + "(), doParse" + c.getSimpleName() + "())";
+                        } else{
+                            throw new UnsupportedOperationException("Class " + clazz.getName() + " / member " + member + ": unsupported @XmlJavaTypeAdapter");
+                        }
+                        if (list && type.equals(new GenericType(((ParameterizedType) cl.getGenericSuperclass()).getActualTypeArguments()[1]))) {
+                            list = false;
+                        }
+                    } else if (model.contains(root)) {
+                        pc = "doParse" + tn + "()";
+                    } else if (root == String.class) {
+                        pc = "doParseText()";
+                    } else {
+                        String n = root.getName();
+                        if (n.startsWith("java.lang.")) {
+                            n = tn;
+                        }
+                        pc = n + ".valueOf(doParseText())";
+                    }
+                    cases.put(en, list
+                            ? "doAdd(" + pc + ", def." + gn + "(), def::" + sn + ");"
+                            : "def." + sn + "(" + pc + ");");
+                });
+            String baseElementHandlers = null;
+            for (Class<?> parent = clazz.getSuperclass(); parent != Object.class; parent = parent.getSuperclass()) {
+                if (getMembers(parent).stream()
+                    .anyMatch(member -> ((AccessibleObject) member).getAnnotation(XmlAttribute.class) == null
+                            && ((AccessibleObject) member).getAnnotation(XmlAnyAttribute.class) == null
+                            && ((AccessibleObject) member).getAnnotation(XmlValue.class) == null)) {
+                    baseElementHandlers = lowercase(parent.getSimpleName()) + "ElementHandler()";
+                    break;
+                }
             }
-            if (elements.isEmpty()) {
+            String elements;
+            if (cases.isEmpty()) {
                 if (baseElementHandlers == null) {
-                    elements = " emptyElementHandler()";
+                    elements = " noElementHandler()";
                 } else {
                     elements = " " + baseElementHandlers;
                 }
+            } else if (cases.size() == 1) {
+                Map.Entry<String, String> entry = cases.entrySet().iterator().next();
+                elements =
+                        " (def, key) -> {\n" +
+                        "    if (\"" + entry.getKey() + "\".equals(key)) {\n" +
+                        "        " + entry.getValue() + "\n" +
+                        "        return true;\n" +
+                        "    } else {\n" +
+                        "        return " + (baseElementHandlers != null ? baseElementHandlers + ".accept(def, key);" : "false;") + "\n" +
+                        "    }\n" +
+                        "}";
             } else {
                 elements =
                         " (def, key) -> {\n" +
                         "    switch (key) {\n" +
-                        elements +
-                        "        default: return " + (baseElementHandlers != null
-                                    ? baseElementHandlers + ".accept(def, key);" : "false;") + "\n" +
+                        cases.entrySet().stream().map(e ->
+                        "        case \"" + e.getKey() + "\": " + e.getValue() + " break;\n"
+                        ).collect(Collectors.joining()) +
+                        "        default: return " + (baseElementHandlers != null ? baseElementHandlers + ".accept(def, key);" : "false;") + "\n" +
                         "    }\n" +
                         "    return true;\n" +
                         "}";
             }
+
+            // @XmlValue
             String value = members.stream()
                     .filter(member -> ((AccessibleObject) member).getAnnotation(XmlValue.class) != null)
                     .findFirst()
@@ -472,7 +455,15 @@ public class ModelParserGenerator {
                             return " (def, val) -> def." + sn + "(val)";
                         }
                     })
-                    .orElse(" noValueHandler()");
+                    .orElseGet(() -> {
+                        for (Class<?> parent = clazz.getSuperclass(); parent != Object.class; parent = parent.getSuperclass()) {
+                            if (getMembers(parent).stream()
+                                    .anyMatch(member -> ((AccessibleObject) member).getAnnotation(XmlValue.class) != null)) {
+                                return " " + lowercase(parent.getSimpleName()) + "ValueHandler()";
+                            }
+                        }
+                        return " noValueHandler()";
+                    });
             if (clazz == RoutesDefinition.class || clazz == RestsDefinition.class) {
                 String element = clazz.getAnnotation(XmlRootElement.class).name();
                 parser.addMethod()
@@ -483,103 +474,81 @@ public class ModelParserGenerator {
                         .addThrows(XmlPullParserException.class)
                         .setBody("expectTag(\"" + element + "\");\nreturn doParse" + name + "();");
             }
-            String className;
+            String qname;
             if (clazz.getDeclaringClass() != null) {
                 parser.addImport(clazz.getDeclaringClass());
-                className = clazz.getDeclaringClass().getSimpleName() + "." + clazz.getSimpleName();
+                qname = clazz.getDeclaringClass().getSimpleName() + "." + name;
             } else {
                 parser.addImport(clazz);
-                className = clazz.getSimpleName();
+                qname = name;
             }
-            parser.addMethod()
-                    .setSignature("    protected " + className + " doParse" + name + "() throws IOException, XmlPullParserException")
-                    .setBody("return doParse(new " + className + "()," + attributes + "," + elements + "," + value + ");\n");
+            if (hasDerived) {
+                if (!attributeMembers.isEmpty()) {
+                    parser.addMethod()
+                            .setSignature("    protected <T extends " + qname + "> AttributeHandler<T> " + lowercase(name) + "AttributeHandler()")
+                            .setBody("return" + attributes + ";");
+                }
+                if (!elementMembers.isEmpty()) {
+                    parser.addMethod()
+                            .setSignature("    protected <T extends " + qname + "> ElementHandler<T> " + lowercase(name) + "ElementHandler()")
+                            .setBody("return" + elements + ";");
+                }
+                if (!Modifier.isAbstract(clazz.getModifiers())) {
+                    parser.addMethod()
+                            .setSignature("    protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
+                            .setBody("return doParse(new " + qname + "(), " +
+                                    (attributeMembers.isEmpty() ? attributes : lowercase(name) + "AttributeHandler()") + ", " +
+                                    (elementMembers.isEmpty() ? elements : lowercase(name) + "ElementHandler()") + "," + value + ");\n");
+                }
+            } else {
+                parser.addMethod()
+                        .setSignature("    protected " + qname + " doParse" + name + "() throws IOException, XmlPullParserException")
+                        .setBody("return doParse(new " + qname + "()," + attributes + "," + elements + "," + value + ");\n");
+            }
         }
-
-        parser.addMethod()
-                .setSignature("    protected <T extends OutputExpressionNode> ElementHandler<T> outputExpressionNodeElementHandler()")
-                .setBody("return (def, key) ->  expressionNodeElementHandler().accept(def, key) || outputDefinitionElementHandler().accept(def, key);");
-        parser.addImport(OutputExpressionNode.class);
-
-        String expressionNodeElementHandlerBody =
-                model.stream()
-                        .filter(ExpressionDefinition.class::isAssignableFrom)
-                        .filter(cl -> cl.getAnnotation(XmlRootElement.class) != null)
-                        .map(cl -> {
-                            String en = cl.getAnnotation(XmlRootElement.class).name();
-                            if ("##default".equals(en)) {
-                                en = lowercase(cl.getSimpleName());
-                            }
-                            String tn = cl.getSimpleName();
-                            return "        case \"" + en + "\": def.setExpression(doParse" + tn + "()); break;\n";
-                        })
-                        .collect(Collectors.joining());
-        parser.addMethod()
-                .setSignature("    protected <T extends ExpressionNode> ElementHandler<T> expressionNodeElementHandler()")
-                .setBody("return (def, key) -> {\n" +
-                         "    switch (key) {\n" +
-                        expressionNodeElementHandlerBody +
-                         "        default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);\n" +
-                         "    }\n" +
-                         "    return true;\n" +
-                         "};\n");
-        parser.addImport(ExpressionNode.class);
-
-        String outputDefinitionElementHandlerBody =
-                model.stream()
-                        .filter(ProcessorDefinition.class::isAssignableFrom)
-                        .filter(cl -> cl.getAnnotation(XmlRootElement.class) != null)
-                        .map(cl -> {
-                            String en = cl.getAnnotation(XmlRootElement.class).name();
-                            if ("##default".equals(en)) {
-                                en = lowercase(cl.getSimpleName());
-                            }
-                            String tn = cl.getSimpleName();
-                            return "        case \"" + en + "\": pd = doParse" + tn + "(); break;\n";
-                        })
-                        .collect(Collectors.joining());
-        parser.addMethod()
-                .setSignature("    protected <T extends ProcessorDefinition<?>> ElementHandler<T> outputDefinitionElementHandler()")
-                .setBody("return (def, key) -> {\n" +
-                         "    ProcessorDefinition<?> pd;\n" +
-                         "    switch (key) {\n" +
-                         outputDefinitionElementHandlerBody +
-                         "        default: return optionalIdentifiedDefinitionElementHandler().accept(def, key);\n" +
-                         "    }\n" +
-                         "    def.getOutputs().add(pd);\n" +
-                         "    return true;\n" +
-                         "};");
-        parser.addImport(ProcessorDefinition.class);
-
-        parser.addMethod()
-                .setSignature("    protected <T extends OptionalIdentifiedDefinition<?>> ElementHandler<T> optionalIdentifiedDefinitionElementHandler()")
-                .setBody("return (def, name) -> {\n" +
-                         "    if (\"description\".equals(name)) {\n" +
-                         "        def.setDescription(doParseDescriptionDefinition());\n" +
-                         "        return true;\n" +
-                         "    } else {\n" +
-                         "        return false;\n" +
-                         "    }\n" +
-                         "};");
-        parser.addImport(OptionalIdentifiedDefinition.class);
-
-        parser.addMethod()
-                .setSignature("    protected <T extends ServiceCallConfiguration> ElementHandler<T> serviceCallConfigurationElementHandler()")
-                .setBody("return (def, name) -> {\n" +
-                        "    if (\"properties\".equals(name)) {\n" +
-                        "        doAdd(doParsePropertyDefinition(), def.getProperties(), def::setProperties);\n" +
-                        "        return true;\n" +
-                        "    } else {\n" +
-                        "        return false;\n" +
-                        "    }\n" +
-                        "};");
 
         return parser;
     }
 
+    private String conversion(JavaClass parser, GenericType type, String val) {
+        Class<?> rawClass = type.getRawClass();
+        if (rawClass == String.class) {
+            return val;
+        } else if (rawClass.isEnum() || rawClass == Integer.class || rawClass == Long.class
+                || rawClass == Boolean.class || rawClass == Float.class) {
+            parser.addImport(rawClass);
+            return rawClass.getSimpleName() + ".valueOf(" + val + ")";
+        } else if (rawClass == List.class && type.getActualTypeArgument(0).getRawClass() == String.class) {
+            return "asStringList(" + val + ")";
+        } else if (rawClass == Set.class && type.getActualTypeArgument(0).getRawClass() == String.class) {
+            return "asStringSet(" + val + ")";
+        } else if (rawClass == Class.class) {
+            return "asClass(" + val + ")";
+        } else if (rawClass == Class[].class) {
+            return "asClassArray(" + val + ")";
+        } else if (rawClass == byte[].class) {
+            return "asByteArray(" + val + ")";
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private List<Member> getMembers(Class<?> clazz) {
+        List<Member> members = Stream.concat(
+                    findFieldsForClass(clazz),
+                    findMethodsForClass(clazz))
+                .filter(m -> ((AnnotatedElement) m).getAnnotation(XmlTransient.class) == null)
+                .sorted(Comparator.comparing(member -> member instanceof Method ? propname(member.getName()) : member.getName()))
+                .collect(Collectors.toList());
+        if (clazz != OutputDefinition.class && OutputDefinition.class.isAssignableFrom(clazz)) {
+            members.removeIf(m -> "setOutputs".equals(m.getName()));
+        }
+        return members;
+    }
+
     private Stream<? extends Member> findMethodsForClass(Class<?> c) {
         XmlAccessType accessType;
-        if (c.getAnnotation(XmlAccessorType.class) != null) {
+        if (c.getAnnotation(XmlAccessorType.class) != null && c != OutputDefinition.class) {
             accessType = c.getAnnotation(XmlAccessorType.class).value();
         } else {
             accessType = XmlAccessType.PUBLIC_MEMBER;

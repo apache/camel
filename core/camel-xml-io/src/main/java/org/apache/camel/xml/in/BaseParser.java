@@ -34,10 +34,7 @@ import java.util.function.Consumer;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.namespace.QName;
 
-import org.apache.camel.model.IdentifiedType;
-import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.OtherAttributesAware;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.xml.io.MXParser;
 import org.apache.camel.xml.io.XmlPullParser;
@@ -205,48 +202,6 @@ public class BaseParser {
         }
     }
 
-    protected <T extends ProcessorDefinition<?>> AttributeHandler<T> processorDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "inheritErrorHandler": def.setInheritErrorHandler(java.lang.Boolean.valueOf(val)); break;
-                default: return optionalIdentifiedDefinitionAttributeHandler().accept(def, key, val);
-            }
-            return true;
-        };
-    }
-
-    protected <T extends OptionalIdentifiedDefinition<?>> AttributeHandler<T> optionalIdentifiedDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "customId": def.setCustomId(java.lang.Boolean.valueOf(val)); break;
-                case "id": def.setId(val); break;
-                default: return false;
-            }
-            return true;
-        };
-    }
-
-    protected <T extends IdentifiedType> AttributeHandler<T> identifiedTypeAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "id": def.setId(val); break;
-                default: return false;
-            }
-            return true;
-        };
-    }
-
-    protected <T extends ExpressionDefinition> AttributeHandler<T> expressionDefinitionAttributeHandler() {
-        return (def, key, val) -> {
-            switch (key) {
-                case "id": def.setId(val); break;
-                case "trim": def.setTrim(val); break;
-                default: return false;
-            }
-            return true;
-        };
-    }
-
     protected void handleOtherAttribute(Object definition, String name, String ns, String val) throws XmlPullParserException {
         if (definition instanceof OtherAttributesAware) {
             Map<QName, Object> others = ((OtherAttributesAware) definition).getOtherAttributes();
@@ -264,7 +219,7 @@ public class BaseParser {
         return null;
     }
 
-    protected <T> ElementHandler<T> emptyElementHandler() {
+    protected <T> ElementHandler<T> noElementHandler() {
         return (def, name) -> handleUnexpectedElement(namespace, name);
     }
 
