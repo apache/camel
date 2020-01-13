@@ -36,10 +36,9 @@
 
     <dependencies>
 
-        <!-- requires camel-core -->
         <dependency>
             <groupId>org.apache.camel</groupId>
-            <artifactId>camel-core-engine</artifactId>
+            <artifactId>camel-support</artifactId>
         </dependency>
 
         <!-- test dependencies -->

@@ -28,7 +28,7 @@ public class CronLoaderTest extends CamelTestSupport {
     public void testDummyCronServiceLoading() throws Exception {
         configureRoutes();
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceived("x");
+        mock.expectedMinimumMessageCount(1);
 
         context.start();
         mock.assertIsSatisfied();
