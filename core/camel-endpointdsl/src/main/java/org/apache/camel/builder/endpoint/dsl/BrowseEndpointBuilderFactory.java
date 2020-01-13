@@ -415,7 +415,7 @@ public interface BrowseEndpointBuilderFactory {
      * Path parameter: name (required)
      * A name which can be any string to uniquely identify the endpoint
      */
-    default BrowseEndpointBuilder browse(String path) {
+    static BrowseEndpointBuilder browse(String path) {
         class BrowseEndpointBuilderImpl extends AbstractEndpointBuilder implements BrowseEndpointBuilder, AdvancedBrowseEndpointBuilder {
             public BrowseEndpointBuilderImpl(String path) {
                 super("browse", path);

@@ -1624,7 +1624,7 @@ public interface ServerEndpointBuilderFactory {
      * Path parameter: uriPath (required)
      * The object information address
      */
-    default ServerEndpointBuilder iec60870Server(String path) {
+    static ServerEndpointBuilder iec60870Server(String path) {
         class ServerEndpointBuilderImpl extends AbstractEndpointBuilder implements ServerEndpointBuilder, AdvancedServerEndpointBuilder {
             public ServerEndpointBuilderImpl(String path) {
                 super("iec60870-server", path);

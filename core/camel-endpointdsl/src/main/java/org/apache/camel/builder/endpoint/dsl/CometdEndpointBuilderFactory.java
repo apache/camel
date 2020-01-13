@@ -1149,7 +1149,7 @@ public interface CometdEndpointBuilderFactory {
      * The channelName represents a topic that can be subscribed to by the Camel
      * endpoints.
      */
-    default CometdEndpointBuilder cometd(String path) {
+    static CometdEndpointBuilder cometd(String path) {
         return cometd("cometd", path);
     }
     /**
@@ -1173,7 +1173,7 @@ public interface CometdEndpointBuilderFactory {
      * The channelName represents a topic that can be subscribed to by the Camel
      * endpoints.
      */
-    default CometdEndpointBuilder cometds(String path) {
+    static CometdEndpointBuilder cometds(String path) {
         return cometd("cometds", path);
     }
     /**
@@ -1185,7 +1185,7 @@ public interface CometdEndpointBuilderFactory {
      * Since: 2.0
      * Maven coordinates: org.apache.camel:camel-cometd
      */
-    default CometdEndpointBuilder cometd(String scheme, String path) {
+    static CometdEndpointBuilder cometd(String scheme, String path) {
         class CometdEndpointBuilderImpl extends AbstractEndpointBuilder implements CometdEndpointBuilder, AdvancedCometdEndpointBuilder {
             public CometdEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

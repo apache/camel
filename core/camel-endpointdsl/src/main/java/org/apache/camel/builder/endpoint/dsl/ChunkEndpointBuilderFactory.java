@@ -239,7 +239,7 @@ public interface ChunkEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default ChunkEndpointBuilder chunk(String path) {
+    static ChunkEndpointBuilder chunk(String path) {
         class ChunkEndpointBuilderImpl extends AbstractEndpointBuilder implements ChunkEndpointBuilder, AdvancedChunkEndpointBuilder {
             public ChunkEndpointBuilderImpl(String path) {
                 super("chunk", path);

@@ -862,7 +862,7 @@ public interface CMISEndpointBuilderFactory {
      * Path parameter: cmsUrl (required)
      * URL to the cmis repository
      */
-    default CMISEndpointBuilder cmis(String path) {
+    static CMISEndpointBuilder cmis(String path) {
         class CMISEndpointBuilderImpl extends AbstractEndpointBuilder implements CMISEndpointBuilder, AdvancedCMISEndpointBuilder {
             public CMISEndpointBuilderImpl(String path) {
                 super("cmis", path);

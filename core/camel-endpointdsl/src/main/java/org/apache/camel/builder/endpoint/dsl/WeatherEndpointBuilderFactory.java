@@ -2232,7 +2232,7 @@ public interface WeatherEndpointBuilderFactory {
      * Path parameter: name (required)
      * The name value is not used.
      */
-    default WeatherEndpointBuilder weather(String path) {
+    static WeatherEndpointBuilder weather(String path) {
         class WeatherEndpointBuilderImpl extends AbstractEndpointBuilder implements WeatherEndpointBuilder, AdvancedWeatherEndpointBuilder {
             public WeatherEndpointBuilderImpl(String path) {
                 super("weather", path);

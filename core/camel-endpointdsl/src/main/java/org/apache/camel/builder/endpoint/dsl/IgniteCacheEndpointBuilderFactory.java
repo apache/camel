@@ -881,7 +881,7 @@ public interface IgniteCacheEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The cache name.
      */
-    default IgniteCacheEndpointBuilder igniteCache(String path) {
+    static IgniteCacheEndpointBuilder igniteCache(String path) {
         class IgniteCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteCacheEndpointBuilder, AdvancedIgniteCacheEndpointBuilder {
             public IgniteCacheEndpointBuilderImpl(String path) {
                 super("ignite-cache", path);

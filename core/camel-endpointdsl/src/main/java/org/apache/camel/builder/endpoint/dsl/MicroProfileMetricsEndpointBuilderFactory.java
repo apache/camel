@@ -365,7 +365,7 @@ public interface MicroProfileMetricsEndpointBuilderFactory {
      * Path parameter: metricName (required)
      * Metric name
      */
-    default MicroProfileMetricsEndpointBuilder microprofileMetrics(String path) {
+    static MicroProfileMetricsEndpointBuilder microprofileMetrics(String path) {
         class MicroProfileMetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MicroProfileMetricsEndpointBuilder, AdvancedMicroProfileMetricsEndpointBuilder {
             public MicroProfileMetricsEndpointBuilderImpl(String path) {
                 super("microprofile-metrics", path);

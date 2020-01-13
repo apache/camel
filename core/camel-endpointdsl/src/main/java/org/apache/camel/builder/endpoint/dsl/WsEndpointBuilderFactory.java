@@ -1327,7 +1327,7 @@ public interface WsEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The URI to use such as http://hostname:port/path
      */
-    default WsEndpointBuilder ahcWs(String path) {
+    static WsEndpointBuilder ahcWs(String path) {
         return ahcWs("ahc-ws", path);
     }
     /**
@@ -1343,7 +1343,7 @@ public interface WsEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The URI to use such as http://hostname:port/path
      */
-    default WsEndpointBuilder ahcWss(String path) {
+    static WsEndpointBuilder ahcWss(String path) {
         return ahcWs("ahc-wss", path);
     }
     /**
@@ -1354,7 +1354,7 @@ public interface WsEndpointBuilderFactory {
      * Since: 2.14
      * Maven coordinates: org.apache.camel:camel-ahc-ws
      */
-    default WsEndpointBuilder ahcWs(String scheme, String path) {
+    static WsEndpointBuilder ahcWs(String scheme, String path) {
         class WsEndpointBuilderImpl extends AbstractEndpointBuilder implements WsEndpointBuilder, AdvancedWsEndpointBuilder {
             public WsEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

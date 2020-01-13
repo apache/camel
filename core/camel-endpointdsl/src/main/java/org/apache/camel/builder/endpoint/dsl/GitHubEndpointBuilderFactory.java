@@ -623,7 +623,7 @@ public interface GitHubEndpointBuilderFactory {
      * Path parameter: branchName
      * Name of branch
      */
-    default GitHubEndpointBuilder github(String path) {
+    static GitHubEndpointBuilder github(String path) {
         class GitHubEndpointBuilderImpl extends AbstractEndpointBuilder implements GitHubEndpointBuilder, AdvancedGitHubEndpointBuilder {
             public GitHubEndpointBuilderImpl(String path) {
                 super("github", path);

@@ -934,7 +934,7 @@ public interface SlackEndpointBuilderFactory {
      * The channel name (syntax #name) or slackuser (syntax userName) to send a
      * message directly to an user.
      */
-    default SlackEndpointBuilder slack(String path) {
+    static SlackEndpointBuilder slack(String path) {
         class SlackEndpointBuilderImpl extends AbstractEndpointBuilder implements SlackEndpointBuilder, AdvancedSlackEndpointBuilder {
             public SlackEndpointBuilderImpl(String path) {
                 super("slack", path);

@@ -2747,7 +2747,7 @@ public interface PahoEndpointBuilderFactory {
      * Path parameter: topic (required)
      * Name of the topic
      */
-    default PahoEndpointBuilder paho(String path) {
+    static PahoEndpointBuilder paho(String path) {
         class PahoEndpointBuilderImpl extends AbstractEndpointBuilder implements PahoEndpointBuilder, AdvancedPahoEndpointBuilder {
             public PahoEndpointBuilderImpl(String path) {
                 super("paho", path);

@@ -255,7 +255,7 @@ public interface KeystoneEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default KeystoneEndpointBuilder openstackKeystone(String path) {
+    static KeystoneEndpointBuilder openstackKeystone(String path) {
         class KeystoneEndpointBuilderImpl extends AbstractEndpointBuilder implements KeystoneEndpointBuilder, AdvancedKeystoneEndpointBuilder {
             public KeystoneEndpointBuilderImpl(String path) {
                 super("openstack-keystone", path);

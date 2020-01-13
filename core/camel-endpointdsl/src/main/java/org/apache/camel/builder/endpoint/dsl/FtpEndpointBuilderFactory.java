@@ -4988,7 +4988,7 @@ public interface FtpEndpointBuilderFactory {
      * Path parameter: directoryName
      * The starting directory
      */
-    default FtpEndpointBuilder ftp(String path) {
+    static FtpEndpointBuilder ftp(String path) {
         class FtpEndpointBuilderImpl extends AbstractEndpointBuilder implements FtpEndpointBuilder, AdvancedFtpEndpointBuilder {
             public FtpEndpointBuilderImpl(String path) {
                 super("ftp", path);

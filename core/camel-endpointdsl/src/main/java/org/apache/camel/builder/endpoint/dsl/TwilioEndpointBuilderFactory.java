@@ -912,7 +912,7 @@ public interface TwilioEndpointBuilderFactory {
      * What sub operation to use for the selected operation
      * The value can be one of: create, delete, fetch, read, update
      */
-    default TwilioEndpointBuilder twilio(String path) {
+    static TwilioEndpointBuilder twilio(String path) {
         class TwilioEndpointBuilderImpl extends AbstractEndpointBuilder implements TwilioEndpointBuilder, AdvancedTwilioEndpointBuilder {
             public TwilioEndpointBuilderImpl(String path) {
                 super("twilio", path);

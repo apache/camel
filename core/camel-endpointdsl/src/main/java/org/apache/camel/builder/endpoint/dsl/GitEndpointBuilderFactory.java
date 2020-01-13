@@ -680,7 +680,7 @@ public interface GitEndpointBuilderFactory {
      * Path parameter: localPath (required)
      * Local repository path
      */
-    default GitEndpointBuilder git(String path) {
+    static GitEndpointBuilder git(String path) {
         class GitEndpointBuilderImpl extends AbstractEndpointBuilder implements GitEndpointBuilder, AdvancedGitEndpointBuilder {
             public GitEndpointBuilderImpl(String path) {
                 super("git", path);

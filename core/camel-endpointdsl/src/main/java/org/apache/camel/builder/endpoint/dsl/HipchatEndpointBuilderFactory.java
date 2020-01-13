@@ -1012,7 +1012,7 @@ public interface HipchatEndpointBuilderFactory {
      * The port for the hipchat server. Is by default 80.
      * Default value: 80
      */
-    default HipchatEndpointBuilder hipchat(String path) {
+    static HipchatEndpointBuilder hipchat(String path) {
         class HipchatEndpointBuilderImpl extends AbstractEndpointBuilder implements HipchatEndpointBuilder, AdvancedHipchatEndpointBuilder {
             public HipchatEndpointBuilderImpl(String path) {
                 super("hipchat", path);

@@ -254,7 +254,7 @@ public interface GlanceEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default GlanceEndpointBuilder openstackGlance(String path) {
+    static GlanceEndpointBuilder openstackGlance(String path) {
         class GlanceEndpointBuilderImpl extends AbstractEndpointBuilder implements GlanceEndpointBuilder, AdvancedGlanceEndpointBuilder {
             public GlanceEndpointBuilderImpl(String path) {
                 super("openstack-glance", path);

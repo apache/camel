@@ -608,7 +608,7 @@ public interface ReactiveStreamsEndpointBuilderFactory {
      * Path parameter: stream
      * Name of the stream channel used by the endpoint to exchange messages.
      */
-    default ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
+    static ReactiveStreamsEndpointBuilder reactiveStreams(String path) {
         class ReactiveStreamsEndpointBuilderImpl extends AbstractEndpointBuilder implements ReactiveStreamsEndpointBuilder, AdvancedReactiveStreamsEndpointBuilder {
             public ReactiveStreamsEndpointBuilderImpl(String path) {
                 super("reactive-streams", path);

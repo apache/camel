@@ -448,9 +448,14 @@ public class JavaClass {
             sb.append(indent);
             if (method.isPublic) {
                 sb.append("public ");
+            } else if (method.isProtected) {
+                sb.append("protected ");
             }
             if (method.isDefault) {
                 sb.append("default ");
+            }
+            if (method.isStatic) {
+                sb.append("static ");
             }
             sb.append(shortName(method.returnType));
             sb.append(" ");

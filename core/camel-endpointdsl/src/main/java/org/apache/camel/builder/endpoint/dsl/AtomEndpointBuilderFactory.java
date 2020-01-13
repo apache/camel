@@ -821,7 +821,7 @@ public interface AtomEndpointBuilderFactory {
      * Path parameter: feedUri (required)
      * The URI to the feed to poll.
      */
-    default AtomEndpointBuilder atom(String path) {
+    static AtomEndpointBuilder atom(String path) {
         class AtomEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomEndpointBuilder, AdvancedAtomEndpointBuilder {
             public AtomEndpointBuilderImpl(String path) {
                 super("atom", path);

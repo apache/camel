@@ -625,7 +625,7 @@ public interface XJEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
      */
-    default XJEndpointBuilder xj(String path) {
+    static XJEndpointBuilder xj(String path) {
         class XJEndpointBuilderImpl extends AbstractEndpointBuilder implements XJEndpointBuilder, AdvancedXJEndpointBuilder {
             public XJEndpointBuilderImpl(String path) {
                 super("xj", path);

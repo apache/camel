@@ -764,7 +764,7 @@ public interface DisruptorEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of queue
      */
-    default DisruptorEndpointBuilder disruptor(String path) {
+    static DisruptorEndpointBuilder disruptor(String path) {
         class DisruptorEndpointBuilderImpl extends AbstractEndpointBuilder implements DisruptorEndpointBuilder, AdvancedDisruptorEndpointBuilder {
             public DisruptorEndpointBuilderImpl(String path) {
                 super("disruptor", path);

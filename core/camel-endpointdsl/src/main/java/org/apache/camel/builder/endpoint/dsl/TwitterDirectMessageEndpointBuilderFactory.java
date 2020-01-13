@@ -1556,7 +1556,7 @@ public interface TwitterDirectMessageEndpointBuilderFactory {
      * The user name to send a direct message. This will be ignored for
      * consumer.
      */
-    default TwitterDirectMessageEndpointBuilder twitterDirectmessage(String path) {
+    static TwitterDirectMessageEndpointBuilder twitterDirectmessage(String path) {
         class TwitterDirectMessageEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterDirectMessageEndpointBuilder, AdvancedTwitterDirectMessageEndpointBuilder {
             public TwitterDirectMessageEndpointBuilderImpl(String path) {
                 super("twitter-directmessage", path);

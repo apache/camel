@@ -1753,7 +1753,7 @@ public interface NatsEndpointBuilderFactory {
      * Path parameter: topic (required)
      * The name of topic we want to use
      */
-    default NatsEndpointBuilder nats(String path) {
+    static NatsEndpointBuilder nats(String path) {
         class NatsEndpointBuilderImpl extends AbstractEndpointBuilder implements NatsEndpointBuilder, AdvancedNatsEndpointBuilder {
             public NatsEndpointBuilderImpl(String path) {
                 super("nats", path);

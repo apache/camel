@@ -1124,7 +1124,7 @@ public interface MyBatisEndpointBuilderFactory {
      * The statement name in the MyBatis XML mapping file which maps to the
      * query, insert, update or delete operation you wish to evaluate.
      */
-    default MyBatisEndpointBuilder mybatis(String path) {
+    static MyBatisEndpointBuilder mybatis(String path) {
         class MyBatisEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisEndpointBuilder, AdvancedMyBatisEndpointBuilder {
             public MyBatisEndpointBuilderImpl(String path) {
                 super("mybatis", path);

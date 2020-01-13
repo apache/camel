@@ -1579,7 +1579,7 @@ public interface SplunkEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name has no purpose
      */
-    default SplunkEndpointBuilder splunk(String path) {
+    static SplunkEndpointBuilder splunk(String path) {
         class SplunkEndpointBuilderImpl extends AbstractEndpointBuilder implements SplunkEndpointBuilder, AdvancedSplunkEndpointBuilder {
             public SplunkEndpointBuilderImpl(String path) {
                 super("splunk", path);

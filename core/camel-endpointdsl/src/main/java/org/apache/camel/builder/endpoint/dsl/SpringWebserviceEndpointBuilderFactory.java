@@ -1048,7 +1048,7 @@ public interface SpringWebserviceEndpointBuilderFactory {
      * The XPath expression to use when option type=xpathresult. Then this
      * option is required to be configured.
      */
-    default SpringWebserviceEndpointBuilder springWs(String path) {
+    static SpringWebserviceEndpointBuilder springWs(String path) {
         class SpringWebserviceEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringWebserviceEndpointBuilder, AdvancedSpringWebserviceEndpointBuilder {
             public SpringWebserviceEndpointBuilderImpl(String path) {
                 super("spring-ws", path);

@@ -1259,7 +1259,7 @@ public interface XmppEndpointBuilderFactory {
      * JID (Jabber ID) of person to receive messages. room parameter has
      * precedence over participant.
      */
-    default XmppEndpointBuilder xmpp(String path) {
+    static XmppEndpointBuilder xmpp(String path) {
         class XmppEndpointBuilderImpl extends AbstractEndpointBuilder implements XmppEndpointBuilder, AdvancedXmppEndpointBuilder {
             public XmppEndpointBuilderImpl(String path) {
                 super("xmpp", path);

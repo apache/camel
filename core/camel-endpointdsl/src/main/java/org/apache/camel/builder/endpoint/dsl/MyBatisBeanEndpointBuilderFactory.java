@@ -241,7 +241,7 @@ public interface MyBatisBeanEndpointBuilderFactory {
      * Path parameter: methodName (required)
      * Name of the method on the bean that has the SQL query to be executed.
      */
-    default MyBatisBeanEndpointBuilder mybatisBean(String path) {
+    static MyBatisBeanEndpointBuilder mybatisBean(String path) {
         class MyBatisBeanEndpointBuilderImpl extends AbstractEndpointBuilder implements MyBatisBeanEndpointBuilder, AdvancedMyBatisBeanEndpointBuilder {
             public MyBatisBeanEndpointBuilderImpl(String path) {
                 super("mybatis-bean", path);

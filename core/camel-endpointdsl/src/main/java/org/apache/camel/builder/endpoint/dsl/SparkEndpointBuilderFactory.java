@@ -279,7 +279,7 @@ public interface SparkEndpointBuilderFactory {
      * Type of the endpoint (rdd, dataframe, hive).
      * The value can be one of: rdd, dataframe, hive
      */
-    default SparkEndpointBuilder spark(String path) {
+    static SparkEndpointBuilder spark(String path) {
         class SparkEndpointBuilderImpl extends AbstractEndpointBuilder implements SparkEndpointBuilder, AdvancedSparkEndpointBuilder {
             public SparkEndpointBuilderImpl(String path) {
                 super("spark", path);

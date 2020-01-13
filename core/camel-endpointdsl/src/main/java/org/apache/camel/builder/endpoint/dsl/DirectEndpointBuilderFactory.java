@@ -495,7 +495,7 @@ public interface DirectEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of direct endpoint
      */
-    default DirectEndpointBuilder direct(String path) {
+    static DirectEndpointBuilder direct(String path) {
         class DirectEndpointBuilderImpl extends AbstractEndpointBuilder implements DirectEndpointBuilder, AdvancedDirectEndpointBuilder {
             public DirectEndpointBuilderImpl(String path) {
                 super("direct", path);

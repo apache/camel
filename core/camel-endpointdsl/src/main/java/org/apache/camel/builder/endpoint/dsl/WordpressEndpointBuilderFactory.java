@@ -861,7 +861,7 @@ public interface WordpressEndpointBuilderFactory {
      * semantic is not enough, like wordpress:post:delete
      * The value can be one of: delete
      */
-    default WordpressEndpointBuilder wordpress(String path) {
+    static WordpressEndpointBuilder wordpress(String path) {
         class WordpressEndpointBuilderImpl extends AbstractEndpointBuilder implements WordpressEndpointBuilder, AdvancedWordpressEndpointBuilder {
             public WordpressEndpointBuilderImpl(String path) {
                 super("wordpress", path);

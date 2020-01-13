@@ -265,7 +265,7 @@ public interface SwiftEndpointBuilderFactory {
      * Path parameter: host (required)
      * OpenStack host url
      */
-    default SwiftEndpointBuilder openstackSwift(String path) {
+    static SwiftEndpointBuilder openstackSwift(String path) {
         class SwiftEndpointBuilderImpl extends AbstractEndpointBuilder implements SwiftEndpointBuilder, AdvancedSwiftEndpointBuilder {
             public SwiftEndpointBuilderImpl(String path) {
                 super("openstack-swift", path);

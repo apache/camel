@@ -1667,7 +1667,7 @@ public interface Olingo4EndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      */
-    default Olingo4EndpointBuilder olingo4(String path) {
+    static Olingo4EndpointBuilder olingo4(String path) {
         class Olingo4EndpointBuilderImpl extends AbstractEndpointBuilder implements Olingo4EndpointBuilder, AdvancedOlingo4EndpointBuilder {
             public Olingo4EndpointBuilderImpl(String path) {
                 super("olingo4", path);

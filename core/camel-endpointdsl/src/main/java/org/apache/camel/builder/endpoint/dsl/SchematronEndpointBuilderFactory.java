@@ -234,7 +234,7 @@ public interface SchematronEndpointBuilderFactory {
      * The path to the schematron rules file. Can either be in class path or
      * location in the file system.
      */
-    default SchematronEndpointBuilder schematron(String path) {
+    static SchematronEndpointBuilder schematron(String path) {
         class SchematronEndpointBuilderImpl extends AbstractEndpointBuilder implements SchematronEndpointBuilder, AdvancedSchematronEndpointBuilder {
             public SchematronEndpointBuilderImpl(String path) {
                 super("schematron", path);

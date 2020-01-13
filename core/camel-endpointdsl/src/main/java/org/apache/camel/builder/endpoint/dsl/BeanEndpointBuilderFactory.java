@@ -271,7 +271,7 @@ public interface BeanEndpointBuilderFactory {
      * Path parameter: beanName (required)
      * Sets the name of the bean to invoke
      */
-    default BeanEndpointBuilder bean(String path) {
+    static BeanEndpointBuilder bean(String path) {
         class BeanEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanEndpointBuilder, AdvancedBeanEndpointBuilder {
             public BeanEndpointBuilderImpl(String path) {
                 super("bean", path);

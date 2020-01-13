@@ -766,7 +766,7 @@ public interface AvroEndpointBuilderFactory {
      * Path parameter: messageName
      * The name of the message to send.
      */
-    default AvroEndpointBuilder avro(String path) {
+    static AvroEndpointBuilder avro(String path) {
         class AvroEndpointBuilderImpl extends AbstractEndpointBuilder implements AvroEndpointBuilder, AdvancedAvroEndpointBuilder {
             public AvroEndpointBuilderImpl(String path) {
                 super("avro", path);

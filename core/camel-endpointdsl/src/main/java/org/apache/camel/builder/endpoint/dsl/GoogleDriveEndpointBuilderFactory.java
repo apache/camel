@@ -1256,7 +1256,7 @@ public interface GoogleDriveEndpointBuilderFactory {
      * The value can be one of: copy, delete, get, getIdForEmail, insert, list,
      * patch, stop, touch, trash, untrash, update, watch
      */
-    default GoogleDriveEndpointBuilder googleDrive(String path) {
+    static GoogleDriveEndpointBuilder googleDrive(String path) {
         class GoogleDriveEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleDriveEndpointBuilder, AdvancedGoogleDriveEndpointBuilder {
             public GoogleDriveEndpointBuilderImpl(String path) {
                 super("google-drive", path);

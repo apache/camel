@@ -1353,7 +1353,7 @@ public interface DockerEndpointBuilderFactory {
      * containerstartcontainerstop, containertop, containerunpause,
      * containerwait, execcreate, execstart
      */
-    default DockerEndpointBuilder docker(String path) {
+    static DockerEndpointBuilder docker(String path) {
         class DockerEndpointBuilderImpl extends AbstractEndpointBuilder implements DockerEndpointBuilder, AdvancedDockerEndpointBuilder {
             public DockerEndpointBuilderImpl(String path) {
                 super("docker", path);

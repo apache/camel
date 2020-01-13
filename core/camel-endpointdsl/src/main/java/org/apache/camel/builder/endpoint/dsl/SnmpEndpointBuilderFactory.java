@@ -1755,7 +1755,7 @@ public interface SnmpEndpointBuilderFactory {
      * Path parameter: port (required)
      * Port number of the SNMP enabled device
      */
-    default SnmpEndpointBuilder snmp(String path) {
+    static SnmpEndpointBuilder snmp(String path) {
         class SnmpEndpointBuilderImpl extends AbstractEndpointBuilder implements SnmpEndpointBuilder, AdvancedSnmpEndpointBuilder {
             public SnmpEndpointBuilderImpl(String path) {
                 super("snmp", path);

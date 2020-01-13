@@ -892,7 +892,7 @@ public interface StreamEndpointBuilderFactory {
      * Kind of stream to use such as System.in or System.out.
      * The value can be one of: in, out, err, header, file
      */
-    default StreamEndpointBuilder stream(String path) {
+    static StreamEndpointBuilder stream(String path) {
         class StreamEndpointBuilderImpl extends AbstractEndpointBuilder implements StreamEndpointBuilder, AdvancedStreamEndpointBuilder {
             public StreamEndpointBuilderImpl(String path) {
                 super("stream", path);

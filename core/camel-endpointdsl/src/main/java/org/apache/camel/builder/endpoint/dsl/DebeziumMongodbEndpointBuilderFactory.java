@@ -1004,7 +1004,7 @@ public interface DebeziumMongodbEndpointBuilderFactory {
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
      */
-    default DebeziumMongodbEndpointBuilder debeziumMongodb(String path) {
+    static DebeziumMongodbEndpointBuilder debeziumMongodb(String path) {
         class DebeziumMongodbEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumMongodbEndpointBuilder, AdvancedDebeziumMongodbEndpointBuilder {
             public DebeziumMongodbEndpointBuilderImpl(String path) {
                 super("debezium-mongodb", path);

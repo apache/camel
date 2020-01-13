@@ -378,7 +378,7 @@ public interface SdbEndpointBuilderFactory {
      * Path parameter: domainName (required)
      * The name of the domain currently worked with.
      */
-    default SdbEndpointBuilder awsSdb(String path) {
+    static SdbEndpointBuilder awsSdb(String path) {
         class SdbEndpointBuilderImpl extends AbstractEndpointBuilder implements SdbEndpointBuilder, AdvancedSdbEndpointBuilder {
             public SdbEndpointBuilderImpl(String path) {
                 super("aws-sdb", path);

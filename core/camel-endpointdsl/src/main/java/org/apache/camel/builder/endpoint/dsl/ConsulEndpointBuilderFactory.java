@@ -1455,7 +1455,7 @@ public interface ConsulEndpointBuilderFactory {
      * Path parameter: apiEndpoint (required)
      * The API endpoint
      */
-    default ConsulEndpointBuilder consul(String path) {
+    static ConsulEndpointBuilder consul(String path) {
         class ConsulEndpointBuilderImpl extends AbstractEndpointBuilder implements ConsulEndpointBuilder, AdvancedConsulEndpointBuilder {
             public ConsulEndpointBuilderImpl(String path) {
                 super("consul", path);

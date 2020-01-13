@@ -215,7 +215,7 @@ public interface BonitaEndpointBuilderFactory {
      * Operation to use
      * The value can be one of: startCase
      */
-    default BonitaEndpointBuilder bonita(String path) {
+    static BonitaEndpointBuilder bonita(String path) {
         class BonitaEndpointBuilderImpl extends AbstractEndpointBuilder implements BonitaEndpointBuilder, AdvancedBonitaEndpointBuilder {
             public BonitaEndpointBuilderImpl(String path) {
                 super("bonita", path);

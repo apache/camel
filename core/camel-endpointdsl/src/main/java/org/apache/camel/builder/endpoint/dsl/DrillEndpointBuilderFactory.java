@@ -244,7 +244,7 @@ public interface DrillEndpointBuilderFactory {
      * ZooKeeper host name or IP address. Use local instead of a host name or IP
      * address to connect to the local Drillbit
      */
-    default DrillEndpointBuilder drill(String path) {
+    static DrillEndpointBuilder drill(String path) {
         class DrillEndpointBuilderImpl extends AbstractEndpointBuilder implements DrillEndpointBuilder, AdvancedDrillEndpointBuilder {
             public DrillEndpointBuilderImpl(String path) {
                 super("drill", path);

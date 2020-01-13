@@ -1329,7 +1329,7 @@ public interface FlatpackEndpointBuilderFactory {
      * Path parameter: resourceUri (required)
      * URL for loading the flatpack mapping file from classpath or file system
      */
-    default FlatpackEndpointBuilder flatpack(String path) {
+    static FlatpackEndpointBuilder flatpack(String path) {
         class FlatpackEndpointBuilderImpl extends AbstractEndpointBuilder implements FlatpackEndpointBuilder, AdvancedFlatpackEndpointBuilder {
             public FlatpackEndpointBuilderImpl(String path) {
                 super("flatpack", path);

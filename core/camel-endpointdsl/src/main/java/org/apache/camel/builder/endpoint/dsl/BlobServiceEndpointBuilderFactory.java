@@ -1235,7 +1235,7 @@ public interface BlobServiceEndpointBuilderFactory {
      * Path parameter: containerOrBlobUri (required)
      * Container or Blob compact Uri
      */
-    default BlobServiceEndpointBuilder azureBlob(String path) {
+    static BlobServiceEndpointBuilder azureBlob(String path) {
         class BlobServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements BlobServiceEndpointBuilder, AdvancedBlobServiceEndpointBuilder {
             public BlobServiceEndpointBuilderImpl(String path) {
                 super("azure-blob", path);

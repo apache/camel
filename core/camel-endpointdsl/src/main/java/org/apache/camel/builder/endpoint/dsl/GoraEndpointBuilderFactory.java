@@ -887,7 +887,7 @@ public interface GoraEndpointBuilderFactory {
      * Path parameter: name (required)
      * Instance name
      */
-    default GoraEndpointBuilder gora(String path) {
+    static GoraEndpointBuilder gora(String path) {
         class GoraEndpointBuilderImpl extends AbstractEndpointBuilder implements GoraEndpointBuilder, AdvancedGoraEndpointBuilder {
             public GoraEndpointBuilderImpl(String path) {
                 super("gora", path);

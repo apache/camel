@@ -285,7 +285,7 @@ public interface NagiosEndpointBuilderFactory {
      * Path parameter: port (required)
      * The port number of the host.
      */
-    default NagiosEndpointBuilder nagios(String path) {
+    static NagiosEndpointBuilder nagios(String path) {
         class NagiosEndpointBuilderImpl extends AbstractEndpointBuilder implements NagiosEndpointBuilder, AdvancedNagiosEndpointBuilder {
             public NagiosEndpointBuilderImpl(String path) {
                 super("nagios", path);

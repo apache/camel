@@ -160,7 +160,7 @@ public interface LdifEndpointBuilderFactory {
      * this must be of scope prototype to avoid it being shared among threads or
      * using a connection that has timed out.
      */
-    default LdifEndpointBuilder ldif(String path) {
+    static LdifEndpointBuilder ldif(String path) {
         class LdifEndpointBuilderImpl extends AbstractEndpointBuilder implements LdifEndpointBuilder, AdvancedLdifEndpointBuilder {
             public LdifEndpointBuilderImpl(String path) {
                 super("ldif", path);

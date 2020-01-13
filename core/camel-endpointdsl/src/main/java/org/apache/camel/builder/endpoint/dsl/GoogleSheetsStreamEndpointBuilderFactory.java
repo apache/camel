@@ -888,7 +888,7 @@ public interface GoogleSheetsStreamEndpointBuilderFactory {
      * Path parameter: apiName
      * Sets the apiName.
      */
-    default GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {
+    static GoogleSheetsStreamEndpointBuilder googleSheetsStream(String path) {
         class GoogleSheetsStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsStreamEndpointBuilder, AdvancedGoogleSheetsStreamEndpointBuilder {
             public GoogleSheetsStreamEndpointBuilderImpl(String path) {
                 super("google-sheets-stream", path);

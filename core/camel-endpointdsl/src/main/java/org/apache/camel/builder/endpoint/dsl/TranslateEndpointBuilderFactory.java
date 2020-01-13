@@ -368,7 +368,7 @@ public interface TranslateEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default TranslateEndpointBuilder awsTranslate(String path) {
+    static TranslateEndpointBuilder awsTranslate(String path) {
         class TranslateEndpointBuilderImpl extends AbstractEndpointBuilder implements TranslateEndpointBuilder, AdvancedTranslateEndpointBuilder {
             public TranslateEndpointBuilderImpl(String path) {
                 super("aws-translate", path);

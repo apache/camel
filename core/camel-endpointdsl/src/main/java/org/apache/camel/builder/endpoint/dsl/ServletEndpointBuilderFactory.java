@@ -745,7 +745,7 @@ public interface ServletEndpointBuilderFactory {
      * Path parameter: contextPath (required)
      * The context-path to use
      */
-    default ServletEndpointBuilder servlet(String path) {
+    static ServletEndpointBuilder servlet(String path) {
         class ServletEndpointBuilderImpl extends AbstractEndpointBuilder implements ServletEndpointBuilder, AdvancedServletEndpointBuilder {
             public ServletEndpointBuilderImpl(String path) {
                 super("servlet", path);

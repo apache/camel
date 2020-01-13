@@ -187,7 +187,7 @@ public interface JingEndpointBuilderFactory {
      * resource or resource on the file system which contains the schema to
      * validate against.
      */
-    default JingEndpointBuilder jing(String path) {
+    static JingEndpointBuilder jing(String path) {
         class JingEndpointBuilderImpl extends AbstractEndpointBuilder implements JingEndpointBuilder, AdvancedJingEndpointBuilder {
             public JingEndpointBuilderImpl(String path) {
                 super("jing", path);

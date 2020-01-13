@@ -248,7 +248,7 @@ public interface RestApiEndpointBuilderFactory {
      * Optional CamelContext id pattern to only allow Rest APIs from rest
      * services within CamelContext's which name matches the pattern.
      */
-    default RestApiEndpointBuilder restApi(String path) {
+    static RestApiEndpointBuilder restApi(String path) {
         class RestApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestApiEndpointBuilder, AdvancedRestApiEndpointBuilder {
             public RestApiEndpointBuilderImpl(String path) {
                 super("rest-api", path);

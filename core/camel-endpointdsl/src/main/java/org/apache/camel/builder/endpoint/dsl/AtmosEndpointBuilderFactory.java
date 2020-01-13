@@ -723,7 +723,7 @@ public interface AtmosEndpointBuilderFactory {
      * Operation to perform
      * The value can be one of: put, del, search, get, move
      */
-    default AtmosEndpointBuilder atmos(String path) {
+    static AtmosEndpointBuilder atmos(String path) {
         class AtmosEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosEndpointBuilder, AdvancedAtmosEndpointBuilder {
             public AtmosEndpointBuilderImpl(String path) {
                 super("atmos", path);

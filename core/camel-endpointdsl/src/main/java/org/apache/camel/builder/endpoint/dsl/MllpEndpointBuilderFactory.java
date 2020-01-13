@@ -1723,7 +1723,7 @@ public interface MllpEndpointBuilderFactory {
      * Path parameter: port (required)
      * Port number for the TCP connection
      */
-    default MllpEndpointBuilder mllp(String path) {
+    static MllpEndpointBuilder mllp(String path) {
         class MllpEndpointBuilderImpl extends AbstractEndpointBuilder implements MllpEndpointBuilder, AdvancedMllpEndpointBuilder {
             public MllpEndpointBuilderImpl(String path) {
                 super("mllp", path);

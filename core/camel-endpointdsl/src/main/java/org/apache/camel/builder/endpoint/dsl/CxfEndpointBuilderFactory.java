@@ -2229,7 +2229,7 @@ public interface CxfEndpointBuilderFactory {
      * Path parameter: address
      * The service publish address.
      */
-    default CxfEndpointBuilder cxf(String path) {
+    static CxfEndpointBuilder cxf(String path) {
         class CxfEndpointBuilderImpl extends AbstractEndpointBuilder implements CxfEndpointBuilder, AdvancedCxfEndpointBuilder {
             public CxfEndpointBuilderImpl(String path) {
                 super("cxf", path);

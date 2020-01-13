@@ -1076,7 +1076,7 @@ public interface GoogleMailEndpointBuilderFactory {
      * The value can be one of: attachments, create, delete, get, getProfile,
      * gmailImport, insert, list, modify, patch, send, trash, untrash, update
      */
-    default GoogleMailEndpointBuilder googleMail(String path) {
+    static GoogleMailEndpointBuilder googleMail(String path) {
         class GoogleMailEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailEndpointBuilder, AdvancedGoogleMailEndpointBuilder {
             public GoogleMailEndpointBuilderImpl(String path) {
                 super("google-mail", path);

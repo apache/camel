@@ -1301,7 +1301,7 @@ public interface InfinispanEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The cache to use
      */
-    default InfinispanEndpointBuilder infinispan(String path) {
+    static InfinispanEndpointBuilder infinispan(String path) {
         class InfinispanEndpointBuilderImpl extends AbstractEndpointBuilder implements InfinispanEndpointBuilder, AdvancedInfinispanEndpointBuilder {
             public InfinispanEndpointBuilderImpl(String path) {
                 super("infinispan", path);

@@ -294,7 +294,7 @@ public interface IgniteSetEndpointBuilderFactory {
      * Path parameter: name (required)
      * The set name.
      */
-    default IgniteSetEndpointBuilder igniteSet(String path) {
+    static IgniteSetEndpointBuilder igniteSet(String path) {
         class IgniteSetEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteSetEndpointBuilder, AdvancedIgniteSetEndpointBuilder {
             public IgniteSetEndpointBuilderImpl(String path) {
                 super("ignite-set", path);

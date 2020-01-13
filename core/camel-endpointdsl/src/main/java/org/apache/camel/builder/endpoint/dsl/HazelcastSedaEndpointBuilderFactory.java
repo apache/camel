@@ -1099,7 +1099,7 @@ public interface HazelcastSedaEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default HazelcastSedaEndpointBuilder hazelcastSeda(String path) {
+    static HazelcastSedaEndpointBuilder hazelcastSeda(String path) {
         class HazelcastSedaEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastSedaEndpointBuilder, AdvancedHazelcastSedaEndpointBuilder {
             public HazelcastSedaEndpointBuilderImpl(String path) {
                 super("hazelcast-seda", path);

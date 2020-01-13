@@ -1668,7 +1668,7 @@ public interface DebeziumMySqlEndpointBuilderFactory {
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
      */
-    default DebeziumMySqlEndpointBuilder debeziumMysql(String path) {
+    static DebeziumMySqlEndpointBuilder debeziumMysql(String path) {
         class DebeziumMySqlEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumMySqlEndpointBuilder, AdvancedDebeziumMySqlEndpointBuilder {
             public DebeziumMySqlEndpointBuilderImpl(String path) {
                 super("debezium-mysql", path);

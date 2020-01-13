@@ -370,7 +370,7 @@ public interface MsvEndpointBuilderFactory {
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
      */
-    default MsvEndpointBuilder msv(String path) {
+    static MsvEndpointBuilder msv(String path) {
         class MsvEndpointBuilderImpl extends AbstractEndpointBuilder implements MsvEndpointBuilder, AdvancedMsvEndpointBuilder {
             public MsvEndpointBuilderImpl(String path) {
                 super("msv", path);

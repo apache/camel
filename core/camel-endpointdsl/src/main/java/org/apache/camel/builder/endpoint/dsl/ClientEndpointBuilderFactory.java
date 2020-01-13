@@ -1548,7 +1548,7 @@ public interface ClientEndpointBuilderFactory {
      * Path parameter: uriPath (required)
      * The object information address
      */
-    default ClientEndpointBuilder iec60870Client(String path) {
+    static ClientEndpointBuilder iec60870Client(String path) {
         class ClientEndpointBuilderImpl extends AbstractEndpointBuilder implements ClientEndpointBuilder, AdvancedClientEndpointBuilder {
             public ClientEndpointBuilderImpl(String path) {
                 super("iec60870-client", path);

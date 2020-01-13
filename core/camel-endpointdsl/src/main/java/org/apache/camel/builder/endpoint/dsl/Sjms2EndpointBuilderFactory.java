@@ -2167,7 +2167,7 @@ public interface Sjms2EndpointBuilderFactory {
      * DestinationName is a JMS queue or topic name. By default, the
      * destinationName is interpreted as a queue name.
      */
-    default Sjms2EndpointBuilder sjms2(String path) {
+    static Sjms2EndpointBuilder sjms2(String path) {
         class Sjms2EndpointBuilderImpl extends AbstractEndpointBuilder implements Sjms2EndpointBuilder, AdvancedSjms2EndpointBuilder {
             public Sjms2EndpointBuilderImpl(String path) {
                 super("sjms2", path);

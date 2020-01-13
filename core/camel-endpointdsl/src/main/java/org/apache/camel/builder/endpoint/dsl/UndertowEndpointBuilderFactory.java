@@ -1358,7 +1358,7 @@ public interface UndertowEndpointBuilderFactory {
      * Path parameter: httpURI (required)
      * The url of the HTTP endpoint to use.
      */
-    default UndertowEndpointBuilder undertow(String path) {
+    static UndertowEndpointBuilder undertow(String path) {
         class UndertowEndpointBuilderImpl extends AbstractEndpointBuilder implements UndertowEndpointBuilder, AdvancedUndertowEndpointBuilder {
             public UndertowEndpointBuilderImpl(String path) {
                 super("undertow", path);

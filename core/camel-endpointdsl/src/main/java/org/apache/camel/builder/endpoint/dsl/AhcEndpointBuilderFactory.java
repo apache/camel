@@ -508,7 +508,7 @@ public interface AhcEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The URI to use such as http://hostname:port/path
      */
-    default AhcEndpointBuilder ahc(String path) {
+    static AhcEndpointBuilder ahc(String path) {
         class AhcEndpointBuilderImpl extends AbstractEndpointBuilder implements AhcEndpointBuilder, AdvancedAhcEndpointBuilder {
             public AhcEndpointBuilderImpl(String path) {
                 super("ahc", path);

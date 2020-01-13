@@ -259,7 +259,7 @@ public interface GraphqlEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The GraphQL server URI.
      */
-    default GraphqlEndpointBuilder graphql(String path) {
+    static GraphqlEndpointBuilder graphql(String path) {
         class GraphqlEndpointBuilderImpl extends AbstractEndpointBuilder implements GraphqlEndpointBuilder, AdvancedGraphqlEndpointBuilder {
             public GraphqlEndpointBuilderImpl(String path) {
                 super("graphql", path);

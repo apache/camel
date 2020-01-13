@@ -786,7 +786,7 @@ public interface JiraEndpointBuilderFactory {
      * The value can be one of: ADDCOMMENT, ADDISSUE, ATTACH, DELETEISSUE,
      * NEWISSUES, NEWCOMMENTS, UPDATEISSUE, TRANSITIONISSUE, WATCHERS
      */
-    default JiraEndpointBuilder jira(String path) {
+    static JiraEndpointBuilder jira(String path) {
         class JiraEndpointBuilderImpl extends AbstractEndpointBuilder implements JiraEndpointBuilder, AdvancedJiraEndpointBuilder {
             public JiraEndpointBuilderImpl(String path) {
                 super("jira", path);

@@ -1053,7 +1053,7 @@ public interface ZendeskEndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What operation to use
      */
-    default ZendeskEndpointBuilder zendesk(String path) {
+    static ZendeskEndpointBuilder zendesk(String path) {
         class ZendeskEndpointBuilderImpl extends AbstractEndpointBuilder implements ZendeskEndpointBuilder, AdvancedZendeskEndpointBuilder {
             public ZendeskEndpointBuilderImpl(String path) {
                 super("zendesk", path);

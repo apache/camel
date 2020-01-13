@@ -1007,7 +1007,7 @@ public interface JcrEndpointBuilderFactory {
      * Path parameter: base
      * Get the base node when accessing the repository
      */
-    default JcrEndpointBuilder jcr(String path) {
+    static JcrEndpointBuilder jcr(String path) {
         class JcrEndpointBuilderImpl extends AbstractEndpointBuilder implements JcrEndpointBuilder, AdvancedJcrEndpointBuilder {
             public JcrEndpointBuilderImpl(String path) {
                 super("jcr", path);

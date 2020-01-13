@@ -1576,7 +1576,7 @@ public interface MiloClientEndpointBuilderFactory {
      * Path parameter: endpointUri (required)
      * The OPC UA server endpoint
      */
-    default MiloClientEndpointBuilder miloClient(String path) {
+    static MiloClientEndpointBuilder miloClient(String path) {
         class MiloClientEndpointBuilderImpl extends AbstractEndpointBuilder implements MiloClientEndpointBuilder, AdvancedMiloClientEndpointBuilder {
             public MiloClientEndpointBuilderImpl(String path) {
                 super("milo-client", path);

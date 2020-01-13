@@ -361,7 +361,7 @@ public interface DigitalOceanEndpointBuilderFactory {
      * rename, changeKernel, enableIpv6, enablePrivateNetworking, takeSnapshot,
      * transfer, convert, attach, detach, assign, unassign, tag, untag
      */
-    default DigitalOceanEndpointBuilder digitalocean(String path) {
+    static DigitalOceanEndpointBuilder digitalocean(String path) {
         class DigitalOceanEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalOceanEndpointBuilder, AdvancedDigitalOceanEndpointBuilder {
             public DigitalOceanEndpointBuilderImpl(String path) {
                 super("digitalocean", path);

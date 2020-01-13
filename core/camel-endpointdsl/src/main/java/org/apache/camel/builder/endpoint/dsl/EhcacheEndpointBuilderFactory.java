@@ -1033,7 +1033,7 @@ public interface EhcacheEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * the cache name
      */
-    default EhcacheEndpointBuilder ehcache(String path) {
+    static EhcacheEndpointBuilder ehcache(String path) {
         class EhcacheEndpointBuilderImpl extends AbstractEndpointBuilder implements EhcacheEndpointBuilder, AdvancedEhcacheEndpointBuilder {
             public EhcacheEndpointBuilderImpl(String path) {
                 super("ehcache", path);

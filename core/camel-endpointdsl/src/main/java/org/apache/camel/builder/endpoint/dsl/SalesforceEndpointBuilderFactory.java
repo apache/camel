@@ -2726,7 +2726,7 @@ public interface SalesforceEndpointBuilderFactory {
      * Path parameter: topicName
      * The name of the topic/channel to use
      */
-    default SalesforceEndpointBuilder salesforce(String path) {
+    static SalesforceEndpointBuilder salesforce(String path) {
         class SalesforceEndpointBuilderImpl extends AbstractEndpointBuilder implements SalesforceEndpointBuilder, AdvancedSalesforceEndpointBuilder {
             public SalesforceEndpointBuilderImpl(String path) {
                 super("salesforce", path);

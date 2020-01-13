@@ -816,7 +816,7 @@ public interface NsqEndpointBuilderFactory {
      * Path parameter: topic (required)
      * The name of topic we want to use
      */
-    default NsqEndpointBuilder nsq(String path) {
+    static NsqEndpointBuilder nsq(String path) {
         class NsqEndpointBuilderImpl extends AbstractEndpointBuilder implements NsqEndpointBuilder, AdvancedNsqEndpointBuilder {
             public NsqEndpointBuilderImpl(String path) {
                 super("nsq", path);

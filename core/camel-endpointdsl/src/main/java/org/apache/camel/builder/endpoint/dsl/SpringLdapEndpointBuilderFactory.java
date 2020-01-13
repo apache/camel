@@ -216,7 +216,7 @@ public interface SpringLdapEndpointBuilderFactory {
      * Path parameter: templateName (required)
      * Name of the Spring LDAP Template bean
      */
-    default SpringLdapEndpointBuilder springLdap(String path) {
+    static SpringLdapEndpointBuilder springLdap(String path) {
         class SpringLdapEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringLdapEndpointBuilder, AdvancedSpringLdapEndpointBuilder {
             public SpringLdapEndpointBuilderImpl(String path) {
                 super("spring-ldap", path);

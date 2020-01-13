@@ -3436,7 +3436,7 @@ public interface FileEndpointBuilderFactory {
      * Path parameter: directoryName (required)
      * The starting directory
      */
-    default FileEndpointBuilder file(String path) {
+    static FileEndpointBuilder file(String path) {
         class FileEndpointBuilderImpl extends AbstractEndpointBuilder implements FileEndpointBuilder, AdvancedFileEndpointBuilder {
             public FileEndpointBuilderImpl(String path) {
                 super("file", path);

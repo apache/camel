@@ -673,7 +673,7 @@ public interface IgniteMessagingEndpointBuilderFactory {
      * Path parameter: topic (required)
      * The topic name.
      */
-    default IgniteMessagingEndpointBuilder igniteMessaging(String path) {
+    static IgniteMessagingEndpointBuilder igniteMessaging(String path) {
         class IgniteMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteMessagingEndpointBuilder, AdvancedIgniteMessagingEndpointBuilder {
             public IgniteMessagingEndpointBuilderImpl(String path) {
                 super("ignite-messaging", path);
