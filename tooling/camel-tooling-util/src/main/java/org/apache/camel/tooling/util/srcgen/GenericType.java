@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.packaging.srcgen;
+package org.apache.camel.tooling.util.srcgen;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.GenericArrayType;
@@ -29,9 +29,9 @@ import java.util.Map;
 @SuppressWarnings("rawtypes")
 public class GenericType {
 
-    private static final GenericType ALL = new GenericType(Object.class);
-
     private static final GenericType[] EMPTY = new GenericType[0];
+
+    private static final GenericType ALL = new GenericType(Object.class);
 
     private static final Map<String, Class> PRIMITIVE_CLASSES = new HashMap<>();
 
