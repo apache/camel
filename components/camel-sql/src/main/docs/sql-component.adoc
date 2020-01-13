@@ -38,8 +38,11 @@ pattern. See further below.
 
 == URI format
 
-TIP: This component can be used as a
+[TIP]
+====
+This component can be used as a
 http://camel.apache.org/transactional-client.html[Transactional Client].
+====
 
 The SQL component uses the following endpoint URI notation:
 
