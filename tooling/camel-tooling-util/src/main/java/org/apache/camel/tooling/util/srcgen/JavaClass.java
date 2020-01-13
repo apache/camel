@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.packaging.srcgen;
+package org.apache.camel.tooling.util.srcgen;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -25,7 +26,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-import org.jboss.forge.roaster.model.util.Strings;
 
 public class JavaClass {
 
@@ -49,6 +49,7 @@ public class JavaClass {
     boolean isAbstract;
     boolean isClass = true;
     boolean isEnum;
+    int maxImportPerPackage = 10;
 
     public JavaClass() {
     }
@@ -67,6 +68,10 @@ public class JavaClass {
         } else {
             return classLoader;
         }
+    }
+
+    public void setMaxImportPerPackage(int maxImportPerPackage) {
+        this.maxImportPerPackage = maxImportPerPackage;
     }
 
     public JavaClass setStatic(boolean aStatic) {
@@ -243,6 +248,20 @@ public class JavaClass {
         imports.removeIf(f -> f.startsWith("java.lang.") || f.startsWith(packageName + "."));
         imports.removeIf(GenericType::isPrimitive);
 
+        Map<String, List<String>> importsByPackages = new LinkedHashMap<>();
+        for (String imp : imports) {
+            String key = imp.substring(0, imp.lastIndexOf('.'));
+            importsByPackages.computeIfAbsent(key, k -> new ArrayList<>()).add(imp);
+        }
+        imports.clear();
+        for (Map.Entry<String, List<String>> e : importsByPackages.entrySet()) {
+            if (e.getValue().size() < maxImportPerPackage) {
+                imports.addAll(e.getValue());
+            } else {
+                imports.add(e.getKey() + ".*");
+            }
+        }
+
         sb.append("package ").append(packageName).append(";\n");
         sb.append("\n");
         if (!imports.isEmpty()) {
@@ -267,7 +286,7 @@ public class JavaClass {
                 .append("enum ").append(name).append(" {\n")
                 .append(indent)
                 .append("    ")
-                .append(Strings.join(values, ",\n" + indent + "    "))
+                .append(String.join(",\n" + indent + "    ", values))
                 .append(";\n")
                 .append(indent)
                 .append("}");
@@ -289,7 +308,7 @@ public class JavaClass {
         }
         if (!implementNames.isEmpty()) {
             sb2.append(isClass ? " implements " : " extends ")
-                    .append(Strings.join(implementNames, ", "));
+                    .append(String.join(", ", implementNames));
         }
         sb2.append(" {");
         if (sb2.length() < 80) {
@@ -311,7 +330,7 @@ public class JavaClass {
             if (!implementNames.isEmpty()) {
                 sb.append("\n");
                 sb.append(indent).append(isClass ? "        implements\n" : "        extends\n");
-                sb.append(indent).append("            ").append(Strings.join(implementNames, ", "));
+                sb.append(indent).append("            ").append(String.join(", ", implementNames));
             }
             sb.append(" {\n");
         }
@@ -415,73 +434,91 @@ public class JavaClass {
         }
         printAnnotations(sb, indent, method.annotations);
 
-        StringBuilder sb2 = new StringBuilder();
-        sb2.append(indent);
-        if (method.isPublic) {
-            sb2.append("public ");
-        } else if (method.isProtected) {
-            sb2.append("protected ");
-        }
-        if (method.isDefault) {
-            sb2.append("default ");
-        }
-        if (method.isStatic) {
-            sb2.append("static ");
-        }
-        if (!method.isConstructor) {
-            sb2.append(method.returnType != null ? shortName(method.returnType) : "void");
-            sb2.append(" ");
-        }
-        sb2.append(method.name);
-        sb2.append("(");
-        sb2.append(method.parameters.stream().map(p -> shortName(p.type) + " " + p.name)
-                .collect(Collectors.joining(", ")));
-        sb2.append(") ");
-        if (!method.exceptions.isEmpty()) {
-            sb2.append("throws ");
-            sb2.append(method.exceptions.stream().map(this::shortName).collect(Collectors.joining(", ", "", " ")));
-        }
-        sb2.append("{");
-        if (sb2.length() < 84) {
-            sb.append(sb2);
+        if (method.signature != null) {
+            sb.append(method.signature);
+            if (!method.isAbstract) {
+                sb.append(" {");
+            }
         } else {
-            sb.append(indent);
+            StringBuilder sb2 = new StringBuilder();
+            sb2.append(indent);
             if (method.isPublic) {
-                sb.append("public ");
+                sb2.append("public ");
             } else if (method.isProtected) {
-                sb.append("protected ");
+                sb2.append("protected ");
+            } else if (method.isPrivate) {
+                sb2.append("private ");
             }
             if (method.isDefault) {
-                sb.append("default ");
+                sb2.append("default ");
             }
             if (method.isStatic) {
-                sb.append("static ");
+                sb2.append("static ");
             }
-            sb.append(shortName(method.returnType));
-            sb.append(" ");
-            sb.append(method.name);
-            if (method.parameters.size() > 0) {
-                sb.append("(\n");
-                sb.append(method.parameters.stream().map(p -> indent + "        " + shortName(p.type) + " " + p.name)
-                        .collect(Collectors.joining(",\n")));
-                sb.append(")");
-            } else {
-                sb.append("()");
+            if (!method.isConstructor) {
+                sb2.append(method.returnType != null ? shortName(method.returnType) : "void");
+                sb2.append(" ");
             }
+            sb2.append(method.name);
+            sb2.append("(");
+            sb2.append(method.parameters.stream().map(p -> shortName(p.type) + " " + p.name)
+                    .collect(Collectors.joining(", ")));
+            sb2.append(") ");
             if (!method.exceptions.isEmpty()) {
-                sb.append("\n            throws");
-                sb.append(method.exceptions.stream().map(this::shortName).collect(Collectors.joining(", ", " ", "")));
+                sb2.append("throws ");
+                sb2.append(method.exceptions.stream().map(this::shortName).collect(Collectors.joining(", ", "", " ")));
             }
-            sb.append(" {");
+            if (!method.isAbstract) {
+                sb2.append("{");
+            }
+            if (sb2.length() < 84) {
+                sb.append(sb2);
+            } else {
+                sb.append(indent);
+                if (method.isPublic) {
+                    sb.append("public ");
+                } else if (method.isProtected) {
+                    sb.append("protected ");
+                } else if (method.isPrivate) {
+                    sb.append("private ");
+                }
+                if (method.isDefault) {
+                    sb.append("default ");
+                }
+                if (!method.isConstructor) {
+                    sb.append(method.returnType != null ? shortName(method.returnType) : "void");
+                    sb.append(" ");
+                }
+                sb.append(method.name);
+                if (method.parameters.size() > 0) {
+                    sb.append("(\n");
+                    sb.append(method.parameters.stream().map(p -> indent + "        " + shortName(p.type) + " " + p.name)
+                            .collect(Collectors.joining(",\n")));
+                    sb.append(")");
+                } else {
+                    sb.append("()");
+                }
+                if (!method.exceptions.isEmpty()) {
+                    sb.append("\n            throws");
+                    sb.append(method.exceptions.stream().map(this::shortName).collect(Collectors.joining(", ", " ", "")));
+                }
+                if (!method.isAbstract) {
+                    sb.append(" {");
+                }
+            }
         }
-        sb.append("\n");
-        for (String l : method.body.split("\n")) {
-            sb.append(indent);
-            sb.append("    ");
-            sb.append(l);
+        if (!method.isAbstract) {
             sb.append("\n");
+            for (String l : method.body.split("\n")) {
+                sb.append(indent);
+                sb.append("    ");
+                sb.append(l);
+                sb.append("\n");
+            }
+            sb.append(indent).append("}\n");
+        } else {
+            sb.append(";\n");
         }
-        sb.append(indent).append("}\n");
     }
 
     private void printField(StringBuilder sb, String indent, Field field) {

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.packaging.srcgen;
+package org.apache.camel.tooling.util.srcgen;
 
 import java.util.ArrayList;
 import java.util.List;
