@@ -587,9 +587,13 @@ optional parameter. The value is converted in the following way:
 `org.jsmpp.bean.OptionalParameter.Null` -> `null`
 |=======================================================================
 
-TIP: *JSMPP library*
+[TIP]
+====
+*JSMPP library*
+
 See the documentation of the http://jsmpp.org[JSMPP Library] for more
 details about the underlying library.
+====
 
 == Exception handling
 
@@ -665,11 +669,14 @@ A route which receives an SMS using the Spring XML DSL:
   </route>
 ----------------------------------------------------------------------------------------------------------------
 
+[TIP]
+====
+*SMSC simulator*
 
-TIP: *SMSC simulator*
 If you need an SMSC simulator for your test, you can use the simulator
 provided by
 http://opensmpp.logica.com/CommonPart/Download/download2.html#simulator[Logica].
+====
 
 == Debug logging
 
