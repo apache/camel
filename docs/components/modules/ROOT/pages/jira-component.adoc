@@ -254,14 +254,14 @@ Required:
 * `IssueKey`: The issue key identifier.
 * body of the exchange is the description.
 
-== AttachFile
+== Attach
 
 Only one file should attach per invocation.
 
 Required:
 
 * `IssueKey`: The issue key identifier.
-* body of the exchange should be of type `GenericFile`
+* body of the exchange should be of type `File`
 
 == DeleteIssue
 
