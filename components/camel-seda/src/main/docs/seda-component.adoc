@@ -23,9 +23,13 @@ if the VM terminates while messages are yet to be processed. If you need
 persistence, reliability or distributed SEDA, try using either
 xref:jms-component.adoc[JMS] or xref:jms-component.adoc[ActiveMQ].
 
-TIP:*Synchronous*
+[TIP]
+====
+*Synchronous*
+
 The xref:direct-component.adoc[Direct] component provides synchronous invocation
 of any consumers when a producer sends a message exchange.
+====
 
 == URI format
 
