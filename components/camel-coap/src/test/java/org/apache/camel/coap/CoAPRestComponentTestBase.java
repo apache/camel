@@ -131,20 +131,16 @@ abstract class CoAPRestComponentTestBase extends CamelTestSupport {
 
                 rest("/TestResource").get("/{id}").to("direct:get1").post("/{id}").to("direct:post1");
 
-                from("direct:get1").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("id", String.class);
-                        exchange.getOut().setBody("Hello " + id);
-                    }
+                from("direct:get1").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    exchange.getMessage().setBody("Hello " + id);
                 });
 
-                from("direct:post1").process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        String id = exchange.getIn().getHeader("id", String.class);
-                        String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
-                        exchange.getOut().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
-                        exchange.getOut().setHeader(Exchange.CONTENT_TYPE, ct);
-                    }
+                from("direct:post1").process(exchange -> {
+                    String id = exchange.getIn().getHeader("id", String.class);
+                    String ct = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+                    exchange.getMessage().setBody("Hello " + id + ": " + exchange.getIn().getBody(String.class));
+                    exchange.getMessage().setHeader(Exchange.CONTENT_TYPE, ct);
                 });
 
                 from("direct:start").toF(getClientURI(), coapport).to("mock:result");
