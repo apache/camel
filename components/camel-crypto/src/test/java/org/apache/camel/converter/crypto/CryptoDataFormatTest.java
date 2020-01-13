@@ -278,7 +278,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
                 from("direct:key-in-header-decrypt").unmarshal(cryptoFormat).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         exchange.getIn().getHeaders().remove(CryptoDataFormat.KEY);
-                        exchange.getOut().copyFrom(exchange.getIn());
+                        exchange.getMessage().copyFrom(exchange.getIn());
                     }
                 }).to("mock:unencrypted");
                 // END SNIPPET: key-in-header
