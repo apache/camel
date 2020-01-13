@@ -55,7 +55,9 @@ public class CronEndpoint extends DefaultEndpoint implements DelegateEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        return delegate.createConsumer(processor);
+        Consumer consumer = delegate.createConsumer(processor);
+        configureConsumer(consumer);
+        return consumer;
     }
 
     public CamelCronConfiguration getConfiguration() {
