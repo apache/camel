@@ -37,16 +37,19 @@ xref:xpath-language.adoc[XPath] or xref:xpath-language.adoc[XQuery]
 Expression.
 
 [NOTE]
+====
 There is also the xref:test.adoc[Test endpoint] which is a
 Mock endpoint, but which uses a second endpoint to provide the list of
 expected message bodies and automatically sets up the Mock endpoint
 assertions. In other words, it's a Mock endpoint that automatically sets
 up its assertions from some sample messages in a File
 or xref:jpa-component.adoc[database], for example.
+====
 
 [CAUTION]
-*Mock endpoints keep received Exchanges in memory indefinitely.* +
- +
+====
+*Mock endpoints keep received Exchanges in memory indefinitely.* 
+
 Remember that Mock is designed for testing. When you add Mock endpoints
 to a route, each Exchange sent to the endpoint will
 be stored (to allow for later validation) in memory until explicitly
@@ -55,11 +58,11 @@ large messages, this may cause excessive memory use. If your goal is to
 test deployable routes inline, consider using
 NotifyBuilder or
 AdviceWith in your tests instead of adding Mock
-endpoints to routes directly. +
- +
+endpoints to routes directly. 
 There are two new options `retainFirst`, and
 `retainLast` that can be used to limit the number of messages the Mock
 endpoints keep in memory.
+====
 
 
 == URI format
@@ -509,8 +512,11 @@ mock.allMessages().arrives().noLaterThan(1).seconds().beforeNext();
 ----
 
 [TIP]
-*Time units* +
+====
+*Time units* 
+
 In the example above we use `seconds` as the time unit, but Camel offers
 `milliseconds`, and `minutes` as well.
+====
 
 
