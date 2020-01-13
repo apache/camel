@@ -47,7 +47,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
         producer.process(exchange);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> documents = exchange.getOut().getBody(List.class);
+        List<Map<String, Object>> documents = exchange.getMessage().getBody(List.class);
         assertEquals(1, documents.size());
         assertEquals("test1.txt", documents.get(0).get("cmis:name"));
     }
@@ -62,9 +62,9 @@ public class CMISQueryProducerTest extends CMISTestSupport {
         producer.process(exchange);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> documents = exchange.getOut().getBody(List.class);
+        List<Map<String, Object>> documents = exchange.getMessage().getBody(List.class);
         assertEquals(2, documents.size());
-        assertEquals(2, exchange.getOut().getHeader("CamelCMISResultCount"));
+        assertEquals(2, exchange.getMessage().getHeader("CamelCMISResultCount"));
     }
 
     @Test
@@ -79,7 +79,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
         producer.process(exchange);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> documents = exchange.getOut().getBody(List.class);
+        List<Map<String, Object>> documents = exchange.getMessage().getBody(List.class);
         assertEquals(1, documents.size());
     }
 
@@ -95,7 +95,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
         producer.process(exchange);
 
         @SuppressWarnings("unchecked")
-        List<Map<String, Object>> documents = exchange.getOut().getBody(List.class);
+        List<Map<String, Object>> documents = exchange.getMessage().getBody(List.class);
         InputStream content = (InputStream)documents.get(0).get("CamelCMISContent");
         assertEquals("This is the first Camel test content.", readFromStream(content));
     }
