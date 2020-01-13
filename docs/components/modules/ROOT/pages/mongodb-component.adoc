@@ -227,9 +227,13 @@ from("direct:findById")
     .to("mock:resultFindById");
 ------------------------------------------------------------------------------
 
-TIP: *Supports optional parameters*.
+[TIP]
+====
+*Supports optional parameters*.
+
 This operation supports specifying a fields filter.
 See <<Specifying a fields filter (projection)>>.
+====
 
 ==== findOneByQuery
 
@@ -260,9 +264,13 @@ from("direct:findOneByQuery")
     .to("mock:resultFindOneByQuery");
 ------------------------------------------------------------------------------------
 
-TIP: *Supports optional parameters*.
+[TIP]
+====
+*Supports optional parameters*.
+
 This operation supports specifying a fields projection and/or a sort clause.
 See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
+====
 
 ==== findAll
 
@@ -343,9 +351,13 @@ consideration. |int/Integer
 consideration. |int/Integer
 |=======================================================================
 
-TIP: *Supports optional parameters*.
+[TIP]
+====
+*Supports optional parameters*.
+
 This operation supports specifying a fields projection and/or a sort clause.
 See <<Specifying a fields filter (projection)>>, <<Specifying a sort clause>>.
+====
 
 ==== count
 
