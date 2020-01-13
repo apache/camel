@@ -49,7 +49,7 @@ public class JSR356Producer extends DefaultAsyncProducer {
         final Session session = exchange.getIn().getHeader(JSR356Constants.SESSION, Session.class);
         if (session != null && exchange.getIn().getHeader(JSR356Constants.USE_INCOMING_SESSION, false, Boolean.class)) {
             synchronized (session) {
-                doSend(exchange, session);
+                doSend(exchange, callback, session);
             }
         } else {
             onExchange.accept(exchange, callback);
@@ -68,14 +68,15 @@ public class JSR356Producer extends DefaultAsyncProducer {
         final ClientEndpointConfig.Builder clientConfig = ClientEndpointConfig.Builder.create();
         manager = new ClientSessions(sessionCount, URI.create(endpointKey), clientConfig.build(), null);
         manager.prepare();
-        onExchange = (ex, cb) -> manager.execute(session -> doSend(ex, session));
+        onExchange = (exchange, callback) -> manager.execute(session -> doSend(exchange, callback, session));
     }
 
-    private void doSend(final Exchange ex, final Session session) {
+    private void doSend(final Exchange exchange, final AsyncCallback callback, final Session session) {
         try {
-            JSR356WebSocketComponent.sendMessage(session, ex.getIn().getBody());
+            JSR356WebSocketComponent.sendMessage(session, exchange.getIn().getBody());
+            callback.done(true);
         } catch (final IOException e) {
-            ex.setException(e);
+            exchange.setException(e);
         }
     }
 
