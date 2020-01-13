@@ -449,13 +449,13 @@ as files then you need to route to a file endpoint such as:
 from("ftp://someone@someserver.com?password=secret&localWorkDirectory=/tmp").to("file://inbox");
 ----
 
-[TIP, caption='Optimization by renaming work file']
-===
+[TIP]
+====
 The route above is ultra efficient as it avoids reading the entire file content into memory.
 It will download the remote file directly to a local file stream.
 The `java.io.File` handle is then used as the Exchange body. The file producer leverages this fact and can work directly on the work file `java.io.File` handle and perform a `java.io.File.rename` to the target filename.
 As Camel knows it's a local work file, it can optimize and use a rename instead of a file copy, as the work file is meant to be deleted anyway.
-===
+====
 
 == Stepwise changing directories
 

@@ -10,9 +10,12 @@ https://github.com/FasterXML/jackson-dataformat-xml[XMLMapper extension]
 to unmarshal an XML payload into Java objects or to marshal Java objects
 into an XML payload.
 
-TIP: If you are familiar with Jackson, this XML data format behaves in the
+[TIP]
+====
+If you are familiar with Jackson, this XML data format behaves in the
 same way as its JSON counterpart, and thus can be used with classes
 annotated for JSON serialization/deserialization.
+====
 
 This extension also mimics
 https://github.com/FasterXML/jackson-dataformat-xml/blob/master/README.md[JAXB's
