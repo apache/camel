@@ -371,7 +371,7 @@ public class JmsBinding {
 
         // the 4th char must be a letter to be a standard JMS header
         if (headerName.length() > 3) {
-            Character fourth = headerName.charAt(3);
+            char fourth = headerName.charAt(3);
             if (Character.isLetter(fourth)) {
                 return true;
             }

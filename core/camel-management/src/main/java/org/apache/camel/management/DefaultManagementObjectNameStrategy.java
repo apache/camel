@@ -497,8 +497,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
     }
 
     protected String getContextId(String name) {
-        Boolean includeHostName = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getIncludeHostName();
-        if (includeHostName != null && includeHostName) {
+        boolean includeHostName = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getIncludeHostName();
+        if (includeHostName) {
             return hostName + "/" + (name != null ? name : VALUE_UNKNOWN);
         } else {
             return name != null ? name : VALUE_UNKNOWN;
@@ -507,8 +507,8 @@ public class DefaultManagementObjectNameStrategy implements ManagementObjectName
 
     protected String getEndpointId(Endpoint ep) {
         String answer = doGetEndpointId(ep);
-        Boolean sanitize = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getMask();
-        if (sanitize != null && sanitize) {
+        boolean sanitize = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getMask();
+        if (sanitize) {
             // use xxxxxx as replacements as * has to be quoted for MBean names
             answer = URISupport.sanitizeUri(answer);
         }
