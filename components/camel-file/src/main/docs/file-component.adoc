@@ -208,8 +208,12 @@ Notice: The various read locks is not all suited to work in clustered mode, wher
 |===
 // endpoint options: END
 
+[TIP]
+====
+*Default behavior for file producer* 
 
-TIP: *Default behavior for file producer* By default it will override any existing file, if one exist with the same name.
+By default it will override any existing file, if one exist with the same name.
+====
 
 // spring-boot-auto-configure options: START
 == Spring Boot Auto-Configuration
@@ -1027,11 +1031,15 @@ file:
 </route>
 ----
 
-TIP: *URI options can reference beans using the # syntax*
+[TIP]
+====
+*URI options can reference beans using the # syntax*
+
 In the Spring DSL route above notice that we can refer to beans in the
 Registry by prefixing the id with `#`. So writing
 `sorter=#mySorter`, will instruct Camel to go look in the
 Registry for a bean with the ID, `mySorter`.
+====
 
 === Sorting using sortBy
 
