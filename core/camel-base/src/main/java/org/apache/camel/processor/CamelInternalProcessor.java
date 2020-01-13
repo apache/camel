@@ -50,6 +50,7 @@ import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.Tracer;
 import org.apache.camel.spi.Transformer;
 import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.MessageHelper;
 import org.apache.camel.support.OrderedComparator;
@@ -544,11 +545,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         private final RouteContext routeContext;
         private String routeId;
+        private UnitOfWorkFactory uowFactory;
 
         public UnitOfWorkProcessorAdvice(RouteContext routeContext) {
             this.routeContext = routeContext;
             if (routeContext != null) {
                 this.routeId = routeContext.getRouteId();
+                this.uowFactory = routeContext.getCamelContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory();
             }
         }
 
@@ -601,7 +604,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         protected UnitOfWork createUnitOfWork(Exchange exchange) {
-            return exchange.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(exchange);
+            if (uowFactory != null) {
+                return uowFactory.createUnitOfWork(exchange);
+            } else {
+                return exchange.getContext().adapt(ExtendedCamelContext.class).getUnitOfWorkFactory().createUnitOfWork(exchange);
+            }
         }
 
     }
@@ -644,12 +651,6 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public MessageHistory before(Exchange exchange) throws Exception {
-            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
-            if (list == null) {
-                list = new LinkedList<>();
-                exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
-            }
-
             // we may be routing outside a route in an onException or interceptor and if so then grab
             // route id from the exchange UoW state
             String targetRouteId = this.routeId;
@@ -662,6 +663,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
             MessageHistory history = factory.newMessageHistory(targetRouteId, definition, System.currentTimeMillis(), exchange);
             if (history != null) {
+                List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+                if (list == null) {
+                    list = new LinkedList<>();
+                    exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
+                }
                 list.add(history);
             }
             return history;
