@@ -161,7 +161,7 @@ without waiting for the `delay`*`timeUnit` parameter between each exchange.
 
 [TIP]
 ====
-TIP: The order of the messages is guaranteed, but the same message might come more than once. So, for example, if you're using
+The order of the messages is guaranteed, but the same message might come more than once. So, for example, if you're using
 this component to sync data from PostgreSQL to other database, make sure your operations are idempotent (e.g. use UPSERT
 instead of INSERT,...). This will make sure repeated messages won't affect your system negatively.
 ====
