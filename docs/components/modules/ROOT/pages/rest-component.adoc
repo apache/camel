@@ -146,10 +146,14 @@ The following components support rest producer:
 The path and uriTemplate option is defined using a REST syntax where you
 define the REST context path using support for parameters. 
 
-TIP:If no uriTemplate is configured then path option works the same way. It
+[TIP]
+====
+If no uriTemplate is configured then path option works the same way. It
 does not matter if you configure only path or if you configure both
 options. Though configuring both a path and uriTemplate is a more common
 practice with REST.
+====
+
 
 The following is a Camel route using a a path only
 

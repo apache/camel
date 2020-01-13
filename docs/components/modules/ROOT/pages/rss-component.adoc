@@ -198,7 +198,9 @@ from("rss:file:src/test/data/rss20.xml?splitEntries=true&delay=100")
     .to("mock:result");
 ----
 
-TIP: If the URL for the RSS feed uses query parameters, this component will
+[TIP]
+====
+If the URL for the RSS feed uses query parameters, this component will
 resolve them. For example if the feed uses `alt=rss`, then the following example will be resolved:
 
 [source,java]
@@ -206,6 +208,7 @@ resolve them. For example if the feed uses `alt=rss`, then the following example
 from("rss:http://someserver.com/feeds/posts/default?alt=rss&splitEntries=false&delay=1000")
     .to("bean:rss");
 ----
+====
 
 == Filtering entries
 

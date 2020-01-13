@@ -508,10 +508,13 @@ certificate, and you may get an exception
 may also get this exception if the client certificate is expired or not
 valid etc.
 
-TIP: The option `sslClientCertHeaders` can be set to `true` which then
+[TIP]
+====
+The option `sslClientCertHeaders` can be set to `true` which then
 enriches the Camel Message with headers having
 details about the client certificate. For example the subject name is
 readily available in the header `CamelNettySSLClientCertSubjectName`.
+====
 
 === Using Multiple Codecs
 
@@ -743,11 +746,14 @@ using the `NettyWorkerPoolBuilder` with 2 worker threads as shown below:
 </bean>
 ----
 
-TIP: For boss thread pool there is a
+[TIP]
+====
+For boss thread pool there is a
 `org.apache.camel.component.netty.NettyServerBossPoolBuilder` builder
 for Netty consumers, and a
 `org.apache.camel.component.netty.NettyClientBossPoolBuilder` for the
 Netty producers.
+====
 
 Then in the Camel routes we can refer to this worker pools by
 configuring the `workerPool` option in the URI as shown below:
