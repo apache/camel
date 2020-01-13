@@ -37,7 +37,7 @@ public class DisruptorWaitForTaskAsPropertyTest extends CamelTestSupport {
                 exchange.setProperty(Exchange.ASYNC_WAIT, WaitForTaskToComplete.IfReplyExpected);
             }
         });
-        assertEquals("Bye World", out.getOut().getBody());
+        assertEquals("Bye World", out.getMessage().getBody());
 
         assertMockEndpointsSatisfied();
     }
