@@ -239,7 +239,7 @@ public interface StringTemplateEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default StringTemplateEndpointBuilder stringTemplate(String path) {
+    static StringTemplateEndpointBuilder stringTemplate(String path) {
         class StringTemplateEndpointBuilderImpl extends AbstractEndpointBuilder implements StringTemplateEndpointBuilder, AdvancedStringTemplateEndpointBuilder {
             public StringTemplateEndpointBuilderImpl(String path) {
                 super("string-template", path);

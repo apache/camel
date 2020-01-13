@@ -1278,7 +1278,7 @@ public interface KubernetesDeploymentsEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
+    static KubernetesDeploymentsEndpointBuilder kubernetesDeployments(
             String path) {
         class KubernetesDeploymentsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesDeploymentsEndpointBuilder, AdvancedKubernetesDeploymentsEndpointBuilder {
             public KubernetesDeploymentsEndpointBuilderImpl(String path) {

@@ -1316,7 +1316,7 @@ public interface AtomixSetEndpointBuilderFactory {
      * Path parameter: resourceName (required)
      * The distributed resource name
      */
-    default AtomixSetEndpointBuilder atomixSet(String path) {
+    static AtomixSetEndpointBuilder atomixSet(String path) {
         class AtomixSetEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixSetEndpointBuilder, AdvancedAtomixSetEndpointBuilder {
             public AtomixSetEndpointBuilderImpl(String path) {
                 super("atomix-set", path);

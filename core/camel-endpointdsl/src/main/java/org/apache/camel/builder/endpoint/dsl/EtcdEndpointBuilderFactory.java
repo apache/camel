@@ -1284,7 +1284,7 @@ public interface EtcdEndpointBuilderFactory {
      * Path parameter: path
      * The path the endpoint refers to
      */
-    default EtcdEndpointBuilder etcd(String path) {
+    static EtcdEndpointBuilder etcd(String path) {
         class EtcdEndpointBuilderImpl extends AbstractEndpointBuilder implements EtcdEndpointBuilder, AdvancedEtcdEndpointBuilder {
             public EtcdEndpointBuilderImpl(String path) {
                 super("etcd", path);

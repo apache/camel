@@ -272,7 +272,7 @@ public interface XChangeEndpointBuilderFactory {
      * Path parameter: name (required)
      * The exchange to connect to
      */
-    default XChangeEndpointBuilder xchange(String path) {
+    static XChangeEndpointBuilder xchange(String path) {
         class XChangeEndpointBuilderImpl extends AbstractEndpointBuilder implements XChangeEndpointBuilder, AdvancedXChangeEndpointBuilder {
             public XChangeEndpointBuilderImpl(String path) {
                 super("xchange", path);

@@ -750,7 +750,7 @@ public interface HazelcastTopicEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default HazelcastTopicEndpointBuilder hazelcastTopic(String path) {
+    static HazelcastTopicEndpointBuilder hazelcastTopic(String path) {
         class HazelcastTopicEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastTopicEndpointBuilder, AdvancedHazelcastTopicEndpointBuilder {
             public HazelcastTopicEndpointBuilderImpl(String path) {
                 super("hazelcast-topic", path);

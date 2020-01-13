@@ -1418,7 +1418,7 @@ public interface AtomixMessagingEndpointBuilderFactory {
      * Path parameter: resourceName (required)
      * The distributed resource name
      */
-    default AtomixMessagingEndpointBuilder atomixMessaging(String path) {
+    static AtomixMessagingEndpointBuilder atomixMessaging(String path) {
         class AtomixMessagingEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMessagingEndpointBuilder, AdvancedAtomixMessagingEndpointBuilder {
             public AtomixMessagingEndpointBuilderImpl(String path) {
                 super("atomix-messaging", path);

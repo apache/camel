@@ -424,7 +424,7 @@ public interface KubernetesSecretsEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesSecretsEndpointBuilder kubernetesSecrets(String path) {
+    static KubernetesSecretsEndpointBuilder kubernetesSecrets(String path) {
         class KubernetesSecretsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesSecretsEndpointBuilder, AdvancedKubernetesSecretsEndpointBuilder {
             public KubernetesSecretsEndpointBuilderImpl(String path) {
                 super("kubernetes-secrets", path);

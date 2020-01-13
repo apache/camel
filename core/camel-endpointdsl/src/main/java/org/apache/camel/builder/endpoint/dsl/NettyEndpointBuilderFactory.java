@@ -4044,7 +4044,7 @@ public interface NettyEndpointBuilderFactory {
      * Path parameter: port (required)
      * The host port number
      */
-    default NettyEndpointBuilder netty(String path) {
+    static NettyEndpointBuilder netty(String path) {
         class NettyEndpointBuilderImpl extends AbstractEndpointBuilder implements NettyEndpointBuilder, AdvancedNettyEndpointBuilder {
             public NettyEndpointBuilderImpl(String path) {
                 super("netty", path);

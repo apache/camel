@@ -781,7 +781,7 @@ public interface PgReplicationSlotEndpointBuilderFactory {
      * Path parameter: outputPlugin (required)
      * Output plugin name (e.g. test_decoding, wal2json)
      */
-    default PgReplicationSlotEndpointBuilder pgReplicationSlot(String path) {
+    static PgReplicationSlotEndpointBuilder pgReplicationSlot(String path) {
         class PgReplicationSlotEndpointBuilderImpl extends AbstractEndpointBuilder implements PgReplicationSlotEndpointBuilder, AdvancedPgReplicationSlotEndpointBuilder {
             public PgReplicationSlotEndpointBuilderImpl(String path) {
                 super("pg-replication-slot", path);

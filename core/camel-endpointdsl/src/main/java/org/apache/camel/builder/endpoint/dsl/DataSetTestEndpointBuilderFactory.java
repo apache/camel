@@ -608,7 +608,7 @@ public interface DataSetTestEndpointBuilderFactory {
      * Name of endpoint to lookup in the registry to use for polling messages
      * used for testing
      */
-    default DataSetTestEndpointBuilder datasetTest(String path) {
+    static DataSetTestEndpointBuilder datasetTest(String path) {
         class DataSetTestEndpointBuilderImpl extends AbstractEndpointBuilder implements DataSetTestEndpointBuilder, AdvancedDataSetTestEndpointBuilder {
             public DataSetTestEndpointBuilderImpl(String path) {
                 super("dataset-test", path);

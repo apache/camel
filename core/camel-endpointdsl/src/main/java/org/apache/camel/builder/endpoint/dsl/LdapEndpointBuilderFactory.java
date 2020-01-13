@@ -233,7 +233,7 @@ public interface LdapEndpointBuilderFactory {
      * javax.naming.directory.DirContext must not be shared, and in those
      * situations it can be better to use java.util.Hashtable or Map instead.
      */
-    default LdapEndpointBuilder ldap(String path) {
+    static LdapEndpointBuilder ldap(String path) {
         class LdapEndpointBuilderImpl extends AbstractEndpointBuilder implements LdapEndpointBuilder, AdvancedLdapEndpointBuilder {
             public LdapEndpointBuilderImpl(String path) {
                 super("ldap", path);

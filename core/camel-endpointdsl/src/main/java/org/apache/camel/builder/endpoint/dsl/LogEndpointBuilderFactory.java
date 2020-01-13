@@ -782,7 +782,7 @@ public interface LogEndpointBuilderFactory {
      * Path parameter: loggerName (required)
      * The logger name to use
      */
-    default LogEndpointBuilder log(String path) {
+    static LogEndpointBuilder log(String path) {
         class LogEndpointBuilderImpl extends AbstractEndpointBuilder implements LogEndpointBuilder, AdvancedLogEndpointBuilder {
             public LogEndpointBuilderImpl(String path) {
                 super("log", path);

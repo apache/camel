@@ -324,7 +324,7 @@ public interface MQEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default MQEndpointBuilder awsMq(String path) {
+    static MQEndpointBuilder awsMq(String path) {
         class MQEndpointBuilderImpl extends AbstractEndpointBuilder implements MQEndpointBuilder, AdvancedMQEndpointBuilder {
             public MQEndpointBuilderImpl(String path) {
                 super("aws-mq", path);

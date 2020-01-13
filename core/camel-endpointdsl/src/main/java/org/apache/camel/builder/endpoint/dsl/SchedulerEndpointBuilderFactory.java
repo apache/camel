@@ -676,7 +676,7 @@ public interface SchedulerEndpointBuilderFactory {
      * Path parameter: name (required)
      * The name of the scheduler
      */
-    default SchedulerEndpointBuilder scheduler(String path) {
+    static SchedulerEndpointBuilder scheduler(String path) {
         class SchedulerEndpointBuilderImpl extends AbstractEndpointBuilder implements SchedulerEndpointBuilder, AdvancedSchedulerEndpointBuilder {
             public SchedulerEndpointBuilderImpl(String path) {
                 super("scheduler", path);

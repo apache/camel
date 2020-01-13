@@ -379,7 +379,7 @@ public interface ValidatorEndpointBuilderFactory {
      * in the Registry, or a full URL to a remote resource or resource on the
      * file system which contains the XSD to validate against.
      */
-    default ValidatorEndpointBuilder validator(String path) {
+    static ValidatorEndpointBuilder validator(String path) {
         class ValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements ValidatorEndpointBuilder, AdvancedValidatorEndpointBuilder {
             public ValidatorEndpointBuilderImpl(String path) {
                 super("validator", path);

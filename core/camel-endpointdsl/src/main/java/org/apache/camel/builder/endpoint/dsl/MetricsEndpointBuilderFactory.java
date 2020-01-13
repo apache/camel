@@ -309,7 +309,7 @@ public interface MetricsEndpointBuilderFactory {
      * Path parameter: metricsName (required)
      * Name of metrics
      */
-    default MetricsEndpointBuilder metrics(String path) {
+    static MetricsEndpointBuilder metrics(String path) {
         class MetricsEndpointBuilderImpl extends AbstractEndpointBuilder implements MetricsEndpointBuilder, AdvancedMetricsEndpointBuilder {
             public MetricsEndpointBuilderImpl(String path) {
                 super("metrics", path);

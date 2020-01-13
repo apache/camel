@@ -1242,7 +1242,7 @@ public interface GoogleCalendarEndpointBuilderFactory {
      * The value can be one of: calendarImport, clear, delete, get, insert,
      * instances, list, move, patch, query, quickAdd, stop, update, watch
      */
-    default GoogleCalendarEndpointBuilder googleCalendar(String path) {
+    static GoogleCalendarEndpointBuilder googleCalendar(String path) {
         class GoogleCalendarEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarEndpointBuilder, AdvancedGoogleCalendarEndpointBuilder {
             public GoogleCalendarEndpointBuilderImpl(String path) {
                 super("google-calendar", path);

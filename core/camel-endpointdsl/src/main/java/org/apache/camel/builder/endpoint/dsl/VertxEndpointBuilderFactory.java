@@ -490,7 +490,7 @@ public interface VertxEndpointBuilderFactory {
      * Path parameter: address (required)
      * Sets the event bus address used to communicate
      */
-    default VertxEndpointBuilder vertx(String path) {
+    static VertxEndpointBuilder vertx(String path) {
         class VertxEndpointBuilderImpl extends AbstractEndpointBuilder implements VertxEndpointBuilder, AdvancedVertxEndpointBuilder {
             public VertxEndpointBuilderImpl(String path) {
                 super("vertx", path);

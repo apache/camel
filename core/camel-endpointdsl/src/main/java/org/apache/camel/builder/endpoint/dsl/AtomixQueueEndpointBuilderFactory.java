@@ -1255,7 +1255,7 @@ public interface AtomixQueueEndpointBuilderFactory {
      * Path parameter: resourceName (required)
      * The distributed resource name
      */
-    default AtomixQueueEndpointBuilder atomixQueue(String path) {
+    static AtomixQueueEndpointBuilder atomixQueue(String path) {
         class AtomixQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixQueueEndpointBuilder, AdvancedAtomixQueueEndpointBuilder {
             public AtomixQueueEndpointBuilderImpl(String path) {
                 super("atomix-queue", path);

@@ -331,7 +331,7 @@ public interface BeanValidatorEndpointBuilderFactory {
      * Path parameter: label (required)
      * Where label is an arbitrary text value describing the endpoint
      */
-    default BeanValidatorEndpointBuilder beanValidator(String path) {
+    static BeanValidatorEndpointBuilder beanValidator(String path) {
         class BeanValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanValidatorEndpointBuilder, AdvancedBeanValidatorEndpointBuilder {
             public BeanValidatorEndpointBuilderImpl(String path) {
                 super("bean-validator", path);

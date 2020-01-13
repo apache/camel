@@ -851,7 +851,7 @@ public interface DataSetEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of DataSet to lookup in the registry
      */
-    default DataSetEndpointBuilder dataset(String path) {
+    static DataSetEndpointBuilder dataset(String path) {
         class DataSetEndpointBuilderImpl extends AbstractEndpointBuilder implements DataSetEndpointBuilder, AdvancedDataSetEndpointBuilder {
             public DataSetEndpointBuilderImpl(String path) {
                 super("dataset", path);

@@ -2155,7 +2155,7 @@ public interface SqlEndpointBuilderFactory {
      * Sets the SQL query to perform. You can externalize the query by using
      * file: or classpath: as prefix and specify the location of the file.
      */
-    default SqlEndpointBuilder sql(String path) {
+    static SqlEndpointBuilder sql(String path) {
         class SqlEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlEndpointBuilder, AdvancedSqlEndpointBuilder {
             public SqlEndpointBuilderImpl(String path) {
                 super("sql", path);

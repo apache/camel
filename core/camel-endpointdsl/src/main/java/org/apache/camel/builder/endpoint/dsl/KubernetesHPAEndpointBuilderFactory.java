@@ -1253,7 +1253,7 @@ public interface KubernetesHPAEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesHPAEndpointBuilder kubernetesHpa(String path) {
+    static KubernetesHPAEndpointBuilder kubernetesHpa(String path) {
         class KubernetesHPAEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesHPAEndpointBuilder, AdvancedKubernetesHPAEndpointBuilder {
             public KubernetesHPAEndpointBuilderImpl(String path) {
                 super("kubernetes-hpa", path);

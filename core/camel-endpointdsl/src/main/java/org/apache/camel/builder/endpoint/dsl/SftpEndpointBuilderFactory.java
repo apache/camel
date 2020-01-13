@@ -5282,7 +5282,7 @@ public interface SftpEndpointBuilderFactory {
      * Path parameter: directoryName
      * The starting directory
      */
-    default SftpEndpointBuilder sftp(String path) {
+    static SftpEndpointBuilder sftp(String path) {
         class SftpEndpointBuilderImpl extends AbstractEndpointBuilder implements SftpEndpointBuilder, AdvancedSftpEndpointBuilder {
             public SftpEndpointBuilderImpl(String path) {
                 super("sftp", path);

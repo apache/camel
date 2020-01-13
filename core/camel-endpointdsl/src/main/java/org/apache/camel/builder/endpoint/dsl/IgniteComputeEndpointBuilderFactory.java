@@ -347,7 +347,7 @@ public interface IgniteComputeEndpointBuilderFactory {
      * Path parameter: endpointId (required)
      * The endpoint ID (not used).
      */
-    default IgniteComputeEndpointBuilder igniteCompute(String path) {
+    static IgniteComputeEndpointBuilder igniteCompute(String path) {
         class IgniteComputeEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteComputeEndpointBuilder, AdvancedIgniteComputeEndpointBuilder {
             public IgniteComputeEndpointBuilderImpl(String path) {
                 super("ignite-compute", path);

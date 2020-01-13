@@ -1287,7 +1287,7 @@ public interface KubernetesReplicationControllersEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
+    static KubernetesReplicationControllersEndpointBuilder kubernetesReplicationControllers(
             String path) {
         class KubernetesReplicationControllersEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesReplicationControllersEndpointBuilder, AdvancedKubernetesReplicationControllersEndpointBuilder {
             public KubernetesReplicationControllersEndpointBuilderImpl(String path) {

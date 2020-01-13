@@ -2890,7 +2890,7 @@ public interface SipEndpointBuilderFactory {
      * URI of the SIP server to connect to (the username and password can be
      * included such as: john:secretmyserver:9999)
      */
-    default SipEndpointBuilder sip(String path) {
+    static SipEndpointBuilder sip(String path) {
         return sip("sip", path);
     }
     /**
@@ -2908,7 +2908,7 @@ public interface SipEndpointBuilderFactory {
      * URI of the SIP server to connect to (the username and password can be
      * included such as: john:secretmyserver:9999)
      */
-    default SipEndpointBuilder sips(String path) {
+    static SipEndpointBuilder sips(String path) {
         return sip("sips", path);
     }
     /**
@@ -2920,7 +2920,7 @@ public interface SipEndpointBuilderFactory {
      * Since: 2.5
      * Maven coordinates: org.apache.camel:camel-sip
      */
-    default SipEndpointBuilder sip(String scheme, String path) {
+    static SipEndpointBuilder sip(String scheme, String path) {
         class SipEndpointBuilderImpl extends AbstractEndpointBuilder implements SipEndpointBuilder, AdvancedSipEndpointBuilder {
             public SipEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

@@ -877,7 +877,7 @@ public interface ThriftEndpointBuilderFactory {
      * Fully qualified service name from the thrift descriptor file (package dot
      * service definition name)
      */
-    default ThriftEndpointBuilder thrift(String path) {
+    static ThriftEndpointBuilder thrift(String path) {
         class ThriftEndpointBuilderImpl extends AbstractEndpointBuilder implements ThriftEndpointBuilder, AdvancedThriftEndpointBuilder {
             public ThriftEndpointBuilderImpl(String path) {
                 super("thrift", path);

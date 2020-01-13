@@ -414,7 +414,7 @@ public interface MiloServerEndpointBuilderFactory {
      * Path parameter: itemId (required)
      * ID of the item
      */
-    default MiloServerEndpointBuilder miloServer(String path) {
+    static MiloServerEndpointBuilder miloServer(String path) {
         class MiloServerEndpointBuilderImpl extends AbstractEndpointBuilder implements MiloServerEndpointBuilder, AdvancedMiloServerEndpointBuilder {
             public MiloServerEndpointBuilderImpl(String path) {
                 super("milo-server", path);

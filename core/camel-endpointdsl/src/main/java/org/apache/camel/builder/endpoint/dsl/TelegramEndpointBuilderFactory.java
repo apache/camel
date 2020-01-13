@@ -1268,7 +1268,7 @@ public interface TelegramEndpointBuilderFactory {
      * The endpoint type. Currently, only the 'bots' type is supported.
      * The value can be one of: bots
      */
-    default TelegramEndpointBuilder telegram(String path) {
+    static TelegramEndpointBuilder telegram(String path) {
         class TelegramEndpointBuilderImpl extends AbstractEndpointBuilder implements TelegramEndpointBuilder, AdvancedTelegramEndpointBuilder {
             public TelegramEndpointBuilderImpl(String path) {
                 super("telegram", path);

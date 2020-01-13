@@ -2432,7 +2432,7 @@ public interface S3EndpointBuilderFactory {
      * Path parameter: bucketNameOrArn (required)
      * Bucket name or ARN
      */
-    default S3EndpointBuilder awsS3(String path) {
+    static S3EndpointBuilder awsS3(String path) {
         class S3EndpointBuilderImpl extends AbstractEndpointBuilder implements S3EndpointBuilder, AdvancedS3EndpointBuilder {
             public S3EndpointBuilderImpl(String path) {
                 super("aws-s3", path);

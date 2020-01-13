@@ -348,7 +348,7 @@ public interface IgniteQueueEndpointBuilderFactory {
      * Path parameter: name (required)
      * The queue name.
      */
-    default IgniteQueueEndpointBuilder igniteQueue(String path) {
+    static IgniteQueueEndpointBuilder igniteQueue(String path) {
         class IgniteQueueEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteQueueEndpointBuilder, AdvancedIgniteQueueEndpointBuilder {
             public IgniteQueueEndpointBuilderImpl(String path) {
                 super("ignite-queue", path);

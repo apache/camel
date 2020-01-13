@@ -320,7 +320,7 @@ public interface EKSEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default EKSEndpointBuilder awsEks(String path) {
+    static EKSEndpointBuilder awsEks(String path) {
         class EKSEndpointBuilderImpl extends AbstractEndpointBuilder implements EKSEndpointBuilder, AdvancedEKSEndpointBuilder {
             public EKSEndpointBuilderImpl(String path) {
                 super("aws-eks", path);

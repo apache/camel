@@ -5565,7 +5565,7 @@ public interface FtpsEndpointBuilderFactory {
      * Path parameter: directoryName
      * The starting directory
      */
-    default FtpsEndpointBuilder ftps(String path) {
+    static FtpsEndpointBuilder ftps(String path) {
         class FtpsEndpointBuilderImpl extends AbstractEndpointBuilder implements FtpsEndpointBuilder, AdvancedFtpsEndpointBuilder {
             public FtpsEndpointBuilderImpl(String path) {
                 super("ftps", path);

@@ -954,7 +954,7 @@ public interface VmEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of queue
      */
-    default VmEndpointBuilder vm(String path) {
+    static VmEndpointBuilder vm(String path) {
         class VmEndpointBuilderImpl extends AbstractEndpointBuilder implements VmEndpointBuilder, AdvancedVmEndpointBuilder {
             public VmEndpointBuilderImpl(String path) {
                 super("vm", path);

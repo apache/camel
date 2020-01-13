@@ -665,7 +665,7 @@ public interface ScpEndpointBuilderFactory {
      * Path parameter: directoryName
      * The starting directory
      */
-    default ScpEndpointBuilder scp(String path) {
+    static ScpEndpointBuilder scp(String path) {
         class ScpEndpointBuilderImpl extends AbstractEndpointBuilder implements ScpEndpointBuilder, AdvancedScpEndpointBuilder {
             public ScpEndpointBuilderImpl(String path) {
                 super("scp", path);

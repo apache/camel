@@ -3139,7 +3139,7 @@ public interface RobotFrameworkEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default RobotFrameworkEndpointBuilder robotframework(String path) {
+    static RobotFrameworkEndpointBuilder robotframework(String path) {
         class RobotFrameworkEndpointBuilderImpl extends AbstractEndpointBuilder implements RobotFrameworkEndpointBuilder, AdvancedRobotFrameworkEndpointBuilder {
             public RobotFrameworkEndpointBuilderImpl(String path) {
                 super("robotframework", path);

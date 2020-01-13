@@ -679,7 +679,7 @@ public interface HazelcastMultimapEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default HazelcastMultimapEndpointBuilder hazelcastMultimap(String path) {
+    static HazelcastMultimapEndpointBuilder hazelcastMultimap(String path) {
         class HazelcastMultimapEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastMultimapEndpointBuilder, AdvancedHazelcastMultimapEndpointBuilder {
             public HazelcastMultimapEndpointBuilderImpl(String path) {
                 super("hazelcast-multimap", path);

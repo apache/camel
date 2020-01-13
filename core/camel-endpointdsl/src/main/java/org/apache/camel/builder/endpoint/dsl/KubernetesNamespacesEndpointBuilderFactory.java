@@ -1274,7 +1274,7 @@ public interface KubernetesNamespacesEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {
+    static KubernetesNamespacesEndpointBuilder kubernetesNamespaces(String path) {
         class KubernetesNamespacesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNamespacesEndpointBuilder, AdvancedKubernetesNamespacesEndpointBuilder {
             public KubernetesNamespacesEndpointBuilderImpl(String path) {
                 super("kubernetes-namespaces", path);

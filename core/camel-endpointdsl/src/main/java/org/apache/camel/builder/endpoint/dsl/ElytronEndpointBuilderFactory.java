@@ -1387,7 +1387,7 @@ public interface ElytronEndpointBuilderFactory {
      * Path parameter: httpURI (required)
      * The url of the HTTP endpoint to use.
      */
-    default ElytronEndpointBuilder elytron(String path) {
+    static ElytronEndpointBuilder elytron(String path) {
         class ElytronEndpointBuilderImpl extends AbstractEndpointBuilder implements ElytronEndpointBuilder, AdvancedElytronEndpointBuilder {
             public ElytronEndpointBuilderImpl(String path) {
                 super("elytron", path);

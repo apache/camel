@@ -1257,7 +1257,7 @@ public interface WebsocketEndpointBuilderFactory {
      * Path parameter: resourceUri (required)
      * Name of the websocket channel to use
      */
-    default WebsocketEndpointBuilder websocket(String path) {
+    static WebsocketEndpointBuilder websocket(String path) {
         class WebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements WebsocketEndpointBuilder, AdvancedWebsocketEndpointBuilder {
             public WebsocketEndpointBuilderImpl(String path) {
                 super("websocket", path);

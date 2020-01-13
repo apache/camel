@@ -557,7 +557,7 @@ public interface AsteriskEndpointBuilderFactory {
      * Path parameter: name (required)
      * Logical name
      */
-    default AsteriskEndpointBuilder asterisk(String path) {
+    static AsteriskEndpointBuilder asterisk(String path) {
         class AsteriskEndpointBuilderImpl extends AbstractEndpointBuilder implements AsteriskEndpointBuilder, AdvancedAsteriskEndpointBuilder {
             public AsteriskEndpointBuilderImpl(String path) {
                 super("asterisk", path);

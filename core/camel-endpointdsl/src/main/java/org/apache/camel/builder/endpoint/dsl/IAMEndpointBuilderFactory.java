@@ -329,7 +329,7 @@ public interface IAMEndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default IAMEndpointBuilder awsIam(String path) {
+    static IAMEndpointBuilder awsIam(String path) {
         class IAMEndpointBuilderImpl extends AbstractEndpointBuilder implements IAMEndpointBuilder, AdvancedIAMEndpointBuilder {
             public IAMEndpointBuilderImpl(String path) {
                 super("aws-iam", path);

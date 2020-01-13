@@ -460,7 +460,7 @@ public interface FileWatchEndpointBuilderFactory {
      * Path parameter: path (required)
      * Path of directory to consume events from.
      */
-    default FileWatchEndpointBuilder fileWatch(String path) {
+    static FileWatchEndpointBuilder fileWatch(String path) {
         class FileWatchEndpointBuilderImpl extends AbstractEndpointBuilder implements FileWatchEndpointBuilder, AdvancedFileWatchEndpointBuilder {
             public FileWatchEndpointBuilderImpl(String path) {
                 super("file-watch", path);

@@ -195,7 +195,7 @@ public interface MvelEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default MvelEndpointBuilder mvel(String path) {
+    static MvelEndpointBuilder mvel(String path) {
         class MvelEndpointBuilderImpl extends AbstractEndpointBuilder implements MvelEndpointBuilder, AdvancedMvelEndpointBuilder {
             public MvelEndpointBuilderImpl(String path) {
                 super("mvel", path);

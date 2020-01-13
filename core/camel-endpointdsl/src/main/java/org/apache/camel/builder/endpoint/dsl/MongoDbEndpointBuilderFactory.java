@@ -1638,7 +1638,7 @@ public interface MongoDbEndpointBuilderFactory {
      * Path parameter: connectionBean (required)
      * Name of com.mongodb.Mongo to use.
      */
-    default MongoDbEndpointBuilder mongodb(String path) {
+    static MongoDbEndpointBuilder mongodb(String path) {
         class MongoDbEndpointBuilderImpl extends AbstractEndpointBuilder implements MongoDbEndpointBuilder, AdvancedMongoDbEndpointBuilder {
             public MongoDbEndpointBuilderImpl(String path) {
                 super("mongodb", path);

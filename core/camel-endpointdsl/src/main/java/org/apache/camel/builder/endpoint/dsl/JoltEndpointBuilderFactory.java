@@ -291,7 +291,7 @@ public interface JoltEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default JoltEndpointBuilder jolt(String path) {
+    static JoltEndpointBuilder jolt(String path) {
         class JoltEndpointBuilderImpl extends AbstractEndpointBuilder implements JoltEndpointBuilder, AdvancedJoltEndpointBuilder {
             public JoltEndpointBuilderImpl(String path) {
                 super("jolt", path);

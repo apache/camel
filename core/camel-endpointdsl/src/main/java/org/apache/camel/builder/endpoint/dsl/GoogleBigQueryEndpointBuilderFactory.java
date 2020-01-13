@@ -207,7 +207,7 @@ public interface GoogleBigQueryEndpointBuilderFactory {
      * Path parameter: tableId
      * BigQuery table id
      */
-    default GoogleBigQueryEndpointBuilder googleBigquery(String path) {
+    static GoogleBigQueryEndpointBuilder googleBigquery(String path) {
         class GoogleBigQueryEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQueryEndpointBuilder, AdvancedGoogleBigQueryEndpointBuilder {
             public GoogleBigQueryEndpointBuilderImpl(String path) {
                 super("google-bigquery", path);

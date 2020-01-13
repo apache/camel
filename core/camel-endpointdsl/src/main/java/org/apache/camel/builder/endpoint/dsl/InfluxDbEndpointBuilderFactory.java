@@ -231,7 +231,7 @@ public interface InfluxDbEndpointBuilderFactory {
      * Path parameter: connectionBean (required)
      * Connection to the influx database, of class InfluxDB.class
      */
-    default InfluxDbEndpointBuilder influxdb(String path) {
+    static InfluxDbEndpointBuilder influxdb(String path) {
         class InfluxDbEndpointBuilderImpl extends AbstractEndpointBuilder implements InfluxDbEndpointBuilder, AdvancedInfluxDbEndpointBuilder {
             public InfluxDbEndpointBuilderImpl(String path) {
                 super("influxdb", path);

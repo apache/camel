@@ -530,7 +530,7 @@ public interface SpringIntegrationEndpointBuilderFactory {
      * Integration consumer and the outputChannel name for the Spring
      * Integration provider.
      */
-    default SpringIntegrationEndpointBuilder springIntegration(String path) {
+    static SpringIntegrationEndpointBuilder springIntegration(String path) {
         class SpringIntegrationEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringIntegrationEndpointBuilder, AdvancedSpringIntegrationEndpointBuilder {
             public SpringIntegrationEndpointBuilderImpl(String path) {
                 super("spring-integration", path);

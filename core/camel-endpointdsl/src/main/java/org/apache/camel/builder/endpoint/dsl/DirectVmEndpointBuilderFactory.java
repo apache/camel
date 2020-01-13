@@ -610,7 +610,7 @@ public interface DirectVmEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of direct-vm endpoint
      */
-    default DirectVmEndpointBuilder directVm(String path) {
+    static DirectVmEndpointBuilder directVm(String path) {
         class DirectVmEndpointBuilderImpl extends AbstractEndpointBuilder implements DirectVmEndpointBuilder, AdvancedDirectVmEndpointBuilder {
             public DirectVmEndpointBuilderImpl(String path) {
                 super("direct-vm", path);

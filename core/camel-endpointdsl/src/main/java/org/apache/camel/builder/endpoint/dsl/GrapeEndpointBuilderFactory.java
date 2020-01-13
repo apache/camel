@@ -158,7 +158,7 @@ public interface GrapeEndpointBuilderFactory {
      * Path parameter: defaultCoordinates (required)
      * Maven coordinates to use as default to grab if the message body is empty.
      */
-    default GrapeEndpointBuilder grape(String path) {
+    static GrapeEndpointBuilder grape(String path) {
         class GrapeEndpointBuilderImpl extends AbstractEndpointBuilder implements GrapeEndpointBuilder, AdvancedGrapeEndpointBuilder {
             public GrapeEndpointBuilderImpl(String path) {
                 super("grape", path);

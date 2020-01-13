@@ -2019,7 +2019,7 @@ public interface MinaEndpointBuilderFactory {
      * Path parameter: port (required)
      * Port number
      */
-    default MinaEndpointBuilder mina(String path) {
+    static MinaEndpointBuilder mina(String path) {
         class MinaEndpointBuilderImpl extends AbstractEndpointBuilder implements MinaEndpointBuilder, AdvancedMinaEndpointBuilder {
             public MinaEndpointBuilderImpl(String path) {
                 super("mina", path);

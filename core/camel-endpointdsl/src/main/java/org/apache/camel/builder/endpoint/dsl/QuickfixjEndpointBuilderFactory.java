@@ -605,7 +605,7 @@ public interface QuickfixjEndpointBuilderFactory {
      * The configFile is the name of the QuickFIX/J configuration to use for the
      * FIX engine (located as a resource found in your classpath).
      */
-    default QuickfixjEndpointBuilder quickfix(String path) {
+    static QuickfixjEndpointBuilder quickfix(String path) {
         class QuickfixjEndpointBuilderImpl extends AbstractEndpointBuilder implements QuickfixjEndpointBuilder, AdvancedQuickfixjEndpointBuilder {
             public QuickfixjEndpointBuilderImpl(String path) {
                 super("quickfix", path);

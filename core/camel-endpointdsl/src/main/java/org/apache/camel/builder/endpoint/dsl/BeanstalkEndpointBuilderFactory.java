@@ -1287,7 +1287,7 @@ public interface BeanstalkEndpointBuilderFactory {
      * Path parameter: connectionSettings
      * Connection settings host:port/tube
      */
-    default BeanstalkEndpointBuilder beanstalk(String path) {
+    static BeanstalkEndpointBuilder beanstalk(String path) {
         class BeanstalkEndpointBuilderImpl extends AbstractEndpointBuilder implements BeanstalkEndpointBuilder, AdvancedBeanstalkEndpointBuilder {
             public BeanstalkEndpointBuilderImpl(String path) {
                 super("beanstalk", path);

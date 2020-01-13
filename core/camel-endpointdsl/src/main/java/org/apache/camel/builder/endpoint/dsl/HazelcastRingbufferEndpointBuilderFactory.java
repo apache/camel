@@ -280,7 +280,7 @@ public interface HazelcastRingbufferEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * The name of the cache
      */
-    default HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(String path) {
+    static HazelcastRingbufferEndpointBuilder hazelcastRingbuffer(String path) {
         class HazelcastRingbufferEndpointBuilderImpl extends AbstractEndpointBuilder implements HazelcastRingbufferEndpointBuilder, AdvancedHazelcastRingbufferEndpointBuilder {
             public HazelcastRingbufferEndpointBuilderImpl(String path) {
                 super("hazelcast-ringbuffer", path);

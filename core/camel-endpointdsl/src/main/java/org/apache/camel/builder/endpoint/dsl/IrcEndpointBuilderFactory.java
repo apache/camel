@@ -1860,7 +1860,7 @@ public interface IrcEndpointBuilderFactory {
      * Port number for the IRC chat server. If no port is configured then a
      * default port of either 6667, 6668 or 6669 is used.
      */
-    default IrcEndpointBuilder irc(String path) {
+    static IrcEndpointBuilder irc(String path) {
         class IrcEndpointBuilderImpl extends AbstractEndpointBuilder implements IrcEndpointBuilder, AdvancedIrcEndpointBuilder {
             public IrcEndpointBuilderImpl(String path) {
                 super("irc", path);

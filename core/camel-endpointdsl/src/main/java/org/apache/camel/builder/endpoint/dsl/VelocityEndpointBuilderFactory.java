@@ -235,7 +235,7 @@ public interface VelocityEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default VelocityEndpointBuilder velocity(String path) {
+    static VelocityEndpointBuilder velocity(String path) {
         class VelocityEndpointBuilderImpl extends AbstractEndpointBuilder implements VelocityEndpointBuilder, AdvancedVelocityEndpointBuilder {
             public VelocityEndpointBuilderImpl(String path) {
                 super("velocity", path);

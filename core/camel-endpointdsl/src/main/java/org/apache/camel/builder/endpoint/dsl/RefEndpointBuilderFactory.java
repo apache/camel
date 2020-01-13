@@ -415,7 +415,7 @@ public interface RefEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of endpoint to lookup in the registry.
      */
-    default RefEndpointBuilder ref(String path) {
+    static RefEndpointBuilder ref(String path) {
         class RefEndpointBuilderImpl extends AbstractEndpointBuilder implements RefEndpointBuilder, AdvancedRefEndpointBuilder {
             public RefEndpointBuilderImpl(String path) {
                 super("ref", path);

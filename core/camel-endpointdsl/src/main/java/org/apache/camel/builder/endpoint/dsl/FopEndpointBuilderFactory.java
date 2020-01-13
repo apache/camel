@@ -197,7 +197,7 @@ public interface FopEndpointBuilderFactory {
      * supported.
      * The value can be one of: pdf, ps, pcl, png, jpeg, svg, xml, mif, rtf, txt
      */
-    default FopEndpointBuilder fop(String path) {
+    static FopEndpointBuilder fop(String path) {
         class FopEndpointBuilderImpl extends AbstractEndpointBuilder implements FopEndpointBuilder, AdvancedFopEndpointBuilder {
             public FopEndpointBuilderImpl(String path) {
                 super("fop", path);

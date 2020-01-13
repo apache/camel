@@ -1394,7 +1394,7 @@ public interface AtomixMapEndpointBuilderFactory {
      * Path parameter: resourceName (required)
      * The distributed resource name
      */
-    default AtomixMapEndpointBuilder atomixMap(String path) {
+    static AtomixMapEndpointBuilder atomixMap(String path) {
         class AtomixMapEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixMapEndpointBuilder, AdvancedAtomixMapEndpointBuilder {
             public AtomixMapEndpointBuilderImpl(String path) {
                 super("atomix-map", path);

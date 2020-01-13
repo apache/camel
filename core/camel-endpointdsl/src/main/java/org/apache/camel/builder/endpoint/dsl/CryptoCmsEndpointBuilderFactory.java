@@ -574,7 +574,7 @@ public interface CryptoCmsEndpointBuilderFactory {
      * context.
      */
     @Deprecated
-    default CryptoCmsEndpointBuilder cryptoCms(String path) {
+    static CryptoCmsEndpointBuilder cryptoCms(String path) {
         class CryptoCmsEndpointBuilderImpl extends AbstractEndpointBuilder implements CryptoCmsEndpointBuilder, AdvancedCryptoCmsEndpointBuilder {
             public CryptoCmsEndpointBuilderImpl(String path) {
                 super("crypto-cms", path);

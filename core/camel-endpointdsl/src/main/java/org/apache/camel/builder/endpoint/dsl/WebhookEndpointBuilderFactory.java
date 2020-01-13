@@ -295,7 +295,7 @@ public interface WebhookEndpointBuilderFactory {
      * Path parameter: endpointUri
      * The delegate uri. Must belong to a component that supports webhooks.
      */
-    default WebhookEndpointBuilder webhook(String path) {
+    static WebhookEndpointBuilder webhook(String path) {
         class WebhookEndpointBuilderImpl extends AbstractEndpointBuilder implements WebhookEndpointBuilder, AdvancedWebhookEndpointBuilder {
             public WebhookEndpointBuilderImpl(String path) {
                 super("webhook", path);

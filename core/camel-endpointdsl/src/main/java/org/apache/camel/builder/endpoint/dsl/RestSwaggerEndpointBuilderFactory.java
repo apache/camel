@@ -278,7 +278,7 @@ public interface RestSwaggerEndpointBuilderFactory {
      * Path parameter: operationId (required)
      * ID of the operation from the Swagger specification.
      */
-    default RestSwaggerEndpointBuilder restSwagger(String path) {
+    static RestSwaggerEndpointBuilder restSwagger(String path) {
         class RestSwaggerEndpointBuilderImpl extends AbstractEndpointBuilder implements RestSwaggerEndpointBuilder, AdvancedRestSwaggerEndpointBuilder {
             public RestSwaggerEndpointBuilderImpl(String path) {
                 super("rest-swagger", path);

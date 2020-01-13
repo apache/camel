@@ -678,7 +678,7 @@ public interface QueueServiceEndpointBuilderFactory {
      * Path parameter: containerAndQueueUri (required)
      * Container Queue compact Uri
      */
-    default QueueServiceEndpointBuilder azureQueue(String path) {
+    static QueueServiceEndpointBuilder azureQueue(String path) {
         class QueueServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements QueueServiceEndpointBuilder, AdvancedQueueServiceEndpointBuilder {
             public QueueServiceEndpointBuilderImpl(String path) {
                 super("azure-queue", path);

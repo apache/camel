@@ -194,7 +194,7 @@ public interface GoogleBigQuerySQLEndpointBuilderFactory {
      * Path parameter: projectId (required)
      * Google Cloud Project Id
      */
-    default GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String path) {
+    static GoogleBigQuerySQLEndpointBuilder googleBigquerySql(String path) {
         class GoogleBigQuerySQLEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleBigQuerySQLEndpointBuilder, AdvancedGoogleBigQuerySQLEndpointBuilder {
             public GoogleBigQuerySQLEndpointBuilderImpl(String path) {
                 super("google-bigquery-sql", path);

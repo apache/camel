@@ -1045,7 +1045,7 @@ public interface ServiceNowEndpointBuilderFactory {
      * Path parameter: instanceName (required)
      * The ServiceNow instance name
      */
-    default ServiceNowEndpointBuilder servicenow(String path) {
+    static ServiceNowEndpointBuilder servicenow(String path) {
         class ServiceNowEndpointBuilderImpl extends AbstractEndpointBuilder implements ServiceNowEndpointBuilder, AdvancedServiceNowEndpointBuilder {
             public ServiceNowEndpointBuilderImpl(String path) {
                 super("servicenow", path);

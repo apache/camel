@@ -796,7 +796,7 @@ public interface GooglePubsubEndpointBuilderFactory {
      * Path parameter: destinationName (required)
      * Destination Name
      */
-    default GooglePubsubEndpointBuilder googlePubsub(String path) {
+    static GooglePubsubEndpointBuilder googlePubsub(String path) {
         class GooglePubsubEndpointBuilderImpl extends AbstractEndpointBuilder implements GooglePubsubEndpointBuilder, AdvancedGooglePubsubEndpointBuilder {
             public GooglePubsubEndpointBuilderImpl(String path) {
                 super("google-pubsub", path);

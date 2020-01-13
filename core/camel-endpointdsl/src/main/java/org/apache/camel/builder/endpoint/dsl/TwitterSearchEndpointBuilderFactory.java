@@ -1535,7 +1535,7 @@ public interface TwitterSearchEndpointBuilderFactory {
      * The search query, use the keywords AND, OR, - and () to narrow the search
      * results.
      */
-    default TwitterSearchEndpointBuilder twitterSearch(String path) {
+    static TwitterSearchEndpointBuilder twitterSearch(String path) {
         class TwitterSearchEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterSearchEndpointBuilder, AdvancedTwitterSearchEndpointBuilder {
             public TwitterSearchEndpointBuilderImpl(String path) {
                 super("twitter-search", path);

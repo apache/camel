@@ -1430,7 +1430,7 @@ public interface Web3jEndpointBuilderFactory {
      * Path parameter: nodeAddress (required)
      * Sets the node address used to communicate
      */
-    default Web3jEndpointBuilder web3j(String path) {
+    static Web3jEndpointBuilder web3j(String path) {
         class Web3jEndpointBuilderImpl extends AbstractEndpointBuilder implements Web3jEndpointBuilder, AdvancedWeb3jEndpointBuilder {
             public Web3jEndpointBuilderImpl(String path) {
                 super("web3j", path);

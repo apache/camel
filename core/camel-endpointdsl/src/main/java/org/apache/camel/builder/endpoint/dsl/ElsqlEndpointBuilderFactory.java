@@ -2360,7 +2360,7 @@ public interface ElsqlEndpointBuilderFactory {
      * system. Notice you can set this option on the component and then you do
      * not have to configure this on the endpoint.
      */
-    default ElsqlEndpointBuilder elsql(String path) {
+    static ElsqlEndpointBuilder elsql(String path) {
         class ElsqlEndpointBuilderImpl extends AbstractEndpointBuilder implements ElsqlEndpointBuilder, AdvancedElsqlEndpointBuilder {
             public ElsqlEndpointBuilderImpl(String path) {
                 super("elsql", path);

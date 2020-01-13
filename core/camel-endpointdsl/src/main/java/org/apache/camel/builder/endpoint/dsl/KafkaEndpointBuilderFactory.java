@@ -3620,7 +3620,7 @@ public interface KafkaEndpointBuilderFactory {
      * Name of the topic to use. On the consumer you can use comma to separate
      * multiple topics. A producer can only send a message to a single topic.
      */
-    default KafkaEndpointBuilder kafka(String path) {
+    static KafkaEndpointBuilder kafka(String path) {
         class KafkaEndpointBuilderImpl extends AbstractEndpointBuilder implements KafkaEndpointBuilder, AdvancedKafkaEndpointBuilder {
             public KafkaEndpointBuilderImpl(String path) {
                 super("kafka", path);

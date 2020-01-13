@@ -419,7 +419,7 @@ public interface TimerEndpointBuilderFactory {
      * Path parameter: timerName (required)
      * The name of the timer
      */
-    default TimerEndpointBuilder timer(String path) {
+    static TimerEndpointBuilder timer(String path) {
         class TimerEndpointBuilderImpl extends AbstractEndpointBuilder implements TimerEndpointBuilder, AdvancedTimerEndpointBuilder {
             public TimerEndpointBuilderImpl(String path) {
                 super("timer", path);

@@ -505,7 +505,7 @@ public interface MockEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of mock endpoint
      */
-    default MockEndpointBuilder mock(String path) {
+    static MockEndpointBuilder mock(String path) {
         class MockEndpointBuilderImpl extends AbstractEndpointBuilder implements MockEndpointBuilder, AdvancedMockEndpointBuilder {
             public MockEndpointBuilderImpl(String path) {
                 super("mock", path);

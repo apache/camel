@@ -1612,7 +1612,7 @@ public interface AtmosphereWebsocketEndpointBuilderFactory {
      * Path parameter: servicePath (required)
      * Name of websocket endpoint
      */
-    default AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(String path) {
+    static AtmosphereWebsocketEndpointBuilder atmosphereWebsocket(String path) {
         class AtmosphereWebsocketEndpointBuilderImpl extends AbstractEndpointBuilder implements AtmosphereWebsocketEndpointBuilder, AdvancedAtmosphereWebsocketEndpointBuilder {
             public AtmosphereWebsocketEndpointBuilderImpl(String path) {
                 super("atmosphere-websocket", path);

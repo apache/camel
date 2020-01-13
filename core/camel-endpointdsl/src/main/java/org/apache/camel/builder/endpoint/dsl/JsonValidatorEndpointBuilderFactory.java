@@ -311,7 +311,7 @@ public interface JsonValidatorEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default JsonValidatorEndpointBuilder jsonValidator(String path) {
+    static JsonValidatorEndpointBuilder jsonValidator(String path) {
         class JsonValidatorEndpointBuilderImpl extends AbstractEndpointBuilder implements JsonValidatorEndpointBuilder, AdvancedJsonValidatorEndpointBuilder {
             public JsonValidatorEndpointBuilderImpl(String path) {
                 super("json-validator", path);

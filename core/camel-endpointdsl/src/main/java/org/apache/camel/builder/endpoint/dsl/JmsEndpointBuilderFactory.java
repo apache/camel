@@ -5418,7 +5418,7 @@ public interface JmsEndpointBuilderFactory {
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
      */
-    default JmsEndpointBuilder jms(String path) {
+    static JmsEndpointBuilder jms(String path) {
         class JmsEndpointBuilderImpl extends AbstractEndpointBuilder implements JmsEndpointBuilder, AdvancedJmsEndpointBuilder {
             public JmsEndpointBuilderImpl(String path) {
                 super("jms", path);

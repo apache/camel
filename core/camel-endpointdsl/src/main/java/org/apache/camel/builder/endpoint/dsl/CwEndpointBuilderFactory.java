@@ -350,7 +350,7 @@ public interface CwEndpointBuilderFactory {
      * Path parameter: namespace (required)
      * The metric namespace
      */
-    default CwEndpointBuilder awsCw(String path) {
+    static CwEndpointBuilder awsCw(String path) {
         class CwEndpointBuilderImpl extends AbstractEndpointBuilder implements CwEndpointBuilder, AdvancedCwEndpointBuilder {
             public CwEndpointBuilderImpl(String path) {
                 super("aws-cw", path);

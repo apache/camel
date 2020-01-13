@@ -1435,7 +1435,7 @@ public interface CassandraEndpointBuilderFactory {
      * Path parameter: keyspace
      * Keyspace to use
      */
-    default CassandraEndpointBuilder cql(String path) {
+    static CassandraEndpointBuilder cql(String path) {
         class CassandraEndpointBuilderImpl extends AbstractEndpointBuilder implements CassandraEndpointBuilder, AdvancedCassandraEndpointBuilder {
             public CassandraEndpointBuilderImpl(String path) {
                 super("cql", path);

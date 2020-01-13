@@ -213,7 +213,7 @@ public interface MicrometerEndpointBuilderFactory {
      * Path parameter: tags
      * Tags of metrics
      */
-    default MicrometerEndpointBuilder micrometer(String path) {
+    static MicrometerEndpointBuilder micrometer(String path) {
         class MicrometerEndpointBuilderImpl extends AbstractEndpointBuilder implements MicrometerEndpointBuilder, AdvancedMicrometerEndpointBuilder {
             public MicrometerEndpointBuilderImpl(String path) {
                 super("micrometer", path);

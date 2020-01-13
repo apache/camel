@@ -218,7 +218,7 @@ public interface MasterEndpointBuilderFactory {
      * Path parameter: delegateUri (required)
      * The endpoint uri to use in master/slave mode
      */
-    default MasterEndpointBuilder master(String path) {
+    static MasterEndpointBuilder master(String path) {
         class MasterEndpointBuilderImpl extends AbstractEndpointBuilder implements MasterEndpointBuilder, AdvancedMasterEndpointBuilder {
             public MasterEndpointBuilderImpl(String path) {
                 super("master", path);

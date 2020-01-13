@@ -1255,7 +1255,7 @@ public interface KubernetesPodsEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesPodsEndpointBuilder kubernetesPods(String path) {
+    static KubernetesPodsEndpointBuilder kubernetesPods(String path) {
         class KubernetesPodsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesPodsEndpointBuilder, AdvancedKubernetesPodsEndpointBuilder {
             public KubernetesPodsEndpointBuilderImpl(String path) {
                 super("kubernetes-pods", path);

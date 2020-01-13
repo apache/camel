@@ -1369,7 +1369,7 @@ public interface KinesisEndpointBuilderFactory {
      * Path parameter: streamName (required)
      * Name of the stream
      */
-    default KinesisEndpointBuilder awsKinesis(String path) {
+    static KinesisEndpointBuilder awsKinesis(String path) {
         class KinesisEndpointBuilderImpl extends AbstractEndpointBuilder implements KinesisEndpointBuilder, AdvancedKinesisEndpointBuilder {
             public KinesisEndpointBuilderImpl(String path) {
                 super("aws-kinesis", path);
