@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven.packaging.srcgen;
+package org.apache.camel.tooling.util.srcgen;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
@@ -27,23 +27,40 @@ public class Method {
     boolean isDefault;
     boolean isPublic;
     boolean isProtected;
+    boolean isPrivate;
     boolean isStatic;
     boolean isConstructor;
+    boolean isAbstract;
+    String signature;
     String body;
     List<Param> parameters = new ArrayList<>();
     List<GenericType> exceptions = new ArrayList<>();
     List<Annotation> annotations = new ArrayList<>();
     Javadoc javadoc = new Javadoc();
 
+    public Method setSignature(String signature) {
+        this.signature = signature;
+        return this;
+    }
+
     public Method setPublic() {
         isPublic = true;
         isProtected = false;
+        isPrivate = false;
         return this;
     }
 
     public Method setProtected() {
         isPublic = false;
         isProtected = true;
+        isPrivate = false;
+        return this;
+    }
+
+    public Method setPrivate() {
+        isPublic = false;
+        isProtected = false;
+        isPrivate = true;
         return this;
     }
 
@@ -54,6 +71,11 @@ public class Method {
 
     public Method setDefault() {
         isDefault = true;
+        return this;
+    }
+
+    public Method setAbstract() {
+        isAbstract = true;
         return this;
     }
 
