@@ -44,7 +44,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
     private CamelLogger logger;
     private ExchangeFormatter formatter;
     private MaskingFormatter maskingFormatter;
-    private Set<LogListener> listeners;
+    private final Set<LogListener> listeners;
 
     public CamelLogProcessor() {
         this(new CamelLogger(CamelLogProcessor.class.getName()));
@@ -53,10 +53,12 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
     public CamelLogProcessor(CamelLogger logger) {
         this.formatter = new ToStringExchangeFormatter();
         this.logger = logger;
+        this.listeners = null;
     }
 
     public CamelLogProcessor(CamelLogger logger, ExchangeFormatter formatter, MaskingFormatter maskingFormatter, Set<LogListener> listeners) {
-        this(logger);
+        this.formatter = new ToStringExchangeFormatter();
+        this.logger = logger;
         this.formatter = formatter;
         this.maskingFormatter = maskingFormatter;
         this.listeners = listeners;
@@ -124,7 +126,7 @@ public class CamelLogProcessor extends AsyncProcessorSupport implements IdAware,
     }
 
     private String fireListeners(Exchange exchange, String message) {
-        if (listeners == null) {
+        if (listeners == null || listeners.isEmpty()) {
             return message;
         }
         for (LogListener listener : listeners) {
