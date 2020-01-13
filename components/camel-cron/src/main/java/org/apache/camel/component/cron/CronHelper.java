@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.cron;
 
-import java.util.Map;
-import java.util.ServiceLoader;
-import java.util.TreeMap;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.ExtendedCamelContext;
+import org.apache.camel.NoFactoryAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.cron.api.CamelCronService;
+import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -29,6 +29,9 @@ import org.slf4j.LoggerFactory;
 
 public final class CronHelper {
     private static final Logger LOGGER = LoggerFactory.getLogger(CronHelper.class);
+
+    private static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/cron/";
+    private static final String FACTORY_KEY = "cron-service";
 
     private CronHelper() {
     }
@@ -48,18 +51,13 @@ public final class CronHelper {
             return service;
         }
 
-        // Fallback to service loader
-        Map<String, CamelCronService> services = new TreeMap<>();
-        ServiceLoader.load(CamelCronService.class).forEach(s -> services.put(s.getId(), s));
-        if (name != null) {
-            return services.get(name);
+        // Fallback to factory finder
+        try {
+            FactoryFinder finder = context.adapt(ExtendedCamelContext.class).getFactoryFinder(RESOURCE_PATH);
+            return finder.newInstance(FACTORY_KEY, CamelCronService.class).orElse(null);
+        } catch (NoFactoryAvailableException e) {
+            throw new RuntimeCamelException("Cannot find any CamelCronService implementation", e);
         }
-        if (services.size() == 1) {
-            return services.values().iterator().next();
-        } else if (services.size() > 1) {
-            LOGGER.warn("Multiple implementations found for CamelCronService: {}", services.keySet());
-        }
-        return null;
     }
 
 }
