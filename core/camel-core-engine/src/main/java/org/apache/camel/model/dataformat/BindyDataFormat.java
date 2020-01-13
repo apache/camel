@@ -74,6 +74,10 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.classType = classType;
     }
 
+    public void setClassType(String classType) {
+        setClassTypeAsString(classType);
+    }
+
     /**
      * Name of model class to use.
      */

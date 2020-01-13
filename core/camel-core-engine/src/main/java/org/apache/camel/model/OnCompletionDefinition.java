@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.Predicate;
 import org.apache.camel.spi.AsPredicate;
@@ -37,8 +38,9 @@ import org.apache.camel.spi.Metadata;
  */
 @Metadata(label = "configuration")
 @XmlRootElement(name = "onCompletion")
+@XmlType(propOrder = {"onWhen", "outputs"})
 @XmlAccessorType(XmlAccessType.FIELD)
-public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefinition> implements OutputNode, ExecutorServiceAwareDefinition<OnCompletionDefinition> {
+public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinition> implements ExecutorServiceAwareDefinition<OnCompletionDefinition> {
     @XmlAttribute
     @Metadata(defaultValue = "AfterConsumer")
     private OnCompletionMode mode;
@@ -55,8 +57,6 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     private String executorServiceRef;
     @XmlAttribute(name = "useOriginalMessage")
     private String useOriginalMessage;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private ExecutorService executorService;
     @XmlTransient
@@ -263,13 +263,10 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
         return this;
     }
 
+    @XmlElementRef
     @Override
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return outputs;
-    }
-
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
+        super.setOutputs(outputs);
     }
 
     public OnCompletionMode getMode() {

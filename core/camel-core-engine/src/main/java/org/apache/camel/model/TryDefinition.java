@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -156,6 +157,7 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         return outputsWithoutCatches;
     }
 
+    @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         initialized = false;

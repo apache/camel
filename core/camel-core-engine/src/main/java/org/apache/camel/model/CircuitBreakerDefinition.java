@@ -33,7 +33,7 @@ import org.apache.camel.spi.Metadata;
 @Metadata(label = "eip,routing,circuitbreaker")
 @XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreakerDefinition> implements OutputNode {
+public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDefinition> {
 
     @XmlElement
     private HystrixConfigurationDefinition hystrixConfiguration;
@@ -41,8 +41,6 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
     private Resilience4jConfigurationDefinition resilience4jConfiguration;
     @XmlAttribute
     private String configurationRef;
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     @XmlTransient
     private OnFallbackDefinition onFallback;
 
@@ -64,18 +62,10 @@ public class CircuitBreakerDefinition extends ProcessorDefinition<CircuitBreaker
         return "circuitBreaker";
     }
 
+    @XmlElementRef
     @Override
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return outputs;
-    }
-
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
-        if (outputs != null) {
-            for (ProcessorDefinition<?> output : outputs) {
-                configureChild(output);
-            }
-        }
+        super.setOutputs(outputs);
     }
 
     @Override
