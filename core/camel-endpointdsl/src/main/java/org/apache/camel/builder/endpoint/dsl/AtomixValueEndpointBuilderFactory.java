@@ -1316,7 +1316,7 @@ public interface AtomixValueEndpointBuilderFactory {
      * Path parameter: resourceName (required)
      * The distributed resource name
      */
-    default AtomixValueEndpointBuilder atomixValue(String path) {
+    static AtomixValueEndpointBuilder atomixValue(String path) {
         class AtomixValueEndpointBuilderImpl extends AbstractEndpointBuilder implements AtomixValueEndpointBuilder, AdvancedAtomixValueEndpointBuilder {
             public AtomixValueEndpointBuilderImpl(String path) {
                 super("atomix-value", path);

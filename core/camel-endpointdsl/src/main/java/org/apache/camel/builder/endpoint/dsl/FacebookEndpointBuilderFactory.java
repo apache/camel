@@ -5413,7 +5413,7 @@ public interface FacebookEndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What operation to perform
      */
-    default FacebookEndpointBuilder facebook(String path) {
+    static FacebookEndpointBuilder facebook(String path) {
         class FacebookEndpointBuilderImpl extends AbstractEndpointBuilder implements FacebookEndpointBuilder, AdvancedFacebookEndpointBuilder {
             public FacebookEndpointBuilderImpl(String path) {
                 super("facebook", path);

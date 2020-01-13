@@ -1405,7 +1405,7 @@ public interface Jt400EndpointBuilderFactory {
      * Whether to work with data queues or remote program call
      * The value can be one of: DTAQ, PGM, SRVPGM
      */
-    default Jt400EndpointBuilder jt400(String path) {
+    static Jt400EndpointBuilder jt400(String path) {
         class Jt400EndpointBuilderImpl extends AbstractEndpointBuilder implements Jt400EndpointBuilder, AdvancedJt400EndpointBuilder {
             public Jt400EndpointBuilderImpl(String path) {
                 super("jt400", path);

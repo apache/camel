@@ -2371,7 +2371,7 @@ public interface HdfsEndpointBuilderFactory {
      * Path parameter: path (required)
      * The directory path to use
      */
-    default HdfsEndpointBuilder hdfs(String path) {
+    static HdfsEndpointBuilder hdfs(String path) {
         class HdfsEndpointBuilderImpl extends AbstractEndpointBuilder implements HdfsEndpointBuilder, AdvancedHdfsEndpointBuilder {
             public HdfsEndpointBuilderImpl(String path) {
                 super("hdfs", path);

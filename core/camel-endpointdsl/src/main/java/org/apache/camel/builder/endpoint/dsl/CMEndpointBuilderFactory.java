@@ -238,7 +238,7 @@ public interface CMEndpointBuilderFactory {
      * Path parameter: host (required)
      * SMS Provider HOST with scheme
      */
-    default CMEndpointBuilder cmSms(String path) {
+    static CMEndpointBuilder cmSms(String path) {
         class CMEndpointBuilderImpl extends AbstractEndpointBuilder implements CMEndpointBuilder, AdvancedCMEndpointBuilder {
             public CMEndpointBuilderImpl(String path) {
                 super("cm-sms", path);

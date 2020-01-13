@@ -819,7 +819,7 @@ public interface RssEndpointBuilderFactory {
      * Path parameter: feedUri (required)
      * The URI to the feed to poll.
      */
-    default RssEndpointBuilder rss(String path) {
+    static RssEndpointBuilder rss(String path) {
         class RssEndpointBuilderImpl extends AbstractEndpointBuilder implements RssEndpointBuilder, AdvancedRssEndpointBuilder {
             public RssEndpointBuilderImpl(String path) {
                 super("rss", path);

@@ -506,7 +506,7 @@ public interface JdbcEndpointBuilderFactory {
      * the registry, meaning if there is a only one instance of DataSource
      * found, then this DataSource will be used.
      */
-    default JdbcEndpointBuilder jdbc(String path) {
+    static JdbcEndpointBuilder jdbc(String path) {
         class JdbcEndpointBuilderImpl extends AbstractEndpointBuilder implements JdbcEndpointBuilder, AdvancedJdbcEndpointBuilder {
             public JdbcEndpointBuilderImpl(String path) {
                 super("jdbc", path);

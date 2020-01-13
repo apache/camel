@@ -1282,7 +1282,7 @@ public interface IronMQEndpointBuilderFactory {
      * Path parameter: queueName (required)
      * The name of the IronMQ queue
      */
-    default IronMQEndpointBuilder ironmq(String path) {
+    static IronMQEndpointBuilder ironmq(String path) {
         class IronMQEndpointBuilderImpl extends AbstractEndpointBuilder implements IronMQEndpointBuilder, AdvancedIronMQEndpointBuilder {
             public IronMQEndpointBuilderImpl(String path) {
                 super("ironmq", path);

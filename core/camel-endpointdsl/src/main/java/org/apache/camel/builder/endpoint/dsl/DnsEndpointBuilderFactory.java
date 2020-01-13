@@ -157,7 +157,7 @@ public interface DnsEndpointBuilderFactory {
      * The type of the lookup.
      * The value can be one of: dig, ip, lookup, wikipedia
      */
-    default DnsEndpointBuilder dns(String path) {
+    static DnsEndpointBuilder dns(String path) {
         class DnsEndpointBuilderImpl extends AbstractEndpointBuilder implements DnsEndpointBuilder, AdvancedDnsEndpointBuilder {
             public DnsEndpointBuilderImpl(String path) {
                 super("dns", path);

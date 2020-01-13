@@ -432,7 +432,7 @@ public interface SolrEndpointBuilderFactory {
      * Path parameter: url (required)
      * Hostname and port for the solr server
      */
-    default SolrEndpointBuilder solr(String path) {
+    static SolrEndpointBuilder solr(String path) {
         return solr("solr", path);
     }
     /**
@@ -449,7 +449,7 @@ public interface SolrEndpointBuilderFactory {
      * Path parameter: url (required)
      * Hostname and port for the solr server
      */
-    default SolrEndpointBuilder solrCloud(String path) {
+    static SolrEndpointBuilder solrCloud(String path) {
         return solr("solrCloud", path);
     }
     /**
@@ -466,7 +466,7 @@ public interface SolrEndpointBuilderFactory {
      * Path parameter: url (required)
      * Hostname and port for the solr server
      */
-    default SolrEndpointBuilder solrs(String path) {
+    static SolrEndpointBuilder solrs(String path) {
         return solr("solrs", path);
     }
     /**
@@ -478,7 +478,7 @@ public interface SolrEndpointBuilderFactory {
      * Since: 2.9
      * Maven coordinates: org.apache.camel:camel-solr
      */
-    default SolrEndpointBuilder solr(String scheme, String path) {
+    static SolrEndpointBuilder solr(String scheme, String path) {
         class SolrEndpointBuilderImpl extends AbstractEndpointBuilder implements SolrEndpointBuilder, AdvancedSolrEndpointBuilder {
             public SolrEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

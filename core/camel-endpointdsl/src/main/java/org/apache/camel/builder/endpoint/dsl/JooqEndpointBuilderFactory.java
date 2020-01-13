@@ -924,7 +924,7 @@ public interface JooqEndpointBuilderFactory {
      * Path parameter: entityType
      * JOOQ entity class
      */
-    default JooqEndpointBuilder jooq(String path) {
+    static JooqEndpointBuilder jooq(String path) {
         class JooqEndpointBuilderImpl extends AbstractEndpointBuilder implements JooqEndpointBuilder, AdvancedJooqEndpointBuilder {
             public JooqEndpointBuilderImpl(String path) {
                 super("jooq", path);

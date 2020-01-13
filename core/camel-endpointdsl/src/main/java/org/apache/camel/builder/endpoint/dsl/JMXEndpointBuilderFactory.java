@@ -793,7 +793,7 @@ public interface JMXEndpointBuilderFactory {
      * Server url comes from the remaining endpoint. Use platform to connect to
      * local JVM.
      */
-    default JMXEndpointBuilder jmx(String path) {
+    static JMXEndpointBuilder jmx(String path) {
         class JMXEndpointBuilderImpl extends AbstractEndpointBuilder implements JMXEndpointBuilder, AdvancedJMXEndpointBuilder {
             public JMXEndpointBuilderImpl(String path) {
                 super("jmx", path);

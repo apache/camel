@@ -326,7 +326,7 @@ public interface PlatformHttpEndpointBuilderFactory {
      * Path parameter: path (required)
      * The path under which this endpoint serves the HTTP requests
      */
-    default PlatformHttpEndpointBuilder platformHttp(String path) {
+    static PlatformHttpEndpointBuilder platformHttp(String path) {
         class PlatformHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements PlatformHttpEndpointBuilder, AdvancedPlatformHttpEndpointBuilder {
             public PlatformHttpEndpointBuilderImpl(String path) {
                 super("platform-http", path);

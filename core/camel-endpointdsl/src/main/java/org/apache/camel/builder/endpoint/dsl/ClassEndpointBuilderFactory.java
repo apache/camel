@@ -271,7 +271,7 @@ public interface ClassEndpointBuilderFactory {
      * Path parameter: beanName (required)
      * Sets the name of the bean to invoke
      */
-    default ClassEndpointBuilder clas(String path) {
+    static ClassEndpointBuilder clas(String path) {
         class ClassEndpointBuilderImpl extends AbstractEndpointBuilder implements ClassEndpointBuilder, AdvancedClassEndpointBuilder {
             public ClassEndpointBuilderImpl(String path) {
                 super("class", path);

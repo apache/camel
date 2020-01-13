@@ -224,7 +224,7 @@ public interface CronEndpointBuilderFactory {
      * Path parameter: name (required)
      * The name of the cron trigger
      */
-    default CronEndpointBuilder cron(String path) {
+    static CronEndpointBuilder cron(String path) {
         class CronEndpointBuilderImpl extends AbstractEndpointBuilder implements CronEndpointBuilder, AdvancedCronEndpointBuilder {
             public CronEndpointBuilderImpl(String path) {
                 super("cron", path);

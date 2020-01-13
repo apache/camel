@@ -170,7 +170,7 @@ public interface IPFSEndpointBuilderFactory {
      * The ipfs command
      * The value can be one of: add, cat, get, version
      */
-    default IPFSEndpointBuilder ipfs(String path) {
+    static IPFSEndpointBuilder ipfs(String path) {
         class IPFSEndpointBuilderImpl extends AbstractEndpointBuilder implements IPFSEndpointBuilder, AdvancedIPFSEndpointBuilder {
             public IPFSEndpointBuilderImpl(String path) {
                 super("ipfs", path);

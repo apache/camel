@@ -1389,7 +1389,7 @@ public interface DebeziumPostgresEndpointBuilderFactory {
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
      */
-    default DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
+    static DebeziumPostgresEndpointBuilder debeziumPostgres(String path) {
         class DebeziumPostgresEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumPostgresEndpointBuilder, AdvancedDebeziumPostgresEndpointBuilder {
             public DebeziumPostgresEndpointBuilderImpl(String path) {
                 super("debezium-postgres", path);

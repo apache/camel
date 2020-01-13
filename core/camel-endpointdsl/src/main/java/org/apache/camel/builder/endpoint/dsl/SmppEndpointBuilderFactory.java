@@ -2124,7 +2124,7 @@ public interface SmppEndpointBuilderFactory {
      * Port number for the SMSC server to use.
      * Default value: 2775
      */
-    default SmppEndpointBuilder smpp(String path) {
+    static SmppEndpointBuilder smpp(String path) {
         return smpp("smpp", path);
     }
     /**
@@ -2145,7 +2145,7 @@ public interface SmppEndpointBuilderFactory {
      * Port number for the SMSC server to use.
      * Default value: 2775
      */
-    default SmppEndpointBuilder smpps(String path) {
+    static SmppEndpointBuilder smpps(String path) {
         return smpp("smpps", path);
     }
     /**
@@ -2156,7 +2156,7 @@ public interface SmppEndpointBuilderFactory {
      * Since: 2.2
      * Maven coordinates: org.apache.camel:camel-smpp
      */
-    default SmppEndpointBuilder smpp(String scheme, String path) {
+    static SmppEndpointBuilder smpp(String scheme, String path) {
         class SmppEndpointBuilderImpl extends AbstractEndpointBuilder implements SmppEndpointBuilder, AdvancedSmppEndpointBuilder {
             public SmppEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

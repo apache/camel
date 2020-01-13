@@ -248,7 +248,7 @@ public interface LumberjackEndpointBuilderFactory {
      * Network port on which to listen for Lumberjack
      * Default value: 5044
      */
-    default LumberjackEndpointBuilder lumberjack(String path) {
+    static LumberjackEndpointBuilder lumberjack(String path) {
         class LumberjackEndpointBuilderImpl extends AbstractEndpointBuilder implements LumberjackEndpointBuilder, AdvancedLumberjackEndpointBuilder {
             public LumberjackEndpointBuilderImpl(String path) {
                 super("lumberjack", path);

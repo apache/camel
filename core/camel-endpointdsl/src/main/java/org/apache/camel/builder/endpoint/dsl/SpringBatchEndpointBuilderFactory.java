@@ -240,7 +240,7 @@ public interface SpringBatchEndpointBuilderFactory {
      * Path parameter: jobName (required)
      * The name of the Spring Batch job located in the registry.
      */
-    default SpringBatchEndpointBuilder springBatch(String path) {
+    static SpringBatchEndpointBuilder springBatch(String path) {
         class SpringBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SpringBatchEndpointBuilder, AdvancedSpringBatchEndpointBuilder {
             public SpringBatchEndpointBuilderImpl(String path) {
                 super("spring-batch", path);

@@ -958,7 +958,7 @@ public interface SedaEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of queue
      */
-    default SedaEndpointBuilder seda(String path) {
+    static SedaEndpointBuilder seda(String path) {
         class SedaEndpointBuilderImpl extends AbstractEndpointBuilder implements SedaEndpointBuilder, AdvancedSedaEndpointBuilder {
             public SedaEndpointBuilderImpl(String path) {
                 super("seda", path);

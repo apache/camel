@@ -318,7 +318,7 @@ public interface IgniteEventsEndpointBuilderFactory {
      * Path parameter: endpointId
      * The endpoint ID (not used).
      */
-    default IgniteEventsEndpointBuilder igniteEvents(String path) {
+    static IgniteEventsEndpointBuilder igniteEvents(String path) {
         class IgniteEventsEndpointBuilderImpl extends AbstractEndpointBuilder implements IgniteEventsEndpointBuilder, AdvancedIgniteEventsEndpointBuilder {
             public IgniteEventsEndpointBuilderImpl(String path) {
                 super("ignite-events", path);

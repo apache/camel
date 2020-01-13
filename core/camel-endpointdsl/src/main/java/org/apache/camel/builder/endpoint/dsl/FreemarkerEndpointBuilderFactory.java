@@ -249,7 +249,7 @@ public interface FreemarkerEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default FreemarkerEndpointBuilder freemarker(String path) {
+    static FreemarkerEndpointBuilder freemarker(String path) {
         class FreemarkerEndpointBuilderImpl extends AbstractEndpointBuilder implements FreemarkerEndpointBuilder, AdvancedFreemarkerEndpointBuilder {
             public FreemarkerEndpointBuilderImpl(String path) {
                 super("freemarker", path);

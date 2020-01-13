@@ -1043,7 +1043,7 @@ public interface CoAPEndpointBuilderFactory {
      * Path parameter: uri
      * The URI for the CoAP endpoint
      */
-    default CoAPEndpointBuilder coap(String path) {
+    static CoAPEndpointBuilder coap(String path) {
         return coap("coap", path);
     }
     /**
@@ -1060,7 +1060,7 @@ public interface CoAPEndpointBuilderFactory {
      * Path parameter: uri
      * The URI for the CoAP endpoint
      */
-    default CoAPEndpointBuilder coapTcp(String path) {
+    static CoAPEndpointBuilder coapTcp(String path) {
         return coap("coap+tcp", path);
     }
     /**
@@ -1077,7 +1077,7 @@ public interface CoAPEndpointBuilderFactory {
      * Path parameter: uri
      * The URI for the CoAP endpoint
      */
-    default CoAPEndpointBuilder coaps(String path) {
+    static CoAPEndpointBuilder coaps(String path) {
         return coap("coaps", path);
     }
     /**
@@ -1094,7 +1094,7 @@ public interface CoAPEndpointBuilderFactory {
      * Path parameter: uri
      * The URI for the CoAP endpoint
      */
-    default CoAPEndpointBuilder coapsTcp(String path) {
+    static CoAPEndpointBuilder coapsTcp(String path) {
         return coap("coaps+tcp", path);
     }
     /**
@@ -1106,7 +1106,7 @@ public interface CoAPEndpointBuilderFactory {
      * Since: 2.16
      * Maven coordinates: org.apache.camel:camel-coap
      */
-    default CoAPEndpointBuilder coap(String scheme, String path) {
+    static CoAPEndpointBuilder coap(String scheme, String path) {
         class CoAPEndpointBuilderImpl extends AbstractEndpointBuilder implements CoAPEndpointBuilder, AdvancedCoAPEndpointBuilder {
             public CoAPEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

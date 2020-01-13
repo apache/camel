@@ -788,7 +788,7 @@ public interface GoogleMailStreamEndpointBuilderFactory {
      * Path parameter: index
      * Specifies an index for the endpoint
      */
-    default GoogleMailStreamEndpointBuilder googleMailStream(String path) {
+    static GoogleMailStreamEndpointBuilder googleMailStream(String path) {
         class GoogleMailStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleMailStreamEndpointBuilder, AdvancedGoogleMailStreamEndpointBuilder {
             public GoogleMailStreamEndpointBuilderImpl(String path) {
                 super("google-mail-stream", path);

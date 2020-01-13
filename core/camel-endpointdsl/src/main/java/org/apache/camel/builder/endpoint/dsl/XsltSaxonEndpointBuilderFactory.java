@@ -598,7 +598,7 @@ public interface XsltSaxonEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
      */
-    default XsltSaxonEndpointBuilder xsltSaxon(String path) {
+    static XsltSaxonEndpointBuilder xsltSaxon(String path) {
         class XsltSaxonEndpointBuilderImpl extends AbstractEndpointBuilder implements XsltSaxonEndpointBuilder, AdvancedXsltSaxonEndpointBuilder {
             public XsltSaxonEndpointBuilderImpl(String path) {
                 super("xslt-saxon", path);

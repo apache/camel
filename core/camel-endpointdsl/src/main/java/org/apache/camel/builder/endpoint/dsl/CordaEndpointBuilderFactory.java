@@ -490,7 +490,7 @@ public interface CordaEndpointBuilderFactory {
      * Path parameter: node (required)
      * The url for the corda node
      */
-    default CordaEndpointBuilder corda(String path) {
+    static CordaEndpointBuilder corda(String path) {
         class CordaEndpointBuilderImpl extends AbstractEndpointBuilder implements CordaEndpointBuilder, AdvancedCordaEndpointBuilder {
             public CordaEndpointBuilderImpl(String path) {
                 super("corda", path);

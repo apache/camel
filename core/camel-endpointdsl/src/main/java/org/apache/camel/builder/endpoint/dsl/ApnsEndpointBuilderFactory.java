@@ -887,7 +887,7 @@ public interface ApnsEndpointBuilderFactory {
      * Path parameter: name
      * Name of the endpoint
      */
-    default ApnsEndpointBuilder apns(String path) {
+    static ApnsEndpointBuilder apns(String path) {
         class ApnsEndpointBuilderImpl extends AbstractEndpointBuilder implements ApnsEndpointBuilder, AdvancedApnsEndpointBuilder {
             public ApnsEndpointBuilderImpl(String path) {
                 super("apns", path);

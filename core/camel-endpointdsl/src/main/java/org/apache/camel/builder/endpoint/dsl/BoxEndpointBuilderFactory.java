@@ -1640,7 +1640,7 @@ public interface BoxEndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      */
-    default BoxEndpointBuilder box(String path) {
+    static BoxEndpointBuilder box(String path) {
         class BoxEndpointBuilderImpl extends AbstractEndpointBuilder implements BoxEndpointBuilder, AdvancedBoxEndpointBuilder {
             public BoxEndpointBuilderImpl(String path) {
                 super("box", path);

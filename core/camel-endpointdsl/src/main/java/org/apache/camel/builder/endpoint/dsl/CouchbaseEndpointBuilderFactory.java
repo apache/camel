@@ -1949,7 +1949,7 @@ public interface CouchbaseEndpointBuilderFactory {
      * The port number to use
      * Default value: 8091
      */
-    default CouchbaseEndpointBuilder couchbase(String path) {
+    static CouchbaseEndpointBuilder couchbase(String path) {
         class CouchbaseEndpointBuilderImpl extends AbstractEndpointBuilder implements CouchbaseEndpointBuilder, AdvancedCouchbaseEndpointBuilder {
             public CouchbaseEndpointBuilderImpl(String path) {
                 super("couchbase", path);

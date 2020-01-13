@@ -303,7 +303,7 @@ public interface SqlStoredEndpointBuilderFactory {
      * Path parameter: template (required)
      * Sets the StoredProcedure template to perform
      */
-    default SqlStoredEndpointBuilder sqlStored(String path) {
+    static SqlStoredEndpointBuilder sqlStored(String path) {
         class SqlStoredEndpointBuilderImpl extends AbstractEndpointBuilder implements SqlStoredEndpointBuilder, AdvancedSqlStoredEndpointBuilder {
             public SqlStoredEndpointBuilderImpl(String path) {
                 super("sql-stored", path);

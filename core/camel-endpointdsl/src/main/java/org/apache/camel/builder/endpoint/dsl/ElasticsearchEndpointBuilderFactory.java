@@ -516,7 +516,7 @@ public interface ElasticsearchEndpointBuilderFactory {
      * Path parameter: clusterName (required)
      * Name of the cluster
      */
-    default ElasticsearchEndpointBuilder elasticsearchRest(String path) {
+    static ElasticsearchEndpointBuilder elasticsearchRest(String path) {
         class ElasticsearchEndpointBuilderImpl extends AbstractEndpointBuilder implements ElasticsearchEndpointBuilder, AdvancedElasticsearchEndpointBuilder {
             public ElasticsearchEndpointBuilderImpl(String path) {
                 super("elasticsearch-rest", path);

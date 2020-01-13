@@ -958,7 +958,7 @@ public interface StubEndpointBuilderFactory {
      * Path parameter: name (required)
      * Name of queue
      */
-    default StubEndpointBuilder stub(String path) {
+    static StubEndpointBuilder stub(String path) {
         class StubEndpointBuilderImpl extends AbstractEndpointBuilder implements StubEndpointBuilder, AdvancedStubEndpointBuilder {
             public StubEndpointBuilderImpl(String path) {
                 super("stub", path);

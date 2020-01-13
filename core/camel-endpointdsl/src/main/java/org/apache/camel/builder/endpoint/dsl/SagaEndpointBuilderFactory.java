@@ -158,7 +158,7 @@ public interface SagaEndpointBuilderFactory {
      * Path parameter: action (required)
      * Action to execute (complete or compensate)
      */
-    default SagaEndpointBuilder saga(String path) {
+    static SagaEndpointBuilder saga(String path) {
         class SagaEndpointBuilderImpl extends AbstractEndpointBuilder implements SagaEndpointBuilder, AdvancedSagaEndpointBuilder {
             public SagaEndpointBuilderImpl(String path) {
                 super("saga", path);

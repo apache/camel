@@ -253,7 +253,7 @@ public interface TikaEndpointBuilderFactory {
      * Tika Operation - parse or detect
      * The value can be one of: parse, detect
      */
-    default TikaEndpointBuilder tika(String path) {
+    static TikaEndpointBuilder tika(String path) {
         class TikaEndpointBuilderImpl extends AbstractEndpointBuilder implements TikaEndpointBuilder, AdvancedTikaEndpointBuilder {
             public TikaEndpointBuilderImpl(String path) {
                 super("tika", path);

@@ -1160,7 +1160,7 @@ public interface YammerEndpointBuilderFactory {
      * The value can be one of: MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT,
      * PRIVATE, RECEIVED, USERS, CURRENT
      */
-    default YammerEndpointBuilder yammer(String path) {
+    static YammerEndpointBuilder yammer(String path) {
         class YammerEndpointBuilderImpl extends AbstractEndpointBuilder implements YammerEndpointBuilder, AdvancedYammerEndpointBuilder {
             public YammerEndpointBuilderImpl(String path) {
                 super("yammer", path);

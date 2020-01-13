@@ -1271,7 +1271,7 @@ public interface KubernetesServicesEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesServicesEndpointBuilder kubernetesServices(String path) {
+    static KubernetesServicesEndpointBuilder kubernetesServices(String path) {
         class KubernetesServicesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesServicesEndpointBuilder, AdvancedKubernetesServicesEndpointBuilder {
             public KubernetesServicesEndpointBuilderImpl(String path) {
                 super("kubernetes-services", path);

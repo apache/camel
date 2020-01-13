@@ -1581,7 +1581,7 @@ public interface TwitterTimelineEndpointBuilderFactory {
      * The value can be one of: PUBLIC, HOME, USER, MENTIONS, RETWEETSOFME,
      * UNKNOWN
      */
-    default TwitterTimelineEndpointBuilder twitterTimeline(String path) {
+    static TwitterTimelineEndpointBuilder twitterTimeline(String path) {
         class TwitterTimelineEndpointBuilderImpl extends AbstractEndpointBuilder implements TwitterTimelineEndpointBuilder, AdvancedTwitterTimelineEndpointBuilder {
             public TwitterTimelineEndpointBuilderImpl(String path) {
                 super("twitter-timeline", path);

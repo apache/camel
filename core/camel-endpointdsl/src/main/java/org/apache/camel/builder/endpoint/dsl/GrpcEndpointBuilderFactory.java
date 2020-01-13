@@ -1348,7 +1348,7 @@ public interface GrpcEndpointBuilderFactory {
      * Fully qualified service name from the protocol buffer descriptor file
      * (package dot service definition name)
      */
-    default GrpcEndpointBuilder grpc(String path) {
+    static GrpcEndpointBuilder grpc(String path) {
         class GrpcEndpointBuilderImpl extends AbstractEndpointBuilder implements GrpcEndpointBuilder, AdvancedGrpcEndpointBuilder {
             public GrpcEndpointBuilderImpl(String path) {
                 super("grpc", path);

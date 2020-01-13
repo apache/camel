@@ -252,7 +252,7 @@ public interface RestOpenApiEndpointBuilderFactory {
      * Path parameter: operationId (required)
      * ID of the operation from the OpenApi specification.
      */
-    default RestOpenApiEndpointBuilder restOpenapi(String path) {
+    static RestOpenApiEndpointBuilder restOpenapi(String path) {
         class RestOpenApiEndpointBuilderImpl extends AbstractEndpointBuilder implements RestOpenApiEndpointBuilder, AdvancedRestOpenApiEndpointBuilder {
             public RestOpenApiEndpointBuilderImpl(String path) {
                 super("rest-openapi", path);

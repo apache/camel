@@ -876,7 +876,7 @@ public interface DdbStreamEndpointBuilderFactory {
      * Path parameter: tableName (required)
      * Name of the dynamodb table
      */
-    default DdbStreamEndpointBuilder awsDdbstream(String path) {
+    static DdbStreamEndpointBuilder awsDdbstream(String path) {
         class DdbStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements DdbStreamEndpointBuilder, AdvancedDdbStreamEndpointBuilder {
             public DdbStreamEndpointBuilderImpl(String path) {
                 super("aws-ddbstream", path);

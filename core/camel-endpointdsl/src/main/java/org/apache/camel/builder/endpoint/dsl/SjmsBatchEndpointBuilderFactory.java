@@ -826,7 +826,7 @@ public interface SjmsBatchEndpointBuilderFactory {
      * The destination name. Only queues are supported, names may be prefixed by
      * 'queue:'.
      */
-    default SjmsBatchEndpointBuilder sjmsBatch(String path) {
+    static SjmsBatchEndpointBuilder sjmsBatch(String path) {
         class SjmsBatchEndpointBuilderImpl extends AbstractEndpointBuilder implements SjmsBatchEndpointBuilder, AdvancedSjmsBatchEndpointBuilder {
             public SjmsBatchEndpointBuilderImpl(String path) {
                 super("sjms-batch", path);

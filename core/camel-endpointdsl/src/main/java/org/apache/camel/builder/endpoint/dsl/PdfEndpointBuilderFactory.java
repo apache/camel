@@ -382,7 +382,7 @@ public interface PdfEndpointBuilderFactory {
      * Operation type
      * The value can be one of: create, append, extractText
      */
-    default PdfEndpointBuilder pdf(String path) {
+    static PdfEndpointBuilder pdf(String path) {
         class PdfEndpointBuilderImpl extends AbstractEndpointBuilder implements PdfEndpointBuilder, AdvancedPdfEndpointBuilder {
             public PdfEndpointBuilderImpl(String path) {
                 super("pdf", path);

@@ -264,7 +264,7 @@ public interface LuceneEndpointBuilderFactory {
      * Operation to do such as insert or query.
      * The value can be one of: insert, query
      */
-    default LuceneEndpointBuilder lucene(String path) {
+    static LuceneEndpointBuilder lucene(String path) {
         class LuceneEndpointBuilderImpl extends AbstractEndpointBuilder implements LuceneEndpointBuilder, AdvancedLuceneEndpointBuilder {
             public LuceneEndpointBuilderImpl(String path) {
                 super("lucene", path);

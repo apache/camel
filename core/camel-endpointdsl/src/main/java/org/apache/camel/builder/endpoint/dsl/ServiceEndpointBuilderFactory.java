@@ -215,7 +215,7 @@ public interface ServiceEndpointBuilderFactory {
      * Path parameter: delegateUri (required)
      * The endpoint uri to expose as service
      */
-    default ServiceEndpointBuilder service(String path) {
+    static ServiceEndpointBuilder service(String path) {
         class ServiceEndpointBuilderImpl extends AbstractEndpointBuilder implements ServiceEndpointBuilder, AdvancedServiceEndpointBuilder {
             public ServiceEndpointBuilderImpl(String path) {
                 super("service", path);

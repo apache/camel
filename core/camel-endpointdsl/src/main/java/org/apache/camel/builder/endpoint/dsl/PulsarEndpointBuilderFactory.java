@@ -992,7 +992,7 @@ public interface PulsarEndpointBuilderFactory {
      * Path parameter: topic (required)
      * The topic
      */
-    default PulsarEndpointBuilder pulsar(String path) {
+    static PulsarEndpointBuilder pulsar(String path) {
         class PulsarEndpointBuilderImpl extends AbstractEndpointBuilder implements PulsarEndpointBuilder, AdvancedPulsarEndpointBuilder {
             public PulsarEndpointBuilderImpl(String path) {
                 super("pulsar", path);

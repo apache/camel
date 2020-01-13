@@ -1262,7 +1262,7 @@ public interface KubernetesNodesEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesNodesEndpointBuilder kubernetesNodes(String path) {
+    static KubernetesNodesEndpointBuilder kubernetesNodes(String path) {
         class KubernetesNodesEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesNodesEndpointBuilder, AdvancedKubernetesNodesEndpointBuilder {
             public KubernetesNodesEndpointBuilderImpl(String path) {
                 super("kubernetes-nodes", path);

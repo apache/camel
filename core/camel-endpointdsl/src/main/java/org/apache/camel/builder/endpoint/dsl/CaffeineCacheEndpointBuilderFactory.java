@@ -513,7 +513,7 @@ public interface CaffeineCacheEndpointBuilderFactory {
      * Path parameter: cacheName (required)
      * the cache name
      */
-    default CaffeineCacheEndpointBuilder caffeineCache(String path) {
+    static CaffeineCacheEndpointBuilder caffeineCache(String path) {
         class CaffeineCacheEndpointBuilderImpl extends AbstractEndpointBuilder implements CaffeineCacheEndpointBuilder, AdvancedCaffeineCacheEndpointBuilder {
             public CaffeineCacheEndpointBuilderImpl(String path) {
                 super("caffeine-cache", path);

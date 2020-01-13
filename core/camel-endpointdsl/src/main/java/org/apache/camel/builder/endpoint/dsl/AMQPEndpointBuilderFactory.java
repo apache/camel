@@ -5418,7 +5418,7 @@ public interface AMQPEndpointBuilderFactory {
      * Path parameter: destinationName (required)
      * Name of the queue or topic to use as destination
      */
-    default AMQPEndpointBuilder amqp(String path) {
+    static AMQPEndpointBuilder amqp(String path) {
         class AMQPEndpointBuilderImpl extends AbstractEndpointBuilder implements AMQPEndpointBuilder, AdvancedAMQPEndpointBuilder {
             public AMQPEndpointBuilderImpl(String path) {
                 super("amqp", path);

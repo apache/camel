@@ -502,7 +502,7 @@ public interface XsltEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod
      */
-    default XsltEndpointBuilder xslt(String path) {
+    static XsltEndpointBuilder xslt(String path) {
         class XsltEndpointBuilderImpl extends AbstractEndpointBuilder implements XsltEndpointBuilder, AdvancedXsltEndpointBuilder {
             public XsltEndpointBuilderImpl(String path) {
                 super("xslt", path);

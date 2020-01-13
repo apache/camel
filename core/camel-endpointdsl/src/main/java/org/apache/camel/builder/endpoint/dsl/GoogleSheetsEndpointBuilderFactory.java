@@ -1083,7 +1083,7 @@ public interface GoogleSheetsEndpointBuilderFactory {
      * What sub operation to use for the selected operation
      * The value can be one of: create, get, update, append, batchUpdate, clear
      */
-    default GoogleSheetsEndpointBuilder googleSheets(String path) {
+    static GoogleSheetsEndpointBuilder googleSheets(String path) {
         class GoogleSheetsEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleSheetsEndpointBuilder, AdvancedGoogleSheetsEndpointBuilder {
             public GoogleSheetsEndpointBuilderImpl(String path) {
                 super("google-sheets", path);

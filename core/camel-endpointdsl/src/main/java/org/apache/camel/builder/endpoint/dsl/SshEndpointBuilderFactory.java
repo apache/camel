@@ -1502,7 +1502,7 @@ public interface SshEndpointBuilderFactory {
      * Sets the port number for the remote SSH server.
      * Default value: 22
      */
-    default SshEndpointBuilder ssh(String path) {
+    static SshEndpointBuilder ssh(String path) {
         class SshEndpointBuilderImpl extends AbstractEndpointBuilder implements SshEndpointBuilder, AdvancedSshEndpointBuilder {
             public SshEndpointBuilderImpl(String path) {
                 super("ssh", path);

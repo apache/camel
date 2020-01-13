@@ -1334,7 +1334,7 @@ public interface HttpEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      */
-    default HttpEndpointBuilder http(String path) {
+    static HttpEndpointBuilder http(String path) {
         return http("http", path);
     }
     /**
@@ -1350,7 +1350,7 @@ public interface HttpEndpointBuilderFactory {
      * Path parameter: httpUri (required)
      * The url of the HTTP endpoint to call.
      */
-    default HttpEndpointBuilder https(String path) {
+    static HttpEndpointBuilder https(String path) {
         return http("https", path);
     }
     /**
@@ -1361,7 +1361,7 @@ public interface HttpEndpointBuilderFactory {
      * Since: 2.3
      * Maven coordinates: org.apache.camel:camel-http
      */
-    default HttpEndpointBuilder http(String scheme, String path) {
+    static HttpEndpointBuilder http(String scheme, String path) {
         class HttpEndpointBuilderImpl extends AbstractEndpointBuilder implements HttpEndpointBuilder, AdvancedHttpEndpointBuilder {
             public HttpEndpointBuilderImpl(String scheme, String path) {
                 super(scheme, path);

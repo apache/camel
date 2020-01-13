@@ -856,7 +856,7 @@ public interface GoogleCalendarStreamEndpointBuilderFactory {
      * Path parameter: index
      * Specifies an index for the endpoint
      */
-    default GoogleCalendarStreamEndpointBuilder googleCalendarStream(String path) {
+    static GoogleCalendarStreamEndpointBuilder googleCalendarStream(String path) {
         class GoogleCalendarStreamEndpointBuilderImpl extends AbstractEndpointBuilder implements GoogleCalendarStreamEndpointBuilder, AdvancedGoogleCalendarStreamEndpointBuilder {
             public GoogleCalendarStreamEndpointBuilderImpl(String path) {
                 super("google-calendar-stream", path);

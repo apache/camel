@@ -805,7 +805,7 @@ public interface DropboxEndpointBuilderFactory {
      * remote folder.
      * The value can be one of: put, del, search, get, move
      */
-    default DropboxEndpointBuilder dropbox(String path) {
+    static DropboxEndpointBuilder dropbox(String path) {
         class DropboxEndpointBuilderImpl extends AbstractEndpointBuilder implements DropboxEndpointBuilder, AdvancedDropboxEndpointBuilder {
             public DropboxEndpointBuilderImpl(String path) {
                 super("dropbox", path);

@@ -257,7 +257,7 @@ public interface DozerEndpointBuilderFactory {
      * Path parameter: name (required)
      * A human readable name of the mapping.
      */
-    default DozerEndpointBuilder dozer(String path) {
+    static DozerEndpointBuilder dozer(String path) {
         class DozerEndpointBuilderImpl extends AbstractEndpointBuilder implements DozerEndpointBuilder, AdvancedDozerEndpointBuilder {
             public DozerEndpointBuilderImpl(String path) {
                 super("dozer", path);

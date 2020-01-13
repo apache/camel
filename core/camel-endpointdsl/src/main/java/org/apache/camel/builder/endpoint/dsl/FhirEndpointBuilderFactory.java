@@ -2344,7 +2344,7 @@ public interface FhirEndpointBuilderFactory {
      * Path parameter: methodName (required)
      * What sub operation to use for the selected operation
      */
-    default FhirEndpointBuilder fhir(String path) {
+    static FhirEndpointBuilder fhir(String path) {
         class FhirEndpointBuilderImpl extends AbstractEndpointBuilder implements FhirEndpointBuilder, AdvancedFhirEndpointBuilder {
             public FhirEndpointBuilderImpl(String path) {
                 super("fhir", path);

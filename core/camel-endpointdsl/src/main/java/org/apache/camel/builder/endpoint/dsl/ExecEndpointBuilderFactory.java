@@ -335,7 +335,7 @@ public interface ExecEndpointBuilderFactory {
      * Sets the executable to be executed. The executable must not be empty or
      * null.
      */
-    default ExecEndpointBuilder exec(String path) {
+    static ExecEndpointBuilder exec(String path) {
         class ExecEndpointBuilderImpl extends AbstractEndpointBuilder implements ExecEndpointBuilder, AdvancedExecEndpointBuilder {
             public ExecEndpointBuilderImpl(String path) {
                 super("exec", path);

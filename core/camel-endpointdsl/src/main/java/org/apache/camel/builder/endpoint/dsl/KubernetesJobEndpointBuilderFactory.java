@@ -1253,7 +1253,7 @@ public interface KubernetesJobEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesJobEndpointBuilder kubernetesJob(String path) {
+    static KubernetesJobEndpointBuilder kubernetesJob(String path) {
         class KubernetesJobEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesJobEndpointBuilder, AdvancedKubernetesJobEndpointBuilder {
             public KubernetesJobEndpointBuilderImpl(String path) {
                 super("kubernetes-job", path);

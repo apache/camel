@@ -495,7 +495,7 @@ public interface JSR356WebSocketEndpointBuilderFactory {
      * that path. Else if the URI is prefixed with the 'ws://' scheme, then a
      * connection is established to the corresponding server
      */
-    default JSR356WebSocketEndpointBuilder websocketJsr356(String path) {
+    static JSR356WebSocketEndpointBuilder websocketJsr356(String path) {
         class JSR356WebSocketEndpointBuilderImpl extends AbstractEndpointBuilder implements JSR356WebSocketEndpointBuilder, AdvancedJSR356WebSocketEndpointBuilder {
             public JSR356WebSocketEndpointBuilderImpl(String path) {
                 super("websocket-jsr356", path);

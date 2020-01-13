@@ -282,7 +282,7 @@ public interface LanguageEndpointBuilderFactory {
      * Path to the resource, or a reference to lookup a bean in the Registry to
      * use as the resource
      */
-    default LanguageEndpointBuilder language(String path) {
+    static LanguageEndpointBuilder language(String path) {
         class LanguageEndpointBuilderImpl extends AbstractEndpointBuilder implements LanguageEndpointBuilder, AdvancedLanguageEndpointBuilder {
             public LanguageEndpointBuilderImpl(String path) {
                 super("language", path);

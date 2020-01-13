@@ -425,7 +425,7 @@ public interface KubernetesConfigMapsEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    default KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(String path) {
+    static KubernetesConfigMapsEndpointBuilder kubernetesConfigMaps(String path) {
         class KubernetesConfigMapsEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesConfigMapsEndpointBuilder, AdvancedKubernetesConfigMapsEndpointBuilder {
             public KubernetesConfigMapsEndpointBuilderImpl(String path) {
                 super("kubernetes-config-maps", path);

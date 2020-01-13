@@ -642,7 +642,7 @@ public interface NitriteEndpointBuilderFactory {
      * Path parameter: database (required)
      * Path to database file. Will be created if not exists.
      */
-    default NitriteEndpointBuilder nitrite(String path) {
+    static NitriteEndpointBuilder nitrite(String path) {
         class NitriteEndpointBuilderImpl extends AbstractEndpointBuilder implements NitriteEndpointBuilder, AdvancedNitriteEndpointBuilder {
             public NitriteEndpointBuilderImpl(String path) {
                 super("nitrite", path);

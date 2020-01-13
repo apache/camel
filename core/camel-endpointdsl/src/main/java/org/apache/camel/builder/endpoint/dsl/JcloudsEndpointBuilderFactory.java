@@ -566,7 +566,7 @@ public interface JcloudsEndpointBuilderFactory {
      * The name of the cloud provider that provides the target service (e.g.
      * aws-s3 or aws_ec2).
      */
-    default JcloudsEndpointBuilder jclouds(String path) {
+    static JcloudsEndpointBuilder jclouds(String path) {
         class JcloudsEndpointBuilderImpl extends AbstractEndpointBuilder implements JcloudsEndpointBuilder, AdvancedJcloudsEndpointBuilder {
             public JcloudsEndpointBuilderImpl(String path) {
                 super("jclouds", path);

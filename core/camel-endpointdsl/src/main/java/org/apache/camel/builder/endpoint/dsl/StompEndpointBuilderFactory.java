@@ -821,7 +821,7 @@ public interface StompEndpointBuilderFactory {
      * Path parameter: destination (required)
      * Name of the queue
      */
-    default StompEndpointBuilder stomp(String path) {
+    static StompEndpointBuilder stomp(String path) {
         class StompEndpointBuilderImpl extends AbstractEndpointBuilder implements StompEndpointBuilder, AdvancedStompEndpointBuilder {
             public StompEndpointBuilderImpl(String path) {
                 super("stomp", path);

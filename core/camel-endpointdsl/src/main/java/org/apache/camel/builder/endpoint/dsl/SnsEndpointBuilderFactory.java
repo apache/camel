@@ -470,7 +470,7 @@ public interface SnsEndpointBuilderFactory {
      * Path parameter: topicNameOrArn (required)
      * Topic name or ARN
      */
-    default SnsEndpointBuilder awsSns(String path) {
+    static SnsEndpointBuilder awsSns(String path) {
         class SnsEndpointBuilderImpl extends AbstractEndpointBuilder implements SnsEndpointBuilder, AdvancedSnsEndpointBuilder {
             public SnsEndpointBuilderImpl(String path) {
                 super("aws-sns", path);

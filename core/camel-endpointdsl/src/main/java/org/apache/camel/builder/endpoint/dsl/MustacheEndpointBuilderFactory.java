@@ -221,7 +221,7 @@ public interface MustacheEndpointBuilderFactory {
      * bean will call a method on a bean to be used as the resource. For bean
      * you can specify the method name after dot, eg bean:myBean.myMethod.
      */
-    default MustacheEndpointBuilder mustache(String path) {
+    static MustacheEndpointBuilder mustache(String path) {
         class MustacheEndpointBuilderImpl extends AbstractEndpointBuilder implements MustacheEndpointBuilder, AdvancedMustacheEndpointBuilder {
             public MustacheEndpointBuilderImpl(String path) {
                 super("mustache", path);

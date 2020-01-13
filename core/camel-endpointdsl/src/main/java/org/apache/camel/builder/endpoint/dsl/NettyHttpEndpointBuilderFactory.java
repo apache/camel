@@ -4467,7 +4467,7 @@ public interface NettyHttpEndpointBuilderFactory {
      * Path parameter: path
      * Resource path
      */
-    default NettyHttpEndpointBuilder nettyHttp(String path) {
+    static NettyHttpEndpointBuilder nettyHttp(String path) {
         class NettyHttpEndpointBuilderImpl extends AbstractEndpointBuilder implements NettyHttpEndpointBuilder, AdvancedNettyHttpEndpointBuilder {
             public NettyHttpEndpointBuilderImpl(String path) {
                 super("netty-http", path);

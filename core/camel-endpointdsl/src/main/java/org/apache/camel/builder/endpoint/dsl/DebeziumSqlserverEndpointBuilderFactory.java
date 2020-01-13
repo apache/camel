@@ -1015,7 +1015,7 @@ public interface DebeziumSqlserverEndpointBuilderFactory {
      * Unique name for the connector. Attempting to register again with the same
      * name will fail.
      */
-    default DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
+    static DebeziumSqlserverEndpointBuilder debeziumSqlserver(String path) {
         class DebeziumSqlserverEndpointBuilderImpl extends AbstractEndpointBuilder implements DebeziumSqlserverEndpointBuilder, AdvancedDebeziumSqlserverEndpointBuilder {
             public DebeziumSqlserverEndpointBuilderImpl(String path) {
                 super("debezium-sqlserver", path);

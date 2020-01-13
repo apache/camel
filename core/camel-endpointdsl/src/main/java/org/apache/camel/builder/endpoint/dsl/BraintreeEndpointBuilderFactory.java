@@ -1418,7 +1418,7 @@ public interface BraintreeEndpointBuilderFactory {
      * Path parameter: methodName
      * What sub operation to use for the selected operation
      */
-    default BraintreeEndpointBuilder braintree(String path) {
+    static BraintreeEndpointBuilder braintree(String path) {
         class BraintreeEndpointBuilderImpl extends AbstractEndpointBuilder implements BraintreeEndpointBuilder, AdvancedBraintreeEndpointBuilder {
             public BraintreeEndpointBuilderImpl(String path) {
                 super("braintree", path);

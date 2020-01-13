@@ -445,7 +445,7 @@ public interface GangliaEndpointBuilderFactory {
      * Port for Ganglia server
      * Default value: 8649
      */
-    default GangliaEndpointBuilder ganglia(String path) {
+    static GangliaEndpointBuilder ganglia(String path) {
         class GangliaEndpointBuilderImpl extends AbstractEndpointBuilder implements GangliaEndpointBuilder, AdvancedGangliaEndpointBuilder {
             public GangliaEndpointBuilderImpl(String path) {
                 super("ganglia", path);

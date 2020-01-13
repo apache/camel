@@ -534,7 +534,7 @@ public interface DigitalSignatureEndpointBuilderFactory {
      * Path parameter: name (required)
      * The logical name of this operation.
      */
-    default DigitalSignatureEndpointBuilder crypto(String path) {
+    static DigitalSignatureEndpointBuilder crypto(String path) {
         class DigitalSignatureEndpointBuilderImpl extends AbstractEndpointBuilder implements DigitalSignatureEndpointBuilder, AdvancedDigitalSignatureEndpointBuilder {
             public DigitalSignatureEndpointBuilderImpl(String path) {
                 super("crypto", path);

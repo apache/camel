@@ -200,7 +200,7 @@ public interface KuduEndpointBuilderFactory {
      * Path parameter: tableName
      * The name of the table where the rows are stored
      */
-    default KuduEndpointBuilder kudu(String path) {
+    static KuduEndpointBuilder kudu(String path) {
         class KuduEndpointBuilderImpl extends AbstractEndpointBuilder implements KuduEndpointBuilder, AdvancedKuduEndpointBuilder {
             public KuduEndpointBuilderImpl(String path) {
                 super("kudu", path);
