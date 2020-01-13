@@ -161,7 +161,10 @@ To set up a route that generates an event every 60 seconds:
 from("timer://foo?fixedRate=true&period=60000").to("bean:myBean?method=someMethodName");
 ----
 
-TIP: Instead of 60000 you can use period=60s which is more friendly to read.
+[TIP]
+====
+Instead of 60000 you can use period=60s which is more friendly to read.
+====
 
 The above route will generate an event and then invoke the
 `someMethodName` method on the bean called `myBean` in the
