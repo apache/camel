@@ -55,12 +55,12 @@ public final class CamelClient {
 
         ExecutorService executors = Executors.newFixedThreadPool(POOL);
         for (int i = 0; i < POOL; i++) {
-            final Integer idx = i;
+            final int idx = i;
             executors.execute(new Runnable() {
                 public void run() {
                     try {
                         for (int j = 0; j < SIZE / POOL; j++) {
-                            producer.sendBody("jms:queue:inbox", "Message " + idx.intValue() * j + j);
+                            producer.sendBody("jms:queue:inbox", "Message " + idx * j + j);
                         }
                     } finally {
                         latch.countDown();

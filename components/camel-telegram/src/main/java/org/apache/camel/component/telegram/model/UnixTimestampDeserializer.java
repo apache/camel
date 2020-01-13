@@ -35,7 +35,7 @@ public class UnixTimestampDeserializer extends JsonDeserializer<Instant> {
     @Override
     public Instant deserialize(JsonParser jsonParser, DeserializationContext deserializationContext) throws IOException {
         try {
-            Long unixTimestamp = Long.parseLong(jsonParser.getText());
+            long unixTimestamp = Long.parseLong(jsonParser.getText());
 
             return Instant.ofEpochSecond(unixTimestamp);
         } catch (Exception e) {

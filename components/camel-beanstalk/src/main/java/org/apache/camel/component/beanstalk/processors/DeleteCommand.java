@@ -34,7 +34,7 @@ public class DeleteCommand extends DefaultCommand {
 
     @Override
     public void act(final Client client, final Exchange exchange) throws NoSuchHeaderException {
-        final Long jobId = BeanstalkExchangeHelper.getJobID(exchange);
+        final long jobId = BeanstalkExchangeHelper.getJobID(exchange);
         final boolean result = client.delete(jobId);
         if (!result && LOG.isWarnEnabled()) {
             LOG.warn(String.format("Failed to delete job %d", jobId));
