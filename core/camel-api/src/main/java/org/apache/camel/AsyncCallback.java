@@ -25,7 +25,7 @@ package org.apache.camel;
  * routing {@link Exchange} when all the data has been gathered. This allows to build non blocking
  * request/reply communication.
  */
-public interface AsyncCallback {
+public interface AsyncCallback extends Runnable {
 
     /**
      * This method is invoked once the {@link Exchange} is done.
@@ -38,4 +38,11 @@ public interface AsyncCallback {
      */
     void done(boolean doneSync);
 
+    /**
+     * Optimized for the reactive executor engine to be able to schedule this callback in its engine.
+     */
+    @Override
+    default void run() {
+        done(false);
+    }
 }

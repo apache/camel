@@ -547,7 +547,7 @@ public class MulticastProcessor extends AsyncProcessorSupport implements Navigat
             original.setProperty(Exchange.REDELIVERY_EXHAUSTED, exhaust);
         }
 
-        camelContext.getReactiveExecutor().callback(callback);
+        camelContext.getReactiveExecutor().schedule(callback);
     }
 
     /**

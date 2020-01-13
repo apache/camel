@@ -180,7 +180,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 // CAMEL END USER - DEBUG ME HERE +++ START +++
                 // ----------------------------------------------------------
                 // callback must be called
-                exchange.getContext().getReactiveExecutor().callback(originalCallback);
+                exchange.getContext().getReactiveExecutor().schedule(originalCallback);
                 // ----------------------------------------------------------
                 // CAMEL END USER - DEBUG ME HERE +++ END +++
                 // ----------------------------------------------------------
