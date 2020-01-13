@@ -296,7 +296,10 @@ a|Override properties
 
 The following example illustrates the use of the `@MockEndpoints` annotation in order to setup mock endpoints as interceptors on all endpoints using the Camel Log component and the `@DisableJmx` annotation to enable JMX which is disabled during tests by default.
 
-TIP: We still use the `@DirtiesContext` annotation to ensure that the CamelContext, routes, and mock endpoints are reinitialized between test methods.
+[TIP]
+====
+We still use the `@DirtiesContext` annotation to ensure that the CamelContext, routes, and mock endpoints are reinitialized between test methods.
+====
 
 [source,java]
 ----
