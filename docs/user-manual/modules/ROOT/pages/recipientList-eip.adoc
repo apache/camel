@@ -34,7 +34,10 @@ The Recipient List EIP supports 15 options which are listed below:
 // eip options: END
 
 
-TIP: You can use the RecipientList Annotation on a POJO to create a Dynamic Recipient List. For more details see the Bean Integration.
+[TIP]
+====
+You can use the RecipientList Annotation on a POJO to create a Dynamic Recipient List. For more details see the Bean Integration.
+====
 
 == Static Recipient List
 The following example shows how to route a request from an input *queue:a* endpoint to a static list of destinations

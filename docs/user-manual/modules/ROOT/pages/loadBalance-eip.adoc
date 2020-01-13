@@ -75,8 +75,12 @@ The above example loads balance requests from *direct:start* to one of the avail
 The failover load balancer is capable of trying the next processor in case an Exchange failed with an exception during processing.
 You can constrain the failover to activate only when one exception of a list you specify occurs. If you do not specify a list any exception will cause fail over to occur. This balancer uses the same strategy for matching exceptions as the Exception Clause does for the `onException`.
 
-TIP: **Enable stream caching if using streams:**
+[TIP]
+====
+**Enable stream caching if using streams:**
+
 If you use streaming then you should enable Stream caching when using the failover load balancer. This is needed so the stream can be re-read after failing over to the next processor.
+====
 
 Here is a sample to failover only if a IOException related exception was thrown:
 [source,java]
@@ -157,9 +161,14 @@ And the same example using Spring XML:
 </route>
 ----
 
-TIP: *Disabled inheritErrorHandler*: You can configure `inheritErrorHandler=false` if you want to failover to the next endpoint as fast as possible.
+[TIP]
+====
+*Disabled inheritErrorHandler*
+
+You can configure `inheritErrorHandler=false` if you want to failover to the next endpoint as fast as possible.
 By disabling the Error Handler you ensure it does not _intervene_ which allows the `failover` load balancer to handle failover asap.
 By also enabling `roundRobin` mode, then it will keep retrying until it success. You can then configure the `maximumFailoverAttempts` option to a high value to let it eventually exhaust (give up) and fail.
+====
 
 == Weighted Round-Robin and Random Load Balancing
 
