@@ -16,8 +16,6 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.AsyncCallback;
-
 /**
  * SPI to plugin different reactive engines in the Camel routing engine.
  */
@@ -36,6 +34,7 @@ public interface ReactiveExecutor {
      * @param runnable    the task
      * @param description a human readable description for logging purpose
      */
+    @Deprecated
     void schedule(Runnable runnable, String description);
 
     /**
@@ -51,6 +50,7 @@ public interface ReactiveExecutor {
      * @param runnable    the task
      * @param description a human readable description for logging purpose
      */
+    @Deprecated
     void scheduleMain(Runnable runnable, String description);
 
     /**
@@ -66,6 +66,7 @@ public interface ReactiveExecutor {
      * @param runnable    the task
      * @param description a human readable description for logging purpose
      */
+    @Deprecated
     void scheduleSync(Runnable runnable, String description);
 
     /**
@@ -74,25 +75,5 @@ public interface ReactiveExecutor {
      * @return true if a task was executed or false if no more pending tasks
      */
     boolean executeFromQueue();
-
-    /**
-     * Schedules the callback to be run
-     *
-     * @param callback    the callable
-     */
-    default void callback(AsyncCallback callback) {
-        schedule(new Runnable() {
-
-            @Override
-            public void run() {
-                callback.done(false);
-            }
-
-            @Override
-            public String toString() {
-                return "Callback[" + callback + "]";
-            }
-        });
-    }
 
 }

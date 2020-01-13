@@ -110,20 +110,6 @@ public class DefaultReactiveExecutor extends ServiceSupport implements ReactiveE
         return pendingTasks.get();
     }
 
-    @Override
-    public void callback(AsyncCallback callback) {
-        schedule(new Runnable() {
-            @Override
-            public void run() {
-                callback.done(false);
-            }
-            @Override
-            public String toString() {
-                return "Callback[" + callback + "]";
-            }
-        });
-    }
-
     private static Runnable describe(Runnable runnable, String description) {
         return new Runnable() {
             @Override
