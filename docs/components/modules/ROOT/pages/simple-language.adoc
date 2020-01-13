@@ -25,14 +25,10 @@ The simple language uses `${body`} placeholders for complex expressions
 where the expression contains constant literals. The $\{ } placeholders
 can be omitted if the expression is only the token itself.
 
-[TIP]
-====
-*Alternative syntax* 
-
-You can also use the alternative syntax which
+TIP: *Alternative syntax* You can also use the alternative syntax which
 uses `$simple{ }` as placeholders. This can be used in situations to avoid clashes when using for example
 Spring property placeholder together with Camel.
-====
+
 
 == Simple Language options
 
