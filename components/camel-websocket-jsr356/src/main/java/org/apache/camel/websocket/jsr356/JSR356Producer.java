@@ -74,9 +74,10 @@ public class JSR356Producer extends DefaultAsyncProducer {
     private void doSend(final Exchange exchange, final AsyncCallback callback, final Session session) {
         try {
             JSR356WebSocketComponent.sendMessage(session, exchange.getIn().getBody());
-            callback.done(true);
         } catch (final IOException e) {
             exchange.setException(e);
+        } finally {
+            callback.done(true);
         }
     }
 
