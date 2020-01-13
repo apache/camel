@@ -43,8 +43,6 @@ public class CronComponent extends DefaultComponent {
 
     @Override
     public Endpoint createEndpoint(String uri, String remaining, Map<String, Object> properties) throws Exception {
-        initCamelCronService();
-
         CamelCronConfiguration configuration = new CamelCronConfiguration();
         configuration.setName(remaining);
         setProperties(configuration, properties);
@@ -61,10 +59,15 @@ public class CronComponent extends DefaultComponent {
         return cronEndpoint;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        initCamelCronService();
+    }
+
     /**
      * Lazy creation of the CamelCronService
      */
-    public synchronized void initCamelCronService() {
+    public void initCamelCronService() {
         if (this.service == null) {
             this.service = CronHelper.resolveCamelCronService(
                     getCamelContext(),
