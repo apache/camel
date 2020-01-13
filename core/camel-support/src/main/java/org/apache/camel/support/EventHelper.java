@@ -1371,7 +1371,7 @@ public final class EventHelper {
         try {
             notifier.notify(event);
         } catch (Throwable e) {
-            LOG.warn("Error notifying event " + event + ". This exception will be ignored. ", e);
+            LOG.warn("Error notifying event " + event + ". This exception will be ignored.", e);
         }
 
         return true;
