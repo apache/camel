@@ -850,8 +850,8 @@ See xref:manual::file-language.adoc[File Language] for more samples.
 
 The file component in Camel deletes the file in use after the operation to be
 performed is successfully completed.
-In cases where you want to read a file without deleting the file.
-<<File3-IdempotentConsumer, You can avoid the autodeletion of the file by setting the `noop=true` option>>.
+In cases where you want to read a file without deleting the file,
+<<File3-IdempotentConsumer, you can avoid the autodeletion of the file by setting the `noop=true` option>>.
 
 [source,java]
 ----
@@ -869,7 +869,7 @@ To enable reuse of this file you can disable the auto-deletion feature explicitl
 from("direct:fileWrite").to("file://inbox?fileName=fileName.txt&noop=true&idempotent=false");
 ----
 
-In the above noope=true will avoid auto-deletion of the file 
+In the above noop=true will avoid auto-deletion of the file 
 and idempotent=false will disable the idempotent consumer feature.
 Hence, making the file available for read-write operations by persisting the file in the mentioned path.
 
