@@ -73,6 +73,11 @@ public class CatchDefinition extends OutputDefinition<CatchDefinition> {
         return "doCatch[ " + getExceptionClasses() + "]";
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

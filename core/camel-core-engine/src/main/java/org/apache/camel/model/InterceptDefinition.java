@@ -68,6 +68,11 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
         return true;
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

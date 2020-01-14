@@ -801,6 +801,11 @@ public class OnExceptionDefinition extends OutputDefinition<OnExceptionDefinitio
 
     // Properties
     // -------------------------------------------------------------------------
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

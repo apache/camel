@@ -75,6 +75,11 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     public MulticastDefinition() {
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

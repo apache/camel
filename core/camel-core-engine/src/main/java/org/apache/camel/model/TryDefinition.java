@@ -157,6 +157,11 @@ public class TryDefinition extends OutputDefinition<TryDefinition> {
         return outputsWithoutCatches;
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return super.getOutputs();
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

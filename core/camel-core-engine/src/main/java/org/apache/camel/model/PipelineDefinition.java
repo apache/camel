@@ -36,6 +36,11 @@ public class PipelineDefinition extends OutputDefinition<PipelineDefinition> {
     public PipelineDefinition() {
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

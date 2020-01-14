@@ -42,6 +42,11 @@ public class OnFallbackDefinition extends OutputDefinition<OnFallbackDefinition>
     public OnFallbackDefinition() {
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

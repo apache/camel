@@ -48,6 +48,11 @@ public class FinallyDefinition extends OutputDefinition<FinallyDefinition> {
         return "doFinally";
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

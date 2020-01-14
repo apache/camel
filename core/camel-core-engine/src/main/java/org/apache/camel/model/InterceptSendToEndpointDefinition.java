@@ -50,6 +50,11 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
         this.uri = uri;
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

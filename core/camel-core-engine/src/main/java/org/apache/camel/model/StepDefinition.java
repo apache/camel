@@ -37,6 +37,11 @@ public class StepDefinition extends OutputDefinition<StepDefinition> {
     public StepDefinition() {
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return super.getOutputs();
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

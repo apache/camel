@@ -682,6 +682,11 @@ public class RouteDefinition extends OutputDefinition<RouteDefinition> implement
         this.input = input;
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     /**
      * Outputs are processors that determines how messages are processed by this
      * route.

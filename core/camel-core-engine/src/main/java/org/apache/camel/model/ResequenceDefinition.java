@@ -62,6 +62,11 @@ public class ResequenceDefinition extends OutputDefinition<ResequenceDefinition>
         }
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

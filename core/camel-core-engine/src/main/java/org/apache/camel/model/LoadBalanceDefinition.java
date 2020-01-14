@@ -58,6 +58,11 @@ public class LoadBalanceDefinition extends OutputDefinition<LoadBalanceDefinitio
     public LoadBalanceDefinition() {
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

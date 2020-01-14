@@ -1138,6 +1138,11 @@ public class AggregateDefinition extends OutputDefinition<AggregateDefinition> i
         }
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
         super.setOutputs(outputs);

@@ -263,6 +263,11 @@ public class OnCompletionDefinition extends OutputDefinition<OnCompletionDefinit
         return this;
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {

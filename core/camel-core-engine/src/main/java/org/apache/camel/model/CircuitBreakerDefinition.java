@@ -62,6 +62,11 @@ public class CircuitBreakerDefinition extends OutputDefinition<CircuitBreakerDef
         return "circuitBreaker";
     }
 
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
     @XmlElementRef
     @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
