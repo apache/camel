@@ -90,7 +90,10 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
+    private static final Object[] EMPTY_STATES = new Object[0];
+
     private final List<CamelInternalProcessorAdvice<?>> advices = new ArrayList<>();
+    private byte statefulAdvices;
 
     public CamelInternalProcessor() {
     }
@@ -108,6 +111,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         advices.add(advice);
         // ensure advices are sorted so they are in the order we want
         advices.sort(OrderedComparator.get());
+
+        if (advice.hasState()) {
+            statefulAdvices++;
+        }
     }
 
     /**
@@ -148,14 +155,16 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             return true;
         }
 
-        // optimise to use object array for states
-        final Object[] states = new Object[advices.size()];
+        // optimise to use object array for states, and only for the number of advices that keep state
+        final Object[] states = statefulAdvices > 0 ? new Object[statefulAdvices] : EMPTY_STATES;
         // optimise for loop using index access to avoid creating iterator object
-        for (int i = 0; i < advices.size(); i++) {
+        for (int i = 0, j = 0; i < advices.size(); i++) {
             CamelInternalProcessorAdvice task = advices.get(i);
             try {
                 Object state = task.before(exchange);
-                states[i] = state;
+                if (task.hasState()) {
+                    states[j++] = state;
+                }
             } catch (Throwable e) {
                 exchange.setException(e);
                 originalCallback.done(true);
@@ -166,9 +175,12 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         // create internal callback which will execute the advices in reverse order when done
         AsyncCallback callback = doneSync -> {
             try {
-                for (int i = advices.size() - 1; i >= 0; i--) {
+                for (int i = advices.size() - 1, j = states.length - 1; i >= 0; i--) {
                     CamelInternalProcessorAdvice task = advices.get(i);
-                    Object state = states[i];
+                    Object state = null;
+                    if (task.hasState()) {
+                        state = states[j--];
+                    }
                     try {
                         task.after(exchange, state);
                     } catch (Throwable e) {
@@ -306,6 +318,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                 uow.afterRoute(exchange, route);
             }
         }
+
+        @Override
+        public boolean hasState() {
+            return false;
+        }
     }
 
     /**
@@ -330,6 +347,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public void after(Exchange exchange, Object state) throws Exception {
             inflightRepository.remove(exchange, id);
+        }
+
+        @Override
+        public boolean hasState() {
+            return false;
         }
     }
 
@@ -406,6 +428,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
             return false;
         }
+
+        @Override
+        public boolean hasState() {
+            return false;
+        }
     }
 
     /**
@@ -455,11 +482,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         @Override
+        public boolean hasState() {
+            return false;
+        }
+
+        @Override
         public int getOrder() {
             // we want tracer just before calling the processor
             return Ordered.LOWEST - 1;
         }
-
     }
 
     /**
@@ -757,6 +788,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public void after(Exchange exchange, Object data) throws Exception {
             // noop
         }
+
+        @Override
+        public boolean hasState() {
+            return false;
+        }
     }
 
     /**
@@ -796,6 +832,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         @Override
         public void after(Exchange exchange, Object data) throws Exception {
             tracer.traceAfterNode(processorDefinition, exchange);
+        }
+
+        @Override
+        public boolean hasState() {
+            return false;
         }
 
         private static final class TracingAfterRoute extends SynchronizationAdapter {
