@@ -154,12 +154,15 @@ The URI, `ldap:ldapserver`, references a Spring bean with the ID,
 The preceding example declares a regular Sun based LDAP `DirContext`
 that connects anonymously to a locally hosted LDAP server.
 
-NOTE: `DirContext` objects are *not* required to support concurrency by
+[NOTE]
+====
+`DirContext` objects are *not* required to support concurrency by
 contract. It is therefore important that the directory context is
 declared with the setting, `scope="prototype"`, in the `bean` definition
 or that the context supports concurrency. In the Spring framework,
 `prototype` scoped objects are instantiated each time they are looked
 up.
+====
 
 == Samples
 
