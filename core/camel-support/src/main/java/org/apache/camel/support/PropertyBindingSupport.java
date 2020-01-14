@@ -353,7 +353,7 @@ public final class PropertyBindingSupport {
             Object value = entry.getValue();
 
             // skip based on some known names
-            if ("basicPropertyBinding".equals(key)) {
+            if ("basicPropertyBinding".equals(key) || "bridgeErrorHandler".equals(key) || "lazyStartProducer".equals(key)) {
                 continue;
             }
 
