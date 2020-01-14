@@ -527,8 +527,9 @@ interceptors, properties and handlers on the CXF
 http://cxf.apache.org/docs/jax-ws-configuration.html[JAX-WS
 Configuration page].
 
-*NOTE*
- You can use cxf:properties to set the camel-cxf endpoint's dataFormat
+[NOTE]
+====
+You can use cxf:properties to set the camel-cxf endpoint's dataFormat
 and setDefaultBus properties from spring configuration file.
 
 [source,xml]
@@ -544,6 +545,7 @@ and setDefaultBus properties from spring configuration file.
      </cxf:properties>
    </cxf:cxfEndpoint>
 -------------------------------------------------------------------------
+====
 
 == Configuring the CXF Endpoints with Apache Aries Blueprint
 
