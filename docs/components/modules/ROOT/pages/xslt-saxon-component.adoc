@@ -49,7 +49,7 @@ The XSLT Saxon component supports 10 options, which are listed below.
 | Name | Description | Default | Type
 | *saxonExtensionFunctions* (advanced) | Allows you to use a custom net.sf.saxon.lib.ExtensionFunctionDefinition. You would need to add camel-saxon to the classpath. The function is looked up in the registry, where you can comma to separate multiple values to lookup. |  | String
 | *saxonConfiguration* (advanced) | To use a custom Saxon configuration |  | Configuration
-| *saxonConfiguration Properties* (advanced) | To set custom Saxon configuration properties |  | Map
+| *saxonConfigurationProperties* (advanced) | To set custom Saxon configuration properties |  | Map
 | *uriResolverFactory* (advanced) | To use a custom UriResolver which depends on a dynamic endpoint resource URI. Should not be used together with the option 'uriResolver'. |  | XsltUriResolverFactory
 | *uriResolver* (advanced) | To use a custom UriResolver. Should not be used together with the option 'uriResolverFactory'. |  | URIResolver
 | *contentCache* (producer) | Cache for the resource content (the stylesheet file) when it is loaded. If set to false Camel will reload the stylesheet file on each message processing. This is good for development. A cached stylesheet can be forced to reload at runtime via JMX using the clearCachedStylesheet operation. | true | boolean

@@ -50,8 +50,8 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.tools.apt.helper.EndpointHelper;
-import org.apache.camel.tools.apt.helper.JsonSchemaHelper;
-import org.apache.camel.tools.apt.helper.Strings;
+import org.apache.camel.tooling.util.JSonSchemaHelper;
+import org.apache.camel.tooling.util.Strings;
 import org.apache.camel.tools.apt.model.ComponentModel;
 import org.apache.camel.tools.apt.model.ComponentOption;
 import org.apache.camel.tools.apt.model.EndpointOption;
@@ -65,10 +65,10 @@ import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findJavaDoc;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.findTypeElement;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.implementsInterface;
 import static org.apache.camel.tools.apt.AnnotationProcessorHelper.processFile;
-import static org.apache.camel.tools.apt.helper.JsonSchemaHelper.sanitizeDescription;
-import static org.apache.camel.tools.apt.helper.Strings.canonicalClassName;
-import static org.apache.camel.tools.apt.helper.Strings.getOrElse;
-import static org.apache.camel.tools.apt.helper.Strings.isNullOrEmpty;
+import static org.apache.camel.tooling.util.JSonSchemaHelper.sanitizeDescription;
+import static org.apache.camel.tooling.util.Strings.canonicalClassName;
+import static org.apache.camel.tooling.util.Strings.getOrElse;
+import static org.apache.camel.tooling.util.Strings.isNullOrEmpty;
 
 /**
  * Processes all Camel {@link UriEndpoint}s and generate json schema documentation for the endpoint/component.
@@ -326,7 +326,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             boolean multiValue = false;
             boolean asPredicate = false;
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "property", required, entry.getType(), defaultValue, doc,
+            buffer.append(JSonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "property", required, entry.getType(), defaultValue, doc,
                 entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue, entry.getConfigurationClass(), entry.getConfigurationField()));
 
@@ -400,7 +400,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             boolean multiValue = false;
             boolean asPredicate = false;
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "path", required, entry.getType(), defaultValue, doc,
+            buffer.append(JSonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "path", required, entry.getType(), defaultValue, doc,
                 entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue, null, null));
 
@@ -448,7 +448,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
             boolean multiValue = entry.isMultiValue();
             boolean asPredicate = false;
 
-            buffer.append(JsonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "parameter", required, entry.getType(), defaultValue,
+            buffer.append(JSonSchemaHelper.toJson(entry.getName(), entry.getDisplayName(), "parameter", required, entry.getType(), defaultValue,
                 doc, entry.isDeprecated(), entry.getDeprecationNote(), entry.isSecret(), entry.getGroup(), entry.getLabel(), entry.isEnumType(), entry.getEnums(),
                 false, null, asPredicate, optionalPrefix, prefix, multiValue, entry.getConfigurationClass(), entry.getConfigurationField()));
 
@@ -765,7 +765,7 @@ public class EndpointAnnotationProcessor extends AbstractCamelAnnotationProcesso
                         isEnum = true;
                         String[] values = path.enums().split(",");
                         for (String val : values) {
-                            enums.add(val);
+                            enums.add(val.trim());
                         }
                     } else {
                         isEnum = fieldTypeElement != null && fieldTypeElement.getKind() == ElementKind.ENUM;

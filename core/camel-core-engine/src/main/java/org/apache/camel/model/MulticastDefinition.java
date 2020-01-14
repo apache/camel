@@ -16,12 +16,14 @@
  */
 package org.apache.camel.model;
 
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.function.Supplier;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -71,6 +73,17 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private String stopOnAggregateException;
 
     public MulticastDefinition() {
+    }
+
+    @Override
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
+    }
+
+    @XmlElementRef
+    @Override
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        super.setOutputs(outputs);
     }
 
     @Override

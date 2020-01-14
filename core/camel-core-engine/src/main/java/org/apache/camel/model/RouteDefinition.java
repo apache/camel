@@ -53,10 +53,9 @@ import org.apache.camel.spi.RoutePolicy;
 @XmlType(propOrder = {"input", "inputType", "outputType", "outputs", "routeProperties"})
 @XmlAccessorType(XmlAccessType.PROPERTY)
 // must use XmlAccessType.PROPERTY as there is some custom logic needed to be executed in the setter methods
-public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implements OutputNode, NamedRoute {
+public class RouteDefinition extends OutputDefinition<RouteDefinition> implements NamedRoute {
     private final AtomicBoolean prepared = new AtomicBoolean(false);
     private FromDefinition input;
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<>();
     private String group;
     private String streamCache;
     private String trace;
@@ -693,14 +692,9 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
      * route.
      */
     @XmlElementRef
+    @Override
     public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
-
-        if (outputs != null) {
-            for (ProcessorDefinition<?> output : outputs) {
-                configureChild(output);
-            }
-        }
+        super.setOutputs(outputs);
     }
 
     /**
@@ -853,6 +847,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Sets the error handler if one is not already set
      */
+    @XmlTransient
     public void setErrorHandlerFactoryIfNull(ErrorHandlerFactory errorHandlerFactory) {
         if (this.errorHandlerFactory == null) {
             setErrorHandlerFactory(errorHandlerFactory);
@@ -925,7 +920,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
         return new ErrorHandlerBuilderRef(ErrorHandlerReifier.DEFAULT_ERROR_HANDLER_BUILDER);
     }
 
-    @XmlTransient
     public ErrorHandlerFactory getErrorHandlerFactory() {
         if (errorHandlerFactory == null) {
             errorHandlerFactory = createErrorHandlerBuilder();
@@ -936,6 +930,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> implem
     /**
      * Sets the error handler to use with processors created by this builder
      */
+    @XmlTransient
     public void setErrorHandlerFactory(ErrorHandlerFactory errorHandlerFactory) {
         this.errorHandlerFactory = errorHandlerFactory;
     }

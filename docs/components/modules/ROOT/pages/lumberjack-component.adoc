@@ -51,7 +51,7 @@ The Lumberjack component supports 4 options, which are listed below.
 |===
 | Name | Description | Default | Type
 | *sslContextParameters* (security) | Sets the default SSL configuration to use for all the endpoints. You can also configure it directly at the endpoint level. |  | SSLContextParameters
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
 |===
