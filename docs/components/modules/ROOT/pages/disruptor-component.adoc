@@ -107,8 +107,8 @@ The Disruptor component supports 10 options, which are listed below.
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *defaultConcurrent Consumers* (consumer) | To configure the default number of concurrent consumers | 1 | int
-| *defaultMultiple Consumers* (consumer) | To configure the default value for multiple consumers | false | boolean
+| *defaultConcurrentConsumers* (consumer) | To configure the default number of concurrent consumers | 1 | int
+| *defaultMultipleConsumers* (consumer) | To configure the default value for multiple consumers | false | boolean
 | *defaultProducerType* (producer) | To configure the default value for DisruptorProducerType The default value is Multi. | Multi | DisruptorProducerType
 | *defaultWaitStrategy* (consumer) | To configure the default value for DisruptorWaitStrategy The default value is Blocking. | Blocking | DisruptorWaitStrategy
 | *defaultBlockWhenFull* (producer) | To configure the default value for block when full The default value is true. | true | boolean

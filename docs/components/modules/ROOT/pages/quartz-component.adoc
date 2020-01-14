@@ -58,7 +58,7 @@ The Quartz component supports 13 options, which are listed below.
 | Name | Description | Default | Type
 | *autoStartScheduler* (scheduler) | Whether or not the scheduler should be auto started. This options is default true | true | boolean
 | *startDelayedSeconds* (scheduler) | Seconds to wait before starting the quartz scheduler. |  | int
-| *prefixJobNameWith EndpointId* (consumer) | Whether to prefix the quartz job with the endpoint id. This option is default false. | false | boolean
+| *prefixJobNameWithEndpointId* (consumer) | Whether to prefix the quartz job with the endpoint id. This option is default false. | false | boolean
 | *enableJmx* (consumer) | Whether to enable Quartz JMX which allows to manage the Quartz scheduler from JMX. This options is default true | true | boolean
 | *propertiesRef* (consumer) | References to an existing Properties or Map to lookup in the registry to use for configuring quartz. |  | String
 | *properties* (consumer) | Properties to configure the Quartz scheduler. |  | Map

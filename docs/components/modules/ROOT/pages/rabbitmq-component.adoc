@@ -67,12 +67,12 @@ The RabbitMQ component supports 52 options, which are listed below.
 | *addresses* (common) | If this option is set, camel-rabbitmq will try to create connection based on the setting of option addresses. The addresses value is a string which looks like server1:12345, server2:12345 |  | String
 | *connectionFactory* (common) | To use a custom RabbitMQ connection factory. When this option is set, all connection options (connectionTimeout, requestedChannelMax...) set on URI are not used |  | ConnectionFactory
 | *threadPoolSize* (consumer) | The consumer uses a Thread Pool Executor with a fixed number of threads. This setting allows you to set that number of threads. | 10 | int
-| *autoDetectConnection Factory* (advanced) | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | boolean
+| *autoDetectConnectionFactory* (advanced) | Whether to auto-detect looking up RabbitMQ connection factory from the registry. When enabled and a single instance of the connection factory is found then it will be used. An explicit connection factory can be configured on the component or endpoint level which takes precedence. | true | boolean
 | *connectionTimeout* (advanced) | Connection timeout | 60000 | int
 | *requestedChannelMax* (advanced) | Connection requested channel max (max number of channels offered) | 2047 | int
 | *requestedFrameMax* (advanced) | Connection requested frame max (max size of frame offered) | 0 | int
 | *requestedHeartbeat* (advanced) | Connection requested heartbeat (heart-beat in seconds offered) | 60 | int
-| *automaticRecovery Enabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
+| *automaticRecoveryEnabled* (advanced) | Enables connection automatic recovery (uses connection implementation that performs automatic recovery when connection shutdown is not initiated by the application) |  | Boolean
 | *networkRecoveryInterval* (advanced) | Network recovery interval in milliseconds (interval used when recovering from network failure) | 5000 | Integer
 | *topologyRecoveryEnabled* (advanced) | Enables connection topology recovery (should topology recovery be performed) |  | Boolean
 | *prefetchEnabled* (consumer) | Enables the quality of service on the RabbitMQConsumer side. You need to specify the option of prefetchSize, prefetchCount, prefetchGlobal at the same time | false | boolean
@@ -82,10 +82,10 @@ The RabbitMQ component supports 52 options, which are listed below.
 | *channelPoolMaxSize* (producer) | Get maximum number of opened channel in pool | 10 | int
 | *channelPoolMaxWait* (producer) | Set the maximum number of milliseconds to wait for a channel from the pool | 1000 | long
 | *requestTimeout* (advanced) | Set timeout for waiting for a reply when using the InOut Exchange Pattern (in milliseconds) | 20000 | long
-| *requestTimeoutChecker Interval* (advanced) | Set requestTimeoutCheckerInterval for inOut exchange | 1000 | long
+| *requestTimeoutCheckerInterval* (advanced) | Set requestTimeoutCheckerInterval for inOut exchange | 1000 | long
 | *transferException* (advanced) | When true and an inOut Exchange failed on the consumer side send the caused Exception back in the response | false | boolean
-| *publisher Acknowledgements* (producer) | When true, the message will be published with publisher acknowledgements turned on | false | boolean
-| *publisher AcknowledgementsTimeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
+| *publisherAcknowledgements* (producer) | When true, the message will be published with publisher acknowledgements turned on | false | boolean
+| *publisherAcknowledgements Timeout* (producer) | The amount of time in milliseconds to wait for a basic.ack response from RabbitMQ server |  | long
 | *guaranteedDeliveries* (producer) | When true, an exception will be thrown when the message cannot be delivered (basic.return) and the message is marked as mandatory. PublisherAcknowledgement will also be activated in this case. See also publisher acknowledgements - When will messages be confirmed. | false | boolean
 | *mandatory* (producer) | This flag tells the server how to react if the message cannot be routed to a queue. If this flag is set, the server will return an unroutable message with a Return method. If this flag is zero, the server silently drops the message. If the header is present rabbitmq.MANDATORY it will override this option. | false | boolean
 | *immediate* (producer) | This flag tells the server how to react if the message cannot be routed to a queue consumer immediately. If this flag is set, the server will return an undeliverable message with a Return method. If this flag is zero, the server will queue the message, but with no guarantee that it will ever be consumed. If the header is present rabbitmq.IMMEDIATE it will override this option. | false | boolean
