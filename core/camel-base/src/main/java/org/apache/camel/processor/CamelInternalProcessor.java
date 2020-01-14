@@ -687,8 +687,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             String targetRouteId = this.routeId;
             if (targetRouteId == null) {
                 UnitOfWork uow = exchange.getUnitOfWork();
-                if (uow != null && uow.getRouteContext() != null) {
-                    targetRouteId = uow.getRouteContext().getRouteId();
+                RouteContext rc = uow != null ? uow.getRouteContext() : null;
+                if (rc != null) {
+                    targetRouteId = rc.getRouteId();
                 }
             }
 
