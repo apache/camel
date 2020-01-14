@@ -334,7 +334,10 @@ Registry. Just remember to prefix the value with #
 so Camel knows it should lookup.
 |===
 
-NOTE: Read below about using non shareable encoders/decoders.
+[NOTE]
+====
+Read below about using non shareable encoders/decoders.
+====
 
 === Using non shareable encoders or decoders
 
@@ -526,7 +529,10 @@ ChannelDownstreamHandlers) that should be added to the pipeline. Note
 that if encoders is specified then the encoder param will be ignored,
 similarly for decoders and the decoder param.
 
-NOTE: Read further above about using non shareable encoders/decoders.
+[NOTE]
+====
+Read further above about using non shareable encoders/decoders.
+====
 
 The lists of codecs need to be added to the Camel's registry so they can
 be resolved when the endpoint is created.
@@ -797,8 +803,11 @@ correlate the replies to the Camel callback that is responsible for continue pro
 To do this you need to implement `NettyCamelStateCorrelationManager` as correlation manager and configure
 it via the `correlationManager=#myManager` option.
 
-NOTE: We recommend extending the `TimeoutCorrelationManagerSupport` when you build custom correlation managers.
+[NOTE]
+====
+We recommend extending the `TimeoutCorrelationManagerSupport` when you build custom correlation managers.
 This provides support for timeout and other complexities you otherwise would need to implement as well.
+====
 
 You can find an example with the Apache Camel source code in the examples directory
 under the `camel-example-netty-custom-correlation` directory.
