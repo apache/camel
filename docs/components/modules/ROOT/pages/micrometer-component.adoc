@@ -439,9 +439,12 @@ route in order to exposes route utilization statistics using Micrometer.
 This factory can be used in Java and XML as the examples below
 demonstrates. 
 
-NOTE: Instead of using the `MicrometerRoutePolicyFactory` you can define a
+[NOTE]
+====
+Instead of using the `MicrometerRoutePolicyFactory` you can define a
 dedicated `MicrometerRoutePolicy` per route you want to instrument, in case you only
 want to instrument a few selected routes.
+====
 
 From Java you just add the factory to the `CamelContext` as shown below:
 
