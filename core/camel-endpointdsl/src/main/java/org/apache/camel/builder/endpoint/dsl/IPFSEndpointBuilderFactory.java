@@ -164,13 +164,7 @@ public interface IPFSEndpointBuilderFactory {
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-ipfs
      * 
-     * Syntax: <code>ipfs:ipfsHost:ipfsPort/ipfsCmd</code>
-     * 
-     * Path parameter: ipfsHost (required)
-     * The ipfs host
-     * 
-     * Path parameter: ipfsPort (required)
-     * The ipfs port
+     * Syntax: <code>ipfs:ipfsCmd</code>
      * 
      * Path parameter: ipfsCmd (required)
      * The ipfs command
