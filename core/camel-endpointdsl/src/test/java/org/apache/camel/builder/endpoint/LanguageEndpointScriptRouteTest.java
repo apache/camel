@@ -20,6 +20,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
+import static org.apache.camel.builder.endpoint.dsl.DirectEndpointBuilderFactory.direct;
+
 public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
 
     @Test
@@ -27,6 +29,18 @@ public class LanguageEndpointScriptRouteTest extends ContextTestSupport {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
         template.sendBody("direct:start", "World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testLanguageFluent() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        context.createFluentProducerTemplate()
+            .to(direct("start"))
+            .withBody("World")
+            .send();
 
         assertMockEndpointsSatisfied();
     }
