@@ -794,22 +794,24 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * URL of the Confluent Platform schema registry servers to use. 
-     * The format is host1:port1,host2:port2. 
-     * This is known as schema.registry.url in the Confluent Platform documentation.
-     * This option is only available in the Confluent Platform (not standard Apache Kafka)
+     * URL of the Confluent Platform schema registry servers to use. The format
+     * is host1:port1,host2:port2. This is known as schema.registry.url in the
+     * Confluent Platform documentation. This option is only available in the
+     * Confluent Platform (not standard Apache Kafka)
      */
     public void setSchemaRegistryURL(String schemaRegistryURL) {
         this.schemaRegistryURL = schemaRegistryURL;
     }
-    
+
     public boolean isSpecificAvroReader() {
         return specificAvroReader;
     }
-    
+
     /**
-     * This enables the use of a specific Avro reader for use with the Confluent Platform schema registry and the io.confluent.kafka.serializers.KafkaAvroDeserializer.
-     * This option is only available in the Confluent Platform (not standard Apache Kafka)
+     * This enables the use of a specific Avro reader for use with the Confluent
+     * Platform schema registry and the
+     * io.confluent.kafka.serializers.KafkaAvroDeserializer. This option is only
+     * available in the Confluent Platform (not standard Apache Kafka)
      */
     public void setSpecificAvroReader(boolean specificAvroReader) {
         this.specificAvroReader = specificAvroReader;
@@ -957,7 +959,8 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
      * and the first rule that matches a principal name is used to map it to a
      * short name. Any later rules in the list are ignored. By default,
      * principal names of the form {username}/{hostname}@{REALM} are mapped to
-     * {username}. For more details on the format please see the security authorization and acls documentation..
+     * {username}. For more details on the format please see the security
+     * authorization and acls documentation..
      * <p/>
      * Multiple values can be separated by comma
      */
@@ -1770,9 +1773,11 @@ public class KafkaConfiguration implements Cloneable, HeaderFilterStrategyAware 
     }
 
     /**
-     * Sets additional properties for either kafka consumer or kafka producer in case they can't be set directly on the camel configurations
-     * (e.g: new Kafka properties that are not reflected yet in Camel configurations), the properties have to be prefixed with
-     * `additionalProperties.`. E.g: `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
+     * Sets additional properties for either kafka consumer or kafka producer in
+     * case they can't be set directly on the camel configurations (e.g: new
+     * Kafka properties that are not reflected yet in Camel configurations), the
+     * properties have to be prefixed with `additionalProperties.`. E.g:
+     * `additionalProperties.transactional.id=12345&additionalProperties.schema.registry.url=http://localhost:8811/avro`
      */
     public void setAdditionalProperties(Map<String, Object> additionalProperties) {
         this.additionalProperties = additionalProperties;

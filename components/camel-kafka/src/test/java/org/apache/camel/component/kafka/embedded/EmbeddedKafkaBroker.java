@@ -27,7 +27,6 @@ import kafka.metrics.KafkaMetricsReporter;
 import kafka.server.KafkaConfig;
 import kafka.server.KafkaServer;
 import kafka.zk.KafkaZkClient;
-
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.kafka.clients.CommonClientConfigs;
 import org.apache.kafka.clients.admin.Admin;
@@ -90,11 +89,10 @@ public class EmbeddedKafkaBroker extends ExternalResource {
         kafkaServer = startBroker(properties);
     }
 
-
     private KafkaServer startBroker(Properties props) {
         List<KafkaMetricsReporter> kmrList = new ArrayList<>();
         Buffer<KafkaMetricsReporter> metricsList = scala.collection.JavaConversions.asScalaBuffer(kmrList);
-        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String>empty(), metricsList);
+        KafkaServer server = new KafkaServer(new KafkaConfig(props), new SystemTime(), Option.<String> empty(), metricsList);
         server.startup();
         return server;
     }

@@ -33,15 +33,10 @@ import org.slf4j.LoggerFactory;
 public class BaseEmbeddedKafkaTest extends CamelTestSupport {
 
     @ClassRule
-    public static EmbeddedZookeeper zookeeper = new EmbeddedZookeeper(
-            AvailablePortFinder.getNextAvailable());
+    public static EmbeddedZookeeper zookeeper = new EmbeddedZookeeper(AvailablePortFinder.getNextAvailable());
 
     @ClassRule
-    public static EmbeddedKafkaBroker kafkaBroker =
-            new EmbeddedKafkaBroker(0,
-                    AvailablePortFinder.getNextAvailable(),
-                    zookeeper.getConnection(),
-                    new Properties());
+    public static EmbeddedKafkaBroker kafkaBroker = new EmbeddedKafkaBroker(0, AvailablePortFinder.getNextAvailable(), zookeeper.getConnection(), new Properties());
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseEmbeddedKafkaTest.class);
 

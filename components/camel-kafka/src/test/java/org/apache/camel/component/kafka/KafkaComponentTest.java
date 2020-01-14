@@ -105,7 +105,7 @@ public class KafkaComponentTest extends CamelTestSupport {
 
         String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566";
 
-        KafkaEndpoint endpoint = (KafkaEndpoint) context.getComponent("kafka").createEndpoint(uri, params);
+        KafkaEndpoint endpoint = (KafkaEndpoint)context.getComponent("kafka").createEndpoint(uri, params);
 
         assertEquals("mytopic", endpoint.getConfiguration().getTopic());
         assertEquals("1", endpoint.getConfiguration().getRequestRequiredAcks());
@@ -160,7 +160,7 @@ public class KafkaComponentTest extends CamelTestSupport {
 
         String uri = "kafka:mytopic?brokers=dev1:12345,dev2:12566";
 
-        KafkaEndpoint endpoint = (KafkaEndpoint) context.getComponent("kafka").createEndpoint(uri, params);
+        KafkaEndpoint endpoint = (KafkaEndpoint)context.getComponent("kafka").createEndpoint(uri, params);
         assertEquals(endpoint.getConfiguration().createProducerProperties().keySet(), getProducerKeys().keySet());
     }
 
@@ -255,10 +255,10 @@ public class KafkaComponentTest extends CamelTestSupport {
     public void testCreateProducerConfigTruststorePassword() throws Exception {
         KeyStoreParameters keyStoreParameters = new KeyStoreParameters();
         keyStoreParameters.setPassword("my-password");
-    
+
         TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
         trustManagersParameters.setKeyStore(keyStoreParameters);
-    
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setTrustManagers(trustManagersParameters);
 
@@ -266,7 +266,7 @@ public class KafkaComponentTest extends CamelTestSupport {
         kcfg.setSslContextParameters(sslContextParameters);
 
         Properties props = kcfg.createProducerProperties();
-    
+
         assertEquals("my-password", props.getProperty("ssl.truststore.password"));
         assertNull(props.getProperty("ssl.keystore.password"));
     }
@@ -275,10 +275,10 @@ public class KafkaComponentTest extends CamelTestSupport {
     public void testCreateConsumerConfigTruststorePassword() throws Exception {
         KeyStoreParameters keyStoreParameters = new KeyStoreParameters();
         keyStoreParameters.setPassword("my-password");
-    
+
         TrustManagersParameters trustManagersParameters = new TrustManagersParameters();
         trustManagersParameters.setKeyStore(keyStoreParameters);
-    
+
         SSLContextParameters sslContextParameters = new SSLContextParameters();
         sslContextParameters.setTrustManagers(trustManagersParameters);
 
@@ -286,7 +286,7 @@ public class KafkaComponentTest extends CamelTestSupport {
         kcfg.setSslContextParameters(sslContextParameters);
 
         Properties props = kcfg.createConsumerProperties();
-    
+
         assertEquals("my-password", props.getProperty("ssl.truststore.password"));
         assertNull(props.getProperty("ssl.keystore.password"));
     }

@@ -36,7 +36,7 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
     public static final String TOPIC = "test";
 
     @EndpointInject("kafka:" + TOPIC
-            + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false&allowManualCommit=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+                    + "?groupId=group1&sessionTimeoutMs=30000&autoCommitEnable=false&allowManualCommit=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -63,13 +63,11 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
 
             @Override
             public void configure() throws Exception {
-                from(from).routeId("foo")
-                    .to(to)
-                    .process(e -> {
-                        KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
-                        assertNotNull(manual);
-                        manual.commitSync();
-                    });
+                from(from).routeId("foo").to(to).process(e -> {
+                    KafkaManualCommit manual = e.getIn().getHeader(KafkaConstants.MANUAL_COMMIT, KafkaManualCommit.class);
+                    assertNotNull(manual);
+                    manual.commitSync();
+                });
             }
         };
     }
@@ -78,7 +76,8 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
     public void kafkaManualCommit() throws InterruptedException, IOException {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
-        // The LAST_RECORD_BEFORE_COMMIT header should include a value as we use manual commit
+        // The LAST_RECORD_BEFORE_COMMIT header should include a value as we use
+        // manual commit
         to.allMessages().header(KafkaConstants.LAST_RECORD_BEFORE_COMMIT).isNotNull();
 
         for (int k = 0; k < 5; k++) {
@@ -93,4 +92,3 @@ public class KafkaConsumerManualCommitTest extends BaseEmbeddedKafkaTest {
     }
 
 }
-
