@@ -325,9 +325,13 @@ The following algorithm is used to determine what HTTP method should be used: +
 == How to get access to HttpServletRequest and HttpServletResponse
 
 You can get access to these two using the Camel type converter system
-using +
- *NOTE* You can get the request and response not just from the processor
+using 
+
+[NOTE]
+====
+You can get the request and response not just from the processor
 after the camel-jetty or camel-cxf endpoint.
+====
 
 [source,java]
 ----------------------------------------------------------------------------------
