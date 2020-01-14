@@ -328,10 +328,14 @@ Component is intelligent enough to pick it up automatically.
 <bean name="logFormatter" class="com.xyz.MyCustomExchangeFormatter" />
 -----
 
-NOTE: the `ExchangeFormatter` gets applied to *all Log endpoints within
+[NOTE]
+====
+The `ExchangeFormatter` gets applied to *all Log endpoints within
 that Camel Context*. If you need different ExchangeFormatters for
 different endpoints, just instantiate the LogComponent as many times as
 needed, and use the relevant bean name as the endpoint prefix.
+====
+
 
 When using a custom log formatter, you
 can specify parameters in the log uri, which gets configured on the
