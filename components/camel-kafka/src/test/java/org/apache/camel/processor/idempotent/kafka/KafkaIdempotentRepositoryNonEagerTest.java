@@ -38,7 +38,7 @@ public class KafkaIdempotentRepositoryNonEagerTest extends CamelTestSupport {
 
     @Rule
     public EmbeddedKafkaBroker kafkaBroker = new EmbeddedKafkaBroker(0, zookeeper.getConnection());
-    
+
     @BindToRegistry("kafkaIdempotentRepository")
     private KafkaIdempotentRepository kafkaIdempotentRepository = new KafkaIdempotentRepository("TEST_IDEM", kafkaBroker.getBrokerList());
 
@@ -53,13 +53,7 @@ public class KafkaIdempotentRepositoryNonEagerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:in")
-                    .to("mock:before")
-                    .idempotentConsumer(header("id"))
-                            .messageIdRepositoryRef("kafkaIdempotentRepository")
-                            .eager(false)
-                        .to("mock:out")
-                    .end();
+                from("direct:in").to("mock:before").idempotentConsumer(header("id")).messageIdRepositoryRef("kafkaIdempotentRepository").eager(false).to("mock:out").end();
             }
         };
     }
@@ -93,9 +87,14 @@ public class KafkaIdempotentRepositoryNonEagerTest extends CamelTestSupport {
             }
         }
 
-        assertEquals(4, kafkaIdempotentRepository.getDuplicateCount()); // id{0} is not a duplicate
+        assertEquals(4, kafkaIdempotentRepository.getDuplicateCount()); // id{0}
+                                                                        // is
+                                                                        // not a
+                                                                        // duplicate
 
-        assertEquals(6, mockOut.getReceivedCounter()); // id{0} goes through the idempotency check twice
+        assertEquals(6, mockOut.getReceivedCounter()); // id{0} goes through the
+                                                       // idempotency check
+                                                       // twice
         assertEquals(10, mockBefore.getReceivedCounter());
     }
 

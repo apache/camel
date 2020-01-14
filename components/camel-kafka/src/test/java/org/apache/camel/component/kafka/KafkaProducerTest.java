@@ -232,7 +232,7 @@ public class KafkaProducerTest {
         verifySendMessage("sometopic", "someKey");
         assertRecordMetadataExists();
     }
-    
+
     @Test
     public void processRequiresTopicInConfiguration() throws Exception {
         endpoint.getConfiguration().setTopic("configTopic");
@@ -391,32 +391,29 @@ public class KafkaProducerTest {
     protected void verifySendMessages(final List<String> expectedTopics) {
         final ArgumentCaptor<ProducerRecord> captor = ArgumentCaptor.forClass(ProducerRecord.class);
         Mockito.verify(producer.getKafkaProducer(), Mockito.atLeast(expectedTopics.size())).send(captor.capture());
-        final List<String> actualTopics = captor.getAllValues()
-                .stream()
-                .map(ProducerRecord::topic)
-                .collect(Collectors.toList());
+        final List<String> actualTopics = captor.getAllValues().stream().map(ProducerRecord::topic).collect(Collectors.toList());
 
         assertEquals(expectedTopics, actualTopics);
     }
 
     private void assertRecordMetadataExists() {
-        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>)in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
         assertTrue(recordMetaData1 != null);
         assertEquals("Expected one recordMetaData", recordMetaData1.size(), 1);
         assertTrue(recordMetaData1.get(0) != null);
     }
 
     private void assertRecordMetadataExists(final int numMetadata) {
-        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>) in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+        List<RecordMetadata> recordMetaData1 = (List<RecordMetadata>)in.getHeader(KafkaConstants.KAFKA_RECORDMETA);
         assertTrue(recordMetaData1 != null);
         assertEquals("Expected one recordMetaData", recordMetaData1.size(), numMetadata);
         assertTrue(recordMetaData1.get(0) != null);
     }
 
     private void assertRecordMetadataExistsForEachAggregatedExchange() {
-        List<Exchange> exchanges = (List<Exchange>) in.getBody();
+        List<Exchange> exchanges = (List<Exchange>)in.getBody();
         for (Exchange ex : exchanges) {
-            List<RecordMetadata> recordMetaData = (List<RecordMetadata>) ex.getMessage().getHeader(KafkaConstants.KAFKA_RECORDMETA);
+            List<RecordMetadata> recordMetaData = (List<RecordMetadata>)ex.getMessage().getHeader(KafkaConstants.KAFKA_RECORDMETA);
             assertTrue(recordMetaData != null);
             assertEquals("Expected one recordMetaData", recordMetaData.size(), 1);
             assertTrue(recordMetaData.get(0) != null);
@@ -424,9 +421,9 @@ public class KafkaProducerTest {
     }
 
     private void assertRecordMetadataExistsForEachAggregatedMessage() {
-        List<Message> messages = (List<Message>) in.getBody();
+        List<Message> messages = (List<Message>)in.getBody();
         for (Message msg : messages) {
-            List<RecordMetadata> recordMetaData = (List<RecordMetadata>) msg.getHeader(KafkaConstants.KAFKA_RECORDMETA);
+            List<RecordMetadata> recordMetaData = (List<RecordMetadata>)msg.getHeader(KafkaConstants.KAFKA_RECORDMETA);
             assertTrue(recordMetaData != null);
             assertEquals("Expected one recordMetaData", recordMetaData.size(), 1);
             assertTrue(recordMetaData.get(0) != null);
@@ -436,7 +433,7 @@ public class KafkaProducerTest {
     private Exchange aggregateExchanges(final List<Exchange> exchangesToAggregate, final AggregationStrategy strategy) {
         Exchange exchangeHolder = new DefaultExchange(camelContext);
 
-        for (final Exchange innerExchange: exchangesToAggregate) {
+        for (final Exchange innerExchange : exchangesToAggregate) {
             exchangeHolder = strategy.aggregate(exchangeHolder, innerExchange);
         }
 

@@ -53,11 +53,7 @@ public class KafkaIdempotentRepositoryEagerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:in")
-                    .to("mock:before")
-                    .idempotentConsumer(header("id")).messageIdRepositoryRef("kafkaIdempotentRepository")
-                        .to("mock:out")
-                    .end();
+                from("direct:in").to("mock:before").idempotentConsumer(header("id")).messageIdRepositoryRef("kafkaIdempotentRepository").to("mock:out").end();
             }
         };
     }
@@ -91,9 +87,14 @@ public class KafkaIdempotentRepositoryEagerTest extends CamelTestSupport {
             }
         }
 
-        assertEquals(4, kafkaIdempotentRepository.getDuplicateCount()); // id{0} is not a duplicate
+        assertEquals(4, kafkaIdempotentRepository.getDuplicateCount()); // id{0}
+                                                                        // is
+                                                                        // not a
+                                                                        // duplicate
 
-        assertEquals(6, mockOut.getReceivedCounter()); // id{0} goes through the idempotency check twice
+        assertEquals(6, mockOut.getReceivedCounter()); // id{0} goes through the
+                                                       // idempotency check
+                                                       // twice
         assertEquals(10, mockBefore.getReceivedCounter());
     }
 

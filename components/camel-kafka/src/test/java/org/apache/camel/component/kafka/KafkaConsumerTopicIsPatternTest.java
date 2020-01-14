@@ -33,9 +33,8 @@ public class KafkaConsumerTopicIsPatternTest extends BaseEmbeddedKafkaTest {
     public static final String TOPIC = "test";
     public static final String TOPIC_PATTERN = "t\\w\\wt";
 
-    @EndpointInject("kafka:" + TOPIC_PATTERN
-        + "?topicIsPattern=true&groupId=group1&autoOffsetReset=earliest"
-        + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
+    @EndpointInject("kafka:" + TOPIC_PATTERN + "?topicIsPattern=true&groupId=group1&autoOffsetReset=earliest"
+                    + "&autoCommitIntervalMs=1000&sessionTimeoutMs=30000&autoCommitEnable=true&interceptorClasses=org.apache.camel.component.kafka.MockConsumerInterceptor")
     private Endpoint from;
 
     @EndpointInject("mock:result")
@@ -73,7 +72,8 @@ public class KafkaConsumerTopicIsPatternTest extends BaseEmbeddedKafkaTest {
         to.expectedMessageCount(5);
         to.expectedBodiesReceivedInAnyOrder("message-0", "message-1", "message-2", "message-3", "message-4");
         to.allMessages().header(KafkaConstants.TOPIC).isEqualTo("test");
-        // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any exchange because autoCommitEnable=true
+        // The LAST_RECORD_BEFORE_COMMIT header should not be configured on any
+        // exchange because autoCommitEnable=true
         to.expectedHeaderValuesReceivedInAnyOrder(KafkaConstants.LAST_RECORD_BEFORE_COMMIT, null, null, null, null, null);
 
         for (int k = 0; k < 5; k++) {
@@ -88,6 +88,3 @@ public class KafkaConsumerTopicIsPatternTest extends BaseEmbeddedKafkaTest {
     }
 
 }
-
-
-
