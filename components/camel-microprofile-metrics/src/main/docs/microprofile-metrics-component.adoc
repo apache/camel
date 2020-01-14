@@ -416,9 +416,12 @@ from("direct:in")
 This factory allows to add a RoutePolicy for each
 route and exposes route utilization statistics using MicroProfile metrics.
 
-NOTE: Instead of using the MicroProfileMetricsRoutePolicyFactory you can define a
+[NOTE]
+====
+Instead of using the MicroProfileMetricsRoutePolicyFactory you can define a
 MicroProfileMetricsRoutePolicy per route you want to instrument, in case you only
 want to instrument a few selected routes.
+====
 
 Add the factory to the `CamelContext` as shown below:
 
