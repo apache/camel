@@ -79,8 +79,11 @@ You can specify a default value to use if
 a property with the key does not exists, eg `file.url:/some/path` where
 the default value is the text after the colon (eg /some/path).
 
-NOTE: Do not use colon in the property key. The colon is used as a separator
+[NOTE]
+====
+Do not use colon in the property key. The colon is used as a separator
 token when you are providing a default value.
+====
 
 == Defining location
 
@@ -128,9 +131,12 @@ location=file:${env:APP_HOME}/etc/foo.properties
 
 Where `APP_HOME` is an OS environment.
 
-NOTE: Some OS'es (such as Linux) do not support dashes in environment variable names,
+[NOTE]
+====
+Some OS'es (such as Linux) do not support dashes in environment variable names,
 so here we are using `APP_HOME`. But if you specify `APP-HOME` then Camel 3 will automatic lookup
 the value as `APP_HOME` (with underscore) as fallback.
+====
 
 You can have multiple placeholders in the same location, such as:
 
@@ -760,7 +766,10 @@ placeholder. This is best illustrated in the example code below
 </camelContext>
 ----
 
-NOTE: The location attribute (on propertyPlaceholder tag) is not mandatory
+[NOTE]
+====
+The location attribute (on propertyPlaceholder tag) is not mandatory
+====
 
 Here we have a Camel XML route where we have defined the
 `<propertyPlaceholder>` to use a custom function, which we refer to be the
