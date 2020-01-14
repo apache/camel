@@ -14,26 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.builder;
+package org.apache.camel;
 
-import org.apache.camel.EndpointConsumerResolver;
-
-/**
- * Type-safe endpoint DSL for building consumer endpoints.
- *
- * @see EndpointProducerBuilder
- */
-public interface EndpointConsumerBuilder extends EndpointConsumerResolver{
+public interface EndpointProducerResolver {
     /**
-     * Builds the url of this endpoint. This API is only intended for Camel
-     * internally.
+     * Resolves this object as an endpoint.
+     *
+     * @param context the camel context
+     * @return a built {@link Endpoint}
+     * @throws NoSuchEndpointException is thrown if the endpoint
      */
-    String getUri();
-
-    /**
-     * Adds an option to this endpoint. This API is only intended for Camel
-     * internally.
-     */
-    void doSetProperty(String name, Object value);
-
+    Endpoint resolve(CamelContext context) throws NoSuchEndpointException;
 }
