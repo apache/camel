@@ -63,7 +63,7 @@ with the following path and query parameters:
 [width="100%",cols="2,5,^1,2",options="header"]
 |===
 | Name | Description | Default | Type
-| *websocketPathOrUri* | If a path (/foo) it will deploy locally the endpoint, if an uri it will connect to the corresponding server |  | String
+| *uri* | If a schemeless URI path is provided, a ServerEndpoint is deployed under that path. Else if the URI is prefixed with the 'ws://' scheme, then a connection is established to the corresponding server |  | URI
 |===
 
 
