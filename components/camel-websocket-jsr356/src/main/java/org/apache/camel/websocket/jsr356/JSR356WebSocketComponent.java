@@ -16,50 +16,30 @@
  */
 package org.apache.camel.websocket.jsr356;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.ByteBuffer;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import javax.websocket.RemoteEndpoint;
-import javax.websocket.Session;
 import javax.websocket.server.ServerContainer;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.spi.annotations.Component;
 import org.apache.camel.support.DefaultComponent;
-import org.apache.camel.util.IOHelper;
 
 import static java.util.Optional.ofNullable;
 
 @Component("websocket-jsr356")
 public class JSR356WebSocketComponent extends DefaultComponent {
-    // didn't find a better way to handle that unless we can assume the
-    // CamelContext is in the ServletContext
+
     private static final Map<String, ContextBag> SERVER_CONTAINERS = new ConcurrentHashMap<>();
 
-    protected int sessionCount;
-
     @Override
-    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) {
-        return new JSR356Endpoint(this, uri);
-    }
-
-    public static void sendMessage(final Session session, final Object message) throws IOException {
-        final RemoteEndpoint.Basic basicRemote = session.getBasicRemote(); // todo: handle async?
-        synchronized (session) {
-            if (String.class.isInstance(message)) {
-                basicRemote.sendText(String.valueOf(message));
-            } else if (ByteBuffer.class.isInstance(message)) {
-                basicRemote.sendBinary(ByteBuffer.class.cast(message));
-            } else if (InputStream.class.isInstance(message)) {
-                IOHelper.copy(InputStream.class.cast(message), basicRemote.getSendStream());
-            } else {
-                throw new IllegalArgumentException("Unsupported input: " + message);
-            }
-        }
+    protected Endpoint createEndpoint(final String uri, final String remaining, final Map<String, Object> parameters) throws Exception {
+        JSR356Endpoint endpoint = new JSR356Endpoint(this, uri);
+        endpoint.setUri(new URI(remaining));
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     public static void registerServer(final String contextPath, final ServerContainer container) {
@@ -71,8 +51,9 @@ public class JSR356WebSocketComponent extends DefaultComponent {
     }
 
     public static ContextBag getContext(final String context) {
-        return ofNullable(context).map(SERVER_CONTAINERS::get)
-            .orElseGet(() -> SERVER_CONTAINERS.size() == 1 ? SERVER_CONTAINERS.values().iterator().next() : SERVER_CONTAINERS.get(""));
+        return ofNullable(context)
+                .map(SERVER_CONTAINERS::get)
+                .orElseGet(() -> SERVER_CONTAINERS.size() == 1 ? SERVER_CONTAINERS.values().iterator().next() : SERVER_CONTAINERS.get(""));
     }
 
     public static final class ContextBag {
