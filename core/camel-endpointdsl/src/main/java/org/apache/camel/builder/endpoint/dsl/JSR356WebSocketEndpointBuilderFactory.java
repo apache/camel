@@ -490,9 +490,10 @@ public interface JSR356WebSocketEndpointBuilderFactory {
      * 
      * Syntax: <code>websocket-jsr356:websocketPathOrUri</code>
      * 
-     * Path parameter: websocketPathOrUri
-     * If a path (/foo) it will deploy locally the endpoint, if an uri it will
-     * connect to the corresponding server
+     * Path parameter: uri
+     * If a schemeless URI path is provided, a ServerEndpoint is deployed under
+     * that path. Else if the URI is prefixed with the 'ws://' scheme, then a
+     * connection is established to the corresponding server
      */
     default JSR356WebSocketEndpointBuilder websocketJsr356(String path) {
         class JSR356WebSocketEndpointBuilderImpl extends AbstractEndpointBuilder implements JSR356WebSocketEndpointBuilder, AdvancedJSR356WebSocketEndpointBuilder {
