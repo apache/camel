@@ -35,6 +35,18 @@ public class LanguageEndpointStaticTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testLanguageFluent() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
+
+        context.createFluentProducerTemplate()
+            .to(direct("start"))
+            .withBody("World")
+            .send();
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
