@@ -846,6 +846,36 @@ from("file://inbox?move=backup/${date:now:yyyyMMdd}/${file:name}").to("...");
 
 See xref:manual::file-language.adoc[File Language] for more samples.
 
+== Avoiding file auto-deletion; Read-Write access enabling and Reading the file inside a route
+
+The file component in Camel deletes the file in use after the operation to be
+performed is successfully completed.
+In cases where you want to read a file without deleting the file,
+<<File3-IdempotentConsumer, you can avoid the autodeletion of the file by setting the `noop=true` option>>.
+Using .pollEnrich() enables you to read a specific file inside a route, where the filename can be defined using 
+fileName=fileName.txt attribute.
+
+[source,java]
+----
+from("direct:fileRead").pollEnrich("file://inbox?fileName=fileName.txt&noop=true").to("...");
+----
+
+However, this attribute also enables the idempotent consumer feature.
+Because of which the files that are already processed will be skipped.
+This restricts the number of operations to be performed on the file, making it a single use file.
+The above scenario is useful for usecases which involve read-only usage of files.
+To enable reuse of this file you can disable the auto-deletion feature explicitly.
+
+[source,java]
+----
+from("direct:fileWrite").to("file://inbox?fileName=fileName.txt&noop=true&idempotent=false");
+----
+
+In the above noop=true will avoid auto-deletion of the file 
+and idempotent=false will disable the idempotent consumer feature.
+Hence, making the file available for read-write operations by persisting the file in the mentioned path.
+
+[[File3-IdempotentConsumer]]
 == Avoiding reading the same file more than once (idempotent consumer)
 
 Camel supports Idempotent Consumer
