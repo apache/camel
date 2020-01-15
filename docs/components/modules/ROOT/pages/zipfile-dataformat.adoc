@@ -149,7 +149,9 @@ from("file:src/test/resources/org/apache/camel/dataformat/zipfile?delay=1000&noo
 == Aggregate
 
 [NOTE]
+====
 Please note that this aggregation strategy requires eager completion check to work properly.
+====
 
 In this example we aggregate all text files found in the input directory
 into a single Zip file that is stored in the output directory. 

@@ -14,8 +14,11 @@ The compression capability is quite useful when you deal with large XML
 and Text based payloads or when you read messages previously comressed
 using `gzip` tool.
 
-NOTE: This dataformat is not for working with gzip files such as uncompressing and building gzip files.
+[NOTE]
+====
+This dataformat is not for working with gzip files such as uncompressing and building gzip files.
 Instead use the zipfile dataformat.
+====
 
 == Options
 
