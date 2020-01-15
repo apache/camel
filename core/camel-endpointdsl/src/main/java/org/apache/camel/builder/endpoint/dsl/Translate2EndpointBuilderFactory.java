@@ -372,7 +372,7 @@ public interface Translate2EndpointBuilderFactory {
      * Path parameter: label (required)
      * Logical name
      */
-    default Translate2EndpointBuilder aws2Translate(String path) {
+    static Translate2EndpointBuilder aws2Translate(String path) {
         class Translate2EndpointBuilderImpl extends AbstractEndpointBuilder implements Translate2EndpointBuilder, AdvancedTranslate2EndpointBuilder {
             public Translate2EndpointBuilderImpl(String path) {
                 super("aws2-translate", path);
