@@ -64,9 +64,12 @@ the option exists to override those by specifying them on the component
 or on the endpoint. Typically you would just need to override the 
 `host` or `basePath` if those differ from the specification.
 
-NOTE: The `host` parameter should contain the absolute URI containing
+[NOTE]
+====
+The `host` parameter should contain the absolute URI containing
 scheme, hostname and port number, for instance:
 `\https://api.example.com`
+====
 
 With `componentName` you specify what component is used to perform the
 requests, this named component needs to be present in the Camel context
@@ -227,7 +230,9 @@ public Component petstore(CamelContext camelContext, UndertowComponent undertow)
 }
 ----
 
-NOTE: Support in Camel for Spring Boot will auto create the 
+[NOTE]
+====
+Support in Camel for Spring Boot will auto create the 
 `UndertowComponent` Spring bean, and you can configure it using
 `application.properties` (or `application.yml`) using prefix
 `camel.component.undertow.`. We are defining the `petstore`
@@ -235,6 +240,7 @@ component here in order to have a named component in the Camel context
 that we can use to interact with the PetStore REST API, if this is the
 only `rest-openapi` component used we might configure it in the same
 manner (using `application.properties`).
+====
 
 Now in our application we can simply use the `ProducerTemplate` to
 invoke PetStore REST methods:
