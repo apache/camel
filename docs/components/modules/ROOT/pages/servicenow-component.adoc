@@ -315,7 +315,10 @@ The component supports 59 options, which are listed below.
 | CREATE | POST | /api/now/import/\{table_name\}
 |===
 
-NOTE: http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API Documentation]
+[NOTE]
+====
+http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji REST API Documentation]
+====
 
 [[ServiceNow-Helsinki]]
 [cols="10%a,10%a,10%a,10%a,60%a", options="header"]
@@ -373,7 +376,10 @@ NOTE: http://wiki.servicenow.com/index.php?title=REST_API#Available_APIs[Fuji RE
 
 |===
 
-NOTE: https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
+[NOTE]
+====
+https://docs.servicenow.com/bundle/helsinki-servicenow-platform/page/integrate/inbound-rest/reference/r_RESTResources.html[Helsinki REST API Documentation]
+====
 
 == Usage examples:
  
