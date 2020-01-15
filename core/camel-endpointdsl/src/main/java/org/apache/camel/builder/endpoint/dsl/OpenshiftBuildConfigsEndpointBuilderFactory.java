@@ -430,7 +430,7 @@ public interface OpenshiftBuildConfigsEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
+    static OpenshiftBuildConfigsEndpointBuilder openshiftBuildConfigs(
             String path) {
         class OpenshiftBuildConfigsEndpointBuilderImpl extends AbstractEndpointBuilder implements OpenshiftBuildConfigsEndpointBuilder, AdvancedOpenshiftBuildConfigsEndpointBuilder {
             public OpenshiftBuildConfigsEndpointBuilderImpl(String path) {

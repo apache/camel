@@ -433,7 +433,7 @@ public interface KubernetesResourcesQuotaEndpointBuilderFactory {
      * Path parameter: masterUrl (required)
      * Kubernetes Master url
      */
-    KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
+    static KubernetesResourcesQuotaEndpointBuilder kubernetesResourcesQuota(
             String path) {
         class KubernetesResourcesQuotaEndpointBuilderImpl extends AbstractEndpointBuilder implements KubernetesResourcesQuotaEndpointBuilder, AdvancedKubernetesResourcesQuotaEndpointBuilder {
             public KubernetesResourcesQuotaEndpointBuilderImpl(String path) {

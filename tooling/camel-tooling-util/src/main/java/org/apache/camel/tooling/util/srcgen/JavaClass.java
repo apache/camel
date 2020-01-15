@@ -482,6 +482,9 @@ public class JavaClass {
                 } else if (method.isPrivate) {
                     sb.append("private ");
                 }
+                if (method.isStatic) {
+                    sb.append("static ");
+                }
                 if (method.isDefault) {
                     sb.append("default ");
                 }
