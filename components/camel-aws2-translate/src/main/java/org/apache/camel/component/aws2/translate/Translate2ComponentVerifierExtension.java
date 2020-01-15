@@ -22,7 +22,6 @@ import org.apache.camel.component.extension.verifier.DefaultComponentVerifierExt
 import org.apache.camel.component.extension.verifier.ResultBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorBuilder;
 import org.apache.camel.component.extension.verifier.ResultErrorHelper;
-
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -73,7 +72,7 @@ public class Translate2ComponentVerifierExtension extends DefaultComponentVerifi
             TranslateClient client = clientBuilder.credentialsProvider(credentialsProvider).region(Region.of(configuration.getRegion())).build();
             TranslateTextRequest req = TranslateTextRequest.builder().sourceLanguageCode("it").targetLanguageCode("en").text("ciao").build();
             client.translateText(req);
-		} catch (SdkClientException e) {
+        } catch (SdkClientException e) {
             ResultErrorBuilder errorBuilder = ResultErrorBuilder.withCodeAndDescription(VerificationError.StandardCode.AUTHENTICATION, e.getMessage())
                 .detail("aws_translate_exception_message", e.getMessage()).detail(VerificationError.ExceptionAttribute.EXCEPTION_CLASS, e.getClass().getName())
                 .detail(VerificationError.ExceptionAttribute.EXCEPTION_INSTANCE, e);

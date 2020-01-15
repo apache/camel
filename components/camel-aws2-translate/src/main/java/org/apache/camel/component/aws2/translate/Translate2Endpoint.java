@@ -26,7 +26,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ScheduledPollEndpoint;
 import org.apache.camel.util.ObjectHelper;
-
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.http.apache.ApacheHttpClient;
@@ -89,20 +88,18 @@ public class Translate2Endpoint extends ScheduledPollEndpoint {
     TranslateClient createTranslateClient() {
         TranslateClient client = null;
         TranslateClientBuilder clientBuilder = TranslateClient.builder();
-    	ProxyConfiguration.Builder proxyConfig = null;
-    	ApacheHttpClient.Builder httpClientBuilder = null;
+        ProxyConfiguration.Builder proxyConfig = null;
+        ApacheHttpClient.Builder httpClientBuilder = null;
         boolean isClientConfigFound = false;
         if (ObjectHelper.isNotEmpty(configuration.getProxyHost()) && ObjectHelper.isNotEmpty(configuration.getProxyPort())) {
-        	proxyConfig = ProxyConfiguration.builder();
-        	URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + configuration.getProxyHost() + configuration.getProxyPort());
-        	proxyConfig.endpoint(proxyEndpoint);
-        	httpClientBuilder = 
-        	        ApacheHttpClient.builder()
-        	                        .proxyConfiguration(proxyConfig.build());
+            proxyConfig = ProxyConfiguration.builder();
+            URI proxyEndpoint = URI.create(configuration.getProxyProtocol() + configuration.getProxyHost() + configuration.getProxyPort());
+            proxyConfig.endpoint(proxyEndpoint);
+            httpClientBuilder = ApacheHttpClient.builder().proxyConfiguration(proxyConfig.build());
             isClientConfigFound = true;
         }
         if (configuration.getAccessKey() != null && configuration.getSecretKey() != null) {
-        	AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
+            AwsBasicCredentials cred = AwsBasicCredentials.create(configuration.getAccessKey(), configuration.getSecretKey());
             if (isClientConfigFound) {
                 clientBuilder = clientBuilder.httpClientBuilder(httpClientBuilder).credentialsProvider(StaticCredentialsProvider.create(cred));
             } else {
