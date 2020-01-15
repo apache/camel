@@ -16,15 +16,11 @@
  */
 package org.apache.camel.model.cloud;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -33,9 +29,7 @@ import org.apache.camel.ExtendedCamelContext;
 import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.cloud.ServiceFilter;
 import org.apache.camel.cloud.ServiceFilterFactory;
-import org.apache.camel.model.IdentifiedType;
 import org.apache.camel.model.ProcessorDefinition;
-import org.apache.camel.model.PropertyDefinition;
 import org.apache.camel.spi.Metadata;
 import org.apache.camel.support.CamelContextHelper;
 import org.apache.camel.support.PropertyBindingSupport;
@@ -44,14 +38,11 @@ import org.apache.camel.util.ObjectHelper;
 @Metadata(label = "routing,cloud,service-discovery")
 @XmlRootElement(name = "serviceFilterConfiguration")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class ServiceCallServiceFilterConfiguration extends IdentifiedType implements ServiceFilterFactory {
+public class ServiceCallServiceFilterConfiguration extends ServiceCallConfiguration implements ServiceFilterFactory {
     @XmlTransient
     private final ServiceCallDefinition parent;
     @XmlTransient
     private final String factoryKey;
-    @XmlElement(name = "properties")
-    @Metadata(label = "advanced")
-    private List<PropertyDefinition> properties;
 
     public ServiceCallServiceFilterConfiguration() {
         this(null, null);
@@ -74,21 +65,6 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
     //
     // *************************************************************************
 
-    public List<PropertyDefinition> getProperties() {
-        return properties;
-    }
-
-    /**
-     * Set client properties to use.
-     * <p/>
-     * These properties are specific to what service call implementation are in
-     * use. For example if using ribbon, then the client properties are define
-     * in com.netflix.client.config.CommonClientConfigKey.
-     */
-    public void setProperties(List<PropertyDefinition> properties) {
-        this.properties = properties;
-    }
-
     /**
      * Adds a custom property to use.
      * <p/>
@@ -97,32 +73,7 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
      * in com.netflix.client.config.CommonClientConfigKey.
      */
     public ServiceCallServiceFilterConfiguration property(String key, String value) {
-        if (properties == null) {
-            properties = new ArrayList<>();
-        }
-        PropertyDefinition prop = new PropertyDefinition();
-        prop.setKey(key);
-        prop.setValue(value);
-        properties.add(prop);
-        return this;
-    }
-
-    protected Map<String, String> getPropertiesAsMap(CamelContext camelContext) throws Exception {
-        Map<String, String> answer;
-
-        if (properties == null || properties.isEmpty()) {
-            answer = Collections.emptyMap();
-        } else {
-            answer = new HashMap<>();
-            for (PropertyDefinition prop : properties) {
-                // support property placeholders
-                String key = CamelContextHelper.parseText(camelContext, prop.getKey());
-                String value = CamelContextHelper.parseText(camelContext, prop.getValue());
-                answer.put(key, value);
-            }
-        }
-
-        return answer;
+        return (ServiceCallServiceFilterConfiguration) super.property(key, value);
     }
 
     // *************************************************************************
@@ -192,10 +143,4 @@ public class ServiceCallServiceFilterConfiguration extends IdentifiedType implem
         return answer;
     }
 
-    // *************************************************************************
-    // Utilities
-    // *************************************************************************
-
-    protected void postProcessFactoryParameters(CamelContext camelContext, Map<String, Object> parameters) throws Exception {
-    }
 }
