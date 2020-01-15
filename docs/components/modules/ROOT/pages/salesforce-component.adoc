@@ -26,9 +26,12 @@ for this component:
 </dependency>
 ----
 
-NOTE: Developers wishing to contribute to the component are instructed
+[NOTE]
+====
+Developers wishing to contribute to the component are instructed
 to look at the https://github.com/apache/camel/tree/master/components/camel-salesforce/camel-salesforce-component/README.md[README.md] file on instructions on how to get started and
 setup your environment for running integration tests.
+====
 
 == Authenticating to Salesforce
 
@@ -55,11 +58,17 @@ For each of the flow different set of properties needs to be set:
 The component auto determines what flow you're trying to configure, to
 be remove ambiguity set the `authenticationType` property.
 
-NOTE: Using Username-Password Flow in production is not encouraged.
+[NOTE]
+====
+Using Username-Password Flow in production is not encouraged.
+====
 
-NOTE: The certificate used in JWT Bearer Token Flow can be a selfsigned 
+[NOTE]
+====
+The certificate used in JWT Bearer Token Flow can be a selfsigned 
 certificate. The KeyStore holding the certificate and the private key
 must contain only single certificate-private key entry.
+====
 
 == URI format
 
@@ -482,12 +491,15 @@ The Composite API batch operation (`composite-batch`) allows you to accumulate m
 submit them in one go, saving the round trip cost of multiple individual requests. Each response is then received in a
 list of responses with the order preserved, so that the n-th requests response is in the n-th place of the response.
 
-NOTE: The results can vary from API to API so the result of the request is given as a `java.lang.Object`. In most cases
+[NOTE]
+====
+The results can vary from API to API so the result of the request is given as a `java.lang.Object`. In most cases
 the result will be a `java.util.Map` with string keys and values or other `java.util.Map` as value. Requests made in
 JSON format hold some type information (i.e. it is known what values are strings and what values are numbers), so in
 general those will be more type friendly. Note that the responses will vary between XML and JSON, this is due to the
 responses from Salesforce API being different. So be careful if you switch between formats without changing the response
 handling code.
+====
 
 Lets look at an example:
 
@@ -538,12 +550,18 @@ The `composite` operation allows submitting up to 25 requests that can be chaine
 generated in previous request can be used in subsequent request. Individual requests and responses are linked with the
 provided _reference_.
 
-NOTE: Composite API supports only JSON payloads.
+[NOTE]
+====
+Composite API supports only JSON payloads.
+====
 
-NOTE: As with the batch API the results can vary from API to API so the result of the request is given as a
+[NOTE]
+====
+As with the batch API the results can vary from API to API so the result of the request is given as a
 `java.lang.Object`. In most cases the result will be a `java.util.Map` with string keys and values or other
 `java.util.Map` as value. Requests made in JSON format hold some type information (i.e. it is known what values are
 strings and what values are numbers), so in general those will be more type friendly.
+====
 
 Lets look at an example:
 
