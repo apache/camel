@@ -2632,13 +2632,7 @@ public interface EndpointBuilders {
      * Since: 2.23
      * Maven coordinates: org.apache.camel:camel-ipfs
      *
-     * Syntax: <code>ipfs:ipfsHost:ipfsPort/ipfsCmd</code>
-     *
-     * Path parameter: ipfsHost (required)
-     * The ipfs host
-     *
-     * Path parameter: ipfsPort (required)
-     * The ipfs port
+     * Syntax: <code>ipfs:ipfsCmd</code>
      *
      * Path parameter: ipfsCmd (required)
      * The ipfs command
@@ -2955,9 +2949,10 @@ public interface EndpointBuilders {
      *
      * Syntax: <code>websocket-jsr356:websocketPathOrUri</code>
      *
-     * Path parameter: websocketPathOrUri
-     * If a path (/foo) it will deploy locally the endpoint, if an uri it will
-     * connect to the corresponding server
+     * Path parameter: uri
+     * If a schemeless URI path is provided, a ServerEndpoint is deployed under
+     * that path. Else if the URI is prefixed with the 'ws://' scheme, then a
+     * connection is established to the corresponding server
      */
     static org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.JSR356WebSocketEndpointBuilder websocketJsr356(String path) {
         return org.apache.camel.builder.endpoint.dsl.JSR356WebSocketEndpointBuilderFactory.websocketJsr356(path);

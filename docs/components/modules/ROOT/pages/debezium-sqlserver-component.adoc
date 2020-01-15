@@ -88,7 +88,7 @@ with the following path and query parameters:
 | *offsetStorage* (consumer) | The name of the Java class that is responsible for persistence of connector offsets. | org.apache.kafka.connect.storage.FileOffsetBackingStore | String
 | *offsetStorageFileName* (consumer) | Path to file where offsets are to be stored. Required when offset.storage is set to the FileOffsetBackingStore |  | String
 | *offsetStoragePartitions* (consumer) | The number of partitions used when creating the offset storage topic. Required when offset.storage is set to the 'KafkaOffsetBackingStore'. |  | int
-| *offsetStorageReplication Factor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
+| *offsetStorageReplicationFactor* (consumer) | Replication factor used when creating the offset storage topic. Required when offset.storage is set to the KafkaOffsetBackingStore |  | int
 | *offsetStorageTopic* (consumer) | The name of the Kafka topic where offsets are to be stored. Required when offset.storage is set to the KafkaOffsetBackingStore. |  | String
 | *exceptionHandler* (consumer) | To let the consumer use a custom ExceptionHandler. Notice if the option bridgeErrorHandler is enabled then this option is not in use. By default the consumer will deal with exceptions, that will be logged at WARN or ERROR level and ignored. |  | ExceptionHandler
 | *exchangePattern* (consumer) | Sets the exchange pattern when the consumer creates an exchange. |  | ExchangePattern
@@ -98,9 +98,9 @@ with the following path and query parameters:
 | *databaseDbname* (sqlserver) | The name of the database the connector should be monitoring. When working with a multi-tenant set-up, must be set to the CDB name. |  | String
 | *databaseHistory* (sqlserver) | The name of the DatabaseHistory class that should be used to store and recover database schema changes. The configuration properties for the history are prefixed with the 'database.history.' string. | io.debezium.relational.history.FileDatabaseHistory | String
 | *databaseHistoryFileFilename* (sqlserver) | The path to the file that will be used to record the database history |  | String
-| *databaseHistoryKafka BootstrapServers* (sqlserver) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
-| *databaseHistoryKafka RecoveryAttempts* (sqlserver) | The number of attempts in a row that no data are returned from Kafka before recover completes. The maximum amount of time to wait after receiving no data is (recovery.attempts) x (recovery.poll.interval.ms). | 100 | int
-| *databaseHistoryKafka RecoveryPollIntervalMs* (sqlserver) | The number of milliseconds to wait while polling for persisted data during recovery. | 100 | int
+| *databaseHistoryKafkaBootstrap Servers* (sqlserver) | A list of host/port pairs that the connector will use for establishing the initial connection to the Kafka cluster for retrieving database schema history previously stored by the connector. This should point to the same Kafka cluster used by the Kafka Connect process. |  | String
+| *databaseHistoryKafkaRecovery Attempts* (sqlserver) | The number of attempts in a row that no data are returned from Kafka before recover completes. The maximum amount of time to wait after receiving no data is (recovery.attempts) x (recovery.poll.interval.ms). | 100 | int
+| *databaseHistoryKafkaRecovery PollIntervalMs* (sqlserver) | The number of milliseconds to wait while polling for persisted data during recovery. | 100 | int
 | *databaseHistoryKafkaTopic* (sqlserver) | The name of the topic for the database schema history |  | String
 | *databaseHostname* (sqlserver) | Resolvable hostname or IP address of the SQL Server database server. |  | String
 | *databasePassword* (sqlserver) | *Required* Password of the SQL Server database user to be used when connecting to the database. |  | String

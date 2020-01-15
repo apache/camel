@@ -74,21 +74,21 @@ The Jetty component supports 32 options, which are listed below.
 | *httpBinding* (advanced) | Not to be used - use JettyHttpBinding instead. |  | HttpBinding
 | *httpConfiguration* (advanced) | Jetty component does not use HttpConfiguration. |  | HttpConfiguration
 | *mbContainer* (advanced) | To use a existing configured org.eclipse.jetty.jmx.MBeanContainer if JMX is enabled that Jetty uses for registering mbeans. |  | MBeanContainer
-| *sslSocketConnector Properties* (security) | A map which contains general SSL connector properties. |  | Map
-| *socketConnector Properties* (security) | A map which contains general HTTP connector properties. Uses the same principle as sslSocketConnectorProperties. |  | Map
+| *sslSocketConnectorProperties* (security) | A map which contains general SSL connector properties. |  | Map
+| *socketConnectorProperties* (security) | A map which contains general HTTP connector properties. Uses the same principle as sslSocketConnectorProperties. |  | Map
 | *continuationTimeout* (consumer) | Allows to set a timeout in millis when using Jetty as consumer (server). By default Jetty uses 30000. You can use a value of = 0 to never expire. If a timeout occurs then the request will be expired and Jetty will return back a http error 503 to the client. This option is only in use when using Jetty with the Asynchronous Routing Engine. | 30000 | Long
 | *useContinuation* (consumer) | Whether or not to use Jetty continuations for the Jetty Server. | true | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters | false | boolean
 | *responseBufferSize* (consumer) | Allows to configure a custom value of the response buffer size on the Jetty connectors. |  | Integer
 | *requestBufferSize* (consumer) | Allows to configure a custom value of the request buffer size on the Jetty connectors. |  | Integer
 | *requestHeaderSize* (consumer) | Allows to configure a custom value of the request header size on the Jetty connectors. |  | Integer
 | *responseHeaderSize* (consumer) | Allows to configure a custom value of the response header size on the Jetty connectors. |  | Integer
 | *proxyHost* (proxy) | To use a http proxy to configure the hostname. |  | String
 | *proxyPort* (proxy) | To use a http proxy to configure the port number. |  | Integer
-| *useXForwardedFor Header* (consumer) | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr. | false | boolean
+| *useXForwardedForHeader* (consumer) | To use the X-Forwarded-For header in HttpServletRequest.getRemoteAddr. | false | boolean
 | *sendServerVersion* (consumer) | If the option is true, jetty will send the server header with the jetty version information to the client which sends the request. NOTE please make sure there is no any other camel-jetty endpoint is share the same port, otherwise this option may not work as expected. | true | boolean
-| *allowJavaSerialized Object* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
+| *allowJavaSerializedObject* (advanced) | Whether to allow java serialization when a request uses context-type=application/x-java-serialized-object. This is by default turned off. If you enable this then be aware that Java will deserialize the incoming data from the request to Java and that can be a potential security risk. | false | boolean
 | *headerFilterStrategy* (filter) | To use a custom org.apache.camel.spi.HeaderFilterStrategy to filter header to and from Camel message. |  | HeaderFilterStrategy
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *bridgeErrorHandler* (consumer) | Allows for bridging the consumer to the Camel routing Error Handler, which mean any exceptions occurred while the consumer is trying to pickup incoming messages, or the likes, will now be processed as a message and handled by the routing Error Handler. By default the consumer will use the org.apache.camel.spi.ExceptionHandler to deal with exceptions, that will be logged at WARN or ERROR level and ignored. | false | boolean
@@ -158,7 +158,7 @@ with the following path and query parameters:
 | *traceEnabled* (consumer) | Specifies whether to enable HTTP TRACE for this Servlet consumer. By default TRACE is turned off. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the endpoint should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
 | *mapHttpMessageBody* (advanced) | If this option is true then IN exchange Body of the exchange will be mapped to HTTP body. Setting this to false will avoid the HTTP mapping. | true | boolean
-| *mapHttpMessageFormUrl EncodedBody* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
+| *mapHttpMessageFormUrlEncoded Body* (advanced) | If this option is true then IN exchange Form Encoded body of the exchange will be mapped to HTTP. Setting this to false will avoid the HTTP Form Encoded body mapping. | true | boolean
 | *mapHttpMessageHeaders* (advanced) | If this option is true then IN exchange Headers of the exchange will be mapped to HTTP headers. Setting this to false will avoid the HTTP Headers mapping. | true | boolean
 | *synchronous* (advanced) | Sets whether synchronous processing should be strictly used, or Camel is allowed to use asynchronous processing (if supported). | false | boolean
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters

@@ -62,7 +62,7 @@ The Elytron component supports 11 options, which are listed below.
 | *elytronProvider* (advanced) | Elytron security provider, has to support mechanism from parameter mechanismName. | instance of WildFlyElytronHttpBearerProvider | WildFlyElytronBaseProvider
 | *undertowHttpBinding* (advanced) | To use a custom HttpBinding to control the mapping between Camel message and HttpClient. |  | UndertowHttpBinding
 | *sslContextParameters* (security) | To configure security using SSLContextParameters |  | SSLContextParameters
-| *useGlobalSslContext Parameters* (security) | Enable usage of global SSL context parameters. | false | boolean
+| *useGlobalSslContextParameters* (security) | Enable usage of global SSL context parameters. | false | boolean
 | *hostOptions* (advanced) | To configure common options, such as thread pools |  | UndertowHostOptions
 | *muteException* (consumer) | If enabled and an Exchange failed processing on the consumer side the response's body won't contain the exception's stack trace. | false | boolean
 | *basicPropertyBinding* (advanced) | Whether the component should use basic property binding (Camel 2.x) or the newer property binding with additional capabilities | false | boolean
