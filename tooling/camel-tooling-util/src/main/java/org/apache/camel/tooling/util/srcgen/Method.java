@@ -34,7 +34,7 @@ public class Method {
     String signature;
     String body;
     List<Param> parameters = new ArrayList<>();
-    List<GenericType> exceptions = new ArrayList<>();
+    List<String> exceptions = new ArrayList<>();
     List<Annotation> annotations = new ArrayList<>();
     Javadoc javadoc = new Javadoc();
 
@@ -118,6 +118,9 @@ public class Method {
         return addThrows(new GenericType(type));
     }
     public Method addThrows(GenericType type) {
+        return addThrows(type.toString());
+    }
+    public Method addThrows(String type) {
         this.exceptions.add(type);
         return this;
     }
