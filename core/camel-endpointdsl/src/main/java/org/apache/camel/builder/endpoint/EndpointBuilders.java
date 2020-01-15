@@ -985,6 +985,7 @@ public interface EndpointBuilders {
      * different signer/verifier/encryptor/decryptor endpoints within the camel
      * context.
      */
+    @Deprecated
     static org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.CryptoCmsEndpointBuilder cryptoCms(String path) {
         return org.apache.camel.builder.endpoint.dsl.CryptoCmsEndpointBuilderFactory.cryptoCms(path);
     }
