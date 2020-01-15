@@ -326,7 +326,6 @@ public class MXParser
     protected static final int READ_CHUNK_SIZE = 8 * 1024; //max data chars in one read() call
     protected Reader reader;
     protected String inputEncoding;
-    protected InputStream inputStream;
 
 
     protected int bufLoadFactor = 95;  // 99%
@@ -510,6 +509,9 @@ public class MXParser
 
 
     public void setInput(Reader in) throws XmlPullParserException {
+        if (in == null) {
+            throw new IllegalArgumentException("input reader can not be null");
+        }
         reset();
         reader = in;
     }
@@ -519,26 +521,20 @@ public class MXParser
         if (inputStream == null) {
             throw new IllegalArgumentException("input stream can not be null");
         }
-        this.inputStream = inputStream;
-        Reader reader;
-        //if(inputEncoding != null) {
+        reset();
         try {
             if (inputEncoding != null) {
-                reader = new InputStreamReader(inputStream, inputEncoding);
+                this.reader = new InputStreamReader(inputStream, inputEncoding);
+                this.inputEncoding = inputEncoding;
             } else {
-                //by default use UTF-8 (InputStreamReader(inputStream)) would use OS default ...
-                reader = new InputStreamReader(inputStream, "UTF-8");
+                XmlStreamReader xr = new XmlStreamReader(inputStream);
+                this.reader = xr;
+                this.inputEncoding = xr.getEncoding();
             }
-        } catch (UnsupportedEncodingException une) {
+        } catch (IOException une) {
             throw new XmlPullParserException(
                     "could not create reader for encoding " + inputEncoding + " : " + une, this, une);
         }
-        //} else {
-        //    reader = new InputStreamReader(inputStream);
-        //}
-        setInput(reader);
-        //must be here as reest() was called in setInput() and has set this.inputEncoding to null ...
-        this.inputEncoding = inputEncoding;
     }
 
     public String getInputEncoding() {
@@ -2535,8 +2531,6 @@ public class MXParser
 
     protected void parseXmlDeclWithVersion(int versionStart, int versionEnd)
             throws XmlPullParserException, IOException {
-        String oldEncoding = this.inputEncoding;
-
         // check version is "1.0"
         if ((versionEnd - versionStart != 3)
                 || buf[versionStart] != '1'
@@ -2586,7 +2580,6 @@ public class MXParser
                 ch = more();
             }
             final int encodingEnd = pos - 1;
-
 
             // TODO reconcile with setInput encodingName
             inputEncoding = newString(buf, encodingStart, encodingEnd - encodingStart);
