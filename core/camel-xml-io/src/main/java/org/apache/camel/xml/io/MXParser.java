@@ -1925,10 +1925,10 @@ public class MXParser
                     else if(xmlnsPos == 2) { if(ch != 'l') startsWithXmlns = false; }
                     else if(xmlnsPos == 3) { if(ch != 'n') startsWithXmlns = false; }
                     else if(xmlnsPos == 4) { if(ch != 's') startsWithXmlns = false; }
-                    else if(xmlnsPos == 5) {
+                    else {
                         if(ch != ':') throw new XmlPullParserException(
                                 "after xmlns in attribute name must be colon"
-                                        +"when namespaces are enabled", this, null);
+                                        +" when namespaces are enabled", this, null);
                         //colonPos = pos - 1 + bufAbsoluteStart;
                     }
                 }
