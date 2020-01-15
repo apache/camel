@@ -16,46 +16,44 @@
  */
 package org.apache.camel.xml.in;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.xml.io.XmlPullParserException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
 public class ModelParserTest {
 
-    @Test
-    public void test() throws Exception {
-        Path dir = getResourceFolder();
-        Files.list(dir).sorted().filter(Files::isRegularFile).forEach(path -> {
-            try {
-                if (path.getFileName().toString().equals("barRest.xml")
-                        || path.getFileName().toString().equals("simpleRest.xml")
-                        || path.getFileName().toString().equals("simpleRestToD.xml")) {
-                    RestsDefinition rests = new ModelParser(
-                            Files.newInputStream(path), "http://camel.apache.org/schema/spring")
-                            .parseRestsDefinition();
-                    System.out.println("Parsed " + path + " successfully");
-                    assertNotNull(rests);
-                } else {
-                    RoutesDefinition routes = new ModelParser(
-                            Files.newInputStream(path), "http://camel.apache.org/schema/spring")
-                            .parseRoutesDefinition();
-                    System.out.println("Parsed " + path + " successfully");
-                    assertNotNull(routes);
-                }
-            } catch (IOException|XmlPullParserException e) {
-                throw new RuntimeException("Error parsing: " + path, e);
-            }
-        });
+    public static final String NAMESPACE = "http://camel.apache.org/schema/spring";
+    private static List<String> REST_XMLS = Arrays.asList("barRest.xml", "simpleRest.xml", "simpleRestToD.xml");
 
+    @Test
+    public void testFiles() throws Exception {
+        Path dir = getResourceFolder();
+        List<Path> files = Files.list(dir).sorted().filter(Files::isRegularFile).collect(Collectors.toList());
+        for (Path path : files) {
+            ModelParser parser = new ModelParser(Files.newInputStream(path), NAMESPACE);
+            boolean isRest = REST_XMLS.contains(path.getFileName().toString());
+            if (isRest) {
+                RestsDefinition rests = parser.parseRestsDefinition();
+                assertNotNull(rests);
+            } else {
+                RoutesDefinition routes = parser.parseRoutesDefinition();
+                assertNotNull(routes);
+            }
+        }
+    }
+
+    @Test
+    public void testSimpleString() throws Exception {
         RoutesDefinition routes = new ModelParser(new StringReader(
                 "<routes>" +
                         "<route id='foo'>" +
