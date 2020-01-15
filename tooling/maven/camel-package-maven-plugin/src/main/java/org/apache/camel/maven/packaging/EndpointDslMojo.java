@@ -312,7 +312,7 @@ public class EndpointDslMojo extends AbstractMojo {
         }
         javaClass.getJavaDoc().setText(doc);
 
-        javaClass.addAnnotation(Generated.class.getName()).setStringValue("value", EndpointDslMojo.class.getName());
+        javaClass.addAnnotation(Generated.class).setStringValue("value", EndpointDslMojo.class.getName());
 
         for (EndpointOptionModel option : model.getEndpointOptions()) {
 

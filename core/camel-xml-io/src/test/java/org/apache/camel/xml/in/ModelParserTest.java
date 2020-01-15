@@ -24,24 +24,12 @@ import java.nio.file.Paths;
 
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
-import org.apache.camel.tooling.util.FileUtil;
 import org.apache.camel.xml.io.XmlPullParserException;
 import org.junit.Test;
 
 import static org.junit.Assert.assertNotNull;
 
 public class ModelParserTest {
-
-    @Test
-    public void generateParser() throws IOException {
-        String parser = new ModelParserGenerator().generateParser();
-        Path dir = getResourceFolder();
-        while (!Files.isDirectory(dir.resolve("src"))) {
-            dir = dir.getParent();
-        }
-        Path output = dir.resolve("src/main/java/org/apache/camel/xml/in/ModelParser.java");
-        FileUtil.updateFile(output, parser);
-    }
 
     @Test
     public void test() throws Exception {

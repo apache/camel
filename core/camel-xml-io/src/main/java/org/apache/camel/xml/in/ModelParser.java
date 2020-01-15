@@ -39,7 +39,7 @@ import org.apache.camel.util.concurrent.ThreadPoolRejectedPolicy;
 import org.apache.camel.xml.io.XmlPullParserException;
 
 @SuppressWarnings("unused")
-@Generated("org.apache.camel.xml.in.ModelParserGenerator")
+@Generated("org.apache.camel.maven.packaging.ModelXmlParserGeneratorMojo")
 public class ModelParser extends BaseParser {
 
     public ModelParser(
