@@ -12,8 +12,11 @@ large XML and Text based payloads. It facilitates more optimal use of
 network bandwidth while incurring a small cost in order to compress and
 decompress payloads at the endpoint.
 
-NOTE: This dataformat is not for working with zip files such as uncompressing and building zip files.
+[NOTE]
+====
+This dataformat is not for working with zip files such as uncompressing and building zip files.
 Instead use the zipfile dataformat.
+====
 
 == Options
 
