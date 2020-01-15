@@ -74,6 +74,23 @@ nsq:myTopic?servers=myserver:4161
 This change is motivated by allowing to configure servers on component level,
 and also for Spring Boot auto-configuration etc.
 
+=== camel-ipfs
+
+The `camel-ipfs` component has changed its endpoint syntax from `nsq:host:port/command` to `ipfs:command`.
+The host and port is now configured on the component level instead.
+
+For example before
+
+[source,text]
+----
+ipfs:127.0.0.1:5001/add
+----
+
+Should be changed to
+----
+ipfs:add
+----
+
 === Graceful Shutdown Timeout
 
 When shutting down Camel, then the default timeout has changed from 300 seconds (5 minutes) to 45 seconds.
