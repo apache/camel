@@ -31,13 +31,13 @@ import software.amazon.awssdk.services.translate.TranslateClient;
 import software.amazon.awssdk.services.translate.TranslateClientBuilder;
 import software.amazon.awssdk.services.translate.model.TranslateTextRequest;
 
-public class TranslateComponentVerifierExtension extends DefaultComponentVerifierExtension {
+public class Translate2ComponentVerifierExtension extends DefaultComponentVerifierExtension {
 
-    public TranslateComponentVerifierExtension() {
+    public Translate2ComponentVerifierExtension() {
         this("aws2-translate");
     }
 
-    public TranslateComponentVerifierExtension(String scheme) {
+    public Translate2ComponentVerifierExtension(String scheme) {
         super(scheme);
     }
 
@@ -67,7 +67,7 @@ public class TranslateComponentVerifierExtension extends DefaultComponentVerifie
         ResultBuilder builder = ResultBuilder.withStatusAndScope(Result.Status.OK, Scope.CONNECTIVITY);
 
         try {
-            TranslateConfiguration configuration = setProperties(new TranslateConfiguration(), parameters);
+            Translate2Configuration configuration = setProperties(new Translate2Configuration(), parameters);
             AwsCredentialsProvider credentialsProvider = DefaultCredentialsProvider.create();
             TranslateClientBuilder clientBuilder = TranslateClient.builder();
             TranslateClient client = clientBuilder.credentialsProvider(credentialsProvider).region(Region.of(configuration.getRegion())).build();

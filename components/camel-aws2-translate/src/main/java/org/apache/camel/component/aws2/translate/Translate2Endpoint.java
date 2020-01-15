@@ -39,14 +39,14 @@ import software.amazon.awssdk.services.translate.TranslateClientBuilder;
  * The aws2-translate component is used for managing Amazon Translate
  */
 @UriEndpoint(firstVersion = "3.1.0", scheme = "aws2-translate", title = "AWS Translate", syntax = "aws2-translate:label", producerOnly = true, label = "cloud,management")
-public class TranslateEndpoint extends ScheduledPollEndpoint {
+public class Translate2Endpoint extends ScheduledPollEndpoint {
 
     private TranslateClient translateClient;
 
     @UriParam
-    private TranslateConfiguration configuration;
+    private Translate2Configuration configuration;
 
-    public TranslateEndpoint(String uri, Component component, TranslateConfiguration configuration) {
+    public Translate2Endpoint(String uri, Component component, Translate2Configuration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
@@ -58,7 +58,7 @@ public class TranslateEndpoint extends ScheduledPollEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new TranslateProducer(this);
+        return new Translate2Producer(this);
     }
 
     @Override
@@ -78,7 +78,7 @@ public class TranslateEndpoint extends ScheduledPollEndpoint {
         super.doStop();
     }
 
-    public TranslateConfiguration getConfiguration() {
+    public Translate2Configuration getConfiguration() {
         return configuration;
     }
 

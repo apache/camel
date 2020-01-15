@@ -20,16 +20,16 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws2.translate.TranslateConstants;
-import org.apache.camel.component.aws2.translate.TranslateLanguageEnum;
-import org.apache.camel.component.aws2.translate.TranslateOperations;
+import org.apache.camel.component.aws2.translate.Translate2Constants;
+import org.apache.camel.component.aws2.translate.Translate2LanguageEnum;
+import org.apache.camel.component.aws2.translate.Translate2Operations;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
 @Ignore("This test must be manually started, you need to specify AWS Credentials")
-public class TranslateProducerIntegrationTest extends CamelTestSupport {
+public class Translate2ProducerIntegrationTest extends CamelTestSupport {
 
     @EndpointInject("mock:result")
     private MockEndpoint mock;
@@ -41,9 +41,9 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:translateText", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(TranslateConstants.OPERATION, TranslateOperations.translateText);
-                exchange.getIn().setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN);
-                exchange.getIn().setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.GERMAN);
+                exchange.getIn().setHeader(Translate2Constants.OPERATION, Translate2Operations.translateText);
+                exchange.getIn().setHeader(Translate2Constants.SOURCE_LANGUAGE, Translate2LanguageEnum.ITALIAN);
+                exchange.getIn().setHeader(Translate2Constants.TARGET_LANGUAGE, Translate2LanguageEnum.GERMAN);
                 exchange.getIn().setBody("Ciao Signorina");
             }
         });
@@ -61,8 +61,8 @@ public class TranslateProducerIntegrationTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:translateTextAuto", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(TranslateConstants.OPERATION, TranslateOperations.translateText);
-                exchange.getIn().setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.GERMAN);
+                exchange.getIn().setHeader(Translate2Constants.OPERATION, Translate2Operations.translateText);
+                exchange.getIn().setHeader(Translate2Constants.TARGET_LANGUAGE, Translate2LanguageEnum.GERMAN);
                 exchange.getIn().setBody("Ciao Signorina");
             }
         });

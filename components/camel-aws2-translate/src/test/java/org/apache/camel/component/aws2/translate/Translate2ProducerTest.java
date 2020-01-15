@@ -21,13 +21,13 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.aws2.translate.TranslateConstants;
-import org.apache.camel.component.aws2.translate.TranslateLanguageEnum;
+import org.apache.camel.component.aws2.translate.Translate2Constants;
+import org.apache.camel.component.aws2.translate.Translate2LanguageEnum;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class TranslateProducerTest extends CamelTestSupport {
+public class Translate2ProducerTest extends CamelTestSupport {
 
     @BindToRegistry("amazonTranslateClient")
     AmazonAWSTranslateMock clientMock = new AmazonAWSTranslateMock();
@@ -42,8 +42,8 @@ public class TranslateProducerTest extends CamelTestSupport {
         Exchange exchange = template.request("direct:translateText", new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader(TranslateConstants.SOURCE_LANGUAGE, TranslateLanguageEnum.ITALIAN);
-                exchange.getIn().setHeader(TranslateConstants.TARGET_LANGUAGE, TranslateLanguageEnum.ENGLISH);
+                exchange.getIn().setHeader(Translate2Constants.SOURCE_LANGUAGE, Translate2LanguageEnum.ITALIAN);
+                exchange.getIn().setHeader(Translate2Constants.TARGET_LANGUAGE, Translate2LanguageEnum.ENGLISH);
                 exchange.getIn().setBody("ciao");
             }
         });

@@ -35,11 +35,11 @@ import software.amazon.awssdk.services.translate.model.TranslateTextResponse;
  * A Producer which sends messages to the Amazon Translate Service
  * <a href="http://aws.amazon.com/translate/">AWS Translate</a>
  */
-public class TranslateProducer extends DefaultProducer {
+public class Translate2Producer extends DefaultProducer {
 
     private transient String translateProducerToString;
 
-    public TranslateProducer(Endpoint endpoint) {
+    public Translate2Producer(Endpoint endpoint) {
         super(endpoint);
     }
 
@@ -54,15 +54,15 @@ public class TranslateProducer extends DefaultProducer {
         }
     }
 
-    private TranslateOperations determineOperation(Exchange exchange) {
-        TranslateOperations operation = exchange.getIn().getHeader(TranslateConstants.OPERATION, TranslateOperations.class);
+    private Translate2Operations determineOperation(Exchange exchange) {
+        Translate2Operations operation = exchange.getIn().getHeader(Translate2Constants.OPERATION, Translate2Operations.class);
         if (operation == null) {
             operation = getConfiguration().getOperation();
         }
         return operation;
     }
 
-    protected TranslateConfiguration getConfiguration() {
+    protected Translate2Configuration getConfiguration() {
         return getEndpoint().getConfiguration();
     }
 
@@ -75,16 +75,16 @@ public class TranslateProducer extends DefaultProducer {
     }
 
     @Override
-    public TranslateEndpoint getEndpoint() {
-        return (TranslateEndpoint)super.getEndpoint();
+    public Translate2Endpoint getEndpoint() {
+        return (Translate2Endpoint)super.getEndpoint();
     }
 
     private void translateText(TranslateClient translateClient, Exchange exchange) {
         Builder request = TranslateTextRequest.builder();
         if (!getConfiguration().isAutodetectSourceLanguage()) {
             if (ObjectHelper.isEmpty(getConfiguration().getSourceLanguage()) && ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
-                String source = exchange.getIn().getHeader(TranslateConstants.SOURCE_LANGUAGE, String.class);
-                String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
+                String source = exchange.getIn().getHeader(Translate2Constants.SOURCE_LANGUAGE, String.class);
+                String target = exchange.getIn().getHeader(Translate2Constants.TARGET_LANGUAGE, String.class);
                 if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
                     throw new IllegalArgumentException("Source and target language must be specified as headers or endpoint options");
                 }
@@ -97,7 +97,7 @@ public class TranslateProducer extends DefaultProducer {
         } else {
             String source = "auto";
             if (ObjectHelper.isEmpty(getConfiguration().getTargetLanguage())) {
-                String target = exchange.getIn().getHeader(TranslateConstants.TARGET_LANGUAGE, String.class);
+                String target = exchange.getIn().getHeader(Translate2Constants.TARGET_LANGUAGE, String.class);
                 if (ObjectHelper.isEmpty(source) || ObjectHelper.isEmpty(target)) {
                     throw new IllegalArgumentException("Target language must be specified when autodetection of source language is enabled");
                 }
@@ -108,8 +108,8 @@ public class TranslateProducer extends DefaultProducer {
                 request.targetLanguageCode(getConfiguration().getTargetLanguage());
             }
         }
-        if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class))) {
-            Collection<String> terminologies = exchange.getIn().getHeader(TranslateConstants.TERMINOLOGY_NAMES, Collection.class);
+        if (!ObjectHelper.isEmpty(exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class))) {
+            Collection<String> terminologies = exchange.getIn().getHeader(Translate2Constants.TERMINOLOGY_NAMES, Collection.class);
             request.terminologyNames(terminologies);
         }
         request.text(exchange.getMessage().getBody(String.class));
